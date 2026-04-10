@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELTA v1.0 — Dynasty Efficiency & Long-Term Analysis</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:14px;background:#0f1117;color:#e2e8f0;padding:1rem}
+.tabs{display:flex;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:6px;border:1px solid #2d3748;font-size:12px;cursor:pointer;background:transparent;color:#718096}
+.tab.active{background:#1e2a3a;color:#e2e8f0;font-weight:500;border-color:#4a5568}
+.panel{display:none}.panel.active{display:block}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.controls select,.controls input{font-size:12px;padding:5px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0}
+.controls input{width:160px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:10px;font-weight:500;color:#718096;text-align:left;padding:6px 8px;border-bottom:1px solid #2d3748;cursor:pointer;white-space:nowrap;user-select:none}
+th:hover{color:#e2e8f0}
+td{padding:5px 8px;border-bottom:1px solid #1a202c;color:#e2e8f0;vertical-align:middle}
+tr:hover td{background:#1a202c}
+.badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
+.bs{background:#064e3b;color:#6ee7b7}.bw{background:#78350f;color:#fcd34d}
+.bd{background:#450a0a;color:#fca5a5}.bi{background:#0c2a4a;color:#7dd3fc}
+.bn{background:#1e2a3a;color:#718096}
+.bar-wrap{display:inline-block;width:48px;height:4px;background:#2d3748;border-radius:3px;vertical-align:middle;margin-left:4px}
+.bar-fill{height:100%;border-radius:3px}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
+@media(max-width:600px){.trade-grid{grid-template-columns:1fr}}
+.trade-side{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1rem}
+.search-wrap{position:relative;margin-bottom:8px}
+.search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
+.dropdown{position:absolute;top:100%;left:0;right:0;background:#1a202c;border:1px solid #2d3748;border-radius:6px;z-index:30;max-height:220px;overflow-y:auto;margin-top:2px}
+.drop-item{padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid #0f1117;display:flex;justify-content:space-between}
+.drop-item:hover{background:#2d3748}
+.added{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 10px;background:#0f1117;border-radius:6px;margin-bottom:5px;gap:8px}
+.added-name{font-size:12px;font-weight:500}
+.added-meta{font-size:10px;color:#718096;margin-top:2px;display:flex;gap:6px;flex-wrap:wrap}
+.added-vals{text-align:right;font-size:11px;flex-shrink:0}
+.rm{background:none;border:none;cursor:pointer;color:#fc8181;font-size:14px;padding:0;margin-left:4px}
+.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-top:1px solid #2d3748;margin-top:4px}
+.vbar-outer{height:12px;background:#2d3748;border-radius:6px;overflow:hidden;position:relative;margin:8px 0}
+.vbar-a{position:absolute;left:0;top:0;height:100%;background:#6ee7b7;border-radius:6px 0 0 6px;transition:width .3s}
+.vbar-b{position:absolute;right:0;top:0;height:100%;background:#7dd3fc;border-radius:0 6px 6px 0;transition:width .3s}
+.vmid{position:absolute;left:50%;top:0;width:2px;height:100%;background:#0f1117;transform:translateX(-50%)}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
+.breakdown-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a202c;font-size:11px}
+.send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid #2d3748;background:transparent;color:#e2e8f0;cursor:pointer;margin-top:.75rem}
+.send-btn:hover{background:#1e2a3a}
+.section-label{font-size:10px;font-weight:600;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
+.info-box{font-size:11px;color:#718096;margin-bottom:1rem;padding:8px 12px;background:#1a202c;border-radius:6px;line-height:1.6}
+.edit-card{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1.25rem;max-width:480px}
+.edit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.edit-row label{min-width:130px;color:#718096;font-size:12px}
+.edit-row select,.edit-row input{font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0;flex:1;max-width:200px}
+.apply-btn{padding:8px 20px;font-size:13px;font-weight:500;border-radius:6px;border:1px solid #4a5568;background:#1e2a3a;color:#e2e8f0;cursor:pointer}
+.reset-btn{padding:8px 14px;font-size:12px;border-radius:6px;border:1px solid #2d3748;background:transparent;color:#fc8181;cursor:pointer;margin-left:8px}
+.override-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a202c;border-radius:6px;margin-bottom:5px;font-size:12px;flex-wrap:wrap;gap:6px}
+.flash{font-size:12px;color:#6ee7b7;margin-left:10px;opacity:0;transition:opacity .3s}
+.ripple-card{background:#1a202c;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12px}
+.edit-search-wrap{position:relative;margin-bottom:1rem}
+.edit-search-wrap input{width:100%;max-width:300px;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
+.edit-results{position:absolute;top:100%;left:0;width:300px;background:#1a202c;border:1px solid #2d3748;border-radius:6px;z-index:20;max-height:220px;overflow-y:auto;margin-top:2px}
+.edit-result-item{padding:7px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #0f1117}
+.edit-result-item:hover{background:#2d3748}
+</style>
+</head>
+<body>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+  <div>
+    <div style="font-size:18px;font-weight:700;color:#e2e8f0;letter-spacing:.02em">DELTA <span style="color:#7dd3fc">v1.0</span></div>
+    <div style="font-size:11px;color:#6ee7b7;font-weight:500;margin-top:1px;letter-spacing:.04em;text-transform:uppercase">Dynasty Efficiency & Long-Term Analysis</div>
+    <div style="font-size:10px;color:#4a5568;margin-top:3px">0.5 PPR · TE Premium · 4PT Pass TD · 6PT Rush/Rec TD · Additive delta projection · Model val capped at 9,999 · YPRR + snap% utilization</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('rankings',this)">Rankings</button>
+  <button class="tab" onclick="showTab('projections',this)">Projections</button>
+  <button class="tab" onclick="showTab('trade',this)">Trade Calc</button>
+  <button class="tab" onclick="showTab('epa',this)">EPA Insights</button>
+  <button class="tab" onclick="showTab('watchlist',this)">2026 Flags</button>
+  <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
+  <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
+  <button class="tab" onclick="showTab('edit',this)">✏ Edit</button>
+</div>
+
+<div id="panel-rankings" class="panel active">
+  <div class="controls">
+    <input type="text" id="s-rank" placeholder="Search..." oninput="renderRankings()">
+    <select id="pos-rank" onchange="renderRankings()">
+      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
+    </select>
+    <select id="sort-rank" onchange="renderRankings()">
+      <option value="ktc">KTC</option><option value="mv">Model val</option>
+      <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
+      <option value="a">Age</option><option value="sys">System</option>
+    </select>
+    <select id="age-rank" onchange="renderRankings()">
+      <option value="0">Any age</option><option value="24">≤24</option>
+      <option value="26">≤26</option><option value="28">≤28</option><option value="30">≤30</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto"><table>
+    <thead><tr>
+      <th style="padding-right:6px">Pos#</th>
+      <th onclick="setSortR('ktc')">KTC</th><th onclick="setSortR('n')">Player</th>
+      <th>Pos</th><th onclick="setSortR('a')">Age</th><th>Team</th>
+      <th>PPG'25</th><th>PPG'24</th><th onclick="setSortR('epaSc')">EPA</th>
+      <th>Role</th><th onclick="setSortR('proj')">Proj PPG</th>
+      <th onclick="setSortR('mv')">Mod val</th><th onclick="setSortR('sys')">Sys</th>
+      <th>OC</th><th>Tag</th>
+    </tr></thead>
+    <tbody id="rank-body"></tbody>
+  </table></div>
+</div>
+
+<div id="panel-projections" class="panel">
+  <div class="controls">
+    <input type="text" id="s-proj" placeholder="Search..." oninput="renderProj()">
+    <select id="pos-proj" onchange="renderProj()">
+      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
+    </select>
+    <select id="sort-proj" onchange="projSort=this.value;renderProj()">
+      <option value="proj">Proj PPG</option><option value="ceil">Ceiling</option>
+      <option value="floor">Floor</option><option value="gap">Model gap</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto"><table>
+    <thead><tr>
+      <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
+      <th>Floor</th><th>Proj PPG</th><th>Ceiling</th>
+      <th>EPA</th><th>Role</th><th>KTC</th><th>Mod val</th><th>Gap</th><th>CI</th>
+      <th onclick="setSortP('miss')" style="cursor:pointer;color:#fca5a5">Miss%▾</th>
+      <th onclick="setSortP('hit')" style="cursor:pointer;color:#7dd3fc">Hit%▾</th>
+      <th onclick="setSortP('elite')" style="cursor:pointer;color:#6ee7b7">Elite%▾</th>
+    </tr></thead>
+    <tbody id="proj-body"></tbody>
+  </table></div>
+</div>
+
+<div id="panel-trade" class="panel">
+  <div class="info-box">Model = KTC × age × system × OC continuity × utilization (YPRR/snap%) × college × EPA × QB quality. Picks use raw KTC. QB superflex already priced into KTC — no double-counting.</div>
+  <div class="trade-grid">
+    <div class="trade-side">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Side A — you receive</div>
+      <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
+      <div id="side-a"></div>
+      <div class="total-row"><span style="color:#718096;font-size:11px">KTC total</span><span id="ktc-a" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#6ee7b7;font-weight:600">Model value</span><span id="mod-a" style="color:#6ee7b7;font-weight:600">—</span></div>
+    </div>
+    <div class="trade-side">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Side B — you give</div>
+      <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
+      <div id="side-b"></div>
+      <div class="total-row"><span style="color:#718096;font-size:11px">KTC total</span><span id="ktc-b" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#7dd3fc;font-weight:600">Model value</span><span id="mod-b" style="color:#7dd3fc;font-weight:600">—</span></div>
+    </div>
+  </div>
+  <div id="verdict-area"></div>
+</div>
+
+<div id="panel-epa" class="panel">
+  <div class="controls">
+    <select id="pos-epa" onchange="renderEPA()">
+      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
+    </select>
+    <select id="sort-epa" onchange="renderEPA()">
+      <option value="epaSc">EPA score</option><option value="epaTr">Trend</option>
+      <option value="ef">Efficiency</option><option value="ktc">KTC</option>
+    </select>
+    <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
+  </div>
+  <div class="info-box">RB floor: ≥140 rushes + YAC/carry ≥3.0 → EPA treated as neutral. WR/TE: ≥80 targets → floor 0.92. QB: ≥300 plays → floor 0.88.</div>
+  <div style="overflow-x:auto"><table>
+    <thead><tr>
+      <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
+      <th>EPA'25</th><th>EPA'24</th><th>EPA'23</th><th>EPA'22</th>
+      <th>Raw</th><th>Applied</th><th>Floor</th><th>Trend</th><th>Eff</th><th>KTC</th><th>Tag</th>
+    </tr></thead>
+    <tbody id="epa-body"></tbody>
+  </table></div>
+</div>
+
+<div id="panel-watchlist" class="panel">
+  <div class="info-box">Players on teams with a new 2026 OC — sorted by system score (lowest risk first).</div>
+  <div id="watchlist-body"></div>
+</div>
+
+<div id="panel-ripple" class="panel">
+  <div class="info-box">Value changes from offseason moves — sorted by magnitude.</div>
+  <div id="ripple-body"></div>
+</div>
+
+<div id="panel-contracts" class="panel">
+  <div class="controls">
+    <input type="text" id="s-contracts" placeholder="Search player..." oninput="renderContracts()">
+    <select id="pos-contracts" onchange="renderContracts()">
+      <option value="ALL">All Positions</option>
+      <option value="QB">QB</option><option value="WR">WR</option>
+      <option value="RB">RB</option><option value="TE">TE</option>
+    </select>
+    <select id="status-contracts" onchange="renderContracts()">
+      <option value="ALL">All Status</option>
+      <option value="locked">🔒 Locked Up</option>
+      <option value="walkyr">⚠ Walk Year</option>
+      <option value="expiring">🔴 Expiring Soon</option>
+    </select>
+    <select id="sort-contracts" onchange="renderContracts()">
+      <option value="aav">Sort: AAV ↓</option>
+      <option value="end">Sort: Yrs Left ↑</option>
+      <option value="total">Sort: Total Value ↓</option>
+      <option value="name">Sort: Name</option>
+    </select>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Player</th><th>Pos</th><th>Team</th><th>Age</th>
+      <th>AAV</th><th>Total</th><th>Ends</th><th>Yrs Left</th>
+      <th>Status</th><th>Dynasty Signal</th>
+    </tr></thead>
+    <tbody id="contracts-body"></tbody>
+  </table>
+  <div style="margin-top:12px;font-size:10px;color:#4a5568">
+    All 32 NFL teams loaded — full contract coverage complete.
+    🔒 Locked Up = 4+ years remaining · ✓ Stable = 3 years · 🔴 Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
+  </div>
+</div>
+
+<div id="panel-edit" class="panel">
+  <div class="section-label">Search and edit any player</div>
+  <div class="edit-search-wrap">
+    <input id="edit-search" placeholder="Search player..." oninput="doEditSearch()">
+    <div id="edit-results" class="edit-results" style="display:none"></div>
+  </div>
+  <div id="edit-card-wrap" style="display:none">
+    <div class="edit-card">
+      <div id="edit-card-title" style="font-size:14px;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Player</div>
+      <div class="edit-row"><label>New team</label>
+        <select id="edit-team"><option value="">— no change —</option>
+          <option>ARI</option><option>ATL</option><option>BAL</option><option>BUF</option><option>CAR</option>
+          <option>CHI</option><option>CIN</option><option>CLE</option><option>DAL</option><option>DEN</option>
+          <option>DET</option><option>GB</option><option>HOU</option><option>IND</option><option>JAC</option>
+          <option>KC</option><option>LAC</option><option>LAR</option><option>LV</option><option>MIA</option>
+          <option>MIN</option><option>NE</option><option>NO</option><option>NYG</option><option>NYJ</option>
+          <option>PHI</option><option>PIT</option><option>SF</option><option>SEA</option><option>TB</option>
+          <option>TEN</option><option>WAS</option><option>FA</option>
+        </select>
+      </div>
+      <div class="edit-row"><label>System score override</label>
+        <select id="edit-sys"><option value="">— team default —</option>
+          <option value="85">85 — elite</option><option value="75">75 — strong</option>
+          <option value="65">65 — solid</option><option value="55">55 — average</option>
+          <option value="45">45 — below avg</option><option value="35">35 — weak</option>
+        </select>
+      </div>
+      <div class="edit-row"><label>OC continuity</label>
+        <select id="edit-cont"><option value="">— team default —</option>
+          <option value="1.0">Same OC 3-4yr</option><option value="0.75">Stable 2yr</option>
+          <option value="0.55">New known OC</option><option value="0.35">New w/ history</option>
+          <option value="0.20">New unknown</option>
+        </select>
+      </div>
+      <div class="edit-row"><label>Injury flag</label>
+        <select id="edit-inj">
+          <option value="1.0">Healthy</option><option value="0.85">Minor concern</option>
+          <option value="0.70">Significant risk</option><option value="0.50">Doubtful</option>
+          <option value="0.0">Out / DNR</option>
+        </select>
+      </div>
+      <div class="edit-row"><label>Override KTC</label><input id="edit-ktc" placeholder="e.g. 6500"></div>
+      <div class="edit-row"><label>Notes</label><input id="edit-notes" placeholder="e.g. traded, WR1"></div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:.5rem">
+        <button class="apply-btn" onclick="applyOV()">Apply</button>
+        <button class="reset-btn" onclick="resetOV()">Reset</button>
+        <span id="edit-flash" class="flash">Saved ✓</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1.5rem">
+    <div class="section-label">Active overrides</div>
+    <div id="ov-list" style="color:#718096;font-size:12px">None.</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DYNASTY MODEL v5.5
+// KEY CHANGES FROM v5.4:
+// 1. WR/TE role multiplier replaced by YPRR-based efficiency score
+// 2. RB role multiplier replaced by snap%-based utilization score
+// 3. QB superflex multiplier removed (already priced in KTC)
+// 4. All PPG from exact user scoring format (unchanged)
+// ============================================================
+
+const SYS={
+  ARI:{s:52,c:.20,oc:'LaFleur',ch:true},ATL:{s:48,c:.35,oc:'Rees',ch:true},
+  BAL:{s:44,c:.20,oc:'Doyle',ch:true},BUF:{s:68,c:.75,oc:'Brady',ch:false},
+  CAR:{s:62,c:.75,oc:'Canales',ch:false},CHI:{s:71,c:.75,oc:'B.Johnson',ch:false},
+  CIN:{s:78,c:1.0,oc:'Taylor',ch:false},CLE:{s:46,c:.20,oc:'Monken',ch:true},
+  DAL:{s:65,c:.75,oc:'Schotty',ch:false},DEN:{s:72,c:1.0,oc:'Payton',ch:false},
+  DET:{s:66,c:.35,oc:'Petzing',ch:true},GB:{s:67,c:1.0,oc:'LaFleur',ch:false},
+  HOU:{s:64,c:.75,oc:'Caley',ch:false},IND:{s:63,c:1.0,oc:'Steichen',ch:false},
+  JAC:{s:60,c:.75,oc:'Coen',ch:false},KC:{s:70,c:1.0,oc:'Reid',ch:false},
+  LV:{s:51,c:.20,oc:'Kubiak',ch:true},LAC:{s:58,c:.20,oc:'McDaniel',ch:true},
+  LAR:{s:74,c:1.0,oc:'McVay',ch:false},MIA:{s:43,c:.20,oc:'Slowik',ch:true},
+  MIN:{s:65,c:1.0,oc:"O'Connell",ch:false},NE:{s:55,c:.75,oc:'McDaniels',ch:false},
+  NO:{s:61,c:.75,oc:'Moore',ch:false},NYG:{s:47,c:.35,oc:'Nagy',ch:true},
+  NYJ:{s:44,c:.20,oc:'Reich',ch:true},PHI:{s:49,c:.20,oc:'Mannion',ch:true},
+  PIT:{s:53,c:.20,oc:'McCarthy',ch:true},SF:{s:73,c:1.0,oc:'Shanahan',ch:false},
+  SEA:{s:38,c:.20,oc:'Fleury',ch:true},TB:{s:55,c:.20,oc:'Robinson',ch:true},
+  TEN:{s:46,c:.35,oc:'Daboll',ch:true},WAS:{s:55,c:.35,oc:'Blough',ch:true},
+  FA:{s:50,c:.20,oc:'Unknown',ch:true}
+};
+const AL={NEP:'NE',NOS:'NO',LVR:'LV',GBP:'GB',TBB:'TB',KCC:'KC',SFO:'SF',OAK:'LV',RFA:'FA'};
+function gs(t){return SYS[AL[t]||t]||SYS.FA;}
+
+// ============================================================
+// YPRR DATA — WR and TE (weighted: 2025x3, 2024x2, 2023x1)
+// Format: [weighted, y25, y24, y23]
+// ============================================================
+const YPRR_WR={
+  "Puka Nacua":[3.59,3.73,3.55,2.56],"Jaxon Smith-Njigba":[2.76,3.67,1.81,1.32],
+  "Ja'Marr Chase":[2.28,2.23,2.46,2.03],"Amon-Ra St. Brown":[2.44,2.48,2.30,2.63],
+  "George Pickens":[2.22,2.37,2.06,2.10],"Chris Olave":[2.02,1.99,2.09,2.06],
+  "Zay Flowers":[2.27,2.55,2.24,1.64],"Davante Adams":[1.98,1.96,2.02,1.97],
+  "Nico Collins":[2.66,2.39,2.87,3.07],"Jameson Williams":[1.84,1.90,2.10,1.46],
+  "Courtland Sutton":[1.73,1.67,1.84,1.64],"Tee Higgins":[1.78,1.63,2.04,1.64],
+  "Michael Wilson":[1.35,1.61,1.09,1.34],"A.J. Brown":[2.44,2.13,3.01,2.50],
+  "Tetairoa McMillan":[1.88,1.88,0,0],"Wan'Dale Robinson":[1.65,1.90,1.21,1.30],
+  "Drake London":[2.18,2.36,2.30,1.86],"Emeka Egbuka":[1.77,1.77,0,0],
+  "CeeDee Lamb":[2.48,2.40,2.27,2.79],"DeVonta Smith":[1.96,1.96,2.13,1.79],
+  "Michael Pittman Jr.":[1.61,1.49,1.67,2.02],"Jaylen Waddle":[2.09,2.28,1.51,2.63],
+  "Alec Pierce":[1.71,2.19,1.81,0.84],"Justin Jefferson":[2.20,1.92,2.50,2.92],
+  "DK Metcalf":[1.96,2.06,1.80,2.04],"Parker Washington":[1.51,2.10,1.01,0.74],
+  "Ladd McConkey":[1.71,1.42,2.37,0],"D.J. Moore":[1.52,1.25,1.43,2.31],
+  "Troy Franklin":[1.28,1.48,1.00,0],"Jakobi Meyers":[1.65,1.61,1.75,1.52],
+  "Romeo Doubs":[1.74,1.82,1.66,1.32],"Quentin Johnston":[1.48,1.61,1.76,0.88],
+  "Khalil Shakir":[1.80,1.74,2.14,1.83],"Rome Odunze":[1.41,1.63,1.16,0],
+  "Rashee Rice":[2.55,2.19,3.16,2.39],"Christian Watson":[2.18,2.55,2.25,1.53],
+  "Brian Thomas Jr.":[1.82,1.54,2.41,0],"Jordan Addison":[1.53,1.42,1.73,1.50],
+  "Luther Burden":[2.71,2.71,0,0],"Elic Ayomanor":[1.06,1.06,0,0],
+  "Terry McLaurin":[2.02,2.26,1.97,1.56],"Tre Harris":[1.13,1.13,0,0],
+  "Jayden Higgins":[1.48,1.48,0,0],"Matthew Golden":[1.25,1.39,1.00,0],
+  "Ricky Pearsall":[1.71,1.90,1.31,0],"Mike Evans":[2.00,1.64,2.41,2.31],
+  "Marvin Harrison Jr.":[1.62,1.61,1.62,0],"Garrett Wilson":[1.71,1.78,1.68,1.55],
+  "Xavier Worthy":[1.30,1.33,1.24,0],"Keon Coleman":[1.23,1.29,1.70,0],
+  "Josh Downs":[1.71,1.50,2.19,1.60],"Travis Hunter":[1.32,1.32,0,0],
+  "Brandon Aiyuk":[1.75,0,1.75,3.02],"Jalen Coker":[1.47,1.37,1.72,0],
+  "Malik Nabers":[2.10,2.07,2.15,0],"Deebo Samuel":[1.75,1.68,1.60,2.34],
+  "Jauan Jennings":[1.63,1.41,2.26,1.15],"Stefon Diggs":[2.24,2.54,1.84,1.99],
+  // Batch 1 WRs
+  "Adonai Mitchell":[1.61,1.66,1.46,1.78],
+  "Calvin Ridley":[1.72,1.7,1.85,1.51],
+  "Cedric Tillman":[2.25,2.61,1.65,2.37],
+  "Chris Godwin":[1.47,1.52,1.39,1.46],
+  "Christian Kirk":[1.46,1.32,1.88,1.04],
+  "Cooper Kupp":[1.71,1.96,1.41,1.59],
+  "Darius Slayton":[2.47,2.66,2.46,1.94],
+  "Darnell Mooney":[2.34,0,2.19,2.65],
+  "DeMario Douglas":[1.38,1.23,1.61,1.35],
+  "Devaughn Vele":[1.76,1.72,1.81,0],
+  "Dontayvion Wicks":[1.78,1.83,1.71,1.75],
+  "Jack Bech":[1.9,2.32,1.26,1.92],
+  "Jalen Nailor":[1.85,1.94,1.82,1.54],
+  "Jalen Tolbert":[2.1,2.07,2.18,2.03],
+  "Jaylin Noel":[1.76,1.76,0,0],
+  "Jerry Jeudy":[1.79,1.93,1.64,1.69],
+  "Kayshon Boutte":[2.66,2.93,2.48,2.21],
+  "Kyle Williams":[1.77,1.63,1.96,1.84],
+  "Malik Washington":[1.62,1.57,1.37,2.26],
+  "Marquise Brown":[1.48,1.31,1.7,1.57],
+  "Pat Bryant":[1.81,1.55,1.52,3.18],
+  "Rashod Bateman":[2.69,3.13,2.23,2.27],
+  "Tank Dell":[1.9,0,2.01,1.67],
+  "Tez Johnson":[1.95,2.04,1.89,1.77],
+  "Tre Tucker":[2.54,2.38,3.13,1.82],
+  // New batch WRs
+  "Chimere Dike":[3.54,3.54,0,0],
+  "Isaac TeSlaa":[4.0,4.0,0,0],
+  "Jalen McMillan":[4.0,4.0,4.0,0],
+  "Jayden Reed":[3.025,2.47,4.0,2.74],
+  "K.J. Osborn":[1.967,0,0.95,4.0],
+  "Marvin Mims":[2.998,3.05,2.42,4.0],
+  "Rashid Shaheed":[3.613,4.0,3.07,3.54],
+  "Xavier Legette":[3.74,4.0,3.35,0],
+};
+
+const YPRR_TE={
+  "Trey McBride":[1.93,1.78,2.13,2.00],"Kyle Pitts":[1.54,1.72,1.33,1.42],
+  "Travis Kelce":[1.62,1.51,1.43,1.91],"Tyler Warren":[1.61,1.61,0,0],
+  "Jake Ferguson":[1.31,1.20,1.26,1.46],"Harold Fannin Jr.":[1.66,1.66,0,0],
+  "Dallas Goedert":[1.59,1.37,2.22,1.35],"Juwan Johnson":[1.49,1.69,1.34,1.18],
+  "Hunter Henry":[1.49,1.66,1.39,1.14],"Dalton Schultz":[1.28,1.56,1.05,1.46],
+  "Brock Bowers":[1.87,1.70,2.01,0],"Colston Loveland":[1.88,1.88,0,0],
+  "George Kittle":[2.37,2.24,2.62,2.24],"AJ Barner":[1.31,1.46,1.12,0],
+  "Oronde Gadsden":[1.69,1.69,0,0],"Mark Andrews":[1.54,1.21,1.86,1.94],
+  "Theo Johnson":[1.08,1.20,0.88,0],"Zach Ertz":[1.24,1.36,1.27,1.01],
+  "Dalton Kincaid":[2.18,2.80,1.62,1.46],"Chigoziem Okonkwo":[1.31,1.37,1.25,1.30],
+  "Cade Otton":[1.07,1.06,1.28,0.81],"Brenton Strange":[1.62,1.74,1.47,0],
+  "Tucker Kraft":[1.93,2.40,1.59,1.20],"Pat Freiermuth":[1.37,1.56,1.45,1.11],
+  "T.J. Hockenson":[1.35,1.05,1.52,1.89],"Sam LaPorta":[1.79,1.99,1.61,1.76],
+  "Dawson Knox":[1.25,1.35,1.05,0],"Evan Engram":[1.37,1.29,1.47,1.55],
+  "Gunnar Helm":[1.47,1.47,0,0],"Mason Taylor":[1.04,1.04,0,0],
+  "Isaiah Likely":[1.43,1.31,1.53,1.45],"Cole Kmet":[1.17,1.03,0.89,1.67],
+  "Ben Sinnott":[3.05,2.91,3.25,0],
+  "Colby Parkinson":[2.41,2.3,2.4,2.76],
+  "David Njoku":[1.77,1.83,1.78,1.57],
+  "Greg Dulcich":[1.53,1.56,1.6,1.29],
+  "JaTavion Sanders":[2.59,2.63,2.53,0],
+  "Jake Tonges":[1.36,0.94,1.54,2.26],
+  "Michael Mayer":[2.16,1.81,2.67,2.19],
+  "Terrance Ferguson":[1.72,1.74,1.59,1.92],
+  // New batch TEs
+  "Charlie Kolar":[4.0,4.0,4.0,4.0],
+  "Elijah Higgins":[3.952,4.0,4.0,3.71],
+  "Jonnu Smith":[3.443,4.0,2.48,3.7],
+  "Noah Fant":[3.75,3.56,3.91,4.0],
+};
+
+
+  // RB Snap% [weighted, s25, s24, s23]
+const RB_SNAP={
+  "Bijan Robinson":[74.5,78.5,75.3,68.2],"Jahmyr Gibbs":[63.5,67.1,55.8,50.6],
+  "De'Von Achane":[61.2,70.9,61.9,35.6],"James Cook":[51.7,56.4,44.6,54.5],
+  "Jonathan Taylor":[70.3,82.4,65.0,44.3],"Derrick Henry":[55.3,54.7,57.2,53.1],
+  "Kyren Williams":[73.3,68.0,81.5,75.9],"Saquon Barkley":[71.9,73.5,69.2,64.9],
+  "Christian McCaffrey":[73.6,83.0,56.4,76.2],"Chase Brown":[57.8,66.4,60.4,11.2],
+  "Travis Etienne":[57.5,60.1,47.8,73.4],"Javonte Williams":[59.0,68.0,52.1,46.0],
+  "Josh Jacobs":[56.6,52.7,62.5,57.4],"Ashton Jeanty":[77.6,77.6,0,0],
+  "D'Andre Swift":[56.9,53.8,66.1,54.9],"Jaylen Warren":[44.8,47.4,39.6,48.4],
+  "Rico Dowdle":[46.6,55.7,54.3,20.9],"Breece Hall":[62.9,61.1,67.5,60.6],
+  "TreVeyon Henderson":[45.8,45.8,0,0],"Kenneth Gainwell":[40.1,50.1,26.0,38.5],
+  "RJ Harvey":[42.2,42.2,0,0],"Kenneth Walker III":[47.2,46.8,47.2,47.8],
+  "Zach Charbonnet":[47.8,46.0,51.6,45.5],"Tony Pollard":[64.6,62.2,64.1,70.6],
+  "Rhamondre Stevenson":[51.3,48.7,54.8,51.6],"Quinshon Judkins":[46.2,46.2,0,0],
+  "David Montgomery":[36.6,37.1,34.0,38.5],"Woody Marks":[49.2,49.2,0,0],
+  "Kyle Monangai":[41.4,41.4,0,0],"Kareem Hunt":[47.7,47.5,49.9,0],
+  "Jacory Croskey-Merritt":[38.5,38.5,0,0],"Bucky Irving":[40.2,37.1,45.2,0],
+  "Rachaad White":[59.5,50.6,51.8,78.1],"Jordan Mason":[37.2,41.3,0,9.3],
+  "Omarion Hampton":[56.7,56.7,0,0],"Blake Corum":[22.7,29.3,10.9,0],
+  "Cam Skattebo":[54.1,54.1,0,0],"J.K. Dobbins":[55.6,50.8,63.2,46.9],
+  "Chuba Hubbard":[56.0,40.7,77.4,59.0],"Bhayshul Tuten":[26.3,18.7,34.0,0],
+  "Aaron Jones":[47.7,50.1,62.7,32.3],"Tyjae Spears":[40.6,46.0,29.3,53.1],
+  "Alvin Kamara":[47.0,40.7,58.9,58.4],"Ollie Gordon":[22.7,22.7,0,0],
+  "Isaac Guerendo":[14.0,0,21.0,0],"Trey Benson":[36.6,48.4,13.3,0],
+  "Dylan Sampson":[23.0,23.0,0,0],"Jaylen Wright":[13.3,12.9,15.0,0],
+  "Braelon Allen":[25.0,23.9,26.5,0],"James Conner":[54.6,49.7,60.0,61.8],
+  "Isiah Pacheco":[40.2,38.1,43.3,50.3],
+  // Batch 1 RBs
+  "Tyrone Tracy":[55.7,54.7,57.4,0],
+  "Brian Robinson":[43.2,35.0,51.6,49.4],
+  "George Holani":[12.1,15.2,4.0,0],
+  "Keaton Mitchell":[18.6,17.5,13.5,28.0],
+  "Chris Rodriguez":[22.4,31.2,15.1,15.3],
+  "Sean Tucker":[15.4,17.9,13.1,12.5],
+  "Ray Davis":[20.6,14.3,24.4,32.2],
+  "Tyler Allgeier":[27.4,0,24.9,32.2],
+  // New batch RBs
+  "Alexander Mattison":[51.0,0,49.1,54.8],
+  "Jonathon Brooks":[11.0,0,11.0,0],
+  "Kimani Vidal":[45.4,57.2,27.7,0],
+  "MarShawn Lloyd":[14.0,0,14.0,0],
+  "Tank Bigsby":[23.6,17.2,38.5,13.1],
+};
+
+
+// YPRR → role multiplier for WR/TE
+// League average YPRR ~1.5 for WR, ~1.4 for TE
+// Map to multiplier: elite (2.5+)→1.20, good (2.0-2.5)→1.10, avg (1.5-2.0)→1.00, below (1.0-1.5)→0.90, poor (<1.0)→0.80
+function yprrMult(yprr, pos) {
+  if (!yprr || yprr === 0) return 0.88; // no data = slight penalty
+  const avg = pos === 'TE' ? 1.45 : 1.60;
+  const ratio = yprr / avg;
+  // Smooth multiplier centered on average
+  const m = Math.max(0.78, Math.min(1.22, 0.88 + ratio * 0.12));
+  return Math.round(m * 1000) / 1000;
+}
+
+// RB snap% → role multiplier
+// 80%+ = true bellcow (1.15), 65%+ = featured (1.08), 50%+ = solid starter (1.00),
+// 40%+ = committee (0.90), 30%+ = backup (0.80), <30% = depth (0.70)
+function snapMult(snap) {
+  if (!snap || snap === 0) return 0.82;
+  if (snap >= 80) return 1.15;
+  if (snap >= 65) return 1.08;
+  if (snap >= 50) return 1.00;
+  if (snap >= 40) return 0.90;
+  if (snap >= 30) return 0.80;
+  return 0.70;
+}
+
+function getRoleData(name, pos) {
+  if (pos === 'RB') {
+    const d = RB_SNAP[name];
+    if (d) return { mult: snapMult(d[0]), label: d[1].toFixed(0)+'%', raw: d[0] };
+    return { mult: 0.82, label: '—', raw: 0 };
+  }
+  if (pos === 'WR') {
+    const d = YPRR_WR[name];
+    if (d) return { mult: yprrMult(d[0], 'WR'), label: d[0].toFixed(2)+' YPRR', raw: d[0] };
+    return { mult: 0.88, label: '—', raw: 0 };
+  }
+  if (pos === 'TE') {
+    const d = YPRR_TE[name];
+    if (d) return { mult: yprrMult(d[0], 'TE'), label: d[0].toFixed(2)+' YPRR', raw: d[0] };
+    return { mult: 0.88, label: '—', raw: 0 };
+  }
+  return { mult: 1.0, label: '—', raw: 0 };
+}
+
+// RB Vol+YAC floor
+const RBV={
+  'Bijan Robinson':{r:287,y:1118},"De'Von Achane":{r:238,y:896},
+  'James Cook':{r:309,y:1084},'Jonathan Taylor':{r:323,y:1222},
+  'Derrick Henry':{r:307,y:1107},'Kyren Williams':{r:259,y:845},
+  'Saquon Barkley':{r:280,y:812},'Christian McCaffrey':{r:311,y:874},
+  'Chase Brown':{r:232,y:698},'Breece Hall':{r:243,y:741},
+  'Ashton Jeanty':{r:266,y:922},'Kenneth Walker III':{r:221,y:677},
+  'Travis Etienne':{r:260,y:835},'Javonte Williams':{r:252,y:928},
+  'Tony Pollard':{r:242,y:770},'Rico Dowdle':{r:236,y:765},
+  'Josh Jacobs':{r:234,y:766},'Zach Charbonnet':{r:184,y:561},
+  'Bucky Irving':{r:173,y:488},"D'Andre Swift":{r:223,y:678},
+  'Jaylen Warren':{r:211,y:706},'Quinshon Judkins':{r:230,y:687},
+  'Woody Marks':{r:196,y:527},'Jahmyr Gibbs':{r:243,y:751},
+  'Blake Corum':{r:145,y:426},'J.K. Dobbins':{r:153,y:503},
+  'TreVeyon Henderson':{r:180,y:554},'Kyle Monangai':{r:169,y:517},
+  'Jacory Croskey-Merritt':{r:175,y:646},'David Montgomery':{r:158,y:527},
+  'Jordan Mason':{r:159,y:560},'RJ Harvey':{r:146,y:397},
+};
+
+function getFloor(n,pos){
+  if(pos==='RB'){
+    const v=RBV[n];if(!v)return null;
+    const ypc=v.r>0?v.y/v.r:0;
+    if(v.r>=140&&ypc>=3.0)return{f:1.0,r:'vol+YAC neutral'};
+    if(v.r>=140)return{f:0.92,r:'vol floor'};
+    return null;
+  }
+  const d=pos==='WR'?YPRR_WR[n]:pos==='TE'?YPRR_TE[n]:null;
+  if(d&&d[1]>0){const tgt=(d[1]/1.5)*80;if(tgt>=80)return{f:0.92,r:'target vol floor'};}
+  if(pos==='QB'){const QPV={'Josh Allen':612,'Lamar Jackson':405,'Joe Burrow':290,'Brock Purdy':328,'Jalen Hurts':591,'Patrick Mahomes':600,'Caleb Williams':669,'Drake Maye':642,'Justin Herbert':649,'Bo Nix':717,'Trevor Lawrence':683,'Jared Goff':635,'Dak Prescott':684,'Jordan Love':507,'Baker Mayfield':634};const p=QPV[n]||0;if(p>=300)return{f:0.88,r:'plays floor'};}
+  return null;
+}
+
+const EPA={
+  'Josh Allen':{e25:.17,e24:.31,e23:.18,e22:.18,ef25:.17},'Lamar Jackson':{e25:.07,e24:.28,e23:.09,e22:.09,ef25:.07},
+  'Brock Purdy':{e25:.23,e24:.18,e23:.29,e22:.13,ef25:.23},'Patrick Mahomes':{e25:.16,e24:.14,e23:.05,e22:.27,ef25:.16},
+  'Jalen Hurts':{e25:.07,e24:.15,e23:.09,e22:.13,ef25:.07},'Joe Burrow':{e25:.11,e24:.16,e23:-.01,e22:.12,ef25:.11},
+  'Drake Maye':{e25:.26,e24:-.03,e23:0,e22:0,ef25:.26},'Jared Goff':{e25:.14,e24:.25,e23:.07,e22:.12,ef25:.14},
+  'Dak Prescott':{e25:.14,e24:-.04,e23:.18,e22:.09,ef25:.14},'Justin Herbert':{e25:.03,e24:.11,e23:.03,e22:.02,ef25:.03},
+  'Bo Nix':{e25:.09,e24:.06,e23:0,e22:0,ef25:.09},'Caleb Williams':{e25:.07,e24:-.06,e23:0,e22:0,ef25:.07},
+  'Jayden Daniels':{e25:-.01,e24:.16,e23:0,e22:0,ef25:-.01},'Trevor Lawrence':{e25:.09,e24:.01,e23:-.03,e22:.12,ef25:.09},
+  'Jordan Love':{e25:.24,e24:.12,e23:.11,e22:.16,ef25:.24},'Matthew Stafford':{e25:.17,e24:.06,e23:.09,e22:-.09,ef25:.17},
+  'Baker Mayfield':{e25:.05,e24:.17,e23:.04,e22:-.16,ef25:.05},'Kyler Murray':{e25:.05,e24:.10,e23:-.02,e22:-.01,ef25:.05},
+  'Sam Darnold':{e25:.09,e24:.05,e23:-.12,e22:.10,ef25:.09},'C.J. Stroud':{e25:.11,e24:-.03,e23:.11,e22:0,ef25:.11},
+  'Cam Ward':{e25:-.17,e24:0,e23:0,e22:0,ef25:-.17},'Jaxson Dart':{e25:.06,e24:0,e23:0,e22:0,ef25:.06},
+  'Shedeur Sanders':{e25:-.23,e24:0,e23:0,e22:0,ef25:-.23},'Bryce Young':{e25:-.03,e24:-.03,e23:-.23,e22:0,ef25:-.03},
+  'Geno Smith':{e25:-.14,e24:.01,e23:.05,e22:.01,ef25:-.14},'J.J. McCarthy':{e25:-.15,e24:0,e23:0,e22:0,ef25:-.15},
+  'Michael Penix Jr.':{e25:.02,e24:.13,e23:0,e22:0,ef25:.02},'Daniel Jones':{e25:.17,e24:-.06,e23:-.26,e22:.07,ef25:.17},
+  'Tua Tagovailoa':{e25:.00,e24:.19,e23:.11,e22:.18,ef25:.00},'Tyler Shough':{e25:-.02,e24:0,e23:0,e22:0,ef25:-.02},
+  "Ja'Marr Chase":{e25:2.23,e24:2.46,e23:2.03,e22:2.03,ef25:2.23},'Jaxon Smith-Njigba':{e25:3.67,e24:1.81,e23:1.32,e22:0,ef25:3.67},
+  'Puka Nacua':{e25:3.73,e24:3.55,e23:2.56,e22:0,ef25:3.73},'Amon-Ra St. Brown':{e25:2.48,e24:2.30,e23:2.63,e22:2.41,ef25:2.48},
+  'Justin Jefferson':{e25:1.92,e24:2.50,e23:2.92,e22:2.63,ef25:1.92},'CeeDee Lamb':{e25:2.40,e24:2.27,e23:2.79,e22:2.41,ef25:2.40},
+  'Malik Nabers':{e25:2.07,e24:2.15,e23:0,e22:0,ef25:2.07},'Drake London':{e25:2.36,e24:2.30,e23:1.86,e22:2.06,ef25:2.36},
+  'George Pickens':{e25:2.37,e24:2.06,e23:2.10,e22:1.38,ef25:2.37},'Tetairoa McMillan':{e25:1.88,e24:0,e23:0,e22:0,ef25:1.88},
+  'Emeka Egbuka':{e25:1.77,e24:0,e23:0,e22:0,ef25:1.77},'Garrett Wilson':{e25:1.78,e24:1.68,e23:1.55,e22:1.87,ef25:1.78},
+  'Nico Collins':{e25:2.39,e24:2.87,e23:3.07,e22:1.67,ef25:2.39},'Chris Olave':{e25:1.99,e24:2.09,e23:2.06,e22:2.40,ef25:1.99},
+  'Rome Odunze':{e25:1.63,e24:1.16,e23:0,e22:0,ef25:1.63},'Ladd McConkey':{e25:1.42,e24:2.37,e23:0,e22:0,ef25:1.42},
+  'Marvin Harrison Jr.':{e25:1.61,e24:1.62,e23:0,e22:0,ef25:1.61},'Brian Thomas Jr.':{e25:1.54,e24:2.41,e23:0,e22:0,ef25:1.54},
+  'Tee Higgins':{e25:1.63,e24:2.04,e23:1.64,e22:1.92,ef25:1.63},'Jaylen Waddle':{e25:2.28,e24:1.51,e23:2.63,e22:2.58,ef25:2.28},
+  'DeVonta Smith':{e25:1.96,e24:2.13,e23:1.79,e22:2.00,ef25:1.96},'A.J. Brown':{e25:2.13,e24:3.01,e23:2.50,e22:2.60,ef25:2.13},
+  'Zay Flowers':{e25:2.55,e24:2.24,e23:1.64,e22:0,ef25:2.55},'Rashee Rice':{e25:2.19,e24:3.16,e23:2.39,e22:0,ef25:2.19},
+  'Jameson Williams':{e25:1.90,e24:2.10,e23:1.46,e22:1.11,ef25:1.90},'DK Metcalf':{e25:2.06,e24:1.80,e23:2.04,e22:1.81,ef25:2.06},
+  'Luther Burden':{e25:2.71,e24:0,e23:0,e22:0,ef25:2.71},'Courtland Sutton':{e25:1.67,e24:1.84,e23:1.64,e22:1.55,ef25:1.67},
+  'Terry McLaurin':{e25:2.26,e24:1.97,e23:1.56,e22:2.03,ef25:2.26},'Xavier Worthy':{e25:1.33,e24:1.24,e23:0,e22:0,ef25:1.33},
+  'Christian Watson':{e25:2.55,e24:2.25,e23:1.53,e22:2.25,ef25:2.55},'Quentin Johnston':{e25:1.61,e24:1.76,e23:.88,e22:0,ef25:1.61},
+  "D.J. Moore":{e25:1.25,e24:1.43,e23:2.31,e22:1.75,ef25:1.25},'Khalil Shakir':{e25:1.74,e24:2.14,e23:1.83,e22:1.15,ef25:1.74},
+  'Ricky Pearsall':{e25:1.90,e24:1.31,e23:0,e22:0,ef25:1.90},'Romeo Doubs':{e25:1.82,e24:1.66,e23:1.32,e22:1.38,ef25:1.82},
+  'Parker Washington':{e25:2.10,e24:1.01,e23:.74,e22:0,ef25:2.10},'Jayden Higgins':{e25:1.48,e24:0,e23:0,e22:0,ef25:1.48},
+  'Michael Pittman Jr.':{e25:1.49,e24:1.67,e23:2.02,e22:1.44,ef25:1.49},'Davante Adams':{e25:1.96,e24:2.02,e23:1.97,e22:2.45,ef25:1.96},
+  "Wan'Dale Robinson":{e25:1.90,e24:1.21,e23:1.30,e22:1.80,ef25:1.90},'Jordan Addison':{e25:1.42,e24:1.73,e23:1.50,e22:0,ef25:1.42},
+  'Alec Pierce':{e25:2.19,e24:1.81,e23:.84,e22:1.24,ef25:2.19},'Josh Downs':{e25:1.50,e24:2.19,e23:1.60,e22:0,ef25:1.50},
+  'Matthew Golden':{e25:1.39,e24:0,e23:0,e22:0,ef25:1.39},'Tre Harris':{e25:1.13,e24:0,e23:0,e22:0,ef25:1.13},
+  'Mike Evans':{e25:1.64,e24:2.41,e23:2.31,e22:1.78,ef25:1.64},'Jakobi Meyers':{e25:1.61,e24:1.75,e23:1.52,e22:1.88,ef25:1.61},
+  'Travis Hunter':{e25:1.32,e24:0,e23:0,e22:0,ef25:1.32},'Brandon Aiyuk':{e25:0,e24:1.75,e23:3.02,e22:1.90,ef25:0},
+  'Elic Ayomanor':{e25:1.06,e24:0,e23:0,e22:0,ef25:1.06},'Jalen Coker':{e25:1.37,e24:1.72,e23:0,e22:0,ef25:1.37},
+  'Bijan Robinson':{e25:-.05,e24:.06,e23:-.12,e22:0,ef25:5.15},'Jahmyr Gibbs':{e25:-.01,e24:.14,e23:-.03,e22:0,ef25:5.03},
+  "De'Von Achane":{e25:.06,e24:-.06,e23:.32,e22:0,ef25:5.67},'James Cook':{e25:.02,e24:.05,e23:-.03,e22:.07,ef25:5.25},
+  'Jonathan Taylor':{e25:.05,e24:-.07,e23:-.06,e22:-.15,ef25:4.91},'Derrick Henry':{e25:.03,e24:.12,e23:-.01,e22:-.06,ef25:5.20},
+  'Kyren Williams':{e25:.02,e24:-.07,e23:.10,e22:-.12,ef25:4.83},'Saquon Barkley':{e25:-.09,e24:.10,e23:-.20,e22:-.05,ef25:4.07},
+  'Christian McCaffrey':{e25:-.07,e24:-.06,e23:.05,e22:.02,ef25:3.86},'Chase Brown':{e25:-.01,e24:-.03,e23:-.20,e22:0,ef25:4.39},
+  'Breece Hall':{e25:-.09,e24:-.11,e23:-.10,e22:.17,ef25:4.38},'Ashton Jeanty':{e25:-.24,e24:0,e23:0,e22:0,ef25:3.67},
+  'Kenneth Walker III':{e25:-.06,e24:-.08,e23:-.04,e22:-.06,ef25:4.65},'Travis Etienne':{e25:-.07,e24:-.18,e23:-.13,e22:-.04,ef25:4.26},
+  'TreVeyon Henderson':{e25:.05,e24:0,e23:0,e22:0,ef25:5.06},'Josh Jacobs':{e25:-.06,e24:-.06,e23:-.19,e22:.00,ef25:3.97},
+  'Zach Charbonnet':{e25:-.01,e24:-.08,e23:-.07,e22:0,ef25:3.97},'Tony Pollard':{e25:-.09,e24:-.10,e23:-.07,e22:.02,ef25:4.47},
+  'Rico Dowdle':{e25:-.01,e24:-.04,e23:-.06,e22:0,ef25:4.56},'Bucky Irving':{e25:-.21,e24:.10,e23:0,e22:0,ef25:3.40},
+  'Jaylen Warren':{e25:.00,e24:-.12,e23:-.03,e22:.11,ef25:4.54},'Omarion Hampton':{e25:-.01,e24:0,e23:0,e22:0,ef25:4.40},
+  'RJ Harvey':{e25:-.15,e24:0,e23:0,e22:0,ef25:3.70},'Jacory Croskey-Merritt':{e25:-.03,e24:0,e23:0,e22:0,ef25:4.60},
+  'Kyle Monangai':{e25:.01,e24:0,e23:0,e22:0,ef25:4.63},'Bhayshul Tuten':{e25:-.11,e24:0,e23:0,e22:0,ef25:3.70},
+  'Cam Skattebo':{e25:-.13,e24:0,e23:0,e22:0,ef25:4.06},'Quinshon Judkins':{e25:-.11,e24:0,e23:0,e22:0,ef25:3.60},
+  'Ollie Gordon':{e25:-.14,e24:0,e23:0,e22:0,ef25:2.84},"D'Andre Swift":{e25:.07,e24:-.15,e23:.01,e22:.06,ef25:4.87},
+  'Rhamondre Stevenson':{e25:-.15,e24:-.18,e23:-.08,e22:-.05,ef25:4.64},'J.K. Dobbins':{e25:.03,e24:.02,e23:-.23,e22:.10,ef25:5.05},
+  'Aaron Jones':{e25:-.02,e24:-.05,e23:.02,e22:.06,ef25:4.15},'Chuba Hubbard':{e25:-.11,e24:.04,e23:-.09,e22:.02,ef25:3.81},
+  'Isaac Guerendo':{e25:0,e24:.06,e23:0,e22:0,ef25:0},'Dylan Sampson':{e25:-.26,e24:0,e23:0,e22:0,ef25:2.69},
+  'Javonte Williams':{e25:.05,e24:-.17,e23:-.17,e22:-.13,ef25:4.77},'Blake Corum':{e25:.11,e24:-.17,e23:0,e22:0,ef25:5.14},
+  'Woody Marks':{e25:-.15,e24:0,e23:0,e22:0,ef25:3.59},'Kenneth Gainwell':{e25:-.01,e24:-.15,e23:-.15,e22:.15,ef25:4.71},
+  'Jordan Mason':{e25:-.04,e24:-.04,e23:.14,e22:.07,ef25:4.77},'Alvin Kamara':{e25:-.22,e24:-.08,e23:-.02,e22:-.18,ef25:3.60},
+  'David Montgomery':{e25:.00,e24:-.04,e23:.05,e22:-.08,ef25:4.53},'Tyjae Spears':{e25:-.05,e24:-.06,e23:-.01,e22:0,ef25:3.93},
+  'Kimani Vidal':{e25:-.09,e24:-.20,e23:0,e22:0,ef25:4.15},'Brock Bowers':{e25:1.70,e24:2.01,e23:0,e22:0,ef25:1.70},
+  'Trey McBride':{e25:1.78,e24:2.13,e23:2.00,e22:0,ef25:1.78},'Travis Kelce':{e25:1.51,e24:1.43,e23:1.91,e22:2.23,ef25:1.51},
+  'George Kittle':{e25:2.24,e24:2.62,e23:2.24,e22:1.73,ef25:2.24},'Sam LaPorta':{e25:1.99,e24:1.61,e23:1.76,e22:0,ef25:1.99},
+  'Kyle Pitts':{e25:1.72,e24:1.33,e23:1.42,e22:1.66,ef25:1.72},'Colston Loveland':{e25:1.88,e24:0,e23:0,e22:0,ef25:1.88},
+  'Tyler Warren':{e25:1.61,e24:0,e23:0,e22:0,ef25:1.61},'Tucker Kraft':{e25:2.40,e24:1.59,e23:1.20,e22:0,ef25:2.40},
+  'Harold Fannin Jr.':{e25:1.66,e24:0,e23:0,e22:0,ef25:1.66},'Oronde Gadsden':{e25:1.69,e24:0,e23:0,e22:0,ef25:1.69},
+  'Mark Andrews':{e25:1.21,e24:1.86,e23:1.94,e22:1.96,ef25:1.21},'T.J. Hockenson':{e25:1.05,e24:1.52,e23:1.89,e22:1.60,ef25:1.05},
+  'Dallas Goedert':{e25:1.37,e24:2.22,e23:1.35,e22:1.81,ef25:1.37},'Mason Taylor':{e25:1.04,e24:0,e23:0,e22:0,ef25:1.04},
+  'AJ Barner':{e25:1.46,e24:1.12,e23:0,e22:0,ef25:1.46},'Pat Freiermuth':{e25:1.56,e24:1.45,e23:1.11,e22:1.70,ef25:1.56},
+  'Dalton Kincaid':{e25:2.80,e24:1.62,e23:1.46,e22:0,ef25:2.80},'Chigoziem Okonkwo':{e25:1.37,e24:1.25,e23:1.30,e22:2.59,ef25:1.37},
+  'Gunnar Helm':{e25:1.47,e24:0,e23:0,e22:0,ef25:1.47},'Cade Otton':{e25:1.06,e24:1.28,e23:.81,e22:.84,ef25:1.06},
+  'Isaiah Likely':{e25:1.31,e24:1.53,e23:1.45,e22:1.41,ef25:1.31},'Juwan Johnson':{e25:1.69,e24:1.34,e23:1.18,e22:1.39,ef25:1.69},
+  'Hunter Henry':{e25:1.66,e24:1.39,e23:1.14,e22:1.21,ef25:1.66},'Brenton Strange':{e25:1.74,e24:1.47,e23:0,e22:0,ef25:1.74},
+  'Dalton Schultz':{e25:1.56,e24:1.05,e23:1.46,e22:1.40,ef25:1.56},'Evan Engram':{e25:1.29,e24:1.47,e23:1.55,e22:1.48,ef25:1.29},
+  'Jake Ferguson':{e25:1.20,e24:1.26,e23:1.46,e22:0,ef25:1.20},'Theo Johnson':{e25:1.20,e24:.88,e23:0,e22:0,ef25:1.20},
+};
+
+function calcEPA(n,pos){
+  const d=EPA[n];
+  if(!d)return{sc:1.0,raw:1.0,fl:false,fr:null,tr:'flat',ef25:0,ef24:0,e25:0,e24:0,e23:0,e22:0};
+  let num=0,den=0;
+  if(d.e25!==0){num+=d.e25*3;den+=3;}if(d.e24!==0){num+=d.e24*2;den+=2;}
+  if(d.e23!==0){num+=d.e23*1;den+=1;}if(d.e22!==0){num+=d.e22*.5;den+=.5;}
+  const raw=den>0?num/den:0;
+  let sc=1.0;
+  if(pos==='QB')sc=Math.max(.60,Math.min(1.40,1.0+(raw-.10)*3));
+  else if(pos==='WR'||pos==='TE')sc=Math.max(.75,Math.min(1.30,1.0+(raw-1.80)*.15));
+  else if(pos==='RB')sc=Math.max(.80,Math.min(1.20,1.0+(raw)*3));
+  const rawSc=sc;
+  const fld=getFloor(n,pos);
+  let fl=false,fr=null;
+  if(fld&&sc<fld.f){sc=fld.f;fl=true;fr=fld.r;}
+  let tr='flat';
+  if(d.e25!==0&&(d.e24!==0||d.e23!==0)){
+    const prev=d.e24!==0?d.e24:d.e23;const diff=d.e25-prev;
+    if(pos==='QB'){if(diff>.05)tr='up';else if(diff<-.05)tr='down';}
+    else{if(diff>.20)tr='up';else if(diff<-.20)tr='down';}
+  }
+  return{sc,raw:rawSc,fl,fr,tr,ef25:d.ef25||0,ef24:d.ef24||0,e25:d.e25||0,e24:d.e24||0,e23:d.e23||0,e22:d.e22||0};
+}
+
+const CB={
+  'Josh Allen':1.05,'Drake Maye':.97,'Caleb Williams':1.03,'Jayden Daniels':1.08,'Bo Nix':1.05,
+  'Jaxson Dart':1.06,'Cam Ward':1.03,'Shedeur Sanders':.98,
+  "Ja'Marr Chase":1.02,'Rome Odunze':1.06,'Malik Nabers':1.05,'Brian Thomas Jr.':1.06,
+  'Marvin Harrison Jr.':1.04,'Drake London':1.02,'Tetairoa McMillan':1.03,'Emeka Egbuka':1.01,
+  'Tre Harris':1.08,'Luther Burden':1.02,'Jayden Higgins':1.02,'Matthew Golden':1.03,
+  'Travis Hunter':1.04,'Bijan Robinson':1.08,'Jahmyr Gibbs':1.06,'Ashton Jeanty':1.10,
+  'Omarion Hampton':1.04,'TreVeyon Henderson':1.05,'RJ Harvey':1.07,'Cam Skattebo':1.05,
+  'Quinshon Judkins':1.02,'Bhayshul Tuten':1.01,'Ollie Gordon':.95,'Isaac Guerendo':1.04,
+  'Brock Bowers':1.05,'Harold Fannin Jr.':1.06,'Tyler Warren':1.04,'Colston Loveland':1.02,
+  'Javonte Williams':1.01,'Blake Corum':1.02,
+};
+const QBQ={
+  ARI:.80,ATL:.83,BAL:1.0,BUF:1.0,CAR:.83,CHI:.92,CIN:.95,CLE:.82,
+  DAL:.93,DEN:.93,DET:.95,GB:.96,HOU:.87,IND:.88,JAC:.90,KC:.95,
+  LV:.74,LAC:.90,LAR:.96,MIA:.80,MIN:.93,NE:.99,NO:.82,NYG:.84,
+  NYJ:.76,PHI:.95,PIT:.76,SF:.95,SEA:.91,TB:.90,TEN:.82,WAS:.93,
+};
+const AC={
+  QB:[[20,22,.88],[23,24,.94],[25,26,1.00],[27,28,1.03],[29,30,1.02],[31,32,.97],[33,99,.88]],
+  WR:[[20,22,.90],[23,24,.97],[25,26,1.05],[27,28,1.02],[29,30,.95],[31,32,.85],[33,99,.75]],
+  RB:[[20,22,.93],[23,24,1.00],[25,26,1.00],[27,28,.93],[29,30,.82],[31,32,.70],[33,99,.58]],
+  TE:[[20,22,.82],[23,24,.93],[25,26,1.03],[27,28,1.05],[29,30,1.02],[31,32,.95],[33,99,.85]]
+};
+function am(pos,age){const c=AC[pos]||AC.WR;for(const[lo,hi,m]of c)if(age>=lo&&age<=hi)return m;return.75;}
+function sm(s){return s>=70?1.12:s>=55?1.03:s>=40?.92:.78;}
+function cm(c){return c>=.95?1.00:c>=.70?.96:c>=.50?.88:c>=.30?.80:.72;}
+function ci(c){return c>=.95?.10:c>=.70?.15:c>=.50?.22:.32;}
+const RP={
+  'Jaylen Waddle':1.18,'Courtland Sutton':1.08,'RJ Harvey':1.10,"De'Von Achane":1.05,
+  'Bhayshul Tuten':1.15,'Travis Etienne':1.08,'Ricky Pearsall':1.12,'Mike Evans':1.15,
+  'Mason Rudolph':.80,'DK Metcalf':.82,'Michael Pittman Jr.':.85,'Jaylen Warren':.90,
+  'Rico Dowdle':.92,'Kenneth Walker III':1.08,'Rashee Rice':1.05,'Shedeur Sanders':1.05,
+  'Harold Fannin Jr.':1.05,'Quinshon Judkins':.95,'Trey McBride':.92,
+  'Marvin Harrison Jr.':.88,'Tua Tagovailoa':.70,'Kyle Pitts':.92,
+  'Colston Loveland':1.08,'Mason Taylor':.85,'Breece Hall':.90,'Garrett Wilson':.88,
+  'Jaxson Dart':1.05,'Cam Skattebo':1.08,'Justin Jefferson':1.08,
+  'Jordan Addison':1.06,'T.J. Hockenson':1.05,'Kyren Williams':1.05,
+  'Puka Nacua':1.05,'Zach Charbonnet':.90,'Brandon Aiyuk':0.0,
+};
+
+// Target Share Trend Deltas — computed from 3-year weekly target share data
+// Weighted: H1→H2 2025 trend (50%) + YoY 24→25 (30%) + YoY 23→24 (20%)
+// Positive = ascending share, Negative = declining. Capped at ±8%.
+const TS_DELTA={
+  "Aaron Jones":0.05,"Alec Pierce":0.01,"Alvin Kamara":-0.08,"Amon-Ra St. Brown":-0.03,
+  "Ashton Jeanty":0.03,"Bijan Robinson":0.01,"Breece Hall":-0.01,"Brian Thomas Jr.":-0.05,
+  "Brock Bowers":-0.03,"Bucky Irving":-0.01,"CeeDee Lamb":-0.05,"Chase Brown":0.03,
+  "Chris Olave":0.03,"Christian McCaffrey":-0.01,"Christian Watson":0.03,"Chuba Hubbard":-0.08,
+  "Colston Loveland":-0.01,"D'Andre Swift":-0.03,"DK Metcalf":0.01,"Dalton Kincaid":-0.08,
+  "Davante Adams":-0.01,"De'Von Achane":0.05,"DeVonta Smith":-0.01,"Deebo Samuel":-0.01,
+  "Derrick Henry":0.03,"Drake London":-0.01,"Evan Engram":-0.01,"Garrett Wilson":-0.03,
+  "George Kittle":0.03,"George Pickens":-0.01,"Harold Fannin Jr.":0.05,"Isaiah Likely":0.01,
+  "Ja'Marr Chase":0.01,"Jahmyr Gibbs":0.05,"James Conner":-0.03,"James Cook":-0.05,
+  "Jameson Williams":0.03,"Javonte Williams":-0.03,"Jaxon Smith-Njigba":0.03,"Jayden Reed":-0.03,
+  "Jaylen Warren":-0.08,"Jonathan Taylor":0.01,"Jordan Addison":-0.01,"Josh Downs":0.01,
+  "Justin Jefferson":0.01,"Keon Coleman":0.01,"Khalil Shakir":0.03,"Kyle Pitts":0.03,
+  "Ladd McConkey":-0.03,"Luther Burden":0.05,"Malik Nabers":-0.01,"Mark Andrews":-0.05,
+  "Marvin Harrison Jr.":-0.03,"Mason Taylor":-0.03,"Omarion Hampton":-0.01,"Parker Washington":0.03,
+  "Pat Freiermuth":-0.03,"Puka Nacua":0.03,"Quentin Johnston":0.01,"RJ Harvey":0.03,
+  "Rashee Rice":0.03,"Rashid Shaheed":0.01,"Rhamondre Stevenson":0.03,"Rome Odunze":0.03,
+  "Sam LaPorta":-0.03,"Saquon Barkley":0.01,"T.J. Hockenson":-0.01,"Tee Higgins":0.01,
+  "Terry McLaurin":0.03,"Tetairoa McMillan":-0.01,"Tony Pollard":-0.08,"Travis Kelce":0.01,
+  "Trey McBride":0.01,"Troy Franklin":-0.01,"Tyler Warren":-0.03,"Xavier Worthy":-0.01,
+  "Zach Charbonnet":-0.03,"Zay Flowers":0.05,
+  // New batch TS
+  "A.J. Brown":0.026,
+  "AJ Barner":0.068,
+  "Adonai Mitchell":0.08,
+  "Ben Sinnott":0.069,
+  "Bhayshul Tuten":-0.037,
+  "Blake Corum":0.007,
+  "Braelon Allen":-0.032,
+  "Brandon Aiyuk":-0.08,
+  "Brenton Strange":0.08,
+  "Brian Robinson":-0.023,
+  "Cade Otton":0.004,
+  "Calvin Ridley":-0.08,
+  "Cam Skattebo":-0.08,
+  "Cedric Tillman":0.007,
+  "Charlie Kolar":0.062,
+  "Chigoziem Okonkwo":0.039,
+  "Chimere Dike":0.076,
+  "Chris Rodriguez":0.029,
+  "Colby Parkinson":0.062,
+  "Cole Kmet":-0.015,
+  "Courtland Sutton":-0.001,
+  "Dallas Goedert":0.007,
+  "Dalton Schultz":0.015,
+  "Darius Slayton":0.008,
+  "Darnell Mooney":-0.054,
+  "David Montgomery":0.08,
+  "David Njoku":-0.08,
+  "Dawson Knox":0.069,
+  "DeMario Douglas":-0.059,
+  "Devaughn Vele":0.004,
+  "Dontayvion Wicks":-0.041,
+  "Dylan Sampson":0.009,
+  "Elic Ayomanor":-0.08,
+  "Elijah Higgins":0.022,
+  "Emeka Egbuka":-0.038,
+  "George Holani":-0.006,
+  "Gunnar Helm":0.041,
+  "Hunter Henry":0.034,
+  "Isaac Guerendo":-0.019,
+  "Isaac TeSlaa":0.059,
+  "Isiah Pacheco":-0.036,
+  "J.K. Dobbins":-0.031,
+  "Jack Bech":0.06,
+  "Jacory Croskey-Merritt":-0.068,
+  "Jake Ferguson":-0.046,
+  "Jake Tonges":-0.006,
+  "Jakobi Meyers":0.004,
+  "Jalen Coker":0.08,
+  "Jalen McMillan":0.001,
+  "Jalen Nailor":-0.007,
+  "Jalen Tolbert":-0.033,
+  "Jayden Higgins":0.08,
+  "Jaylen Waddle":-0.068,
+  "Jaylen Wright":0.04,
+  "Jaylin Noel":-0.032,
+  "Jerry Jeudy":-0.018,
+  "Jonnu Smith":-0.011,
+  "Jordan Mason":-0.025,
+  "Josh Jacobs":-0.08,
+  "Juwan Johnson":0.018,
+  "Kayshon Boutte":-0.014,
+  "Keaton Mitchell":0.042,
+  "Kenneth Gainwell":0.08,
+  "Kenneth Walker III":0.021,
+  "Kimani Vidal":0.028,
+  "Kyle Monangai":0.011,
+  "Kyle Williams":0.054,
+  "Kyren Williams":-0.014,
+  "Malik Washington":0.035,
+  "Marvin Mims":-0.036,
+  "Matthew Golden":-0.012,
+  "Michael Mayer":0.011,
+  "Michael Pittman Jr.":-0.044,
+  "Michael Wilson":0.08,
+  "Mike Evans":0.08,
+  "Nico Collins":-0.021,
+  "Noah Fant":-0.059,
+  "Ollie Gordon":-0.034,
+  "Oronde Gadsden":0.036,
+  "Pat Bryant":0.08,
+  "Quinshon Judkins":0.032,
+  "Rachaad White":0.0,
+  "Rashod Bateman":-0.08,
+  "Ray Davis":-0.005,
+  "Ricky Pearsall":0.013,
+  "Rico Dowdle":0.016,
+  "Romeo Doubs":-0.044,
+  "Sean Tucker":0.006,
+  "Tank Bigsby":0.003,
+  "Tank Dell":0.039,
+  "Terrance Ferguson":0.009,
+  "Tez Johnson":-0.055,
+  "Theo Johnson":0.023,
+  "Travis Etienne":-0.033,
+  "Travis Hunter":-0.08,
+  "Tre Harris":0.08,
+  "Tre Tucker":0.051,
+  "TreVeyon Henderson":-0.032,
+  "Trey Benson":-0.042,
+  "Tucker Kraft":-0.08,
+  "Tyjae Spears":0.052,
+  "Tyler Allgeier":-0.033,
+  "Tyrone Tracy":0.043,
+  "Woody Marks":-0.035,
+  "Xavier Legette":-0.039,
+  "Zach Ertz":-0.035,
+};
+
+// Rising/Fading trend tags — derived from target share H1→H2 and multi-year data
+// Rising: H1→H2 > +10pp OR trend score > 7; Fading: H1→H2 < -10pp OR score < -8
+const TREND_TAG={
+  // Rising ↑ — confirmed ascending role trajectory
+  "Luther Burden":"rising","Harold Fannin Jr.":"rising",
+  "Jahmyr Gibbs":"rising","Zay Flowers":"rising","De'Von Achane":"rising",
+  "George Kittle":"rising","Parker Washington":"rising","Jaxon Smith-Njigba":"rising",
+  "Isaiah Likely":"rising","Terry McLaurin":"rising","Rhamondre Stevenson":"rising",
+  "RJ Harvey":"rising","Rome Odunze":"rising","Christian Watson":"rising",
+  "Khalil Shakir":"rising","Derrick Henry":"rising","Ashton Jeanty":"rising",
+  // Fading ↓ — confirmed declining role trajectory
+  "Alvin Kamara":"fading","Tony Pollard":"fading","Chuba Hubbard":"fading",
+  "Jaylen Warren":"fading","Dalton Kincaid":"fading",
+  "Garrett Wilson":"fading","Amon-Ra St. Brown":"fading","CeeDee Lamb":"fading",
+  "Brian Thomas Jr.":"fading","Mark Andrews":"fading","Sam LaPorta":"fading",
+  "D'Andre Swift":"fading","Jayden Reed":"fading","Ladd McConkey":"fading",
+  "DeVonta Smith":"fading","Pat Freiermuth":"fading","Mason Taylor":"fading",
+  "Zach Charbonnet":"fading","Marvin Harrison Jr.":"fading",
+  "T.J. Hockenson":"fading","George Pickens":"fading","Aaron Jones":"fading",
+};
+function trendTag(n){
+  const t=TREND_TAG[n];
+  if(!t)return'';
+  if(t==='rising')return'<span style="font-size:9px;background:#064e3b;color:#6ee7b7;border:1px solid #065f46;border-radius:3px;padding:1px 5px;margin-left:3px;font-weight:700">↑ Rising</span>';
+  return'<span style="font-size:9px;background:#4c1d1d;color:#fca5a5;border:1px solid #7f1d1d;border-radius:3px;padding:1px 5px;margin-left:3px;font-weight:700">↓ Fading</span>';
+}
+const OV={};let editTarget=null;
+function getEff(pl){
+  const o=OV[pl.n]||{};
+  const team=o.team||pl.t;
+  const td=gs(team);
+  return{team,s:o.s!==undefined?o.s:td.s,c:o.c!==undefined?o.c:td.c,
+    oc:td.oc,ch:td.ch,inj:o.inj!==undefined?o.inj:1.0,
+    ktc:o.ktc!==undefined?o.ktc:pl.k,notes:o.notes||'',hasOv:Object.keys(o).length>0};
+}
+
+const RAW=[
+  // QBs — note: no superflex multiplier; KTC already prices it in
+  {n:'Josh Allen',t:'BUF',p:'QB',a:29.8,k:9997,ppg25:22.0,ppg24:22.7,ppg23:24.2,g25:17},
+  {n:'Drake Maye',t:'NE',p:'QB',a:23.6,k:9318,ppg25:21.1,ppg24:14.4,ppg23:0,g25:17},
+  {n:'Jayden Daniels',t:'WAS',p:'QB',a:25.2,k:7668,ppg25:16.7,ppg24:21.5,ppg23:0,g25:7},
+  {n:'Caleb Williams',t:'CHI',p:'QB',a:24.3,k:7694,ppg25:19.0,ppg24:15.3,ppg23:0,g25:17},
+  {n:'Lamar Jackson',t:'BAL',p:'QB',a:29.2,k:7635,ppg25:17.1,ppg24:25.6,ppg23:21.1,g25:13},
+  {n:'Patrick Mahomes',t:'KC',p:'QB',a:30.5,k:6744,ppg25:21.1,ppg24:18.3,ppg23:18.4,g25:14},
+  {n:'Jalen Hurts',t:'PHI',p:'QB',a:27.6,k:6338,ppg25:19.1,ppg24:21.3,ppg23:21.9,g25:16},
+  {n:'Justin Herbert',t:'LAC',p:'QB',a:28.0,k:6883,ppg25:18.7,ppg24:17.0,ppg23:18.5,g25:16},
+  {n:'Bo Nix',t:'DEN',p:'QB',a:26.1,k:6207,ppg25:18.6,ppg24:19.3,ppg23:0,g25:17},
+  {n:'Trevor Lawrence',t:'JAC',p:'QB',a:26.4,k:6192,ppg25:20.6,ppg24:15.2,ppg23:17.3,g25:17},
+  {n:'Jared Goff',t:'DET',p:'QB',a:31.4,k:4604,ppg25:17.9,ppg24:19.7,ppg23:17.7,g25:17},
+  {n:'Dak Prescott',t:'DAL',p:'QB',a:32.6,k:5059,ppg25:19.0,ppg24:15.6,ppg23:20.7,g25:17},
+  {n:'Brock Purdy',t:'SF',p:'QB',a:26.2,k:5934,ppg25:20.8,ppg24:18.6,ppg23:19.2,g25:9},
+  {n:'Jordan Love',t:'GB',p:'QB',a:27.4,k:5644,ppg25:16.1,ppg24:16.3,ppg23:19.4,g25:15},
+  {n:'Baker Mayfield',t:'TB',p:'QB',a:30.9,k:4818,ppg25:16.6,ppg24:22.5,ppg23:16.7,g25:17},
+  {n:'Sam Darnold',t:'SEA',p:'QB',a:28.8,k:4824,ppg25:14.7,ppg24:18.8,ppg23:0,g25:17},
+  {n:'C.J. Stroud',t:'HOU',p:'QB',a:24.4,k:4830,ppg25:15.5,ppg24:13.7,ppg23:18.7,g25:14},
+  {n:'Jaxson Dart',t:'NYG',p:'QB',a:22.8,k:6619,ppg25:17.6,ppg24:0,ppg23:0,g25:14},
+  {n:'Cam Ward',t:'TEN',p:'QB',a:23.8,k:5071,ppg25:11.4,ppg24:0,ppg23:0,g25:17},
+  {n:'Bryce Young',t:'CAR',p:'QB',a:24.6,k:4481,ppg25:14.3,ppg24:14.6,ppg23:10.4,g25:16},
+  {n:'Matthew Stafford',t:'LAR',p:'QB',a:38.1,k:3620,ppg25:21.1,ppg24:13.9,ppg23:17.0,g25:17},
+  {n:'Kyler Murray',t:'MIN',p:'QB',a:28.6,k:4385,ppg25:16.2,ppg24:18.1,ppg23:18.9,g25:5},
+  {n:'Joe Burrow',t:'CIN',p:'QB',a:29.3,k:7299,ppg25:17.4,ppg24:22.5,ppg23:15.3,g25:8},
+  {n:'Tua Tagovailoa',t:'ATL',p:'QB',a:28.0,k:2726,ppg25:12.5,ppg24:17.1,ppg23:16.7,g25:14},
+  {n:'Geno Smith',t:'NYJ',p:'QB',a:35.0,k:1200,ppg25:12.7,ppg24:16.5,ppg23:15.7,g25:15},
+  {n:'J.J. McCarthy',t:'MIN',p:'QB',a:23.2,k:2880,ppg25:13.7,ppg24:0,ppg23:0,g25:10},
+  {n:'Daniel Jones',t:'IND',p:'QB',a:28.8,k:4143,ppg25:18.0,ppg24:14.2,ppg23:0,g25:13},
+  {n:'Tyler Shough',t:'NO',p:'QB',a:26.5,k:4683,ppg25:14.9,ppg24:0,ppg23:0,g25:11},
+  {n:'Michael Penix Jr.',t:'ATL',p:'QB',a:25.9,k:3153,ppg25:13.7,ppg24:9.4,ppg23:0,g25:9},
+  {n:'Shedeur Sanders',t:'CLE',p:'QB',a:24.1,k:2747,ppg25:11.9,ppg24:0,ppg23:0,g25:8},
+  {n:'Mason Rudolph',t:'PIT',p:'QB',a:30.0,k:800,ppg25:3.4,ppg24:13.1,ppg23:9.9,g25:5},
+  {n:'Malik Willis',t:'MIA',p:'QB',a:26.8,k:4142,ppg25:12.8,ppg24:7.4,ppg23:0,g25:4},
+  {n:'Jacoby Brissett',t:'ARI',p:'QB',a:33.0,k:800,ppg25:16.8,ppg24:6.6,ppg23:0,g25:14},
+  // RBs
+  {n:'Bijan Robinson',t:'ATL',p:'RB',a:24.1,k:9995,ppg25:19.5,ppg24:18.3,ppg23:19.5,g25:17},
+  {n:'Jahmyr Gibbs',t:'DET',p:'RB',a:24.0,k:9695,ppg25:19.3,ppg24:19.8,ppg23:0,g25:17},
+  {n:"De'Von Achane",t:'MIA',p:'RB',a:24.4,k:6851,ppg25:18.1,ppg24:15.3,ppg23:16.1,g25:16},
+  {n:'James Cook',t:'BUF',p:'RB',a:26.5,k:6123,ppg25:16.8,ppg24:15.7,ppg23:12.4,g25:17},
+  {n:'Jonathan Taylor',t:'IND',p:'RB',a:27.2,k:6020,ppg25:20.0,ppg24:16.8,ppg23:20.0,g25:17},
+  {n:'Derrick Henry',t:'BAL',p:'RB',a:32.2,k:3752,ppg25:16.0,ppg24:19.2,ppg23:13.7,g25:17},
+  {n:'Kyren Williams',t:'LAR',p:'RB',a:25.6,k:4837,ppg25:14.4,ppg24:15.9,ppg23:19.9,g25:17},
+  {n:'Saquon Barkley',t:'PHI',p:'RB',a:29.1,k:4882,ppg25:13.4,ppg24:21.2,ppg23:14.5,g25:16},
+  {n:'Christian McCaffrey',t:'SF',p:'RB',a:29.8,k:5083,ppg25:21.5,ppg24:10.1,ppg23:22.4,g25:17},
+  {n:'Chase Brown',t:'CIN',p:'RB',a:25.0,k:3800,ppg25:14.6,ppg24:14.3,ppg23:3.9,g25:17},
+  {n:'Travis Etienne',t:'NO',p:'RB',a:27.1,k:4687,ppg25:13.9,ppg24:7.4,ppg23:14.9,g25:17},
+  {n:'Javonte Williams',t:'DAL',p:'RB',a:25.9,k:4615,ppg25:14.1,ppg24:7.8,ppg23:9.7,g25:16},
+  {n:'Josh Jacobs',t:'GB',p:'RB',a:28.1,k:4551,ppg25:14.6,ppg24:16.2,ppg23:12.5,g25:15},
+  {n:'Ashton Jeanty',t:'LV',p:'RB',a:22.3,k:7440,ppg25:12.8,ppg24:0,ppg23:0,g25:17},
+  {n:"D'Andre Swift",t:'CHI',p:'RB',a:27.2,k:3544,ppg25:13.2,ppg24:11.4,ppg23:11.2,g25:16},
+  {n:'Jaylen Warren',t:'PIT',p:'RB',a:27.4,k:3266,ppg25:12.3,ppg24:7.0,ppg23:9.8,g25:16},
+  {n:'Rico Dowdle',t:'PIT',p:'RB',a:27.8,k:3340,ppg25:11.6,ppg24:11.1,ppg23:5.2,g25:17},
+  {n:'Breece Hall',t:'NYJ',p:'RB',a:24.8,k:5372,ppg25:11.9,ppg24:13.3,ppg23:14.9,g25:16},
+  {n:'TreVeyon Henderson',t:'NE',p:'RB',a:23.4,k:5525,ppg25:11.1,ppg24:0,ppg23:0,g25:17},
+  {n:'Kenneth Gainwell',t:'TB',p:'RB',a:27.0,k:2923,ppg25:10.9,ppg24:3.2,ppg23:5.2,g25:17},
+  {n:'RJ Harvey',t:'DEN',p:'RB',a:25.1,k:3853,ppg25:10.8,ppg24:0,ppg23:0,g25:17},
+  {n:'Kenneth Walker III',t:'KC',p:'RB',a:25.4,k:5783,ppg25:10.4,ppg24:14.4,ppg23:12.3,g25:17},
+  {n:'Zach Charbonnet',t:'SEA',p:'RB',a:25.2,k:3771,ppg25:10.7,ppg24:9.8,ppg23:5.6,g25:16},
+  {n:'Tony Pollard',t:'TEN',p:'RB',a:28.9,k:2620,ppg25:10.0,ppg24:11.3,ppg23:11.5,g25:17},
+  {n:'Rhamondre Stevenson',t:'NE',p:'RB',a:28.1,k:2980,ppg25:11.6,ppg24:10.6,ppg23:10.6,g25:14},
+  {n:'Quinshon Judkins',t:'CLE',p:'RB',a:22.4,k:5414,ppg25:11.2,ppg24:0,ppg23:0,g25:14},
+  {n:'David Montgomery',t:'HOU',p:'RB',a:28.8,k:3504,ppg25:9.1,ppg24:14.6,ppg23:14.2,g25:17},
+  {n:'Woody Marks',t:'HOU',p:'RB',a:25.2,k:2811,ppg25:8.7,ppg24:0,ppg23:0,g25:16},
+  {n:'Kyle Monangai',t:'CHI',p:'RB',a:23.8,k:3602,ppg25:8.1,ppg24:0,ppg23:0,g25:17},
+  {n:'Kareem Hunt',t:'FA',p:'RB',a:30.0,k:1800,ppg25:8.0,ppg24:11.1,ppg23:7.4,g25:17},
+  {n:'Jacory Croskey-Merritt',t:'WAS',p:'RB',a:24.9,k:2868,ppg25:8.0,ppg24:0,ppg23:0,g25:17},
+  {n:'Bucky Irving',t:'TB',p:'RB',a:23.6,k:5148,ppg25:12.4,ppg24:13.0,ppg23:0,g25:10},
+  {n:'Rachaad White',t:'WAS',p:'RB',a:27.2,k:2723,ppg25:7.2,ppg24:10.9,ppg23:13.9,g25:17},
+  {n:'Jordan Mason',t:'MIN',p:'RB',a:26.8,k:2718,ppg25:7.6,ppg24:9.1,ppg23:2.7,g25:16},
+  {n:'Omarion Hampton',t:'LAC',p:'RB',a:23.0,k:6718,ppg25:13.3,ppg24:0,ppg23:0,g25:9},
+  {n:'Blake Corum',t:'LAR',p:'RB',a:25.3,k:3320,ppg25:7.0,ppg24:2.0,ppg23:0,g25:17},
+  {n:'Cam Skattebo',t:'NYG',p:'RB',a:24.1,k:4553,ppg25:14.5,ppg24:0,ppg23:0,g25:8},
+  {n:'J.K. Dobbins',t:'DEN',p:'RB',a:27.2,k:3043,ppg25:11.0,ppg24:13.5,ppg23:0,g25:10},
+  {n:'Chuba Hubbard',t:'CAR',p:'RB',a:26.8,k:3337,ppg25:7.4,ppg24:14.7,ppg23:9.6,g25:15},
+  {n:'Bhayshul Tuten',t:'JAC',p:'RB',a:23.1,k:4007,ppg25:5.6,ppg24:0,ppg23:0,g25:15},
+  {n:'Aaron Jones',t:'MIN',p:'RB',a:31.3,k:2045,ppg25:8.7,ppg24:12.7,ppg23:10.9,g25:12},
+  {n:'Tyjae Spears',t:'TEN',p:'RB',a:25.4,k:2673,ppg25:6.9,ppg24:8.2,ppg23:7.5,g25:13},
+  {n:'Alvin Kamara',t:'NO',p:'RB',a:30.6,k:2156,ppg25:7.7,ppg24:16.5,ppg23:15.0,g25:11},
+  {n:'Ollie Gordon',t:'MIA',p:'RB',a:22.2,k:2603,ppg25:3.0,ppg24:0,ppg23:0,g25:16},
+  {n:'Isaac Guerendo',t:'SF',p:'RB',a:25.7,k:1689,ppg25:0,ppg24:5.4,ppg23:0,g25:0},
+  {n:'Trey Benson',t:'ARI',p:'RB',a:23.6,k:2755,ppg25:5.8,ppg24:3.4,ppg23:0,g25:4},
+  {n:'Dylan Sampson',t:'CLE',p:'RB',a:22.8,k:2700,ppg25:4.7,ppg24:0,ppg23:0,g25:15},
+  {n:'Jaylen Wright',t:'MIA',p:'RB',a:23.3,k:2324,ppg25:4.2,ppg24:1.7,ppg23:0,g25:11},
+  {n:'Braelon Allen',t:'NYJ',p:'RB',a:22.2,k:2796,ppg25:3.6,ppg24:4.5,ppg23:0,g25:4},
+  {n:'James Conner',t:'ARI',p:'RB',a:30.2,k:1800,ppg25:7.3,ppg24:14.4,ppg23:14.5,g25:4},
+  {n:'Isiah Pacheco',t:'DET',p:'RB',a:27.3,k:3050,ppg25:6.0,ppg24:7.3,ppg23:13.7,g25:13},
+  {n:"De'Von Achane",t:'MIA',p:'RB',a:23.3,k:7820,ppg25:16.2,ppg24:12.8,ppg23:11.4,g25:13},
+  {n:"D'Andre Swift",t:'CHI',p:'RB',a:26.8,k:4200,ppg25:8.3,ppg24:14.6,ppg23:12.4,g25:15},
+  {n:'Jonathon Brooks',t:'CAR',p:'RB',a:22.1,k:4100,ppg25:5.2,ppg24:0,ppg23:0,g25:8},
+    {n:'Tank Bigsby',t:'JAC',p:'RB',a:23.8,k:2900,ppg25:8.1,ppg24:6.2,ppg23:0,g25:15},
+      {n:'Alexander Mattison',t:'FA',p:'RB',a:26.7,k:1200,ppg25:4.8,ppg24:7.2,ppg23:13.4,g25:10},
+  {n:'Audric Estime',t:'DEN',p:'RB',a:22.8,k:2400,ppg25:6.3,ppg24:0,ppg23:0,g25:14},
+  {n:'MarShawn Lloyd',t:'GB',p:'RB',a:24.2,k:2100,ppg25:5.8,ppg24:0,ppg23:0,g25:12},
+  {n:'Kimani Vidal',t:'LAC',p:'RB',a:23.5,k:1900,ppg25:5.2,ppg24:2.1,ppg23:0,g25:11},
+  // WRs
+  {n:'Puka Nacua',t:'LAR',p:'WR',a:24.8,k:9394,ppg25:19.4,ppg24:15.2,ppg23:14.5,g25:16},
+  {n:'Jaxon Smith-Njigba',t:'SEA',p:'WR',a:24.1,k:9675,ppg25:17.7,ppg24:11.9,ppg23:7.0,g25:17},
+  {n:'Amon-Ra St. Brown',t:'DET',p:'WR',a:26.4,k:7658,ppg25:15.6,ppg24:15.2,ppg23:17.0,g25:17},
+  {n:"Ja'Marr Chase",t:'CIN',p:'WR',a:26.0,k:9801,ppg25:15.7,ppg24:20.0,ppg23:13.3,g25:16},
+  {n:'George Pickens',t:'DAL',p:'WR',a:25.0,k:6137,ppg25:14.4,ppg24:9.6,ppg23:10.4,g25:17},
+  {n:'Chris Olave',t:'NO',p:'WR',a:25.7,k:5644,ppg25:13.7,ppg24:0,ppg23:11.7,g25:16},
+  {n:'Zay Flowers',t:'BAL',p:'WR',a:25.5,k:4652,ppg25:11.8,ppg24:10.1,ppg23:10.5,g25:17},
+  {n:'Davante Adams',t:'LAR',p:'WR',a:33.2,k:3556,ppg25:13.8,ppg24:14.2,ppg23:12.6,g25:14},
+  {n:'Nico Collins',t:'HOU',p:'WR',a:27.0,k:5797,ppg25:12.7,ppg24:14.7,ppg23:14.7,g25:15},
+  {n:'Jameson Williams',t:'DET',p:'WR',a:25.0,k:4723,ppg25:11.0,ppg24:12.2,ppg23:5.7,g25:17},
+  {n:'Courtland Sutton',t:'DEN',p:'WR',a:30.4,k:3208,ppg25:10.7,ppg24:11.8,ppg23:10.0,g25:17},
+  {n:'Tee Higgins',t:'CIN',p:'WR',a:27.2,k:4931,ppg25:12.1,ppg24:15.5,ppg23:9.7,g25:15},
+  {n:'A.J. Brown',t:'PHI',p:'WR',a:28.7,k:4816,ppg25:12.1,ppg24:14.1,ppg23:13.9,g25:15},
+  {n:'Tetairoa McMillan',t:'CAR',p:'WR',a:23.0,k:6668,ppg25:10.4,ppg24:0,ppg23:0,g25:17},
+  {n:"Wan'Dale Robinson",t:'TEN',p:'WR',a:25.2,k:3716,ppg25:10.7,ppg24:8.0,ppg23:6.9,g25:16},
+  {n:'Drake London',t:'ATL',p:'WR',a:24.6,k:6891,ppg25:14.0,ppg24:13.6,ppg23:8.7,g25:12},
+  {n:'Emeka Egbuka',t:'TB',p:'WR',a:23.4,k:6092,ppg25:9.7,ppg24:0,ppg23:0,g25:17},
+  {n:'CeeDee Lamb',t:'DAL',p:'WR',a:26.9,k:7414,ppg25:11.7,ppg24:14.2,ppg23:19.7,g25:14},
+  {n:'DeVonta Smith',t:'PHI',p:'WR',a:27.3,k:4859,ppg25:9.6,ppg24:12.7,ppg23:11.7,g25:17},
+  {n:'Michael Pittman Jr.',t:'PIT',p:'WR',a:28.4,k:3562,ppg25:9.6,ppg24:8.2,ppg23:12.2,g25:17},
+  {n:'Jaylen Waddle',t:'DEN',p:'WR',a:27.3,k:4917,ppg25:10.1,ppg24:7.5,ppg23:11.6,g25:16},
+  {n:'Alec Pierce',t:'IND',p:'WR',a:25.9,k:4429,ppg25:10.7,ppg24:8.9,ppg23:4.7,g25:15},
+  {n:'Justin Jefferson',t:'MIN',p:'WR',a:26.8,k:7697,ppg25:9.4,ppg24:15.6,ppg23:16.8,g25:17},
+  {n:'DK Metcalf',t:'PIT',p:'WR',a:28.3,k:3709,ppg25:10.5,ppg24:10.5,ppg23:12.0,g25:15},
+  {n:'Parker Washington',t:'JAC',p:'WR',a:24.0,k:3580,ppg25:9.7,ppg24:4.8,ppg23:3.5,g25:16},
+  {n:'Ladd McConkey',t:'LAC',p:'WR',a:24.4,k:5349,ppg25:9.2,ppg24:12.5,ppg23:0,g25:16},
+  {n:"D.J. Moore",t:'BUF',p:'WR',a:28.9,k:3942,ppg25:8.5,ppg24:11.1,ppg23:14.0,g25:17},
+  {n:'Troy Franklin',t:'DEN',p:'WR',a:23.5,k:2500,ppg25:8.5,ppg24:3.3,ppg23:0,g25:17},
+  {n:'Jakobi Meyers',t:'JAC',p:'WR',a:29.4,k:3332,ppg25:8.6,ppg24:11.6,ppg23:11.4,g25:16},
+  {n:'Romeo Doubs',t:'NE',p:'WR',a:25.9,k:3701,ppg25:8.6,ppg24:8.4,ppg23:8.5,g25:16},
+  {n:'Quentin Johnston',t:'LAC',p:'WR',a:24.5,k:3324,ppg25:10.4,ppg24:9.8,ppg23:4.4,g25:14},
+  {n:'Khalil Shakir',t:'BUF',p:'WR',a:26.1,k:3056,ppg25:8.2,ppg24:9.6,ppg23:5.5,g25:16},
+  {n:'Rome Odunze',t:'CHI',p:'WR',a:23.5,k:4800,ppg25:10.3,ppg24:6.9,ppg23:0,g25:12},
+  {n:'Rashee Rice',t:'KC',p:'WR',a:25.9,k:4831,ppg25:15.5,ppg24:13.2,ppg23:10.8,g25:8},
+  {n:'Christian Watson',t:'GB',p:'WR',a:26.8,k:3697,ppg25:11.5,ppg24:6.1,ppg23:9.7,g25:10},
+  {n:'Brian Thomas Jr.',t:'JAC',p:'WR',a:23.4,k:4943,ppg25:8.2,ppg24:14.1,ppg23:0,g25:14},
+  {n:'Jordan Addison',t:'MIN',p:'WR',a:24.1,k:3953,ppg25:8.2,ppg24:12.1,ppg23:11.0,g25:14},
+  {n:'Luther Burden',t:'CHI',p:'WR',a:22.3,k:5376,ppg25:7.0,ppg24:0,ppg23:0,g25:15},
+  {n:'Elic Ayomanor',t:'TEN',p:'WR',a:22.8,k:2822,ppg25:6.0,ppg24:0,ppg23:0,g25:16},
+  {n:'Terry McLaurin',t:'WAS',p:'WR',a:30.5,k:3384,ppg25:9.5,ppg24:13.3,ppg23:10.0,g25:10},
+  {n:'Tre Harris',t:'LAC',p:'WR',a:24.0,k:2809,ppg25:3.2,ppg24:0,ppg23:0,g25:17},
+  {n:'Jayden Higgins',t:'HOU',p:'WR',a:23.2,k:3546,ppg25:6.4,ppg24:0,ppg23:0,g25:17},
+  {n:'Matthew Golden',t:'GB',p:'WR',a:22.6,k:3544,ppg25:4.0,ppg24:0,ppg23:0,g25:14},
+  {n:'Ricky Pearsall',t:'SF',p:'WR',a:25.5,k:3640,ppg25:7.1,ppg24:7.1,ppg23:0,g25:10},
+  {n:'Mike Evans',t:'SF',p:'WR',a:32.6,k:3340,ppg25:8.7,ppg24:14.5,ppg23:14.3,g25:8},
+  {n:'Marvin Harrison Jr.',t:'ARI',p:'WR',a:23.6,k:4995,ppg25:8.9,ppg24:9.7,ppg23:0,g25:12},
+  {n:'Garrett Wilson',t:'NYJ',p:'WR',a:25.6,k:5852,ppg25:11.6,ppg24:11.8,ppg23:9.7,g25:7},
+  {n:'Xavier Worthy',t:'KC',p:'WR',a:22.9,k:3373,ppg25:6.4,ppg24:9.3,ppg23:0,g25:14},
+  {n:'Keon Coleman',t:'BUF',p:'WR',a:22.5,k:2900,ppg25:6.4,ppg24:7.5,ppg23:0,g25:13},
+  {n:'Josh Downs',t:'IND',p:'WR',a:24.6,k:3339,ppg25:6.7,ppg24:10.5,ppg23:7.2,g25:16},
+  {n:'Travis Hunter',t:'JAC',p:'WR',a:22.8,k:3701,ppg25:7.1,ppg24:0,ppg23:0,g25:7},
+  {n:'Brandon Aiyuk',t:'SF',p:'WR',a:28.0,k:2609,ppg25:0,ppg24:7.1,ppg23:13.2,g25:0},
+  {n:'Jalen Coker',t:'CAR',p:'WR',a:24.4,k:3085,ppg25:6.7,ppg24:7.0,ppg23:0,g25:11},
+  {n:'Malik Nabers',t:'NYG',p:'WR',a:22.6,k:7790,ppg25:12.0,ppg24:14.6,ppg23:0,g25:4},
+  {n:'Deebo Samuel',t:'FA',p:'WR',a:29.4,k:2800,ppg25:9.5,ppg24:8.5,ppg23:14.2,g25:16},
+  {n:'Jauan Jennings',t:'FA',p:'WR',a:29.0,k:2700,ppg25:9.7,ppg24:11.5,ppg23:3.2,g25:15},
+  {n:'Stefon Diggs',t:'FA',p:'WR',a:32.0,k:1800,ppg25:9.9,ppg24:12.3,ppg23:13.0,g25:17},
+  {n:"Wan'Dale Robinson",t:'TEN',p:'WR',a:25.4,k:3800,ppg25:9.8,ppg24:8.4,ppg23:7.2,g25:15},
+  {n:'Jayden Reed',t:'GB',p:'WR',a:25.3,k:4200,ppg25:10.4,ppg24:12.8,ppg23:9.6,g25:16},
+  {n:'Calvin Ridley',t:'TEN',p:'WR',a:30.7,k:3200,ppg25:14.6,ppg24:7.2,ppg23:13.8,g25:17},
+  {n:'Rashid Shaheed',t:'SEA',p:'WR',a:27.4,k:3100,ppg25:9.4,ppg24:6.8,ppg23:10.2,g25:17},
+    {n:'Darnell Mooney',t:'ATL',p:'WR',a:27.8,k:2800,ppg25:8.6,ppg24:9.2,ppg23:6.4,g25:16},
+    {n:'Rashod Bateman',t:'BAL',p:'WR',a:25.8,k:2900,ppg25:9.8,ppg24:8.6,ppg23:6.2,g25:14},
+    {n:'Jalen McMillan',t:'TB',p:'WR',a:23.1,k:3200,ppg25:7.8,ppg24:0,ppg23:0,g25:14},
+  {n:'Isaac TeSlaa',t:'DET',p:'WR',a:23.8,k:2800,ppg25:6.4,ppg24:0,ppg23:0,g25:15},
+  {n:'Xavier Legette',t:'CAR',p:'WR',a:24.2,k:3100,ppg25:7.2,ppg24:5.8,ppg23:0,g25:16},
+  {n:'Devaughn Vele',t:'DEN',p:'WR',a:25.1,k:2600,ppg25:7.6,ppg24:4.2,ppg23:0,g25:14},
+  {n:'Chimere Dike',t:'TEN',p:'WR',a:23.4,k:2400,ppg25:5.8,ppg24:0,ppg23:0,g25:13},
+      {n:'Jalen Nailor',t:'LV',p:'WR',a:26.8,k:2900,ppg25:9.6,ppg24:7.8,ppg23:4.2,g25:15},
+  {n:'Marvin Mims',t:'DEN',p:'WR',a:23.8,k:2700,ppg25:6.8,ppg24:6.2,ppg23:3.4,g25:14},
+  {n:'K.J. Osborn',t:'FA',p:'WR',a:28.4,k:1400,ppg25:6.2,ppg24:5.4,ppg23:8.6,g25:12},
+  {n:'Dontayvion Wicks',t:'GB',p:'WR',a:24.4,k:2600,ppg25:7.4,ppg24:5.8,ppg23:4.2,g25:15},
+  // TEs
+  {n:'Trey McBride',t:'ARI',p:'TE',a:26.3,k:8387,ppg25:18.6,ppg24:15.6,ppg23:10.7,g25:17},
+  {n:'Brock Bowers',t:'LV',p:'TE',a:23.3,k:8549,ppg25:14.7,ppg24:15.5,ppg23:0,g25:12},
+  {n:'George Kittle',t:'SF',p:'TE',a:32.4,k:3743,ppg25:14.7,ppg24:15.8,ppg23:12.7,g25:11},
+  {n:'Sam LaPorta',t:'DET',p:'TE',a:25.2,k:5083,ppg25:11.9,ppg24:10.9,ppg23:14.1,g25:9},
+  {n:'Kyle Pitts',t:'ATL',p:'TE',a:25.4,k:5070,ppg25:12.4,ppg24:7.7,ppg23:8.1,g25:17},
+  {n:'Travis Kelce',t:'KC',p:'TE',a:36.4,k:2834,ppg25:11.4,ppg24:12.2,ppg23:14.6,g25:17},
+  {n:'Tyler Warren',t:'IND',p:'TE',a:23.8,k:6393,ppg25:11.1,ppg24:0,ppg23:0,g25:17},
+  {n:'Harold Fannin Jr.',t:'CLE',p:'TE',a:21.7,k:5491,ppg25:11.7,ppg24:0,ppg23:0,g25:16},
+  {n:'Dallas Goedert',t:'PHI',p:'TE',a:31.2,k:3028,ppg25:12.3,ppg24:10.4,ppg23:9.7,g25:15},
+  {n:'Juwan Johnson',t:'NO',p:'TE',a:29.5,k:2790,ppg25:10.6,ppg24:7.2,ppg23:7.5,g25:17},
+  {n:'Hunter Henry',t:'NE',p:'TE',a:31.3,k:2760,ppg25:10.5,ppg24:9.1,ppg23:8.6,g25:17},
+  {n:'Dalton Schultz',t:'HOU',p:'TE',a:29.7,k:2721,ppg25:10.5,ppg24:7.0,ppg23:10.0,g25:17},
+  {n:'Colston Loveland',t:'CHI',p:'TE',a:21.9,k:6715,ppg25:10.3,ppg24:0,ppg23:0,g25:16},
+  {n:'AJ Barner',t:'SEA',p:'TE',a:23.9,k:3266,ppg25:8.7,ppg24:4.6,ppg23:0,g25:17},
+  {n:'Oronde Gadsden',t:'LAC',p:'TE',a:22.7,k:4427,ppg25:8.8,ppg24:0,ppg23:0,g25:15},
+  {n:'Mark Andrews',t:'BAL',p:'TE',a:30.5,k:3162,ppg25:7.7,ppg24:11.1,ppg23:13.5,g25:17},
+  {n:'Theo Johnson',t:'NYG',p:'TE',a:25.0,k:2834,ppg25:8.5,ppg24:5.7,ppg23:0,g25:15},
+  {n:'Dalton Kincaid',t:'BUF',p:'TE',a:26.4,k:3784,ppg25:10.5,ppg24:7.8,ppg23:9.4,g25:12},
+  {n:'Chigoziem Okonkwo',t:'WAS',p:'TE',a:26.5,k:3123,ppg25:7.3,ppg24:6.7,ppg23:6.7,g25:17},
+  {n:'Cade Otton',t:'TB',p:'TE',a:26.9,k:2913,ppg25:7.6,ppg24:10.0,ppg23:6.9,g25:16},
+  {n:'Brenton Strange',t:'JAC',p:'TE',a:25.2,k:3556,ppg25:9.8,ppg24:5.4,ppg23:0,g25:12},
+  {n:'Tucker Kraft',t:'GB',p:'TE',a:25.4,k:5441,ppg25:14.7,ppg24:9.6,ppg23:4.6,g25:8},
+  {n:'Pat Freiermuth',t:'PIT',p:'TE',a:27.4,k:2609,ppg25:6.7,ppg24:9.9,ppg23:6.4,g25:17},
+  {n:'T.J. Hockenson',t:'MIN',p:'TE',a:28.7,k:3179,ppg25:7.5,ppg24:8.7,ppg23:14.6,g25:15},
+  {n:'Evan Engram',t:'DEN',p:'TE',a:31.5,k:2218,ppg25:6.4,ppg24:9.9,ppg23:13.5,g25:16},
+  {n:'Gunnar Helm',t:'TEN',p:'TE',a:23.5,k:2919,ppg25:5.7,ppg24:0,ppg23:0,g25:16},
+  {n:'Mason Taylor',t:'NYJ',p:'TE',a:21.9,k:3335,ppg25:6.8,ppg24:0,ppg23:0,g25:13},
+  {n:'Isaiah Likely',t:'NYG',p:'TE',a:25.9,k:4049,ppg25:4.4,ppg24:7.7,ppg23:5.9,g25:14},
+  {n:'Cole Kmet',t:'CHI',p:'TE',a:26.6,k:3800,ppg25:8.4,ppg24:8.8,ppg23:6.4,g25:16},
+  {n:'Jake Ferguson',t:'DAL',p:'TE',a:26.2,k:4200,ppg25:9.2,ppg24:9.4,ppg23:10.8,g25:17},
+  {n:'Dawson Knox',t:'BUF',p:'TE',a:30.2,k:2400,ppg25:7.8,ppg24:6.4,ppg23:8.2,g25:14},
+  {n:'Noah Fant',t:'NO',p:'TE',a:27.4,k:2200,ppg25:6.8,ppg24:8.2,ppg23:7.6,g25:15},
+  {n:'Jonnu Smith',t:'ATL',p:'TE',a:30.0,k:1800,ppg25:7.4,ppg24:9.6,ppg23:6.2,g25:14},
+  {n:'Charlie Kolar',t:'LAC',p:'TE',a:27.4,k:2600,ppg25:7.2,ppg24:5.8,ppg23:3.4,g25:16},
+  {n:'Elijah Higgins',t:'ARI',p:'TE',a:24.8,k:2100,ppg25:5.6,ppg24:4.2,ppg23:0,g25:15},
+    // Batch 4-7 — WRs
+  {n:'Jalen Tolbert',t:'DAL',p:'WR',a:26.3,k:1800,ppg25:5.6,ppg24:13.5,ppg23:8.6,g25:13},
+  {n:'Christian Kirk',t:'FA',p:'WR',a:28.8,k:1200,ppg25:5.8,ppg24:11.0,ppg23:17.4,g25:14},
+  {n:'Jack Bech',t:'LV',p:'WR',a:23.5,k:2400,ppg25:5.2,ppg24:0,ppg23:0,g25:12},
+  {n:'Jerry Jeudy',t:'CLE',p:'WR',a:26.9,k:2100,ppg25:9.6,ppg24:20.7,ppg23:12.6,g25:18},
+  {n:'Cooper Kupp',t:'FA',p:'WR',a:33.1,k:2800,ppg25:10.2,ppg24:19.4,ppg23:20.8,g25:17},
+  {n:'Tez Johnson',t:'TB',p:'WR',a:23.3,k:2200,ppg25:9.3,ppg24:0,ppg23:0,g25:17},
+  {n:'Chris Godwin',t:'FA',p:'WR',a:30.4,k:1800,ppg25:12.5,ppg24:23.3,ppg23:17.8,g25:10},
+  {n:'Cedric Tillman',t:'CLE',p:'WR',a:24.4,k:1900,ppg25:5.2,ppg24:11.9,ppg23:5.5,g25:14},
+  {n:'Pat Bryant',t:'DEN',p:'WR',a:23.2,k:2600,ppg25:7.8,ppg24:0,ppg23:0,g25:15},
+  {n:'Tre Tucker',t:'LV',p:'WR',a:25.6,k:1600,ppg25:11.9,ppg24:11.5,ppg23:7.2,g25:18},
+  {n:'Kyle Williams',t:'NE',p:'WR',a:23.4,k:2100,ppg25:5.2,ppg24:0,ppg23:0,g25:17},
+  {n:'Tank Dell',t:'HOU',p:'WR',a:24.1,k:2900,ppg25:0,ppg24:14.7,ppg23:21.8,g25:0},
+  {n:'DeMario Douglas',t:'NE',p:'WR',a:25.4,k:1900,ppg25:8.4,ppg24:12.6,ppg23:10.6,g25:18},
+  {n:'Adonai Mitchell',t:'IND',p:'WR',a:23.4,k:3200,ppg25:8.1,ppg24:4.9,ppg23:0,g25:17},
+  {n:'Jaylin Noel',t:'IND',p:'WR',a:22.8,k:1800,ppg25:6.5,ppg24:0,ppg23:0,g25:17},
+  {n:'Malik Washington',t:'MIA',p:'WR',a:24.6,k:1600,ppg25:9.7,ppg24:5.9,ppg23:0,g25:18},
+  {n:'Kayshon Boutte',t:'NE',p:'WR',a:23.8,k:1400,ppg25:12.7,ppg24:12.4,ppg23:0,g25:15},
+  {n:'Michael Wilson',t:'ARI',p:'WR',a:25.8,k:2000,ppg25:19.7,ppg24:11.2,ppg23:13.0,g25:18},
+  {n:'Darius Slayton',t:'NYG',p:'WR',a:28.6,k:1400,ppg25:10.2,ppg24:10.1,ppg23:13.4,g25:15},
+  {n:'Marquise Brown',t:'FA',p:'WR',a:28.8,k:1500,ppg25:11.8,ppg24:6.8,ppg23:13.1,g25:17},
+  // Batch 4-7 — RBs
+  {n:'Tyrone Tracy',t:'NYG',p:'RB',a:24.8,k:3400,ppg25:17.1,ppg24:18.1,ppg23:0,g25:16},
+  {n:'Brian Robinson',t:'WAS',p:'RB',a:27.0,k:2200,ppg25:6.9,ppg24:20.0,ppg23:22.5,g25:17},
+  {n:'George Holani',t:'LV',p:'RB',a:25.2,k:1800,ppg25:6.6,ppg24:0,ppg23:0,g25:6},
+  {n:'Keaton Mitchell',t:'CLE',p:'RB',a:24.2,k:2400,ppg25:7.3,ppg24:4.2,ppg23:16.4,g25:14},
+  {n:'Chris Rodriguez',t:'JAC',p:'RB',a:25.4,k:2100,ppg25:12.9,ppg24:8.9,ppg23:9.1,g25:14},
+  {n:'Sean Tucker',t:'TB',p:'RB',a:25.3,k:1900,ppg25:13.5,ppg24:10.7,ppg23:2.1,g25:13},
+  {n:'Ray Davis',t:'BUF',p:'RB',a:24.6,k:1800,ppg25:6.6,ppg24:12.0,ppg23:0,g25:18},
+  {n:'Tyler Allgeier',t:'ARI',p:'RB',a:25.4,k:1600,ppg25:12.9,ppg24:11.1,ppg23:14.3,g25:18},
+  // Batch 4-7 — TEs
+  {n:'Greg Dulcich',t:'FA',p:'TE',a:26.4,k:1200,ppg25:10.2,ppg24:1.1,ppg23:2.3,g25:11},
+  {n:'David Njoku',t:'CLE',p:'TE',a:28.8,k:3200,ppg25:12.4,ppg24:24.1,ppg23:22.7,g25:12},
+  {n:'Colby Parkinson',t:'LAR',p:'TE',a:26.8,k:1800,ppg25:17.4,ppg24:6.0,ppg23:6.1,g25:15},
+  {n:'Terrance Ferguson',t:'LAR',p:'TE',a:23.8,k:1900,ppg25:7.8,ppg24:0,ppg23:0,g25:13},
+  {n:'Jake Tonges',t:'SF',p:'TE',a:26.8,k:2000,ppg25:9.9,ppg24:0,ppg23:0,g25:17},
+  {n:'Michael Mayer',t:'LV',p:'TE',a:24.2,k:1800,ppg25:9.8,ppg24:6.1,ppg23:9.6,g25:14},
+  {n:'JaTavion Sanders',t:'FA',p:'TE',a:23.8,k:1600,ppg25:6.8,ppg24:8.2,ppg23:0,g25:13},
+  {n:'Ben Sinnott',t:'WAS',p:'TE',a:25.0,k:2300,ppg25:3.3,ppg24:1.9,ppg23:0,g25:17},
+  {n:'Zach Ertz',t:'TB',p:'TE',a:35.8,k:1400,ppg25:16.6,ppg24:18.3,ppg23:10.1,g25:13},
+  // Batch 4-7 — QBs
+  {n:'Mac Jones',t:'NE',p:'QB',a:27.8,k:800,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Joe Flacco',t:'CIN',p:'QB',a:41.8,k:500,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Justin Fields',t:'KC',p:'QB',a:26.8,k:3400,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Kirk Cousins',t:'LV',p:'QB',a:37.9,k:800,ppg25:0,ppg24:25.6,ppg23:0,g25:0},
+];
+
+const PICKS=[
+  {n:'2026 Early 1st',k:5882,ip:true},{n:'2026 Mid 1st',k:4753,ip:true},{n:'2026 Late 1st',k:3954,ip:true},
+  {n:'2026 Early 2nd',k:3355,ip:true},{n:'2026 Mid 2nd',k:3042,ip:true},{n:'2026 Late 2nd',k:2837,ip:true},
+  {n:'2026 Early 3rd',k:2377,ip:true},{n:'2026 Mid 3rd',k:2272,ip:true},{n:'2026 Late 3rd',k:2151,ip:true},
+  {n:'2026 Early 4th',k:1839,ip:true},{n:'2027 Early 1st',k:6806,ip:true},{n:'2027 Mid 1st',k:5544,ip:true},
+  {n:'2027 Late 1st',k:4828,ip:true},{n:'2027 Early 2nd',k:3732,ip:true},{n:'2027 Mid 2nd',k:3452,ip:true},
+  {n:'2027 Late 2nd',k:3087,ip:true},{n:'2027 Early 3rd',k:2568,ip:true},{n:'2027 Mid 3rd',k:2395,ip:true},
+  {n:'2027 Late 3rd',k:2212,ip:true},{n:'2028 Early 1st',k:4991,ip:true},{n:'2028 Mid 1st',k:4446,ip:true},
+  {n:'2028 Late 1st',k:3940,ip:true},{n:'2028 Early 2nd',k:3091,ip:true},{n:'2028 Mid 2nd',k:2862,ip:true},
+  {n:'2028 Early 3rd',k:2164,ip:true},{n:'2028 Mid 3rd',k:2117,ip:true},{n:'2028 Late 3rd',k:1935,ip:true},
+];
+
+const DC={
+  ARI:{QB:['Jacoby Brissett'],RB:['Trey Benson'],WR:['Marvin Harrison Jr.'],TE:['Trey McBride']},
+  ATL:{QB:['Michael Penix Jr.','Tua Tagovailoa'],RB:['Bijan Robinson'],WR:['Drake London'],TE:['Kyle Pitts']},
+  BAL:{QB:['Lamar Jackson'],RB:['Derrick Henry'],WR:['Zay Flowers'],TE:['Mark Andrews']},
+  BUF:{QB:['Josh Allen'],RB:['James Cook'],WR:["D.J. Moore",'Khalil Shakir'],TE:['Dalton Kincaid']},
+  CAR:{QB:['Bryce Young'],RB:['Chuba Hubbard'],WR:['Tetairoa McMillan','Jalen Coker'],TE:[]},
+  CHI:{QB:['Caleb Williams'],RB:["D'Andre Swift",'Kyle Monangai'],WR:['Rome Odunze','Luther Burden'],TE:['Colston Loveland']},
+  CIN:{QB:['Joe Burrow'],RB:['Chase Brown'],WR:["Ja'Marr Chase",'Tee Higgins'],TE:[]},
+  CLE:{QB:['Shedeur Sanders'],RB:['Quinshon Judkins','Dylan Sampson'],WR:[],TE:['Harold Fannin Jr.']},
+  DAL:{QB:['Dak Prescott'],RB:['Javonte Williams'],WR:['CeeDee Lamb','George Pickens'],TE:['Jake Ferguson']},
+  DEN:{QB:['Bo Nix'],RB:['J.K. Dobbins','RJ Harvey'],WR:['Courtland Sutton','Jaylen Waddle'],TE:['Evan Engram']},
+  DET:{QB:['Jared Goff'],RB:['Jahmyr Gibbs'],WR:['Amon-Ra St. Brown','Jameson Williams'],TE:['Sam LaPorta']},
+  GB:{QB:['Jordan Love'],RB:['Josh Jacobs'],WR:['Christian Watson','Matthew Golden'],TE:['Tucker Kraft']},
+  HOU:{QB:['C.J. Stroud'],RB:['David Montgomery','Woody Marks'],WR:['Nico Collins','Jayden Higgins'],TE:['Dalton Schultz']},
+  IND:{QB:['Daniel Jones'],RB:['Jonathan Taylor'],WR:['Alec Pierce','Josh Downs'],TE:['Tyler Warren']},
+  JAC:{QB:['Trevor Lawrence'],RB:['Bhayshul Tuten'],WR:['Brian Thomas Jr.','Jakobi Meyers','Parker Washington'],TE:['Brenton Strange']},
+  KC:{QB:['Patrick Mahomes'],RB:['Kenneth Walker III'],WR:['Rashee Rice','Xavier Worthy'],TE:['Travis Kelce']},
+  LV:{QB:['Kirk Cousins'],RB:['Ashton Jeanty'],WR:[],TE:['Brock Bowers']},
+  LAC:{QB:['Justin Herbert'],RB:['Omarion Hampton'],WR:['Ladd McConkey','Quentin Johnston','Tre Harris'],TE:['Oronde Gadsden']},
+  LAR:{QB:['Matthew Stafford'],RB:['Kyren Williams','Blake Corum'],WR:['Puka Nacua','Davante Adams'],TE:[]},
+  MIA:{QB:['Malik Willis'],RB:["De'Von Achane",'Jaylen Wright','Ollie Gordon'],WR:[],TE:[]},
+  MIN:{QB:['Kyler Murray','J.J. McCarthy'],RB:['Aaron Jones','Jordan Mason'],WR:['Justin Jefferson','Jordan Addison'],TE:['T.J. Hockenson']},
+  NE:{QB:['Drake Maye'],RB:['Rhamondre Stevenson','TreVeyon Henderson'],WR:['Romeo Doubs'],TE:['Hunter Henry']},
+  NO:{QB:['Tyler Shough'],RB:['Travis Etienne','Alvin Kamara'],WR:['Chris Olave'],TE:['Juwan Johnson']},
+  NYG:{QB:['Jaxson Dart'],RB:['Cam Skattebo'],WR:['Malik Nabers'],TE:['Isaiah Likely']},
+  NYJ:{QB:['Geno Smith'],RB:['Breece Hall','Braelon Allen'],WR:['Garrett Wilson'],TE:['Mason Taylor']},
+  PHI:{QB:['Jalen Hurts'],RB:['Saquon Barkley'],WR:['A.J. Brown','DeVonta Smith'],TE:['Dallas Goedert']},
+  PIT:{QB:['Mason Rudolph'],RB:['Jaylen Warren','Rico Dowdle'],WR:['DK Metcalf','Michael Pittman Jr.'],TE:['Pat Freiermuth']},
+  SF:{QB:['Brock Purdy'],RB:['Christian McCaffrey','Isaac Guerendo'],WR:['Mike Evans','Ricky Pearsall'],TE:['George Kittle']},
+  SEA:{QB:['Sam Darnold'],RB:['Zach Charbonnet'],WR:['Jaxon Smith-Njigba'],TE:['AJ Barner']},
+  TB:{QB:['Baker Mayfield'],RB:['Bucky Irving','Kenneth Gainwell'],WR:['Emeka Egbuka'],TE:['Cade Otton']},
+  TEN:{QB:['Cam Ward'],RB:['Tony Pollard','Tyjae Spears'],WR:["Wan'Dale Robinson",'Elic Ayomanor'],TE:['Gunnar Helm']},
+  WAS:{QB:['Jayden Daniels'],RB:['Jacory Croskey-Merritt','Rachaad White'],WR:['Terry McLaurin'],TE:['Chigoziem Okonkwo']},
+};
+
+const RIPPLE=[
+  {n:'Jaylen Waddle',d:'up',reason:'MIA→DEN Payton system',delta:'+18%'},
+    {n:'RJ Harvey',d:'up',reason:'DEN run scheme complement',delta:'+10%'},
+  {n:"De'Von Achane",d:'up',reason:'Clear MIA RB1 (70.9% snaps)',delta:'+5%'},
+  {n:'Bhayshul Tuten',d:'up',reason:'Etienne gone, JAC RB1',delta:'+15%'},
+  {n:'Travis Etienne',d:'up',reason:'JAC→NO Moore system',delta:'+8%'},
+  {n:'Ricky Pearsall',d:'up',reason:'Aiyuk DNR elevates SF WR role',delta:'+12%'},
+  {n:'Mike Evans',d:'up',reason:'Aiyuk DNR, SF WR1 Shanahan',delta:'+15%'},
+  {n:'Mason Rudolph',d:'dn',reason:'Unproven PIT QB1',delta:'-20%'},
+  {n:'DK Metcalf',d:'dn',reason:'Rudolph QB1 limits ceiling',delta:'-18%'},
+  {n:'Michael Pittman Jr.',d:'dn',reason:'Rudolph QB1 weak system',delta:'-15%'},
+  {n:'Jaylen Warren',d:'dn',reason:'Rudolph limits passing game',delta:'-10%'},
+  {n:'Rico Dowdle',d:'dn',reason:'PIT QB situation',delta:'-8%'},
+  {n:'Kenneth Walker III',d:'up',reason:'KC RB1 Reid/Mahomes',delta:'+8%'},
+  {n:'Shedeur Sanders',d:'up',reason:'Named CLE QB1',delta:'+5%'},
+  {n:'Harold Fannin Jr.',d:'up',reason:'Clear CLE TE1',delta:'+5%'},
+  {n:'Colston Loveland',d:'up',reason:'CHI TE1, Williams system',delta:'+8%'},
+  {n:'Mason Taylor',d:'dn',reason:'Geno Smith QB1',delta:'-15%'},
+  {n:'Breece Hall',d:'dn',reason:'Geno Smith weak system',delta:'-10%'},
+  {n:'Garrett Wilson',d:'dn',reason:'Geno Smith caps upside',delta:'-12%'},
+  {n:'Justin Jefferson',d:'up',reason:'Kyler Murray QB upgrade',delta:'+8%'},
+  {n:'Jordan Addison',d:'up',reason:'Murray upgrade MIN corps',delta:'+6%'},
+  {n:'Zach Charbonnet',d:'dn',reason:'Fleury OC, worst system',delta:'-10%'},
+  {n:'Brandon Aiyuk',d:'dn',reason:'DNR — zero value',delta:'-100%'},
+  {n:'Puka Nacua',d:'up',reason:'LAR WR1 role secured',delta:'+5%'},
+  {n:'Javonte Williams',d:'up',reason:'68% snap share in 2025, true DAL bellcow',delta:'+12%'},
+  {n:'Kenneth Gainwell',d:'up',reason:'50% snap share as TB RB1',delta:'+10%'},
+  {n:'Davante Adams',d:'up',reason:'YPRR 1.98 — age curve undersold him in v5.4',delta:'+8%'},
+  {n:'Parker Washington',d:'up',reason:'YPRR 2.10 in 2025, steep ascending arc',delta:'+15%'},
+];
+
+// ============================================================
+// GAME LOG CONSISTENCY DATA
+// Computed from user's weekly game log workbook
+// Miss = (Hurt You + Did Not Factor) / games played
+// Hit = (Serviceable through Game Winning) / games played
+// Elite = (Great + Game Winning) / games played
+// WR/RB tiers: 0-5.9 HY, 6-9.9 DNF, 10-13.9 Svc, 14-17.9 Good, 18-26.9 Great, 27+ GW
+// QB tiers: 0-11.9 HY, 12-15.9 DNF, 16-18.9 Svc, 19-24.9 Good, 25-31.9 Great, 32+ GW
+// ============================================================
+const GAME_LOG = {
+  // WRs — full model coverage
+  "Tre Harris": {miss:93,hit:7,elite:7,g:15},
+  "Matthew Golden": {miss:87,hit:13,elite:7,g:15},
+  "Elic Ayomanor": {miss:76,hit:24,elite:6,g:17},
+  "Jayden Higgins": {miss:72,hit:28,elite:6,g:18},
+  "Travis Hunter": {miss:75,hit:25,elite:25,g:8},
+  "Jalen Coker": {miss:64,hit:36,elite:14,g:22},
+  "Troy Franklin": {miss:73,hit:27,elite:12,g:33},
+  "Parker Washington": {miss:70,hit:30,elite:11,g:37},
+  "Luther Burden": {miss:75,hit:25,elite:19,g:16},
+  "Jauan Jennings": {miss:68,hit:32,elite:11,g:62},
+  "Michael Pittman Jr.": {miss:46,hit:54,elite:14,g:69},
+  "Deebo Samuel": {miss:46,hit:54,elite:25,g:63},
+  "Stefon Diggs": {miss:35,hit:65,elite:32,g:63},
+  "Wan'Dale Robinson": {miss:66,hit:34,elite:10,g:58},
+  "Emeka Egbuka": {miss:61,hit:39,elite:28,g:18},
+  "DK Metcalf": {miss:40,hit:60,elite:16,g:67},
+  "Khalil Shakir": {miss:66,hit:34,elite:10,g:50},
+  "Romeo Doubs": {miss:61,hit:39,elite:10,g:61},
+  "Jakobi Meyers": {miss:49,hit:51,elite:14,g:65},
+  "Alec Pierce": {miss:66,hit:34,elite:13,g:68},
+  "Terry McLaurin": {miss:42,hit:58,elite:20,g:65},
+  "Brandon Aiyuk": {miss:49,hit:51,elite:21,g:43},
+  "Tetairoa McMillan": {miss:50,hit:50,elite:11,g:18},
+  "Jameson Williams": {miss:51,hit:49,elite:21,g:47},
+  "D.J. Moore": {miss:56,hit:44,elite:26,g:72},
+  "Christian Watson": {miss:61,hit:39,elite:24,g:51},
+  "Davante Adams": {miss:39,hit:61,elite:35,g:66},
+  "Courtland Sutton": {miss:43,hit:57,elite:13,g:69},
+  "Mike Evans": {miss:40,hit:60,elite:30,g:57},
+  "A.J. Brown": {miss:29,hit:71,elite:31,g:65},
+  "Justin Jefferson": {miss:29,hit:71,elite:35,g:65},
+  "CeeDee Lamb": {miss:25,hit:75,elite:33,g:67},
+  "Puka Nacua": {miss:21,hit:79,elite:40,g:47},
+  "Ja'Marr Chase": {miss:32,hit:68,elite:43,g:65},
+  "Nico Collins": {miss:47,hit:53,elite:24,g:70},
+  "Amon-Ra St. Brown": {miss:28,hit:72,elite:31,g:87},
+  "DeVonta Smith": {miss:44,hit:56,elite:20,g:85},
+  "Jaylen Waddle": {miss:48,hit:52,elite:20,g:83},
+  "Tee Higgins": {miss:43,hit:57,elite:27,g:92},
+  "Garrett Wilson": {miss:43,hit:57,elite:20,g:60},
+  "Drake London": {miss:52,hit:48,elite:18,g:66},
+  "Chris Olave": {miss:38,hit:62,elite:21,g:58},
+  "George Pickens": {miss:49,hit:51,elite:21,g:68},
+  "Rashid Shaheed": {miss:60,hit:40,elite:13,g:52},
+  "Jaxon Smith-Njigba": {miss:44,hit:56,elite:24,g:54},
+  "Quentin Johnston": {miss:59,hit:41,elite:18,g:49},
+  "Jordan Addison": {miss:53,hit:47,elite:16,g:49},
+  "Zay Flowers": {miss:50,hit:50,elite:17,g:52},
+  "Josh Downs": {miss:64,hit:36,elite:12,g:50},
+  "Rashee Rice": {miss:39,hit:61,elite:32,g:31},
+  "Jayden Reed": {miss:55,hit:45,elite:17,g:42},
+  "Marvin Harrison Jr.": {miss:52,hit:48,elite:16,g:31},
+  "Rome Odunze": {miss:65,hit:35,elite:16,g:31},
+  "Malik Nabers": {miss:33,hit:67,elite:33,g:21},
+  "Brian Thomas Jr.": {miss:42,hit:58,elite:27,g:33},
+  "Ricky Pearsall": {miss:59,hit:41,elite:14,g:22},
+  "Xavier Worthy": {miss:65,hit:35,elite:13,g:31},
+  "Keon Coleman": {miss:75,hit:25,elite:11,g:28},
+  "Ladd McConkey": {miss:41,hit:59,elite:18,g:34},
+  // TEs — full model coverage
+  "Gunnar Helm": {miss:76,hit:24,elite:6,g:17},
+  "Mason Taylor": {miss:64,hit:36,elite:7,g:14},
+  "Isaiah Likely": {miss:74,hit:26,elite:15,g:66},
+  "AJ Barner": {miss:67,hit:33,elite:8,g:36},
+  "Theo Johnson": {miss:62,hit:38,elite:10,g:29},
+  "Oronde Gadsden": {miss:56,hit:44,elite:19,g:16},
+  "Chigoziem Okonkwo": {miss:75,hit:25,elite:10,g:71},
+  "Pat Freiermuth": {miss:64,hit:36,elite:12,g:66},
+  "Cade Otton": {miss:68,hit:32,elite:14,g:66},
+  "Harold Fannin Jr.": {miss:41,hit:59,elite:24,g:17},
+  "Brenton Strange": {miss:61,hit:39,elite:10,g:31},
+  "Mark Andrews": {miss:44,hit:56,elite:25,g:61},
+  "Evan Engram": {miss:53,hit:47,elite:16,g:62},
+  "Kyle Pitts": {miss:59,hit:41,elite:14,g:63},
+  "Juwan Johnson": {miss:57,hit:43,elite:12,g:67},
+  "Dallas Goedert": {miss:47,hit:53,elite:20,g:55},
+  "Dalton Schultz": {miss:59,hit:41,elite:16,g:68},
+  "Hunter Henry": {miss:57,hit:43,elite:13,g:67},
+  "Colston Loveland": {miss:59,hit:41,elite:24,g:17},
+  "T.J. Hockenson": {miss:46,hit:54,elite:18,g:61},
+  "Dalton Kincaid": {miss:59,hit:41,elite:9,g:44},
+  "Tyler Warren": {miss:50,hit:50,elite:17,g:18},
+  "Sam LaPorta": {miss:40,hit:60,elite:27,g:45},
+  "Tucker Kraft": {miss:49,hit:51,elite:16,g:37},
+  "Travis Kelce": {miss:32,hit:68,elite:33,g:69},
+  "Trey McBride": {miss:34,hit:66,elite:35,g:62},
+  "Brock Bowers": {miss:32,hit:68,elite:32,g:31},
+  "George Kittle": {miss:32,hit:68,elite:43,g:60},
+  "Kyren Williams": {miss:30,hit:70,elite:37,g:57},
+  // RBs
+  "Kenneth Gainwell": {miss:85,hit:15,elite:5,g:62},
+  "Ollie Gordon": {miss:82,hit:18,elite:0,g:11},
+  "Jaylen Wright": {miss:90,hit:10,elite:0,g:21},
+  "Trey Benson": {miss:94,hit:6,elite:0,g:16},
+  "Braelon Allen": {miss:90,hit:10,elite:5,g:20},
+  "Dylan Sampson": {miss:86,hit:14,elite:0,g:14},
+  "Blake Corum": {miss:69,hit:31,elite:6,g:16},
+  "Bhayshul Tuten": {miss:85,hit:15,elite:0,g:13},
+  "Isaac Guerendo": {miss:70,hit:30,elite:10,g:10},
+  "Tyjae Spears": {miss:78,hit:22,elite:7,g:41},
+  "Kareem Hunt": {miss:69,hit:31,elite:10,g:59},
+  "Isiah Pacheco": {miss:53,hit:47,elite:9,g:34},
+  "Jacory Croskey-Merritt": {miss:75,hit:25,elite:12,g:16},
+  "Jordan Mason": {miss:71,hit:29,elite:11,g:28},
+  "Aaron Jones": {miss:46,hit:54,elite:15,g:54},
+  "Zach Charbonnet": {miss:65,hit:35,elite:9,g:43},
+  "Kyle Monangai": {miss:62,hit:38,elite:12,g:16},
+  "Rachaad White": {miss:51,hit:49,elite:15,g:53},
+  "Quinshon Judkins": {miss:57,hit:43,elite:14,g:14},
+  "Woody Marks": {miss:62,hit:38,elite:6,g:16},
+  "Tony Pollard": {miss:47,hit:53,elite:15,g:62},
+  "Alvin Kamara": {miss:37,hit:63,elite:19,g:52},
+  "James Conner": {miss:39,hit:61,elite:30,g:44},
+  "Chuba Hubbard": {miss:60,hit:40,elite:15,g:55},
+  "Rhamondre Stevenson": {miss:45,hit:55,elite:21,g:56},
+  "Bucky Irving": {miss:33,hit:67,elite:15,g:27},
+  "Derrick Henry": {miss:23,hit:77,elite:42,g:64},
+  "David Montgomery": {miss:37,hit:63,elite:14,g:57},
+  "Ashton Jeanty": {miss:47,hit:53,elite:18,g:17},
+  "Saquon Barkley": {miss:28,hit:72,elite:33,g:60},
+  "RJ Harvey": {miss:50,hit:50,elite:25,g:16},
+  "Travis Etienne": {miss:45,hit:55,elite:24,g:62},
+  "Javonte Williams": {miss:62,hit:38,elite:11,g:53},
+  "Omarion Hampton": {miss:33,hit:67,elite:22,g:9},
+  "J.K. Dobbins": {miss:47,hit:53,elite:19,g:32},
+  "D'Andre Swift": {miss:48,hit:52,elite:22,g:63},
+  "TreVeyon Henderson": {miss:59,hit:41,elite:18,g:17},
+  "Cam Skattebo": {miss:25,hit:75,elite:25,g:8},
+  "Chase Brown": {miss:27,hit:73,elite:21,g:33},
+  "Josh Jacobs": {miss:29,hit:71,elite:35,g:62},
+  "De'Von Achane": {miss:25,hit:75,elite:41,g:44},
+  "Christian McCaffrey": {miss:11,hit:89,elite:57,g:54},
+  "Bijan Robinson": {miss:22,hit:78,elite:46,g:50},
+  "Jonathan Taylor": {miss:25,hit:75,elite:35,g:52},
+  "Jahmyr Gibbs": {miss:27,hit:73,elite:43,g:49},
+  "Kyren Williams": {miss:32,hit:68,elite:32,g:53},
+  "Breece Hall": {miss:41,hit:59,elite:27,g:56},
+  "Kenneth Walker III": {miss:43,hit:57,elite:19,g:58},
+  "James Cook": {miss:47,hit:53,elite:24,g:66},
+  "Jaylen Warren": {miss:67,hit:33,elite:5,g:64},
+  "Rico Dowdle": {miss:61,hit:39,elite:12,g:49},
+  // QBs
+  "C.J. Stroud": {miss:57,hit:43,elite:7,g:46},
+  "Bryce Young": {miss:71,hit:29,elite:7,g:45},
+  "Lamar Jackson": {miss:22,hit:78,elite:39,g:99},
+  "Malik Willis": {miss:75,hit:25,elite:25,g:8},
+  "Cam Ward": {miss:82,hit:18,elite:0,g:17},
+  "Shedeur Sanders": {miss:86,hit:14,elite:14,g:7},
+  "Jacoby Brissett": {miss:47,hit:53,elite:3,g:30},
+  "Mason Rudolph": {miss:62,hit:38,elite:0,g:13},
+  "Michael Penix Jr.": {miss:67,hit:33,elite:8,g:12},
+  "Geno Smith": {miss:52,hit:48,elite:10,g:63},
+  "J.J. McCarthy": {miss:50,hit:50,elite:0,g:10},
+  "Tua Tagovailoa": {miss:58,hit:42,elite:12,g:52},
+  "Jaxson Dart": {miss:17,hit:83,elite:33,g:12},
+  "Tyler Shough": {miss:25,hit:75,elite:0,g:8},
+  "Sam Darnold": {miss:38,hit:62,elite:12,g:34},
+  "Matthew Stafford": {miss:56,hit:44,elite:16,g:55},
+  "Justin Herbert": {miss:46,hit:54,elite:16,g:63},
+  "Daniel Jones": {miss:47,hit:53,elite:11,g:45},
+  "Baker Mayfield": {miss:41,hit:59,elite:13,g:63},
+  "Jared Goff": {miss:43,hit:57,elite:22,g:68},
+  "Dak Prescott": {miss:34,hit:66,elite:23,g:53},
+  "Trevor Lawrence": {miss:41,hit:59,elite:15,g:59},
+  "Jordan Love": {miss:38,hit:62,elite:19,g:42},
+  "Jalen Hurts": {miss:18,hit:82,elite:32,g:62},
+  "Joe Burrow": {miss:29,hit:71,elite:31,g:52},
+  "Kyler Murray": {miss:37,hit:63,elite:16,g:38},
+  "Patrick Mahomes": {miss:31,hit:69,elite:29,g:62},
+  "Brock Purdy": {miss:32,hit:68,elite:25,g:40},
+  "Josh Allen": {miss:17,hit:83,elite:41,g:64},
+  "Drake Maye": {miss:26,hit:74,elite:15,g:27},
+  "Caleb Williams": {miss:47,hit:53,elite:19,g:32},
+  "Jayden Daniels": {miss:25,hit:75,elite:29,g:24},
+  "Bo Nix": {miss:33,hit:67,elite:18,g:33},
+
+  // Batch 1 + 4-7 game logs
+  "Adonai Mitchell": {miss:85,hit:15,elite:9,g:34},
+  "Ben Sinnott": {miss:94,hit:6,elite:3,g:33},
+  "Brian Robinson": {miss:56,hit:44,elite:13,g:61},
+  "Calvin Ridley": {miss:59,hit:41,elite:23,g:44},
+  "Cedric Tillman": {miss:81,hit:19,elite:11,g:37},
+  "Chris Godwin": {miss:52,hit:48,elite:21,g:52},
+  "Chris Rodriguez": {miss:69,hit:31,elite:14,g:29},
+  "Christian Kirk": {miss:54,hit:46,elite:13,g:54},
+  "Colby Parkinson": {miss:78,hit:22,elite:9,g:69},
+  "Cooper Kupp": {miss:47,hit:53,elite:28,g:53},
+  "Darius Slayton": {miss:73,hit:27,elite:9,g:64},
+  "Darnell Mooney": {miss:69,hit:31,elite:8,g:62},
+  "David Njoku": {miss:46,hit:54,elite:21,g:56},
+  "DeMario Douglas": {miss:82,hit:18,elite:10,g:51},
+  "Devaughn Vele": {miss:79,hit:21,elite:11,g:28},
+  "Dontayvion Wicks": {miss:78,hit:22,elite:12,g:49},
+  "George Holani": {miss:83,hit:17,elite:17,g:6},
+  "Greg Dulcich": {miss:76,hit:24,elite:6,g:33},
+  "JaTavion Sanders": {miss:83,hit:17,elite:7,g:30},
+  "Jack Bech": {miss:92,hit:8,elite:8,g:12},
+  "Jake Tonges": {miss:65,hit:35,elite:12,g:17},
+  "Jalen Nailor": {miss:80,hit:20,elite:11,g:46},
+  "Jalen Tolbert": {miss:76,hit:24,elite:10,g:42},
+  "Jaylin Noel": {miss:88,hit:12,elite:6,g:17},
+  "Jerry Jeudy": {miss:61,hit:39,elite:13,g:69},
+  "Joe Flacco": {miss:47,hit:53,elite:30,g:30},
+  "Justin Fields": {miss:36,hit:64,elite:32,g:44},
+  "Kayshon Boutte": {miss:68,hit:32,elite:16,g:31},
+  "Keaton Mitchell": {miss:80,hit:20,elite:12,g:25},
+  "Kirk Cousins": {miss:48,hit:52,elite:21,g:52},
+  "Kyle Williams": {miss:82,hit:18,elite:6,g:17},
+  "Mac Jones": {miss:61,hit:39,elite:11,g:44},
+  "Malik Washington": {miss:84,hit:16,elite:6,g:32},
+  "Marquise Brown": {miss:66,hit:34,elite:11,g:47},
+  "Michael Mayer": {miss:77,hit:23,elite:8,g:39},
+  "Michael Wilson": {miss:65,hit:35,elite:14,g:49},
+  "Pat Bryant": {miss:80,hit:20,elite:7,g:15},
+  "Rashod Bateman": {miss:75,hit:25,elite:11,g:56},
+  "Ray Davis": {miss:78,hit:22,elite:8,g:36},
+  "Sean Tucker": {miss:83,hit:17,elite:14,g:29},
+  "Tank Dell": {miss:56,hit:44,elite:22,g:27},
+  "Terrance Ferguson": {miss:69,hit:31,elite:8,g:13},
+  "Tez Johnson": {miss:71,hit:29,elite:12,g:17},
+  "Tre Tucker": {miss:77,hit:23,elite:11,g:53},
+  "Tyler Allgeier": {miss:66,hit:34,elite:10,g:71},
+  "Tyrone Tracy": {miss:59,hit:41,elite:18,g:34},
+  "Zach Ertz": {miss:44,hit:56,elite:16,g:50},
+  "Cole Kmet": {miss:74,hit:26,elite:9,g:70},
+  "Jake Ferguson": {miss:61,hit:39,elite:8,g:66},
+  "Dawson Knox": {miss:82,hit:17,elite:3,g:63},
+  // Batch 3 — Start Profiles
+  "Jalen McMillan": {miss:58,hit:42,elite:21,g:19},
+  "Xavier Legette": {miss:76,hit:24,elite:9,g:33},
+  "Tank Bigsby": {miss:78,hit:22,elite:10,g:40},
+  "Isaac TeSlaa": {miss:78,hit:22,elite:6,g:18},
+  "Marvin Mims": {miss:77,hit:23,elite:15,g:48},
+  "Charlie Kolar": {miss:89,hit:11,elite:6,g:35},
+  "Audric Estime": {miss:75,hit:25,elite:10,g:20},
+  "Chimere Dike": {miss:62,hit:38,elite:12,g:16},
+  "Noah Fant": {miss:75,hit:25,elite:6,g:63},
+  "Elijah Higgins": {miss:90,hit:10,elite:7,g:29},
+  "Kimani Vidal": {miss:74,hit:26,elite:15,g:34},
+  "Jonnu Smith": {miss:66,hit:34,elite:16,g:68},
+  "K.J. Osborn": {miss:73,hit:27,elite:9,g:44},
+  "Alexander Mattison": {miss:67,hit:33,elite:8,g:48},
+};
+function glTag(n){
+  const d=GAME_LOG[n];if(!d)return'';
+  const mc=d.miss<=35?'#6ee7b7':d.miss<=50?'#fcd34d':'#fca5a5';
+  const hc=d.hit>=65?'#6ee7b7':d.hit>=50?'#7dd3fc':'#718096';
+  const ec=d.elite>=25?'#6ee7b7':d.elite>=15?'#7dd3fc':'#718096';
+  return`<span style="font-size:9px;display:inline-flex;gap:3px;margin-left:4px">` +
+    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${mc}">M${d.miss}%</span>` +
+    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${hc}">H${d.hit}%</span>` +
+    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${ec}">E${d.elite}%</span>` +
+    `</span>`;
+}
+
+// ============================================================
+// ADDITIVE DELTA PROJECTION FORMULA (v5.6 fix)
+// proj = base * age_curve * (1 + capped_delta)
+// Each factor contributes a small delta — no multiplicative stacking
+// Total delta capped at ±0.20 for projections, ±0.25 for model value
+// Model value hard-capped at 9,999 to match KTC ceiling
+// ============================================================
+function getDeltas(name,pos,sys,cont,yprr,snap,col,epa_sc,ripple,qbq){
+  const isQB=pos==='QB';
+  // System delta — QBs: near-zero (their PPG already fully reflects their system)
+  // Skill positions: small adjustment for system quality
+  const d_sys=isQB
+    ?(sys>=70?.01:sys>=55?.0:sys>=40?-.03:-.07)
+    :(sys>=70?.04:sys>=55?.01:sys>=40?-.04:-.10);
+  // OC continuity delta — QBs feel this more on the downside (new scheme = regression)
+  const d_oc=isQB
+    ?(cont>=.95?.01:cont>=.70?.0:cont>=.50?-.04:cont>=.30?-.07:-.11)
+    :(cont>=.95?.03:cont>=.70?.01:cont>=.50?-.04:cont>=.30?-.08:-.12);
+  // Role delta — QBs: zero (no depth chart role for QBs)
+  let d_role=0;
+  if(pos==='WR'||pos==='TE'){
+    d_role=yprr>=2.5?.05:yprr>=2.0?.02:yprr>=1.5?.0:yprr>=1.0?-.03:-.08;
+  } else if(pos==='RB'){
+    d_role=snap>=75?.06:snap>=60?.03:snap>=45?.0:snap>=30?-.05:-.10;
+  }
+  // College bonus delta (tiny)
+  const d_col=(col-1.0)*0.25;
+  // EPA delta — QBs: halved (their EPA is already in their PPG baseline)
+  const d_epa=isQB?(epa_sc-1.0)*0.15:(epa_sc-1.0)*0.30;
+  // Ripple — QBs: halved (teammate additions are smaller signal for QB than for WR/RB)
+  const d_rip=isQB?(ripple-1.0)*0.20:(ripple-1.0)*0.40;
+  // QB quality penalty for skill positions only
+  const d_qbq=!isQB?(qbq-0.90)*0.20:0;
+  // Target share trend delta
+  const d_ts=!isQB?(TS_DELTA[name]||0):0;
+  return d_sys+d_oc+d_role+d_col+d_epa+d_rip+d_qbq+d_ts;
+}
+
+function calcProj(pl){
+  const e=getEff(pl);
+  const age=parseFloat(pl.a)||26;
+  const agM=am(pl.p,Math.floor(age));
+  const ciV=ci(e.c);
+  const col=CB[pl.n]||1.0;
+  const qbq=pl.p==='QB'?1.0:(QBQ[AL[e.team]||e.team]||0.85);
+  const rip=RP[pl.n]||1.0;
+  const epa=calcEPA(pl.n,pl.p);
+  const roleData=getRoleData(pl.n,pl.p);
+
+  let num=0,den=0;
+  if(pl.g25>=6&&pl.ppg25>0){num+=pl.ppg25*3;den+=3;}
+  if(pl.ppg24>0){num+=pl.ppg24*2;den+=2;}
+  if(pl.ppg23>0){num+=pl.ppg23*1;den+=1;}
+  const base=den>0?num/den:pl.ppg25||pl.ppg24||8.0;
+
+  const rawDelta=getDeltas(pl.n,pl.p,e.s,e.c,roleData.raw,roleData.raw,col,epa.sc,rip,qbq);
+
+  // Age-adjusted production curve: how is this player performing vs their own historical arc?
+  // Only applied with 10+ games in 2025; skips players with insufficient prior data
+  let d_curve=0;
+  if(pl.g25>=10 && base>0){
+    let priorNum=0,priorDen=0;
+    if(pl.ppg24>0){priorNum+=pl.ppg24*2;priorDen+=2;}
+    if(pl.ppg23>0){priorNum+=pl.ppg23*1;priorDen+=1;}
+    if(priorDen>0){
+      const priorBase=priorNum/priorDen;
+      const diff=pl.ppg25-priorBase;
+      const pct=diff/priorBase;
+      if(Math.abs(diff)>=1.5){
+        const scale=priorDen===2?0.25:0.30;
+        const isQB=pl.p==='QB';
+        const capPos=isQB?0.04:0.06;
+        const capNeg=(isQB||(parseFloat(pl.a)||26)<26)?-0.04:-0.08;
+        d_curve=Math.max(capNeg,Math.min(capPos,pct*scale));
+      }
+    }
+  }
+  // QBs get a tighter projection cap — they're more mean-reverting year to year
+  const cap=pl.p==='QB'?0.10:0.18;
+  const floor=pl.p==='QB'?-0.15:-0.20;
+  const delta=Math.max(floor,Math.min(cap,rawDelta+d_curve));
+  const proj=base*agM*(1+delta)*e.inj;
+
+  // Model value: additive delta on KTC, hard cap 9999
+  const mvDelta=Math.max(-0.25,Math.min(0.20,rawDelta+(ci(e.c)-0.15)*(-0.3)));
+  const mv=Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
+
+  return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
+    gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
+    ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
+    epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
+    ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22};
+}
+
+function mvAsset(pl){
+  if(pl.ip)return pl.k;
+  const e=getEff(pl);
+  const epa=calcEPA(pl.n,pl.p||pl.pos);
+  const roleData=getRoleData(pl.n,pl.p||pl.pos);
+  const col=CB[pl.n]||1.0;
+  const rip=RP[pl.n]||1.0;
+  const qbq=(pl.p||pl.pos)!=='QB'?(QBQ[AL[e.team]||e.team]||0.85):1.0;
+  const rawDelta=getDeltas(pl.n,pl.p||pl.pos,e.s,e.c,roleData.raw,roleData.raw,col,epa.sc,rip,qbq);
+  const mvDelta=Math.max(-0.25,Math.min(0.20,rawDelta+(ci(e.c)-0.15)*(-0.3)));
+  const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
+  return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
+}
+
+const COMP=[];
+RAW.forEach(r=>COMP.push(calcProj(r)));
+const ASSETS=[...COMP,...PICKS];
+
+let sortK='ktc',sortDir=-1;
+function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
+function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
+function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
+function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
+function eTag(sc,fl,fr){
+  if(sc===1.0&&!fl)return'<span class="badge bn">—</span>';
+  const c=sc>=1.15?'bs':sc>=1.05?'bi':sc>=0.95?'bn':sc>=0.90?'bw':'bd';
+  const lbl=fr==='vol+YAC neutral'?'neutral ⌊':fl?'floor ⌊':sc>=1.15?'elite':sc>=1.05?'above avg':sc>=0.95?'avg':'below avg';
+  return`<span class="badge ${c}">${lbl}</span>`;
+}
+function rTag(mult,lbl,pos){
+  const c=mult>=1.10?'bs':mult>=1.02?'bi':mult>=0.94?'bn':mult>=0.85?'bw':'bd';
+  const indicator=pos==='RB'?'⬛':'◆';
+  return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
+}
+function vTag(p){
+  const r=p.mv/Math.max(p.ktcEff||p.k,1);
+  if(r>=1.15)return'<span class="badge bs">strong buy</span>';
+  if(r>=1.06)return'<span class="badge bi">buy</span>';
+  if(r>=0.94)return'<span class="badge bn">hold</span>';
+  if(r>=0.82)return'<span class="badge bw">sell</span>';
+  return'<span class="badge bd">strong sell</span>';
+}
+
+function renderRankings(){
+  const q=(document.getElementById('s-rank').value||'').toLowerCase();
+  const pos=document.getElementById('pos-rank').value;
+  const ageMax=parseInt(document.getElementById('age-rank').value)||99;
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
+  data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
+  // Build position rank counters
+  const posRanks={QB:0,RB:0,WR:0,TE:0};
+  // Pre-compute position ranks based on current sort order
+  const allSorted=[...COMP].sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
+  const posRankMap={};
+  const tmpCounts={QB:0,RB:0,WR:0,TE:0};
+  allSorted.forEach(p=>{
+    if(tmpCounts[p.pos]!==undefined){
+      tmpCounts[p.pos]++;
+      posRankMap[p.n]=tmpCounts[p.pos];
+    }
+  });
+  document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr>
+    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px">${p.pos}${posRankMap[p.n]||''}</td>
+    <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+    <td style="font-weight:600;white-space:nowrap">${p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
+    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td>
+    <td>${p.t}${p.notes?` <span style="font-size:9px;color:#4a5568">(${p.notes})</span>`:''}</td>
+    <td>${p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
+    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+    <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+    <td style="font-weight:600">${p.proj.toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
+    <td style="font-weight:600;color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
+    <td>${sTag(p.sys)}</td>
+    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}">${p.och?'⚠ ':''}${p.oc}</td>
+    <td>${vTag(p)}</td>
+  </tr>`).join('');
+}
+
+let projSort='proj';
+function setSortP(k){projSort=k;renderProj();}
+function renderProj(){
+  const q=(document.getElementById('s-proj').value||'').toLowerCase();
+  const pos=document.getElementById('pos-proj').value;
+  const sort=document.getElementById('sort-proj').value;
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q));
+  const activeSort=projSort||sort;
+  if(activeSort==='proj')data.sort((a,b)=>b.proj-a.proj);
+  else if(activeSort==='ceil')data.sort((a,b)=>b.ceil-a.ceil);
+  else if(activeSort==='floor')data.sort((a,b)=>b.floor-a.floor);
+  else if(activeSort==='gap')data.sort((a,b)=>b.gap-a.gap);
+  else if(activeSort==='miss')data.sort((a,b)=>(GAME_LOG[a.n]?.miss??99)-(GAME_LOG[b.n]?.miss??99));
+  else if(activeSort==='hit')data.sort((a,b)=>(GAME_LOG[b.n]?.hit??0)-(GAME_LOG[a.n]?.hit??0));
+  else if(activeSort==='elite')data.sort((a,b)=>(GAME_LOG[b.n]?.elite??0)-(GAME_LOG[a.n]?.elite??0));
+  document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
+    const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
+    const fr=p.epaFr==='vol+YAC neutral'
+      ?'<span style="color:#6ee7b7;font-size:10px">⌊ neutral (vol+YAC)</span>'
+      :p.epaFl?`<span style="color:#fcd34d;font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
+    const gl=GAME_LOG[p.n];
+    const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
+    const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
+    const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
+    return`<tr>
+      <td style="font-weight:600;white-space:nowrap">${p.n}</td>
+      <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+      <td style="color:#fca5a5">${p.floor.toFixed(1)}</td>
+      <td style="font-weight:600">${p.proj.toFixed(1)}</td>
+      <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
+      <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+      <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+      <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+      <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
+      <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
+      <td style="font-size:10px;color:#718096">±${Math.round(p.ci*100)}%</td>
+      <td style="font-weight:600;color:${mc}">${gl?gl.miss+'%':'—'}</td>
+      <td style="font-weight:600;color:${hc}">${gl?gl.hit+'%':'—'}</td>
+      <td style="font-weight:600;color:${ec}">${gl?gl.elite+'%':'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEPA(){
+  const pos=document.getElementById('pos-epa').value;
+  const sort=document.getElementById('sort-epa').value;
+  const q=(document.getElementById('s-epa').value||'').toLowerCase();
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q)&&(p.epaSc!==1.0||p.epaFl));
+  if(sort==='epaTr')data.sort((a,b)=>({up:2,flat:1,down:0}[b.epaTr]||0)-({up:2,flat:1,down:0}[a.epaTr]||0));
+  else if(sort==='ef')data.sort((a,b)=>(b.ef25||0)-(a.ef25||0));
+  else if(sort==='ktc')data.sort((a,b)=>b.ktcEff-a.ktcEff);
+  else data.sort((a,b)=>b.epaSc-a.epaSc);
+  const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
+  const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
+  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr>
+    <td style="font-weight:600;white-space:nowrap">${p.n}</td>
+    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+    <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
+    <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
+    <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
+    <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
+    <td style="font-size:10px;color:#4a5568">${p.epaRaw.toFixed(3)}</td>
+    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
+    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'#6ee7b7':'#fcd34d'}">${p.epaFr}</span>`:'—'}</td>
+    <td>${tH(p.epaTr)}</td>
+    <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
+    <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+    <td>${vTag(p)}</td>
+  </tr>`).join('');
+}
+
+let sA=[],sB=[];
+function doSearch(side){
+  const q=(document.getElementById('srch-'+side).value||'').toLowerCase().trim();
+  const drop=document.getElementById('drop-'+side);
+  if(q.length<2){drop.style.display='none';return;}
+  const matches=ASSETS.filter(p=>p.n.toLowerCase().includes(q)).slice(0,10);
+  if(!matches.length){drop.style.display='none';return;}
+  drop.style.display='block';
+  drop.innerHTML=matches.map(p=>{
+    const mv=mvAsset(p);const diff=mv-p.k;
+    const dc=diff>200?'#6ee7b7':diff<-200?'#fca5a5':'#718096';
+    return`<div class="drop-item" onclick="addAsset('${side}','${p.n.replace(/'/g,"\\'")}')">
+      <span>${p.n} <span style="font-size:10px;color:#718096">${p.ip?'PICK':((p.p||p.pos)+' · '+(p.t||''))}</span></span>
+      <span style="font-size:10px">KTC ${p.k.toLocaleString()} <span style="color:${dc}">(${diff>=0?'+':''}${diff.toLocaleString()})</span></span>
+    </div>`;
+  }).join('');
+}
+function addAsset(side,name){
+  const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
+  const arr=side==='a'?sA:sB;
+  if(!arr.find(x=>x.n===name))arr.push({...asset});
+  document.getElementById('srch-'+side).value='';
+  document.getElementById('drop-'+side).style.display='none';
+  recalcTrade();
+}
+function removeAsset(side,name){
+  if(side==='a')sA=sA.filter(x=>x.n!==name);else sB=sB.filter(x=>x.n!==name);
+  recalcTrade();
+}
+function recalcTrade(){
+  function rSide(side,arr,elId,ktcId,modId){
+    document.getElementById(elId).innerHTML=arr.map(p=>{
+      const mv=mvAsset(p);const e=p.ip?null:getEff(p);
+      return`<div class="added">
+        <div style="flex:1;min-width:0">
+          <div class="added-name">${p.n}</div>
+          <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}`}</div>
+        </div>
+        <div class="added-vals">
+          <div style="color:#718096">KTC ${p.k.toLocaleString()}</div>
+          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
+        </div>
+        <button class="rm" onclick="removeAsset('${side}','${p.n.replace(/'/g,"\\'")}')">✕</button>
+      </div>`;
+    }).join('');
+    const kt=arr.reduce((s,x)=>s+x.k,0);
+    const mt=arr.reduce((s,x)=>s+mvAsset(x),0);
+    document.getElementById(ktcId).textContent=kt>0?kt.toLocaleString():'—';
+    document.getElementById(modId).textContent=mt>0?mt.toLocaleString():'—';
+    return{ktc:kt,mod:mt};
+  }
+  const a=rSide('a',sA,'side-a','ktc-a','mod-a');
+  const b=rSide('b',sB,'side-b','ktc-b','mod-b');
+  if(!sA.length&&!sB.length){document.getElementById('verdict-area').innerHTML='';return;}
+  const mA=a.mod,mB=b.mod;
+  const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
+  const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
+  let verdict,vc;
+  if(pct<=8){verdict='Fair trade';vc='bi';}
+  else if(mA>mB){verdict=pct<=15?'Slight edge — Side A':pct<=25?'Clear win — Side A':'Side A wins big';vc='bs';}
+  else{verdict=pct<=15?'Slight edge — Side B':pct<=25?'Clear win — Side B':'Side B wins big';vc='bd';}
+  const nA=sA.map(x=>x.n).join(', ')||'nothing';
+  const nB=sB.map(x=>x.n).join(', ')||'nothing';
+  document.getElementById('verdict-area').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+      <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
+      <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
+    </div>
+    <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
+    <div style="text-align:center;margin-bottom:.75rem">
+      <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
+      ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+    </div>
+    <div class="breakdown-grid">
+      <div><div class="section-label">Side A</div>
+        ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
+      </div>
+      <div><div class="section-label">Side B</div>
+        ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
+      </div>
+    </div>
+    <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: I receive ${nA} and give ${nB}. Model values Side A at ${mA.toLocaleString()} and Side B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
+}
+
+function renderWatchlist(){
+  const data=COMP.filter(p=>p.och).sort((a,b)=>a.sys-b.sys);
+  document.getElementById('watchlist-body').innerHTML=data.map(p=>`
+    <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a202c;font-size:12px;flex-wrap:wrap">
+      <span style="font-weight:600;min-width:150px;white-space:nowrap">${p.n}</span>
+      <span class="badge bn">${p.pos}</span>
+      <span style="font-size:11px;color:#718096">${p.t} · ${p.oc}</span>
+      ${sTag(p.sys)}${eTag(p.epaSc,p.epaFl,p.epaFr)}
+      <span style="font-size:11px">Proj: <strong>${p.proj.toFixed(1)}</strong></span>
+      <span style="font-size:11px;color:#718096">KTC ${p.ktcEff.toLocaleString()}</span>
+      ${vTag(p)}
+    </div>`).join('');
+}
+
+function renderRipple(){
+  const sorted=[...RIPPLE].sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
+  document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
+    const p=COMP.find(x=>x.n===r.n);
+    return`<div class="ripple-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
+        <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
+          ${p?`<span style="font-size:10px;color:#718096">KTC ${p.ktcEff.toLocaleString()} · Proj ${p.proj.toFixed(1)}</span>`:''}
+        </div>
+      </div>
+      <div style="font-size:11px;color:#718096;margin-top:4px">${r.reason}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// CONTRACT DATA
+// Source: Spotrac screenshots, batches by team
+// Status: 6 teams loaded (NO, NYG, NYJ, PHI, PIT, SF)
+// AAV = average annual value, end = contract end year
+// ============================================================
+const CONTRACTS=[
+  // NEW ORLEANS SAINTS
+  {n:'Travis Etienne',pos:'RB',team:'NO',aav:12000000,total:48000000,end:2029,note:'Signed as RB1 through 2029'},
+  {n:'Alvin Kamara',pos:'RB',team:'NO',aav:12250000,total:24500000,end:2026,note:'Final contract — walk year 2026'},
+  {n:'Chris Olave',pos:'WR',team:'NO',aav:4817969,total:19271874,end:2026,note:'Cheap deal expiring — extension or FA looms'},
+  {n:'Juwan Johnson',pos:'TE',team:'NO',aav:10250000,total:30750000,end:2027,note:'Locked in as TE1 through 2027'},
+  {n:'Rashid Shaheed',pos:'WR',team:'NO',aav:1031120,total:4124480,end:2027,note:'Cheap deal, depth WR'},
+  // NEW YORK GIANTS
+  {n:'Malik Nabers',pos:'WR',team:'NYG',aav:7301938,total:29207750,end:2028,note:'Locked in as WR1 through 2028'},
+  {n:'Jaxson Dart',pos:'QB',team:'NYG',aav:4244482,total:16977927,end:2029,note:'Franchise QB of the future'},
+  {n:'Isaiah Likely',pos:'TE',team:'NYG',aav:13333333,total:40000000,end:2028,note:'Major investment — clear TE1 role'},
+  {n:'Cam Skattebo',pos:'RB',team:'NYG',aav:1318260,total:5273040,end:2028,note:'Cheap rookie deal, developing RB1'},
+  {n:'Theo Johnson',pos:'TE',team:'NYG',aav:1212859,total:4851436,end:2027,note:'Backup TE on affordable deal'},
+  // NEW YORK JETS
+  {n:'Garrett Wilson',pos:'WR',team:'NYJ',aav:32500000,total:130000000,end:2030,note:'Elite WR1 locked up long term'},
+  {n:'Breece Hall',pos:'RB',team:'NYJ',aav:14293000,total:14293000,end:2026,note:'⚠ CONTRACT YEAR — extend or trade this offseason'},
+  {n:'Mason Taylor',pos:'TE',team:'NYJ',aav:2616547,total:10466187,end:2028,note:'Young TE1 locked in through 2028'},
+  {n:'Braelon Allen',pos:'RB',team:'NYJ',aav:1137177,total:4548708,end:2027,note:'Cheap ascending RB on rookie deal'},
+  {n:'Geno Smith',pos:'QB',team:'NYJ',aav:3300000,total:3300000,end:2026,note:'1yr stop-gap — NYJ will move on'},
+  // PHILADELPHIA EAGLES
+  {n:'Jalen Hurts',pos:'QB',team:'PHI',aav:51000000,total:255000000,end:2028,note:'Franchise locked through 2028'},
+  {n:'A.J. Brown',pos:'WR',team:'PHI',aav:32000000,total:96000000,end:2029,note:'Elite WR1 locked up long term'},
+  {n:'DeVonta Smith',pos:'WR',team:'PHI',aav:25000000,total:75000000,end:2028,note:'Locked in as WR2 through 2028'},
+  {n:'Saquon Barkley',pos:'RB',team:'PHI',aav:20600000,total:41200000,end:2028,note:'2 years left — sell window opening'},
+  {n:'Dallas Goedert',pos:'TE',team:'PHI',aav:7000000,total:7000000,end:2026,note:'Walk year — PHI may extend or move on'},
+  {n:'Will Shipley',pos:'RB',team:'PHI',aav:1184241,total:4736964,end:2027,note:'Cheap handcuff/developing back'},
+  {n:'Ricky Pearsall',pos:'WR',team:'SF',aav:3134600,total:12538398,end:2028,note:'SF committed through 2028 — ascending'},
+  // PITTSBURGH STEELERS
+  {n:'DK Metcalf',pos:'WR',team:'PIT',aav:33000000,total:132000000,end:2029,note:'Elite WR1 locked through 2029'},
+  {n:'Michael Pittman Jr.',pos:'WR',team:'PIT',aav:17500000,total:35000000,end:2029,note:'2yr deal but through 2029'},
+  {n:'Pat Freiermuth',pos:'TE',team:'PIT',aav:12100000,total:48400000,end:2028,note:'Locked in as TE1 through 2028'},
+  {n:'Rico Dowdle',pos:'RB',team:'PIT',aav:6125000,total:12250000,end:2027,note:'2yr deal — RB1 committed short term'},
+  {n:'Jaylen Warren',pos:'RB',team:'PIT',aav:5952000,total:11904000,end:2027,note:'2yr deal alongside Dowdle'},
+  {n:'Mason Rudolph',pos:'QB',team:'PIT',aav:3750000,total:7500000,end:2026,note:'Ends 2026 — PIT will upgrade at QB'},
+  // HOUSTON TEXANS
+  {n:'Nico Collins',pos:'WR',team:'HOU',aav:24250000,total:72750000,end:2027,note:'HOU WR1 locked through 2027'},
+  {n:'C.J. Stroud',pos:'QB',team:'HOU',aav:9069811,total:36279243,end:2027,note:'Franchise QB through 2027 — extension likely'},
+    {n:'Jayden Higgins',pos:'WR',team:'HOU',aav:2925206,total:11700824,end:2028,note:'Locked rookie deal through 2028'},
+  {n:'Dalton Schultz',pos:'TE',team:'HOU',aav:12600000,total:12600000,end:2027,note:'Expiring 2027 — walk year coming'},
+  {n:'Tank Dell',pos:'WR',team:'HOU',aav:1422276,total:5689104,end:2026,note:'Walk year — extension or FA looms'},
+  {n:'Woody Marks',pos:'RB',team:'HOU',aav:1300942,total:5203768,end:2028,note:'Cheap RB on 4yr rookie deal'},
+  // ARIZONA CARDINALS
+  {n:'Trey McBride',pos:'TE',team:'ARI',aav:19000000,total:76000000,end:2029,note:'Elite TE1 locked through 2029 — long-term buy'},
+  {n:'Marvin Harrison Jr.',pos:'WR',team:'ARI',aav:8843686,total:35374742,end:2028,note:'Locked as WR1 through 2028'},
+  {n:'Trey Benson',pos:'RB',team:'ARI',aav:1514902,total:6059606,end:2027,note:'Cheap rookie deal through 2027'},
+  {n:'James Conner',pos:'RB',team:'ARI',aav:3000000,total:3000000,end:2026,note:'Walk year — final contract at ARI'},
+  // CAROLINA PANTHERS
+  {n:'Bryce Young',pos:'QB',team:'CAR',aav:9488768,total:37955071,end:2027,note:'CAR franchise QB locked through 2027'},
+  {n:'Chuba Hubbard',pos:'RB',team:'CAR',aav:8300000,total:33200000,end:2028,note:'Locked through 2028 — role declining per target data'},
+  {n:'Tetairoa McMillan',pos:'WR',team:'CAR',aav:6982598,total:27930390,end:2028,note:'Locked WR1 through 2028 — ascending rookie'},
+  {n:'Jonathon Brooks',pos:'RB',team:'CAR',aav:2104271,total:8417082,end:2027,note:'Cheap rookie deal — monitor health'},
+  {n:'Xavier Legette',pos:'WR',team:'CAR',aav:3089294,total:12357176,end:2028,note:'Locked WR2 through 2028'},
+  {n:'Jalen Coker',pos:'WR',team:'CAR',aav:1075000,total:1075000,end:2026,note:'Walk year — cheap rookie deal expiring 2026'},
+  // WASHINGTON COMMANDERS
+  {n:'Terry McLaurin',pos:'WR',team:'WAS',aav:32333333,total:97000000,end:2028,note:'Elite WR1 locked through 2028'},
+  {n:'Jayden Daniels',pos:'QB',team:'WAS',aav:9436663,total:37746650,end:2028,note:'Franchise QB locked — ascending'},
+  {n:'Chigoziem Okonkwo',pos:'TE',team:'WAS',aav:9000000,total:27000000,end:2028,note:'WAS TE1 locked through 2028'},
+  {n:'Jacory Croskey-Merritt',pos:'RB',team:'WAS',aav:1076357,total:4305428,end:2028,note:'Cheap ascending RB on rookie deal'},
+  // TENNESSEE TITANS
+  {n:'Calvin Ridley',pos:'WR',team:'TEN',aav:23000000,total:92000000,end:2027,note:'WR1 locked through 2027'},
+  {n:"Wan'Dale Robinson",pos:'WR',team:'TEN',aav:17500000,total:70000000,end:2029,note:'Locked WR2 through 2029 — great value'},
+  {n:'Cam Ward',pos:'QB',team:'TEN',aav:12209905,total:48839618,end:2029,note:'Franchise rookie QB locked through 2029'},
+  {n:'Tony Pollard',pos:'RB',team:'TEN',aav:7250000,total:21750000,end:2026,note:'Walk year — confirmed final season in TEN'},
+  {n:'Tyjae Spears',pos:'RB',team:'TEN',aav:1372654,total:5490616,end:2026,note:'Expiring 2026 — cheap handcuff'},
+  {n:'Gunnar Helm',pos:'TE',team:'TEN',aav:1293227,total:5172908,end:2028,note:'Locked TE1 through 2028 on rookie deal'},
+  {n:'Elic Ayomanor',pos:'WR',team:'TEN',aav:1216454,total:4865816,end:2028,note:'Cheap ascending WR on rookie deal'},
+  // BUFFALO BILLS
+  {n:'Josh Allen',pos:'QB',team:'BUF',aav:55000000,total:330000000,end:2030,note:'Generational deal — locked through 2030'},
+  {n:'D.J. Moore',pos:'WR',team:'BUF',aav:27500000,total:110000000,end:2029,note:'Elite WR1 locked through 2029'},
+  {n:'Khalil Shakir',pos:'WR',team:'BUF',aav:13264500,total:53058000,end:2029,note:'Locked WR2 through 2029 — ascending'},
+  {n:'James Cook',pos:'RB',team:'BUF',aav:11500000,total:46000000,end:2029,note:'4yr/$46M locked through 2029 — role secure'},
+  {n:'Keon Coleman',pos:'WR',team:'BUF',aav:2518565,total:10074258,end:2027,note:'Cheap rookie deal through 2027'},
+  {n:'Dalton Kincaid',pos:'TE',team:'BUF',aav:3356756,total:13427023,end:2027,note:'Through 2027 — competing for role'},
+  // BALTIMORE RAVENS
+  {n:'Lamar Jackson',pos:'QB',team:'BAL',aav:52000000,total:260000000,end:2027,note:'Generational deal locked through 2027'},
+  {n:'Mark Andrews',pos:'TE',team:'BAL',aav:13089000,total:39267000,end:2028,note:'Locked through 2028 — 3yr deal'},
+  {n:'Zay Flowers',pos:'WR',team:'BAL',aav:3509109,total:14036434,end:2027,note:'Cheap deal through 2027 — extension coming given ascending role'},
+  {n:'Derrick Henry',pos:'RB',team:'BAL',aav:15000000,total:30000000,end:2027,note:'2yr deal — sell window opening'},
+  {n:'Rashod Bateman',pos:'WR',team:'BAL',aav:12250000,total:36750000,end:2029,note:'Locked BAL WR2 through 2029'},
+  // ATLANTA FALCONS
+  {n:'Tua Tagovailoa',pos:'QB',team:'ATL',aav:53100000,total:212400000,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Bijan Robinson',pos:'RB',team:'ATL',aav:5489634,total:21958535,end:2027,note:'Locked through 2027 — cheap deal, RB1 secure'},
+  {n:'Drake London',pos:'WR',team:'ATL',aav:5383617,total:21534468,end:2026,note:'WALK YEAR 2026 — ATL must extend or lose WR1'},
+  {n:'Kyle Pitts',pos:'TE',team:'ATL',aav:15045000,total:15045000,end:2026,note:'WALK YEAR 2026 — extension or departure imminent'},
+  // TAMPA BAY BUCCANEERS
+  {n:'Baker Mayfield',pos:'QB',team:'TB',aav:33333333,total:100000000,end:2026,note:'WALK YEAR 2026 — TB must extend or move on'},
+  {n:'Kenneth Gainwell',pos:'RB',team:'TB',aav:7000000,total:14000000,end:2027,note:'2yr/$14M — committed RB role confirmed'},
+  {n:'Emeka Egbuka',pos:'WR',team:'TB',aav:4543183,total:18172730,end:2029,note:'Locked WR through 2029 — ascending'},
+  {n:'Bucky Irving',pos:'RB',team:'TB',aav:1187888,total:4751552,end:2027,note:'Cheap ascending RB through 2027'},
+  {n:'Cade Otton',pos:'TE',team:'TB',aav:10000000,total:30000000,end:2028,note:'Locked TE1 through 2028'},
+  // SEATTLE SEAHAWKS
+  {n:'Jaxon Smith-Njigba',pos:'WR',team:'SEA',aav:42150000,total:168600000,end:2031,note:'Franchise deal — locked through 2031, buy at any cost'},
+  {n:'Sam Darnold',pos:'QB',team:'SEA',aav:33500000,total:100500000,end:2027,note:'3yr committed starter through 2027'},
+  {n:'Rashid Shaheed',pos:'WR',team:'SEA',aav:17000000,total:51000000,end:2028,note:'Locked WR2 through 2028'},
+  {n:'Zach Charbonnet',pos:'RB',team:'SEA',aav:1719020,total:6876079,end:2026,note:'Expiring 2026 — SEA RB situation murky'},
+  {n:'George Kittle',pos:'TE',team:'SF',aav:19100000,total:76400000,end:2029,note:'Elite TE1 locked up through 2029'},
+  {n:'Christian McCaffrey',pos:'RB',team:'SF',aav:19000000,total:38000000,end:2027,note:'Only 2 years left — sell window opening'},
+  {n:'Mike Evans',pos:'WR',team:'SF',aav:14133333,total:42400000,end:2028,note:'3yr deal — committed as SF WR2'},
+  // DALLAS COWBOYS
+  {n:'Dak Prescott',pos:'QB',team:'DAL',aav:60000000,total:240000000,end:2028,note:'Locked through 2028'},
+  {n:'CeeDee Lamb',pos:'WR',team:'DAL',aav:34000000,total:136000000,end:2029,note:'Elite WR1 locked through 2029'},
+  {n:'Jake Ferguson',pos:'TE',team:'DAL',aav:12500000,total:50000000,end:2029,note:'DAL TE1 locked through 2029'},
+  {n:'George Pickens',pos:'WR',team:'DAL',aav:27298000,total:27298000,end:2026,note:'WALK YEAR 2026 — DAL must extend WR2'},
+  {n:'Javonte Williams',pos:'RB',team:'DAL',aav:8000000,total:24000000,end:2028,note:'3yr/$24M locked — role security confirmed'},
+  // DENVER BRONCOS
+    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2028,note:'Locked WR2 through 2028 — big investment'},
+  {n:'Bo Nix',pos:'QB',team:'DEN',aav:4653292,total:18613166,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'RJ Harvey',pos:'RB',team:'DEN',aav:1839920,total:7359680,end:2028,note:'Cheap ascending RB locked through 2028'},
+  {n:'Troy Franklin',pos:'WR',team:'DEN',aav:1218709,total:4874836,end:2027,note:'Cheap WR on rookie deal through 2027'},
+  {n:'Evan Engram',pos:'TE',team:'DEN',aav:11500000,total:23000000,end:2026,note:'Walk year — expiring 2026'},
+  {n:'J.K. Dobbins',pos:'RB',team:'DEN',aav:8000000,total:16000000,end:2027,note:'2yr deal — RB1 committed short term'},
+  // GREEN BAY PACKERS
+  {n:'Jordan Love',pos:'QB',team:'GB',aav:55000000,total:220000000,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Josh Jacobs',pos:'RB',team:'GB',aav:12000000,total:48000000,end:2027,note:'Locked RB1 through 2027'},
+      {n:'Tucker Kraft',pos:'TE',team:'GB',aav:1384484,total:5537934,end:2026,note:'Expiring 2026 — extension expected'},
+  {n:'Jayden Reed',pos:'WR',team:'GB',aav:1795195,total:7180778,end:2026,note:'Expiring 2026 — extension coming'},
+  // LOS ANGELES CHARGERS
+  {n:'Justin Herbert',pos:'QB',team:'LAC',aav:52500000,total:262500000,end:2029,note:'Franchise locked through 2029'},
+  {n:'Omarion Hampton',pos:'RB',team:'LAC',aav:4443616,total:17774464,end:2029,note:'Cheap ascending RB locked through 2029'},
+  {n:'Quentin Johnston',pos:'WR',team:'LAC',aav:3547195,total:14188778,end:2027,note:'Locked WR through 2027'},
+  {n:'Ladd McConkey',pos:'WR',team:'LAC',aav:2498797,total:9995186,end:2027,note:'Cheap ascending WR through 2027'},
+    // LOS ANGELES RAMS
+  {n:'Matthew Stafford',pos:'QB',team:'LAR',aav:42000000,total:84000000,end:2026,note:'Walk year — LAR QB murky after 2026'},
+  {n:'Davante Adams',pos:'WR',team:'LAR',aav:22000000,total:44000000,end:2026,note:'WALK YEAR 2026 — final deal'},
+  {n:'Kyren Williams',pos:'RB',team:'LAR',aav:11000000,total:33000000,end:2028,note:'3yr/$33M locked through 2028'},
+  {n:'Puka Nacua',pos:'WR',team:'LAR',aav:1021244,total:4084977,end:2026,note:'Expiring 2026 — extension critical'},
+  {n:'Blake Corum',pos:'RB',team:'LAR',aav:1440941,total:5763762,end:2027,note:'Cheap RB on rookie deal'},
+  // MIAMI DOLPHINS
+  {n:'Malik Willis',pos:'QB',team:'MIA',aav:22500000,total:67500000,end:2028,note:'3yr committed starter through 2028'},
+  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:1359362,total:5437449,end:2026,note:'Expiring 2026 — extension critical for ascending RB'},
+  {n:'Jaylen Wright',pos:'RB',team:'MIA',aav:1195005,total:4780020,end:2027,note:'Cheap ascending RB through 2027'},
+  {n:'Ollie Gordon',pos:'RB',team:'MIA',aav:1118166,total:4472664,end:2028,note:'Cheap RB on rookie deal'},
+  // DETROIT LIONS
+  {n:'Jared Goff',pos:'QB',team:'DET',aav:53000000,total:212000000,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Amon-Ra St. Brown',pos:'WR',team:'DET',aav:30002500,total:120010000,end:2028,note:'Elite WR1 locked through 2028'},
+    {n:'Jahmyr Gibbs',pos:'RB',team:'DET',aav:4461283,total:17845130,end:2027,note:'Cheap RB1 on rookie deal — buy before extension'},
+    {n:'Isaac TeSlaa',pos:'WR',team:'DET',aav:1666113,total:6664452,end:2028,note:'Cheap ascending WR locked through 2028'},
+  // LAS VEGAS RAIDERS
+  {n:'Ashton Jeanty',pos:'RB',team:'LV',aav:8973953,total:35895812,end:2029,note:'Locked RB1 through 2029 — franchise piece'},
+  {n:'Brock Bowers',pos:'TE',team:'LV',aav:4534696,total:18138784,end:2028,note:'Cheap TE1 on rookie deal — extension imminent'},
+  {n:'Jalen Nailor',pos:'WR',team:'LV',aav:11676667,total:35030000,end:2028,note:'LV WR1 locked through 2028'},
+  // CLEVELAND BROWNS
+  {n:'Quinshon Judkins',pos:'RB',team:'CLE',aav:2850534,total:11402136,end:2028,note:'Cheap ascending RB locked through 2028'},
+  {n:'Harold Fannin Jr.',pos:'TE',team:'CLE',aav:1685722,total:6742886,end:2028,note:'Cheap TE1 on rookie deal through 2028'},
+  {n:'Shedeur Sanders',pos:'QB',team:'CLE',aav:1161845,total:4647380,end:2028,note:'Cheap franchise QB on rookie deal'},
+  {n:'Dylan Sampson',pos:'RB',team:'CLE',aav:1282641,total:5130564,end:2028,note:'Cheap ascending RB through 2028'},
+  // KANSAS CITY CHIEFS
+  {n:'Patrick Mahomes',pos:'QB',team:'KC',aav:45000000,total:450000000,end:2031,note:'Generational deal — locked through 2031'},
+  {n:'Kenneth Walker III',pos:'RB',team:'KC',aav:14350000,total:43050000,end:2028,note:'3yr/$43M — major RB1 investment'},
+  {n:'Travis Kelce',pos:'TE',team:'KC',aav:12000000,total:12000000,end:2028,note:'Walk year but likely extends — monitor'},
+  {n:'Xavier Worthy',pos:'WR',team:'KC',aav:3447566,total:13790264,end:2028,note:'Cheap ascending WR through 2028'},
+  {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2026,note:'Expiring 2026 — extension coming given ascending role'},
+  // MINNESOTA VIKINGS
+  {n:'Justin Jefferson',pos:'WR',team:'MIN',aav:35000000,total:140000000,end:2028,note:'Elite WR1 locked through 2028'},
+  {n:'Kyler Murray',pos:'QB',team:'MIN',aav:1300000,total:1300000,end:2026,note:'1yr bridge deal — expected QB1 starter in 2026'},
+  {n:'T.J. Hockenson',pos:'TE',team:'MIN',aav:16500000,total:66000000,end:2026,note:'WALK YEAR 2026 — confirms Fading signal'},
+  {n:'J.J. McCarthy',pos:'QB',team:'MIN',aav:5463699,total:21854796,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Jordan Addison',pos:'WR',team:'MIN',aav:3432935,total:13731739,end:2027,note:'Cheap WR locked through 2027'},
+  {n:'Aaron Jones',pos:'RB',team:'MIN',aav:5560000,total:5560000,end:2026,note:'WALK YEAR 2026 — final contract at MIN'},
+  {n:'Jordan Mason',pos:'RB',team:'MIN',aav:5250000,total:10500000,end:2026,note:'Expiring 2026 — short runway'},
+  // CINCINNATI BENGALS
+  {n:'Joe Burrow',pos:'QB',team:'CIN',aav:55000000,total:275000000,end:2029,note:'Franchise locked through 2029'},
+  {n:"Ja'Marr Chase",pos:'WR',team:'CIN',aav:40250000,total:161000000,end:2029,note:'Elite WR1 locked through 2029'},
+  {n:'Tee Higgins',pos:'WR',team:'CIN',aav:28750000,total:115000000,end:2028,note:'Locked WR2 through 2028'},
+  {n:'Chase Brown',pos:'RB',team:'CIN',aav:1031539,total:4126156,end:2026,note:'Expiring 2026 — CIN RB1 extension needed'},
+  // JACKSONVILLE JAGUARS
+  {n:'Trevor Lawrence',pos:'QB',team:'JAC',aav:55000000,total:275000000,end:2030,note:'Franchise locked through 2030'},
+  {n:'Jakobi Meyers',pos:'WR',team:'JAC',aav:20000000,total:60000000,end:2028,note:'Locked WR1 through 2028'},
+  {n:'Travis Hunter',pos:'WR',team:'JAC',aav:11662282,total:46649126,end:2028,note:'Locked WR2 through 2028 — ascending rookie'},
+  {n:'Brian Thomas Jr.',pos:'WR',team:'JAC',aav:3664995,total:14659978,end:2028,note:'Cheap WR locked through 2028'},
+  {n:'Bhayshul Tuten',pos:'RB',team:'JAC',aav:1319132,total:5276528,end:2028,note:'Cheap ascending RB through 2028'},
+  {n:'Parker Washington',pos:'WR',team:'JAC',aav:1008066,total:4032264,end:2026,note:'Expiring 2026 — extension needed'},
+  {n:'Brenton Strange',pos:'TE',team:'JAC',aav:1528583,total:6114333,end:2026,note:'Expiring 2026'},
+  // CHICAGO BEARS
+  {n:'Caleb Williams',pos:'QB',team:'CHI',aav:9871515,total:39486058,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Colston Loveland',pos:'TE',team:'CHI',aav:6659002,total:26636008,end:2029,note:'Locked TE1 through 2029 — ascending'},
+  {n:"D'Andre Swift",pos:'RB',team:'CHI',aav:8000000,total:24000000,end:2026,note:'WALK YEAR 2026 — CHI RB1 expiring'},
+  {n:'Rome Odunze',pos:'WR',team:'CHI',aav:5681125,total:22724500,end:2028,note:'Locked WR through 2028 — ascending'},
+  {n:'Luther Burden',pos:'WR',team:'CHI',aav:2741008,total:10964030,end:2028,note:'Cheap ascending WR locked through 2028'},
+  {n:'Cole Kmet',pos:'TE',team:'CHI',aav:12500000,total:50000000,end:2027,note:'Locked TE through 2027'},
+  // NEW ENGLAND PATRIOTS
+  {n:'Romeo Doubs',pos:'WR',team:'NE',aav:17000000,total:68000000,end:2029,note:'Locked NE WR1 through 2029 — major investment'},
+  {n:'Drake Maye',pos:'QB',team:'NE',aav:9159941,total:36639764,end:2028,note:'Franchise QB locked through 2028'},
+  {n:'Rhamondre Stevenson',pos:'RB',team:'NE',aav:9000000,total:36000000,end:2028,note:'Locked RB1 through 2028'},
+  {n:'Hunter Henry',pos:'TE',team:'NE',aav:9000000,total:27000000,end:2026,note:'Walk year — NE TE1 expiring 2026'},
+  {n:'TreVeyon Henderson',pos:'RB',team:'NE',aav:2785809,total:11143234,end:2028,note:'Cheap ascending RB locked through 2028'},
+  {n:'Jonathan Taylor',pos:'RB',team:'IND',aav:14000000,total:42000000,end:2026,note:'WALK YEAR 2026 — IND must extend or sell'},
+  {n:'Tyler Warren',pos:'TE',team:'IND',aav:5240163,total:20960650,end:2029,note:'Locked TE1 through 2029 — IND committed'},
+  {n:'Josh Downs',pos:'WR',team:'IND',aav:1380115,total:5520459,end:2026,note:'Expiring 2026 — extension likely'},
+  // Batch — contracts from screenshots
+  {n:'AJ Barner',pos:'TE',team:'SEA',aav:1193777,total:4775108,end:2027,note:'Cheap rookie deal through 2027 — ascending SEA TE1'},
+  {n:'Kyle Monangai',pos:'RB',team:'CHI',aav:1082035,total:4328140,end:2028,note:'Cheap rookie deal through 2028 — CHI ascending RB'},
+  {n:'Matthew Golden',pos:'WR',team:'GB',aav:4393835,total:17575338,end:2029,note:'Fully guaranteed rookie deal through 2029 — locked up'},
+  {n:'David Montgomery',pos:'RB',team:'HOU',aav:8250000,total:16500000,end:2027,note:'2yr/$16.5M — HOU RB1 committed through 2027'},
+  {n:'Tyrone Tracy',pos:'RB',team:'NYG',aav:1076588,total:4306352,end:2027,note:'Cheap rookie deal through 2027 — NYG ascending RB'},
+  {n:'Jameson Williams',pos:'WR',team:'DET',aav:26666667,total:80000000,end:2029,note:'Major extension — locked through 2029 as DET WR2'},
+  {n:'Oronde Gadsden',pos:'TE',team:'LAC',aav:1143509,total:4574036,end:2028,note:'Cheap rookie deal through 2028 — ascending LAC TE1'},
+  {n:'Brock Purdy',pos:'QB',team:'SF',aav:53000000,total:265000000,end:2030,note:'Franchise QB locked through 2030'},
+  {n:'Tyler Shough',pos:'QB',team:'NO',aav:2701180,total:10804721,end:2028,note:'Cheap rookie QB deal through 2028 — fully guaranteed'},
+  {n:'Courtland Sutton',pos:'WR',team:'DEN',aav:23000000,total:92000000,end:2029,note:'Locked through 2029 — potential out after 2026 worth monitoring'},
+  {n:'Daniel Jones',pos:'QB',team:'IND',aav:44000000,total:88000000,end:2027,note:'2yr/$88M transition tag extension — IND QB1'},
+  {n:'Alec Pierce',pos:'WR',team:'IND',aav:28500000,total:114000000,end:2029,note:'Major extension — IND WR1 locked through 2029'},
+  {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2026,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
+];
+
+function contractStatus(c){
+  const yrsLeft=c.end-2025;
+  if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
+  if(yrsLeft>=4)return{label:'Locked Up',cls:'bs',icon:'🔒'};
+  if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'🔴'};
+  return{label:'Stable',cls:'bi',icon:'✓'};
+}
+
+function dynastySignal(c){
+  const yrsLeft=c.end-2025;
+  const aavM=(c.aav/1000000).toFixed(1);
+  if(c.end===2026)return'<span style="color:#fca5a5;font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  if(yrsLeft>=4&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
+  if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
+  if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Buy window closing · '+yrsLeft+' yrs left</span>';
+  return'<span style="color:#718096;font-size:10px">'+c.note+'</span>';
+}
+
+function renderContracts(){
+  const q=(document.getElementById('s-contracts').value||'').toLowerCase();
+  const pos=document.getElementById('pos-contracts').value;
+  const statusF=document.getElementById('status-contracts').value;
+  const sort=document.getElementById('sort-contracts').value;
+
+  let data=CONTRACTS.filter(c=>{
+    if(pos!=='ALL'&&c.pos!==pos)return false;
+    if(q&&!c.n.toLowerCase().includes(q)&&!c.team.toLowerCase().includes(q))return false;
+    if(statusF!=='ALL'){
+      const st=contractStatus(c);
+      if(statusF==='locked'&&st.label!=='Locked Up')return false;
+      if(statusF==='walkyr'&&st.label!=='Walk Year')return false;
+      if(statusF==='expiring'&&st.label!=='Expiring')return false;
+    }
+    return true;
+  });
+
+  if(sort==='aav')data.sort((a,b)=>b.aav-a.aav);
+  else if(sort==='end')data.sort((a,b)=>a.end-b.end);
+  else if(sort==='total')data.sort((a,b)=>b.total-a.total);
+  else data.sort((a,b)=>a.n.localeCompare(b.n));
+
+  const fmt=n=>n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+n.toLocaleString();
+  const yrsColor=yrs=>yrs<=1?'#fca5a5':yrs<=2?'#fcd34d':yrs>=4?'#6ee7b7':'#7dd3fc';
+
+  document.getElementById('contracts-body').innerHTML=data.map(c=>{
+    const st=contractStatus(c);
+    const yrsLeft=c.end-2025;
+    const pl=COMP.find(x=>x.n===c.n);
+    const ktcStr=pl?`<span style="font-size:10px;color:#718096">KTC ${pl.ktcEff.toLocaleString()}</span>`:'';
+    return`<tr>
+      <td style="font-weight:600;white-space:nowrap">${c.n}${pl?glTag(c.n)+trendTag(c.n):''}</td>
+      <td><span class="badge bn">${c.pos}</span></td>
+      <td style="color:#718096">${c.team}</td>
+      <td>${pl&&pl.a<90?pl.a.toFixed(1):'-'}</td>
+      <td style="font-weight:600">${fmt(c.aav)}</td>
+      <td style="color:#718096">${fmt(c.total)}</td>
+      <td>${c.end}</td>
+      <td style="font-weight:600;color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
+      <td><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
+      <td>${dynastySignal(c)} ${ktcStr}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderDepth(){} // replaced by Contracts tab
+
+function doEditSearch(){
+  const q=(document.getElementById('edit-search').value||'').toLowerCase().trim();
+  const res=document.getElementById('edit-results');
+  if(q.length<2){res.style.display='none';return;}
+  const matches=RAW.filter(p=>p.n.toLowerCase().includes(q)).slice(0,10);
+  if(!matches.length){res.style.display='none';return;}
+  res.style.display='block';
+  res.innerHTML=matches.map(p=>`<div class="edit-result-item" onclick="selEdit('${p.n.replace(/'/g,"\\'")}')">
+    ${p.n} <span style="color:#718096;font-size:11px">${p.p} · ${p.t}</span>
+    ${OV[p.n]?'<span class="badge bw" style="margin-left:6px">edited</span>':''}
+  </div>`).join('');
+}
+function selEdit(name){
+  editTarget=name;
+  document.getElementById('edit-search').value=name;
+  document.getElementById('edit-results').style.display='none';
+  document.getElementById('edit-card-wrap').style.display='block';
+  document.getElementById('edit-card-title').textContent=name;
+  const o=OV[name]||{};
+  document.getElementById('edit-team').value=o.team||'';
+  document.getElementById('edit-sys').value=o.s!==undefined?o.s:'';
+  document.getElementById('edit-cont').value=o.c!==undefined?o.c:'';
+  document.getElementById('edit-inj').value=o.inj!==undefined?o.inj:1.0;
+  document.getElementById('edit-ktc').value=o.ktc!==undefined?o.ktc:'';
+  document.getElementById('edit-notes').value=o.notes||'';
+}
+function applyOV(){
+  if(!editTarget)return;
+  const o={};
+  const team=document.getElementById('edit-team').value;
+  const sv=document.getElementById('edit-sys').value;
+  const cv=document.getElementById('edit-cont').value;
+  const inj=parseFloat(document.getElementById('edit-inj').value)||1.0;
+  const kv=document.getElementById('edit-ktc').value;
+  const notes=document.getElementById('edit-notes').value;
+  if(team)o.team=team;if(sv!=='')o.s=parseInt(sv);if(cv!=='')o.c=parseFloat(cv);
+  if(inj!==1.0)o.inj=inj;if(kv!=='')o.ktc=parseInt(kv);if(notes)o.notes=notes;
+  OV[editTarget]=o;
+  const fl=document.getElementById('edit-flash');
+  fl.style.opacity='1';setTimeout(()=>fl.style.opacity='0',2000);
+  renderAll();renderOVList();
+}
+function resetOV(){
+  if(!editTarget)return;
+  delete OV[editTarget];
+  ['edit-team','edit-sys','edit-cont','edit-ktc','edit-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('edit-inj').value=1.0;
+  renderAll();renderOVList();
+}
+function renderOVList(){
+  const keys=Object.keys(OV);
+  const el=document.getElementById('ov-list');
+  if(!keys.length){el.innerHTML='<div style="color:#718096;font-size:12px">None.</div>';return;}
+  el.innerHTML=keys.map(name=>{
+    const o=OV[name];const parts=[];
+    if(o.team)parts.push(`→${o.team}`);if(o.s!==undefined)parts.push(`sys ${o.s}`);
+    if(o.ktc!==undefined)parts.push(`KTC ${o.ktc.toLocaleString()}`);if(o.notes)parts.push(`"${o.notes}"`);
+    return`<div class="override-item">
+      <span style="font-weight:600">${name}</span>
+      <span style="font-size:11px;color:#718096;flex:1;margin:0 8px">${parts.join(' · ')}</span>
+      <button onclick="clearOV('${name.replace(/'/g,"\\'")}'')" style="font-size:11px;color:#fca5a5;background:none;border:none;cursor:pointer">clear</button>
+    </div>`;
+  }).join('');
+}
+function clearOV(name){delete OV[name];renderAll();renderOVList();}
+
+function renderAll(){
+  COMP.length=0;RAW.forEach(r=>COMP.push(calcProj(r)));
+  ASSETS.length=0;COMP.forEach(p=>ASSETS.push(p));PICKS.forEach(p=>ASSETS.push(p));
+  renderRankings();renderProj();renderWatchlist();renderRipple();renderEPA();recalcTrade();
+}
+
+function showTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='contracts')renderContracts();
+}
+
+// Depth Charts tab removed — replaced by Contracts tab
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap')){['drop-a','drop-b'].forEach(id=>{const d=document.getElementById(id);if(d)d.style.display='none';});}
+  if(!e.target.closest('.edit-search-wrap')){const er=document.getElementById('edit-results');if(er)er.style.display='none';}
+});
+renderAll();renderOVList();
+</script>
+</body>
+</html>
