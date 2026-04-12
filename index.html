@@ -443,7 +443,7 @@ const RB_SNAP={
   "Rachaad White":[59.5,50.6,51.8,78.1],"Jordan Mason":[37.2,41.3,0,9.3],
   "Omarion Hampton":[56.7,56.7,0,0],"Blake Corum":[22.7,29.3,10.9,0],
   "Cam Skattebo":[54.1,54.1,0,0],"J.K. Dobbins":[55.6,50.8,63.2,46.9],
-  "Chuba Hubbard":[56.0,40.7,77.4,59.0],"Bhayshul Tuten":[26.3,18.7,34.0,0],
+  "Chuba Hubbard":[56.0,40.7,77.4,59.0],"Bhayshul Tuten":[45.0,55.0,34.0,0],
   "Aaron Jones":[47.7,50.1,62.7,32.3],"Tyjae Spears":[40.6,46.0,29.3,53.1],
   "Alvin Kamara":[47.0,40.7,58.9,58.4],"Ollie Gordon":[22.7,22.7,0,0],
   "Isaac Guerendo":[14.0,0,21.0,0],"Trey Benson":[36.6,48.4,13.3,0],
@@ -703,7 +703,7 @@ const TS_DELTA={
   "Colston Loveland":-0.01,"D'Andre Swift":-0.03,"DK Metcalf":0.01,"Dalton Kincaid":-0.08,
   "Davante Adams":-0.01,"De'Von Achane":0.05,"DeVonta Smith":-0.01,"Deebo Samuel":-0.01,
   "Derrick Henry":0.03,"Drake London":-0.01,"Evan Engram":-0.01,"Garrett Wilson":-0.03,
-  "George Kittle":0.03,"George Pickens":-0.01,"Harold Fannin Jr.":0.05,"Isaiah Likely":0.01,
+  "George Kittle":0.03,"George Pickens":-0.01,"Harold Fannin Jr.":0.08,"Isaiah Likely":0.01,
   "Ja'Marr Chase":0.01,"Jahmyr Gibbs":0.05,"James Conner":-0.03,"James Cook":-0.05,
   "Jameson Williams":0.03,"Javonte Williams":-0.03,"Jaxon Smith-Njigba":0.03,"Jayden Reed":-0.03,
   "Jaylen Warren":-0.08,"Jonathan Taylor":0.01,"Jordan Addison":-0.01,"Josh Downs":0.01,
@@ -831,19 +831,23 @@ const TREND_TAG={
   // Rising ↑ — confirmed ascending role trajectory
   "Luther Burden":"rising","Harold Fannin Jr.":"rising",
   "Jahmyr Gibbs":"rising","Zay Flowers":"rising","De'Von Achane":"rising",
-  "George Kittle":"rising","Parker Washington":"rising","Jaxon Smith-Njigba":"rising",
-  "Isaiah Likely":"rising","Terry McLaurin":"rising","Rhamondre Stevenson":"rising",
-  "RJ Harvey":"rising","Rome Odunze":"rising","Christian Watson":"rising",
-  "Khalil Shakir":"rising","Derrick Henry":"rising","Ashton Jeanty":"rising",
+  "George Kittle":"rising","Parker Washington":"rising","Jaxon Smith-Njigba":"rising","Rhamondre Stevenson":"rising",
+  "RJ Harvey":"rising","Ashton Jeanty":"rising",
   // Fading ↓ — confirmed declining role trajectory
   "Alvin Kamara":"fading","Tony Pollard":"fading","Chuba Hubbard":"fading",
-  "Jaylen Warren":"fading","Dalton Kincaid":"fading",
-  "Garrett Wilson":"fading","Amon-Ra St. Brown":"fading","CeeDee Lamb":"fading",
-  "Brian Thomas Jr.":"fading","Mark Andrews":"fading","Sam LaPorta":"fading",
-  "D'Andre Swift":"fading","Jayden Reed":"fading","Ladd McConkey":"fading",
-  "DeVonta Smith":"fading","Pat Freiermuth":"fading","Mason Taylor":"fading",
-  "Zach Charbonnet":"fading","Marvin Harrison Jr.":"fading",
-  "T.J. Hockenson":"fading","George Pickens":"fading","Aaron Jones":"fading",
+  "Garrett Wilson":"fading",
+  "Brian Thomas Jr.":"fading","Mark Andrews":"fading","Jayden Reed":"fading","Ladd McConkey":"fading",
+  "DeVonta Smith":"fading","Pat Freiermuth":"fading","Mason Taylor":"fading","Marvin Harrison Jr.":"fading",
+  "T.J. Hockenson":"fading",
+  "George Pickens":"rising",
+  "Jaxson Dart":"rising",
+  "Jaylen Warren":"rising",
+  "Rome Odunze":"rising",
+  "Aaron Jones":"fading",
+  "D'Andre Swift":"fading",
+  "Derrick Henry":"fading",
+  "Isaiah Likely":"fading",
+  "Terry McLaurin":"fading",
 };
 function trendTag(n){
   const t=TREND_TAG[n];
@@ -948,8 +952,8 @@ const RAW=[
   {n:'Braelon Allen',t:'NYJ',p:'RB',a:22.2,k:2796,ppg25:3.6,ppg24:4.5,ppg23:0,g25:4},
   {n:'James Conner',t:'ARI',p:'RB',a:30.2,k:1800,ppg25:7.3,ppg24:14.4,ppg23:14.5,g25:4},
   {n:'Isiah Pacheco',t:'DET',p:'RB',a:27.3,k:3050,ppg25:6.0,ppg24:7.3,ppg23:13.7,g25:13},
-  {n:"De'Von Achane",t:'MIA',p:'RB',a:23.3,k:7820,ppg25:16.2,ppg24:12.8,ppg23:11.4,g25:13},
-  {n:"D'Andre Swift",t:'CHI',p:'RB',a:26.8,k:4200,ppg25:8.3,ppg24:14.6,ppg23:12.4,g25:15},
+  
+  
   {n:'Jonathon Brooks',t:'CAR',p:'RB',a:22.1,k:4100,ppg25:5.2,ppg24:0,ppg23:0,g25:8},
     {n:'Tank Bigsby',t:'JAC',p:'RB',a:23.8,k:2900,ppg25:8.1,ppg24:6.2,ppg23:0,g25:15},
       {n:'Alexander Mattison',t:'FA',p:'RB',a:26.7,k:1200,ppg25:4.8,ppg24:7.2,ppg23:13.4,g25:10},
@@ -1014,7 +1018,7 @@ const RAW=[
   {n:'Deebo Samuel',t:'FA',p:'WR',a:29.4,k:2800,ppg25:9.5,ppg24:8.5,ppg23:14.2,g25:16},
   {n:'Jauan Jennings',t:'FA',p:'WR',a:29.0,k:2700,ppg25:9.7,ppg24:11.5,ppg23:3.2,g25:15},
   {n:'Stefon Diggs',t:'FA',p:'WR',a:32.0,k:1800,ppg25:9.9,ppg24:12.3,ppg23:13.0,g25:17},
-  {n:"Wan'Dale Robinson",t:'TEN',p:'WR',a:25.4,k:3800,ppg25:9.8,ppg24:8.4,ppg23:7.2,g25:15},
+  
   {n:'Jayden Reed',t:'GB',p:'WR',a:25.3,k:4200,ppg25:10.4,ppg24:12.8,ppg23:9.6,g25:16},
   {n:'Calvin Ridley',t:'TEN',p:'WR',a:30.7,k:3200,ppg25:14.6,ppg24:7.2,ppg23:13.8,g25:17},
   {n:'Rashid Shaheed',t:'SEA',p:'WR',a:27.4,k:3100,ppg25:9.4,ppg24:6.8,ppg23:10.2,g25:17},
@@ -1097,7 +1101,7 @@ const RAW=[
   {n:'Tyler Allgeier',t:'ARI',p:'RB',a:25.4,k:1600,ppg25:12.9,ppg24:11.1,ppg23:14.3,g25:18},
   // Batch 4-7 — TEs
   {n:'Greg Dulcich',t:'FA',p:'TE',a:26.4,k:1200,ppg25:10.2,ppg24:1.1,ppg23:2.3,g25:11},
-  {n:'David Njoku',t:'CLE',p:'TE',a:28.8,k:3200,ppg25:12.4,ppg24:24.1,ppg23:22.7,g25:12},
+  {n:'David Njoku',t:'FA',p:'TE',a:28.8,k:3200,ppg25:12.4,ppg24:24.1,ppg23:22.7,g25:12},
   {n:'Colby Parkinson',t:'LAR',p:'TE',a:26.8,k:1800,ppg25:17.4,ppg24:6.0,ppg23:6.1,g25:15},
   {n:'Terrance Ferguson',t:'LAR',p:'TE',a:23.8,k:1900,ppg25:7.8,ppg24:0,ppg23:0,g25:13},
   {n:'Jake Tonges',t:'SF',p:'TE',a:26.8,k:2000,ppg25:9.9,ppg24:0,ppg23:0,g25:17},
@@ -1505,18 +1509,146 @@ function calcProj(pl){
   const epa=calcEPA(pl.n,pl.p);
   const roleData=getRoleData(pl.n,pl.p);
 
+  // ── RULE 1: MINIMUM SAMPLE THRESHOLD ──────────────────────────
+  // Seasons with very few games get reduced weight — prevents injury-year
+  // or emergency-starter averages from being treated as full seasons.
+  const g25=pl.g25||0;
+  const w25 = g25>=10 ? 3 : g25>=8 ? 1.5 : g25>=4 ? 0.75 : 0;
+  const w24 = pl.ppg24>0 ? 2 : 0;
+  const w23 = pl.ppg23>0 ? 1 : 0;
+
   let num=0,den=0;
-  if(pl.g25>=6&&pl.ppg25>0){num+=pl.ppg25*3;den+=3;}
-  if(pl.ppg24>0){num+=pl.ppg24*2;den+=2;}
-  if(pl.ppg23>0){num+=pl.ppg23*1;den+=1;}
-  const base=den>0?num/den:pl.ppg25||pl.ppg24||8.0;
+  if(w25>0&&pl.ppg25>0){num+=pl.ppg25*w25;den+=w25;}
+  if(w24>0){num+=pl.ppg24*w24;den+=w24;}
+  if(w23>0){num+=pl.ppg23*w23;den+=w23;}
+  let base=den>0?num/den:pl.ppg25||pl.ppg24||8.0;
 
-  const rawDelta=getDeltas(pl.n,pl.p,e.s,e.c,roleData.raw,roleData.raw,col,epa.sc,rip,qbq);
+  // Stale-production discount: if player has no 2025 games, prior data
+  // is unconfirmed — reduce base to reflect health/role uncertainty
+  if(g25===0 && pl.ppg25===0){
+    base *= 0.75; // stale discount — production not confirmed this season
+  }
 
-  // Age-adjusted production curve: how is this player performing vs their own historical arc?
-  // Only applied with 10+ games in 2025; skips players with insufficient prior data
+  // ── RULE 2: VOLUME-ADJUSTED YPRR ──────────────────────────────
+  // Regress YPRR toward league avg based on seasons of data available.
+  // Also cap the role BONUS for players with thin data — prevents a WR
+  // with 2 big-play targets from getting an elite efficiency designation.
+  let adjYPRR = roleData.raw;
+  if((pl.p==='WR'||pl.p==='TE') && adjYPRR>0){
+    const d = pl.p==='WR' ? YPRR_WR[pl.n] : YPRR_TE[pl.n];
+    if(d){
+      const wrAvg = pl.p==='TE' ? 1.45 : 1.60;
+      const seasons = (d[1]>0?1:0)+(d[2]>0?1:0)+(d[3]>0?1:0);
+      // More regression for fewer seasons of data
+      const regrFactor = seasons>=3 ? 0.85 : seasons===2 ? 0.70 : 0.50;
+      adjYPRR = adjYPRR*regrFactor + wrAvg*(1-regrFactor);
+      adjYPRR = Math.round(adjYPRR*100)/100;
+    }
+  }
+
+  // ── RULE 3: ROLE STABILITY MODIFIER ───────────────────────────
+  // Penalize players whose high PPG came from a temporary role spike.
+  // Increased cap to -0.15 so meaningful spikes are properly dampened.
+  let d_stability = 0;
+  if(pl.ppg25>0 && pl.ppg24>0 && pl.ppg23>0){
+    const avg2324 = (pl.ppg24*2+pl.ppg23)/3;
+    const spike = pl.ppg25 - avg2324;
+    if(spike>0 && avg2324>0 && spike/avg2324>0.35){
+      // Stronger dampening — cap raised to -0.15
+      d_stability = -Math.min(0.15, (spike/avg2324 - 0.35) * 0.30);
+    }
+  } else if(pl.ppg25>0 && pl.ppg24===0 && pl.ppg23===0 && g25<14){
+    d_stability = -0.10; // only one season of data, limited games
+  } else if(pl.ppg25>0 && (pl.ppg24===0||pl.ppg23===0) && g25<12){
+    d_stability = -0.06;
+  }
+  // Two-year player (no 2023) with high variance between years
+  if(pl.ppg25>0 && pl.ppg24>0 && pl.ppg23===0){
+    const swing = Math.abs(pl.ppg25 - pl.ppg24) / Math.max(pl.ppg25, pl.ppg24);
+    if(swing > 0.30) d_stability -= 0.04; // large swing between only 2 years
+    // RBs with only 2 years of data and no prior baseline — unproven sustained role
+    if(pl.p==='RB') d_stability -= 0.08;
+  }
+  // Stale spike: 2024 outlier with no 2025 confirmation
+  if(pl.ppg24>0 && pl.ppg23>0 && pl.ppg25===0 && g25===0){
+    if(pl.ppg24 > pl.ppg23*1.4) d_stability = -0.08;
+  }
+  // Single-year players (rookie or returning): apply regression
+  // Catches Dart (g25=14, ppg24=0) and similar first-year starters
+  // who slip through the g25<14 threshold with exactly 14+ games
+  if(pl.ppg25>0 && pl.ppg24===0 && pl.ppg23===0){
+    d_stability = pl.p==='QB' ? -0.08 : -0.10; // QB regresses less aggressively
+  }
+
+  // ── RULE 4: VOLATILITY PENALTY ────────────────────────────────
+  let d_volatility = 0;
+  const gl = GAME_LOG[pl.n];
+  if(gl && gl.g >= 20){
+    if(gl.miss > 65) d_volatility = -0.09;
+    else if(gl.miss > 55) d_volatility = -0.06;
+    else if(gl.miss > 45) d_volatility = -0.03;
+    else if(gl.miss > 40) d_volatility = -0.01;
+    if(gl.elite > 30) d_volatility = Math.min(0, d_volatility + 0.03);
+    else if(gl.elite > 20) d_volatility = Math.min(0, d_volatility + 0.01);
+  }
+
+  // ── RULE 5: INJURY / TIME-DECAY MODIFIER ─────────────────────
+  let d_decay = 0;
+  if(g25===0 && pl.ppg24===0){
+    d_decay = -0.18; // no recent data at all
+  } else if(g25===0){
+    d_decay = -0.12; // missed all of 2025
+  } else if(g25>0 && g25<4){
+    d_decay = -0.08;
+  } else if(g25>0 && g25<8){
+    d_decay = -0.04;
+  }
+  if(pl.ppg25>0 && pl.ppg24>0 && pl.ppg23>0){
+    if(pl.ppg25 < pl.ppg24 && pl.ppg24 < pl.ppg23) d_decay -= 0.03;
+  }
+
+  // ── FIX 1: DAMPEN OC CONTINUITY PENALTY FOR PROVEN PRODUCERS ──
+  // A new OC should temper a proven WR1, not crater them.
+  // Proven = base >= positional threshold OR recent season >= 15 PPG.
+  // For proven players: pull continuity 60% toward neutral, and soften
+  // system score by +10pts — preventing one bad-system + new-OC combo
+  // from collapsing an established producer's entire projection.
+  const provenThreshold = pl.p==='WR'?13.0:pl.p==='TE'?12.0:pl.p==='RB'?15.0:22.0;
+  const provenPPG25 = pl.p==='WR'?15.0:pl.p==='TE'?13.0:pl.p==='RB'?16.0:24.0;
+  const isProven = base >= provenThreshold || pl.ppg25 >= provenPPG25;
+  // Soften OC continuity penalty: pull 60% toward neutral (0.70) for proven players
+  const adjCont = isProven && e.c < 0.70
+    ? e.c + (0.70 - e.c) * 0.60
+    : e.c;
+  // Soften system score: proven producers carry their role through bad environments
+  const adjSys = isProven && e.s < 55
+    ? Math.min(e.s + 10, 55)
+    : e.s;
+
+  // ── FIX 3: MULTI-YEAR YPRR CONFIRMATION FOR POSITIVE ROLE DELTA ─
+  // A single season of high YPRR does not earn a positive role bonus.
+  // Player must have 2+ seasons above league average YPRR to qualify.
+  // If only 1 season above avg → treat as neutral (0 role delta, not positive).
+  // This prevents speed-specialist or small-sample efficiency from
+  // projecting fringe WRs into WR1 territory.
+  let finalAdjYPRR = adjYPRR;
+  if(pl.p==='WR'||pl.p==='TE'){
+    const d = pl.p==='WR' ? YPRR_WR[pl.n] : YPRR_TE[pl.n];
+    if(d){
+      const avg = pl.p==='TE' ? 1.45 : 1.60;
+      const seasonsAboveAvg = (d[1]>avg?1:0)+(d[2]>avg?1:0)+(d[3]>avg?1:0);
+      // Only 1 season above avg → cap adjYPRR at league average (no role bonus)
+      if(seasonsAboveAvg < 2 && finalAdjYPRR > avg){
+        finalAdjYPRR = avg; // neutral — no positive role delta awarded
+      }
+    }
+  }
+
+  const rawDelta=getDeltas(pl.n,pl.p,adjSys,adjCont,finalAdjYPRR,roleData.raw,col,epa.sc,rip,qbq);
+
+  // ── AGE-ADJUSTED PRODUCTION CURVE (existing) ──────────────────
   let d_curve=0;
-  if(pl.g25>=10 && base>0){
+  if(g25>=10 && base>0){
     let priorNum=0,priorDen=0;
     if(pl.ppg24>0){priorNum+=pl.ppg24*2;priorDen+=2;}
     if(pl.ppg23>0){priorNum+=pl.ppg23*1;priorDen+=1;}
@@ -1533,11 +1665,25 @@ function calcProj(pl){
       }
     }
   }
-  // QBs get a tighter projection cap — they're more mean-reverting year to year
+
+  // ── COMBINE ALL DELTAS ─────────────────────────────────────────
   const cap=pl.p==='QB'?0.10:0.18;
-  const floor=pl.p==='QB'?-0.15:-0.20;
-  const delta=Math.max(floor,Math.min(cap,rawDelta+d_curve));
-  const proj=base*agM*(1+delta)*e.inj;
+  const floorD=pl.p==='QB'?-0.15:-0.25;
+  const totalDelta=rawDelta+d_curve+d_stability+d_volatility+d_decay;
+  const delta=Math.max(floorD,Math.min(cap,totalDelta));
+  let proj=base*agM*(1+delta)*e.inj;
+
+  // ── FIX 2: MISS% AS HARD PROJECTION CEILING ────────────────────
+  // High Miss% players cannot project into reliable starter territory
+  // regardless of other positive signals. A 65%+ Miss rate means the
+  // player is genuinely unreliable — efficiency signals are misleading.
+  // Ceiling is set relative to position average PPG:
+  //   WR/RB avg starter: ~11.5 | TE avg starter: ~10.5 | QB: ~18.0
+  if(gl && gl.g >= 20){
+    const posCeil = pl.p==='QB'?22.0:pl.p==='TE'?11.5:12.5;
+    if(gl.miss > 65) proj = Math.min(proj, posCeil * 0.92);       // hard ceiling
+    else if(gl.miss > 55) proj = Math.min(proj, posCeil * 1.05);  // soft ceiling
+  }
 
   // Model value: additive delta on KTC, hard cap 9999
   const mvDelta=Math.max(-0.25,Math.min(0.20,rawDelta+(ci(e.c)-0.15)*(-0.3)));
