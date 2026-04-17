@@ -15,6 +15,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:#0f1117;color:#e
 .controls select,.controls input{font-size:12px;padding:5px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0}
 .controls input{width:160px}
 table{width:100%;border-collapse:collapse;font-size:12px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px}
 th{font-size:10px;font-weight:500;color:#718096;text-align:left;padding:6px 8px;border-bottom:1px solid #2d3748;cursor:pointer;white-space:nowrap;user-select:none}
 th:hover{color:#e2e8f0}
 td{padding:5px 8px;border-bottom:1px solid #1a202c;color:#e2e8f0;vertical-align:middle}
@@ -26,7 +27,28 @@ tr:hover td{background:#1a202c}
 .bar-wrap{display:inline-block;width:48px;height:4px;background:#2d3748;border-radius:3px;vertical-align:middle;margin-left:4px}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
-@media(max-width:600px){.trade-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .trade-grid{grid-template-columns:1fr}
+  body{padding:.5rem}
+  .tabs{gap:3px}
+  .tab{padding:5px 9px;font-size:11px}
+  .controls{gap:5px}
+  .controls input{width:120px}
+  table{font-size:11px}
+  th,td{padding:4px 5px}
+  /* Modal mobile */
+  .dd-card{border-radius:10px 10px 0 0;max-height:85vh;margin-top:auto}
+  .dd-overlay{align-items:flex-end;padding:0}
+  .dd-grid{grid-template-columns:repeat(2,1fr)}
+  .dd-name{font-size:15px}
+  /* Quick search */
+  #deck-search{font-size:13px}
+}
+@media(max-width:400px){
+  .tab{padding:4px 7px;font-size:10px}
+  .dd-grid{grid-template-columns:1fr 1fr}
+  .dd-stat-val{font-size:14px}
+}}
 .trade-side{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1rem}
 .search-wrap{position:relative;margin-bottom:8px}
 .search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
@@ -63,6 +85,50 @@ tr:hover td{background:#1a202c}
 .edit-results{position:absolute;top:100%;left:0;width:300px;background:#1a202c;border:1px solid #2d3748;border-radius:6px;z-index:20;max-height:220px;overflow-y:auto;margin-top:2px}
 .edit-result-item{padding:7px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #0f1117}
 .edit-result-item:hover{background:#2d3748}
+
+/* ── DELTA Deck — Player Card Modal ─────────────────────────── */
+.dd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;transition:opacity .2s;pointer-events:none;-webkit-overflow-scrolling:touch}
+.dd-overlay.open{opacity:1;pointer-events:auto}
+.dd-card{background:#111827;border:1px solid #2d3748;border-radius:14px;
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  transform:translateY(16px);transition:transform .2s;position:relative}
+.dd-overlay.open .dd-card{transform:translateY(0)}
+.dd-header{padding:1.25rem 1.25rem .75rem;border-bottom:1px solid #1f2937;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.dd-name{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+.dd-meta{font-size:11px;color:#718096;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.dd-close{background:none;border:none;color:#718096;font-size:20px;cursor:pointer;
+  padding:0 4px;line-height:1;flex-shrink:0}
+.dd-close:hover{color:#e2e8f0}
+.dd-body{padding:1rem 1.25rem}
+.dd-section{margin-bottom:1.1rem}
+.dd-section-label{font-size:9px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:#4a5568;margin-bottom:.5rem}
+.dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.dd-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.dd-stat{background:#1a202c;border-radius:7px;padding:8px 10px}
+.dd-stat-val{font-size:16px;font-weight:700;line-height:1}
+.dd-stat-lbl{font-size:9px;color:#718096;margin-top:2px}
+.dd-arc{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:4px}
+.dd-arc-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;position:relative;transition:height .3s}
+.dd-arc-yr{font-size:8px;color:#4a5568;text-align:center;margin-top:2px}
+.dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.dd-prog-label{font-size:10px;color:#718096;width:36px;flex-shrink:0}
+.dd-prog-bar{flex:1;height:5px;background:#1a202c;border-radius:3px;overflow:hidden}
+.dd-prog-fill{height:100%;border-radius:3px;transition:width .4s}
+.dd-prog-val{font-size:10px;font-weight:600;width:28px;text-align:right;flex-shrink:0}
+.dd-writeup{font-size:11px;line-height:1.65;color:#a0aec0;font-style:italic;
+  background:#1a202c;border-radius:8px;padding:.75rem 1rem;border-left:2px solid #2d3748}
+.dd-writeup.loading{color:#4a5568}
+.dd-actions{display:flex;gap:8px;margin-top:1rem}
+.dd-btn{flex:1;font-size:11px;padding:8px;border-radius:7px;border:1px solid #2d3748;
+  background:#1a202c;color:#e2e8f0;cursor:pointer;text-align:center}
+.dd-btn:hover{background:#2d3748}
+.dd-btn.primary{background:#064e3b;border-color:#065f46;color:#6ee7b7}
+.dd-btn.primary:hover{background:#065f46}
+.dd-divider{height:1px;background:#1f2937;margin:.75rem 0}
 </style>
 </head>
 <body>
@@ -70,8 +136,27 @@ tr:hover td{background:#1a202c}
   <div>
     <div style="font-size:18px;font-weight:700;color:#e2e8f0;letter-spacing:.02em">DELTA <span style="color:#7dd3fc">v1.0</span></div>
     <div style="font-size:11px;color:#6ee7b7;font-weight:500;margin-top:1px;letter-spacing:.04em;text-transform:uppercase">Dynasty Efficiency & Long-Term Analysis</div>
-    <div style="font-size:10px;color:#4a5568;margin-top:3px">0.5 PPR · TE Premium · 4PT Pass TD · 6PT Rush/Rec TD · Additive delta projection · Model val capped at 9,999 · YPRR + snap% utilization</div>
+    <div id="scoring-disc" style="font-size:10px;color:#4a5568;margin-top:3px">0.5PPR + TE Premium · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0</div>
   </div>
+</div>
+
+<!-- DELTA Deck Quick Search -->
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;position:relative">
+  <div style="position:relative;flex:1;max-width:280px">
+    <input id="deck-search" type="text" placeholder="⚡ Quick player lookup…"
+      oninput="deckSearchInput()"
+      onkeydown="deckSearchKey(event)"
+      style="width:100%;font-size:12px;padding:6px 10px 6px 28px;border-radius:7px;
+        border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;outline:none"
+      autocomplete="off">
+    <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);
+      font-size:11px;color:#4a5568;pointer-events:none">🔍</span>
+    <div id="deck-drop" style="display:none;position:absolute;top:100%;left:0;right:0;
+      background:#1a202c;border:1px solid #2d3748;border-radius:7px;z-index:50;
+      max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 8px 24px rgba(0,0,0,.5)">
+    </div>
+  </div>
+  <span style="font-size:10px;color:#4a5568">Click any row to open player card</span>
 </div>
 
 <div class="tabs">
@@ -100,6 +185,13 @@ tr:hover td{background:#1a202c}
     <select id="age-rank" onchange="renderRankings()">
       <option value="0">Any age</option><option value="24">≤24</option>
       <option value="26">≤26</option><option value="28">≤28</option><option value="30">≤30</option>
+    </select>
+      <select id="scoring-fmt" onchange="applyScoring()" title="Scoring format">
+      <option value="half_tep">0.5PPR + TE Prem</option>
+      <option value="half">0.5 PPR</option>
+      <option value="full_tep">Full PPR + TE Prem</option>
+      <option value="full">Full PPR</option>
+      <option value="std">Standard</option>
     </select>
   </div>
   <div style="overflow-x:auto"><table>
@@ -142,7 +234,16 @@ tr:hover td{background:#1a202c}
 </div>
 
 <div id="panel-trade" class="panel">
-  <div class="info-box">Model = KTC × age × system × OC continuity × utilization (YPRR/snap%) × college × EPA × QB quality. Picks use raw KTC. QB superflex already priced into KTC — no double-counting.</div>
+  <div class="info-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <span>Model = KTC × age × system × OC continuity × utilization × college × EPA × QB quality. Picks use raw KTC.</span>
+    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+      <option value="half_tep">0.5PPR + TE Prem</option>
+      <option value="half">0.5 PPR</option>
+      <option value="full_tep">Full PPR + TE Prem</option>
+      <option value="full">Full PPR</option>
+      <option value="std">Standard</option>
+    </select>
+  </div>
   <div class="trade-grid">
     <div class="trade-side">
       <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Side A — you receive</div>
@@ -296,6 +397,256 @@ tr:hover td{background:#1a202c}
 // 4. All PPG from exact user scoring format (unchanged)
 // ============================================================
 
+let scoringFmt='half_tep'; // global scoring format
+// Position-average rec/game for format sensitivity
+const REC_PG_POS_AVG={WR:3.21,RB:1.76,TE:3.06};
+const REC_FMT_SENSITIVITY=0.010; // mv delta per (rec_delta x format_pts)
+const REC_FMT_CAP=0.10; // max +/-10% mv shift from format
+
+// How many extra rec pts each format gives vs base (0.5PPR + TE Premium)
+function fmtRecPts(pos,fmt){
+  if(fmt==='half_tep') return 0;
+  if(fmt==='std')   return pos==='TE'?-1.5:-0.5;
+  if(fmt==='half')  return pos==='TE'?-1.0:0;
+  if(fmt==='full_tep') return 0.5;
+  if(fmt==='full')  return pos==='TE'?-0.5:0.5;
+  return 0;
+}
+
+function formatMvShift(name,pos,fmt){
+  if(!fmt||fmt==='half_tep') return 0;
+  const rpg=REC_PG[name]||0;
+  if(!rpg) return 0;
+  const avg=REC_PG_POS_AVG[pos]||0;
+  const recDelta=rpg-avg;
+  const pts=fmtRecPts(pos,fmt);
+  const shift=recDelta*pts*REC_FMT_SENSITIVITY;
+  return Math.max(-REC_FMT_CAP,Math.min(REC_FMT_CAP,shift));
+}
+
+const REC_PG={
+  'A.J. Brown':4.59,
+  'AJ Barner':3.06,
+  'Aaron Jones':1.65,
+  'Adonai Mitchell':1.94,
+  'Alec Pierce':2.76,
+  'Alvin Kamara':1.94,
+  'Amon-Ra St. Brown':6.88,
+  'Ashton Jeanty':3.24,
+  'Audric Estime':0.92,
+  'Ben Sinnott':0.65,
+  'Bhayshul Tuten':0.59,
+  'Bijan Robinson':4.65,
+  'Blake Corum':0.47,
+  'Braelon Allen':0.25,
+  'Breece Hall':2.12,
+  'Brenton Strange':2.71,
+  'Brian Robinson':0.47,
+  'Brian Thomas Jr.':3.0,
+  'Brock Bowers':3.76,
+  'Bucky Irving':1.76,
+  'Cade Otton':3.47,
+  'Calvin Ridley':1.7,
+  'Cam Skattebo':1.41,
+  'Cedric Tillman':1.31,
+  'CeeDee Lamb':4.69,
+  'Charlie Kolar':0.83,
+  'Chase Brown':4.06,
+  'Chigoziem Okonkwo':3.29,
+  'Chimere Dike':2.82,
+  'Chris Godwin':3.0,
+  'Chris Olave':5.88,
+  'Chris Rodriguez':0.18,
+  'Christian Kirk':1.75,
+  'Christian McCaffrey':6.0,
+  'Christian Watson':2.69,
+  'Chuba Hubbard':1.76,
+  'Colby Parkinson':2.87,
+  'Cole Kmet':1.76,
+  'Colston Loveland':3.62,
+  'Cooper Kupp':2.76,
+  'Courtland Sutton':4.35,
+  "D'Andre Swift":2.0,
+  'D.J. Moore':2.94,
+  'DK Metcalf':3.47,
+  'Dallas Goedert':3.53,
+  'Dalton Kincaid':3.9,
+  'Dalton Schultz':4.82,
+  'Darius Slayton':2.18,
+  'Darnell Mooney':1.88,
+  'Davante Adams':4.0,
+  'David Montgomery':1.41,
+  'David Njoku':1.94,
+  'Dawson Knox':2.4,
+  "De'Von Achane":3.94,
+  'DeMario Douglas':2.38,
+  'DeVonta Smith':4.53,
+  'Deebo Samuel':4.24,
+  'Derrick Henry':0.88,
+  'Devaughn Vele':1.56,
+  'Dontayvion Wicks':1.88,
+  'Drake London':5.67,
+  'Dylan Sampson':1.94,
+  'Elic Ayomanor':2.41,
+  'Elijah Higgins':1.76,
+  'Emeka Egbuka':3.71,
+  'Evan Engram':2.94,
+  'Garrett Wilson':3.0,
+  'George Holani':0.14,
+  'George Kittle':4.75,
+  'George Pickens':5.47,
+  'Greg Dulcich':1.86,
+  'Gunnar Helm':2.59,
+  'Harold Fannin Jr.':4.5,
+  'Hunter Henry':3.53,
+  'Isaac TeSlaa':1.07,
+  'Isaiah Likely':1.59,
+  'Isiah Pacheco':1.12,
+  'J.K. Dobbins':0.79,
+  "Ja'Marr Chase":7.35,
+  'JaTavion Sanders':1.71,
+  'Jack Bech':1.54,
+  'Jacory Croskey-Merritt':0.56,
+  'Jahmyr Gibbs':4.53,
+  'Jake Ferguson':4.82,
+  'Jake Tonges':2.0,
+  'Jakobi Meyers':4.41,
+  'Jalen Coker':1.94,
+  'Jalen McMillan':1.5,
+  'Jalen Nailor':1.71,
+  'Jalen Tolbert':1.06,
+  'James Conner':0.57,
+  'James Cook':1.94,
+  'Jameson Williams':3.82,
+  'Jauan Jennings':3.24,
+  'Javonte Williams':2.06,
+  'Jaxon Smith-Njigba':7.0,
+  'Jayden Higgins':2.41,
+  'Jayden Reed':1.9,
+  'Jaylen Waddle':4.0,
+  'Jaylen Warren':2.35,
+  'Jaylen Wright':0.29,
+  'Jaylin Noel':1.62,
+  'Jerry Jeudy':2.94,
+  'Jonathan Taylor':2.71,
+  'Jonnu Smith':2.24,
+  'Jordan Addison':2.47,
+  'Jordan Mason':0.88,
+  'Josh Downs':3.41,
+  'Josh Jacobs':2.12,
+  'Justin Jefferson':4.94,
+  'Juwan Johnson':4.53,
+  'Kareem Hunt':1.06,
+  'Kayshon Boutte':2.2,
+  'Keaton Mitchell':0.9,
+  'Kenneth Gainwell':4.29,
+  'Kenneth Walker III':1.82,
+  'Keon Coleman':2.24,
+  'Khalil Shakir':4.24,
+  'Kimani Vidal':0.94,
+  'Kyle Monangai':1.06,
+  'Kyle Pitts':5.18,
+  'Kyle Williams':0.83,
+  'Kyren Williams':2.12,
+  'Ladd McConkey':3.88,
+  'Luther Burden':3.13,
+  'Malik Washington':2.71,
+  'Mark Andrews':3.0,
+  'Marquise Brown':2.88,
+  'Marvin Harrison Jr.':2.93,
+  'Marvin Mims':2.64,
+  'Mason Taylor':2.59,
+  'Matthew Golden':1.81,
+  'Michael Mayer':2.06,
+  'Michael Pittman Jr.':4.71,
+  'Michael Wilson':4.33,
+  'Mike Evans':2.73,
+  'Nico Collins':4.44,
+  'Noah Fant':2.0,
+  'Omarion Hampton':1.88,
+  'Oronde Gadsden':2.88,
+  'Parker Washington':3.41,
+  'Pat Bryant':1.82,
+  'Pat Freiermuth':2.41,
+  'Puka Nacua':7.59,
+  'Quentin Johnston':3.0,
+  'Quinshon Judkins':1.53,
+  'RJ Harvey':2.76,
+  'Rachaad White':2.35,
+  'Rashee Rice':3.53,
+  'Rashid Shaheed':3.47,
+  'Rashod Bateman':1.12,
+  'Ray Davis':0.71,
+  'Rhamondre Stevenson':2.29,
+  'Ricky Pearsall':3.0,
+  'Rico Dowdle':2.29,
+  'Rome Odunze':2.59,
+  'Romeo Doubs':3.24,
+  'Sam LaPorta':3.08,
+  'Saquon Barkley':2.18,
+  'Sean Tucker':0.47,
+  'Stefon Diggs':5.0,
+  'T.J. Hockenson':3.0,
+  'Tank Bigsby':0.21,
+  'Tee Higgins':3.47,
+  'Terrance Ferguson':0.65,
+  'Terry McLaurin':2.71,
+  'Tetairoa McMillan':4.12,
+  'Tez Johnson':1.75,
+  'Theo Johnson':2.65,
+  'Tony Pollard':1.94,
+  'Travis Etienne':2.12,
+  'Travis Hunter':1.65,
+  'Travis Kelce':4.47,
+  'Tre Harris':1.76,
+  'Tre Tucker':3.35,
+  'TreVeyon Henderson':2.06,
+  'Trey Benson':1.0,
+  'Trey McBride':7.41,
+  'Troy Franklin':3.82,
+  'Tucker Kraft':4.0,
+  'Tyjae Spears':2.65,
+  'Tyler Allgeier':0.82,
+  'Tyler Warren':4.47,
+  'Tyrone Tracy':2.12,
+  "Wan'Dale Robinson":5.41,
+  'Woody Marks':1.41,
+  'Xavier Legette':2.06,
+  'Xavier Worthy':2.47,
+  'Zach Charbonnet':1.18,
+  'Zach Ertz':3.33,
+  'Zay Flowers':5.06
+};
+
+// ── Positional Scarcity Tiers ─────────────────────────────────
+// TEs are scarcer than WRs at equivalent PPG — reflected in mv bonus
+const SCARCITY_TIERS={
+  TE:{elite:14,starter:11,eliteBonus:0.12,starterBonus:0.06},
+  WR:{elite:18,starter:14,eliteBonus:0.05,starterBonus:0.02},
+  RB:{elite:18,starter:14,eliteBonus:0.05,starterBonus:0.02},
+  QB:{elite:22,starter:18,eliteBonus:0.03,starterBonus:0.01},
+};
+function scarcityBonus(pos,proj){
+  const t=SCARCITY_TIERS[pos];if(!t)return 0;
+  if(proj>=t.elite)return t.eliteBonus;
+  if(proj>=t.starter)return t.starterBonus;
+  return 0;
+}
+
+// ── Team Competition Index ─────────────────────────────────────
+// Forward-looking crowding penalty for target-heavy teams
+// Built from sum of top receiver KTCs per team
+const COMP_IDX={
+  SF:0.04,ARI:0.03,DET:0.03,CIN:0.03,PHI:0.02,
+  MIA:0.03,MIN:0.02,KC:0.02,LAR:0.02,
+};
+// Players exempt from own-team competition (they ARE the alpha)
+const COMP_EXEMPT=new Set([
+  'Brock Bowers','Trey McBride','Ja\'Marr Chase','Justin Jefferson',
+  'CeeDee Lamb','Jaxon Smith-Njigba','Christian McCaffrey','Bijan Robinson',
+  'George Kittle','Travis Kelce',
+]);
+
 const SYS={
   ARI:{s:52,c:.20,oc:'LaFleur',ch:true},ATL:{s:48,c:.35,oc:'Rees',ch:true},
   BAL:{s:44,c:.20,oc:'Doyle',ch:true},BUF:{s:68,c:.75,oc:'Brady',ch:false},
@@ -323,102 +674,102 @@ function gs(t){return SYS[AL[t]||t]||SYS.FA;}
 // Format: [weighted, y25, y24, y23]
 // ============================================================
 const YPRR_WR={
-  "Puka Nacua":[3.59,3.73,3.55,2.56],"Jaxon Smith-Njigba":[2.76,3.67,1.81,1.32],
-  "Ja'Marr Chase":[2.28,2.23,2.46,2.03],"Amon-Ra St. Brown":[2.44,2.48,2.30,2.63],
-  "George Pickens":[2.22,2.37,2.06,2.10],"Chris Olave":[2.02,1.99,2.09,2.06],
-  "Zay Flowers":[2.27,2.55,2.24,1.64],"Davante Adams":[1.98,1.96,2.02,1.97],
-  "Nico Collins":[2.66,2.39,2.87,3.07],"Jameson Williams":[1.84,1.90,2.10,1.46],
-  "Courtland Sutton":[1.73,1.67,1.84,1.64],"Tee Higgins":[1.78,1.63,2.04,1.64],
-  "Michael Wilson":[1.35,1.61,1.09,1.34],"A.J. Brown":[2.44,2.13,3.01,2.50],
-  "Tetairoa McMillan":[1.88,1.88,0,0],"Wan'Dale Robinson":[1.65,1.90,1.21,1.30],
-  "Drake London":[2.18,2.36,2.30,1.86],"Emeka Egbuka":[1.77,1.77,0,0],
-  "CeeDee Lamb":[2.48,2.40,2.27,2.79],"DeVonta Smith":[1.96,1.96,2.13,1.79],
-  "Michael Pittman Jr.":[1.61,1.49,1.67,2.02],"Jaylen Waddle":[2.09,2.28,1.51,2.63],
-  "Alec Pierce":[1.71,2.19,1.81,0.84],"Justin Jefferson":[2.20,1.92,2.50,2.92],
-  "DK Metcalf":[1.96,2.06,1.80,2.04],"Parker Washington":[1.51,2.10,1.01,0.74],
-  "Ladd McConkey":[1.71,1.42,2.37,0],"D.J. Moore":[1.52,1.25,1.43,2.31],
-  "Troy Franklin":[1.28,1.48,1.00,0],"Jakobi Meyers":[1.65,1.61,1.75,1.52],
-  "Romeo Doubs":[1.74,1.82,1.66,1.32],"Quentin Johnston":[1.48,1.61,1.76,0.88],
-  "Khalil Shakir":[1.80,1.74,2.14,1.83],"Rome Odunze":[1.41,1.63,1.16,0],
-  "Rashee Rice":[2.55,2.19,3.16,2.39],"Christian Watson":[2.18,2.55,2.25,1.53],
-  "Brian Thomas Jr.":[1.82,1.54,2.41,0],"Jordan Addison":[1.53,1.42,1.73,1.50],
+  "Puka Nacua":[3.21,3.73,3.59,2.58],"Jaxon Smith-Njigba":[2.47,3.61,1.81,1.32],
+  "Ja'Marr Chase":[2.17,2.23,2.46,2.03],"Amon-Ra St. Brown":[2.32,2.48,2.3,2.63],
+  "George Pickens":[2.13,2.37,2.06,2.1],"Chris Olave":[1.97,1.99,2.09,2.07],
+  "Zay Flowers":[2.19,2.55,2.24,1.64],"Davante Adams":[1.93,1.96,2.04,1.97],
+  "Nico Collins":[2.47,2.32,2.87,3.06],"Jameson Williams":[1.85,1.9,2.1,1.46],
+  "Courtland Sutton":[1.68,1.61,1.84,1.65],"Tee Higgins":[1.75,1.63,2.05,1.64],
+  "Michael Wilson":[1.43,1.61,1.1,1.34],"A.J. Brown":[2.36,2.13,3.01,2.53],
+  "Tetairoa McMillan":[1.88,1.88,0,0],"Wan'Dale Robinson":[1.57,1.9,1.21,1.3],
+  "Drake London":[2.16,2.36,2.32,1.85],"Emeka Egbuka":[1.77,1.77,0,0],
+  "CeeDee Lamb":[2.3,2.4,2.27,2.77],"DeVonta Smith":[1.93,1.96,2.13,1.79],
+  "Michael Pittman Jr.":[1.64,1.49,1.68,2.03],"Jaylen Waddle":[1.98,2.18,1.54,2.63],
+  "Alec Pierce":[1.77,2.1,1.82,0.85],"Justin Jefferson":[2.18,1.92,2.51,2.91],
+  "DK Metcalf":[1.89,1.99,1.81,2.05],"Parker Washington":[1.52,2.1,1.01,0.75],
+  "Ladd McConkey":[1.75,1.42,2.39,0.0],"D.J. Moore":[1.51,1.25,1.44,2.3],
+  "Troy Franklin":[1.38,1.48,1.0,0.0],"Jakobi Meyers":[1.64,1.61,1.76,1.52],
+  "Romeo Doubs":[1.64,1.73,1.67,1.32],"Quentin Johnston":[1.51,1.51,1.77,0.88],
+  "Khalil Shakir":[1.85,1.74,2.15,1.83],"Rome Odunze":[1.5,1.63,1.18,0.0],
+  "Rashee Rice":[2.4,2.19,3.16,2.39],"Christian Watson":[2.18,2.55,2.26,1.54],
+  "Brian Thomas Jr.":[1.81,1.54,2.45,0.0],"Jordan Addison":[1.52,1.36,1.73,1.5],
   "Luther Burden":[2.71,2.71,0,0],"Elic Ayomanor":[1.06,1.06,0,0],
-  "Terry McLaurin":[2.02,2.26,1.97,1.56],"Tre Harris":[1.13,1.13,0,0],
+  "Terry McLaurin":[1.98,2.26,1.98,1.56],"Tre Harris":[1.13,1.13,0,0],
   "Jayden Higgins":[1.48,1.48,0,0],"Matthew Golden":[1.25,1.39,1.00,0],
-  "Ricky Pearsall":[1.71,1.90,1.31,0],"Mike Evans":[2.00,1.64,2.41,2.31],
-  "Marvin Harrison Jr.":[1.62,1.61,1.62,0],"Garrett Wilson":[1.71,1.78,1.68,1.55],
-  "Xavier Worthy":[1.30,1.33,1.24,0],"Keon Coleman":[1.23,1.29,1.70,0],
-  "Josh Downs":[1.71,1.50,2.19,1.60],"Travis Hunter":[1.32,1.32,0,0],
-  "Brandon Aiyuk":[1.75,0,1.75,3.02],"Jalen Coker":[1.47,1.37,1.72,0],
-  "Malik Nabers":[2.10,2.07,2.15,0],"Deebo Samuel":[1.75,1.68,1.60,2.34],
-  "Jauan Jennings":[1.63,1.41,2.26,1.15],"Stefon Diggs":[2.24,2.54,1.84,1.99],
+  "Ricky Pearsall":[1.62,1.84,1.31,0.0],"Mike Evans":[1.95,1.64,2.41,2.32],
+  "Marvin Harrison Jr.":[1.61,1.61,1.63,0.0],"Garrett Wilson":[1.67,1.73,1.69,1.55],
+  "Xavier Worthy":[1.36,1.26,1.24,0.0],"Keon Coleman":[1.5,1.29,1.71,0.0],
+  "Josh Downs":[1.73,1.5,2.2,1.6],"Travis Hunter":[1.32,1.32,0,0],
+  "Brandon Aiyuk":[2.0,0.0,1.75,3.02],"Jalen Coker":[1.54,1.37,1.72,0.0],
+  "Malik Nabers":[1.95,2.07,2.16,0.0],"Deebo Samuel":[1.74,1.68,1.6,2.34],
+  "Jauan Jennings":[1.64,1.41,2.26,1.15],"Stefon Diggs":[2.07,2.41,1.84,1.99],
   // Batch 1 WRs
-  "Adonai Mitchell":[1.61,1.66,1.46,1.78],
-  "Calvin Ridley":[1.72,1.7,1.85,1.51],
-  "Cedric Tillman":[2.25,2.61,1.65,2.37],
-  "Chris Godwin":[1.47,1.52,1.39,1.46],
-  "Christian Kirk":[1.46,1.32,1.88,1.04],
-  "Cooper Kupp":[1.71,1.96,1.41,1.59],
-  "Darius Slayton":[2.47,2.66,2.46,1.94],
-  "Darnell Mooney":[2.34,0,2.19,2.65],
-  "DeMario Douglas":[1.38,1.23,1.61,1.35],
-  "Devaughn Vele":[1.76,1.72,1.81,0],
-  "Dontayvion Wicks":[1.78,1.83,1.71,1.75],
-  "Jack Bech":[1.9,2.32,1.26,1.92],
-  "Jalen Nailor":[1.85,1.94,1.82,1.54],
-  "Jalen Tolbert":[2.1,2.07,2.18,2.03],
-  "Jaylin Noel":[1.76,1.76,0,0],
-  "Jerry Jeudy":[1.79,1.93,1.64,1.69],
-  "Kayshon Boutte":[2.66,2.93,2.48,2.21],
-  "Kyle Williams":[1.77,1.63,1.96,1.84],
-  "Malik Washington":[1.62,1.57,1.37,2.26],
-  "Marquise Brown":[1.48,1.31,1.7,1.57],
-  "Pat Bryant":[1.81,1.55,1.52,3.18],
-  "Rashod Bateman":[2.69,3.13,2.23,2.27],
-  "Tank Dell":[1.9,0,2.01,1.67],
-  "Tez Johnson":[1.95,2.04,1.89,1.77],
-  "Tre Tucker":[2.54,2.38,3.13,1.82],
+  "Adonai Mitchell":[1.55,1.47,1.52,1.78],
+  "Calvin Ridley":[1.79,1.89,1.87,1.56],
+  "Cedric Tillman":[1.03,0.85,1.22,0.61],
+  "Chris Godwin":[1.74,1.34,2.37,1.81],
+  "Christian Kirk":[1.38,0.85,1.72,2.07],
+  "Cooper Kupp":[1.66,1.39,1.99,1.85],
+  "Darius Slayton":[1.26,1.23,1.08,1.38],
+  "Darnell Mooney":[1.31,0.96,1.89,0.89],
+  "DeMario Douglas":[1.74,2.02,1.4,1.71],
+  "Devaughn Vele":[1.41,1.2,1.51,0.0],
+  "Dontayvion Wicks":[1.52,1.38,1.42,2.04],
+  "Jack Bech":[1.36,1.15,1.26,1.92],
+  "Jalen Nailor":[1.07,1.06,1.08,0.55],
+  "Jalen Tolbert":[1.02,0.77,1.1,0.97],
+  "Jaylin Noel":[1.52,1.44,0.0,0.0],
+  "Jerry Jeudy":[1.39,1.02,1.72,1.64],
+  "Kayshon Boutte":[1.26,1.47,1.27,0.23],
+  "Kyle Williams":[1.55,1.17,1.96,1.84],
+  "Malik Washington":[1.18,0.87,0.87,2.26],
+  "Marquise Brown":[1.81,1.49,2.68,1.24],
+  "Pat Bryant":[1.64,1.22,1.52,3.18],
+  "Rashod Bateman":[1.17,0.7,1.69,1.1],
+  "Tank Dell":[1.69,0.0,1.49,2.2],
+  "Tez Johnson":[1.48,1.07,1.89,1.77],
+  "Tre Tucker":[1.19,1.19,0.84,1.48],
   // New batch WRs
-  "Chimere Dike":[3.54,3.54,0,0],
-  "Isaac TeSlaa":[4.0,4.0,0,0],
-  "Jalen McMillan":[4.0,4.0,4.0,0],
-  "Jayden Reed":[3.025,2.47,4.0,2.74],
-  "K.J. Osborn":[1.967,0,0.95,4.0],
-  "Marvin Mims":[2.998,3.05,2.42,4.0],
-  "Rashid Shaheed":[3.613,4.0,3.07,3.54],
-  "Xavier Legette":[3.74,4.0,3.35,0],
+  "Chimere Dike":[1.31,1.03,0.0,0.0],
+  "Isaac TeSlaa":[1.21,0.81,0.0,0.0],
+  "Jalen McMillan":[1.71,2.14,1.18,0.0],
+  "Jayden Reed":[1.94,1.85,2.21,2.03],
+  "K.J. Osborn":[1.15,0.0,0.95,0.97],
+  "Marvin Mims":[1.68,1.17,2.57,1.53],
+  "Rashid Shaheed":[1.65,1.41,2.04,1.66],
+  "Xavier Legette":[1.19,0.9,1.19,0.0],
 };
 
 const YPRR_TE={
-  "Trey McBride":[1.93,1.78,2.13,2.00],"Kyle Pitts":[1.54,1.72,1.33,1.42],
-  "Travis Kelce":[1.62,1.51,1.43,1.91],"Tyler Warren":[1.61,1.61,0,0],
-  "Jake Ferguson":[1.31,1.20,1.26,1.46],"Harold Fannin Jr.":[1.66,1.66,0,0],
-  "Dallas Goedert":[1.59,1.37,2.22,1.35],"Juwan Johnson":[1.49,1.69,1.34,1.18],
-  "Hunter Henry":[1.49,1.66,1.39,1.14],"Dalton Schultz":[1.28,1.56,1.05,1.46],
-  "Brock Bowers":[1.87,1.70,2.01,0],"Colston Loveland":[1.88,1.88,0,0],
-  "George Kittle":[2.37,2.24,2.62,2.24],"AJ Barner":[1.31,1.46,1.12,0],
-  "Oronde Gadsden":[1.69,1.69,0,0],"Mark Andrews":[1.54,1.21,1.86,1.94],
-  "Theo Johnson":[1.08,1.20,0.88,0],"Zach Ertz":[1.24,1.36,1.27,1.01],
-  "Dalton Kincaid":[2.18,2.80,1.62,1.46],"Chigoziem Okonkwo":[1.31,1.37,1.25,1.30],
-  "Cade Otton":[1.07,1.06,1.28,0.81],"Brenton Strange":[1.62,1.74,1.47,0],
-  "Tucker Kraft":[1.93,2.40,1.59,1.20],"Pat Freiermuth":[1.37,1.56,1.45,1.11],
-  "T.J. Hockenson":[1.35,1.05,1.52,1.89],"Sam LaPorta":[1.79,1.99,1.61,1.76],
-  "Dawson Knox":[1.25,1.35,1.05,0],"Evan Engram":[1.37,1.29,1.47,1.55],
-  "Gunnar Helm":[1.47,1.47,0,0],"Mason Taylor":[1.04,1.04,0,0],
-  "Isaiah Likely":[1.43,1.31,1.53,1.45],"Cole Kmet":[1.17,1.03,0.89,1.67],
-  "Ben Sinnott":[3.05,2.91,3.25,0],
-  "Colby Parkinson":[2.41,2.3,2.4,2.76],
-  "David Njoku":[1.77,1.83,1.78,1.57],
-  "Greg Dulcich":[1.53,1.56,1.6,1.29],
-  "JaTavion Sanders":[2.59,2.63,2.53,0],
-  "Jake Tonges":[1.36,0.94,1.54,2.26],
-  "Michael Mayer":[2.16,1.81,2.67,2.19],
-  "Terrance Ferguson":[1.72,1.74,1.59,1.92],
+  "Trey McBride":[1.79,1.78,2.14,2.02],"Kyle Pitts":[1.53,1.72,1.33,1.42],
+  "Travis Kelce":[1.56,1.46,1.44,1.92],"Tyler Warren":[1.61,1.61,0,0],
+  "Jake Ferguson":[1.32,1.2,1.27,1.46],"Harold Fannin Jr.":[1.66,1.66,0,0],
+  "Dallas Goedert":[1.63,1.37,2.21,1.36],"Juwan Johnson":[1.48,1.69,1.34,1.19],
+  "Hunter Henry":[1.46,1.66,1.39,1.15],"Dalton Schultz":[1.39,1.56,1.06,1.46],
+  "Brock Bowers":[1.72,1.7,2.03,0.0],"Colston Loveland":[1.88,1.88,0,0],
+  "George Kittle":[2.15,2.15,2.62,2.23],"AJ Barner":[1.37,1.46,1.14,0.0],
+  "Oronde Gadsden":[1.54,1.64,0.0,0.0],"Mark Andrews":[1.56,1.21,1.86,1.95],
+  "Theo Johnson":[1.19,1.2,0.91,0.0],"Zach Ertz":[1.29,1.36,1.29,1.01],
+  "Dalton Kincaid":[2.07,2.8,1.62,1.46],"Chigoziem Okonkwo":[1.43,1.37,1.27,1.31],
+  "Cade Otton":[1.13,1.06,1.29,0.81],"Brenton Strange":[1.43,1.74,1.48,0.41],
+  "Tucker Kraft":[1.82,2.3,1.6,1.22],"Pat Freiermuth":[1.47,1.56,1.46,1.12],
+  "T.J. Hockenson":[1.38,1.05,1.52,1.89],"Sam LaPorta":[1.77,1.99,1.62,1.76],
+  "Dawson Knox":[1.19,1.35,1.05,0.77],"Evan Engram":[1.42,1.29,1.51,1.56],
+  "Gunnar Helm":[1.47,1.47,0,0],"Mason Taylor":[1.13,1.04,0.91,0.0],
+  "Isaiah Likely":[1.42,1.31,1.54,1.46],"Cole Kmet":[1.17,1.03,0.91,1.7],
+  "Ben Sinnott":[0.95,1.06,0.26,0.0],
+  "Colby Parkinson":[1.36,1.62,0.99,1.11],
+  "David Njoku":[1.31,1.07,1.34,1.69],
+  "Greg Dulcich":[1.43,2.29,0.26,1.25],
+  "JaTavion Sanders":[1.09,0.83,1.11,0.0],
+  "Jake Tonges":[1.51,1.27,1.54,2.26],
+  "Michael Mayer":[1.2,1.47,0.69,1.11],
+  "Terrance Ferguson":[1.52,1.37,1.59,1.92],
   // New batch TEs
-  "Charlie Kolar":[4.0,4.0,4.0,4.0],
-  "Elijah Higgins":[3.952,4.0,4.0,3.71],
-  "Jonnu Smith":[3.443,4.0,2.48,3.7],
-  "Noah Fant":[3.75,3.56,3.91,4.0],
+  "Charlie Kolar":[1.84,1.41,2.91,1.47],
+  "Elijah Higgins":[1.19,1.0,1.01,1.81],
+  "Jonnu Smith":[1.33,0.77,1.96,1.56],
+  "Noah Fant":[1.34,1.33,1.3,1.29],
 };
 
 
@@ -434,7 +785,7 @@ const RB_SNAP={
   "D'Andre Swift":[56.9,53.8,66.1,54.9],"Jaylen Warren":[44.8,47.4,39.6,48.4],
   "Rico Dowdle":[46.6,55.7,54.3,20.9],"Breece Hall":[62.9,61.1,67.5,60.6],
   "TreVeyon Henderson":[45.8,45.8,0,0],"Kenneth Gainwell":[40.1,50.1,26.0,38.5],
-  "RJ Harvey":[42.2,42.2,0,0],"Kenneth Walker III":[47.2,46.8,47.2,47.8],
+  "RJ Harvey":[42.2,42.2,0,0],"Kenneth Walker III":[62.0,62.0,47.2,47.8],
   "Zach Charbonnet":[47.8,46.0,51.6,45.5],"Tony Pollard":[64.6,62.2,64.1,70.6],
   "Rhamondre Stevenson":[51.3,48.7,54.8,51.6],"Quinshon Judkins":[46.2,46.2,0,0],
   "David Montgomery":[36.6,37.1,34.0,38.5],"Woody Marks":[49.2,49.2,0,0],
@@ -465,6 +816,7 @@ const RB_SNAP={
   "Kimani Vidal":[45.4,57.2,27.7,0],
   "MarShawn Lloyd":[14.0,0,14.0,0],
   "Tank Bigsby":[23.6,17.2,38.5,13.1],
+  "Audric Estime":[34.1,45.8,16.6,0],
 };
 
 
@@ -611,20 +963,106 @@ const EPA={
   'Jordan Mason':{e25:-.04,e24:-.04,e23:.14,e22:.07,ef25:4.77},'Alvin Kamara':{e25:-.22,e24:-.08,e23:-.02,e22:-.18,ef25:3.60},
   'David Montgomery':{e25:.00,e24:-.04,e23:.05,e22:-.08,ef25:4.53},'Tyjae Spears':{e25:-.05,e24:-.06,e23:-.01,e22:0,ef25:3.93},
   'Kimani Vidal':{e25:-.09,e24:-.20,e23:0,e22:0,ef25:4.15},'Brock Bowers':{e25:1.70,e24:2.01,e23:0,e22:0,ef25:1.70},
-  'Trey McBride':{e25:1.78,e24:2.13,e23:2.00,e22:0,ef25:1.78},'Travis Kelce':{e25:1.51,e24:1.43,e23:1.91,e22:2.23,ef25:1.51},
-  'George Kittle':{e25:2.24,e24:2.62,e23:2.24,e22:1.73,ef25:2.24},'Sam LaPorta':{e25:1.99,e24:1.61,e23:1.76,e22:0,ef25:1.99},
+  'Trey McBride':{e25:1.78,e24:2.13,e23:2.00,e22:0.84,ef25:1.78},'Travis Kelce':{e25:1.46,e24:1.43,e23:1.91,e22:2.23,ef25:1.51},
+  'George Kittle':{e25:2.15,e24:2.62,e23:2.24,e22:1.73,ef25:2.24},'Sam LaPorta':{e25:1.99,e24:1.61,e23:1.76,e22:0,ef25:1.99},
   'Kyle Pitts':{e25:1.72,e24:1.33,e23:1.42,e22:1.66,ef25:1.72},'Colston Loveland':{e25:1.88,e24:0,e23:0,e22:0,ef25:1.88},
-  'Tyler Warren':{e25:1.61,e24:0,e23:0,e22:0,ef25:1.61},'Tucker Kraft':{e25:2.40,e24:1.59,e23:1.20,e22:0,ef25:2.40},
-  'Harold Fannin Jr.':{e25:1.66,e24:0,e23:0,e22:0,ef25:1.66},'Oronde Gadsden':{e25:1.69,e24:0,e23:0,e22:0,ef25:1.69},
+  'Tyler Warren':{e25:1.61,e24:0,e23:0,e22:0,ef25:1.61},'Tucker Kraft':{e25:2.3,e24:1.59,e23:1.20,e22:0,ef25:2.40},
+  'Harold Fannin Jr.':{e25:1.66,e24:0,e23:0,e22:0,ef25:1.66},'Oronde Gadsden':{e25:1.64,e24:0,e23:0,e22:0,ef25:1.69},
   'Mark Andrews':{e25:1.21,e24:1.86,e23:1.94,e22:1.96,ef25:1.21},'T.J. Hockenson':{e25:1.05,e24:1.52,e23:1.89,e22:1.60,ef25:1.05},
-  'Dallas Goedert':{e25:1.37,e24:2.22,e23:1.35,e22:1.81,ef25:1.37},'Mason Taylor':{e25:1.04,e24:0,e23:0,e22:0,ef25:1.04},
+  'Dallas Goedert':{e25:1.37,e24:2.22,e23:1.35,e22:1.81,ef25:1.37},'Mason Taylor':{e25:1.04,e24:0.91,e23:0,e22:0,ef25:1.04},
   'AJ Barner':{e25:1.46,e24:1.12,e23:0,e22:0,ef25:1.46},'Pat Freiermuth':{e25:1.56,e24:1.45,e23:1.11,e22:1.70,ef25:1.56},
   'Dalton Kincaid':{e25:2.80,e24:1.62,e23:1.46,e22:0,ef25:2.80},'Chigoziem Okonkwo':{e25:1.37,e24:1.25,e23:1.30,e22:2.59,ef25:1.37},
   'Gunnar Helm':{e25:1.47,e24:0,e23:0,e22:0,ef25:1.47},'Cade Otton':{e25:1.06,e24:1.28,e23:.81,e22:.84,ef25:1.06},
   'Isaiah Likely':{e25:1.31,e24:1.53,e23:1.45,e22:1.41,ef25:1.31},'Juwan Johnson':{e25:1.69,e24:1.34,e23:1.18,e22:1.39,ef25:1.69},
-  'Hunter Henry':{e25:1.66,e24:1.39,e23:1.14,e22:1.21,ef25:1.66},'Brenton Strange':{e25:1.74,e24:1.47,e23:0,e22:0,ef25:1.74},
+  'Hunter Henry':{e25:1.66,e24:1.39,e23:1.14,e22:1.21,ef25:1.66},'Brenton Strange':{e25:1.74,e24:1.47,e23:0.41,e22:0,ef25:1.74},
   'Dalton Schultz':{e25:1.56,e24:1.05,e23:1.46,e22:1.40,ef25:1.56},'Evan Engram':{e25:1.29,e24:1.47,e23:1.55,e22:1.48,ef25:1.29},
-  'Jake Ferguson':{e25:1.20,e24:1.26,e23:1.46,e22:0,ef25:1.20},'Theo Johnson':{e25:1.20,e24:.88,e23:0,e22:0,ef25:1.20},
+  'Jake Ferguson':{e25:1.20,e24:1.26,e23:1.46,e22:1.66,ef25:1.20},'Theo Johnson':{e25:1.20,e24:.88,e23:0,e22:0,ef25:1.20},
+  // Missing QBs from EPA document
+  'Mac Jones':{e25:0.1,e24:0.0,e23:-0.18,e22:-0.09,ef25:0.1},
+  'Malik Willis':{e25:0.49,e24:0.25,e23:-0.5,e22:-0.47,ef25:0.49},
+  'Mason Rudolph':{e25:0.06,e24:-0.01,e23:0.09,e22:0.0,ef25:0.06},
+  'Jacoby Brissett':{e25:0.0,e24:-0.18,e23:0.68,e22:0.08,ef25:0.0},
+  'Kirk Cousins':{e25:-0.02,e24:0.12,e23:0.06,e22:0.03,ef25:-0.02},
+  'Joe Flacco':{e25:-0.1,e24:-0.01,e23:-0.06,e22:-0.15,ef25:-0.1},
+  'Justin Fields':{e25:-0.06,e24:0.02,e23:-0.03,e22:-0.03,ef25:-0.06},
+  'Aaron Rodgers':{e25:0.02,e24:0.06,e23:0.12,e22:-0.04,ef25:0.02},
+  // 2025 WR EPA (YPRR-based) from document
+  'Stefon Diggs':{e25:2.41,e24:1.84,e23:1.99,e22:2.5,ef25:2.41},
+  'Michael Wilson':{e25:1.59,e24:1.09,e23:1.34,e22:0,ef25:1.59},
+  'Deebo Samuel':{e25:1.65,e24:1.6,e23:2.34,e22:1.68,ef25:1.65},
+  'Troy Franklin':{e25:1.44,e24:1.0,e23:0.0,e22:0,ef25:1.44},
+  'Tre Tucker':{e25:1.19,e24:0.84,e23:1.48,e22:0,ef25:1.19},
+  'Rashid Shaheed':{e25:1.41,e24:2.04,e23:1.66,e22:2.6,ef25:1.41},
+  'Jauan Jennings':{e25:1.38,e24:2.26,e23:1.15,e22:1.37,ef25:1.38},
+  'Jerry Jeudy':{e25:1.02,e24:1.72,e23:1.64,e22:2.15,ef25:1.02},
+  'Cooper Kupp':{e25:1.39,e24:1.99,e23:1.85,e22:2.44,ef25:1.39},
+  'Marquise Brown':{e25:1.49,e24:2.68,e23:1.24,e22:1.43,ef25:1.49},
+  'Kayshon Boutte':{e25:1.47,e24:1.27,e23:0.23,e22:0,ef25:1.47},
+  'Darius Slayton':{e25:1.23,e24:1.08,e23:1.38,e22:1.78,ef25:1.23},
+  'Adonai Mitchell':{e25:1.47,e24:1.52,e23:1.78,e22:0,ef25:1.47},
+  'DeMario Douglas':{e25:2.02,e24:1.4,e23:1.71,e22:0,ef25:2.02},
+  'Jalen Nailor':{e25:1.06,e24:1.08,e23:0.55,e22:0,ef25:1.06},
+  'Darnell Mooney':{e25:0.96,e24:1.89,e23:0.89,e22:1.58,ef25:0.96},
+  'Chimere Dike':{e25:1.03,e24:0.0,e23:0.0,e22:0,ef25:1.03},
+  'Keon Coleman':{e25:1.27,e24:1.7,e23:0.0,e22:0,ef25:1.27},
+  'Pat Bryant':{e25:1.22,e24:1.52,e23:3.18,e22:0,ef25:1.22},
+  'Calvin Ridley':{e25:1.89,e24:1.85,e23:1.56,e22:0,ef25:1.89},
+  'Xavier Legette':{e25:0.9,e24:1.19,e23:0.0,e22:0,ef25:0.9},
+  'Chris Godwin':{e25:1.34,e24:2.37,e23:1.81,e22:1.75,ef25:1.34},
+  'Dontayvion Wicks':{e25:1.38,e24:1.42,e23:2.04,e22:0,ef25:1.38},
+  'Tez Johnson':{e25:1.07,e24:1.89,e23:1.77,e22:0,ef25:1.07},
+  'Marvin Mims':{e25:1.17,e24:2.57,e23:1.53,e22:0,ef25:1.17},
+  'Malik Washington':{e25:0.87,e24:0.87,e23:2.26,e22:0,ef25:0.87},
+  'Jayden Reed':{e25:1.85,e24:2.21,e23:2.03,e22:0,ef25:1.85},
+  'Jalen Tolbert':{e25:0.77,e24:1.1,e23:0.97,e22:0.3,ef25:0.77},
+  'Cedric Tillman':{e25:0.85,e24:1.22,e23:0.61,e22:0,ef25:0.85},
+  'Devaughn Vele':{e25:1.2,e24:1.51,e23:0.0,e22:0,ef25:1.2},
+  'Jaylin Noel':{e25:1.44,e24:0.0,e23:0.0,e22:0,ef25:1.44},
+  'Jack Bech':{e25:1.15,e24:1.26,e23:1.92,e22:0,ef25:1.15},
+  'Rashod Bateman':{e25:0.7,e24:1.69,e23:1.1,e22:2.38,ef25:0.7},
+  'Kyle Williams':{e25:1.17,e24:1.96,e23:1.84,e22:0,ef25:1.17},
+  'Jalen McMillan':{e25:2.14,e24:1.18,e23:0.0,e22:0,ef25:2.14},
+  'Christian Kirk':{e25:0.85,e24:1.72,e23:2.07,e22:1.78,ef25:0.85},
+  'Isaac TeSlaa':{e25:0.81,e24:0.0,e23:0.0,e22:0,ef25:0.81},
+  // 2025 RB EPA from document
+  "De'Von Achane":{e25:0.06,e24:0,e23:0,e22:0,ef25:0.06},
+  'Tyrone Tracy':{e25:-0.06,e24:-0.11,e23:0,e22:0,ef25:-0.06},
+  'Kareem Hunt':{e25:0.06,e24:0,e23:-0.04,e22:-0.09,ef25:0.06},
+  'Rachaad White':{e25:0.09,e24:-0.11,e23:-0.17,e22:-0.13,ef25:0.09},
+  'Tyler Allgeier':{e25:-0.08,e24:0.03,e23:-0.12,e22:0.05,ef25:-0.08},
+  'Chris Rodriguez':{e25:0.06,e24:0.23,e23:-0.07,e22:0,ef25:0.06},
+  'Isiah Pacheco':{e25:-0.12,e24:-0.16,e23:0,e22:0,ef25:-0.12},
+  'Brian Robinson':{e25:-0.01,e24:-0.06,e23:-0.12,e22:-0.03,ef25:-0.01},
+  'Tank Bigsby':{e25:0.12,e24:0,e23:-0.25,e22:0,ef25:0.12},
+  'Keaton Mitchell':{e25:0.04,e24:-0.35,e23:0.37,e22:0,ef25:0.04},
+  'Sean Tucker':{e25:-0.04,e24:0.2,e23:-0.41,e22:0,ef25:-0.04},
+  'Jaylen Wright':{e25:-0.08,e24:-0.3,e23:0,e22:0,ef25:-0.08},
+  'Ray Davis':{e25:0.02,e24:-0.05,e23:0,e22:0,ef25:0.02},
+  'Trey Benson':{e25:-0.01,e24:-0.08,e23:0,e22:0,ef25:-0.01},
+  'George Holani':{e25:-0.42,e24:-0.26,e23:0,e22:0,ef25:-0.42},
+  'James Conner':{e25:-0.09,e24:0,e23:0.07,e22:0,ef25:-0.09},
+  'Audric Estime':{e25:0.1,e24:-0.1,e23:0,e22:0,ef25:0.1},
+  'Braelon Allen':{e25:-0.43,e24:-0.08,e23:0,e22:0,ef25:-0.43},
+  // 2024 RB EPA
+  'MarShawn Lloyd':{e25:0,e24:-0.3,e23:0,e22:0,ef25:0},
+  'Jonathon Brooks':{e25:0,e24:-0.31,e23:0,e22:0,ef25:0},
+  'Alexander Mattison':{e25:0,e24:-0.23,e23:-0.18,e22:0,ef25:0},
+  // 2025 TE EPA (YPRR-based)
+  'Zach Ertz':{e25:1.35,e24:1.27,e23:1.01,e22:1.07,ef25:1.35},
+  'Dawson Knox':{e25:1.33,e24:1.05,e23:0.77,e22:1.11,ef25:1.33},
+  'Colby Parkinson':{e25:1.62,e24:0.99,e23:1.11,e22:1.57,ef25:1.62},
+  'Cole Kmet':{e25:1.0,e24:0.89,e23:1.67,e22:1.28,ef25:1.0},
+  'Greg Dulcich':{e25:2.29,e24:0.26,e23:1.29,e22:1.31,ef25:2.29},
+  'Michael Mayer':{e25:1.47,e24:0.69,e23:1.11,e22:0,ef25:1.47},
+  'Jake Tonges':{e25:1.27,e24:1.54,e23:2.26,e22:0,ef25:1.27},
+  'Noah Fant':{e25:1.33,e24:1.3,e23:1.29,e22:1.38,ef25:1.33},
+  'Elijah Higgins':{e25:1.0,e24:1.01,e23:1.81,e22:0,ef25:1.0},
+  'David Njoku':{e25:1.07,e24:1.34,e23:1.69,e22:1.57,ef25:1.07},
+  'Jonnu Smith':{e25:0.77,e24:1.96,e23:1.56,e22:1.43,ef25:0.77},
+  'Charlie Kolar':{e25:1.41,e24:2.91,e23:1.47,e22:1.81,ef25:1.41},
+  'Ben Sinnott':{e25:1.06,e24:0.26,e23:0.0,e22:0,ef25:1.06},
+  'Terrance Ferguson':{e25:1.37,e24:1.59,e23:1.92,e22:0,ef25:1.37},
+  'JaTavion Sanders':{e25:0.83,e24:1.11,e23:0.0,e22:0,ef25:0.83},
 };
 
 function calcEPA(n,pos){
@@ -666,7 +1104,7 @@ const CB={
 const QBQ={
   ARI:.80,ATL:.83,BAL:1.0,BUF:1.0,CAR:.83,CHI:.92,CIN:.95,CLE:.82,
   DAL:.93,DEN:.93,DET:.95,GB:.96,HOU:.87,IND:.88,JAC:.90,KC:.95,
-  LV:.74,LAC:.90,LAR:.96,MIA:.80,MIN:.93,NE:.99,NO:.82,NYG:.84,
+  LV:.74,LAC:.90,LAR:.96,MIA:.80,MIN:.95,NE:.99,NO:.82,NYG:.84,
   NYJ:.76,PHI:.95,PIT:.76,SF:.95,SEA:.91,TB:.90,TEN:.82,WAS:.93,
 };
 const AC={
@@ -780,7 +1218,7 @@ const TS_DELTA={
   "Kayshon Boutte":-0.014,
   "Keaton Mitchell":0.042,
   "Kenneth Gainwell":0.08,
-  "Kenneth Walker III":0.021,
+  "Kenneth Walker III":0.05,
   "Kimani Vidal":0.028,
   "Kyle Monangai":0.011,
   "Kyle Williams":0.054,
@@ -823,6 +1261,17 @@ const TS_DELTA={
   "Woody Marks":-0.035,
   "Xavier Legette":-0.039,
   "Zach Ertz":-0.035,
+  // Remaining FA/late players TS
+  "Chris Godwin":0.036,
+  "Christian Kirk":0.013,
+  "Cooper Kupp":-0.027,
+  "D.J. Moore":-0.066,
+  "Greg Dulcich":0.08,
+  "Jauan Jennings":0.056,
+  "Kareem Hunt":0.023,
+  "Marquise Brown":-0.08,
+  "Stefon Diggs":-0.048,
+  "Wan'Dale Robinson":0.08,
 };
 
 // Rising/Fading trend tags — derived from target share H1→H2 and multi-year data
@@ -831,7 +1280,7 @@ const TREND_TAG={
   // Rising ↑ — confirmed ascending role trajectory
   "Luther Burden":"rising","Harold Fannin Jr.":"rising",
   "Jahmyr Gibbs":"rising","Zay Flowers":"rising","De'Von Achane":"rising",
-  "George Kittle":"rising","Parker Washington":"rising","Jaxon Smith-Njigba":"rising","Rhamondre Stevenson":"rising",
+  "George Kittle":"rising","Jaxon Smith-Njigba":"rising",
   "RJ Harvey":"rising","Ashton Jeanty":"rising",
   // Fading ↓ — confirmed declining role trajectory
   "Alvin Kamara":"fading","Tony Pollard":"fading","Chuba Hubbard":"fading",
@@ -841,7 +1290,7 @@ const TREND_TAG={
   "T.J. Hockenson":"fading",
   "George Pickens":"rising",
   "Jaxson Dart":"rising",
-  "Jaylen Warren":"rising",
+  
   "Rome Odunze":"rising",
   "Aaron Jones":"fading",
   "D'Andre Swift":"fading",
@@ -1012,7 +1461,7 @@ const RAW=[
   {n:'Keon Coleman',t:'BUF',p:'WR',a:22.5,k:2900,ppg25:6.4,ppg24:7.5,ppg23:0,g25:13},
   {n:'Josh Downs',t:'IND',p:'WR',a:24.6,k:3339,ppg25:6.7,ppg24:10.5,ppg23:7.2,g25:16},
   {n:'Travis Hunter',t:'JAC',p:'WR',a:22.8,k:3701,ppg25:7.1,ppg24:0,ppg23:0,g25:7},
-  {n:'Brandon Aiyuk',t:'SF',p:'WR',a:28.0,k:2609,ppg25:0,ppg24:7.1,ppg23:13.2,g25:0},
+  {n:'Brandon Aiyuk',t:'FA',p:'WR',a:28.0,k:2609,ppg25:0,ppg24:0,ppg23:0,g25:0},
   {n:'Jalen Coker',t:'CAR',p:'WR',a:24.4,k:3085,ppg25:6.7,ppg24:7.0,ppg23:0,g25:11},
   {n:'Malik Nabers',t:'NYG',p:'WR',a:22.6,k:7790,ppg25:12.0,ppg24:14.6,ppg23:0,g25:4},
   {n:'Deebo Samuel',t:'FA',p:'WR',a:29.4,k:2800,ppg25:9.5,ppg24:8.5,ppg23:14.2,g25:16},
@@ -1106,9 +1555,9 @@ const RAW=[
   {n:'Terrance Ferguson',t:'LAR',p:'TE',a:23.8,k:1900,ppg25:7.8,ppg24:0,ppg23:0,g25:13},
   {n:'Jake Tonges',t:'SF',p:'TE',a:26.8,k:2000,ppg25:9.9,ppg24:0,ppg23:0,g25:17},
   {n:'Michael Mayer',t:'LV',p:'TE',a:24.2,k:1800,ppg25:9.8,ppg24:6.1,ppg23:9.6,g25:14},
-  {n:'JaTavion Sanders',t:'FA',p:'TE',a:23.8,k:1600,ppg25:6.8,ppg24:8.2,ppg23:0,g25:13},
+  {n:'JaTavion Sanders',t:'CAR',p:'TE',a:23.8,k:1600,ppg25:6.8,ppg24:8.2,ppg23:0,g25:13},
   {n:'Ben Sinnott',t:'WAS',p:'TE',a:25.0,k:2300,ppg25:3.3,ppg24:1.9,ppg23:0,g25:17},
-  {n:'Zach Ertz',t:'TB',p:'TE',a:35.8,k:1400,ppg25:16.6,ppg24:18.3,ppg23:10.1,g25:13},
+  {n:'Zach Ertz',t:'WAS',p:'TE',a:35.8,k:1400,ppg25:16.6,ppg24:18.3,ppg23:10.1,g25:13},
   // Batch 4-7 — QBs
   {n:'Mac Jones',t:'NE',p:'QB',a:27.8,k:800,ppg25:0,ppg24:0,ppg23:0,g25:0},
   {n:'Joe Flacco',t:'CIN',p:'QB',a:41.8,k:500,ppg25:0,ppg24:0,ppg23:0,g25:0},
@@ -1686,8 +2135,8 @@ function calcProj(pl){
   }
 
   // Model value: additive delta on KTC, hard cap 9999
-  const mvDelta=Math.max(-0.25,Math.min(0.20,rawDelta+(ci(e.c)-0.15)*(-0.3)));
-  const mv=Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
+  // mv computed via mvAsset (includes all 5 features: contract, injury, scarcity, competition, volatility)
+  const mv=mvAsset({...pl,proj,p:pl.p});
 
   return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
@@ -1705,270 +2154,81 @@ function mvAsset(pl){
   const rip=RP[pl.n]||1.0;
   const qbq=(pl.p||pl.pos)!=='QB'?(QBQ[AL[e.team]||e.team]||0.85):1.0;
   const rawDelta=getDeltas(pl.n,pl.p||pl.pos,e.s,e.c,roleData.raw,roleData.raw,col,epa.sc,rip,qbq);
-  const mvDelta=Math.max(-0.25,Math.min(0.20,rawDelta+(ci(e.c)-0.15)*(-0.3)));
+
+  // Volatility penalty (miss% suppresses value regardless of system)
+  const glMV=GAME_LOG[pl.n];
+  let d_vol_mv=0;
+  if(glMV && glMV.g>=20){
+    if(glMV.miss>65) d_vol_mv=-0.10;
+    else if(glMV.miss>55) d_vol_mv=-0.06;
+    else if(glMV.miss>45) d_vol_mv=-0.03;
+    if(glMV.elite>30) d_vol_mv=Math.min(0,d_vol_mv+0.03);
+  }
+
+  // Stability penalty (single-spike seasons)
+  const g25mv=pl.g25||0;
+  let d_stab_mv=0;
+  if((pl.ppg25||0)>0&&(pl.ppg24||0)>0&&(pl.ppg23||0)>0){
+    const avg2324=((pl.ppg24||0)*2+(pl.ppg23||0))/3;
+    const spike=(pl.ppg25||0)-avg2324;
+    if(spike>0&&avg2324>0&&spike/avg2324>0.35)
+      d_stab_mv=-Math.min(0.12,(spike/avg2324-0.35)*0.25);
+  }
+  if(g25mv===0&&(pl.ppg25||0)===0) d_stab_mv-=0.10;
+
+  // ── FEATURE 1: Contract year signal ─────────────────────────
+  let d_contract_mv=0;
+  const ctEntry=CONTRACTS.find(c=>c.n===pl.n);
+  if(!ctEntry){
+    d_contract_mv=-0.02; // no contract = uncertainty
+  } else {
+    const expiresIn=ctEntry.end-2026;
+    if(expiresIn<=0){ // walk year or expired
+      const isProductive=(pl.ppg25||0)>=12;
+      const isYoung=(pl.a||30)<29;
+      d_contract_mv=isProductive&&isYoung?0.04:-0.03;
+    }
+    // multi-year deals: slight positive for security
+    else if(expiresIn>=3) d_contract_mv=0.01;
+  }
+
+  // ── FEATURE 2: Injury history signal ────────────────────────
+  let d_inj_hist=0;
+  const pos2=pl.p||pl.pos;
+  const g25h=pl.g25||0;
+  const ppg24h=pl.ppg24||0;
+  const ppg23h=pl.ppg23||0;
+  // Missed most of 2025 (not a known full-year injury that's already priced via inj)
+  if(g25h>0&&g25h<9) d_inj_hist-=0.04;
+  // Missed significant games multiple recent seasons
+  if(g25h<14&&ppg24h===0&&(pl.a||30)>22) d_inj_hist-=0.03;
+  if(g25h<14&&ppg23h===0&&ppg24h===0&&(pl.a||30)>23) d_inj_hist-=0.02;
+  d_inj_hist=Math.max(-0.08,d_inj_hist);
+
+  // ── FEATURE 3: Positional scarcity ──────────────────────────
+  const proj_mv=pl.proj||0;
+  const d_scarcity=scarcityBonus(pos2,proj_mv);
+
+  // ── FEATURE 4: Team competition index ───────────────────────
+  let d_comp=0;
+  if(!COMP_EXEMPT.has(pl.n)&&pos2!=='QB'){
+    d_comp=-(COMP_IDX[AL[e.team]||e.team]||0);
+  }
+
+  // ── FEATURE 5b: Format-aware dynasty value ──────────────────
+  const d_fmt=formatMvShift(pl.n,pos2,scoringFmt);
+
+  const mvDelta=Math.max(-0.35,Math.min(0.25,
+    rawDelta+(ci(e.c)-0.15)*(-0.3)
+    +d_vol_mv+d_stab_mv
+    +d_contract_mv+d_inj_hist
+    +d_scarcity+d_comp
+    +d_fmt
+  ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
   return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
 }
 
-const COMP=[];
-RAW.forEach(r=>COMP.push(calcProj(r)));
-const ASSETS=[...COMP,...PICKS];
-
-let sortK='ktc',sortDir=-1;
-function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
-function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
-function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
-function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
-function eTag(sc,fl,fr){
-  if(sc===1.0&&!fl)return'<span class="badge bn">—</span>';
-  const c=sc>=1.15?'bs':sc>=1.05?'bi':sc>=0.95?'bn':sc>=0.90?'bw':'bd';
-  const lbl=fr==='vol+YAC neutral'?'neutral ⌊':fl?'floor ⌊':sc>=1.15?'elite':sc>=1.05?'above avg':sc>=0.95?'avg':'below avg';
-  return`<span class="badge ${c}">${lbl}</span>`;
-}
-function rTag(mult,lbl,pos){
-  const c=mult>=1.10?'bs':mult>=1.02?'bi':mult>=0.94?'bn':mult>=0.85?'bw':'bd';
-  const indicator=pos==='RB'?'⬛':'◆';
-  return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
-}
-function vTag(p){
-  const r=p.mv/Math.max(p.ktcEff||p.k,1);
-  if(r>=1.15)return'<span class="badge bs">strong buy</span>';
-  if(r>=1.06)return'<span class="badge bi">buy</span>';
-  if(r>=0.94)return'<span class="badge bn">hold</span>';
-  if(r>=0.82)return'<span class="badge bw">sell</span>';
-  return'<span class="badge bd">strong sell</span>';
-}
-
-function renderRankings(){
-  const q=(document.getElementById('s-rank').value||'').toLowerCase();
-  const pos=document.getElementById('pos-rank').value;
-  const ageMax=parseInt(document.getElementById('age-rank').value)||99;
-  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
-  data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
-  // Build position rank counters
-  const posRanks={QB:0,RB:0,WR:0,TE:0};
-  // Pre-compute position ranks based on current sort order
-  const allSorted=[...COMP].sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
-  const posRankMap={};
-  const tmpCounts={QB:0,RB:0,WR:0,TE:0};
-  allSorted.forEach(p=>{
-    if(tmpCounts[p.pos]!==undefined){
-      tmpCounts[p.pos]++;
-      posRankMap[p.n]=tmpCounts[p.pos];
-    }
-  });
-  document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr>
-    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px">${p.pos}${posRankMap[p.n]||''}</td>
-    <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-    <td style="font-weight:600;white-space:nowrap">${p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
-    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td>
-    <td>${p.t}${p.notes?` <span style="font-size:9px;color:#4a5568">(${p.notes})</span>`:''}</td>
-    <td>${p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
-    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
-    <td style="font-weight:600">${p.proj.toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
-    <td style="font-weight:600;color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
-    <td>${sTag(p.sys)}</td>
-    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}">${p.och?'⚠ ':''}${p.oc}</td>
-    <td>${vTag(p)}</td>
-  </tr>`).join('');
-}
-
-let projSort='proj';
-function setSortP(k){projSort=k;renderProj();}
-function renderProj(){
-  const q=(document.getElementById('s-proj').value||'').toLowerCase();
-  const pos=document.getElementById('pos-proj').value;
-  const sort=document.getElementById('sort-proj').value;
-  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q));
-  const activeSort=projSort||sort;
-  if(activeSort==='proj')data.sort((a,b)=>b.proj-a.proj);
-  else if(activeSort==='ceil')data.sort((a,b)=>b.ceil-a.ceil);
-  else if(activeSort==='floor')data.sort((a,b)=>b.floor-a.floor);
-  else if(activeSort==='gap')data.sort((a,b)=>b.gap-a.gap);
-  else if(activeSort==='miss')data.sort((a,b)=>(GAME_LOG[a.n]?.miss??99)-(GAME_LOG[b.n]?.miss??99));
-  else if(activeSort==='hit')data.sort((a,b)=>(GAME_LOG[b.n]?.hit??0)-(GAME_LOG[a.n]?.hit??0));
-  else if(activeSort==='elite')data.sort((a,b)=>(GAME_LOG[b.n]?.elite??0)-(GAME_LOG[a.n]?.elite??0));
-  document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
-    const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
-    const fr=p.epaFr==='vol+YAC neutral'
-      ?'<span style="color:#6ee7b7;font-size:10px">⌊ neutral (vol+YAC)</span>'
-      :p.epaFl?`<span style="color:#fcd34d;font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
-    const gl=GAME_LOG[p.n];
-    const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
-    const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
-    const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
-    return`<tr>
-      <td style="font-weight:600;white-space:nowrap">${p.n}</td>
-      <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
-      <td style="color:#fca5a5">${p.floor.toFixed(1)}</td>
-      <td style="font-weight:600">${p.proj.toFixed(1)}</td>
-      <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
-      <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-      <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
-      <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-      <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
-      <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
-      <td style="font-size:10px;color:#718096">±${Math.round(p.ci*100)}%</td>
-      <td style="font-weight:600;color:${mc}">${gl?gl.miss+'%':'—'}</td>
-      <td style="font-weight:600;color:${hc}">${gl?gl.hit+'%':'—'}</td>
-      <td style="font-weight:600;color:${ec}">${gl?gl.elite+'%':'—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderEPA(){
-  const pos=document.getElementById('pos-epa').value;
-  const sort=document.getElementById('sort-epa').value;
-  const q=(document.getElementById('s-epa').value||'').toLowerCase();
-  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q)&&(p.epaSc!==1.0||p.epaFl));
-  if(sort==='epaTr')data.sort((a,b)=>({up:2,flat:1,down:0}[b.epaTr]||0)-({up:2,flat:1,down:0}[a.epaTr]||0));
-  else if(sort==='ef')data.sort((a,b)=>(b.ef25||0)-(a.ef25||0));
-  else if(sort==='ktc')data.sort((a,b)=>b.ktcEff-a.ktcEff);
-  else data.sort((a,b)=>b.epaSc-a.epaSc);
-  const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
-  const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
-  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr>
-    <td style="font-weight:600;white-space:nowrap">${p.n}</td>
-    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
-    <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
-    <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
-    <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
-    <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
-    <td style="font-size:10px;color:#4a5568">${p.epaRaw.toFixed(3)}</td>
-    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
-    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'#6ee7b7':'#fcd34d'}">${p.epaFr}</span>`:'—'}</td>
-    <td>${tH(p.epaTr)}</td>
-    <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
-    <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-    <td>${vTag(p)}</td>
-  </tr>`).join('');
-}
-
-let sA=[],sB=[];
-function doSearch(side){
-  const q=(document.getElementById('srch-'+side).value||'').toLowerCase().trim();
-  const drop=document.getElementById('drop-'+side);
-  if(q.length<2){drop.style.display='none';return;}
-  const matches=ASSETS.filter(p=>p.n.toLowerCase().includes(q)).slice(0,10);
-  if(!matches.length){drop.style.display='none';return;}
-  drop.style.display='block';
-  drop.innerHTML=matches.map(p=>{
-    const mv=mvAsset(p);const diff=mv-p.k;
-    const dc=diff>200?'#6ee7b7':diff<-200?'#fca5a5':'#718096';
-    return`<div class="drop-item" onclick="addAsset('${side}','${p.n.replace(/'/g,"\\'")}')">
-      <span>${p.n} <span style="font-size:10px;color:#718096">${p.ip?'PICK':((p.p||p.pos)+' · '+(p.t||''))}</span></span>
-      <span style="font-size:10px">KTC ${p.k.toLocaleString()} <span style="color:${dc}">(${diff>=0?'+':''}${diff.toLocaleString()})</span></span>
-    </div>`;
-  }).join('');
-}
-function addAsset(side,name){
-  const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
-  const arr=side==='a'?sA:sB;
-  if(!arr.find(x=>x.n===name))arr.push({...asset});
-  document.getElementById('srch-'+side).value='';
-  document.getElementById('drop-'+side).style.display='none';
-  recalcTrade();
-}
-function removeAsset(side,name){
-  if(side==='a')sA=sA.filter(x=>x.n!==name);else sB=sB.filter(x=>x.n!==name);
-  recalcTrade();
-}
-function recalcTrade(){
-  function rSide(side,arr,elId,ktcId,modId){
-    document.getElementById(elId).innerHTML=arr.map(p=>{
-      const mv=mvAsset(p);const e=p.ip?null:getEff(p);
-      return`<div class="added">
-        <div style="flex:1;min-width:0">
-          <div class="added-name">${p.n}</div>
-          <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}`}</div>
-        </div>
-        <div class="added-vals">
-          <div style="color:#718096">KTC ${p.k.toLocaleString()}</div>
-          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
-        </div>
-        <button class="rm" onclick="removeAsset('${side}','${p.n.replace(/'/g,"\\'")}')">✕</button>
-      </div>`;
-    }).join('');
-    const kt=arr.reduce((s,x)=>s+x.k,0);
-    const mt=arr.reduce((s,x)=>s+mvAsset(x),0);
-    document.getElementById(ktcId).textContent=kt>0?kt.toLocaleString():'—';
-    document.getElementById(modId).textContent=mt>0?mt.toLocaleString():'—';
-    return{ktc:kt,mod:mt};
-  }
-  const a=rSide('a',sA,'side-a','ktc-a','mod-a');
-  const b=rSide('b',sB,'side-b','ktc-b','mod-b');
-  if(!sA.length&&!sB.length){document.getElementById('verdict-area').innerHTML='';return;}
-  const mA=a.mod,mB=b.mod;
-  const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
-  const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
-  let verdict,vc;
-  if(pct<=8){verdict='Fair trade';vc='bi';}
-  else if(mA>mB){verdict=pct<=15?'Slight edge — Side A':pct<=25?'Clear win — Side A':'Side A wins big';vc='bs';}
-  else{verdict=pct<=15?'Slight edge — Side B':pct<=25?'Clear win — Side B':'Side B wins big';vc='bd';}
-  const nA=sA.map(x=>x.n).join(', ')||'nothing';
-  const nB=sB.map(x=>x.n).join(', ')||'nothing';
-  document.getElementById('verdict-area').innerHTML=`
-    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-      <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
-      <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
-    </div>
-    <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
-    <div style="text-align:center;margin-bottom:.75rem">
-      <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
-      ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
-    </div>
-    <div class="breakdown-grid">
-      <div><div class="section-label">Side A</div>
-        ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
-      </div>
-      <div><div class="section-label">Side B</div>
-        ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
-      </div>
-    </div>
-    <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: I receive ${nA} and give ${nB}. Model values Side A at ${mA.toLocaleString()} and Side B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
-}
-
-function renderWatchlist(){
-  const data=COMP.filter(p=>p.och).sort((a,b)=>a.sys-b.sys);
-  document.getElementById('watchlist-body').innerHTML=data.map(p=>`
-    <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a202c;font-size:12px;flex-wrap:wrap">
-      <span style="font-weight:600;min-width:150px;white-space:nowrap">${p.n}</span>
-      <span class="badge bn">${p.pos}</span>
-      <span style="font-size:11px;color:#718096">${p.t} · ${p.oc}</span>
-      ${sTag(p.sys)}${eTag(p.epaSc,p.epaFl,p.epaFr)}
-      <span style="font-size:11px">Proj: <strong>${p.proj.toFixed(1)}</strong></span>
-      <span style="font-size:11px;color:#718096">KTC ${p.ktcEff.toLocaleString()}</span>
-      ${vTag(p)}
-    </div>`).join('');
-}
-
-function renderRipple(){
-  const sorted=[...RIPPLE].sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
-  document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
-    const p=COMP.find(x=>x.n===r.n);
-    return`<div class="ripple-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
-        <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
-          ${p?`<span style="font-size:10px;color:#718096">KTC ${p.ktcEff.toLocaleString()} · Proj ${p.proj.toFixed(1)}</span>`:''}
-        </div>
-      </div>
-      <div style="font-size:11px;color:#718096;margin-top:4px">${r.reason}</div>
-    </div>`;
-  }).join('');
-}
-
-// ============================================================
-// CONTRACT DATA
-// Source: Spotrac screenshots, batches by team
-// Status: 6 teams loaded (NO, NYG, NYJ, PHI, PIT, SF)
-// AAV = average annual value, end = contract end year
-// ============================================================
 const CONTRACTS=[
   // NEW ORLEANS SAINTS
   {n:'Travis Etienne',pos:'RB',team:'NO',aav:12000000,total:48000000,end:2029,note:'Signed as RB1 through 2029'},
@@ -2174,6 +2434,320 @@ const CONTRACTS=[
   {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2026,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
 ];
 
+const COMP=[];
+RAW.forEach(r=>COMP.push(calcProj(r)));
+const ASSETS=[...COMP,...PICKS];
+
+let sortK='ktc',sortDir=-1;
+function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
+function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
+function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
+function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
+function eTag(sc,fl,fr){
+  if(sc===1.0&&!fl)return'<span class="badge bn">—</span>';
+  const c=sc>=1.15?'bs':sc>=1.05?'bi':sc>=0.95?'bn':sc>=0.90?'bw':'bd';
+  const lbl=fr==='vol+YAC neutral'?'neutral ⌊':fl?'floor ⌊':sc>=1.15?'elite':sc>=1.05?'above avg':sc>=0.95?'avg':'below avg';
+  return`<span class="badge ${c}">${lbl}</span>`;
+}
+function rTag(mult,lbl,pos){
+  const c=mult>=1.10?'bs':mult>=1.02?'bi':mult>=0.94?'bn':mult>=0.85?'bw':'bd';
+  const indicator=pos==='RB'?'⬛':'◆';
+  return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
+}
+function vTag(p){
+  const r=mvAsset(p)/Math.max(p.ktcEff||p.k,1);
+  if(r>=1.15)return'<span class="badge bs">strong buy</span>';
+  if(r>=1.06)return'<span class="badge bi">buy</span>';
+  if(r>=0.94)return'<span class="badge bn">hold</span>';
+  if(r>=0.82)return'<span class="badge bw">sell</span>';
+  return'<span class="badge bd">strong sell</span>';
+}
+
+// ── FEATURE 5: Scoring Format Adjustment ─────────────────────
+// Base format: 0.5 PPR + TE Premium (1.0 bonus for TEs)
+// REC_PG stores receptions/game for 2025 season
+// Delta vs base for each format:
+//   standard:   -0.5×rec (all) and -1.0×rec (TE premium removal)
+//   half:       -1.0×rec (TE only, removes premium, keeps 0.5 for others)
+//   full_tep:   +0.5×rec (all, adds to existing 0.5)
+//   full:        0 for WR/RB, -0.5×rec (TE, removes premium partially)
+function getScoringDelta(name,pos,fmt){
+  const r=REC_PG[name]||0;
+  if(fmt==='half_tep') return 0; // current base
+  if(fmt==='half')     return pos==='TE'?-r*1.0:0; // remove TE premium only
+  if(fmt==='full_tep') return r*0.5; // add 0.5 to everyone
+  if(fmt==='full')     return pos==='TE'?-r*0.5:r*0.5; // full for WR/RB, remove TEP for TE
+  if(fmt==='std')      return -(r*0.5)+(pos==='TE'?-r*1.0:0); // remove all rec pts
+  return 0;
+}
+
+
+function applyScoring(){
+  scoringFmt=document.getElementById('scoring-fmt').value;
+  // Update disclaimer text
+  const labels={
+    'half_tep':'0.5 PPR + TE Premium','half':'0.5 PPR (no TE Prem)',
+    'full_tep':'Full PPR + TE Premium','full':'Full PPR (no TE Prem)','std':'Standard'
+  };
+  const disc=document.getElementById('scoring-disc');
+  if(disc) disc.textContent=labels[scoringFmt]+' · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0';
+  renderRankings();
+  if(typeof renderProj==='function') renderProj();
+  if(typeof renderDepth==='function') renderDepth();
+}
+
+function getAdjProj(p){
+  const delta=getScoringDelta(p.n,p.p||p.pos,scoringFmt);
+  return Math.max(0,+(p.proj+delta).toFixed(1));
+}
+
+function renderRankings(){
+  const q=(document.getElementById('s-rank').value||'').toLowerCase();
+  const pos=document.getElementById('pos-rank').value;
+  const ageMax=parseInt(document.getElementById('age-rank').value)||99;
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
+  data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
+  // Build position rank counters
+  const posRanks={QB:0,RB:0,WR:0,TE:0};
+  // Pre-compute position ranks based on current sort order
+  const allSorted=[...COMP].sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
+  const posRankMap={};
+  const tmpCounts={QB:0,RB:0,WR:0,TE:0};
+  allSorted.forEach(p=>{
+    if(tmpCounts[p.pos]!==undefined){
+      tmpCounts[p.pos]++;
+      posRankMap[p.n]=tmpCounts[p.pos];
+    }
+  });
+  document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px">${p.pos}${posRankMap[p.n]||''}</td>
+    <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+    <td style="font-weight:600;white-space:nowrap">${p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
+    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td>
+    <td>${p.t}${p.notes?` <span style="font-size:9px;color:#4a5568">(${p.notes})</span>`:''}</td>
+    <td>${p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
+    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+    <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
+    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${mvAsset(p).toLocaleString()}</td>
+    <td>${sTag(p.sys)}</td>
+    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}">${p.och?'⚠ ':''}${p.oc}</td>
+    <td>${vTag(p)}</td>
+  </tr>`).join('');
+}
+
+let projSort='proj';
+function setSortP(k){projSort=k;renderProj();}
+function renderProj(){
+  const q=(document.getElementById('s-proj').value||'').toLowerCase();
+  const pos=document.getElementById('pos-proj').value;
+  const sort=document.getElementById('sort-proj').value;
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q));
+  const activeSort=projSort||sort;
+  if(activeSort==='proj')data.sort((a,b)=>b.proj-a.proj);
+  else if(activeSort==='ceil')data.sort((a,b)=>b.ceil-a.ceil);
+  else if(activeSort==='floor')data.sort((a,b)=>b.floor-a.floor);
+  else if(activeSort==='gap')data.sort((a,b)=>b.gap-a.gap);
+  else if(activeSort==='miss')data.sort((a,b)=>(GAME_LOG[a.n]?.miss??99)-(GAME_LOG[b.n]?.miss??99));
+  else if(activeSort==='hit')data.sort((a,b)=>(GAME_LOG[b.n]?.hit??0)-(GAME_LOG[a.n]?.hit??0));
+  else if(activeSort==='elite')data.sort((a,b)=>(GAME_LOG[b.n]?.elite??0)-(GAME_LOG[a.n]?.elite??0));
+  document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
+    const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
+    const fr=p.epaFr==='vol+YAC neutral'
+      ?'<span style="color:#6ee7b7;font-size:10px">⌊ neutral (vol+YAC)</span>'
+      :p.epaFl?`<span style="color:#fcd34d;font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
+    const gl=GAME_LOG[p.n];
+    const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
+    const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
+    const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
+    return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+      <td style="font-weight:600;white-space:nowrap">${p.n}</td>
+      <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+      <td style="color:#fca5a5">${p.floor.toFixed(1)}</td>
+      <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
+      <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
+      <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+      <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+      <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+      <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
+      <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
+      <td style="font-size:10px;color:#718096">±${Math.round(p.ci*100)}%</td>
+      <td style="font-weight:600;color:${mc}">${gl?gl.miss+'%':'—'}</td>
+      <td style="font-weight:600;color:${hc}">${gl?gl.hit+'%':'—'}</td>
+      <td style="font-weight:600;color:${ec}">${gl?gl.elite+'%':'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEPA(){
+  const pos=document.getElementById('pos-epa').value;
+  const sort=document.getElementById('sort-epa').value;
+  const q=(document.getElementById('s-epa').value||'').toLowerCase();
+  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q)&&(p.epaSc!==1.0||p.epaFl));
+  if(sort==='epaTr')data.sort((a,b)=>({up:2,flat:1,down:0}[b.epaTr]||0)-({up:2,flat:1,down:0}[a.epaTr]||0));
+  else if(sort==='ef')data.sort((a,b)=>(b.ef25||0)-(a.ef25||0));
+  else if(sort==='ktc')data.sort((a,b)=>b.ktcEff-a.ktcEff);
+  else data.sort((a,b)=>b.epaSc-a.epaSc);
+  const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
+  const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
+  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+    <td style="font-weight:600;white-space:nowrap">${p.n}</td>
+    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+    <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
+    <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
+    <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
+    <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
+    <td style="font-size:10px;color:#4a5568">${p.epaRaw.toFixed(3)}</td>
+    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
+    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'#6ee7b7':'#fcd34d'}">${p.epaFr}</span>`:'—'}</td>
+    <td>${tH(p.epaTr)}</td>
+    <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
+    <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+    <td>${vTag(p)}</td>
+  </tr>`).join('');
+}
+
+let sA=[],sB=[];
+function doSearch(side){
+  const q=(document.getElementById('srch-'+side).value||'').toLowerCase().trim();
+  const drop=document.getElementById('drop-'+side);
+  if(q.length<2){drop.style.display='none';return;}
+  const matches=ASSETS.filter(p=>p.n.toLowerCase().includes(q)).slice(0,10);
+  if(!matches.length){drop.style.display='none';return;}
+  drop.style.display='block';
+  drop.innerHTML=matches.map(p=>{
+    const mv=mvAsset(p);const diff=mv-p.k;
+    const dc=diff>200?'#6ee7b7':diff<-200?'#fca5a5':'#718096';
+    return`<div class="drop-item" onclick="addAsset('${side}','${p.n.replace(/'/g,"\\'")}')">
+      <span>${p.n} <span style="font-size:10px;color:#718096">${p.ip?'PICK':((p.p||p.pos)+' · '+(p.t||''))}</span></span>
+      <span style="font-size:10px">KTC ${p.k.toLocaleString()} <span style="color:${dc}">(${diff>=0?'+':''}${diff.toLocaleString()})</span></span>
+    </div>`;
+  }).join('');
+}
+function addAsset(side,name){
+  const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
+  const arr=side==='a'?sA:sB;
+  if(!arr.find(x=>x.n===name))arr.push({...asset});
+  document.getElementById('srch-'+side).value='';
+  document.getElementById('drop-'+side).style.display='none';
+  recalcTrade();
+}
+function removeAsset(side,name){
+  if(side==='a')sA=sA.filter(x=>x.n!==name);else sB=sB.filter(x=>x.n!==name);
+  recalcTrade();
+}
+function applyTradeScoring(){
+  // Sync trade tab format with global scoringFmt
+  const sel=document.getElementById('trade-scoring-fmt');
+  if(sel) scoringFmt=sel.value;
+  // Also keep main selector in sync if it exists
+  const main=document.getElementById('scoring-fmt');
+  if(main) main.value=scoringFmt;
+  // Update main disclaimer
+  const labels={
+    'half_tep':'0.5PPR + TE Prem','half':'0.5 PPR (no TE Prem)',
+    'full_tep':'Full PPR + TE Prem','full':'Full PPR (no TE Prem)','std':'Standard'
+  };
+  const disc=document.getElementById('scoring-disc');
+  if(disc) disc.textContent=labels[scoringFmt]+' · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0';
+  recalcTrade();
+}
+
+function recalcTrade(){
+  function rSide(side,arr,elId,ktcId,modId){
+    document.getElementById(elId).innerHTML=arr.map(p=>{
+      const mv=mvAsset(p);const e=p.ip?null:getEff(p);
+      return`<div class="added">
+        <div style="flex:1;min-width:0">
+          <div class="added-name">${p.n}</div>
+          <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}<span style="color:#a0aec0">${getAdjProj(p).toFixed(1)} PPG</span>`}</div>
+        </div>
+        <div class="added-vals">
+          <div style="color:#718096">KTC ${p.k.toLocaleString()}</div>
+          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
+        </div>
+        <button class="rm" onclick="removeAsset('${side}','${p.n.replace(/'/g,"\\'")}')">✕</button>
+      </div>`;
+    }).join('');
+    const kt=arr.reduce((s,x)=>s+x.k,0);
+    const mt=arr.reduce((s,x)=>s+mvAsset(x),0);
+    document.getElementById(ktcId).textContent=kt>0?kt.toLocaleString():'—';
+    document.getElementById(modId).textContent=mt>0?mt.toLocaleString():'—';
+    return{ktc:kt,mod:mt};
+  }
+  const a=rSide('a',sA,'side-a','ktc-a','mod-a');
+  const b=rSide('b',sB,'side-b','ktc-b','mod-b');
+  if(!sA.length&&!sB.length){document.getElementById('verdict-area').innerHTML='';return;}
+  const mA=a.mod,mB=b.mod;
+  const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
+  const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
+  let verdict,vc;
+  if(pct<=8){verdict='Fair trade';vc='bi';}
+  else if(mA>mB){verdict=pct<=15?'Slight edge — Side A':pct<=25?'Clear win — Side A':'Side A wins big';vc='bs';}
+  else{verdict=pct<=15?'Slight edge — Side B':pct<=25?'Clear win — Side B':'Side B wins big';vc='bd';}
+  const nA=sA.map(x=>x.n).join(', ')||'nothing';
+  const nB=sB.map(x=>x.n).join(', ')||'nothing';
+  document.getElementById('verdict-area').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+      <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
+      <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
+    </div>
+    <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
+    <div style="text-align:center;margin-bottom:.75rem">
+      <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
+      ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+    </div>
+    <div class="breakdown-grid">
+      <div><div class="section-label">Side A</div>
+        ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
+      </div>
+      <div><div class="section-label">Side B</div>
+        ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
+      </div>
+    </div>
+    <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: I receive ${nA} and give ${nB}. Model values Side A at ${mA.toLocaleString()} and Side B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
+}
+
+function renderWatchlist(){
+  const data=COMP.filter(p=>p.och).sort((a,b)=>a.sys-b.sys);
+  document.getElementById('watchlist-body').innerHTML=data.map(p=>`
+    <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a202c;font-size:12px;flex-wrap:wrap">
+      <span style="font-weight:600;min-width:150px;white-space:nowrap">${p.n}</span>
+      <span class="badge bn">${p.pos}</span>
+      <span style="font-size:11px;color:#718096">${p.t} · ${p.oc}</span>
+      ${sTag(p.sys)}${eTag(p.epaSc,p.epaFl,p.epaFr)}
+      <span style="font-size:11px">Proj: <strong>${getAdjProj(p).toFixed(1)}</strong></span>
+      <span style="font-size:11px;color:#718096">KTC ${p.ktcEff.toLocaleString()}</span>
+      ${vTag(p)}
+    </div>`).join('');
+}
+
+function renderRipple(){
+  const sorted=[...RIPPLE].sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
+  document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
+    const p=COMP.find(x=>x.n===r.n);
+    return`<div class="ripple-card" style="cursor:pointer" data-name="${r.n}" onclick="openDeck(this.dataset.name)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
+        <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
+          ${p?`<span style="font-size:10px;color:#718096">KTC ${p.ktcEff.toLocaleString()} · Proj ${getAdjProj(p).toFixed(1)}</span>`:''}
+        </div>
+      </div>
+      <div style="font-size:11px;color:#718096;margin-top:4px">${r.reason}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// CONTRACT DATA
+// Source: Spotrac screenshots, batches by team
+// Status: 6 teams loaded (NO, NYG, NYJ, PHI, PIT, SF)
+// AAV = average annual value, end = contract end year
+// ============================================================
 function contractStatus(c){
   const yrsLeft=c.end-2025;
   if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
@@ -2223,7 +2797,7 @@ function renderContracts(){
     const yrsLeft=c.end-2025;
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:#718096">KTC ${pl.ktcEff.toLocaleString()}</span>`:'';
-    return`<tr>
+    return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)">
       <td style="font-weight:600;white-space:nowrap">${c.n}${pl?glTag(c.n)+trendTag(c.n):''}</td>
       <td><span class="badge bn">${c.pos}</span></td>
       <td style="color:#718096">${c.team}</td>
@@ -2326,6 +2900,335 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.edit-search-wrap')){const er=document.getElementById('edit-results');if(er)er.style.display='none';}
 });
 renderAll();renderOVList();
+
+// ════════════════════════════════════════════════════════════
+// DELTA Deck — Player Card Modal
+// ════════════════════════════════════════════════════════════
+
+function openDeck(name){
+  const p=COMP.find(x=>x.n===name);
+  if(!p) return;
+  document.getElementById('dd-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  renderDeck(p);
+}
+
+function closeDeckNow(){
+  document.getElementById('dd-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function closeDeck(e){
+  if(e.target===document.getElementById('dd-overlay')) closeDeckNow();
+}
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDeckNow(); });
+
+function renderDeck(p){
+  // ── Header ──
+  document.getElementById('dd-name').textContent=p.n;
+  document.getElementById('dd-card').dataset.player=p.n;
+  const trend=TREND_TAG[p.n]||'';
+  const trendHtml=trend==='rising'?'<span class="badge bi">↑ Rising</span>':
+                  trend==='fading'?'<span class="badge bw">↓ Fading</span>':'';
+  const ct=CONTRACTS.find(c=>c.n===p.n);
+  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}</span>`:'<span style="color:#4a5568">No contract data</span>';
+  document.getElementById('dd-meta').innerHTML=
+    `<span>${p.pos} · ${p.t}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}${trendHtml}`;
+
+  // ── Body ──
+  const gl=GAME_LOG[p.n];
+  const adjProj=getAdjProj(p);
+  const mv=mvAsset(p);
+  const epaLabel=p.pos==='QB'?'EPA/Play':'YPRR';
+
+  // PPG arc data
+  const ppgs=[
+    {yr:"'23",v:p.ppg23||0},{yr:"'24",v:p.ppg24||0},{yr:"'25",v:p.ppg25||0}
+  ];
+  const maxPpg=Math.max(...ppgs.map(x=>x.v),1);
+
+  // EPA arc
+  const epas=[
+    {yr:"'22",v:p.e22||0},{yr:"'23",v:p.e23||0},{yr:"'24",v:p.e24||0},{yr:"'25",v:p.e25||0}
+  ].filter(x=>x.v!==0);
+  const maxEpa=epas.length?Math.max(...epas.map(x=>Math.abs(x.v)),0.01):1;
+
+  // EPA arc color
+  const epaColor=v=>v>=1.8?'#6ee7b7':v>=1.4?'#7dd3fc':v>=1.0?'#fcd34d':'#fc8181';
+  const qbEpaColor=v=>v>=0.15?'#6ee7b7':v>=0.05?'#7dd3fc':v>=-0.05?'#fcd34d':'#fc8181';
+
+  // PPG arc bars
+  const ppgBars=ppgs.map(x=>{
+    const h=x.v>0?Math.max(8,Math.round((x.v/maxPpg)*44)):3;
+    const c=x.v>=18?'#6ee7b7':x.v>=14?'#7dd3fc':x.v>=10?'#fcd34d':x.v>0?'#fc8181':'#2d3748';
+    return`<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v>0?x.v.toFixed(1):'-'}</div>
+      <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
+      <div class="dd-arc-yr">${x.yr}</div></div>`;
+  }).join('');
+
+  // EPA arc bars
+  const epaBars=epas.map(x=>{
+    const h=Math.max(5,Math.round((Math.abs(x.v)/maxEpa)*44));
+    const c=p.pos==='QB'?qbEpaColor(x.v):(p.pos==='RB'?
+      (x.v>=0.05?'#6ee7b7':x.v>=-0.05?'#fcd34d':'#fc8181'):epaColor(x.v));
+    return`<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v.toFixed(2)}</div>
+      <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
+      <div class="dd-arc-yr">${x.yr}</div></div>`;
+  }).join('');
+
+  // Start Profile bars
+  const glHtml=gl?`
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Elite</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#6ee7b7"></div></div>
+      <div class="dd-prog-val" style="color:#6ee7b7">${gl.elite}%</div>
+    </div>
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Hit</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100-gl.miss}%;background:#7dd3fc"></div></div>
+      <div class="dd-prog-val" style="color:#7dd3fc">${100-gl.miss}%</div>
+    </div>
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Miss</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#fc8181"></div></div>
+      <div class="dd-prog-val" style="color:#fc8181">${gl.miss}%</div>
+    </div>
+    <div style="font-size:9px;color:#4a5568;margin-top:4px">${gl.g} games sampled</div>`
+  :'<div style="font-size:11px;color:#4a5568">Insufficient game data</div>';
+
+  // Role label
+  const roleStr=p.pos==='RB'?(RB_SNAP[p.n]?`${RB_SNAP[p.n][0].toFixed(0)}% snap share`:'—'):
+    (p.pos==='WR'&&YPRR_WR[p.n]?`${YPRR_WR[p.n][0].toFixed(2)} YPRR`:
+    (p.pos==='TE'&&YPRR_TE[p.n]?`${YPRR_TE[p.n][0].toFixed(2)} YPRR`:'—'));
+
+  // System
+  const sysColor=p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
+
+  // Contract note
+  const ctNote=ct&&ct.note?`<div style="font-size:10px;color:#718096;margin-top:6px;font-style:italic">${ct.note}</div>`:'';
+
+  // Rec / game for format note
+  const recPg=REC_PG[p.n];
+  const recStr=recPg?`${recPg.toFixed(1)} rec/g`:null;
+
+  document.getElementById('dd-body').innerHTML=`
+
+    <div class="dd-section">
+      <div class="dd-section-label">Projection & Value</div>
+      <div class="dd-grid">
+        <div class="dd-stat">
+          <div class="dd-stat-val" style="color:#6ee7b7">${adjProj.toFixed(1)}</div>
+          <div class="dd-stat-lbl">Proj PPG</div>
+        </div>
+        <div class="dd-stat">
+          <div class="dd-stat-val">${mv.toLocaleString()}</div>
+          <div class="dd-stat-lbl">Model Value</div>
+        </div>
+        <div class="dd-stat">
+          <div class="dd-stat-val">${p.ktcEff.toLocaleString()}</div>
+          <div class="dd-stat-lbl">KTC</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        ${vTag(p)}
+        ${trendHtml}
+        <span style="font-size:10px;color:#718096">${ct?`Exp ${ct.end}`:'No contract'}</span>
+        ${recStr?`<span style="font-size:10px;color:#718096">${recStr}</span>`:''}
+      </div>
+    </div>
+
+    <div class="dd-divider"></div>
+
+    <div class="dd-section">
+      <div class="dd-section-label">PPG Trend</div>
+      <div class="dd-arc" style="height:52px">${ppgBars}</div>
+    </div>
+
+    <div class="dd-section">
+      <div class="dd-section-label">${epaLabel} Arc</div>
+      ${epas.length?`<div class="dd-arc" style="height:52px">${epaBars}</div>`
+        :'<div style="font-size:11px;color:#4a5568">No multi-year data</div>'}
+    </div>
+
+    <div class="dd-divider"></div>
+
+    <div class="dd-section">
+      <div class="dd-section-label">Start Profile</div>
+      ${glHtml}
+    </div>
+
+    <div class="dd-divider"></div>
+
+    <div class="dd-section">
+      <div class="dd-section-label">System & Role</div>
+      <div class="dd-grid-2">
+        <div class="dd-stat">
+          <div class="dd-stat-val" style="color:${sysColor}">${p.sys}</div>
+          <div class="dd-stat-lbl">System Score</div>
+        </div>
+        <div class="dd-stat">
+          <div class="dd-stat-val" style="font-size:13px">${roleStr}</div>
+          <div class="dd-stat-lbl">Utilization</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:10px;color:${p.och?'#fcd34d':'#718096'}">
+        ${p.och?'⚠ OC change — scheme risk':''} ${p.oc||''}
+      </div>
+    </div>
+
+    <div class="dd-divider"></div>
+
+    <div class="dd-section">
+      <div class="dd-section-label">DELTA Scouting Report</div>
+      <div class="dd-writeup loading" id="dd-writeup">Generating report…</div>
+    </div>
+
+    ${ct?`<div class="dd-section" style="margin-top:-.25rem">
+      <div class="dd-section-label">Contract</div>
+      <div style="font-size:11px">${ct.note||'Contract data available'}</div>
+    </div>`:''}
+
+    <div class="dd-actions">
+      <button class="dd-btn primary" onclick="askClaudeAbout('${p.n.replace(/'/g,"\'")}')">Ask Claude ↗</button>
+      <button class="dd-btn" onclick="closeDeckNow()">Close</button>
+    </div>
+  `;
+
+  // Generate the scouting report via Claude API
+  generateScoutingReport(p);
+}
+
+function askClaudeAbout(name){
+  const p=COMP.find(x=>x.n===name);
+  if(!p) return;
+  const gl=GAME_LOG[p.n];
+  const mv=mvAsset(p);
+  const prompt=`Evaluate ${name} as a dynasty asset. DELTA model data: Proj ${getAdjProj(p).toFixed(1)} PPG, Model Value ${mv.toLocaleString()} vs KTC ${p.ktcEff.toLocaleString()} (${vTag(p).replace(/<[^>]+>/g,'')}), Age ${p.a.toFixed(1)}, ${p.pos} on ${p.t}, System score ${p.sys}, EPA score ${p.epaSc?.toFixed(2)||'N/A'}${gl?`, Start Profile miss/elite: ${gl.miss}%/${gl.elite}% (${gl.g} games)`:''}. Should I buy, sell, or hold at current KTC pricing?`;
+  closeDeckNow();
+  sendPrompt(prompt);
+}
+
+async function generateScoutingReport(p){
+  const gl=GAME_LOG[p.n];
+  const ct=CONTRACTS.find(c=>c.n===p.n);
+  const mv=mvAsset(p);
+  const trend=TREND_TAG[p.n]||'neutral';
+  const adjProj=getAdjProj(p);
+
+  // Build a tight data context for the prompt
+  const dataCtx=[
+    `Player: ${p.n} | ${p.pos} | ${p.t} | Age ${p.a.toFixed(1)}`,
+    `Projection: ${adjProj.toFixed(1)} PPG (${['half_tep','half','full_tep','full','std'].includes(scoringFmt)?scoringFmt:'0.5PPR'} format)`,
+    `PPG trend: ${p.ppg23>0?p.ppg23.toFixed(1)+' → ':''}${p.ppg24>0?p.ppg24.toFixed(1)+' → ':''}${p.ppg25.toFixed(1)}`,
+    `Model value: ${mv.toLocaleString()} vs KTC ${p.ktcEff.toLocaleString()} → ${vTag(p).replace(/<[^>]+>/g,'')}`,
+    `Trajectory tag: ${trend}`,
+    `System score: ${p.sys}/100 | OC: ${p.oc}${p.och?' (NEW OC)':''}`,
+    p.e25?`EPA arc: ${p.e22?p.e22+' → ':''}${p.e23?p.e23+' → ':''}${p.e24?p.e24+' → ':''}${p.e25} (${p.pos==='QB'?'EPA/play':'YPRR'})`:null,
+    gl?`Start Profile: ${gl.miss}% miss | ${gl.elite}% elite | ${gl.g} games`:null,
+    ct?`Contract: expires ${ct.end}${ct.end<=2026?' (walk year)':''}`:null,
+    REC_PG[p.n]?`Receptions: ${REC_PG[p.n].toFixed(1)}/game`:null,
+  ].filter(Boolean).join('\n');
+
+  const prompt=`You are a dynasty fantasy football analyst writing a 2-3 sentence DELTA Deck scouting report. Be specific, direct, and data-driven. Reference the actual numbers. Tone: confident analyst, not a chatbot. No fluff, no "it's worth noting", no "overall". Just the signal.
+
+Data:
+${dataCtx}
+
+Write the scouting report in 2-3 sentences:`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:200,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'Report unavailable.';
+    const el=document.getElementById('dd-writeup');
+    if(el){el.textContent=text;el.classList.remove('loading');}
+  }catch(err){
+    const el=document.getElementById('dd-writeup');
+    if(el){el.textContent='Report unavailable — check connection.';el.classList.remove('loading');}
+  }
+}
+
+
+// ── DELTA Deck Quick Search ───────────────────────────────────
+function deckSearchInput(){
+  const q=(document.getElementById('deck-search').value||'').toLowerCase().trim();
+  const drop=document.getElementById('deck-drop');
+  if(!q){drop.style.display='none';return;}
+  const matches=COMP.filter(p=>p.n.toLowerCase().includes(q)||
+    p.pos.toLowerCase()===q||p.t.toLowerCase()===q)
+    .sort((a,b)=>b.ktcEff-a.ktcEff).slice(0,8);
+  if(!matches.length){drop.style.display='none';return;}
+  drop.innerHTML=matches.map((p,i)=>{
+    const mv=mvAsset(p);
+    const ratio=mv/Math.max(p.ktcEff,1);
+    const dot=ratio>=1.06?'🟢':ratio>=0.94?'🟡':'🔴';
+    return`<div class="drop-item" data-name="${p.n}" data-idx="${i}"
+      onclick="deckSearchSelect(this.dataset.name)"
+      style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <span style="font-weight:600;font-size:12px">${p.n}</span>
+        <span style="font-size:10px;color:#718096;margin-left:6px">${p.pos} · ${p.t}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10px">
+        <span style="color:#718096">KTC ${p.ktcEff.toLocaleString()}</span>
+        <span>${dot}</span>
+      </div>
+    </div>`;
+  }).join('');
+  drop.style.display='block';
+}
+
+function deckSearchKey(e){
+  if(e.key==='Escape'){
+    document.getElementById('deck-drop').style.display='none';
+    document.getElementById('deck-search').value='';
+    return;
+  }
+  if(e.key==='Enter'){
+    const first=document.querySelector('#deck-drop .drop-item');
+    if(first) deckSearchSelect(first.dataset.name);
+  }
+}
+
+function deckSearchSelect(name){
+  document.getElementById('deck-drop').style.display='none';
+  document.getElementById('deck-search').value='';
+  openDeck(name);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#deck-search')&&!e.target.closest('#deck-drop')){
+    const drop=document.getElementById('deck-drop');
+    if(drop) drop.style.display='none';
+  }
+});
+
 </script>
+
+<!-- DELTA Deck — Player Card Modal -->
+<div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
+  <div class="dd-card" id="dd-card" data-player="">
+    <div class="dd-header">
+      <div>
+        <div class="dd-name" id="dd-name">—</div>
+        <div class="dd-meta" id="dd-meta"></div>
+      </div>
+      <button class="dd-close" onclick="closeDeckNow()">✕</button>
+    </div>
+    <div class="dd-body" id="dd-body"></div>
+  </div>
+</div>
 </body>
 </html>
