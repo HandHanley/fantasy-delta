@@ -623,7 +623,7 @@ const REC_PG={
 const SCARCITY_TIERS={
   TE:{elite:14,starter:9,eliteBonus:0.12,starterBonus:0.06},
   WR:{elite:18,starter:14,eliteBonus:0.05,starterBonus:0.02},
-  RB:{elite:18,starter:14,eliteBonus:0.05,starterBonus:0.02},
+  RB:{elite:18,starter:10,eliteBonus:0.05,starterBonus:0.02},
   QB:{elite:22,starter:18,eliteBonus:0.03,starterBonus:0.01},
 };
 function scarcityBonus(pos,proj){
@@ -644,7 +644,7 @@ const COMP_IDX={
 const COMP_EXEMPT=new Set([
   'Brock Bowers','Trey McBride','Ja\'Marr Chase','Justin Jefferson',
   'CeeDee Lamb','Jaxon Smith-Njigba','Christian McCaffrey','Bijan Robinson',
-  'George Kittle','Travis Kelce',
+  'George Kittle','Travis Kelce','Malik Nabers','Ashton Jeanty',
 ]);
 
 const SYS={
@@ -662,7 +662,7 @@ const SYS={
   NO:{s:61,c:.75,oc:'Moore',ch:false},NYG:{s:47,c:.35,oc:'Nagy',ch:true},
   NYJ:{s:44,c:.20,oc:'Reich',ch:true},PHI:{s:49,c:.20,oc:'Mannion',ch:true},
   PIT:{s:53,c:.20,oc:'McCarthy',ch:true},SF:{s:73,c:1.0,oc:'Shanahan',ch:false},
-  SEA:{s:38,c:.20,oc:'Fleury',ch:true},TB:{s:55,c:.20,oc:'Robinson',ch:true},
+  SEA:{s:55,c:.20,oc:'Fleury',ch:true},TB:{s:55,c:.20,oc:'Robinson',ch:true},
   TEN:{s:46,c:.35,oc:'Daboll',ch:true},WAS:{s:55,c:.35,oc:'Blough',ch:true},
   FA:{s:50,c:.20,oc:'Unknown',ch:true}
 };
@@ -1923,10 +1923,16 @@ function getDeltas(name,pos,sys,cont,yprr,snap,col,epa_sc,ripple,qbq){
   const d_sys=isQB
     ?(sys>=70?.01:sys>=55?.0:sys>=40?-.03:-.07)
     :(sys>=70?.04:sys>=55?.01:sys>=40?-.04:-.10);
-  // OC continuity delta — QBs feel this more on the downside (new scheme = regression)
+  // OC continuity delta — QBs feel this most, RBs least (scheme-independent)
+  // Franchise cornerstones (COMP_EXEMPT): new OCs adapt to them, penalty halved
+  const ocFranchise=COMP_EXEMPT.has(name);
   const d_oc=isQB
     ?(cont>=.95?.01:cont>=.70?.0:cont>=.50?-.04:cont>=.30?-.07:-.11)
-    :(cont>=.95?.03:cont>=.70?.01:cont>=.50?-.04:cont>=.30?-.08:-.12);
+    :pos==='RB'
+      ?(cont>=.95?.01:cont>=.70?.01:cont>=.50?-.02:cont>=.30?-.03:-.05)
+      :ocFranchise
+        ?(cont>=.95?.03:cont>=.70?.01:cont>=.50?-.02:cont>=.30?-.04:-.06)
+        :(cont>=.95?.03:cont>=.70?.01:cont>=.50?-.04:cont>=.30?-.08:-.12);
   // Role delta — QBs: zero (no depth chart role for QBs)
   let d_role=0;
   if(pos==='WR'){
@@ -2174,8 +2180,13 @@ function mvAsset(pl){
   if((pl.ppg25||0)>0&&(pl.ppg24||0)>0&&(pl.ppg23||0)>0){
     const avg2324=((pl.ppg24||0)*2+(pl.ppg23||0))/3;
     const spike=(pl.ppg25||0)-avg2324;
-    if(spike>0&&avg2324>0&&spike/avg2324>0.35)
+    if(spike>0&&avg2324>0&&spike/avg2324>0.35){
       d_stab_mv=-Math.min(0.12,(spike/avg2324-0.35)*0.25);
+      // If EPA/YPRR also improved significantly, breakout is real not a fluke
+      const epaChk=EPA[pl.n];
+      if(epaChk&&epaChk.e25&&epaChk.e24&&(epaChk.e25-epaChk.e24>0.30))
+        d_stab_mv*=0.4;
+    }
   }
   if(g25mv===0&&(pl.ppg25||0)===0) d_stab_mv-=0.10;
 
@@ -2218,15 +2229,23 @@ function mvAsset(pl){
     d_comp=-(COMP_IDX[AL[e.team]||e.team]||0);
   }
 
+  // ── Rising/Fading trend signal ───────────────────────────────
+  const trendMV=TREND_TAG[pl.n];
+  const d_trend=trendMV==='rising'?0.025:trendMV==='fading'?-0.015:0;
+
   // ── FEATURE 5b: Format-aware dynasty value ──────────────────
   const d_fmt=formatMvShift(pl.n,pos2,scoringFmt);
 
+  // Franchise cornerstone players (COMP_EXEMPT) adapt new OCs to them, not vice versa
+  const isFranchise=COMP_EXEMPT.has(pl.n);
+  const trendForCi=TREND_TAG[pl.n];
+  const ciMult=pos2==='RB'?0.5:isFranchise?0.4:(pos2==='QB'&&trendForCi==='rising')?0.5:1.0;
   const mvDelta=Math.max(-0.35,Math.min(0.25,
-    rawDelta+(ci(e.c)-0.15)*(-0.3)
+    rawDelta+((ci(e.c)-0.15)*(-0.3))*ciMult
     +d_vol_mv+d_stab_mv
     +d_contract_mv+d_inj_hist
     +d_scarcity+d_comp
-    +d_fmt
+    +d_trend+d_fmt
   ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
   return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
@@ -2455,7 +2474,7 @@ const SCOUT={
   'Baker Mayfield':`Mayfield's contract expires in 2026 (walk year) and his numbers support it — 13% elite rate across 63 games is the lowest of any starting QB in the model. He's been a solid 0.05 EPA/play for two years but is no longer a must-start. Sell or let expire.`,
   'Sam Darnold':`Darnold had a breakout 2024 (18.8 PPG) but fell back to 14.7 PPG in 2025 after joining a rebuilding SEA. His career 38% miss rate and middling 0.09 EPA/play profile him as a system-dependent QB2 — locked through 2027 but the target environment downgrade is real.`,
   'C.J. Stroud':`Stroud's 57% miss rate across 46 games is the biggest concern — he oscillates between elite (2023) and below-average (2024) without a clear trend. He bounced back to 15.5 PPG in 2025 at 0.11 EPA/play in a strong HOU system; locked through 2027 with young weapons. Upside hold.`,
-  'Jaxson Dart':`Dart's 17% miss rate across 12 games is the best rookie start in the model, and his 0.06 EPA/play was positive territory for a true rookie. NYG is rebuilding around him through 2029 at just 23 — hold with Rising tag; the model is conservative on first-year QBs with limited samples.`,
+  'Jaxson Dart':`Dart's 17% miss rate across 12 games is the best rookie start in the model, and his 0.06 EPA/play was positive for a true rookie. NYG is rebuilding around him through 2029 at 23 with a Rising tag. The model rates him a strong sell due to NYG's low system score and new OC — hold with patience; the upside is real but the model penalizes the current environment heavily.`,
   'Cam Ward':`Ward's 82% miss rate across 17 games and -0.17 EPA/play is the weakest profile of any full-time starter in the model. TEN's environment is limited and there's no established weapons around him yet. Hold at minimum expectation — 2026 will be the real evaluation year.`,
   'Bryce Young':`Young stabilized in 2025 (14.3 PPG, -0.03 EPA/play) after a disastrous 2023 (-0.23) but the 71% miss rate across 45 games is the worst of any expensive QB. CAR is investing in weapons through 2027 but the floor risk is real — hold only.`,
   'Matthew Stafford':`Stafford is 38 with a walk-year contract in 2026 and declining efficiency (0.17 EPA/play is good but PPG was 21.1 only because of the LAR system). Sell into any 2025-nostalgia market — the dynasty value here is minimal beyond one more season.`,
@@ -2476,7 +2495,7 @@ const SCOUT={
   'Justin Fields':`Fields has no dynasty relevance as a KC backup. His -0.06 career EPA average suggests he's a strong athlete but an inconsistent passer. Release unless your league counts rushing TDs heavily for QBs.`,
   'Kirk Cousins':`Cousins is 38 with no contract in LV after missing all of 2025. No dynasty value.`,
   'Puka Nacua':`Nacua's YPRR has improved every season (2.56→3.55→3.73) and his 3.73 in 2025 is the highest of any WR in the model — his efficiency is genuine. The walk-year contract in 2026 is the main risk, but at 25 in a strong LAR system he's one of the most compelling buy/hold WRs at his price point.`,
-  'Jaxon Smith-Njigba':`JSN's YPRR exploded from 1.81 to 3.67 in 2025 — the biggest single-season efficiency jump in the WR data — and his 7.0 receptions per game are elite. Locked through 2031 at 24 with a Rising tag; the model is conservative on him due to the spike penalty, but the talent and role are real. Buy.`,
+  'Jaxon Smith-Njigba':`JSN's YPRR exploded from 1.81 to 3.67 in 2025 — the biggest single-season efficiency jump in the WR data — and he finished as the WR1 with 119 catches and 7.0 receptions per game. Locked through 2031 at 24 with a Rising tag in SEA's offense, he's one of the most compelling hold-and-never-sell assets in the model. Hold firmly — do not sell at current KTC.`,
   'Amon-Ra St. Brown':`St. Brown's 2.48 YPRR and 6.9 receptions per game are among the most consistent WR profiles in the model across all four years — minimal volatility, 28% miss rate, 31% elite rate. Locked through 2028 at 26 in DET's elite passing system. Core hold.`,
   'George Pickens':`Pickens is in the best situation of his career after moving to DAL — his YPRR has climbed steadily (1.38→2.10→2.06→2.37) and his walk-year contract in 2026 creates maximum motivation. Rising tag is well-earned; the ceiling here is a WR1 season if Prescott stays healthy.`,
   'Chris Olave':`Olave's 1.99 YPRR is consistent across three seasons and his 38% miss rate is clean, but he's on an expiring 2026 deal in NO with an OC change — two simultaneous risks. The model rates him a buy based on efficiency and contract bonus; hold if confident in the NO situation, sell if you can get equal value.`,
@@ -2525,7 +2544,7 @@ const SCOUT={
   'Travis Hunter':`Hunter is a unique dual-threat playing WR in JAC — 1.32 YPRR and 75% miss rate in limited action as a true rookie at 23. Locked through 2028; monitor the NFL translation. Upside hold.`,
   'Brandon Aiyuk':`Aiyuk is off a team (FA) with no 2025 production and no contract — the dynasty value is in the hope he lands somewhere good. His 1.75-3.02 YPRR history shows the talent is real. Monitor landing spot; hold only at minimal cost and sell into any pop if he signs somewhere strong.`,
   'Jalen Coker':`Coker's 1.37 YPRR and 6.7 PPG in year two in CAR are modest. At 24 locked through 2026, he's an ascending WR2 in a developing offense — hold but don't reach.`,
-  'Malik Nabers':`Nabers posted 2.07 YPRR and 12.0 PPG in year two despite missing significant time — his per-game efficiency is elite. Locked through 2028 at 23 in an NYG rebuild, the situation will improve as the team builds around him. Hold and monitor health — the talent is undeniable but the injury flag keeps his model value suppressed.`,
+  'Malik Nabers':`Nabers posted 2.07 YPRR and 12.0 PPG across only 4 games in year two — his per-game efficiency extrapolates to elite production. The model rates him a strong sell at KTC 7,790 due to injury history and NYG OC uncertainty; in practice, hold if you have him and wait for a healthy 2026 season before selling into a potentially undervalued window.`,
   'Deebo Samuel':`Samuel is 29, FA, and his YPRR (1.65-1.68) reflects a functional hybrid role without elite receiving efficiency. His 46% miss rate across 63 games and no contract make this a terminal sell in dynasty.`,
   'Jauan Jennings':`Jennings is 29, FA, with no contract — his 11.5 PPG (2024) spike in SF's system was situation-dependent and his 68% miss rate confirms the instability. Release.`,
   'Stefon Diggs':`Diggs is 32, FA, with no contract after an injury year — his 2.41 YPRR and 35% elite rate in 2025 are legitimately strong but unsustainable at his age and situation. Sell into any market that prices his historical name value.`,
@@ -2569,7 +2588,7 @@ const SCOUT={
   'Bijan Robinson':`Robinson's 4.65 receptions per game and elite 46% elite rate across 50 games make him the most complete RB in dynasty — he's worth full PPR premium even at KTC 9,995. His EPA is negative (the running game is average) but the receiving work is irreplaceable. Core hold.`,
   'Jahmyr Gibbs':`Gibbs' 4.53 receptions per game and 43% elite rate across 49 games are elite dual-threat numbers — the Rising tag reflects an expanding role at 24 in DET's offense. Locked through 2027; buy if you can get him near KTC. One of the top 5 dynasty assets at any position.`,
   'James Cook':`Cook's 52% snap share and 1.9 rec/game make him a volume-dependent RB2 — his per-carry efficiency (0.02 EPA) is nearly average. At 26 locked through 2029 in BUF's strong offense, he's a reliable hold without the upside ceiling of the elite dual-threats.`,
-  'Jonathan Taylor':`Taylor's 0.05 EPA/rush in 2025 was his best since 2021 and his 70% snap share is elite — but his 2.7 rec/game limits his PPR upside. Walk-year contract in 2026 at 27 is the key inflection. Sell into the 2025 production if you can.`,
+  'Jonathan Taylor':`Taylor's 0.05 EPA/rush in 2025 was his best since 2021 and his 70% snap share is elite — but his 2.7 rec/game limits his PPR upside significantly. Walk-year contract in 2026 at 27 is the key inflection. The model rates him hold at current KTC — sell into the 2025 production if you can get a buyer paying for the name.`,
   'Derrick Henry':`Henry's 0.88 receptions per game make him one of the most standard-format-dependent assets in the model — he drops significantly in PPR value. His 42% elite rate is genuinely strong but the Fading tag is warranted at 32 locked through 2027. Sell in PPR leagues, hold in standard.`,
   'Kyren Williams':`Williams' 0.02 EPA and 2.1 rec/game profile him as an average RB with moderate PPR upside. His 73% snap share is elite and he's locked through 2028 at 26 in LAR's system. Hold — the volume is the value.`,
   'Saquon Barkley':`Barkley's -0.09 EPA/rush across four years confirms he's not an efficiency driver — his value is volume (72% snap share, 2.2 rec/game) in PHI's elite offense. At 29 locked through 2028, he'll decline before the deal ends. Hold short-term, plan your exit.`,
@@ -2578,7 +2597,7 @@ const SCOUT={
   'Travis Etienne':`Etienne's EPA/rush has been negative across four years (-0.04 to -0.18) — he's a pure volume RB without efficiency upside. In NO at 2.1 rec/game and 58% snap share, he's a volume play locked through 2029. Hold in standard, sell in PPR.`,
   'Javonte Williams':`Williams' 62% miss rate across 53 games and consistently negative EPA (-0.13 to -0.17 for three years) paint a clear picture — he's a below-average RB who relies on snap share. DAL locked him through 2028 at 26 but the efficiency is a real concern. Sell.`,
   'Josh Jacobs':`Jacobs' EPA/rush has been -0.06 for two straight years in GB — he's not moving the efficiency needle. His 57% snap share and 2.1 rec/game are fine, locked through 2027 at 28. Hold in standard, sell in PPR where pass-catchers dominate.`,
-  'Ashton Jeanty':`Jeanty's -0.24 EPA/rush in a weak LV offense with a 47% miss rate as a rookie is a real concern — but his 3.24 receptions per game and Rising tag reflect the opportunity in front of him. At 22 locked through 2029, hold with upside — the model is conservative on rookie EPA in limited environments.`,
+  'Ashton Jeanty':`Jeanty's -0.24 EPA/rush in a weak LV offense with a 47% miss rate as a rookie is a real concern — but his 3.24 receptions per game and Rising tag reflect the opportunity in front of him. The model rates him a sell due to LV's poor QB quality and EPA; hold with upside — at 22 locked through 2029, the efficiency will improve as the situation does.`,
   'Jaylen Warren':`Warren's 67% miss rate across 64 games and consistently negative EPA across three years are red flags — the model is right to be skeptical. PIT locked him through 2027 at 45% snap share, but the efficiency profile is below average. Sell.`,
   'Rico Dowdle':`Dowdle's -0.01 EPA/rush (near average) and 47% snap share in PIT are modest — he's a committee back without a clear path to expanded volume. At 28 locked through 2027, hold only in deep leagues.`,
   'Breece Hall':`Hall's EPA/rush has been negative for three straight years (-0.09 to -0.11) and his walk-year contract in 2026 at 25 is the key inflection point. His 63% snap share and 2.1 rec/game are positive, but NYJ's offensive environment has been limiting. Hold through contract resolution.`,
