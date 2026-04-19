@@ -1,4 +1,4 @@
 [build]
   publish = "."
   command = ""
-  ignore = "git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF | grep -qv '^data/market-values.json$'"
+  ignore = "git diff --name-only $CACHED_COMMIT_REF $COMMIT_REF | grep -v '^data/market-values.json$' | grep -q ."
