@@ -1,84 +1,38 @@
-/**
- * fetch-market-values.js
- * 
- * Fetches dynasty player values from FantasyCalc's free public API.
- * Runs inside the GitHub Action and writes data/market-values.json.
- * 
- * FantasyCalc API parameters:
- *   isDynasty=true        — dynasty values (not redraft)
- *   numQbs=2              — superflex (2 QB) scoring
- *   numTeams=12           — 12-team league
- *   ppr=1                 — full PPR
- * 
- * Adjust numQbs to 1 if your league is 1QB format.
- */
+name: Update Market Values
 
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
+# Runs every day at 6am UTC (2am ET) — quiet hours, before most people open DELTA
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  # Also lets you trigger it manually from GitHub's Actions tab anytime
+  workflow_dispatch:
 
-const API_URL = 'https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1';
-const OUTPUT_PATH = path.join(__dirname, '..', 'data', 'market-values.json');
+jobs:
+  fetch-values:
+    runs-on: ubuntu-latest
 
-function fetchJSON(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(new Error(`Failed to parse JSON: ${e.message}`));
-        }
-      });
-    }).on('error', reject);
-  });
-}
+    steps:
+      # Step 1: Check out your repo so the Action can write files to it
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-async function main() {
-  console.log('Fetching market values from FantasyCalc...');
-  
-  const raw = await fetchJSON(API_URL);
-  console.log(`Received ${raw.length} player entries`);
+      # Step 2: Set up Node.js (we use JS for the fetch script, no extra installs needed)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-  // Transform into a clean lookup object keyed by player name
-  // DELTA matches players by name, so that's our key
-  const values = {};
-  
-  for (const entry of raw) {
-    const name = entry.player?.name;
-    if (!name) continue;
+      # Step 3: Run the fetch script — this calls FantasyCalc and writes data/market-values.json
+      - name: Fetch latest market values
+        run: node scripts/fetch-market-values.js
 
-    values[name] = {
-      value: entry.value,                    // The market value number (0-10000 scale)
-      overallRank: entry.overallRank,        // Overall dynasty rank
-      positionRank: entry.positionRank,      // Rank within position
-      position: entry.player.position,       // QB/RB/WR/TE
-      team: entry.player.maybeTeam,          // NFL team abbreviation
-      trend30Day: entry.trend30Day,          // Value change over last 30 days
-      sleeperId: entry.player.sleeperId,     // Sleeper player ID (useful for Phase 2)
-    };
-  }
-
-  // Add metadata so DELTA knows when this data was fetched
-  const output = {
-    fetchedAt: new Date().toISOString(),
-    source: 'FantasyCalc',
-    format: 'dynasty-superflex-12team-fullppr',
-    playerCount: Object.keys(values).length,
-    values,
-  };
-
-  // Make sure the data directory exists
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
-
-  console.log(`✓ Wrote ${Object.keys(values).length} player values to ${OUTPUT_PATH}`);
-  console.log(`  Fetched at: ${output.fetchedAt}`);
-}
-
-main().catch(err => {
-  console.error('Error:', err.message);
-  process.exit(1);
-});
+      # Step 4: If anything changed, commit and push back to the repo
+      # Netlify watches your repo — a new commit triggers an automatic redeploy
+      - name: Commit updated data
+        run: |
+          git config user.name "DELTA Bot"
+          git config user.email "delta-bot@users.noreply.github.com"
+          git add data/market-values.json
+          # Only commits if something actually changed (exits 0 either way)
+          git diff --staged --quiet || git commit -m "chore: update market values $(date -u +%Y-%m-%d)"
+          git push
