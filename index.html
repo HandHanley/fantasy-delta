@@ -167,7 +167,7 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('watchlist',this)">2026 Flags</button>
   <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
-  <button class="tab" onclick="showTab('edit',this)">✏ Edit</button>
+  <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
 </div>
 
 <div id="panel-rankings" class="panel active">
@@ -3996,9 +3996,247 @@ document.addEventListener('click',e=>{
   }
 });
 
+
+
+const PROSPECTS_2026=[
+  {n:'Jeremiyah Love',pos:'RB',school:'Notre Dame',age:21,pr:1,pp:3,ovr:3,por:1,ds:96,cap:40,bb:30,ag:18,ath:8,comp:1.0,note:'6.9 YPC in BOTH 2024 and 2025 (not a fluke). 21 total TD, 114 total ypg in 2025. 27 rec/280 yds = real receiving back. Generational RB profile.'},
+  {n:'Fernando Mendoza',pos:'QB',school:'Indiana',age:22,pr:1,pp:1,ovr:1,por:1,ds:91,cap:40,bb:30,ag:15,ath:6,comp:1.0,note:'10.78 AY/A in 2025 matches Stroud\'s final season. Career 3.2:1 TD:INT. Modest rusher (7 rush TD 2025) adds floor. Passing-first profile, not dual-threat.'},
+  {n:'Kenyon Sadiq',pos:'TE',school:'Oregon',age:21,pr:1,pp:12,ovr:16,por:1,ds:88,cap:37,bb:23,ag:18,ath:10,comp:1.0,note:'TE1 of class. 5→24→51 catches: elite trajectory. 11.9% catch share in Oregon\'s pass-heavy offense. 4.39 speed/43.5 vert = historically elite TE athleticism.'},
+  {n:'Carnell Tate',pos:'WR',school:'Ohio St.',age:21,pr:1,pp:9,ovr:9,por:1,ds:87,cap:37,bb:27,ag:18,ath:5,comp:1.0,note:'875 yds/9 TD as Ohio State WR2 behind Jeremiah Smith. 17.2 YPR in 2025. 13% catch share understates value — splitting targets with Smith. Route-running elite.'},
+  {n:'Jordyn Tyson',pos:'WR',school:'Arizona St.',age:22,pr:1,pp:14,ovr:18,por:2,ds:79,cap:37,bb:22,ag:15,ath:5,comp:0.95,note:'15% catch share over 9 games — elite if healthy (prorates to 27% full season). YPR declining: 21.4→14.7→11.7. Missed 2023 entirely, limited 2025. Boom/bust.'},
+  {n:'Makai Lemon',pos:'WR',school:'USC',age:22,pr:1,pp:18,ovr:22,por:3,ds:76,cap:33,bb:23,ag:15,ath:5,comp:1.0,note:'19.6% catch share as USC WR1 in 2025, 14.7 YPR all 3 seasons — remarkably consistent. Youngest top WR (age 20). Volume + efficiency + youth = highest dynasty ceiling.'},
+  {n:'Omar Cooper',pos:'WR',school:'Indiana',age:21,pr:1,pp:28,ovr:38,por:4,ds:76,cap:33,bb:19,ag:18,ath:6,comp:1.0,note:'WR2 projection. Dense frame, reliable hands.'},
+  {n:'Zachariah Branch',pos:'WR',school:'Georgia',age:22,pr:2,pp:38,ovr:50,por:5,ds:68,cap:24,bb:19,ag:15,ath:10,comp:1.0,note:'4.35 speed but 10.0 YPR career — slot/RAC profile not deep threat. 21% catch share at Georgia as WR1, but low YPR limits ceiling in non-PPR.'},
+  {n:'Oscar Delp',pos:'TE',school:'Georgia',age:23,pr:1,pp:25,ovr:36,por:2,ds:68,cap:33,bb:19,ag:11,ath:5,comp:1.0,note:'Consensus TE2. Bowers-lite profile. Georgia\'s featured TE. No combine data but film shows natural receiver with good hands and route running.'},
+  {n:'Ty Simpson',pos:'QB',school:'Alabama',age:23,pr:1,pp:28,ovr:38,por:2,ds:66,cap:33,bb:19,ag:11,ath:3,comp:1.0,note:'Only 15 career starts. 2025 was solid (8.25 AY/A, 145.2 rate) but YPC dropped to 1.0 — not a rusher. Ceiling limited without proven rushing floor.'},
+  {n:'De\'Zhaun Stribling',pos:'WR',school:'Ole Miss',age:22,pr:2,pp:50,ovr:60,por:6,ds:63,cap:24,bb:15,ag:15,ath:9,comp:1.0,note:'6-2, 207 with 4.36 speed. Elite size-speed combo. 2025 production at Ole Miss modest. Power forward profile who wins contested catches.'},
+  {n:'Jadarian Price',pos:'RB',school:'Notre Dame',age:22,pr:2,pp:35,ovr:45,por:2,ds:64,cap:24,bb:19,ag:15,ath:6,comp:1.0,note:'6.0 YPC but career 15 receptions — pure power back. Shared backfield with Love limits dynasty value. Pass-catching floor essentially zero.'},
+  {n:'Chris Brazzell II',pos:'WR',school:'Tennessee',age:22,pr:2,pp:62,ovr:78,por:9,ds:57,cap:24,bb:10,ag:15,ath:8,comp:0.95,note:'16.3% catch share at Tennessee in SEC. 1,017 yds/9 TD in 2025. 4.37 speed at 6-4 = elite measurables. Breakout season in power conference.'},
+  {n:'Mike Washington Jr.',pos:'RB',school:'Arkansas',age:23,pr:2,pp:48,ovr:62,por:4,ds:56,cap:24,bb:13,ag:11,ath:8,comp:0.85,note:'MAC→CUSA→SEC: 1,070 rush yds + 28 rec in first SEC season. 6.4 YPC vs SEC. 4.33 speed. Non-P5 background suppresses stock but 2025 proved legitimacy.'},
+  {n:'Eli Raridon',pos:'TE',school:'Notre Dame',age:22,pr:2,pp:50,ovr:65,por:4,ds:59,cap:24,bb:15,ag:15,ath:5,comp:1.0,note:'4.62 speed at 6-6, 245. Good movement skills. Notre Dame\'s featured TE when healthy. Developmental ceiling with legitimate athleticism.'},
+  {n:'Jonah Coleman',pos:'RB',school:'Washington',age:23,pr:2,pp:45,ovr:58,por:3,ds:55,cap:24,bb:15,ag:11,ath:5,comp:1.0,note:'354 rec yds in 2025 — best receiving season among RBs in class. 87 career catches. 5.5 career YPC. Versatile back with real PPR upside.'},
+  {n:'Max Klare',pos:'TE',school:'Ohio St.',age:23,pr:2,pp:42,ovr:55,por:3,ds:55,cap:24,bb:15,ag:11,ath:5,comp:1.0,note:'Reliable target. High catch rate, limited explosion.'},
+  {n:'Malachi Fields',pos:'WR',school:'Notre Dame',age:23,pr:2,pp:55,ovr:68,por:7,ds:51,cap:24,bb:14,ag:11,ath:2,comp:0.95,note:'6-5 frame, 17.5 YPR at Notre Dame in 2025 but only 36 catches (9.5% catch share). Limited role even after transfer. Red zone threat with size.'},
+  {n:'Skyler Bell',pos:'WR',school:'UConn',age:24,pr:2,pp:58,ovr:72,por:8,ds:50,cap:24,bb:11,ag:7,ath:8,comp:0.75,note:'101 catches, 29.7% catch share at UConn — but heavy non-P5 discount. 4.40 speed. Production dominant in weak competition; P5 adjustment unknown.'},
+  {n:'Ja\'Kobi Lane',pos:'WR',school:'USC',age:22,pr:3,pp:75,ovr:95,por:10,ds:48,cap:16,bb:11,ag:15,ath:6,comp:1.0,note:'Long WR. Battles for contested balls well.'},
+  {n:'Garrett Nussmeier',pos:'QB',school:'LSU',age:24,pr:2,pp:93,ovr:86,por:3,ds:44,cap:24,bb:11,ag:7,ath:2,comp:1.0,note:'Negative career rush yards — pure pocket passer. 4.2% INT rate dipped in injury-shortened 2025. Day 2 developmental, not a dynasty priority.'},
+  {n:'Drew Allar',pos:'QB',school:'Penn St.',age:22,pr:3,pp:107,ovr:105,por:4,ds:44,cap:16,bb:7,ag:15,ath:6,comp:1.0,note:'Underrated: 8.75 AY/A in healthy 2024, 732 career rush yds (12 TD). Ankle injury ended 2025. More complete than draft position suggests.'},
+  {n:'Cade Klubnik',pos:'QB',school:'Clemson',age:22,pr:3,pp:116,ovr:130,por:6,ds:43,cap:16,bb:7,ag:15,ath:5,comp:1.0,note:'4-year starter, 73 TDs. Up-and-down career at Clemson. Ideal developmental fit.'},
+  {n:'Nicholas Singleton',pos:'RB',school:'Penn St.',age:22,pr:3,pp:88,ovr:115,por:6,ds:46,cap:16,bb:7,ag:15,ath:8,comp:1.0,note:'4-year Penn State starter, 102 career catches. Most proven non-Love back. 2025 dip (549 rush yds) was volume-limited alongside Allen. Rd3 is value.'},
+  {n:'Justin Joly',pos:'TE',school:'NC State',age:23,pr:3,pp:78,ovr:100,por:5,ds:42,cap:16,bb:10,ag:11,ath:5,comp:0.95,note:'Route running TE. Underrated in class.'},
+  {n:'Bryce Lance',pos:'WR',school:'North Dakota St.',age:23,pr:3,pp:85,ovr:110,por:11,ds:40,cap:16,bb:4,ag:11,ath:9,comp:0.6,note:'FCS standout with elite speed. Projection risk.'},
+  {n:'Emmett Johnson',pos:'RB',school:'Nebraska',age:22,pr:3,pp:80,ovr:105,por:5,ds:43,cap:16,bb:7,ag:15,ath:5,comp:1.0,note:'1,821 total yds, 46 rec in 2025 — elite dual-threat production. One-year wonder risk (first major workload). Josh Jacobs comp justified by pass-catching.'},
+  {n:'Demond Claiborne',pos:'RB',school:'Wake Forest',age:22,pr:4,pp:115,ovr:145,por:7,ds:40,cap:10,bb:7,ag:15,ath:8,comp:0.95,note:'4.37 speed with decent receiving (28 rec in 2025). Consistent ACC producer but 4.7 career YPC limits ceiling. Speed is the calling card.'},
+  {n:'Marlin Klein',pos:'TE',school:'Michigan',age:23,pr:3,pp:95,ovr:125,por:7,ds:41,cap:16,bb:7,ag:11,ath:7,comp:1.0,note:'Developing route runner. Size/speed combo intriguing.'},
+  {n:'Elijah Sarratt',pos:'WR',school:'Indiana',age:23,pr:3,pp:95,ovr:120,por:12,ds:37,cap:16,bb:5,ag:11,ath:5,comp:0.75,note:'Reliable slot. High catch rate. Limited upside.'},
+  {n:'CJ Donaldson',pos:'RB',school:'Ohio St.',age:22,pr:4,pp:125,ovr:160,por:8,ds:34,cap:10,bb:4,ag:15,ath:5,comp:1.0,note:'Power back with surprising receiving chops.'},
+  {n:'Sam Roush',pos:'TE',school:'Stanford',age:24,pr:3,pp:88,ovr:112,por:6,ds:36,cap:16,bb:7,ag:7,ath:6,comp:0.95,note:'Big-bodied blocker/receiver hybrid. Versatile.'},
+  {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:94,ovr:113,por:5,ds:32,cap:16,bb:7,ag:7,ath:2,comp:1.0,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
+  {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:5,pp:153,ovr:155,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
+  {n:'KC Concepcion',pos:'WR',school:'Texas A&M',age:21,pr:1,pp:30,ovr:27,por:5,ds:76,cap:33,bb:23,ag:15,ath:5,comp:0.98,note:'Dynamic YAC weapon — 440 of 919 yds came after catch in 2025. NC State→Texas A&M SEC breakout. Drop concerns (6.8% career rate) are real. Slot/outside versatile. Zay Flowers comp.'}
+];
+
+function getScoreColor(s) {
+  if (s >= 85) return '#4caf50';
+  if (s >= 70) return '#8bc34a';
+  if (s >= 55) return '#ffb300';
+  if (s >= 40) return '#ff7043';
+  return '#78909c';
+}
+
+function getScoreLabel(s) {
+  if (s >= 85) return 'ELITE PROSPECT';
+  if (s >= 70) return 'HIGH VALUE';
+  if (s >= 55) return 'MID-ROUND TARGET';
+  if (s >= 40) return 'DEPTH/STASH';
+  return 'FLIER';
+}
+
+function getPosColor(pos) {
+  return pos==='QB'?'#e91e63':pos==='WR'?'#2196f3':pos==='RB'?'#4caf50':'#ff9800';
+}
+
+function filterRookies(pos, btn) {
+  document.querySelectorAll('.pos-filter-btn').forEach(b=>{
+    b.style.background = 'transparent';
+    b.style.color = '#8899aa';
+    b.style.borderColor = '#334';
+  });
+  btn.style.background = '#4a90d9';
+  btn.style.color = '#fff';
+  btn.style.borderColor = '#4a90d9';
+  renderRookieBoard(pos);
+}
+
+function renderRookieBoard(posFilter) {
+  const board = document.getElementById('rookie-board');
+  if (!board) return;
+  const filtered = posFilter === 'ALL' ? PROSPECTS_2026 : PROSPECTS_2026.filter(p=>p.pos===posFilter);
+  const sorted = [...filtered].sort((a,b)=>b.ds-a.ds);
+  
+  let html = '';
+  let lastPos = '';
+  
+  sorted.forEach((p, i) => {
+    const sc = getScoreColor(p.ds);
+    const sl = getScoreLabel(p.ds);
+    const pc = getPosColor(p.pos);
+    
+    if (posFilter === 'ALL' && p.pos !== lastPos) {
+      lastPos = p.pos;
+      html += `<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#4a90d9;text-transform:uppercase;margin:${i===0?'0':'16px'} 0 8px;padding-left:4px">${p.pos}</div>`;
+    }
+    
+    const rdColor = p.pr===1?'#4caf50':p.pr===2?'#2196f3':p.pr===3?'#ffb300':'#78909c';
+    
+    html += `
+    <div onclick="showRookieCard(${i},${JSON.stringify(posFilter).replace(/"/g,"'")})" style="background:#1a2332;border:1px solid #2d3f55;border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='#4a90d9'" onmouseout="this.style.borderColor='#2d3f55'">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="min-width:44px;height:44px;border-radius:8px;background:${sc}22;border:1px solid ${sc}55;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font-size:16px;font-weight:800;color:${sc};line-height:1">${p.ds}</div>
+          <div style="font-size:7px;color:${sc}99;font-weight:600">DELTA</div>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:14px;font-weight:700;color:#e8edf2">${p.n}</span>
+            <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>
+            <span style="font-size:10px;color:${rdColor};background:${rdColor}22;padding:1px 6px;border-radius:4px;font-weight:600">Rd${p.pr} #${p.pp}</span>
+          </div>
+          <div style="font-size:11px;color:#8899aa">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${sc}">${sl}</div>
+          <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
+            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:#64b5f6">${p.cap}</div>
+              <div style="font-size:7px;color:#4a6f8a">CAP</div>
+            </div>
+            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:#ba68c8">${p.bb}</div>
+              <div style="font-size:7px;color:#4a6f8a">BOARD</div>
+            </div>
+            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:#4db6ac">${p.ag}</div>
+              <div style="font-size:7px;color:#4a6f8a">AGE</div>
+            </div>
+            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:#ffb74d">${p.ath}</div>
+              <div style="font-size:7px;color:#4a6f8a">ATH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#6a7f94;border-top:1px solid #2d3f55;padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <span>${p.note}</span>
+        ${p.comp<1.0?`<span style="white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:#ff704322;color:#ff7043;flex-shrink:0">COMP ×${p.comp.toFixed(2)}</span>`:''}
+      </div>
+    </div>`;
+  });
+  
+  board.innerHTML = html;
+}
+
+function showRookieCard(idx, posFilter) {
+  const filtered = posFilter === 'ALL' ? PROSPECTS_2026 : PROSPECTS_2026.filter(p=>p.pos===posFilter);
+  const sorted = [...filtered].sort((a,b)=>b.ds-a.ds);
+  const p = sorted[idx];
+  if (!p) return;
+  const sc = getScoreColor(p.ds);
+  const pc = getPosColor(p.pos);
+  const rdColor = p.pr===1?'#4caf50':p.pr===2?'#2196f3':p.pr===3?'#ffb300':'#78909c';
+  
+  const bars = [
+    {label:'Draft Capital', val:p.cap, max:40, color:'#64b5f6'},
+    {label:'Big Board (comp-adj)', val:p.bb, max:30, color:'#ba68c8'},
+    {label:'Age/Runway', val:p.ag, max:20, color:'#4db6ac'},
+    {label:'Athleticism (composite)', val:p.ath, max:10, color:'#ffb74d'},
+  ];
+  
+  const barHTML = bars.map(b=>`
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:11px;color:#8899aa">${b.label}</span>
+        <span style="font-size:11px;font-weight:700;color:${b.color}">${b.val} / ${b.max}</span>
+      </div>
+      <div style="background:#0d1927;border-radius:4px;height:6px">
+        <div style="background:${b.color};height:6px;border-radius:4px;width:${(b.val/b.max*100)}%;transition:width 0.4s"></div>
+      </div>
+    </div>
+  `).join('');
+  
+  const modal = document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#000a;z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+  modal.innerHTML=`
+  <div style="background:#121f2e;border:1px solid #2d3f55;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:20px;font-weight:800;color:#e8edf2;margin-bottom:4px">${p.n}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;font-weight:700;color:${pc};background:${pc}22;padding:2px 8px;border-radius:4px">${p.pos}</span>
+          <span style="font-size:11px;color:#8899aa">${p.school}</span>
+          <span style="font-size:11px;color:#8899aa">· Age ${p.age}</span>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 12px;background:${sc}22;border:1px solid ${sc}44;border-radius:10px">
+        <div style="font-size:28px;font-weight:900;color:${sc};line-height:1">${p.ds}</div>
+        <div style="font-size:8px;letter-spacing:1px;color:${sc}99;font-weight:700">DELTA SCORE</div>
+      </div>
+    </div>
+    <div style="background:#0d1927;border-radius:8px;padding:12px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div style="text-align:center">
+          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">PROJ ROUND</div>
+          <div style="font-size:16px;font-weight:800;color:${rdColor}">Rd${p.pr}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">PROJ PICK</div>
+          <div style="font-size:16px;font-weight:800;color:${rdColor}">#${p.pp}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">POS RANK</div>
+          <div style="font-size:16px;font-weight:800;color:#8899aa">${p.pos}#${p.por}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">OVERALL</div>
+          <div style="font-size:16px;font-weight:800;color:#8899aa">#${p.ovr}</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">${barHTML}</div>
+    <div style="background:#0d1927;border-radius:8px;padding:12px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#4a90d9">SCOUT NOTE</div>
+        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#ff704322;color:#ff7043">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#4caf5022;color:#4caf50">P4</div>'}
+      </div>
+      <div style="font-size:12px;color:#a0b0c0;line-height:1.5">${p.note}</div>
+    </div>
+    <div style="background:#1a2332;border:1px solid #ff980044;border-radius:8px;padding:10px;margin-bottom:14px">
+      <div style="font-size:10px;color:#ff9800;font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
+    </div>
+    <button onclick="this.closest('div[style*="position:fixed"]').remove()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer">Close</button>
+  </div>`;
+  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+  document.body.appendChild(modal);
+}
+
 </script>
 
 <!-- DELTA Deck — Player Card Modal -->
+<div id="panel-rookies" class="panel">
+  <div class="section-label">2026 Rookie Prospect Board</div>
+  <div style="background:#1a2332;border:1px solid #2d3f55;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#8899aa;line-height:1.6">
+    <strong style="color:#64b5f6">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;font-size:12px;cursor:pointer;font-weight:600">All</button>
+    <button class="pos-filter-btn" onclick="filterRookies('QB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">QB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('WR',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">WR</button>
+    <button class="pos-filter-btn" onclick="filterRookies('RB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">RB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('TE',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">TE</button>
+  </div>
+  <div id="rookie-board"></div>
+</div>
+
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
   <div class="dd-card" id="dd-card" data-player="">
     <div class="dd-header">
