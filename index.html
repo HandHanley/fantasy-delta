@@ -51,7 +51,7 @@ tr:hover td{background:#1a202c}
 }}
 .tc-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer;transition:all .15s}
 .tc-btn:hover{border-color:#6b7280;color:#a0aec0}
-.tc-active{background:#1e3a5f;border-color:#4a90d9;color:#7dd3fc}
+.tc-active{background:#0f2744;border-color:#2d6bc4;color:#4a90d9;box-shadow:0 0 0 1px #1e3a5f}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
 .trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -3529,7 +3529,7 @@ function doSearch(side){
 }
 function addAsset(side,name){
   const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
-  const arr=side==='a'?sA:sB;
+  const arr=side==='a'?sA:side==='b'?sB:side==='c'?sC:sD;
   if(!arr.find(x=>x.n===name))arr.push({...asset});
   document.getElementById('srch-'+side).value='';
   document.getElementById('drop-'+side).style.display='none';
@@ -4498,19 +4498,18 @@ function showRookieCard(idx, posFilter) {
 
 <script>
 
-// ── PICK TIER → SLOT RESCALER ─────────────────────────────────────────────
+// ── PICK TIER RESCALER ────────────────────────────────────────────────────
 function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};
   const slots = tierSlots[tierName];
   if (!slots) return;
   const slotPicks = PICKS.filter(p => {
-    const pat = /^(\d{4}) (\d)\.(\d{2})$/;
-    const m = p.n.match(pat);
+    const m = p.n.match(/^(\d{4}) (\d)\.(\d{2})$/);
     return m && m[1]===String(year) && parseInt(m[2])===rnd && slots.includes(parseInt(m[3]));
   });
   if (!slotPicks.length) return;
-  const currentAvg = slotPicks.reduce((s,p)=>s+p.k,0) / slotPicks.length;
-  const ratio = newTierVal / (currentAvg || newTierVal);
+  const avg = slotPicks.reduce((s,p)=>s+p.k,0) / slotPicks.length;
+  const ratio = newTierVal / (avg || newTierVal);
   slotPicks.forEach(p => { p.k = Math.round(p.k * ratio); });
 }
 
@@ -4544,23 +4543,18 @@ async function loadLiveMarketValues() {
 
     const values = data.values;
 
-    // Update pick tier anchors and proportionally rescale slot picks
-    const pickTierMap = {
-      'Early 1st Round Pick': {rnd:1, tier:'Early'},
-      'Mid 1st Round Pick':   {rnd:1, tier:'Mid'},
-      'Late 1st Round Pick':  {rnd:1, tier:'Late'},
-      'Early 2nd Round Pick': {rnd:2, tier:'Early'},
-      'Mid 2nd Round Pick':   {rnd:2, tier:'Mid'},
-      'Late 2nd Round Pick':  {rnd:2, tier:'Late'},
-      'Early 3rd Round Pick': {rnd:3, tier:'Early'},
-      'Mid 3rd Round Pick':   {rnd:3, tier:'Mid'},
-      'Late 3rd Round Pick':  {rnd:3, tier:'Late'},
+    // Rescale slot picks from FC tier anchors
+    const tierMap = {
+      'Early 1st Round Pick':{rnd:1,tier:'Early'},'Mid 1st Round Pick':{rnd:1,tier:'Mid'},
+      'Late 1st Round Pick':{rnd:1,tier:'Late'},'Early 2nd Round Pick':{rnd:2,tier:'Early'},
+      'Mid 2nd Round Pick':{rnd:2,tier:'Mid'},'Late 2nd Round Pick':{rnd:2,tier:'Late'},
+      'Early 3rd Round Pick':{rnd:3,tier:'Early'},'Mid 3rd Round Pick':{rnd:3,tier:'Mid'},
+      'Late 3rd Round Pick':{rnd:3,tier:'Late'},
     };
-    for (const [fcName, meta] of Object.entries(pickTierMap)) {
-      for (const year of [2026, 2027, 2028]) {
-        const fullName = year + ' ' + fcName;
-        const fcPick = values[fullName];
-        if (fcPick) rescalePickTier(year, meta.rnd, meta.tier, fcPick.value);
+    for (const [n,m] of Object.entries(tierMap)) {
+      for (const yr of [2026,2027,2028]) {
+        const fc = values[yr+' '+n];
+        if (fc) rescalePickTier(yr, m.rnd, m.tier, fc.value);
       }
     }
     let updated = 0;
