@@ -49,6 +49,12 @@ tr:hover td{background:#1a202c}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }}
+.tc-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer;transition:all .15s}
+.tc-btn:hover{border-color:#6b7280;color:#a0aec0}
+.tc-active{background:#1e3a5f;border-color:#4a90d9;color:#7dd3fc}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
+.trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
 .trade-side{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1rem}
 .search-wrap{position:relative;margin-bottom:8px}
 .search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
@@ -244,20 +250,51 @@ tr:hover td{background:#1a202c}
       <option value="std">Standard</option>
     </select>
   </div>
-  <div class="trade-grid">
-    <div class="trade-side">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Side A — you receive</div>
+
+  <!-- Team count toggle -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+    <span style="font-size:11px;color:#718096;font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
+    <div style="display:flex;gap:4px">
+      <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2-Team</button>
+      <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3-Team</button>
+      <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4-Team</button>
+    </div>
+    <button onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer">Clear all</button>
+  </div>
+
+  <div id="trade-mode-note" style="font-size:11px;color:#4a6080;margin-bottom:.75rem;display:none;padding:8px 12px;background:#0d1927;border-radius:6px;border:1px solid #1e3a5f">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
+  <div class="trade-grid" id="trade-grid">
+    <!-- Side A -->
+    <div class="trade-side" id="trade-col-a">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team A — you receive</div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
       <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#6ee7b7;font-weight:600">Model value</span><span id="mod-a" style="color:#6ee7b7;font-weight:600">—</span></div>
     </div>
-    <div class="trade-side">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Side B — you give</div>
+    <!-- Side B -->
+    <div class="trade-side" id="trade-col-b">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team B — you give</div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
       <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#7dd3fc;font-weight:600">Model value</span><span id="mod-b" style="color:#7dd3fc;font-weight:600">—</span></div>
+    </div>
+    <!-- Side C (3-way) -->
+    <div class="trade-side" id="trade-col-c" style="display:none">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#d8b4fe;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team C</div>
+      <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
+      <div id="side-c"></div>
+      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#d8b4fe;font-weight:600">Model value</span><span id="mod-c" style="color:#d8b4fe;font-weight:600">—</span></div>
+    </div>
+    <!-- Side D (4-way) -->
+    <div class="trade-side" id="trade-col-d" style="display:none">
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#fdba74;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team D</div>
+      <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
+      <div id="side-d"></div>
+      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#fdba74;font-weight:600">Model value</span><span id="mod-d" style="color:#fdba74;font-weight:600">—</span></div>
     </div>
   </div>
   <div id="verdict-area"></div>
@@ -1826,15 +1863,141 @@ const RAW=[
 ];
 
 const PICKS=[
-  {n:'2026 Early 1st',k:5882,ip:true},{n:'2026 Mid 1st',k:4753,ip:true},{n:'2026 Late 1st',k:3954,ip:true},
-  {n:'2026 Early 2nd',k:3355,ip:true},{n:'2026 Mid 2nd',k:3042,ip:true},{n:'2026 Late 2nd',k:2837,ip:true},
-  {n:'2026 Early 3rd',k:2377,ip:true},{n:'2026 Mid 3rd',k:2272,ip:true},{n:'2026 Late 3rd',k:2151,ip:true},
-  {n:'2026 Early 4th',k:1839,ip:true},{n:'2027 Early 1st',k:6806,ip:true},{n:'2027 Mid 1st',k:5544,ip:true},
-  {n:'2027 Late 1st',k:4828,ip:true},{n:'2027 Early 2nd',k:3732,ip:true},{n:'2027 Mid 2nd',k:3452,ip:true},
-  {n:'2027 Late 2nd',k:3087,ip:true},{n:'2027 Early 3rd',k:2568,ip:true},{n:'2027 Mid 3rd',k:2395,ip:true},
-  {n:'2027 Late 3rd',k:2212,ip:true},{n:'2028 Early 1st',k:4991,ip:true},{n:'2028 Mid 1st',k:4446,ip:true},
-  {n:'2028 Late 1st',k:3940,ip:true},{n:'2028 Early 2nd',k:3091,ip:true},{n:'2028 Mid 2nd',k:2862,ip:true},
-  {n:'2028 Early 3rd',k:2164,ip:true},{n:'2028 Mid 3rd',k:2117,ip:true},{n:'2028 Late 3rd',k:1935,ip:true},
+  {n:'2026 1.01',k:6941,ip:true},
+  {n:'2026 1.02',k:6294,ip:true},
+  {n:'2026 1.03',k:5647,ip:true},
+  {n:'2026 1.04',k:5000,ip:true},
+  {n:'2026 1.05',k:5133,ip:true},
+  {n:'2026 1.06',k:4880,ip:true},
+  {n:'2026 1.07',k:4626,ip:true},
+  {n:'2026 1.08',k:4373,ip:true},
+  {n:'2026 1.09',k:4191,ip:true},
+  {n:'2026 1.10',k:4033,ip:true},
+  {n:'2026 1.11',k:3875,ip:true},
+  {n:'2026 1.12',k:3717,ip:true},
+  {n:'2026 Early 1st Round Pick',k:5882,ip:true,hidden:true},
+  {n:'2026 Mid 1st Round Pick',k:4753,ip:true,hidden:true},
+  {n:'2026 Late 1st Round Pick',k:3954,ip:true,hidden:true},
+  {n:'2026 2.01',k:3959,ip:true},
+  {n:'2026 2.02',k:3590,ip:true},
+  {n:'2026 2.03',k:3221,ip:true},
+  {n:'2026 2.04',k:2852,ip:true},
+  {n:'2026 2.05',k:3285,ip:true},
+  {n:'2026 2.06',k:3123,ip:true},
+  {n:'2026 2.07',k:2961,ip:true},
+  {n:'2026 2.08',k:2799,ip:true},
+  {n:'2026 2.09',k:3007,ip:true},
+  {n:'2026 2.10',k:2894,ip:true},
+  {n:'2026 2.11',k:2780,ip:true},
+  {n:'2026 2.12',k:2667,ip:true},
+  {n:'2026 Early 2st Round Pick',k:3355,ip:true,hidden:true},
+  {n:'2026 Mid 2st Round Pick',k:3042,ip:true,hidden:true},
+  {n:'2026 Late 2st Round Pick',k:2837,ip:true,hidden:true},
+  {n:'2026 3.01',k:2805,ip:true},
+  {n:'2026 3.02',k:2543,ip:true},
+  {n:'2026 3.03',k:2282,ip:true},
+  {n:'2026 3.04',k:2020,ip:true},
+  {n:'2026 3.05',k:2454,ip:true},
+  {n:'2026 3.06',k:2333,ip:true},
+  {n:'2026 3.07',k:2211,ip:true},
+  {n:'2026 3.08',k:2090,ip:true},
+  {n:'2026 3.09',k:2280,ip:true},
+  {n:'2026 3.10',k:2194,ip:true},
+  {n:'2026 3.11',k:2108,ip:true},
+  {n:'2026 3.12',k:2022,ip:true},
+  {n:'2026 Early 3st Round Pick',k:2377,ip:true,hidden:true},
+  {n:'2026 Mid 3st Round Pick',k:2272,ip:true,hidden:true},
+  {n:'2026 Late 3st Round Pick',k:2151,ip:true,hidden:true},
+  {n:'2027 1.01',k:8031,ip:true},
+  {n:'2027 1.02',k:7282,ip:true},
+  {n:'2027 1.03',k:6534,ip:true},
+  {n:'2027 1.04',k:5785,ip:true},
+  {n:'2027 1.05',k:5988,ip:true},
+  {n:'2027 1.06',k:5692,ip:true},
+  {n:'2027 1.07',k:5396,ip:true},
+  {n:'2027 1.08',k:5100,ip:true},
+  {n:'2027 1.09',k:5118,ip:true},
+  {n:'2027 1.10',k:4925,ip:true},
+  {n:'2027 1.11',k:4731,ip:true},
+  {n:'2027 1.12',k:4538,ip:true},
+  {n:'2027 Early 1st Round Pick',k:6806,ip:true,hidden:true},
+  {n:'2027 Mid 1st Round Pick',k:5544,ip:true,hidden:true},
+  {n:'2027 Late 1st Round Pick',k:4828,ip:true,hidden:true},
+  {n:'2027 2.01',k:4404,ip:true},
+  {n:'2027 2.02',k:3993,ip:true},
+  {n:'2027 2.03',k:3583,ip:true},
+  {n:'2027 2.04',k:3172,ip:true},
+  {n:'2027 2.05',k:3728,ip:true},
+  {n:'2027 2.06',k:3544,ip:true},
+  {n:'2027 2.07',k:3360,ip:true},
+  {n:'2027 2.08',k:3176,ip:true},
+  {n:'2027 2.09',k:3272,ip:true},
+  {n:'2027 2.10',k:3149,ip:true},
+  {n:'2027 2.11',k:3025,ip:true},
+  {n:'2027 2.12',k:2902,ip:true},
+  {n:'2027 Early 2st Round Pick',k:3732,ip:true,hidden:true},
+  {n:'2027 Mid 2st Round Pick',k:3452,ip:true,hidden:true},
+  {n:'2027 Late 2st Round Pick',k:3087,ip:true,hidden:true},
+  {n:'2027 3.01',k:3030,ip:true},
+  {n:'2027 3.02',k:2748,ip:true},
+  {n:'2027 3.03',k:2465,ip:true},
+  {n:'2027 3.04',k:2183,ip:true},
+  {n:'2027 3.05',k:2587,ip:true},
+  {n:'2027 3.06',k:2459,ip:true},
+  {n:'2027 3.07',k:2331,ip:true},
+  {n:'2027 3.08',k:2203,ip:true},
+  {n:'2027 3.09',k:2345,ip:true},
+  {n:'2027 3.10',k:2256,ip:true},
+  {n:'2027 3.11',k:2168,ip:true},
+  {n:'2027 3.12',k:2079,ip:true},
+  {n:'2027 Early 3st Round Pick',k:2568,ip:true,hidden:true},
+  {n:'2027 Mid 3st Round Pick',k:2395,ip:true,hidden:true},
+  {n:'2027 Late 3st Round Pick',k:2212,ip:true,hidden:true},
+  {n:'2028 1.01',k:5889,ip:true},
+  {n:'2028 1.02',k:5340,ip:true},
+  {n:'2028 1.03',k:4791,ip:true},
+  {n:'2028 1.04',k:4242,ip:true},
+  {n:'2028 1.05',k:4802,ip:true},
+  {n:'2028 1.06',k:4565,ip:true},
+  {n:'2028 1.07',k:4327,ip:true},
+  {n:'2028 1.08',k:4090,ip:true},
+  {n:'2028 1.09',k:4176,ip:true},
+  {n:'2028 1.10',k:4019,ip:true},
+  {n:'2028 1.11',k:3861,ip:true},
+  {n:'2028 1.12',k:3704,ip:true},
+  {n:'2028 Early 1st Round Pick',k:4991,ip:true,hidden:true},
+  {n:'2028 Mid 1st Round Pick',k:4446,ip:true,hidden:true},
+  {n:'2028 Late 1st Round Pick',k:3940,ip:true,hidden:true},
+  {n:'2028 2.01',k:3647,ip:true},
+  {n:'2028 2.02',k:3307,ip:true},
+  {n:'2028 2.03',k:2967,ip:true},
+  {n:'2028 2.04',k:2627,ip:true},
+  {n:'2028 2.05',k:3091,ip:true},
+  {n:'2028 2.06',k:2938,ip:true},
+  {n:'2028 2.07',k:2786,ip:true},
+  {n:'2028 2.08',k:2633,ip:true},
+  {n:'2028 2.09',k:2756,ip:true},
+  {n:'2028 2.10',k:2652,ip:true},
+  {n:'2028 2.11',k:2548,ip:true},
+  {n:'2028 2.12',k:2444,ip:true},
+  {n:'2028 Early 2st Round Pick',k:3091,ip:true,hidden:true},
+  {n:'2028 Mid 2st Round Pick',k:2862,ip:true,hidden:true},
+  {n:'2028 Late 2st Round Pick',k:2600,ip:true,hidden:true},
+  {n:'2028 3.01',k:2554,ip:true},
+  {n:'2028 3.02',k:2316,ip:true},
+  {n:'2028 3.03',k:2077,ip:true},
+  {n:'2028 3.04',k:1839,ip:true},
+  {n:'2028 3.05',k:2286,ip:true},
+  {n:'2028 3.06',k:2173,ip:true},
+  {n:'2028 3.07',k:2061,ip:true},
+  {n:'2028 3.08',k:1948,ip:true},
+  {n:'2028 3.09',k:2051,ip:true},
+  {n:'2028 3.10',k:1974,ip:true},
+  {n:'2028 3.11',k:1896,ip:true},
+  {n:'2028 3.12',k:1819,ip:true},
+  {n:'2028 Early 3st Round Pick',k:2164,ip:true,hidden:true},
+  {n:'2028 Mid 3st Round Pick',k:2117,ip:true,hidden:true},
+  {n:'2028 Late 3st Round Pick',k:1935,ip:true,hidden:true}
 ];
 
 const DC={
@@ -3161,7 +3324,7 @@ const COLLEGES={
 
 const COMP=[];
 RAW.forEach(r=>COMP.push(calcProj(r)));
-const ASSETS=[...COMP,...PICKS];
+const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
 
 let sortK='ktc',sortDir=-1;
 function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
@@ -3347,7 +3510,7 @@ function renderEPA(){
   </tr>`).join('');
 }
 
-let sA=[],sB=[];
+let sA=[],sB=[],sC=[],sD=[];let tradeTeams=2;
 function doSearch(side){
   const q=(document.getElementById('srch-'+side).value||'').toLowerCase().trim();
   const drop=document.getElementById('drop-'+side);
@@ -3373,7 +3536,10 @@ function addAsset(side,name){
   recalcTrade();
 }
 function removeAsset(side,name){
-  if(side==='a')sA=sA.filter(x=>x.n!==name);else sB=sB.filter(x=>x.n!==name);
+  if(side==='a')sA=sA.filter(x=>x.n!==name);
+  else if(side==='b')sB=sB.filter(x=>x.n!==name);
+  else if(side==='c')sC=sC.filter(x=>x.n!==name);
+  else sD=sD.filter(x=>x.n!==name);
   recalcTrade();
 }
 function applyTradeScoring(){
@@ -3394,8 +3560,15 @@ function applyTradeScoring(){
 }
 
 function recalcTrade(){
-  function rSide(side,arr,elId,ktcId,modId){
-    document.getElementById(elId).innerHTML=arr.map(p=>{
+  const SIDES=[
+    {id:'a',arr:sA,color:'#6ee7b7',label:'Team A'},
+    {id:'b',arr:sB,color:'#7dd3fc',label:'Team B'},
+    {id:'c',arr:sC,color:'#d8b4fe',label:'Team C'},
+    {id:'d',arr:sD,color:'#fdba74',label:'Team D'},
+  ].slice(0,tradeTeams);
+
+  const totals=SIDES.map(s=>{
+    document.getElementById('side-'+s.id).innerHTML=s.arr.map(p=>{
       const mv=mvAsset(p);const e=p.ip?null:getEff(p);
       return`<div class="added">
         <div style="flex:1;min-width:0">
@@ -3406,49 +3579,122 @@ function recalcTrade(){
           <div style="color:#718096">Mkt ${p.k.toLocaleString()}</div>
           <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
         </div>
-        <button class="rm" onclick="removeAsset('${side}','${p.n.replace(/'/g,"\\'")}')">✕</button>
+        <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\'")}')">✕</button>
       </div>`;
     }).join('');
-    const kt=arr.reduce((s,x)=>s+x.k,0);
-    const mt=arr.reduce((s,x)=>s+mvAsset(x),0);
-    document.getElementById(ktcId).textContent=kt>0?kt.toLocaleString():'—';
-    document.getElementById(modId).textContent=mt>0?mt.toLocaleString():'—';
-    return{ktc:kt,mod:mt};
+    const kt=s.arr.reduce((x,p)=>x+p.k,0);
+    const mt=s.arr.reduce((x,p)=>x+mvAsset(p),0);
+    document.getElementById('ktc-'+s.id).textContent=kt>0?kt.toLocaleString():'—';
+    document.getElementById('mod-'+s.id).textContent=mt>0?mt.toLocaleString():'—';
+    return{id:s.id,label:s.label,color:s.color,arr:s.arr,ktc:kt,mod:mt};
+  });
+
+  const anyPlayers=totals.some(t=>t.arr.length>0);
+  if(!anyPlayers){document.getElementById('verdict-area').innerHTML='';return;}
+
+  if(tradeTeams===2){
+    // Classic 2-team verdict
+    const mA=totals[0].mod,mB=totals[1].mod;
+    const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
+    const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
+    let verdict,vc;
+    if(pct<=8){verdict='Fair trade';vc='bi';}
+    else if(mA>mB){verdict=pct<=15?'Slight edge — Team A':pct<=25?'Clear win — Team A':'Team A wins big';vc='bs';}
+    else{verdict=pct<=15?'Slight edge — Team B':pct<=25?'Clear win — Team B':'Team B wins big';vc='bd';}
+    const nA=sA.map(x=>x.n).join(', ')||'nothing';
+    const nB=sB.map(x=>x.n).join(', ')||'nothing';
+    document.getElementById('verdict-area').innerHTML=`
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
+        <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
+      </div>
+      <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
+      <div style="text-align:center;margin-bottom:.75rem">
+        <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
+        ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+      </div>
+      <div class="breakdown-grid">
+        <div><div class="section-label">Team A receives</div>
+          ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+          <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
+        </div>
+        <div><div class="section-label">Team B receives</div>
+          ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+          <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
+        </div>
+      </div>
+      <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: Team A receives ${nA} and Team B receives ${nB}. Model values Team A at ${mA.toLocaleString()} and Team B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
+  } else {
+    // Multi-team verdict — show each team's net value and rank by winner
+    const grandTotal=totals.reduce((s,t)=>s+t.mod,0);
+    const maxMod=Math.max(...totals.map(t=>t.mod));
+    const sorted=[...totals].sort((a,b)=>b.mod-a.mod);
+    const winner=sorted[0];
+    const allEqual=totals.every(t=>Math.abs(t.mod-totals[0].mod)/Math.max(grandTotal/tradeTeams,1)<0.08);
+
+    const playerLists=totals.map(t=>t.arr.map(x=>x.n).join(', ')||'nothing');
+    const promptText=totals.map((t,i)=>`${t.label} receives ${playerLists[i]} (value: ${t.mod.toLocaleString()})`).join('; ');
+
+    document.getElementById('verdict-area').innerHTML=`
+      <div style="margin-bottom:1rem">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#718096;margin-bottom:.5rem">
+          ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS THIS TRADE'}
+        </div>
+        ${sorted.map((t,i)=>{
+          const pct=Math.round(t.mod/Math.max(maxMod,1)*100);
+          const isWinner=i===0&&!allEqual;
+          return`<div style="margin-bottom:.5rem">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+              <span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
+              <span style="color:${t.color};font-weight:600">${t.mod.toLocaleString()}</span>
+            </div>
+            <div style="background:#1a202c;border-radius:3px;height:6px;overflow:hidden">
+              <div style="background:${t.color};width:${pct}%;height:100%;border-radius:3px;opacity:${isWinner?1:0.5}"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
+        ${totals.map(t=>`
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid #2d3748;padding-bottom:.3rem">${t.label} RECEIVES</div>
+            ${t.arr.map(p=>`<div class="breakdown-row"><span style="font-size:11px">${p.n}</span><span style="font-weight:600;font-size:11px">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+            ${t.arr.length===0?'<div style="font-size:11px;color:#4a5568">Nothing</div>':''}
+            <div class="breakdown-row" style="font-weight:700;border-top:1px solid #2d3748;margin-top:4px;padding-top:4px">
+              <span style="font-size:11px">Total</span><span style="color:${t.color};font-size:11px">${t.mod.toLocaleString()}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+      <button class="send-btn" onclick="sendPrompt('Evaluate this ${tradeTeams}-team dynasty trade: ${promptText}. Who wins?')">Ask Claude to evaluate ↗</button>`;
   }
-  const a=rSide('a',sA,'side-a','ktc-a','mod-a');
-  const b=rSide('b',sB,'side-b','ktc-b','mod-b');
-  if(!sA.length&&!sB.length){document.getElementById('verdict-area').innerHTML='';return;}
-  const mA=a.mod,mB=b.mod;
-  const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
-  const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
-  let verdict,vc;
-  if(pct<=8){verdict='Fair trade';vc='bi';}
-  else if(mA>mB){verdict=pct<=15?'Slight edge — Side A':pct<=25?'Clear win — Side A':'Side A wins big';vc='bs';}
-  else{verdict=pct<=15?'Slight edge — Side B':pct<=25?'Clear win — Side B':'Side B wins big';vc='bd';}
-  const nA=sA.map(x=>x.n).join(', ')||'nothing';
-  const nB=sB.map(x=>x.n).join(', ')||'nothing';
-  document.getElementById('verdict-area').innerHTML=`
-    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-      <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
-      <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
-    </div>
-    <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
-    <div style="text-align:center;margin-bottom:.75rem">
-      <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
-      ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
-    </div>
-    <div class="breakdown-grid">
-      <div><div class="section-label">Side A</div>
-        ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
-      </div>
-      <div><div class="section-label">Side B</div>
-        ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-        <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
-      </div>
-    </div>
-    <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: I receive ${nA} and give ${nB}. Model values Side A at ${mA.toLocaleString()} and Side B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
 }
+
+function setTradeTeams(n){
+  tradeTeams=n;
+  ['2','3','4'].forEach(x=>{
+    document.getElementById('tc-'+x).classList.toggle('tc-active',parseInt(x)===n);
+  });
+  document.getElementById('trade-col-c').style.display=n>=3?'':'none';
+  document.getElementById('trade-col-d').style.display=n>=4?'':'none';
+  const grid=document.getElementById('trade-grid');
+  grid.className='trade-grid'+(n===3?' three-col':n===4?' four-col':'');
+  // Clear hidden side data when shrinking
+  if(n<3){sC.length=0;}
+  if(n<4){sD.length=0;}
+  recalcTrade();
+}
+
+function clearAllTrade(){
+  sA.length=0;sB.length=0;sC.length=0;sD.length=0;
+  ['a','b','c','d'].forEach(s=>{
+    const si=document.getElementById('srch-'+s);
+    if(si)si.value='';
+    const di=document.getElementById('drop-'+s);
+    if(di)di.style.display='none';
+  });
+  recalcTrade();
+}
+
 
 function renderWatchlist(){
   const data=COMP.filter(p=>p.och).sort((a,b)=>a.sys-b.sys);
@@ -4251,6 +4497,23 @@ function showRookieCard(idx, posFilter) {
 </div>
 
 <script>
+
+// ── PICK TIER → SLOT RESCALER ─────────────────────────────────────────────
+function rescalePickTier(year, rnd, tierName, newTierVal) {
+  const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};
+  const slots = tierSlots[tierName];
+  if (!slots) return;
+  const slotPicks = PICKS.filter(p => {
+    const pat = /^(\d{4}) (\d)\.(\d{2})$/;
+    const m = p.n.match(pat);
+    return m && m[1]===String(year) && parseInt(m[2])===rnd && slots.includes(parseInt(m[3]));
+  });
+  if (!slotPicks.length) return;
+  const currentAvg = slotPicks.reduce((s,p)=>s+p.k,0) / slotPicks.length;
+  const ratio = newTierVal / (currentAvg || newTierVal);
+  slotPicks.forEach(p => { p.k = Math.round(p.k * ratio); });
+}
+
 // ── NAME ALIASES ──────────────────────────────────────────────────────────
 // Add entries here whenever you notice a player isn't getting updated.
 // Format: 'FantasyCalc name': 'DELTA name'
@@ -4280,6 +4543,26 @@ async function loadLiveMarketValues() {
     }
 
     const values = data.values;
+
+    // Update pick tier anchors and proportionally rescale slot picks
+    const pickTierMap = {
+      'Early 1st Round Pick': {rnd:1, tier:'Early'},
+      'Mid 1st Round Pick':   {rnd:1, tier:'Mid'},
+      'Late 1st Round Pick':  {rnd:1, tier:'Late'},
+      'Early 2nd Round Pick': {rnd:2, tier:'Early'},
+      'Mid 2nd Round Pick':   {rnd:2, tier:'Mid'},
+      'Late 2nd Round Pick':  {rnd:2, tier:'Late'},
+      'Early 3rd Round Pick': {rnd:3, tier:'Early'},
+      'Mid 3rd Round Pick':   {rnd:3, tier:'Mid'},
+      'Late 3rd Round Pick':  {rnd:3, tier:'Late'},
+    };
+    for (const [fcName, meta] of Object.entries(pickTierMap)) {
+      for (const year of [2026, 2027, 2028]) {
+        const fullName = year + ' ' + fcName;
+        const fcPick = values[fullName];
+        if (fcPick) rescalePickTier(year, meta.rnd, meta.tier, fcPick.value);
+      }
+    }
     let updated = 0;
     let notFound = [];
 
