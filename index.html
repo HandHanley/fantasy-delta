@@ -49,9 +49,9 @@ tr:hover td{background:#1a202c}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }}
-.tc-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer;transition:all .15s}
-.tc-btn:hover{border-color:#6b7280;color:#a0aec0}
-.tc-active{background:#0f2744;border-color:#2d6bc4;color:#4a90d9;box-shadow:0 0 0 1px #1e3a5f}
+.tc-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;border:1px solid #2d3748;background:#0d1117;color:#718096;cursor:pointer;transition:all .15s}
+.tc-btn:hover{border-color:#4a5568;color:#a0aec0;background:#111827}
+.tc-active{background:#1e2a3a;border-color:#4a5568;color:#e2e8f0;font-weight:600}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
 .trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -4245,41 +4245,42 @@ document.addEventListener('click',e=>{
 
 
 const PROSPECTS_2026=[
-  {n:'Jeremiyah Love',pos:'RB',school:'Notre Dame',age:21,pr:1,pp:3,ovr:3,por:1,ds:96,cap:40,bb:30,ag:18,ath:8,comp:1.0,note:'6.9 YPC in BOTH 2024 and 2025 (not a fluke). 21 total TD, 114 total ypg in 2025. 27 rec/280 yds = real receiving back. Generational RB profile.'},
-  {n:'Fernando Mendoza',pos:'QB',school:'Indiana',age:22,pr:1,pp:1,ovr:1,por:1,ds:91,cap:40,bb:30,ag:15,ath:6,comp:1.0,note:'10.78 AY/A in 2025 matches Stroud\'s final season. Career 3.2:1 TD:INT. Modest rusher (7 rush TD 2025) adds floor. Passing-first profile, not dual-threat.'},
-  {n:'Kenyon Sadiq',pos:'TE',school:'Oregon',age:21,pr:1,pp:12,ovr:16,por:1,ds:88,cap:37,bb:23,ag:18,ath:10,comp:1.0,note:'TE1 of class. 5→24→51 catches: elite trajectory. 11.9% catch share in Oregon\'s pass-heavy offense. 4.39 speed/43.5 vert = historically elite TE athleticism.'},
-  {n:'Carnell Tate',pos:'WR',school:'Ohio St.',age:21,pr:1,pp:9,ovr:9,por:1,ds:87,cap:37,bb:27,ag:18,ath:5,comp:1.0,note:'875 yds/9 TD as Ohio State WR2 behind Jeremiah Smith. 17.2 YPR in 2025. 13% catch share understates value — splitting targets with Smith. Route-running elite.'},
-  {n:'Jordyn Tyson',pos:'WR',school:'Arizona St.',age:22,pr:1,pp:14,ovr:18,por:2,ds:79,cap:37,bb:22,ag:15,ath:5,comp:0.95,note:'15% catch share over 9 games — elite if healthy (prorates to 27% full season). YPR declining: 21.4→14.7→11.7. Missed 2023 entirely, limited 2025. Boom/bust.'},
-  {n:'Makai Lemon',pos:'WR',school:'USC',age:22,pr:1,pp:18,ovr:22,por:3,ds:76,cap:33,bb:23,ag:15,ath:5,comp:1.0,note:'19.6% catch share as USC WR1 in 2025, 14.7 YPR all 3 seasons — remarkably consistent. Youngest top WR (age 20). Volume + efficiency + youth = highest dynasty ceiling.'},
-  {n:'Omar Cooper',pos:'WR',school:'Indiana',age:21,pr:1,pp:28,ovr:38,por:4,ds:76,cap:33,bb:19,ag:18,ath:6,comp:1.0,note:'WR2 projection. Dense frame, reliable hands.'},
-  {n:'Zachariah Branch',pos:'WR',school:'Georgia',age:22,pr:2,pp:38,ovr:50,por:5,ds:68,cap:24,bb:19,ag:15,ath:10,comp:1.0,note:'4.35 speed but 10.0 YPR career — slot/RAC profile not deep threat. 21% catch share at Georgia as WR1, but low YPR limits ceiling in non-PPR.'},
-  {n:'Oscar Delp',pos:'TE',school:'Georgia',age:23,pr:1,pp:25,ovr:36,por:2,ds:68,cap:33,bb:19,ag:11,ath:5,comp:1.0,note:'Consensus TE2. Bowers-lite profile. Georgia\'s featured TE. No combine data but film shows natural receiver with good hands and route running.'},
-  {n:'Ty Simpson',pos:'QB',school:'Alabama',age:23,pr:1,pp:28,ovr:38,por:2,ds:66,cap:33,bb:19,ag:11,ath:3,comp:1.0,note:'Only 15 career starts. 2025 was solid (8.25 AY/A, 145.2 rate) but YPC dropped to 1.0 — not a rusher. Ceiling limited without proven rushing floor.'},
-  {n:'De\'Zhaun Stribling',pos:'WR',school:'Ole Miss',age:22,pr:2,pp:50,ovr:60,por:6,ds:63,cap:24,bb:15,ag:15,ath:9,comp:1.0,note:'6-2, 207 with 4.36 speed. Elite size-speed combo. 2025 production at Ole Miss modest. Power forward profile who wins contested catches.'},
-  {n:'Jadarian Price',pos:'RB',school:'Notre Dame',age:22,pr:2,pp:35,ovr:45,por:2,ds:64,cap:24,bb:19,ag:15,ath:6,comp:1.0,note:'6.0 YPC but career 15 receptions — pure power back. Shared backfield with Love limits dynasty value. Pass-catching floor essentially zero.'},
-  {n:'Chris Brazzell II',pos:'WR',school:'Tennessee',age:22,pr:2,pp:62,ovr:78,por:9,ds:57,cap:24,bb:10,ag:15,ath:8,comp:0.95,note:'16.3% catch share at Tennessee in SEC. 1,017 yds/9 TD in 2025. 4.37 speed at 6-4 = elite measurables. Breakout season in power conference.'},
-  {n:'Mike Washington Jr.',pos:'RB',school:'Arkansas',age:23,pr:2,pp:48,ovr:62,por:4,ds:56,cap:24,bb:13,ag:11,ath:8,comp:0.85,note:'MAC→CUSA→SEC: 1,070 rush yds + 28 rec in first SEC season. 6.4 YPC vs SEC. 4.33 speed. Non-P5 background suppresses stock but 2025 proved legitimacy.'},
-  {n:'Eli Raridon',pos:'TE',school:'Notre Dame',age:22,pr:2,pp:50,ovr:65,por:4,ds:59,cap:24,bb:15,ag:15,ath:5,comp:1.0,note:'4.62 speed at 6-6, 245. Good movement skills. Notre Dame\'s featured TE when healthy. Developmental ceiling with legitimate athleticism.'},
-  {n:'Jonah Coleman',pos:'RB',school:'Washington',age:23,pr:2,pp:45,ovr:58,por:3,ds:55,cap:24,bb:15,ag:11,ath:5,comp:1.0,note:'354 rec yds in 2025 — best receiving season among RBs in class. 87 career catches. 5.5 career YPC. Versatile back with real PPR upside.'},
-  {n:'Max Klare',pos:'TE',school:'Ohio St.',age:23,pr:2,pp:42,ovr:55,por:3,ds:55,cap:24,bb:15,ag:11,ath:5,comp:1.0,note:'Reliable target. High catch rate, limited explosion.'},
-  {n:'Malachi Fields',pos:'WR',school:'Notre Dame',age:23,pr:2,pp:55,ovr:68,por:7,ds:51,cap:24,bb:14,ag:11,ath:2,comp:0.95,note:'6-5 frame, 17.5 YPR at Notre Dame in 2025 but only 36 catches (9.5% catch share). Limited role even after transfer. Red zone threat with size.'},
-  {n:'Skyler Bell',pos:'WR',school:'UConn',age:24,pr:2,pp:58,ovr:72,por:8,ds:50,cap:24,bb:11,ag:7,ath:8,comp:0.75,note:'101 catches, 29.7% catch share at UConn — but heavy non-P5 discount. 4.40 speed. Production dominant in weak competition; P5 adjustment unknown.'},
-  {n:'Ja\'Kobi Lane',pos:'WR',school:'USC',age:22,pr:3,pp:75,ovr:95,por:10,ds:48,cap:16,bb:11,ag:15,ath:6,comp:1.0,note:'Long WR. Battles for contested balls well.'},
-  {n:'Garrett Nussmeier',pos:'QB',school:'LSU',age:24,pr:2,pp:93,ovr:86,por:3,ds:44,cap:24,bb:11,ag:7,ath:2,comp:1.0,note:'Negative career rush yards — pure pocket passer. 4.2% INT rate dipped in injury-shortened 2025. Day 2 developmental, not a dynasty priority.'},
-  {n:'Drew Allar',pos:'QB',school:'Penn St.',age:22,pr:3,pp:107,ovr:105,por:4,ds:44,cap:16,bb:7,ag:15,ath:6,comp:1.0,note:'Underrated: 8.75 AY/A in healthy 2024, 732 career rush yds (12 TD). Ankle injury ended 2025. More complete than draft position suggests.'},
-  {n:'Cade Klubnik',pos:'QB',school:'Clemson',age:22,pr:3,pp:116,ovr:130,por:6,ds:43,cap:16,bb:7,ag:15,ath:5,comp:1.0,note:'4-year starter, 73 TDs. Up-and-down career at Clemson. Ideal developmental fit.'},
-  {n:'Nicholas Singleton',pos:'RB',school:'Penn St.',age:22,pr:3,pp:88,ovr:115,por:6,ds:46,cap:16,bb:7,ag:15,ath:8,comp:1.0,note:'4-year Penn State starter, 102 career catches. Most proven non-Love back. 2025 dip (549 rush yds) was volume-limited alongside Allen. Rd3 is value.'},
-  {n:'Justin Joly',pos:'TE',school:'NC State',age:23,pr:3,pp:78,ovr:100,por:5,ds:42,cap:16,bb:10,ag:11,ath:5,comp:0.95,note:'Route running TE. Underrated in class.'},
-  {n:'Bryce Lance',pos:'WR',school:'North Dakota St.',age:23,pr:3,pp:85,ovr:110,por:11,ds:40,cap:16,bb:4,ag:11,ath:9,comp:0.6,note:'FCS standout with elite speed. Projection risk.'},
-  {n:'Emmett Johnson',pos:'RB',school:'Nebraska',age:22,pr:3,pp:80,ovr:105,por:5,ds:43,cap:16,bb:7,ag:15,ath:5,comp:1.0,note:'1,821 total yds, 46 rec in 2025 — elite dual-threat production. One-year wonder risk (first major workload). Josh Jacobs comp justified by pass-catching.'},
-  {n:'Demond Claiborne',pos:'RB',school:'Wake Forest',age:22,pr:4,pp:115,ovr:145,por:7,ds:40,cap:10,bb:7,ag:15,ath:8,comp:0.95,note:'4.37 speed with decent receiving (28 rec in 2025). Consistent ACC producer but 4.7 career YPC limits ceiling. Speed is the calling card.'},
-  {n:'Marlin Klein',pos:'TE',school:'Michigan',age:23,pr:3,pp:95,ovr:125,por:7,ds:41,cap:16,bb:7,ag:11,ath:7,comp:1.0,note:'Developing route runner. Size/speed combo intriguing.'},
-  {n:'Elijah Sarratt',pos:'WR',school:'Indiana',age:23,pr:3,pp:95,ovr:120,por:12,ds:37,cap:16,bb:5,ag:11,ath:5,comp:0.75,note:'Reliable slot. High catch rate. Limited upside.'},
-  {n:'CJ Donaldson',pos:'RB',school:'Ohio St.',age:22,pr:4,pp:125,ovr:160,por:8,ds:34,cap:10,bb:4,ag:15,ath:5,comp:1.0,note:'Power back with surprising receiving chops.'},
-  {n:'Sam Roush',pos:'TE',school:'Stanford',age:24,pr:3,pp:88,ovr:112,por:6,ds:36,cap:16,bb:7,ag:7,ath:6,comp:0.95,note:'Big-bodied blocker/receiver hybrid. Versatile.'},
-  {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:94,ovr:113,por:5,ds:32,cap:16,bb:7,ag:7,ath:2,comp:1.0,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
-  {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:5,pp:153,ovr:155,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
-  {n:'KC Concepcion',pos:'WR',school:'Texas A&M',age:21,pr:1,pp:30,ovr:27,por:5,ds:76,cap:33,bb:23,ag:15,ath:5,comp:0.98,note:'Dynamic YAC weapon — 440 of 919 yds came after catch in 2025. NC State→Texas A&M SEC breakout. Drop concerns (6.8% career rate) are real. Slot/outside versatile. Zay Flowers comp.'}
+  {n:'Jeremiyah Love',pos:'RB',school:'Notre Dame',age:21,pr:1,pp:3,ovr:3,por:1,ds:96,cap:40,bb:30,ag:18,ath:8,comp:1.0,prod:1.12,scar:0.97,note:'6.9 YPC in BOTH 2024 and 2025 (not a fluke). 21 total TD, 114 total ypg in 2025. 27 rec/280 yds = real receiving back. Generational RB profile.'},
+  {n:'Fernando Mendoza',pos:'QB',school:'Indiana',age:22,pr:1,pp:1,ovr:1,por:1,ds:91,cap:40,bb:30,ag:15,ath:6,comp:1.0,prod:1.0,scar:1.12,note:'10.78 AY/A in 2025 matches Stroud\'s final season. Career 3.2:1 TD:INT. Modest rusher (7 rush TD 2025) adds floor. Passing-first profile, not dual-threat.'},
+  {n:'Kenyon Sadiq',pos:'TE',school:'Oregon',age:21,pr:1,pp:12,ovr:16,por:1,ds:86,cap:37,bb:21,ag:18,ath:10,comp:1.0,prod:-0.3,scar:1.03,note:'TE1 of class. 5→24→51 catches: elite trajectory. 11.9% catch share in Oregon\'s pass-heavy offense. 4.39 speed/43.5 vert = historically elite TE athleticism.'},
+  {n:'Carnell Tate',pos:'WR',school:'Ohio St.',age:21,pr:1,pp:9,ovr:9,por:1,ds:87,cap:37,bb:27,ag:18,ath:5,comp:1.0,prod:-0.1,scar:1.0,note:'875 yds/9 TD as Ohio State WR2 behind Jeremiah Smith. 17.2 YPR in 2025. 13% catch share understates value — splitting targets with Smith. Route-running elite.'},
+  {n:'Jordyn Tyson',pos:'WR',school:'Arizona St.',age:22,pr:1,pp:14,ovr:18,por:2,ds:80,cap:37,bb:23,ag:15,ath:5,comp:0.95,prod:1.05,scar:1.0,note:'15% catch share over 9 games — elite if healthy (prorates to 27% full season). YPR declining: 21.4→14.7→11.7. Missed 2023 entirely, limited 2025. Boom/bust.'},
+  {n:'Makai Lemon',pos:'WR',school:'USC',age:22,pr:1,pp:18,ovr:22,por:3,ds:78,cap:33,bb:25,ag:15,ath:5,comp:1.0,prod:1.08,scar:1.0,note:'19.6% catch share as USC WR1 in 2025, 14.7 YPR all 3 seasons — remarkably consistent. Youngest top WR (age 20). Volume + efficiency + youth = highest dynasty ceiling.'},
+  {n:'Omar Cooper',pos:'WR',school:'Indiana',age:21,pr:1,pp:28,ovr:38,por:4,ds:76,cap:33,bb:19,ag:18,ath:6,comp:1.0,prod:1.0,scar:1.0,note:'WR2 projection. Dense frame, reliable hands.'},
+  {n:'Zachariah Branch',pos:'WR',school:'Georgia',age:22,pr:2,pp:38,ovr:50,por:5,ds:66,cap:24,bb:17,ag:15,ath:10,comp:1.0,prod:-0.1,scar:1.0,note:'4.35 speed but 10.0 YPR career — slot/RAC profile not deep threat. 21% catch share at Georgia as WR1, but low YPR limits ceiling in non-PPR.'},
+  {n:'Oscar Delp',pos:'TE',school:'Georgia',age:23,pr:4,pp:135,ovr:135,por:7,ds:30,cap:10,bb:4,ag:11,ath:5,comp:1.0,prod:-0.3,scar:1.03,note:'Day 3 blocker-first TE. PFF projects TE3/TE4. Limited receiving production (70 rec, 854 yds career) in Georgia run-heavy offense. Athletic but not a receiving threat. Witten/Knox comp.'},
+  {n:'Ty Simpson',pos:'QB',school:'Alabama',age:23,pr:1,pp:28,ovr:38,por:2,ds:67,cap:33,bb:20,ag:11,ath:3,comp:1.0,prod:-0.1,scar:1.12,note:'Only 15 career starts. 2025 was solid (8.25 AY/A, 145.2 rate) but YPC dropped to 1.0 — not a rusher. Ceiling limited without proven rushing floor.'},
+  {n:'De\'Zhaun Stribling',pos:'WR',school:'Ole Miss',age:22,pr:2,pp:50,ovr:60,por:6,ds:62,cap:24,bb:14,ag:15,ath:9,comp:1.0,prod:-0.1,scar:1.0,note:'6-2, 207 with 4.36 speed. Elite size-speed combo. 2025 production at Ole Miss modest. Power forward profile who wins contested catches.'},
+  {n:'Jadarian Price',pos:'RB',school:'Notre Dame',age:22,pr:2,pp:35,ovr:45,por:2,ds:59,cap:24,bb:14,ag:15,ath:6,comp:1.0,prod:-0.2,scar:0.97,note:'6.0 YPC but career 15 receptions — pure power back. Shared backfield with Love limits dynasty value. Pass-catching floor essentially zero.'},
+  {n:'Chris Brazzell II',pos:'WR',school:'Tennessee',age:22,pr:2,pp:62,ovr:78,por:9,ds:56,cap:24,bb:9,ag:15,ath:8,comp:0.95,prod:-0.1,scar:1.0,note:'16.3% catch share at Tennessee in SEC. 1,017 yds/9 TD in 2025. 4.37 speed at 6-4 = elite measurables. Breakout season in power conference.'},
+  {n:'Mike Washington Jr.',pos:'RB',school:'Arkansas',age:23,pr:2,pp:48,ovr:62,por:4,ds:56,cap:24,bb:13,ag:11,ath:8,comp:0.85,prod:1.05,scar:0.97,note:'MAC→CUSA→SEC: 1,070 rush yds + 28 rec in first SEC season. 6.4 YPC vs SEC. 4.33 speed. Non-P5 background suppresses stock but 2025 proved legitimacy.'},
+  {n:'Eli Raridon',pos:'TE',school:'Notre Dame',age:22,pr:2,pp:50,ovr:44,por:4,ds:61,cap:24,bb:17,ag:15,ath:5,comp:1.0,prod:-0.3,scar:1.03,note:'4.62 speed at 6-6, 245. Good movement skills. Notre Dame\'s featured TE when healthy. Developmental ceiling with legitimate athleticism.'},
+  {n:'Jonah Coleman',pos:'RB',school:'Washington',age:23,pr:2,pp:45,ovr:58,por:3,ds:56,cap:24,bb:16,ag:11,ath:5,comp:1.0,prod:0.1,scar:0.97,note:'354 rec yds in 2025 — best receiving season among RBs in class. 87 career catches. 5.5 career YPC. Versatile back with real PPR upside.'},
+  {n:'Max Klare',pos:'TE',school:'Ohio St.',age:23,pr:2,pp:42,ovr:48,por:4,ds:60,cap:24,bb:20,ag:11,ath:5,comp:1.0,prod:0.0,scar:1.03,note:'Reliable target. High catch rate, limited explosion.'},
+  {n:'Malachi Fields',pos:'WR',school:'Notre Dame',age:23,pr:2,pp:55,ovr:68,por:7,ds:49,cap:24,bb:12,ag:11,ath:2,comp:0.95,prod:-0.1,scar:1.0,note:'6-5 frame, 17.5 YPR at Notre Dame in 2025 but only 36 catches (9.5% catch share). Limited role even after transfer. Red zone threat with size.'},
+  {n:'Skyler Bell',pos:'WR',school:'UConn',age:24,pr:2,pp:58,ovr:72,por:8,ds:48,cap:24,bb:9,ag:7,ath:8,comp:0.75,prod:-0.1,scar:1.0,note:'101 catches, 29.7% catch share at UConn — but heavy non-P5 discount. 4.40 speed. Production dominant in weak competition; P5 adjustment unknown.'},
+  {n:'Ja\'Kobi Lane',pos:'WR',school:'USC',age:22,pr:3,pp:75,ovr:95,por:10,ds:47,cap:16,bb:10,ag:15,ath:6,comp:1.0,prod:-0.1,scar:1.0,note:'Long WR. Battles for contested balls well.'},
+  {n:'Garrett Nussmeier',pos:'QB',school:'LSU',age:24,pr:2,pp:93,ovr:86,por:3,ds:45,cap:24,bb:12,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,note:'Negative career rush yards — pure pocket passer. 4.2% INT rate dipped in injury-shortened 2025. Day 2 developmental, not a dynasty priority.'},
+  {n:'Drew Allar',pos:'QB',school:'Penn St.',age:22,pr:3,pp:107,ovr:105,por:4,ds:45,cap:16,bb:8,ag:15,ath:6,comp:1.0,prod:1.0,scar:1.12,note:'Underrated: 8.75 AY/A in healthy 2024, 732 career rush yds (12 TD). Ankle injury ended 2025. More complete than draft position suggests.'},
+  {n:'Cade Klubnik',pos:'QB',school:'Clemson',age:22,pr:3,pp:116,ovr:130,por:6,ds:44,cap:16,bb:8,ag:15,ath:5,comp:1.0,prod:1.0,scar:1.12,note:'4-year starter, 73 TDs. Up-and-down career at Clemson. Ideal developmental fit.'},
+  {n:'Nicholas Singleton',pos:'RB',school:'Penn St.',age:22,pr:3,pp:88,ovr:115,por:6,ds:47,cap:16,bb:8,ag:15,ath:8,comp:1.0,prod:0.1,scar:0.97,note:'4-year Penn State starter, 102 career catches. Most proven non-Love back. 2025 dip (549 rush yds) was volume-limited alongside Allen. Rd3 is value.'},
+  {n:'Justin Joly',pos:'TE',school:'NC State',age:23,pr:3,pp:78,ovr:52,por:5,ds:49,cap:16,bb:17,ag:11,ath:5,comp:0.95,prod:0.2,scar:1.03,note:'Route running TE. Underrated in class.'},
+  {n:'Bryce Lance',pos:'WR',school:'North Dakota St.',age:23,pr:3,pp:85,ovr:110,por:11,ds:38,cap:16,bb:2,ag:11,ath:9,comp:0.6,prod:-0.1,scar:1.0,note:'FCS standout with elite speed. Projection risk.'},
+  {n:'Emmett Johnson',pos:'RB',school:'Nebraska',age:22,pr:3,pp:80,ovr:105,por:5,ds:42,cap:16,bb:6,ag:15,ath:5,comp:1.0,prod:0.88,scar:0.97,note:'1,821 total yds, 46 rec in 2025 — elite dual-threat production. One-year wonder risk (first major workload). Josh Jacobs comp justified by pass-catching.'},
+  {n:'Demond Claiborne',pos:'RB',school:'Wake Forest',age:22,pr:4,pp:115,ovr:145,por:7,ds:39,cap:10,bb:6,ag:15,ath:8,comp:0.95,prod:0.97,scar:0.97,note:'4.37 speed with decent receiving (28 rec in 2025). Consistent ACC producer but 4.7 career YPC limits ceiling. Speed is the calling card.'},
+  {n:'Marlin Klein',pos:'TE',school:'Michigan',age:23,pr:3,pp:95,ovr:72,por:7,ds:46,cap:16,bb:12,ag:11,ath:7,comp:1.0,prod:-0.3,scar:1.03,note:'Developing route runner. Size/speed combo intriguing.'},
+  {n:'Elijah Sarratt',pos:'WR',school:'Indiana',age:23,pr:3,pp:95,ovr:120,por:12,ds:35,cap:16,bb:3,ag:11,ath:5,comp:0.75,prod:-0.2,scar:1.0,note:'Reliable slot. High catch rate. Limited upside.'},
+  {n:'CJ Donaldson',pos:'RB',school:'Ohio St.',age:22,pr:4,pp:125,ovr:160,por:8,ds:34,cap:10,bb:4,ag:15,ath:5,comp:1.0,prod:0.92,scar:0.97,note:'Power back with surprising receiving chops.'},
+  {n:'Sam Roush',pos:'TE',school:'Stanford',age:24,pr:3,pp:88,ovr:62,por:6,ds:44,cap:16,bb:15,ag:7,ath:6,comp:0.95,prod:0.0,scar:1.03,note:'Big-bodied blocker/receiver hybrid. Versatile.'},
+  {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:94,ovr:113,por:5,ds:33,cap:16,bb:8,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
+  {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:5,pp:153,ovr:155,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,prod:1.0,scar:1.12,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
+  {n:'KC Concepcion',pos:'WR',school:'Texas A&M',age:21,pr:1,pp:30,ovr:27,por:5,ds:74,cap:33,bb:21,ag:15,ath:5,comp:0.98,prod:0.93,scar:1.0,note:'Dynamic YAC weapon — 440 of 919 yds came after catch in 2025. NC State→Texas A&M SEC breakout. Drop concerns (6.8% career rate) are real. Slot/outside versatile. Zay Flowers comp.'},
+  {n:'Eli Stowers',pos:'TE',school:'Vanderbilt',age:24,pr:2,pp:58,ovr:35,por:2,ds:66,cap:24,bb:22,ag:11,ath:9,comp:1.0,prod:0.2,scar:1.03,note:'Converted QB at Vanderbilt — LaPorta comp. 16.4% catch share as featured TE. 4.51/45.5\" vert (record)/135\" broad at combine. Raw route runner but elite athleticism and SEC production.'}
 ];
 
 function getScoreColor(s) {
@@ -4452,7 +4453,11 @@ function showRookieCard(idx, posFilter) {
     <div style="background:#0d1927;border-radius:8px;padding:12px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#4a90d9">SCOUT NOTE</div>
-        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#ff704322;color:#ff7043">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#4caf5022;color:#4caf50">P4</div>'}
+        <div style="display:flex;gap:4px">
+        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#ff704322;color:#ff7043">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#4caf5022;color:#4caf50">P4</div>'}
+        ${p.prod&&p.prod>1.02?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#06b6d422;color:#06b6d4">PROD+</div>':p.prod&&p.prod<0.95?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#f59e0b22;color:#f59e0b">PROD−</div>':''}
+          ${p.scar&&p.scar>1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#a78bfa22;color:#a78bfa">'+(p.pos==='QB'?'SF+':'TEP+')+'</div>'):p.scar&&p.scar<1.0?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#71809622;color:#718096">RB−</div>':''}
+        </div>
       </div>
       <div style="font-size:12px;color:#a0b0c0;line-height:1.5">${p.note}</div>
     </div>
@@ -4465,11 +4470,181 @@ function showRookieCard(idx, posFilter) {
   document.body.appendChild(modal);
 }
 
+
+// ── POST-DRAFT SCORE REFRESH ──────────────────────────────────────────────
+function toggleDraftRefresh() {
+  const panel = document.getElementById('draft-refresh-panel');
+  const btn = document.getElementById('draft-refresh-btn');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '✕ Close' : '⚡ Update with Real Draft Picks';
+  if (open) buildDraftEntries();
+}
+
+function buildDraftEntries() {
+  const container = document.getElementById('draft-entries');
+  // Show all prospects sorted by projected pick with input fields
+  const sorted = [...PROSPECTS_2026].sort((a,b) => {
+    if (a.pr !== b.pr) return a.pr - b.pr;
+    return a.pp - b.pp;
+  });
+  container.innerHTML = sorted.map(p => {
+    const stored = window._draftOverrides?.[p.n] || {};
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#111d2e;border-radius:5px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:600;color:#e2e8f0">${p.n}</div>
+        <div style="font-size:10px;color:#4a5568">Projected: Rd${p.pr} Pick ${p.pp}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:10px;color:#718096">Actual Rd</span>
+        <input type="number" min="1" max="7" placeholder="${p.pr}"
+          value="${stored.rd || ''}"
+          id="rd_${p.n.replace(/[^a-z0-9]/gi,'_')}"
+          style="width:40px;padding:3px 6px;border-radius:4px;border:1px solid #2d3748;background:#0d1117;color:#e2e8f0;font-size:11px;text-align:center">
+        <span style="font-size:10px;color:#718096">Pick</span>
+        <input type="number" min="1" max="262" placeholder="${p.pp}"
+          value="${stored.pk || ''}"
+          id="pk_${p.n.replace(/[^a-z0-9]/gi,'_')}"
+          style="width:50px;padding:3px 6px;border-radius:4px;border:1px solid #2d3748;background:#0d1117;color:#e2e8f0;font-size:11px;text-align:center">
+        <span id="delta_${p.n.replace(/[^a-z0-9]/gi,'_')}" style="font-size:10px;width:30px;text-align:right;color:#718096"></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function calcCapPts(rd, pk) {
+  if (rd === 1) {
+    if (pk <= 5) return 40;
+    if (pk <= 15) return 37;
+    return 33;
+  }
+  if (rd === 2) return 24;
+  if (rd === 3) return 16;
+  if (rd === 4) return 10;
+  return 5;
+}
+
+function applyDraftPicks() {
+  if (!window._draftOverrides) window._draftOverrides = {};
+  let changed = 0;
+  PROSPECTS_2026.forEach(p => {
+    const safeId = p.n.replace(/[^a-z0-9]/gi,'_');
+    const rdEl = document.getElementById('rd_' + safeId);
+    const pkEl = document.getElementById('pk_' + safeId);
+    if (!rdEl || !pkEl) return;
+    const rd = parseInt(rdEl.value);
+    const pk = parseInt(pkEl.value);
+    if (!isNaN(rd) && !isNaN(pk) && rd >= 1 && pk >= 1) {
+      const newCap = calcCapPts(rd, pk);
+      const oldCap = p.cap;
+      if (newCap !== oldCap || rd !== p.pr || pk !== p.pp) {
+        window._draftOverrides[p.n] = {rd, pk};
+        // Recalc score
+        const newScore = newCap + p.bb + p.ag + p.ath;
+        const delta = newScore - p.ds;
+        p.cap = newCap; p.pr = rd; p.pp = pk; p.ds = newScore;
+        // Show delta
+        const deltaEl = document.getElementById('delta_' + safeId);
+        if (deltaEl) {
+          deltaEl.textContent = delta > 0 ? '+'+delta : delta < 0 ? delta : '';
+          deltaEl.style.color = delta > 0 ? '#6ee7b7' : delta < 0 ? '#fca5a5' : '#718096';
+        }
+        changed++;
+      }
+    }
+  });
+  if (changed > 0) {
+    renderProspects();
+    showToast(changed + ' prospect score' + (changed>1?'s':'') + ' updated with real draft picks');
+  } else {
+    showToast('No changes detected — enter actual pick numbers above');
+  }
+}
+
+function resetDraftPicks() {
+  window._draftOverrides = {};
+  // Restore from original PROSPECTS_2026 data
+  PROSPECTS_2026.forEach(p => {
+    p.pr = p._origPr || p.pr;
+    p.pp = p._origPp || p.pp;
+    p.cap = p._origCap || p.cap;
+    p.ds = p._origDs || p.ds;
+  });
+  buildDraftEntries();
+  renderProspects();
+  showToast('Reset to projected draft positions');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('delta-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'delta-toast';
+    t.style.cssText = 'position:fixed;bottom:48px;right:12px;background:#1e2a3a;border:1px solid #2d6bc4;border-radius:6px;padding:8px 14px;font-size:11px;color:#7dd3fc;font-weight:600;z-index:1000;transition:opacity .3s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+// Store original values on load so reset always works
+PROSPECTS_2026.forEach(p => {
+  p._origPr = p.pr; p._origPp = p.pp;
+  p._origCap = p.cap; p._origDs = p.ds;
+});
+
+
+// ── WATCHLIST (localStorage) ──────────────────────────────────────────────
+function getWatchlist() {
+  try { return JSON.parse(localStorage.getItem('delta_watchlist') || '[]'); }
+  catch(e) { return []; }
+}
+function isWatched(name) { return getWatchlist().includes(name); }
+function toggleWatch(e, name) {
+  e.stopPropagation();
+  const list = getWatchlist();
+  const idx = list.indexOf(name);
+  if (idx > -1) list.splice(idx, 1);
+  else list.push(name);
+  try { localStorage.setItem('delta_watchlist', JSON.stringify(list)); }
+  catch(e) {}
+  renderProspects();
+}
+
+
+let _watchFilterOn = false;
+function toggleWatchFilter() {
+  _watchFilterOn = !_watchFilterOn;
+  const btn = document.getElementById('watch-filter-btn');
+  if (btn) {
+    btn.textContent = _watchFilterOn ? '★ Watchlist' : '☆ Watchlist';
+    btn.style.color = _watchFilterOn ? '#fbbf24' : '#718096';
+    btn.style.borderColor = _watchFilterOn ? '#fbbf24' : '#2d3748';
+  }
+  renderProspects();
+}
+
 </script>
 
 <!-- DELTA Deck — Player Card Modal -->
 <div id="panel-rookies" class="panel">
-  <div class="section-label">2026 Rookie Prospect Board</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
+    <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
+    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid #2d6bc4;background:#0f2744;color:#4a90d9;cursor:pointer">⚡ Update with Real Draft Picks</button>
+  </div>
+
+  <!-- Post-draft pick entry panel -->
+  <div id="draft-refresh-panel" style="display:none;background:#0d1927;border:1px solid #1e3a5f;border-radius:8px;padding:14px;margin-bottom:1rem">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#4a90d9;margin-bottom:10px">POST-DRAFT SCORE REFRESH</div>
+    <div style="font-size:11px;color:#718096;margin-bottom:12px">Enter actual draft picks after the 2026 NFL Draft (Apr 24-26). Scores will recalculate using real capital instead of projections.</div>
+    <div id="draft-entries" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="applyDraftPicks()" style="font-size:11px;font-weight:700;padding:6px 16px;border-radius:5px;border:none;background:#2d6bc4;color:#fff;cursor:pointer">Recalculate Scores</button>
+      <button onclick="resetDraftPicks()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer">Reset to Projections</button>
+    </div>
+  </div>
   <div style="background:#1a2332;border:1px solid #2d3f55;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#8899aa;line-height:1.6">
     <strong style="color:#64b5f6">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
   </div>
@@ -4498,7 +4673,6 @@ function showRookieCard(idx, posFilter) {
 
 <script>
 
-// ── PICK TIER RESCALER ────────────────────────────────────────────────────
 function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};
   const slots = tierSlots[tierName];
@@ -4512,7 +4686,6 @@ function rescalePickTier(year, rnd, tierName, newTierVal) {
   const ratio = newTierVal / (avg || newTierVal);
   slotPicks.forEach(p => { p.k = Math.round(p.k * ratio); });
 }
-
 // ── NAME ALIASES ──────────────────────────────────────────────────────────
 // Add entries here whenever you notice a player isn't getting updated.
 // Format: 'FantasyCalc name': 'DELTA name'
@@ -4542,8 +4715,6 @@ async function loadLiveMarketValues() {
     }
 
     const values = data.values;
-
-    // Rescale slot picks from FC tier anchors
     const tierMap = {
       'Early 1st Round Pick':{rnd:1,tier:'Early'},'Mid 1st Round Pick':{rnd:1,tier:'Mid'},
       'Late 1st Round Pick':{rnd:1,tier:'Late'},'Early 2nd Round Pick':{rnd:2,tier:'Early'},
