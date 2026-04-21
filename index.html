@@ -4346,7 +4346,7 @@ function renderRookieBoard(posFilter) {
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
             <span style="font-size:14px;font-weight:700;color:#e8edf2">${p.n}</span>
-            <button onclick="toggleWatch(event,p.n)" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0 2px;line-height:1;color:${isWatched(p.n)?'#fbbf24':'#374151'}" title="${isWatched(p.n)?'Remove from watchlist':'Add to watchlist'}">${isWatched(p.n)?'★':'☆'}</button>
+            <span class="watch-star" data-name="${p.n}" style="cursor:pointer;font-size:16px;padding:0 4px;color:${isWatched(p.n)?'#fbbf24':'#4a5568'}">${isWatched(p.n)?'★':'☆'}</span>
             <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>
             <span style="font-size:10px;color:${rdColor};background:${rdColor}22;padding:1px 6px;border-radius:4px;font-weight:600">Rd${p.pr} #${p.pp}</span>
           </div>
@@ -4413,6 +4413,7 @@ function showRookieCard(idx, posFilter) {
   `).join('');
   
   const modal = document.createElement('div');
+  modal.id='rookie-modal';
   modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#000a;z-index:9999;display:flex;align-items:flex-end;justify-content:center';
   modal.innerHTML=`
   <div style="background:#121f2e;border:1px solid #2d3f55;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
@@ -4420,7 +4421,7 @@ function showRookieCard(idx, posFilter) {
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
           <div style="font-size:20px;font-weight:800;color:#e8edf2">${p.n}</div>
-          <button onclick="toggleWatch(event,p.n);this.textContent=isWatched(p.n)?'★':'☆';this.style.color=isWatched(p.n)?'#fbbf24':'#718096'" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;color:${isWatched(p.n)?'#fbbf24':'#718096'}">${isWatched(p.n)?'★':'☆'}</button>
+          <button class="watch-star" data-name="${p.n}" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;color:${isWatched(p.n)?'#fbbf24':'#718096'}">${isWatched(p.n)?'★':'☆'}</button>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <span style="font-size:11px;font-weight:700;color:${pc};background:${pc}22;padding:2px 8px;border-radius:4px">${p.pos}</span>
@@ -4468,15 +4469,20 @@ function showRookieCard(idx, posFilter) {
     <div style="background:#1a2332;border:1px solid #ff980044;border-radius:8px;padding:10px;margin-bottom:14px">
       <div style="font-size:10px;color:#ff9800;font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
     </div>
-    <button onclick="this.closest('div[style*="position:fixed"]').remove()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer" onclick="this.closest('[style*=\"z-index:9999\"]').remove()">Close</button>
+    <button onclick="this.closest('div[style*="position:fixed"]').remove()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer" onclick="closeRookieModal()">Close</button>
   </div>`;
-  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+  modal.onclick = e => { if(e.target===modal) closeRookieModal(); };
   document.body.appendChild(modal);
 }
 
 
 // ── POST-DRAFT SCORE REFRESH ──────────────────────────────────────────────
 function renderProspects() { renderRookieBoard(document.getElementById("rook-pos")?.value || "ALL"); }
+
+function closeRookieModal() {
+  const m = document.getElementById('rookie-modal');
+  if (m) m.remove();
+}
 
 function toggleDraftRefresh() {
   const panel = document.getElementById('draft-refresh-panel');
@@ -4631,6 +4637,27 @@ function toggleWatchFilter() {
   }
   renderProspects();
 }
+
+
+// ── WATCHLIST EVENT DELEGATION ────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  const star = e.target.closest('.watch-star');
+  if (!star) return;
+  e.stopPropagation();
+  const name = star.dataset.name;
+  if (!name) return;
+  const list = getWatchlist();
+  const idx = list.indexOf(name);
+  if (idx > -1) list.splice(idx, 1);
+  else list.push(name);
+  try { localStorage.setItem('delta_watchlist', JSON.stringify(list)); } catch(e) {}
+  // Update all stars for this player
+  document.querySelectorAll('.watch-star[data-name="' + name + '"]').forEach(s => {
+    const watched = list.includes(name);
+    s.textContent = watched ? '★' : '☆';
+    s.style.color = watched ? '#fbbf24' : '#4a5568';
+  });
+});
 
 </script>
 
