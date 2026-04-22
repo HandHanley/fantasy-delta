@@ -4280,7 +4280,11 @@ const PROSPECTS_2026=[
   {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:94,ovr:113,por:5,ds:33,cap:16,bb:8,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
   {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:5,pp:153,ovr:155,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,prod:1.0,scar:1.12,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
   {n:'KC Concepcion',pos:'WR',school:'Texas A&M',age:21,pr:1,pp:30,ovr:27,por:5,ds:74,cap:33,bb:21,ag:15,ath:5,comp:0.98,prod:0.93,scar:1.0,note:'Dynamic YAC weapon — 440 of 919 yds came after catch in 2025. NC State→Texas A&M SEC breakout. Drop concerns (6.8% career rate) are real. Slot/outside versatile. Zay Flowers comp.'},
-  {n:'Eli Stowers',pos:'TE',school:'Vanderbilt',age:24,pr:2,pp:58,ovr:35,por:2,ds:66,cap:24,bb:22,ag:11,ath:9,comp:1.0,prod:0.2,scar:1.03,note:'Converted QB at Vanderbilt — LaPorta comp. 16.4% catch share as featured TE. 4.51/45.5\" vert (record)/135\" broad at combine. Raw route runner but elite athleticism and SEC production.'}
+  {n:'Eli Stowers',pos:'TE',school:'Vanderbilt',age:24,pr:2,pp:58,ovr:35,por:2,ds:66,cap:24,bb:22,ag:11,ath:9,comp:1.0,prod:0.2,scar:1.03,note:'Converted QB at Vanderbilt — LaPorta comp. 16.4% catch share as featured TE. 4.51/45.5\" vert (record)/135\" broad at combine. Raw route runner but elite athleticism and SEC production.'},
+  {n:'Kaytron Allen',pos:'RB',school:'Penn State',age:23,pr:4,pp:123,ovr:123,por:9,ds:34,cap:10,bb:8,ag:11,ath:5,comp:1.0,prod:0.1,scar:1.0,note:'4yr Penn State workhorse — 769 carries, 4,180 yds, 39 TDs. 70 career receptions shows receiving floor. Big Ten proven.'},
+  {n:'Chris Bell',pos:'WR',school:'Louisville',age:23,pr:2,pp:60,ovr:67,por:8,ds:57,cap:24,bb:14,ag:11,ath:8,comp:0.95,prod:0.0,scar:1.0,note:'151 rec/2166 yds career at Louisville — consistent 4yr producer. 72 rec/917 yds in 2025. Size-speed WR, vertical threat. ACC competition.'},
+  {n:'Brenen Thompson',pos:'WR',school:'Mississippi State',age:24,pr:2,pp:68,ovr:74,por:9,ds:51,cap:24,bb:12,ag:7,ath:8,comp:0.8,prod:0.0,scar:1.0,note:'4.26 40 — fastest WR in class. 57 rec/1054 yds in 2025 at MSU. Career spread across Texas, Oklahoma, MSU. Pure speed, one dominant season.'},
+  {n:'Deion Burks',pos:'WR',school:'Oklahoma',age:23,pr:3,pp:88,ovr:88,por:10,ds:47,cap:16,bb:10,ag:11,ath:10,comp:1.0,prod:-0.1,scar:1.0,note:'Elite combine: 4.30/42.5\" vert/131\" broad. Explosive slot WR. Injury history (2024 limited). Purdue→Oklahoma transfer. Speed + YAC profile, size concerns at 5\'9\".'}
 ];
 
 function getScoreColor(s) {
@@ -4384,6 +4388,11 @@ function renderRookieBoard(posFilter) {
   board.innerHTML = html;
 }
 
+function closeRookieModal() {
+  const m = document.getElementById('rookie-modal');
+  if (m) m.remove();
+}
+
 function showRookieCard(idx, posFilter) {
   const filtered = posFilter === 'ALL' ? PROSPECTS_2026 : PROSPECTS_2026.filter(p=>p.pos===posFilter);
   const sorted = [...filtered].sort((a,b)=>b.ds-a.ds);
@@ -4469,7 +4478,7 @@ function showRookieCard(idx, posFilter) {
     <div style="background:#1a2332;border:1px solid #ff980044;border-radius:8px;padding:10px;margin-bottom:14px">
       <div style="font-size:10px;color:#ff9800;font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
     </div>
-    <button onclick="this.closest('div[style*="position:fixed"]').remove()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer" onclick="closeRookieModal()">Close</button>
+    <button onclick="closeRookieModal()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer">Close</button>
   </div>`;
   modal.onclick = e => { if(e.target===modal) closeRookieModal(); };
   document.body.appendChild(modal);
@@ -4478,11 +4487,6 @@ function showRookieCard(idx, posFilter) {
 
 // ── POST-DRAFT SCORE REFRESH ──────────────────────────────────────────────
 function renderProspects() { renderRookieBoard(document.getElementById("rook-pos")?.value || "ALL"); }
-
-function closeRookieModal() {
-  const m = document.getElementById('rookie-modal');
-  if (m) m.remove();
-}
 
 function toggleDraftRefresh() {
   const panel = document.getElementById('draft-refresh-panel');
