@@ -1870,7 +1870,36 @@ const RAW=[
   {n:'Makai Lemon',t:'PHI',p:'WR',a:22,k:7400,ppg25:9.5,ppg24:0,ppg23:0,g25:0},
   {n:'KC Concepcion',t:'CLE',p:'WR',a:22,k:6200,ppg25:8.7,ppg24:0,ppg23:0,g25:0},
   {n:'Omar Cooper',t:'NYJ',p:'WR',a:22,k:5800,ppg25:7.6,ppg24:0,ppg23:0,g25:0},
-  {n:'Jadarian Price',t:'SEA',p:'RB',a:22,k:6000,ppg25:9.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Jadarian Price',t:'SEA',p:'RB',a:22,k:6000,ppg25:9.8,ppg24:0,ppg23:0,g25:0},,
+  // 2026 Rookies — Day 2 & 3 picks
+  {n:"De'Zhaun Stribling",t:'SF',p:'WR',a:24,k:4200,ppg25:7.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Denzel Boston',t:'CLE',p:'WR',a:23,k:4800,ppg25:6.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Germie Bernard',t:'PIT',p:'WR',a:23,k:3800,ppg25:5.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Eli Stowers',t:'PHI',p:'TE',a:24,k:6200,ppg25:6.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Marlin Klein',t:'HOU',p:'TE',a:24,k:2800,ppg25:3.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Max Klare',t:'LAR',p:'TE',a:23,k:3800,ppg25:5.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Carson Beck',t:'ARI',p:'QB',a:24,k:3200,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Sam Roush',t:'CHI',p:'TE',a:24,k:2200,ppg25:2.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Antonio Williams',t:'WAS',p:'WR',a:23,k:4600,ppg25:8.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Oscar Delp',t:'NO',p:'TE',a:23,k:2600,ppg25:3.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Malachi Fields',t:'NYG',p:'WR',a:23,k:3200,ppg25:5.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Zachariah Branch',t:'ATL',p:'WR',a:22,k:5000,ppg25:7.6,ppg24:0,ppg23:0,g25:0},
+  {n:"Ja'Kobi Lane",t:'BAL',p:'WR',a:23,k:3600,ppg25:6.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Chris Brazzell II',t:'CAR',p:'WR',a:23,k:3000,ppg25:5.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Ted Hurst',t:'TB',p:'WR',a:24,k:3400,ppg25:6.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Drew Allar',t:'PIT',p:'QB',a:24,k:3800,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Will Kacmarek',t:'MIA',p:'TE',a:24,k:2000,ppg25:2.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Chris Bell',t:'MIA',p:'WR',a:23,k:3600,ppg25:5.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Eli Raridon',t:'NE',p:'TE',a:24,k:3400,ppg25:4.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Caleb Douglas',t:'MIA',p:'WR',a:23,k:3200,ppg25:5.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Zavion Thomas',t:'CHI',p:'WR',a:23,k:3000,ppg25:5.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Kaelon Black',t:'SF',p:'RB',a:23,k:3200,ppg25:6.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Barion Brown',t:'NO',p:'WR',a:23,k:3200,ppg25:5.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Cyrus Allen',t:'KC',p:'WR',a:24,k:3400,ppg25:5.4,ppg24:0,ppg23:0,g25:0},
+  {n:'Reggie Virgil',t:'ARI',p:'WR',a:24,k:2600,ppg25:4.2,ppg24:0,ppg23:0,g25:0},
+  {n:'Kendrick Law',t:'DET',p:'WR',a:23,k:2800,ppg25:4.8,ppg24:0,ppg23:0,g25:0},
+  {n:'Kaden Wetjen',t:'PIT',p:'WR',a:24,k:1200,ppg25:2.0,ppg24:0,ppg23:0,g25:0},
+  {n:'Colbie Young',t:'CIN',p:'WR',a:24,k:2400,ppg25:4.0,ppg24:0,ppg23:0,g25:0}
 ];
 
 const PICKS=[
@@ -2047,78 +2076,74 @@ const DC={
 };
 
 const RIPPLE=[
+  // ── Pre-draft offseason moves ─────────────────────────────────────────
   {n:'Jaylen Waddle',d:'up',reason:'MIA→DEN Payton system',delta:'+18%'},
-    {n:'RJ Harvey',d:'up',reason:'DEN run scheme complement',delta:'+10%'},
-  {n:"De'Von Achane",d:'up',reason:'Clear MIA RB1 (70.9% snaps)',delta:'+5%'},
+  {n:'RJ Harvey',d:'up',reason:'DEN run scheme complement',delta:'+10%'},
   {n:'Bhayshul Tuten',d:'up',reason:'Etienne gone, JAC RB1',delta:'+15%'},
-  {n:'Travis Etienne',d:'up',reason:'JAC→NO Moore system',delta:'+8%'},
-  {n:'Ricky Pearsall',d:'up',reason:'Aiyuk DNR elevates SF WR role',delta:'+12%'},
-  {n:'Mike Evans',d:'up',reason:'Aiyuk DNR, SF WR1 Shanahan',delta:'+15%'},
-  {n:'Mason Rudolph',d:'dn',reason:'Unproven PIT QB1',delta:'-20%'},
-  {n:'DK Metcalf',d:'dn',reason:'Rudolph QB1 limits ceiling',delta:'-18%'},
-  {n:'Michael Pittman Jr.',d:'dn',reason:'Rudolph QB1 weak system',delta:'-15%'},
-  {n:'Jaylen Warren',d:'dn',reason:'Rudolph limits passing game',delta:'-10%'},
-  {n:'Rico Dowdle',d:'dn',reason:'PIT QB situation',delta:'-8%'},
-  {n:'Kenneth Walker III',d:'up',reason:'KC RB1 Reid/Mahomes',delta:'+8%'},
+  {n:'Travis Etienne',d:'up',reason:'JAC→NO Moore system, role TBD',delta:'+8%'},
+  {n:'Mike Evans',d:'up',reason:'SF WR1 — Aiyuk DNR, Shanahan offense',delta:'+15%'},
+  {n:'Ricky Pearsall',d:'down',reason:'SF — Evans arrives as WR1, then Rd2 WR drafted. Pearsall falls to WR3',delta:'-18%'},
+  {n:'Kenneth Walker III',d:'up',reason:'KC RB1 — Reid/Mahomes system, elite opportunity',delta:'+8%'},
   {n:'Shedeur Sanders',d:'up',reason:'Named CLE QB1',delta:'+5%'},
   {n:'Harold Fannin Jr.',d:'up',reason:'Clear CLE TE1',delta:'+5%'},
-  {n:'Colston Loveland',d:'up',reason:'CHI TE1, Williams system',delta:'+8%'},
-  {n:'Mason Taylor',d:'dn',reason:'Geno Smith QB1',delta:'-15%'},
-  {n:'Breece Hall',d:'dn',reason:'Geno Smith weak system',delta:'-10%'},
-  {n:'Garrett Wilson',d:'dn',reason:'Geno Smith caps upside',delta:'-12%'},
-  {n:'Justin Jefferson',d:'up',reason:'Kyler Murray QB upgrade',delta:'+8%'},
-  {n:'Jordan Addison',d:'up',reason:'Murray upgrade MIN corps',delta:'+6%'},
-  {n:'Zach Charbonnet',d:'dn',reason:'Fleury OC, worst system',delta:'-10%'},
-  {n:'Brandon Aiyuk',d:'dn',reason:'DNR — zero value',delta:'-100%'},
-  {n:'Puka Nacua',d:'up',reason:'LAR WR1 role secured',delta:'+5%'},
+  {n:'Colston Loveland',d:'up',reason:'CHI TE1, Caleb Williams system',delta:'+8%'},
+  {n:'Justin Jefferson',d:'up',reason:'Kyler Murray QB upgrade MIN',delta:'+8%'},
+  {n:'Jordan Addison',d:'up',reason:'Murray upgrade elevates MIN corps',delta:'+6%'},
   {n:'Javonte Williams',d:'up',reason:'68% snap share in 2025, true DAL bellcow',delta:'+12%'},
   {n:'Kenneth Gainwell',d:'up',reason:'50% snap share as TB RB1',delta:'+10%'},
-  {n:'Davante Adams',d:'up',reason:'YPRR 1.98 — age curve undersold him in v5.4',delta:'+8%'},
+  {n:'Davante Adams',d:'up',reason:'YPRR 1.98 — age curve undersold him',delta:'+8%'},
   {n:'Parker Washington',d:'up',reason:'YPRR 2.10 in 2025, steep ascending arc',delta:'+15%'},
+  {n:'George Pickens',d:'down',reason:'DAL — franchise tagged 2026, long-term deal unknown. Contract uncertainty is real dynasty risk',delta:'-8%'},
+  {n:'CeeDee Lamb',d:'down',reason:'DAL — Pickens as WR2 compresses targets slightly',delta:'-6%'},
 
-  // 2026 Draft ripple effects
-  {n:'Jeremiyah Love',d:'up',reason:'ARI #3 — RB1 long-term. Conner re-signed but Love takes over immediately',delta:'+28%'},
-  {n:'James Conner',d:'down',reason:'ARI — Love drafted but Conner re-signed. Conner is committee back, not cut',delta:'-40%'},
-  {n:'Trey McBride',d:'up',reason:'Love draws box safeties, opens TE targets',delta:'+8%'},
-  {n:'Carnell Tate',d:'up',reason:'TEN #4 — immediate WR1 with Cam Ward at QB. Strong QB situation',delta:'+28%'},
+  // ── 2026 Draft Round 1 ────────────────────────────────────────────────
+  {n:'Jeremiyah Love',d:'up',reason:'ARI #3 — RB1 immediately. Conner re-signed as committee back only',delta:'+28%'},
+  {n:'James Conner',d:'down',reason:'ARI — Love drafted #3, Conner now committee back not cut',delta:'-40%'},
+  {n:'Trey McBride',d:'up',reason:'ARI — Love draws box safeties, opens middle for McBride',delta:'+10%'},
+  {n:'Carnell Tate',d:'up',reason:'TEN #4 — immediate WR1 with Cam Ward at QB',delta:'+28%'},
   {n:'Calvin Ridley',d:'down',reason:'TEN — loses WR1 role to Tate immediately',delta:'-30%'},
-  {n:'Jordyn Tyson',d:'up',reason:'NO #8 — Kellen Moore HC, Tyler Shough QB showed promise in 2025. Better situation than expected',delta:'+18%'},
-  {n:'Chris Olave',d:'down',reason:'NO — competes with Tyson for targets',delta:'-15%'},
-  {n:'Kenyon Sadiq',d:'up',reason:'NYJ #16 — immediate TE1, no competition. Geno Smith at QB limits upside vs young QB scenario',delta:'+14%'},
-  {n:'Tyler Conklin',d:'down',reason:'NYJ — Sadiq takes over, cut candidate',delta:'-85%'},
-  {n:'Makai Lemon',d:'up',reason:'PHI #20 — Hurts offense. AJ Brown still on roster (likely June 1 trade). WR3 for now',delta:'+10%'},
+  {n:'Cam Ward',d:'up',reason:'TEN — Tate gives Ward an elite WR1 target immediately',delta:'+12%'},
+  {n:'Jordyn Tyson',d:'up',reason:'NO #8 — Kellen Moore HC, Tyler Shough showed promise in 2025',delta:'+18%'},
+  {n:'Chris Olave',d:'down',reason:'NO — Tyson drafted WR heir, Olave loses target share',delta:'-18%'},
+  {n:'Tyler Shough',d:'up',reason:'NO — Tyson gives Shough an explosive WR1 to target',delta:'+15%'},
+  {n:'Kenyon Sadiq',d:'up',reason:'NYJ #16 — immediate TE1, no competition. Geno Smith limits upside',delta:'+14%'},
+  {n:'Mason Taylor',d:'down',reason:'NYJ — Sadiq takes over TE1 immediately',delta:'-65%'},
+  {n:'Tyler Conklin',d:'down',reason:'NYJ — Sadiq drafted, Conklin is cut candidate',delta:'-80%'},
+  {n:'Makai Lemon',d:'up',reason:'PHI #20 — Hurts offense. AJ Brown still on roster, WR3 for now',delta:'+10%'},
+  {n:'DeVonta Smith',d:'down',reason:'PHI — Lemon added, Brown trade likely June 1. Three-way split coming',delta:'-8%'},
   {n:'KC Concepcion',d:'up',reason:'CLE #24 — WR1 path in thin Browns room',delta:'+15%'},
-  {n:'Jerry Jeudy',d:'down',reason:'CLE — demoted to WR2 behind Concepcion',delta:'-25%'},
-  {n:'DeVonta Smith',d:'down',reason:'PHI — Brown still there. Three WRs now competing — Smith WR1 ceiling intact near-term',delta:'-5%'},
-  {n:'Omar Cooper',d:'up',reason:'NYJ #30 — WR2 with Garrett Wilson. Geno Smith limits ceiling but clear role',delta:'+10%'},
-  {n:'Garrett Wilson',d:'down',reason:'NYJ — shares targets with Cooper',delta:'-8%'},
-  {n:'Jadarian Price',d:'up',reason:'SEA #32 — strong OL, run-heavy scheme. Kenneth Walker injury history opens door for early role',delta:'+18%'},
-  {n:'Kenneth Walker III',d:'down',reason:'SEA — Price is long-term answer, cut risk 2027',delta:'-35%'},
-  {n:'Zach Charbonnet',d:'down',reason:'SEA — three-way split further devalues',delta:'-20%'},
+  {n:'Jerry Jeudy',d:'down',reason:'CLE — demoted to WR2 behind Concepcion, then Boston also added. Three rookie WRs crowding room',delta:'-30%'},
+  {n:'Omar Cooper',d:'up',reason:'NYJ #30 — WR2 behind Wilson. Geno Smith limits ceiling',delta:'+10%'},
+  {n:'Garrett Wilson',d:'down',reason:'NYJ — Cooper drafted WR2, Wilson remains WR1 but shares',delta:'-8%'},
+  {n:'Geno Smith',d:'up',reason:'NYJ — Sadiq + Cooper give Geno two first-round skill players',delta:'+8%'},
+  {n:'Jadarian Price',d:'up',reason:'SEA #32 — strong OL, run-heavy scheme. Walker injury history opens door',delta:'+18%'},
+  {n:'Kenneth Walker III',d:'down',reason:'SEA — Price drafted, Walker long-term cut risk 2027',delta:'-35%'},
+  {n:'Zach Charbonnet',d:'down',reason:'SEA — Price arrival further reduces role',delta:'-20%'},
   {n:'Fernando Mendoza',d:'up',reason:'LV #1 — franchise QB. Cousins starts 2026, Mendoza takes over mid-year or 2027',delta:'+25%'},
-  {n:'Puka Nacua',d:'down',reason:'LAR — Simpson coming, Stafford lame duck',delta:'-20%'},
+  {n:'Kirk Cousins',d:'down',reason:'LV — Mendoza #1 overall, Cousins pure bridge with zero dynasty value',delta:'-95%'},
+  {n:'Ty Simpson',d:'up',reason:'LAR #13 — SF+ dynasty value long-term. Stafford starts 2026, Simpson is 2028 play',delta:'+10%'},
+  {n:'Puka Nacua',d:'down',reason:'LAR — Simpson era eventually coming, Stafford lame duck',delta:'-20%'},
   {n:'Cooper Kupp',d:'down',reason:'LAR — aging WR in transitioning offense',delta:'-40%'},
 
-  // QB situation ripples from rookie landing spots
-  {n:'Cam Ward',d:'up',reason:'TEN drafted Tate — elite WR1 gives Ward top target immediately',delta:'+12%'},
-  {n:'Tyler Shough',d:'up',reason:'NO drafted Tyson — explosive WR1 elevates Shough ceiling',delta:'+15%'},
-  {n:'Geno Smith',d:'up',reason:'NYJ — Sadiq + Cooper give Geno two first-round skill players',delta:'+8%'},
-  {n:'Fernando Mendoza',d:'up',reason:'LV #1 overall — franchise QB, Cousins bridge 2026',delta:'+25%'},
-  // Displaced/impacted veterans
-  {n:'Chris Olave',d:'down',reason:'NO — Tyson drafted as WR1 heir, Olave loses target share',delta:'-18%'},
-  {n:'Mason Taylor',d:'down',reason:'NYJ — Sadiq drafted, Taylor loses TE1 role immediately',delta:'-65%'},
-  {n:'James Conner',d:'down',reason:'ARI — Love drafted #3, Conner now committee back not starter',delta:'-40%'},
-  {n:'Calvin Ridley',d:'down',reason:'TEN — Tate drafted as WR1, Ridley loses top target role',delta:'-28%'},
-  {n:'Trey McBride',d:'up',reason:'ARI — Love draws box safeties, creates TE seam opportunities',delta:'+10%'},
-  {n:'DeVonta Smith',d:'down',reason:'PHI — Lemon added, Brown trade likely by June 1 then 3-way split',delta:'-10%'},
-  {n:'Kenneth Walker III',d:'down',reason:'SEA — Price drafted #32, Walker long-term cut risk',delta:'-35%'},
-  {n:'Zach Charbonnet',d:'down',reason:'SEA — Price arrival further reduces Charbonnet role',delta:'-20%'},
-  {n:'Jerry Jeudy',d:'down',reason:'CLE — Concepcion drafted as WR1, Jeudy to WR2',delta:'-25%'},
-  {n:'Garrett Wilson',d:'down',reason:'NYJ — Cooper drafted WR2, Wilson remains WR1 but shares',delta:'-8%'},
-  {n:'Tyler Conklin',d:'down',reason:'NYJ — Sadiq drafted, Conklin is immediate cut candidate',delta:'-80%'},
-  {n:'Cooper Kupp',d:'down',reason:'LAR — Simpson incoming, Stafford lame duck, transition imminent',delta:'-35%'},
-  {n:'Puka Nacua',d:'down',reason:'LAR — Simpson era coming, uncertainty beyond 2026 season',delta:'-20%'},
-  {n:'Kirk Cousins',d:'down',reason:'LV — Mendoza #1 overall, Cousins pure bridge with zero dynasty value',delta:'-95%'},
+  // ── 2026 Draft Day 2/3 ────────────────────────────────────────────────
+  {n:'Eli Stowers',d:'up',reason:'PHI #54 — TE2 behind Goedert (31). Heir apparent with Hurts throwing',delta:'+22%'},
+  {n:'Germie Bernard',d:'up',reason:'PIT #47 — WR3 behind Metcalf + Pittman. QB unresolved (Howard/Allar/Rodgers)',delta:'+8%'},
+  {n:'Denzel Boston',d:'up',reason:'CLE #39 — WR2/3 behind Concepcion. Two rookie WRs competing with Jeudy',delta:'+10%'},
+  {n:'Antonio Williams',d:'up',reason:'WAS #71 — Jayden Daniels elite QB, WR2 behind McLaurin',delta:'+18%'},
+  {n:'Jayden Daniels',d:'up',reason:'WAS — Williams gives Daniels a legitimate WR2 threat opposite McLaurin',delta:'+8%'},
+  {n:'Terry McLaurin',d:'down',reason:'WAS — Williams drafted WR2, mild target share compression',delta:'-6%'},
+  {n:'Zachariah Branch',d:'up',reason:'ATL #79 — WR2 behind London. Penix Jr likely starter, Tua competing in camp',delta:'+10%'},
+  {n:'Drake London',d:'up',reason:'ATL — Branch adds another weapon, Penix Jr/Tua competition. Net neutral to slight positive',delta:'+4%'},
+  {n:'Tua Tagovailoa',d:'up',reason:'ATL — competing with Penix Jr for starter role. Value contingent on camp outcome',delta:'+6%'},
+  {n:'Max Klare',d:'up',reason:'LAR #61 — Rd2 TE in Stafford era pass-heavy system',delta:'+8%'},
+  {n:'Drew Allar',d:'up',reason:'PIT #76 — QB competition with Howard, possible long-term franchise QB',delta:'+8%'},
+  {n:'Ted Hurst',d:'up',reason:'TB #84 — Baker Mayfield solid QB, open WR depth chart',delta:'+8%'},
+  {n:'Eli Raridon',d:'up',reason:'NE #95 — starter-level TE opportunity in thin NE roster',delta:'+6%'},
+  {n:'Caleb Douglas',d:'up',reason:'MIA #75 — ample opportunity with thin WR room. Malik Willis at QB limits ceiling',delta:'+8%'},
+  {n:'Chris Bell',d:'up',reason:'MIA #94 — same opportunity as Douglas, open WR room to prove himself',delta:'+8%'},
+  {n:'Malik Willis',d:'up',reason:'MIA — Bell + Douglas + Kacmarek drafted. Best offensive weapons Willis has had',delta:'+10%'},
+  {n:'Kaelon Black',d:'up',reason:'SF #90 — elite OL system but McCaffrey is still the feature back. Backup role only',delta:'+5%'},
+  {n:'Zavion Thomas',d:'up',reason:'CHI #89 — DJ Moore returns as WR1, Thomas projects WR2 with upside',delta:'+6%'},
 ];
 
 // ============================================================
@@ -2374,6 +2399,7 @@ const GAME_LOG = {
   "Jonnu Smith": {miss:66,hit:34,elite:16,g:68},
   "K.J. Osborn": {miss:73,hit:27,elite:9,g:44},
   "Alexander Mattison": {miss:67,hit:33,elite:8,g:48},
+
 };
 function glTag(n){
   const d=GAME_LOG[n];if(!d)return'';
@@ -2973,6 +2999,56 @@ const CONTRACTS=[
   {n:'Daniel Jones',pos:'QB',team:'IND',aav:44000000,total:88000000,end:2027,note:'2yr/$88M transition tag extension — IND QB1'},
   {n:'Alec Pierce',pos:'WR',team:'IND',aav:28500000,total:114000000,end:2029,note:'Major extension — IND WR1 locked through 2029'},
   {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2026,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
+  // 2026 Draft Rounds 4-7
+  {n:'Brenen Thompson',pos:'WR',team:'LAC',aav:980000,total:3920000,end:2029,note:'Rd4 #105 — LAC speed WR, 4.26 40'},
+  {n:'Jonah Coleman',pos:'RB',team:'DEN',aav:960000,total:3840000,end:2029,note:'Rd4 #109 — DEN RB, Payton system'},
+  {n:'Cade Klubnik',pos:'QB',team:'NYJ',aav:955000,total:3820000,end:2029,note:'Rd4 #110 — NYJ backup QB, developmental'},
+  {n:'Elijah Sarratt',pos:'WR',team:'BAL',aav:935000,total:3740000,end:2029,note:'Rd4 #115 — BAL depth WR'},
+  {n:'Kaden Wetjen',pos:'WR',team:'PIT',aav:920000,total:3680000,end:2029,note:'Rd4 #121 — PIT kick returner/depth WR'},
+  {n:'Mike Washington Jr.',pos:'RB',team:'LV',aav:915000,total:3660000,end:2029,note:'Rd4 #122 — LV RB, Mendoza era backup'},
+  {n:'Skyler Bell',pos:'WR',team:'BUF',aav:910000,total:3640000,end:2029,note:'Rd4 #125 — BUF depth WR, Bills offense'},
+  {n:'Matthew Hibner',pos:'TE',team:'BAL',aav:900000,total:3600000,end:2029,note:'Rd4 #133 — BAL blocking TE'},
+  {n:'Bryce Lance',pos:'WR',team:'NO',aav:890000,total:3560000,end:2029,note:'Rd4 #136 — NO depth WR, FCS background'},
+  {n:'Colbie Young',pos:'WR',team:'CIN',aav:880000,total:3520000,end:2029,note:'Rd4 #140 — CIN depth WR'},
+  {n:'Reggie Virgil',pos:'WR',team:'ARI',aav:870000,total:3480000,end:2029,note:'Rd5 #143 — ARI depth WR, one-year wonder concern'},
+  {n:'Justin Joly',pos:'TE',team:'DEN',aav:855000,total:3420000,end:2029,note:'Rd5 #152 — DEN most proven TE producer in class'},
+  {n:'Emmett Johnson',pos:'RB',team:'KC',aav:840000,total:3360000,end:2029,note:'Rd5 #161 — KC RB, Mahomes system'},
+  {n:'Nicholas Singleton',pos:'RB',team:'TEN',aav:835000,total:3340000,end:2029,note:'Rd5 #165 — TEN RB behind Ward/Tate offense'},
+  {n:'Kendrick Law',pos:'WR',team:'DET',aav:825000,total:3300000,end:2029,note:'Rd5 #168 — DET offense elite but thin production profile'},
+  {n:'Adam Randall',pos:'RB',team:'BAL',aav:820000,total:3280000,end:2029,note:'Rd5 #174 — BAL RB, converted WR athlete'},
+  {n:'Kevin Coleman Jr.',pos:'WR',team:'MIA',aav:815000,total:3260000,end:2029,note:'Rd5 #177 — MIA WR, Willis at QB limits ceiling'},
+  {n:'Cole Payton',pos:'QB',team:'PHI',aav:810000,total:3240000,end:2029,note:'Rd5 #178 — PHI backup QB, FCS background'},
+  {n:'Cyrus Allen',pos:'WR',team:'KC',aav:805000,total:3220000,end:2029,note:'Rd5 #176 — KC WR, Mahomes creates opportunity'},
+  {n:'Taylen Green',pos:'QB',team:'CLE',aav:795000,total:3180000,end:2029,note:'Rd6 #182 — CLE backup QB'},
+  {n:'Kaytron Allen',pos:'RB',team:'WAS',aav:785000,total:3140000,end:2029,note:'Rd6 #187 — WAS depth RB'},
+  {n:'Barion Brown',pos:'WR',team:'NO',aav:780000,total:3120000,end:2029,note:'Rd6 #190 — NO depth WR, Olave+Tyson limit ceiling'},
+  {n:'Demond Claiborne',pos:'RB',team:'MIN',aav:775000,total:3100000,end:2029,note:'Rd6 #198 — MIN depth RB'},
+  {n:'Deion Burks',pos:'WR',team:'IND',aav:760000,total:3040000,end:2029,note:'Rd7 #254 — IND WR, slid from projected Rd3'},
+  {n:'Garrett Nussmeier',pos:'QB',team:'KC',aav:755000,total:3020000,end:2029,note:'Rd7 #249 — KC backup QB behind Mahomes'},
+  {n:'Seth McGowan',pos:'RB',team:'IND',aav:750000,total:3000000,end:2029,note:'Rd7 #237 — IND depth RB'},
+  {n:'Caleb Douglas',pos:'WR',team:'MIA',aav:1390000,total:5560000,end:2029,note:'Rd3 #75 — 4yr rookie deal. MIA WR — Malik Willis at QB (Tua moved to ATL). Low-volume situation hurts dynasty ceiling significantly'},
+  {n:'Zavion Thomas',pos:'WR',team:'CHI',aav:1310000,total:5240000,end:2029,note:'Rd3 #89 — 4yr rookie deal. CHI WR — DJ Moore returns WR1, Thomas WR2'},
+  {n:'Kaelon Black',pos:'RB',team:'SF',aav:1305000,total:5220000,end:2029,note:'Rd3 #90 — 4yr rookie deal. SF RB — strong OL system but crowded room'},
+  // 2026 Day 2 Rookies
+  {n:"De'Zhaun Stribling",pos:'WR',team:'SF',aav:1800000,total:7200000,end:2029,note:'Rd2 #33 — 4yr rookie deal. SF WR — Deebo/Aiyuk departed, real target share available'},
+  {n:'Denzel Boston',pos:'WR',team:'CLE',aav:2200000,total:8800000,end:2029,note:'Rd2 #39 — 4yr rookie deal. CLE WR2 behind Concepcion. QB situation (Sanders) limits ceiling'},
+  {n:'Germie Bernard',pos:'WR',team:'PIT',aav:1900000,total:7600000,end:2029,note:'Rd2 #47 — 4yr rookie deal. PIT WR3 behind DK Metcalf + Pittman. QB unresolved (Howard/Allar/Rodgers). Ceiling compressed vs expected'},
+  {n:'Eli Stowers',pos:'TE',team:'PHI',aav:1700000,total:6800000,end:2029,note:'Rd2 #54 — 4yr rookie deal. PHI TE2 behind Goedert (31, injury history). Heir apparent — Hurts is elite QB. Best long-term TE dynasty situation in class'},
+  {n:'Marlin Klein',pos:'TE',team:'HOU',aav:1600000,total:6400000,end:2029,note:'Rd2 #59 — 4yr rookie deal. Blocking TE — Stroud is elite QB but limited dynasty upside'},
+  {n:'Max Klare',pos:'TE',team:'LAR',aav:1550000,total:6200000,end:2029,note:'Rd2 #61 — 4yr rookie deal. LAR TE behind Stafford short-term, Simpson era eventually'},
+  {n:'Carson Beck',pos:'QB',team:'ARI',aav:1500000,total:6000000,end:2029,note:'Rd3 #65 — 4yr rookie deal. ARI backup behind Love. Long-term Brady/Love pairing'},
+  {n:'Sam Roush',pos:'TE',team:'CHI',aav:1450000,total:5800000,end:2029,note:'Rd3 #69 — 4yr rookie deal. CHI blocking TE — limited dynasty receiving upside'},
+  {n:'Antonio Williams',pos:'WR',team:'WAS',aav:1420000,total:5680000,end:2029,note:'Rd3 #71 — 4yr rookie deal. WAS WR2 behind McLaurin with Jayden Daniels throwing'},
+  {n:'Oscar Delp',pos:'TE',team:'NO',aav:1400000,total:5600000,end:2029,note:'Rd3 #73 — 4yr rookie deal. Blocking-first TE in NO. Shough/Moore system'},
+  {n:'Malachi Fields',pos:'WR',team:'NYG',aav:1390000,total:5560000,end:2029,note:'Rd3 #74 — 4yr rookie deal. NYG WR room thin but QB situation uncertain'},
+  {n:'Zachariah Branch',pos:'WR',team:'ATL',aav:1380000,total:5520000,end:2029,note:'Rd3 #79 — 4yr rookie deal. ATL WR behind Drake London — Kirk/Pitts offense'},
+  {n:"Ja'Kobi Lane",pos:'WR',team:'BAL',aav:1370000,total:5480000,end:2029,note:'Rd3 #80 — 4yr rookie deal. BAL WR — Lamar Jackson is elite, crowded WR room'},
+  {n:'Chris Brazzell II',pos:'WR',team:'CAR',aav:1360000,total:5440000,end:2029,note:'Rd3 #83 — 4yr rookie deal. CAR WR — thin room but weak offense overall'},
+  {n:'Ted Hurst',pos:'WR',team:'TB',aav:1355000,total:5420000,end:2029,note:'Rd3 #84 — 4yr rookie deal. TB WR — Baker Mayfield gives solid QB situation'},
+  {n:'Drew Allar',pos:'QB',team:'PIT',aav:1350000,total:5400000,end:2029,note:'Rd3 #76 — 4yr rookie deal. PIT QB competition with Howard and possible Rodgers. Long-term franchise QB'},
+  {n:'Will Kacmarek',pos:'TE',team:'MIA',aav:1320000,total:5280000,end:2029,note:'Rd3 #87 — 4yr rookie deal. Blocking TE in MIA — minimal dynasty receiving upside'},
+  {n:'Chris Bell',pos:'WR',team:'MIA',aav:1300000,total:5200000,end:2029,note:'Rd3 #94 — 4yr rookie deal. MIA WR3 — Tua + Douglas competing for targets'},
+  {n:'Eli Raridon',pos:'TE',team:'NE',aav:1290000,total:5160000,end:2029,note:'Rd3 #95 — 4yr rookie deal. NE TE — thin NE roster but unclear QB situation'},
   // 2026 Rookies — standard 4yr rookie deals
   {n:'Fernando Mendoza',pos:'QB',team:'LV',aav:9500000,total:38000000,end:2029,note:'#1 overall — 4yr through 2029. Cousins bridge 2026, Mendoza starter 2027+'},
   {n:'Jeremiyah Love',pos:'RB',team:'ARI',aav:8200000,total:32800000,end:2029,note:'#3 overall — 4yr through 2029. Cardinals RB1 immediately. Conner in committee'},
@@ -3616,6 +3692,96 @@ function doSearch(side){
     </div>`;
   }).join('');
 }
+
+// ── DELTA TRADE ADJUSTMENT V4 ─────────────────────────────────────────────
+// Four adjustments applied to model value totals:
+// 1. Relative elite premium (threshold 7,500) — higher peak gets ×1.12, lower gets ×1.06
+// 2. Same-position clustering ×0.85 per additional asset — EXEMPT for elite assets
+// 3. Same-team clustering ×0.90 per additional same-team asset
+// 4. Package concentration bonus based on average raw value per asset
+
+function calcAdjustedSide(arrA, arrB) {
+  const ELITE = 7500;
+
+  function peakKtc(arr) {
+    return arr.reduce((mx, p) => Math.max(mx, p.k||0), 0);
+  }
+
+  const peakA = peakKtc(arrA);
+  const peakB = peakKtc(arrB);
+  const aElite = peakA >= ELITE;
+  const bElite = peakB >= ELITE;
+
+  let eliteMultA, eliteMultB;
+  if (aElite && bElite) {
+    eliteMultA = peakA >= peakB ? 1.12 : 1.06;
+    eliteMultB = peakB >= peakA ? 1.12 : 1.06;
+  } else if (aElite) {
+    eliteMultA = 1.12; eliteMultB = 1.00;
+  } else if (bElite) {
+    eliteMultA = 1.00; eliteMultB = 1.12;
+  } else {
+    eliteMultA = 1.00; eliteMultB = 1.00;
+  }
+
+  function processSide(arr, peakKtc, eliteMultPeak) {
+    const posCount = {}, teamCount = {};
+    let total = 0;
+    const detail = [];
+    arr.forEach(p => {
+      const ktc = p.k || 0;
+      const pos = p.pos || p.p || 'WR';
+      const team = p.t || '';
+      const isElite = ktc >= ELITE;
+      const isPeak = isElite && ktc === peakKtc;
+      const isEliteNonPeak = isElite && !isPeak;
+
+      // 1. Elite premium
+      const eliteM = isPeak ? eliteMultPeak : isEliteNonPeak ? 1.04 : 1.00;
+      let adj = Math.round(ktc * eliteM);
+
+      // 2. Position clustering (exempt if elite)
+      let posM = 1.0;
+      if (!isElite) {
+        posCount[pos] = (posCount[pos] || 0) + 1;
+        posM = Math.pow(0.85, posCount[pos] - 1);
+        adj = Math.round(adj * posM);
+      }
+
+      // 3. Team clustering
+      let teamM = 1.0;
+      if (team && team !== 'PICK' && team !== '') {
+        teamCount[team] = (teamCount[team] || 0) + 1;
+        teamM = Math.pow(0.90, teamCount[team] - 1);
+        adj = Math.round(adj * teamM);
+      }
+
+      total += adj;
+      detail.push({name: p.n, ktc, adj, pos, team, eliteM, posM, teamM, isElite});
+    });
+
+    // 4. Concentration bonus
+    const avgRaw = arr.length > 0 ? arr.reduce((s,p) => s+(p.k||0), 0) / arr.length : 0;
+    const concM = avgRaw >= 8000 ? 1.08 : avgRaw >= 6000 ? 1.04 : avgRaw >= 4000 ? 1.02 : 1.00;
+    total = Math.round(total * concM);
+
+    return {total, detail, concM, avgRaw};
+  }
+
+  const sideA = processSide(arrA, peakA, eliteMultA);
+  const sideB = processSide(arrB, peakB, eliteMultB);
+  return {sideA, sideB};
+}
+
+function verdictFromGap(gap, maxVal) {
+  const pct = Math.abs(gap) / Math.max(maxVal, 1) * 100;
+  if (pct <= 3) return {text: 'Essentially even — personal preference decides', cls: 'bi', pct};
+  if (pct <= 8) return {text: 'Slight edge', cls: 'bi', pct};
+  if (pct <= 15) return {text: 'Clear winner', cls: gap > 0 ? 'bs' : 'bd', pct};
+  return {text: 'Decisive advantage', cls: gap > 0 ? 'bs' : 'bd', pct};
+}
+
+
 function addAsset(side,name){
   const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
   const arr=side==='a'?sA:side==='b'?sB:side==='c'?sC:sD;
@@ -3682,14 +3848,20 @@ function recalcTrade(){
   if(!anyPlayers){document.getElementById('verdict-area').innerHTML='';return;}
 
   if(tradeTeams===2){
-    // Classic 2-team verdict
-    const mA=totals[0].mod,mB=totals[1].mod;
+    // V4 adjusted totals — replace simple mod sums with adjusted values
+    const v4=calcAdjustedSide(totals[0].arr, totals[1].arr);
+    const mA=v4.sideA.total||totals[0].mod;
+    const mB=v4.sideB.total||totals[1].mod;
+    // Update displayed model values with V4 adjusted figures
+    document.getElementById('mod-a').textContent=mA>0?mA.toLocaleString():'—';
+    document.getElementById('mod-b').textContent=mB>0?mB.toLocaleString():'—';
     const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
     const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
     let verdict,vc;
-    if(pct<=8){verdict='Fair trade';vc='bi';}
-    else if(mA>mB){verdict=pct<=15?'Slight edge — Team A':pct<=25?'Clear win — Team A':'Team A wins big';vc='bs';}
-    else{verdict=pct<=15?'Slight edge — Team B':pct<=25?'Clear win — Team B':'Team B wins big';vc='bd';}
+    if(pct<=3){verdict='Essentially even — personal preference decides';vc='bi';}
+    else if(pct<=8){verdict=mA>mB?'Slight edge — Team A':'Slight edge — Team B';vc='bi';}
+    else if(pct<=15){verdict=mA>mB?'Clear winner — Team A':'Clear winner — Team B';vc=mA>mB?'bs':'bd';}
+    else{verdict=mA>mB?'Decisive advantage — Team A':'Decisive advantage — Team B';vc=mA>mB?'bs':'bd';}
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
     document.getElementById('verdict-area').innerHTML=`
@@ -4341,42 +4513,80 @@ const PROSPECTS_2026=[
   {n:'Jordyn Tyson',pos:'WR',school:'Arizona St.',age:22,pr:1,pp:8,ovr:18,por:2,ds:80,cap:37,bb:23,ag:15,ath:5,comp:0.95,prod:1.05,scar:1.0,team:'NO',drafted:true,note:'15% catch share over 9 games — elite if healthy (prorates to 27% full season). YPR declining: 21.4→14.7→11.7. Missed 2023 entirely, limited 2025. Boom/bust.'},
   {n:'Makai Lemon',pos:'WR',school:'USC',age:22,pr:1,pp:20,ovr:22,por:3,ds:78,cap:33,bb:25,ag:15,ath:5,comp:1.0,prod:1.08,scar:1.0,team:'PHI',drafted:true,note:'19.6% catch share as USC WR1 in 2025, 14.7 YPR all 3 seasons — remarkably consistent. Youngest top WR (age 20). Volume + efficiency + youth = highest dynasty ceiling.'},
   {n:'Omar Cooper',pos:'WR',school:'Indiana',age:21,pr:1,pp:30,ovr:38,por:4,ds:76,cap:33,bb:19,ag:18,ath:6,comp:1.0,prod:1.0,scar:1.0,team:'NYJ',drafted:true,note:'WR2 projection. Dense frame, reliable hands.'},
-  {n:'Zachariah Branch',pos:'WR',school:'Georgia',age:22,pr:2,pp:38,ovr:50,por:5,ds:66,cap:24,bb:17,ag:15,ath:10,comp:1.0,prod:-0.1,scar:1.0,team:'',drafted:false,note:'4.35 speed but 10.0 YPR career — slot/RAC profile not deep threat. 21% catch share at Georgia as WR1, but low YPR limits ceiling in non-PPR.'},
-  {n:'Oscar Delp',pos:'TE',school:'Georgia',age:23,pr:4,pp:135,ovr:135,por:7,ds:30,cap:10,bb:4,ag:11,ath:5,comp:1.0,prod:-0.3,scar:1.03,team:'',drafted:false,note:'Day 3 blocker-first TE. PFF projects TE3/TE4. Limited receiving production (70 rec, 854 yds career) in Georgia run-heavy offense. Athletic but not a receiving threat. Witten/Knox comp.'},
+  {n:'Zachariah Branch',pos:'WR',school:'Georgia',age:22,pr:3,pp:79,ovr:50,por:5,ds:58,cap:16,bb:17,ag:15,ath:10,comp:1.0,prod:-0.1,scar:1.0,team:'ATL',drafted:true,note:'4.35 speed but 10.0 YPR career — slot/RAC profile not deep threat. 21% catch share at Georgia as WR1, but low YPR limits ceiling in non-PPR.'},
+  {n:'Oscar Delp',pos:'TE',school:'Georgia',age:23,pr:3,pp:73,ovr:135,por:7,ds:36,cap:16,bb:4,ag:11,ath:5,comp:1.0,prod:-0.3,scar:1.03,team:'NO',drafted:true,note:'Day 3 blocker-first TE. PFF projects TE3/TE4. Limited receiving production (70 rec, 854 yds career) in Georgia run-heavy offense. Athletic but not a receiving threat. Witten/Knox comp.'},
   {n:'Ty Simpson',pos:'QB',school:'Alabama',age:23,pr:1,pp:13,ovr:38,por:2,ds:71,cap:37,bb:20,ag:11,ath:3,comp:1.0,prod:-0.1,scar:1.12,team:'LAR',drafted:true,note:'Only 15 career starts. 2025 was solid (8.25 AY/A, 145.2 rate) but YPC dropped to 1.0 — not a rusher. Ceiling limited without proven rushing floor.'},
-  {n:'De\'Zhaun Stribling',pos:'WR',school:'Ole Miss',age:22,pr:2,pp:50,ovr:60,por:6,ds:62,cap:24,bb:14,ag:15,ath:9,comp:1.0,prod:-0.1,scar:1.0,team:'',drafted:false,note:'6-2, 207 with 4.36 speed. Elite size-speed combo. 2025 production at Ole Miss modest. Power forward profile who wins contested catches.'},
+  {n:'De\'Zhaun Stribling',pos:'WR',school:'Ole Miss',age:22,pr:2,pp:33,ovr:60,por:6,ds:62,cap:24,bb:14,ag:15,ath:9,comp:1.0,prod:-0.1,scar:1.0,team:'SF',drafted:true,note:'6-2, 207 with 4.36 speed. Elite size-speed combo. 2025 production at Ole Miss modest. Power forward profile who wins contested catches.'},
   {n:'Jadarian Price',pos:'RB',school:'Notre Dame',age:22,pr:1,pp:32,ovr:45,por:2,ds:68,cap:33,bb:14,ag:15,ath:6,comp:1.0,prod:-0.2,scar:0.97,team:'SEA',drafted:true,note:'6.0 YPC but career 15 receptions — pure power back. Shared backfield with Love limits dynasty value. Pass-catching floor essentially zero.'},
-  {n:'Chris Brazzell II',pos:'WR',school:'Tennessee',age:22,pr:2,pp:62,ovr:78,por:9,ds:56,cap:24,bb:9,ag:15,ath:8,comp:0.95,prod:-0.1,scar:1.0,team:'',drafted:false,note:'16.3% catch share at Tennessee in SEC. 1,017 yds/9 TD in 2025. 4.37 speed at 6-4 = elite measurables. Breakout season in power conference.'},
-  {n:'Mike Washington Jr.',pos:'RB',school:'Arkansas',age:23,pr:2,pp:48,ovr:62,por:4,ds:56,cap:24,bb:13,ag:11,ath:8,comp:0.85,prod:1.05,scar:0.97,team:'',drafted:false,note:'MAC→CUSA→SEC: 1,070 rush yds + 28 rec in first SEC season. 6.4 YPC vs SEC. 4.33 speed. Non-P5 background suppresses stock but 2025 proved legitimacy.'},
-  {n:'Eli Raridon',pos:'TE',school:'Notre Dame',age:22,pr:2,pp:50,ovr:44,por:4,ds:61,cap:24,bb:17,ag:15,ath:5,comp:1.0,prod:-0.3,scar:1.03,team:'',drafted:false,note:'4.62 speed at 6-6, 245. Good movement skills. Notre Dame\'s featured TE when healthy. Developmental ceiling with legitimate athleticism.'},
-  {n:'Jonah Coleman',pos:'RB',school:'Washington',age:23,pr:2,pp:45,ovr:58,por:3,ds:56,cap:24,bb:16,ag:11,ath:5,comp:1.0,prod:0.1,scar:0.97,team:'',drafted:false,note:'354 rec yds in 2025 — best receiving season among RBs in class. 87 career catches. 5.5 career YPC. Versatile back with real PPR upside.'},
-  {n:'Max Klare',pos:'TE',school:'Ohio St.',age:23,pr:2,pp:42,ovr:48,por:4,ds:60,cap:24,bb:20,ag:11,ath:5,comp:1.0,prod:0.0,scar:1.03,team:'',drafted:false,note:'Reliable target. High catch rate, limited explosion.'},
-  {n:'Malachi Fields',pos:'WR',school:'Notre Dame',age:23,pr:2,pp:55,ovr:68,por:7,ds:49,cap:24,bb:12,ag:11,ath:2,comp:0.95,prod:-0.1,scar:1.0,team:'',drafted:false,note:'6-5 frame, 17.5 YPR at Notre Dame in 2025 but only 36 catches (9.5% catch share). Limited role even after transfer. Red zone threat with size.'},
-  {n:'Skyler Bell',pos:'WR',school:'UConn',age:24,pr:2,pp:58,ovr:72,por:8,ds:48,cap:24,bb:9,ag:7,ath:8,comp:0.75,prod:-0.1,scar:1.0,team:'',drafted:false,note:'101 catches, 29.7% catch share at UConn — but heavy non-P5 discount. 4.40 speed. Production dominant in weak competition; P5 adjustment unknown.'},
-  {n:'Ja\'Kobi Lane',pos:'WR',school:'USC',age:22,pr:3,pp:75,ovr:95,por:10,ds:47,cap:16,bb:10,ag:15,ath:6,comp:1.0,prod:-0.1,scar:1.0,team:'',drafted:false,note:'Long WR. Battles for contested balls well.'},
-  {n:'Garrett Nussmeier',pos:'QB',school:'LSU',age:24,pr:2,pp:93,ovr:86,por:3,ds:45,cap:24,bb:12,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,team:'',drafted:false,note:'Negative career rush yards — pure pocket passer. 4.2% INT rate dipped in injury-shortened 2025. Day 2 developmental, not a dynasty priority.'},
-  {n:'Drew Allar',pos:'QB',school:'Penn St.',age:22,pr:3,pp:107,ovr:105,por:4,ds:45,cap:16,bb:8,ag:15,ath:6,comp:1.0,prod:1.0,scar:1.12,team:'',drafted:false,note:'Underrated: 8.75 AY/A in healthy 2024, 732 career rush yds (12 TD). Ankle injury ended 2025. More complete than draft position suggests.'},
-  {n:'Cade Klubnik',pos:'QB',school:'Clemson',age:22,pr:3,pp:116,ovr:130,por:6,ds:44,cap:16,bb:8,ag:15,ath:5,comp:1.0,prod:1.0,scar:1.12,team:'',drafted:false,note:'4-year starter, 73 TDs. Up-and-down career at Clemson. Ideal developmental fit.'},
-  {n:'Nicholas Singleton',pos:'RB',school:'Penn St.',age:22,pr:3,pp:88,ovr:115,por:6,ds:47,cap:16,bb:8,ag:15,ath:8,comp:1.0,prod:0.1,scar:0.97,team:'',drafted:false,note:'4-year Penn State starter, 102 career catches. Most proven non-Love back. 2025 dip (549 rush yds) was volume-limited alongside Allen. Rd3 is value.'},
-  {n:'Justin Joly',pos:'TE',school:'NC State',age:23,pr:3,pp:78,ovr:52,por:5,ds:49,cap:16,bb:17,ag:11,ath:5,comp:0.95,prod:0.2,scar:1.03,team:'',drafted:false,note:'Route running TE. Underrated in class.'},
-  {n:'Bryce Lance',pos:'WR',school:'North Dakota St.',age:23,pr:3,pp:85,ovr:110,por:11,ds:38,cap:16,bb:2,ag:11,ath:9,comp:0.6,prod:-0.1,scar:1.0,team:'',drafted:false,note:'FCS standout with elite speed. Projection risk.'},
-  {n:'Emmett Johnson',pos:'RB',school:'Nebraska',age:22,pr:3,pp:80,ovr:105,por:5,ds:42,cap:16,bb:6,ag:15,ath:5,comp:1.0,prod:0.88,scar:0.97,team:'',drafted:false,note:'1,821 total yds, 46 rec in 2025 — elite dual-threat production. One-year wonder risk (first major workload). Josh Jacobs comp justified by pass-catching.'},
-  {n:'Demond Claiborne',pos:'RB',school:'Wake Forest',age:22,pr:4,pp:115,ovr:145,por:7,ds:39,cap:10,bb:6,ag:15,ath:8,comp:0.95,prod:0.97,scar:0.97,team:'',drafted:false,note:'4.37 speed with decent receiving (28 rec in 2025). Consistent ACC producer but 4.7 career YPC limits ceiling. Speed is the calling card.'},
-  {n:'Marlin Klein',pos:'TE',school:'Michigan',age:23,pr:3,pp:95,ovr:72,por:7,ds:46,cap:16,bb:12,ag:11,ath:7,comp:1.0,prod:-0.3,scar:1.03,team:'',drafted:false,note:'Developing route runner. Size/speed combo intriguing.'},
-  {n:'Elijah Sarratt',pos:'WR',school:'Indiana',age:23,pr:3,pp:95,ovr:120,por:12,ds:35,cap:16,bb:3,ag:11,ath:5,comp:0.75,prod:-0.2,scar:1.0,team:'',drafted:false,note:'Reliable slot. High catch rate. Limited upside.'},
+  {n:'Chris Brazzell II',pos:'WR',school:'Tennessee',age:22,pr:3,pp:83,ovr:78,por:9,ds:48,cap:16,bb:9,ag:15,ath:8,comp:0.95,prod:-0.1,scar:1.0,team:'CAR',drafted:true,note:'16.3% catch share at Tennessee in SEC. 1,017 yds/9 TD in 2025. 4.37 speed at 6-4 = elite measurables. Breakout season in power conference.'},
+  {n:'Mike Washington Jr.',pos:'RB',school:'Arkansas',age:23,pr:4,pp:122,ovr:122,por:4,ds:42,cap:10,bb:13,ag:11,ath:8,comp:0.85,prod:1.05,scar:0.97,team:'LV',drafted:true,note:'MAC→CUSA→SEC: 1,070 rush yds + 28 rec in first SEC season. 6.4 YPC vs SEC. 4.33 speed. Non-P5 background suppresses stock but 2025 proved legitimacy.'},
+  {n:'Eli Raridon',pos:'TE',school:'Notre Dame',age:22,pr:3,pp:95,ovr:44,por:4,ds:53,cap:16,bb:17,ag:15,ath:5,comp:1.0,prod:-0.3,scar:1.03,team:'NE',drafted:true,note:'4.62 speed at 6-6, 245. Good movement skills. Notre Dame\'s featured TE when healthy. Developmental ceiling with legitimate athleticism.'},
+  {n:'Jonah Coleman',pos:'RB',school:'Washington',age:23,pr:4,pp:109,ovr:109,por:3,ds:42,cap:10,bb:16,ag:11,ath:5,comp:1.0,prod:0.1,scar:0.97,team:'DEN',drafted:true,note:'354 rec yds in 2025 — best receiving season among RBs in class. 87 career catches. 5.5 career YPC. Versatile back with real PPR upside.'},
+  {n:'Max Klare',pos:'TE',school:'Ohio St.',age:23,pr:2,pp:61,ovr:48,por:4,ds:60,cap:24,bb:20,ag:11,ath:5,comp:1.0,prod:0.0,scar:1.03,team:'LAR',drafted:true,note:'Reliable target. High catch rate, limited explosion.'},
+  {n:'Malachi Fields',pos:'WR',school:'Notre Dame',age:23,pr:3,pp:74,ovr:68,por:7,ds:41,cap:16,bb:12,ag:11,ath:2,comp:0.95,prod:-0.1,scar:1.0,team:'NYG',drafted:true,note:'6-5 frame, 17.5 YPR at Notre Dame in 2025 but only 36 catches (9.5% catch share). Limited role even after transfer. Red zone threat with size.'},
+  {n:'Skyler Bell',pos:'WR',school:'UConn',age:24,pr:4,pp:125,ovr:125,por:8,ds:34,cap:10,bb:9,ag:7,ath:8,comp:0.75,prod:-0.1,scar:1.0,team:'BUF',drafted:true,note:'101 catches, 29.7% catch share at UConn — but heavy non-P5 discount. 4.40 speed. Production dominant in weak competition; P5 adjustment unknown.'},
+  {n:'Ja\'Kobi Lane',pos:'WR',school:'USC',age:22,pr:3,pp:80,ovr:95,por:10,ds:47,cap:16,bb:10,ag:15,ath:6,comp:1.0,prod:-0.1,scar:1.0,team:'BAL',drafted:true,note:'Long WR. Battles for contested balls well.'},
+  {n:'Garrett Nussmeier',pos:'QB',school:'LSU',age:24,pr:7,pp:249,ovr:249,por:3,ds:24,cap:3,bb:12,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,team:'KC',drafted:true,note:'Negative career rush yards — pure pocket passer. 4.2% INT rate dipped in injury-shortened 2025. Day 2 developmental, not a dynasty priority.'},
+  {n:'Drew Allar',pos:'QB',school:'Penn St.',age:22,pr:3,pp:76,ovr:105,por:4,ds:45,cap:16,bb:8,ag:15,ath:6,comp:1.0,prod:1.0,scar:1.12,team:'PIT',drafted:true,note:'Underrated: 8.75 AY/A in healthy 2024, 732 career rush yds (12 TD). Ankle injury ended 2025. More complete than draft position suggests.'},
+  {n:'Cade Klubnik',pos:'QB',school:'Clemson',age:22,pr:4,pp:110,ovr:110,por:6,ds:38,cap:10,bb:8,ag:15,ath:5,comp:1.0,prod:1.0,scar:1.12,team:'NYJ',drafted:true,note:'4-year starter, 73 TDs. Up-and-down career at Clemson. Ideal developmental fit.'},
+  {n:'Nicholas Singleton',pos:'RB',school:'Penn St.',age:22,pr:5,pp:165,ovr:165,por:6,ds:38,cap:7,bb:8,ag:15,ath:8,comp:1.0,prod:0.1,scar:0.97,team:'TEN',drafted:true,note:'4-year Penn State starter, 102 career catches. Most proven non-Love back. 2025 dip (549 rush yds) was volume-limited alongside Allen. Rd3 is value.'},
+  {n:'Justin Joly',pos:'TE',school:'NC State',age:23,pr:5,pp:152,ovr:152,por:5,ds:40,cap:7,bb:17,ag:11,ath:5,comp:0.95,prod:0.2,scar:1.03,team:'DEN',drafted:true,note:'Route running TE. Underrated in class.'},
+  {n:'Bryce Lance',pos:'WR',school:'North Dakota St.',age:23,pr:4,pp:136,ovr:136,por:11,ds:32,cap:10,bb:2,ag:11,ath:9,comp:0.6,prod:-0.1,scar:1.0,team:'NO',drafted:true,note:'FCS standout with elite speed. Projection risk.'},
+  {n:'Emmett Johnson',pos:'RB',school:'Nebraska',age:22,pr:5,pp:161,ovr:161,por:5,ds:33,cap:7,bb:6,ag:15,ath:5,comp:1.0,prod:0.88,scar:0.97,team:'KC',drafted:true,note:'1,821 total yds, 46 rec in 2025 — elite dual-threat production. One-year wonder risk (first major workload). Josh Jacobs comp justified by pass-catching.'},
+  {n:'Demond Claiborne',pos:'RB',school:'Wake Forest',age:22,pr:6,pp:198,ovr:198,por:7,ds:34,cap:5,bb:6,ag:15,ath:8,comp:0.95,prod:0.97,scar:0.97,team:'MIN',drafted:true,note:'4.37 speed with decent receiving (28 rec in 2025). Consistent ACC producer but 4.7 career YPC limits ceiling. Speed is the calling card.'},
+  {n:'Marlin Klein',pos:'TE',school:'Michigan',age:23,pr:2,pp:59,ovr:72,por:7,ds:54,cap:24,bb:12,ag:11,ath:7,comp:1.0,prod:-0.3,scar:1.03,team:'HOU',drafted:true,note:'Developing route runner. Size/speed combo intriguing.'},
+  {n:'Elijah Sarratt',pos:'WR',school:'Indiana',age:23,pr:4,pp:115,ovr:115,por:12,ds:29,cap:10,bb:3,ag:11,ath:5,comp:0.75,prod:-0.2,scar:1.0,team:'BAL',drafted:true,note:'Reliable slot. High catch rate. Limited upside.'},
   {n:'CJ Donaldson',pos:'RB',school:'Ohio St.',age:22,pr:4,pp:125,ovr:160,por:8,ds:34,cap:10,bb:4,ag:15,ath:5,comp:1.0,prod:0.92,scar:0.97,team:'',drafted:false,note:'Power back with surprising receiving chops.'},
-  {n:'Sam Roush',pos:'TE',school:'Stanford',age:24,pr:3,pp:88,ovr:62,por:6,ds:44,cap:16,bb:15,ag:7,ath:6,comp:0.95,prod:0.0,scar:1.03,team:'',drafted:false,note:'Big-bodied blocker/receiver hybrid. Versatile.'},
-  {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:94,ovr:113,por:5,ds:33,cap:16,bb:8,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,team:'',drafted:false,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
-  {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:5,pp:153,ovr:155,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,prod:1.0,scar:1.12,team:'',drafted:false,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
+  {n:'Sam Roush',pos:'TE',school:'Stanford',age:24,pr:3,pp:69,ovr:62,por:6,ds:44,cap:16,bb:15,ag:7,ath:6,comp:0.95,prod:0.0,scar:1.03,team:'CHI',drafted:true,note:'Big-bodied blocker/receiver hybrid. Versatile.'},
+  {n:'Carson Beck',pos:'QB',school:'Miami',age:24,pr:3,pp:65,ovr:113,por:5,ds:33,cap:16,bb:8,ag:7,ath:2,comp:1.0,prod:1.0,scar:1.12,team:'ARI',drafted:true,note:'Elite accuracy (69.5% career, 72.4% in 2025) but YPC declining to 0.7. 12 INTs in both 2024 and 2025. Age 24 limits dynasty runway.'},
+  {n:'Taylen Green',pos:'QB',school:'Arkansas',age:23,pr:6,pp:182,ovr:182,por:7,ds:30,cap:5,bb:4,ag:11,ath:10,comp:0.9,prod:1.0,scar:1.12,team:'CLE',drafted:true,note:'2,405 career rush yds at 5.2 YPC — elite dual-threat. 64.8 rush ypg in 2025. Passing accuracy (60.1%) and 35 career INTs are real concerns.'},
   {n:'KC Concepcion',pos:'WR',school:'Texas A&M',age:21,pr:1,pp:24,ovr:27,por:5,ds:74,cap:33,bb:21,ag:15,ath:5,comp:0.98,prod:0.93,scar:1.0,team:'CLE',drafted:true,note:'Dynamic YAC weapon — 440 of 919 yds came after catch in 2025. NC State→Texas A&M SEC breakout. Drop concerns (6.8% career rate) are real. Slot/outside versatile. Zay Flowers comp.'},
-  {n:'Eli Stowers',pos:'TE',school:'Vanderbilt',age:24,pr:2,pp:58,ovr:35,por:2,ds:66,cap:24,bb:22,ag:11,ath:9,comp:1.0,prod:0.2,scar:1.03,team:'',drafted:false,note:'Converted QB at Vanderbilt — LaPorta comp. 16.4% catch share as featured TE. 4.51/45.5\" vert (record)/135\" broad at combine. Raw route runner but elite athleticism and SEC production.'},
-  {n:'Kaytron Allen',pos:'RB',school:'Penn State',age:23,pr:4,pp:123,ovr:123,por:9,ds:34,cap:10,bb:8,ag:11,ath:5,comp:1.0,prod:0.1,scar:1.0,team:'',drafted:false,note:'4yr Penn State workhorse — 769 carries, 4,180 yds, 39 TDs. 70 career receptions shows receiving floor. Big Ten proven.'},
-  {n:'Chris Bell',pos:'WR',school:'Louisville',age:23,pr:2,pp:60,ovr:67,por:8,ds:57,cap:24,bb:14,ag:11,ath:8,comp:0.95,prod:0.0,scar:1.0,team:'',drafted:false,note:'151 rec/2166 yds career at Louisville — consistent 4yr producer. 72 rec/917 yds in 2025. Size-speed WR, vertical threat. ACC competition.'},
-  {n:'Brenen Thompson',pos:'WR',school:'Mississippi State',age:24,pr:2,pp:68,ovr:74,por:9,ds:51,cap:24,bb:12,ag:7,ath:8,comp:0.8,prod:0.0,scar:1.0,team:'',drafted:false,note:'4.26 40 — fastest WR in class. 57 rec/1054 yds in 2025 at MSU. Career spread across Texas, Oklahoma, MSU. Pure speed, one dominant season.'},
-  {n:'Deion Burks',pos:'WR',school:'Oklahoma',age:23,pr:3,pp:88,ovr:88,por:10,ds:47,cap:16,bb:10,ag:11,ath:10,comp:1.0,prod:-0.1,scar:1.0,team:'',drafted:false,note:'Elite combine: 4.30/42.5\" vert/131\" broad. Explosive slot WR. Injury history (2024 limited). Purdue→Oklahoma transfer. Speed + YAC profile, size concerns at 5\'9\".'},
-  {n:'Adam Randall',pos:'RB',school:'Clemson',age:22,pr:5,pp:160,ovr:160,por:11,ds:31,cap:5,bb:4,ag:15,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'',drafted:false,note:'WR→RB convert. 6\'3\" 232 lbs, Cordarrelle Patterson comp. 36 rec as RB in 2025 — receiving instincts are real. Only 858 career rush yds but one-year sample. Day 3 capital.'},
-  {n:'Ted Hurst',pos:'WR',school:'Georgia State',age:24,pr:3,pp:95,ovr:82,por:11,ds:37,cap:16,bb:8,ag:7,ath:6,comp:0.75,prod:0.0,scar:1.0,team:'',drafted:false,note:'127 rec/1965 yds in just 2 seasons at Georgia State. Elite volume for G5 — 15 TDs. Sun Belt competition discount applies. Kiper #82, Day 3 projection.'},
-  {n:'Kevin Coleman Jr.',pos:'WR',school:'Missouri',age:24,pr:4,pp:148,ovr:153,por:14,ds:29,cap:10,bb:4,ag:7,ath:8,comp:0.95,prod:0.0,scar:1.0,team:'',drafted:false,note:'166 rec/2026 yds career across Louisville→MSU→Missouri. Best yr: 74 rec/932 yds at MSU (SEC). Speed WR, 3-school journey hurts context. Day 3 capital.'}
+  {n:'Eli Stowers',pos:'TE',school:'Vanderbilt',age:24,pr:2,pp:54,ovr:35,por:2,ds:66,cap:24,bb:22,ag:11,ath:9,comp:1.0,prod:0.2,scar:1.03,team:'PHI',drafted:true,note:'Converted QB at Vanderbilt — LaPorta comp. 16.4% catch share as featured TE. 4.51/45.5\" vert (record)/135\" broad at combine. Raw route runner but elite athleticism and SEC production.'},
+  {n:'Kaytron Allen',pos:'RB',school:'Penn State',age:23,pr:6,pp:187,ovr:187,por:9,ds:29,cap:5,bb:8,ag:11,ath:5,comp:1.0,prod:0.1,scar:1.0,team:'WAS',drafted:true,note:'4yr Penn State workhorse — 769 carries, 4,180 yds, 39 TDs. 70 career receptions shows receiving floor. Big Ten proven.'},
+  {n:'Chris Bell',pos:'WR',school:'Louisville',age:23,pr:3,pp:94,ovr:67,por:8,ds:49,cap:16,bb:14,ag:11,ath:8,comp:0.95,prod:0.0,scar:1.0,team:'MIA',drafted:true,note:'151 rec/2166 yds career at Louisville — consistent 4yr producer. 72 rec/917 yds in 2025. Size-speed WR, vertical threat. ACC competition.'},
+  {n:'Brenen Thompson',pos:'WR',school:'Mississippi State',age:24,pr:4,pp:105,ovr:105,por:9,ds:37,cap:10,bb:12,ag:7,ath:8,comp:0.8,prod:0.0,scar:1.0,team:'LAC',drafted:true,note:'4.26 40 — fastest WR in class. 57 rec/1054 yds in 2025 at MSU. Career spread across Texas, Oklahoma, MSU. Pure speed, one dominant season.'},
+  {n:'Deion Burks',pos:'WR',school:'Oklahoma',age:23,pr:7,pp:254,ovr:254,por:10,ds:34,cap:3,bb:10,ag:11,ath:10,comp:1.0,prod:-0.1,scar:1.0,team:'IND',drafted:true,note:'Elite combine: 4.30/42.5\" vert/131\" broad. Explosive slot WR. Injury history (2024 limited). Purdue→Oklahoma transfer. Speed + YAC profile, size concerns at 5\'9\".'},
+  {n:'Adam Randall',pos:'RB',school:'Clemson',age:22,pr:5,pp:174,ovr:174,por:11,ds:33,cap:7,bb:4,ag:15,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'BAL',drafted:true,note:'WR→RB convert. 6\'3\" 232 lbs, Cordarrelle Patterson comp. 36 rec as RB in 2025 — receiving instincts are real. Only 858 career rush yds but one-year sample. Day 3 capital.'},
+  {n:'Ted Hurst',pos:'WR',school:'Georgia State',age:24,pr:3,pp:84,ovr:82,por:11,ds:37,cap:16,bb:8,ag:7,ath:6,comp:0.75,prod:0.0,scar:1.0,team:'TB',drafted:true,note:'127 rec/1965 yds in just 2 seasons at Georgia State. Elite volume for G5 — 15 TDs. Sun Belt competition discount applies. Kiper #82, Day 3 projection.'},
+  {n:'Kevin Coleman Jr.',pos:'WR',school:'Missouri',age:24,pr:5,pp:177,ovr:177,por:14,ds:26,cap:7,bb:4,ag:7,ath:8,comp:0.95,prod:0.0,scar:1.0,team:'MIA',drafted:true,note:'166 rec/2026 yds career across Louisville→MSU→Missouri. Best yr: 74 rec/932 yds at MSU (SEC). Speed WR, 3-school journey hurts context. Day 3 capital.'},
+  {n:'Denzel Boston',pos:'WR',school:'Washington',age:23,pr:2,pp:39,ovr:39,por:5,ds:61,cap:24,bb:19,ag:11,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'CLE',drafted:true,note:'132 rec/1781 yds/20 TDs at Washington — two years Big Ten production. CLE WR2 behind Concepcion. 9 TDs in 2025. Strong producer, crowded room.'},
+  {n:'Antonio Williams',pos:'WR',school:'Clemson',age:23,pr:3,pp:71,ovr:71,por:10,ds:48,cap:16,bb:14,ag:11,ath:7,comp:0.95,prod:0.0,scar:1.0,team:'WAS',drafted:true,note:'208 rec/2336 yds/21 TDs — 4yr Clemson PROD+. WAS WR2 behind McLaurin with Jayden Daniels throwing. Slot specialist, 88th pct separation.'},
+  {n:'Will Kacmarek',pos:'TE',school:'Ohio State',age:25,pr:3,pp:87,ovr:87,por:9,ds:35,cap:16,bb:8,ag:7,ath:4,comp:1.0,prod:-0.3,scar:1.03,team:'MIA',drafted:true,note:'Blocking-first TE — Miami: \"elite as a blocker.\" 65 rec/761 yds career (MAC+Big Ten). Dynasty blocker, near-zero receiving upside.'},
+  {n:'Germie Bernard',pos:'WR',school:'Alabama',age:23,pr:2,pp:47,ovr:47,por:6,ds:61,cap:24,bb:19,ag:11,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'PIT',drafted:true,note:'155 rec/2203 yds MSU→Washington→Alabama. 114 rec/1656 yds in 2 SEC seasons. PIT WR2 behind Pickens — Howard/Allar/Rodgers at QB, open competition.'},
+  {n:'Caleb Douglas',pos:'WR',school:'Texas Tech',age:23,pr:3,pp:75,ovr:75,por:11,ds:50,cap:16,bb:15,ag:11,ath:8,comp:1.0,prod:0.0,scar:1.0,team:'MIA',drafted:true,note:'135 rec/2031 yds at Florida→Texas Tech. 114 rec/1723 yds in Big 12. MIA WR slot — replaces Waddle role. Tua Tagovailoa at QB.'},
+  {n:'Zavion Thomas',pos:'WR',school:'LSU',age:23,pr:3,pp:89,ovr:89,por:13,ds:45,cap:16,bb:10,ag:11,ath:8,comp:1.0,prod:-0.1,scar:1.0,team:'CHI',drafted:true,note:'106 rec/1213 yds — thin production. Only 64 rec/706 yds at LSU in 2 years. CHI WR room has DJ Moore — Thomas is WR2 target.'},
+  {n:'Kaelon Black',pos:'RB',school:'Indiana',age:23,pr:3,pp:90,ovr:90,por:10,ds:40,cap:16,bb:7,ag:11,ath:6,comp:0.85,prod:-0.2,scar:0.97,team:'SF',drafted:true,note:'2261 rush yds but split FCS/Big Ten. Only 8 rec at Big Ten level — receiving base is FCS-inflated. SF RB behind solid OL. PROD- on P4 receiving.'},
+  {n:'Reggie Virgil',pos:'WR',school:'Texas Tech',age:24,pr:5,pp:143,ovr:143,por:18,ds:28,cap:7,bb:6,ag:7,ath:8,comp:1.0,prod:-0.1,scar:1.0,team:'ARI',drafted:true,note:'100 rec/1583 yds MAC→Texas Tech. One-year wonder concern — 43 MAC catches in 3 yrs before breakout. ARI depth WR.'},
+  {n:'Kendrick Law',pos:'WR',school:'Kentucky',age:23,pr:5,pp:168,ovr:168,por:20,ds:27,cap:7,bb:2,ag:11,ath:7,comp:0.95,prod:-0.2,scar:1.0,team:'DET',drafted:true,note:'86 rec/883 yds — 3 thin Alabama years then 53 catches at Kentucky. DET offense is elite but production signal is weak. PROD-.'},
+  {n:'Cyrus Allen',pos:'WR',school:'Cincinnati',age:24,pr:5,pp:176,ovr:176,por:21,ds:26,cap:7,bb:3,ag:7,ath:9,comp:0.85,prod:0.0,scar:1.0,team:'KC',drafted:true,note:'137 rec/2221 yds — La Tech (G5)→A&M→Cincinnati. Big 12 most recent. KC/Mahomes always creates opportunity. Competition tier mixed.'},
+  {n:'Barion Brown',pos:'WR',school:'LSU',age:23,pr:6,pp:190,ovr:190,por:22,ds:28,cap:5,bb:4,ag:11,ath:8,comp:1.0,prod:0.0,scar:1.0,team:'NO',drafted:true,note:'175 rec/2060 yds — 3yr Kentucky + LSU. Four-year SEC producer. NO WR room crowded (Olave+Tyson). Rd6 capital limits dynasty ceiling.'},
+  {n:'Kaden Wetjen',pos:'WR',school:'Iowa',age:24,pr:4,pp:121,ovr:121,por:16,ds:29,cap:10,bb:5,ag:7,ath:7,comp:1.0,prod:-0.2,scar:1.0,team:'PIT',drafted:true,note:'Primarily a kick returner. Minimal receiving production. PIT depth/ST player.'},
+  {n:'Colbie Young',pos:'WR',school:'Georgia',age:24,pr:4,pp:140,ovr:140,por:17,ds:29,cap:10,bb:6,ag:7,ath:6,comp:1.0,prod:-0.1,scar:1.0,team:'CIN',drafted:true,note:'Georgia WR depth piece. CIN system could develop him. Rd4 historical record.'},
+  {n:'Matthew Hibner',pos:'TE',school:'Michigan State',age:24,pr:4,pp:133,ovr:133,por:11,ds:28,cap:10,bb:6,ag:7,ath:5,comp:1.0,prod:-0.1,scar:1.03,team:'BAL',drafted:true,note:'BAL Rd4 TE — historical record. Blocking/developmental role.'},
+  {n:'Max Bredeson',pos:'TE',school:'Michigan',age:24,pr:5,pp:159,ovr:159,por:99,ds:21,cap:7,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'MIN',drafted:true,note:'MIN blocking TE — historical record'},
+  {n:'Tanner Koziol',pos:'TE',school:'Wisconsin',age:24,pr:5,pp:164,ovr:164,por:99,ds:21,cap:7,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'JAC',drafted:true,note:'JAC blocking TE — historical record'},
+  {n:'Riley Nowakowski',pos:'TE',school:'Michigan State',age:24,pr:5,pp:169,ovr:169,por:99,ds:21,cap:7,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'PIT',drafted:true,note:'PIT depth TE — historical record'},
+  {n:'Joe Royer',pos:'TE',school:'Tennessee',age:24,pr:5,pp:170,ovr:170,por:99,ds:21,cap:7,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'CIN',drafted:true,note:'CIN depth TE — historical record'},
+  {n:'Josh Cuevas',pos:'TE',school:'Fresno State',age:24,pr:5,pp:173,ovr:173,por:99,ds:20,cap:7,bb:1,ag:7,ath:5,comp:0.8,prod:-0.2,scar:1.03,team:'BAL',drafted:true,note:'BAL depth TE — historical record'},
+  {n:'Cole Payton',pos:'QB',school:'Weber State',age:24,pr:5,pp:178,ovr:178,por:99,ds:20,cap:7,bb:1,ag:7,ath:5,comp:0.6,prod:-0.2,scar:1.12,team:'PHI',drafted:true,note:'PHI Rd5 QB — FCS background, historical record'},
+  {n:'Seydou Traore',pos:'TE',school:'Clemson',age:24,pr:5,pp:180,ovr:180,por:99,ds:21,cap:7,bb:2,ag:7,ath:5,comp:0.95,prod:-0.2,scar:1.03,team:'MIA',drafted:true,note:'MIA depth TE — historical record'},
+  {n:'Bauer Sharp',pos:'TE',school:'Stanford',age:24,pr:6,pp:185,ovr:185,por:99,ds:19,cap:5,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'TB',drafted:true,note:'TB depth TE — historical record'},
+  {n:'Josh Cameron',pos:'WR',school:'Baylor',age:24,pr:6,pp:191,ovr:191,por:99,ds:19,cap:5,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.0,team:'JAC',drafted:true,note:'JAC depth WR — historical record'},
+  {n:'Malik Benson',pos:'WR',school:'Georgia',age:24,pr:6,pp:195,ovr:195,por:99,ds:19,cap:5,bb:2,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.0,team:'LV',drafted:true,note:'LV depth WR — historical record'},
+  {n:'CJ Daniels',pos:'WR',school:'South Carolina',age:24,pr:6,pp:197,ovr:197,por:99,ds:19,cap:5,bb:2,ag:7,ath:5,comp:0.95,prod:-0.2,scar:1.0,team:'LAR',drafted:true,note:'LAR depth WR — historical record'},
+  {n:'Emmanuel Henderson JR',pos:'WR',school:'Georgia Southern',age:24,pr:6,pp:199,ovr:199,por:99,ds:18,cap:5,bb:1,ag:7,ath:5,comp:0.75,prod:-0.2,scar:1.0,team:'SEA',drafted:true,note:'SEA depth WR — historical record'},
+  {n:'CJ Williams',pos:'WR',school:'Notre Dame',age:24,pr:6,pp:203,ovr:203,por:99,ds:18,cap:5,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.0,team:'JAC',drafted:true,note:'JAC depth WR — historical record'},
+  {n:'Lewis Bond',pos:'WR',school:'Houston',age:24,pr:6,pp:204,ovr:204,por:99,ds:18,cap:5,bb:1,ag:7,ath:5,comp:0.85,prod:-0.2,scar:1.0,team:'HOU',drafted:true,note:'HOU depth WR — historical record'},
+  {n:'Anthony Smith',pos:'WR',school:'Alabama',age:24,pr:7,pp:218,ovr:218,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.0,team:'DAL',drafted:true,note:'DAL depth WR Rd7 — historical record'},
+  {n:'Jack Endries',pos:'TE',school:'Notre Dame',age:24,pr:7,pp:221,ovr:221,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'CIN',drafted:true,note:'CIN Rd7 TE — historical record'},
+  {n:'Athan Kaliakmanis',pos:'QB',school:'Minnesota',age:24,pr:7,pp:223,ovr:223,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.12,team:'WAS',drafted:true,note:'WAS Rd7 QB — historical record'},
+  {n:'Jaren Kanak',pos:'TE',school:'Kansas State',age:24,pr:7,pp:225,ovr:225,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'TEN',drafted:true,note:'TEN Rd7 TE — historical record'},
+  {n:'Eli Heidenreich',pos:'RB',school:'Indiana',age:24,pr:7,pp:230,ovr:230,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:0.97,team:'PIT',drafted:true,note:'PIT Rd7 RB — historical record'},
+  {n:'Behren Morton',pos:'QB',school:'Texas Tech',age:24,pr:7,pp:234,ovr:234,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.12,team:'NE',drafted:true,note:'NE Rd7 QB — historical record'},
+  {n:'Seth McGowan',pos:'RB',school:'Michigan',age:24,pr:7,pp:237,ovr:237,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:0.97,team:'IND',drafted:true,note:'IND Rd7 RB — depth back'},
+  {n:'Jam Miller',pos:'RB',school:'Georgia',age:24,pr:7,pp:245,ovr:245,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:0.97,team:'NE',drafted:true,note:'NE Rd7 RB — historical record'},
+  {n:'Carsen Ryan',pos:'TE',school:'Indiana',age:24,pr:7,pp:248,ovr:248,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'CLE',drafted:true,note:'CLE Rd7 TE — historical record'},
+  {n:'Dallen Bently',pos:'TE',school:'Colorado',age:24,pr:7,pp:256,ovr:256,por:99,ds:16,cap:3,bb:1,ag:7,ath:5,comp:1.0,prod:-0.2,scar:1.03,team:'DEN',drafted:true,note:'DEN Rd7 TE — historical record'}
 ];
 
 function getScoreColor(s) {
