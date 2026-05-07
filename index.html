@@ -1399,10 +1399,10 @@ const CB={
   'Javonte Williams':1.01,'Blake Corum':1.02,
 };
 const QBQ={
-  ARI:.80,ATL:.83,BAL:1.0,BUF:1.0,CAR:.83,CHI:.92,CIN:.95,CLE:.82,
+  ARI:.78,ATL:.83,BAL:1.0,BUF:1.0,CAR:.83,CHI:.92,CIN:.95,CLE:.82,
   DAL:.93,DEN:.93,DET:.95,GB:.96,HOU:.87,IND:.88,JAC:.90,KC:.95,
-  LV:.74,LAC:.90,LAR:.96,MIA:.80,MIN:.95,NE:.99,NO:.82,NYG:.84,
-  NYJ:.76,PHI:.95,PIT:.76,SF:.95,SEA:.91,TB:.90,TEN:.82,WAS:.93,
+  LV:.74,LAC:.90,LAR:.96,MIA:.72,MIN:1.0,NE:.99,NO:.85,NYG:.84,
+  NYJ:.76,PHI:.95,PIT:.76,SF:.95,SEA:.91,TB:.90,TEN:.85,WAS:.95,
 };
 const AC={
   QB:[[20,22,.88],[23,24,.94],[25,26,1.00],[27,28,1.03],[29,30,1.02],[31,32,.97],[33,99,.88]],
@@ -1862,7 +1862,7 @@ const RAW=[
   {n:'Kirk Cousins',t:'LV',p:'QB',a:37.9,k:800,ppg25:0,ppg24:25.6,ppg23:0,g25:0},
   // 2026 Rookies — post-draft Round 1
   {n:'Fernando Mendoza',t:'LV',p:'QB',a:23,k:8800,ppg25:0.0,ppg24:0,ppg23:0,g25:0},
-  {n:'Jeremiyah Love',t:'ARI',p:'RB',a:22,k:9300,ppg25:10.5,ppg24:0,ppg23:0,g25:0},
+  {n:'Jeremiyah Love',t:'ARI',p:'RB',a:22,k:9300,ppg25:9.8,ppg24:0,ppg23:0,g25:0},
   {n:'Carnell Tate',t:'TEN',p:'WR',a:21,k:7800,ppg25:10.4,ppg24:0,ppg23:0,g25:0},
   {n:'Jordyn Tyson',t:'NO',p:'WR',a:23,k:7600,ppg25:8.6,ppg24:0,ppg23:0,g25:0},
   {n:'Ty Simpson',t:'LAR',p:'QB',a:23,k:4200,ppg25:0.0,ppg24:0,ppg23:0,g25:0},
@@ -2102,8 +2102,8 @@ const RIPPLE=[
   {n:'Shedeur Sanders',d:'up',reason:'Named CLE QB1',delta:'+5%'},
   {n:'Harold Fannin Jr.',d:'up',reason:'Clear CLE TE1',delta:'+5%'},
   {n:'Colston Loveland',d:'up',reason:'CHI TE1, Caleb Williams system',delta:'+8%'},
-  {n:'Justin Jefferson',d:'up',reason:'Kyler Murray QB upgrade MIN',delta:'+8%'},
-  {n:'Jordan Addison',d:'up',reason:'Murray upgrade elevates MIN corps',delta:'+6%'},
+  {n:'Justin Jefferson',d:'up',reason:'MIN — Kyler Murray arrives as QB1, elite weapons upgraded to top-5 dynasty situation',delta:'+12%'},
+  {n:'Jordan Addison',d:'up',reason:'MIN — Kyler Murray arrival transforms WR2 role. Addison in prime with elite QB',delta:'+10%'},
   {n:'Javonte Williams',d:'up',reason:'68% snap share in 2025, true DAL bellcow',delta:'+12%'},
   {n:'Kenneth Gainwell',d:'up',reason:'50% snap share as TB RB1',delta:'+10%'},
   {n:'Davante Adams',d:'up',reason:'LAR WR — YPRR 1.98 in 2025, age curve undersold him. Rams offense',delta:'+8%'},
@@ -5121,8 +5121,10 @@ async function loadLiveMarketValues() {
       const match = values[alias] || values[name];
       
       if (match) {
-        player.k = match.value;       // Update the market value
+        player.k = match.value;            // Update the market value
         player.fcRank = match.overallRank; // Store overall rank for reference
+        if (match.trend30Day !== undefined) player.fcTrend = match.trend30Day;
+        if (match.team && match.team !== player.t) player.fcTeam = match.team;
         updated++;
       } else {
         notFound.push(name);
@@ -5174,7 +5176,8 @@ function showDataFreshness(fetchedAt) {
     ].join(';');
     document.body.appendChild(badge);
   }
-  badge.textContent = `Mkt values: ${label}`;
+  const playerCount = data.playerCount || 0;
+  badge.textContent = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}`;
 }
 
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
