@@ -1,38 +1,42 @@
 name: Update Market Values
 
-# Runs every day at 6am UTC (2am ET) — quiet hours, before most people open DELTA
 on:
   schedule:
+    # Run daily at 6am UTC (2am ET, 11pm PT)
     - cron: '0 6 * * *'
-  # Also lets you trigger it manually from GitHub's Actions tab anytime
-  workflow_dispatch:
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
-  fetch-values:
+  update-values:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      # Step 1: Check out your repo so the Action can write files to it
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js (we use JS for the fetch script, no extra installs needed)
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Step 3: Run the fetch script — this calls FantasyCalc and writes data/market-values.json
-      - name: Fetch latest market values
+      - name: Fetch market values from FantasyCalc
         run: node scripts/fetch-market-values.js
 
-      # Step 4: If anything changed, commit and push back to the repo
-      # Netlify watches your repo — a new commit triggers an automatic redeploy
-      - name: Commit updated data
+      - name: Commit updated values
         run: |
           git config user.name "DELTA Bot"
           git config user.email "delta-bot@users.noreply.github.com"
           git add data/market-values.json
-          # Only commits if something actually changed (exits 0 either way)
-          git diff --staged --quiet || git commit -m "chore: update market values $(date -u +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to market values — skipping commit"
+          else
+            PLAYER_COUNT=$(node -e "const d=require('./data/market-values.json');console.log(d.playerCount)")
+            PICK_COUNT=$(node -e "const d=require('./data/market-values.json');console.log(d.pickCount)")
+            git commit -m "chore: update market values [skip ci]
+
+  Players: ${PLAYER_COUNT} | Picks: ${PICK_COUNT}
+  Fetched: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
