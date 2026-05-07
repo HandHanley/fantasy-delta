@@ -5132,6 +5132,7 @@ async function loadLiveMarketValues() {
     }
 
     console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched`);
+    showDataFreshness(data.fetched, updated);
     if (notFound.length > 0 && notFound.length < 20) {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
@@ -5154,14 +5155,14 @@ async function loadLiveMarketValues() {
 }
 
 // ── FRESHNESS INDICATOR ───────────────────────────────────────────────────
-function showDataFreshness(fetchedAt) {
+function showDataFreshness(fetchedAt, playerCount) {
   const date = new Date(fetchedAt);
   const hoursAgo = Math.round((Date.now() - date.getTime()) / 3600000);
   const label = hoursAgo < 2 ? 'Just updated' : 
                 hoursAgo < 24 ? `${hoursAgo}h ago` : 
                 `${Math.round(hoursAgo/24)}d ago`;
 
-  // Find or create a freshness badge in the header area
+  // Find or create a freshness badge
   let badge = document.getElementById('delta-freshness');
   if (!badge) {
     badge = document.createElement('div');
@@ -5176,7 +5177,6 @@ function showDataFreshness(fetchedAt) {
     ].join(';');
     document.body.appendChild(badge);
   }
-  const playerCount = data.playerCount || 0;
   badge.textContent = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}`;
 }
 
