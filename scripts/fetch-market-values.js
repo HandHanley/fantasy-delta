@@ -1,84 +1,103 @@
 /**
- * fetch-market-values.js
- * 
- * Fetches dynasty player values from FantasyCalc's free public API.
- * Runs inside the GitHub Action and writes data/market-values.json.
- * 
- * FantasyCalc API parameters:
- *   isDynasty=true        — dynasty values (not redraft)
- *   numQbs=2              — superflex (2 QB) scoring
- *   numTeams=12           — 12-team league
- *   ppr=1                 — full PPR
- * 
- * Adjust numQbs to 1 if your league is 1QB format.
+ * DELTA Live Market Values — Fetch Script
+ * Runs nightly via GitHub Actions
+ * Fetches FantasyCalc dynasty SF 12-team 1PPR values for:
+ *   - All players (RAW array updates)
+ *   - Pick tier anchors (slot pick rescaling)
+ * Writes to data/market-values.json
  */
 
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const API_URL = 'https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1';
-const OUTPUT_PATH = path.join(__dirname, '..', 'data', 'market-values.json');
+const FC_URL = 'https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1&includePicksAsPlayers=true';
 
-function fetchJSON(url) {
+function fetch(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = https.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; DELTA/1.0)',
+        'Accept': 'application/json',
+      }
+    }, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(new Error(`Failed to parse JSON: ${e.message}`));
-        }
+        try { resolve(JSON.parse(data)); }
+        catch (e) { reject(new Error(`JSON parse failed: ${e.message}`)); }
       });
-    }).on('error', reject);
+    });
+    req.on('error', reject);
+    req.setTimeout(30000, () => { req.destroy(); reject(new Error('Timeout')); });
   });
 }
 
 async function main() {
-  console.log('Fetching market values from FantasyCalc...');
-  
-  const raw = await fetchJSON(API_URL);
-  console.log(`Received ${raw.length} player entries`);
+  console.log(`[DELTA] Fetching FantasyCalc values at ${new Date().toISOString()}`);
 
-  // Transform into a clean lookup object keyed by player name
-  // DELTA matches players by name, so that's our key
-  const values = {};
-  
-  for (const entry of raw) {
-    const name = entry.player?.name;
-    if (!name) continue;
+  const data = await fetch(FC_URL);
 
-    values[name] = {
-      value: entry.value,                    // The market value number (0-10000 scale)
-      overallRank: entry.overallRank,        // Overall dynasty rank
-      positionRank: entry.positionRank,      // Rank within position
-      position: entry.player.position,       // QB/RB/WR/TE
-      team: entry.player.maybeTeam,          // NFL team abbreviation
-      trend30Day: entry.trend30Day,          // Value change over last 30 days
-      sleeperId: entry.player.sleeperId,     // Sleeper player ID (useful for Phase 2)
-    };
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`Unexpected response format: ${JSON.stringify(data).slice(0, 200)}`);
   }
 
-  // Add metadata so DELTA knows when this data was fetched
+  console.log(`[DELTA] Received ${data.length} entries from FantasyCalc`);
+
+  // Build values map: name → {value, overallRank, positionRank, trend30Day, position, team}
+  const values = {};
+  let playerCount = 0;
+  let pickCount = 0;
+
+  for (const item of data) {
+    const name = item?.player?.name;
+    const value = item?.value;
+    if (!name || value === undefined) continue;
+
+    const isPick = name.includes('Round Pick') || name.includes('round pick');
+
+    values[name] = {
+      value: Math.round(value),
+      overallRank: item.overallRank || null,
+      positionRank: item.positionRank || null,
+      trend30Day: item.trend30Day || 0,
+      position: item?.player?.position || null,
+      team: item?.player?.maybeTeam || null,
+    };
+
+    if (isPick) pickCount++;
+    else playerCount++;
+  }
+
+  console.log(`[DELTA] Processed: ${playerCount} players, ${pickCount} picks`);
+
+  // Ensure output directory exists
+  const outDir = path.join(process.cwd(), 'data');
+  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+
   const output = {
-    fetchedAt: new Date().toISOString(),
-    source: 'FantasyCalc',
-    format: 'dynasty-superflex-12team-fullppr',
-    playerCount: Object.keys(values).length,
+    fetched: new Date().toISOString(),
+    playerCount,
+    pickCount,
+    totalCount: playerCount + pickCount,
     values,
   };
 
-  // Make sure the data directory exists
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  const outPath = path.join(outDir, 'market-values.json');
+  fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
+  console.log(`[DELTA] Written to ${outPath} (${Math.round(JSON.stringify(output).length / 1024)}KB)`);
 
-  console.log(`✓ Wrote ${Object.keys(values).length} player values to ${OUTPUT_PATH}`);
-  console.log(`  Fetched at: ${output.fetchedAt}`);
+  // Log a few key players for verification
+  const checks = ['Josh Allen', 'Brock Bowers', 'Jeremiyah Love', 'Carnell Tate', '2026 1st Round Pick'];
+  console.log('\n[DELTA] Spot check:');
+  for (const name of checks) {
+    const v = values[name] || values[name + ' (Early)'];
+    if (v) console.log(`  ${name}: ${v.value} (rank #${v.overallRank})`);
+    else console.log(`  ${name}: NOT FOUND`);
+  }
 }
 
 main().catch(err => {
-  console.error('Error:', err.message);
+  console.error('[DELTA] Fetch failed:', err.message);
   process.exit(1);
 });
