@@ -32,11 +32,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to market values — skipping commit"
           else
-            PLAYER_COUNT=$(node -e "const d=require('./data/market-values.json');console.log(d.playerCount)")
-            PICK_COUNT=$(node -e "const d=require('./data/market-values.json');console.log(d.pickCount)")
-            git commit -m "chore: update market values [skip ci]
-
-  Players: ${PLAYER_COUNT} | Picks: ${PICK_COUNT}
-  Fetched: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git commit -m "chore: update market values [skip ci]"
             git push
           fi
