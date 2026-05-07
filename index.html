@@ -142,7 +142,6 @@ tr:hover td{background:#1a202c}
   <div>
     <div style="font-size:18px;font-weight:700;color:#e2e8f0;letter-spacing:.02em">DELTA <span style="color:#7dd3fc">v1.0</span></div>
     <div style="font-size:11px;color:#6ee7b7;font-weight:500;margin-top:1px;letter-spacing:.04em;text-transform:uppercase">Dynasty Efficiency & Long-Term Analysis</div>
-    <div id="scoring-disc" style="font-size:10px;color:#4a5568;margin-top:3px">0.5PPR + TE Premium · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0</div>
   </div>
 </div>
 
@@ -5146,8 +5145,9 @@ async function loadLiveMarketValues() {
     }
 
   } catch (err) {
-    // Silently fail — DELTA still works with baked-in values
+    // Show error in badge so we can debug
     console.warn('[DELTA] Could not load live market values:', err.message);
+    showDataFreshness(new Date().toISOString(), -1);
   }
 }
 
@@ -5178,10 +5178,14 @@ function showDataFreshness(fetchedAt, playerCount) {
 }
 
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
-// Wait for the page to fully load before trying to update values
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadLiveMarketValues);
-} else {
+// Show badge immediately so we know rendering works
+// Will be updated once fetch completes
+window.addEventListener('load', function() {
+  showDataFreshness(new Date().toISOString(), 0);
+  loadLiveMarketValues();
+});
+if (document.readyState === 'complete') {
+  showDataFreshness(new Date().toISOString(), 0);
   loadLiveMarketValues();
 }
 
