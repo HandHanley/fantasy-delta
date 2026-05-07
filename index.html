@@ -5137,9 +5137,6 @@ async function loadLiveMarketValues() {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
 
-    // Show timestamp in the UI
-    showDataFreshness(data.fetchedAt);
-
     // Re-render whatever tab is currently active with fresh values
     const activePanel = document.querySelector('.panel.active');
     if (activePanel) {
