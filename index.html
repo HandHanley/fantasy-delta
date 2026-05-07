@@ -1869,7 +1869,7 @@ const RAW=[
   {n:'Makai Lemon',t:'PHI',p:'WR',a:22,k:7400,ppg25:9.5,ppg24:0,ppg23:0,g25:0},
   {n:'KC Concepcion',t:'CLE',p:'WR',a:22,k:6200,ppg25:8.7,ppg24:0,ppg23:0,g25:0},
   {n:'Omar Cooper',t:'NYJ',p:'WR',a:22,k:5800,ppg25:7.6,ppg24:0,ppg23:0,g25:0},
-  {n:'Jadarian Price',t:'SEA',p:'RB',a:22,k:6000,ppg25:9.8,ppg24:0,ppg23:0,g25:0},,
+  {n:'Jadarian Price',t:'SEA',p:'RB',a:22,k:6000,ppg25:9.8,ppg24:0,ppg23:0,g25:0},
   // 2026 Rookies — Day 2 & 3 picks
   {n:"De'Zhaun Stribling",t:'SF',p:'WR',a:24,k:4200,ppg25:7.2,ppg24:0,ppg23:0,g25:0},
   {n:'Denzel Boston',t:'CLE',p:'WR',a:23,k:4800,ppg25:6.8,ppg24:0,ppg23:0,g25:0},
@@ -5113,6 +5113,7 @@ async function loadLiveMarketValues() {
 
     // RAW is DELTA's main player array — update each player's .k (market value)
     for (const player of RAW) {
+      if (!player || !player.n) continue; // guard against undefined entries
       const name = player.n;
       const alias = FC_ALIASES[name] || name;
       
