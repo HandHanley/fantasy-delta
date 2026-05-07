@@ -3606,7 +3606,7 @@ function renderRankings(){
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
     <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-    <td style="font-weight:600;white-space:nowrap">${p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
+    <td style="font-weight:600;white-space:nowrap">${(p.g25===0&&p.ppg25>0)?'<span class="badge bi" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':'')}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
     <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td>
     <td>${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
