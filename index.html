@@ -164,6 +164,12 @@ tr:hover td{background:#1a202c}
   <span style="font-size:10px;color:#4a5568">Click any row to open player card</span>
 </div>
 
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px">
+  <button id="sleeper-connect-btn" onclick="showSleeperConnect()"
+          style="font-size:10px;font-weight:600;padding:4px 10px;background:#1a2332;
+                 border:1px solid #2d3f55;border-radius:6px;color:#7dd3fc;cursor:pointer;
+                 white-space:nowrap;margin-left:auto">🏈 Connect Sleeper</button>
+</div>
 <div class="tabs">
   <button class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button class="tab" onclick="showTab('projections',this)">Projections</button>
@@ -1711,7 +1717,7 @@ const RAW=[
   {n:'Amon-Ra St. Brown',t:'DET',p:'WR',a:26.4,k:7658,ppg25:15.6,ppg24:15.2,ppg23:17.0,g25:17},
   {n:"Ja'Marr Chase",t:'CIN',p:'WR',a:26.0,k:9801,ppg25:15.7,ppg24:20.0,ppg23:13.3,g25:16},
   {n:'George Pickens',t:'DAL',p:'WR',a:25.0,k:6137,ppg25:14.4,ppg24:9.6,ppg23:10.4,g25:17},
-  {n:'Chris Olave',t:'NO',p:'WR',a:25.7,k:5644,ppg25:13.7,ppg24:0,ppg23:11.7,g25:16},
+  {n:'Chris Olave',t:'NO',p:'WR',a:25.7,k:5644,ppg25:13.7,ppg24:7.6,ppg23:11.7,g25:16},
   {n:'Zay Flowers',t:'BAL',p:'WR',a:25.5,k:4652,ppg25:11.8,ppg24:10.1,ppg23:10.5,g25:17},
   {n:'Davante Adams',t:'LAR',p:'WR',a:33.2,k:3556,ppg25:13.8,ppg24:14.2,ppg23:12.6,g25:14},
   {n:'Nico Collins',t:'HOU',p:'WR',a:27.0,k:5797,ppg25:12.7,ppg24:14.7,ppg23:14.7,g25:15},
@@ -1765,7 +1771,7 @@ const RAW=[
   {n:'Stefon Diggs',t:'FA',p:'WR',a:32.0,k:1800,ppg25:9.9,ppg24:12.3,ppg23:13.0,g25:17},
   
   {n:'Jayden Reed',t:'GB',p:'WR',a:25.3,k:4200,ppg25:10.4,ppg24:12.8,ppg23:9.6,g25:16},
-  {n:'Calvin Ridley',t:'TEN',p:'WR',a:30.7,k:3200,ppg25:14.6,ppg24:7.2,ppg23:13.8,g25:17},
+  {n:'Calvin Ridley',t:'TEN',p:'WR',a:30.7,k:3200,ppg25:5.5,ppg24:7.2,ppg23:13.8,g25:7},
   {n:'Rashid Shaheed',t:'SEA',p:'WR',a:27.4,k:3100,ppg25:9.4,ppg24:6.8,ppg23:10.2,g25:17},
     {n:'Darnell Mooney',t:'ATL',p:'WR',a:27.8,k:2800,ppg25:8.6,ppg24:9.2,ppg23:6.4,g25:16},
     {n:'Rashod Bateman',t:'BAL',p:'WR',a:25.8,k:2900,ppg25:9.8,ppg24:8.6,ppg23:6.2,g25:14},
@@ -3096,31 +3102,27 @@ const SCOUT={
   'Jordan Love':`Love's EPA/play jumped to 0. 24 in 2025 — his best mark — but his PPG fell from 19. 4 (2023) to 16. 1 (2025) with a 38% miss rate. The model rates Jordan Love a buy at current market value.`,
   'Baker Mayfield':`Mayfield's contract expires in 2026 (walk year) and his numbers support it — 13% elite rate across 63 games is the lowest of any starting QB in the model. He's been a solid 0. 05 EPA/play for two years but is no longer a must-start. The model rates Baker Mayfield a sell at current market value.`,
   'Sam Darnold':`Darnold had a breakout 2024 (18. 8 PPG) but fell back to 14. 7 PPG in 2025 after joining a rebuilding SEA. His career 38% miss rate and middling 0. The model rates Sam Darnold a sell at current market value.`,
-  'C.J. Stroud':`Stroud's 57% miss rate across 46 games is the biggest concern — he oscillates between elite (2023) and below-average (2024) without a clear trend. He bounced back to 15. 5 PPG in 2025 at 0. 11 EPA/play in a strong HOU system; locked through 2027 with young weapons. The model rates C. J. The model rates C. J. The model rates C.J. Stroud a sell at current market value.`,
-  'Jaxson Dart':`Dart's 17% miss rate across 12 games is the best rookie start in the model, and his 0. 06 EPA/play was positive for a true rookie. NYG is rebuilding around him through 2029 at 23 with a Rising tag. The model rates Jaxson Dart a sell at current market value.`,
-  'Cam Ward':`Ward's 82% miss rate across 17 games and -0. 17 EPA/play is the weakest profile of any full-time starter in the model. TEN's environment is limited and there's no established weapons around him yet. The model rates Cam Ward a strong sell at current market value.`,
+  'C.J. Stroud':`Stroud's 57% miss rate across 46 games is the biggest concern — he oscillates between elite (2023) and below-average (2024) without a clear trend. He bounced back to 15. 5 PPG in 2025 at 0. 11 EPA/play in a strong HOU system; locked through 2027 with young weapons. The model rates Jaxson Dart a sell at current market value.`,
+  'Cam Ward':`Ward's 82% miss rate across 17 games and -0. 17 EPA/play is the weakest profile of any full-time starter in the model. TEN drafted Carnell Tate #4 overall as his WR1 — Ward now has a legitimate top receiver and the offensive ceiling has risen meaningfully heading into Year 2. The model rates Cam Ward a strong sell at current market value.`,
   'Bryce Young':`Young stabilized in 2025 (14. 3 PPG, -0. 03 EPA/play) after a disastrous 2023 (-0. 23) but the 71% miss rate across 45 games is the worst of any expensive QB. The model rates Bryce Young a strong sell at current market value.`,
   'Matthew Stafford':`Stafford is 38 with a walk-year contract in 2026 and declining efficiency (0. 17 EPA/play is good but PPG was 21. 1 only because of the LAR system). The model rates Matthew Stafford a sell at current market value.`,
-  'Kyler Murray':`Murray's move to MIN as a starter (QBQ 0. 95) is a significant upgrade from the ARI (0. 80) environment but his PPG has declined three straight years (18. 9→18. 1→16. 2) and his contract expires in 2026 (walk year). The model rates Kyler Murray a hold at current market value.`,
+  'Kyler Murray':`Murray's move to MIN gives him Jefferson and Addison as weapons — arguably the best WR room of his career. His 2025 PPG (16.2) came in only 5 games due to injury with a weak ARI cast. The MIN upgrade is real and his contract situation extends through 2027. The model rates Kyler Murray a buy at current market value.`,
   'Joe Burrow':`Burrow's 17. 4 PPG in 2025 was below his 22. 5 peak in 2024 but his 0. 11 EPA/play and 31% elite rate across 52 games are legitimate. CIN's pass-heavy system and Chase give him a high floor; locked through 2029 at 29. The model rates Joe Burrow a hold at current market value.`,
   'Tua Tagovailoa':`Tua's move to ATL (exp 2028) after concussion concerns is the defining story — he was effective when healthy (0. 19 EPA/play in 2024) but dropped to 0. 11 in 2025 before the move. The 58% miss rate across 52 games reflects availability risk more than talent. The model rates Tua Tagovailoa a strong sell at current market value.`,
   'Geno Smith':`Smith is 35 on an expiring 2026 deal with -0. 14 EPA/play in 2025 — he was replacement level last season. The model rates Geno Smith a strong sell at current market value.`,
-  'J.J. McCarthy':`McCarthy's -0. 15 EPA/play and 50% miss rate across just 10 games is a small sample with no clear trend. MIN upgraded to Kyler Murray which limits his path to value. The model rates J. J. The model rates J. J. The model rates J.J. McCarthy a sell at current market value.`,
-  'Daniel Jones':`Jones' 2025 revival (18. 0 PPG, 0. 17 EPA/play) in IND is genuinely surprising — his best numbers since 2022. The model rates Daniel Jones a hold at current market value.`,
+  'J.J. McCarthy':`McCarthy's -0. 15 EPA/play and 50% miss rate across just 10 games is a small sample with no clear trend. MIN upgraded to Kyler Murray which limits his path to value. The model rates Daniel Jones a hold at current market value.`,
   'Tyler Shough':`Shough is a first-year starter with minimal sample (8 games, -0. 02 EPA/play) — judgment suspended. The model rates Tyler Shough a sell at current market value.`,
-  'Michael Penix Jr.':`Penix inherited the ATL starting job and posted 13. 7 PPG at 0. 02 EPA/play — league average efficiency in a good system. At 26 with no contract beyond this evaluation period, he needs to earn an extension in 2026. The model rates Michael Penix Jr. The model rates Michael Penix Jr. The model rates Michael Penix Jr. a strong sell at current market value.`,
-  'Shedeur Sanders':`Sanders' -0. 23 EPA/play and 86% miss rate across just 7 games as a CLE rookie is too small a sample to draw conclusions, but it was rough. The model rates Shedeur Sanders a strong sell at current market value.`,
+  'Michael Penix Jr.':`Penix inherited the ATL starting job and posted 13. 7 PPG at 0. 02 EPA/play — league average efficiency in a good system. At 26 with no contract beyond this evaluation period, he needs to earn an extension in 2026. The model rates Shedeur Sanders a strong sell at current market value.`,
   'Mason Rudolph':`Rudolph is 30, on an expiring 2026 deal, with -0. 06 EPA/play this year and no future dynasty value. The model rates Mason Rudolph a strong sell at current market value.`,
   'Malik Willis':`Willis posted a career-best 0. 49 EPA/play and 12. 8 PPG in MIA's system in limited action — the talent was always there. The model rates Malik Willis a strong sell at current market value.`,
-  'Jacoby Brissett':`. The model rates Jacoby Brissett a strong sell at current market value.`,
+  'Jacoby Brissett':`Brissett is the ARI bridge starter in 2026 while Jeremiyah Love develops. His 2025 numbers (16.8 PPG in 14 games) are deceptive — he's a one-year placeholder with zero dynasty value. The model rates Jacoby Brissett a strong sell at current market value.`,
   'Mac Jones':`Jones has no 2025 production and no contract. The model rates Mac Jones a strong sell at current market value.`,
   'Joe Flacco':`Flacco is 42. The model rates Joe Flacco a strong sell at current market value.`,
   'Justin Fields':`Fields has no dynasty relevance as a KC backup. His -0. 06 career EPA average suggests he's a strong athlete but an inconsistent passer. The model rates Justin Fields a sell at current market value.`,
   'Kirk Cousins':`Cousins is 38 with no contract in LV after missing all of 2025. The model rates Kirk Cousins a strong sell at current market value.`,
   'Puka Nacua':`Nacua's YPRR has improved every season (2. 56→3. 55→3. 73) and his 3. 73 in 2025 is the highest of any WR in the model — his efficiency is genuine. The model rates Puka Nacua a strong buy at current market value — one of the best value opportunities at the position.`,
   'Jaxon Smith-Njigba':`JSN's YPRR exploded from 1. 81 to 3. 67 in 2025 — the biggest single-season efficiency jump in the WR data — and he finished as the WR1 with 119 catches and 7. 0 receptions per game. Locked through 2031 at 24 with a Rising tag in SEA's offense, he's one of the most compelling hold-and-never-sell assets in the model. The model rates Jaxon Smith-Njigba a hold at current market value.`,
-  'Amon-Ra St. Brown':`St. Brown's 2. 48 YPRR and 6. 9 receptions per game are among the most consistent WR profiles in the model across all four years — minimal volatility, 28% miss rate, 31% elite rate. Locked through 2028 at 26 in DET's elite passing system. The model rates Amon-Ra St. The model rates Amon-Ra St. The model rates Amon-Ra St. Brown a hold at current market value.`,
-  'George Pickens':`Pickens is in the best situation of his career after moving to DAL — his YPRR has climbed steadily (1. 38→2. 10→2. 06→2. 37) and his walk-year contract in 2026 creates maximum motivation. The model rates George Pickens a strong buy at current market value — one of the best value opportunities at the position.`,
+  'Amon-Ra St. Brown':`St. Brown's 2. 48 YPRR and 6. 9 receptions per game are among the most consistent WR profiles in the model across all four years — minimal volatility, 28% miss rate, 31% elite rate. Locked through 2028 at 26 in DET's elite passing system. The model rates George Pickens a strong buy at current market value — one of the best value opportunities at the position.`,
   'Chris Olave':`Olave's 1. 99 YPRR is consistent across three seasons and his 38% miss rate is clean, but he's on an expiring 2026 deal in NO with an OC change — two simultaneous risks. The model rates Chris Olave a buy at current market value.`,
   'Zay Flowers':`Flowers' YPRR improved to 2. 55 in 2025 and he's locked through 2027 at 26 — the Rising tag reflects a genuine target share expansion in BAL's offense. His 50% miss rate is the only concern. The model rates Zay Flowers a hold at current market value.`,
   'Davante Adams':`Adams is 33 on an expiring 2026 deal — walk year — and his efficiency (1. 96 YPRR) has been remarkably stable but not elite for his age. His 35% elite rate is genuinely good but the age curve hits WRs hard at 33-34. The model rates Davante Adams a strong sell at current market value.`,
@@ -3128,16 +3130,15 @@ const SCOUT={
   'Jameson Williams':`Williams posted 1. 90 YPRR in 2025 — his best — at 25 with improving efficiency each season. His 51% miss rate across 47 games is the risk, but DET locked him through 2029 and he's ascending. The model rates Jameson Williams a hold at current market value.`,
   'Courtland Sutton':`Sutton's 1. 67 YPRR across four seasons is reliably average — he's a system-dependent WR2 in DEN whose numbers spike with good QB play. The model rates Courtland Sutton a buy at current market value.`,
   'Tee Higgins':`Higgins' 2025 dip (1. 63 YPRR, 12. 1 PPG) after his strong 2024 (2. 04 YPRR) is notable — he's playing alongside Chase which caps his ceiling. The model rates Tee Higgins a buy at current market value.`,
-  'A.J. Brown':`Brown's 2. 13 YPRR and 31% elite rate across 65 games remain elite — he's consistently one of the most efficient WRs in the model. The model rates A. J. The model rates A. J. The model rates A.J. Brown a hold at current market value.`,
-  'Tetairoa McMillan':`McMillan's 1. 88 YPRR as a true rookie on a rebuilding CAR team is a strong debut — his efficiency is well above average from Day 1. The model rates Tetairoa McMillan a hold at current market value.`,
+  'A.J. Brown':`Brown's 2. 13 YPRR and 31% elite rate across 65 games remain elite — he's consistently one of the most efficient WRs in the model. The model rates Tetairoa McMillan a hold at current market value.`,
   'Drake London':`London's YPRR has climbed steadily (2. 06→1. 86→2. 30→2. 36) and he's one of the few WRs combining above-average efficiency with a high reception rate (5. 7/game). His walk-year 2026 contract is the risk — if ATL doesn't extend him, roster uncertainty follows. The model rates Drake London a hold at current market value.`,
+  'Garrett Wilson':`Wilson's YPRR has declined from 1.87 to 1.55 over four years with a 43% miss rate and Fading tag — the NYJ offensive environment has been chronically limiting. Locked through 2030 at 26 with Omar Cooper and Kenyon Sadiq drafted as new weapons, the upside is real if the QB situation (Frank Reich OC) stabilizes. The model rates Garrett Wilson a strong sell at current market value.`,
   'Emeka Egbuka':`Egbuka's 1. 77 YPRR as a rookie in TB — a developing situation — with a 28% elite rate across 18 games is a strong debut. At 23 locked through 2029 with a lower reception rate (3. The model rates Emeka Egbuka a strong sell at current market value.`,
   'CeeDee Lamb':`Lamb's 2. 40 YPRR remains elite across four seasons and his 33% elite rate across 67 games is top-tier. His 2025 dip (11. The model rates CeeDee Lamb a buy at current market value.`,
   'DeVonta Smith':`Smith's 1. 96 YPRR is stable but unspectacular — consistently above average without elite upside. His 44% miss rate and Fading trend reflect reduced target share in PHI's evolving offense. The model rates DeVonta Smith a strong sell at current market value.`,
-  'Michael Pittman Jr.':`Pittman's YPRR declined from 2. 02 (2023) to 1. 49 (2025) and his PPG has fallen three straight seasons — now in PIT, which is an OC change and a lateral move at best. At 28 locked through 2029, the efficiency decline is the concern. The model rates Michael Pittman Jr. The model rates Michael Pittman Jr. The model rates Michael Pittman Jr. a strong sell at current market value.`,
-  'Jaylen Waddle':`Waddle's YPRR bounced back to 2. 18 in 2025 after a rough 2024 (1. 51), and his move to DEN gives him a fresh start in a developing system. The model rates Jaylen Waddle a buy at current market value.`,
+  'Michael Pittman Jr.':`Pittman's YPRR declined from 2. 02 (2023) to 1. 49 (2025) and his PPG has fallen three straight seasons — now in PIT, which is an OC change and a lateral move at best. At 28 locked through 2029, the efficiency decline is the concern. The model rates Jaylen Waddle a buy at current market value.`,
   'Alec Pierce':`Pierce's YPRR improved to 2. 19 in 2025 — his best — but his 66% miss rate across 68 games is the worst hold-back. The model rates Alec Pierce a hold at current market value.`,
-  'Justin Jefferson':`Jefferson's YPRR dropped to 1. 92 in 2025 — his lowest since 2021 — and his PPG fell from 16. 8 to 9. 4 in a contract year. He signed with MIN through 2028 at 27 with Murray as QB, which is a significant upgrade. The model rates Justin Jefferson a strong buy at current market value — one of the best value opportunities at the position.`,
+  'Justin Jefferson':`Jefferson's YPRR dropped to 1. 92 in 2025 — his lowest since 2021 — and his PPG fell from 16. 8 to 9. 4 in a contract year. He signed with MIN through 2028 at 27 with Kyler Murray as QB — a massive upgrade from the McCarthy era. The 2025 PPG dip (9.4) is entirely explainable by QB play and should rebound significantly. The model rates Justin Jefferson a strong buy at current market value — one of the best value opportunities at the position.`,
   'DK Metcalf':`Metcalf's move to PIT gives him a new system at 28 locked through 2029 — his YPRR has been 1. 80-2. 06 for four years, solidly above average. His 40% miss rate is clean. The model rates DK Metcalf a strong sell at current market value.`,
   'Parker Washington':`Washington's YPRR jumped from 1. 01 to 2. 10 in 2025 — promising — but his 70% miss rate across 37 games and walk-year 2026 contract make him high-risk. The model rates Parker Washington a sell at current market value.`,
   'Ladd McConkey':`McConkey's YPRR fell from 2. 37 to 1. 42 in 2025 — a sharp decline — earning the Fading tag. His 41% miss rate is fine but the efficiency step-back in year two is a concern; LAC locked him through 2027. The model rates Ladd McConkey a strong sell at current market value.`,
@@ -3149,20 +3150,18 @@ const SCOUT={
   'Rome Odunze':`Odunze's Rising tag reflects his opportunity — 1. 63 YPRR as a sophomore at 24 in CHI locked through 2028. His 65% miss rate is the concern pulling his model value below buy territory. The model rates Rome Odunze a hold at current market value.`,
   'Rashee Rice':`Rice's 2. 19 YPRR and 32% elite rate in a partial 2025 season are genuinely elite — he's one of the best WRs in the model when available. The injury history and walk-year 2026 contract are risks; the model rates him a buy based on efficiency and contract bonus. The model rates Rashee Rice a strong buy at current market value — one of the best value opportunities at the position.`,
   'Christian Watson':`Watson's YPRR is 2. 55 in 2025 — his best — but his 61% miss rate across 51 games and walk-year 2026 contract make him difficult to hold confidently. The model rates Christian Watson a hold at current market value.`,
-  'Brian Thomas Jr.':`Thomas Jr. fell from 2. 41 YPRR (2024) to 1. 54 (2025) — a real decline in year two — and his Fading tag is warranted. At 23 locked through 2028 with a 42% miss rate, the talent is real but the JAC environment is limiting. The model rates Brian Thomas Jr. The model rates Brian Thomas Jr. The model rates Brian Thomas Jr. a sell at current market value.`,
-  'Jordan Addison':`Addison's YPRR dropped from 1. 73 to 1. 42 in 2025 and his PPG fell to 8. 2 — a disappointing year two with a 53% miss rate. The model rates Jordan Addison a hold at current market value.`,
+  'Brian Thomas Jr.':`Thomas Jr. fell from 2. 41 YPRR (2024) to 1. 54 (2025) — a real decline in year two — and his Fading tag is warranted. At 23 locked through 2028 with a 42% miss rate, the talent is real but the JAC environment is limiting. The model rates Jordan Addison a hold at current market value.`,
   'Luther Burden':`Burden's 2. 71 YPRR as a true rookie in CHI is the highest first-year mark in the model — elite efficiency from Day 1. At 22 locked through 2028 with a Rising tag, the 75% miss rate reflects volume (he's in a developing system), not talent. The model rates Luther Burden a hold at current market value.`,
   'Elic Ayomanor':`Ayomanor's 1. 06 YPRR and 6. 0 PPG as a rookie in TEN is below-average efficiency in a weak system. At 23 locked through 2028, the upside requires significant situation and development improvement. The model rates Elic Ayomanor a strong sell at current market value.`,
   'Terry McLaurin':`McLaurin's 2. 26 YPRR in 2025 was genuinely strong — his best in four years — but his Fading tag reflects age (30) and a declining PPG trend. At 30 locked through 2028 in WAS's ascending offense, he may outperform the Fading tag short-term. The model rates Terry McLaurin a sell at current market value.`,
   'Tre Harris':`Harris' 1. 13 YPRR and 93% miss rate across 15 games as a rookie is one of the worst debut profiles in the model. LAC is investing in him but no contract is on file. The model rates Tre Harris a strong sell at current market value.`,
   'Jayden Higgins':`Higgins' 1. 48 YPRR and 6. 4 PPG as a rookie in HOU shows average efficiency with limited volume. At 23 locked through 2028 with Stroud throwing in a good system, the path to WR2 production is real. The model rates Jayden Higgins a hold at current market value.`,
   'Matthew Golden':`Golden's 1. 39 YPRR and 4. 0 PPG in 15 games is modest — a role player on a strong GB team at 23. The model rates Matthew Golden a sell at current market value.`,
-  'Ricky Pearsall':`Pearsall's YPRR improved from 1. 31 to 1. 90 in year two — real development — and SF locked him through 2028. At 26 in a strong system with Evans arriving and Kittle, the target competition is real but his efficiency is trending correctly. The model rates Ricky Pearsall a buy at current market value.`,
+  'Ricky Pearsall':`Pearsall's YPRR improved from 1. 31 to 1. 90 in year two — real development — and SF locked him through 2028 but Evans arriving as WR1 and Stribling drafted in Rd2 means Pearsall has fallen to WR3 — a significant ceiling limiter. The model rates Ricky Pearsall a sell at current market value.`,
   'Mike Evans':`Evans moved to SF at 33 on a 3-year deal — the team situation is the best of his career, but the age curve is undeniable. His 2025 YPRR (1. 64) dropped and his PPG fell to 8. 7 in only 11 games. The model rates Mike Evans a hold at current market value.`,
-  'Marvin Harrison Jr.':`Harrison Jr. 's 1. 61 YPRR is consistent across two seasons but his PPG has declined (9. 7→8. 9) and his 52% miss rate in a weak ARI system is the problem. The model rates Marvin Harrison Jr. The model rates Marvin Harrison Jr. The model rates Marvin Harrison Jr. a strong sell at current market value.`,
-  'Garrett Wilson':`Wilson's YPRR has declined from 1. 87 to 1. 73 over four years with a 43% miss rate and Fading tag — the NYJ offensive environment has been chronically limiting. Locked through 2030 at 26 in a rebuilt NYJ, there's real upside if Darnold or a new QB unlocks the offense. The model rates Garrett Wilson a strong sell at current market value.`,
+  'Marvin Harrison Jr.':`Harrison Jr. 's 1. 61 YPRR is consistent across two seasons but his PPG has declined (9.7→8.9) and his 52% miss rate with Jacoby Brissett as the 2026 bridge QB is the core problem. Harrison is a victim of situation, not talent — but the situation won't improve until Love is ready in 2027. The model rates Marvin Harrison Jr. a strong sell at current market value.`,
   'Xavier Worthy':`Worthy's 1. 33 YPRR and 65% miss rate across 31 games reflect a complementary role behind a crowded KC WR room. The model rates Xavier Worthy a sell at current market value.`,
-  'Keon Coleman':`Coleman's YPRR dropped from 1. 70 to 1. 27 in year two — below average — with a 75% miss rate in BUF. At 22 locked through 2027, he's competing with Shakir, Metcalf and a loaded BUF offense. The model rates Keon Coleman a sell at current market value.`,
+  'Keon Coleman':`Coleman's YPRR dropped from 1. 70 to 1. 27 in year two — below average — with a 75% miss rate in BUF. At 22 locked through 2027, he's competing with Shakir and a loaded BUF passing offense under Josh Allen. The model rates Keon Coleman a sell at current market value.`,
   'Josh Downs':`Downs' YPRR fell from 2. 19 to 1. 50 in 2025 — a step back in a walk year — and IND's QB situation is uncertain. The model rates Josh Downs a sell at current market value.`,
   'Travis Hunter':`Hunter is a unique dual-threat playing WR in JAC — 1. 32 YPRR and 75% miss rate in limited action as a true rookie at 23. Locked through 2028; monitor the NFL translation. The model rates Travis Hunter a strong sell at current market value.`,
   'Brandon Aiyuk':`Aiyuk is off a team (FA) with no 2025 production and no contract — the dynasty value is in the hope he lands somewhere good. His 1. 75-3. 02 YPRR history shows the talent is real. The model rates Brandon Aiyuk a strong sell at current market value.`,
@@ -3172,7 +3171,7 @@ const SCOUT={
   'Jauan Jennings':`Jennings is 29, FA, with no contract — his 11. 5 PPG (2024) spike in SF's system was situation-dependent and his 68% miss rate confirms the instability. The model rates Jauan Jennings a strong sell at current market value.`,
   'Stefon Diggs':`Diggs is 32, FA, with no contract after an injury year — his 2. 41 YPRR and 35% elite rate in 2025 are legitimately strong but unsustainable at his age and situation. The model rates Stefon Diggs a strong sell at current market value.`,
   'Jayden Reed':`Reed's YPRR dipped from 2. 21 to 1. 85 in 2025 with a 55% miss rate — the Fading tag is earned. At 25 in a walk year for GB, he needs an extension and a role upgrade. The model rates Jayden Reed a hold at current market value.`,
-  'Calvin Ridley':`Ridley's YPRR bounced back to 1. 89 in 2025 (14. 6 PPG) after a down 2024 — but his 59% miss rate across 44 games and age (31) cap the upside. The model rates Calvin Ridley a strong sell at current market value.`,
+  'Calvin Ridley':`Ridley played only 7 games in 2025 (5.5 PPG) — a sharp decline from his 2023 peak (13.8 PPG) — and is now entering 2026 at age 31 with Carnell Tate drafted as the clear WR1 replacement. The writing is on the wall. The model rates Calvin Ridley a strong sell at current market value.`,
   'Rashid Shaheed':`Shaheed's YPRR dropped from 2. 04 to 1. 41 in 2025 in SEA's new system — below average after two above-average seasons. The model rates Rashid Shaheed a strong sell at current market value.`,
   'Darnell Mooney':`Mooney's 0. 96 YPRR in 2025 is below average and declining — his efficiency has fallen from 1. 89 (2024) to under 1. 0. The model rates Darnell Mooney a strong sell at current market value.`,
   'Rashod Bateman':`Bateman's YPRR collapsed from 1. 69 to 0. 70 in 2025 — the worst mark of his career — with a 75% miss rate across 56 games. At 26 locked through 2029 in BAL, the talent hasn't translated to consistent production. The model rates Rashod Bateman a strong sell at current market value.`,
@@ -3183,8 +3182,7 @@ const SCOUT={
   'Chimere Dike':`Dike's 1. 03 YPRR as a rookie in TEN is below average with a 62% miss rate. The model rates Chimere Dike a strong sell at current market value.`,
   'Jalen Nailor':`Nailor's 1. 06 YPRR in a starting role and 80% miss rate across 46 games in LV is a poor efficiency profile. At 27 locked through 2028, he's a depth piece. The model rates Jalen Nailor a strong sell at current market value.`,
   'Marvin Mims':`Mims' YPRR fell sharply from 2. 57 to 1. 17 in 2025 — one of the steeper declines in the WR data — with a 77% miss rate. At 24 with no contract, the opportunity in DEN was real but the performance didn't follow. The model rates Marvin Mims a sell at current market value.`,
-  'K.J. Osborn':`Osborn is 28, FA, no contract, with declining production. The model rates K. J. The model rates K. J. The model rates K.J. Osborn a strong sell at current market value.`,
-  'Dontayvion Wicks':`Wicks' 1. 38 YPRR and 7. 4 PPG in GB are consistent but below-average — he's a complementary piece in a stacked offense. The model rates Dontayvion Wicks a sell at current market value.`,
+  'K.J. Osborn':`Osborn is 28, FA, no contract, with declining production. The model rates Dontayvion Wicks a sell at current market value.`,
   'Jalen Tolbert':`Tolbert's 0. 77 YPRR and 5. 6 PPG in 2025 are a step backward — declining efficiency as the WR3 in DAL. The model rates Jalen Tolbert a sell at current market value.`,
   'Christian Kirk':`Kirk is 29, FA, and his 0. 85 YPRR in 2025 was the worst of his career. The model rates Christian Kirk a strong sell at current market value.`,
   'Jack Bech':`Bech's 1. 15 YPRR across two years in LV is below average with a 92% miss rate as a role player. The model rates Jack Bech a strong sell at current market value.`,
@@ -3207,8 +3205,7 @@ const SCOUT={
   'Marquise Brown':`Brown is 29, FA, with declining YPRR (1. 49) and no contract after limited production. The model rates Marquise Brown a strong sell at current market value.`,
   "Ja'Marr Chase":`Chase's 2. 23 YPRR, 43% elite rate, and 32% miss rate across 65 games represent the gold standard at WR. His no-contract situation is the only risk — CIN will pay him, but the walk year in 2026 is a negotiation storyline. The model rates Ja'Marr Chase a strong buy at current market value — one of the best value opportunities at the position.`,
   "Wan'Dale Robinson":`Robinson's YPRR bounced back to 1. 90 in 2025 with 5. 4 receptions per game — the receiving volume is real — but his 66% miss rate is the persistent concern. The model rates Wan'Dale Robinson a strong sell at current market value.`,
-  'D.J. Moore':`Moore's YPRR fell to 1. 25 in 2025 — below average — with a 56% miss rate in BUF's crowded offense. At 29 locked through 2029, the role compression is real with Metcalf arriving. The model rates D. J. The model rates D. J. The model rates D.J. Moore a sell at current market value.`,
-  'Bijan Robinson':`Robinson's 4. 65 receptions per game and elite 46% elite rate across 50 games make him the most complete RB in dynasty — he's worth full PPR premium even at market value 9,995. His EPA is negative (the running game is average) but the receiving work is irreplaceable. The model rates Bijan Robinson a hold at current market value.`,
+  'D.J. Moore':`Moore's YPRR fell to 1. 25 in 2025 — below average — with a 56% miss rate in BUF's crowded offense. At 29 locked through 2029, the role compression is real in BUF's crowded WR room. The model rates Bijan Robinson a hold at current market value.`,
   'Jahmyr Gibbs':`Gibbs' 4. 53 receptions per game and 43% elite rate across 49 games are elite dual-threat numbers — the Rising tag reflects an expanding role at 24 in DET's offense. Locked through 2027; buy if you can get him near market value. The model rates Jahmyr Gibbs a buy at current market value.`,
   'James Cook':`Cook's 52% snap share and 1. 9 rec/game make him a volume-dependent RB2 — his per-carry efficiency (0. 02 EPA) is nearly average. The model rates James Cook a hold at current market value.`,
   'Jonathan Taylor':`Taylor's 0. 05 EPA/rush in 2025 was his best since 2021 and his 70% snap share is elite — but his 2. 7 rec/game limits his PPR upside significantly. Walk-year contract in 2026 at 27 is the key inflection. The model rates Jonathan Taylor a hold at current market value.`,
@@ -3243,8 +3240,7 @@ const SCOUT={
   'Omarion Hampton':`Hampton's -0. 01 EPA and 57% snap share as a rookie in LAC across only 9 games is too small a sample. The model rates Omarion Hampton a sell at current market value.`,
   'Blake Corum':`Corum's +0. 11 EPA/rush is the best mark among LAR RBs — the most efficient rusher in the model at his price point — but his 23% snap share and 0. 5 rec/game cap his PPG ceiling significantly. The model rates Blake Corum a hold at current market value.`,
   'Cam Skattebo':`Skattebo's -0. 13 EPA and 54% snap share across only 8 games as a rookie is a tiny sample. The model rates Cam Skattebo a strong sell at current market value.`,
-  'J.K. Dobbins':`Dobbins' +0. 03 EPA/rush across 32 games is above average — he's an efficient runner when available. The model rates J. K. The model rates J. K. The model rates J.K. Dobbins a hold at current market value.`,
-  'Chuba Hubbard':`Hubbard's EPA/rush turned negative in 2025 (-0. 11) after a strong 2024 and his PPG fell from 14. 7 to 7. 4 — a real step back with a Fading tag. The model rates Chuba Hubbard a strong sell at current market value.`,
+  'J.K. Dobbins':`Dobbins' +0. 03 EPA/rush across 32 games is above average — he's an efficient runner when available. The model rates Chuba Hubbard a strong sell at current market value.`,
   'Bhayshul Tuten':`Tuten's -0. 11 EPA and 45% snap share with an 85% miss rate across 13 games as a rookie in JAC are poor numbers. The model rates Bhayshul Tuten a hold at current market value.`,
   'Aaron Jones':`Jones is 31 with a walk-year 2026 contract and Fading tag — his 48% snap share in MIN is a committee role and his EPA has been negative for two years. The model rates Aaron Jones a strong sell at current market value.`,
   'Tyjae Spears':`Spears' -0. 05 EPA and 41% snap share in TEN with 2. 6 rec/game are modest numbers in a weak system. The model rates Tyjae Spears a strong sell at current market value.`,
@@ -3280,8 +3276,7 @@ const SCOUT={
   'Kyle Pitts':`Pitts' YPRR improved from 1. 33 to 1. 72 in 2025 and his 5. 2 receptions per game are elite — but his 59% miss rate across 63 games is the persistent problem. Walk-year 2026 at 25 in ATL; the talent is real but the floor is genuinely low. The model rates Kyle Pitts a hold at current market value.`,
   'Travis Kelce':`Kelce's YPRR has declined from 2. 23 to 1. 46 across four seasons — a clear downward arc — and he's 36 locked through 2028. His 32% miss rate stays clean but the production peak is behind him. The model rates Travis Kelce a hold at current market value.`,
   'Tyler Warren':`Warren's 1. 61 YPRR and 50% miss rate as a true rookie in IND are average, which is actually promising for a first-year TE in a developing system. The model rates Tyler Warren a buy at current market value.`,
-  'Harold Fannin Jr.':`Fannin's 1. 66 YPRR and 24% elite rate across 17 games as a true rookie in CLE — the best debut efficiency of any 2025 TE rookie — with a Rising tag. At 22 locked through 2028, this is a top-5 TE in dynasty within two years if the environment develops. The model rates Harold Fannin Jr. The model rates Harold Fannin Jr. The model rates Harold Fannin Jr. a hold at current market value.`,
-  'Dallas Goedert':`Goedert's YPRR swung from 2. 22 (2024) to 1. 37 (2025) — sharp decline — and his 47% miss rate and walk-year 2026 contract make him difficult to hold. At 31, the age compounds the concern. The model rates Dallas Goedert a sell at current market value.`,
+  'Harold Fannin Jr.':`Fannin's 1. 66 YPRR and 24% elite rate across 17 games as a true rookie in CLE — the best debut efficiency of any 2025 TE rookie — with a Rising tag. At 22 locked through 2028, this is a top-5 TE in dynasty within two years if the environment develops. The model rates Dallas Goedert a sell at current market value.`,
   'Juwan Johnson':`Johnson's 1. 69 YPRR and 4. 5 receptions per game in 2025 are strong for a 30-year-old — but NO's offense and his age make this a diminishing asset. The model rates Juwan Johnson a hold at current market value.`,
   'Hunter Henry':`Henry's 1. 66 YPRR in 2025 is his best mark — genuinely elite — but at 31 with a walk-year 2026 contract, the output is likely to continue declining. The model rates Hunter Henry a hold at current market value.`,
   'Dalton Schultz':`Schultz's YPRR (1. 56 in 2025) is above average with 4. 8 receptions per game — he's a consistent TE2 in HOU's offense. At 30 locked through 2027, he's a reliable floor in TEP formats. The model rates Dalton Schultz a hold at current market value.`,
@@ -3296,10 +3291,9 @@ const SCOUT={
   'Brenton Strange':`Strange's YPRR has improved every season (0. 41→1. 47→1. 74) — consistent development — and his 2025 breakout (9. 8 PPG) is encouraging. The model rates Brenton Strange a buy at current market value.`,
   'Tucker Kraft':`Kraft's YPRR has improved each season (1. 20→1. 59→2. 30) — one of the cleanest efficiency arcs in the TE data — and his 14. 7 PPG in 2025 was genuine production. The model rates Tucker Kraft a buy at current market value.`,
   'Pat Freiermuth':`Freiermuth's YPRR (1. 56) is above average but his PPG fell to 6. 7 in 2025 — his worst full season — with a 64% miss rate and Fading tag in PIT's crowded offense. The model rates Pat Freiermuth a strong sell at current market value.`,
-  'T.J. Hockenson':`Hockenson's YPRR has declined from 1. 89 to 1. 05 across four seasons and his PPG fell from 14. 6 (2023) to 7. 5 (2025). The model rates T. J. The model rates T. J. The model rates T.J. Hockenson a buy at current market value.`,
-  'Evan Engram':`Engram is 32 with a walk-year 2026 contract and declining YPRR (1. 29) — he was a top-3 TE in 2023 but the window has closed. The model rates Evan Engram a hold at current market value.`,
+  'T.J. Hockenson':`Hockenson's YPRR has declined from 1. 89 to 1. 05 across four seasons and his PPG fell from 14. 6 (2023) to 7. 5 (2025). The model rates Evan Engram a hold at current market value.`,
   'Gunnar Helm':`Helm's 1. 47 YPRR as a true rookie in TEN is above average — promising debut efficiency at 24 locked through 2028. His 76% miss rate reflects limited usage in a developing system. The model rates Gunnar Helm a sell at current market value.`,
-  'Mason Taylor':`Taylor's 1. 04 YPRR across two seasons in NYJ is below average with a Fading tag — the output (6. 8 PPG) doesn't match market value. At 22 locked through 2028, the age gives him runway but the early production is underwhelming. The model rates Mason Taylor a strong sell at current market value.`,
+  'Mason Taylor':`Taylor's 1. 04 YPRR across two seasons in NYJ is below average with a Fading tag — the output (6. 8 PPG) doesn't match market value. At 22 locked through 2028, the age gives him runway but Kenyon Sadiq was drafted in the first round to replace him as TE1 — Taylor's path to targets is now significantly more difficult. The model rates Mason Taylor a strong sell at current market value.`,
   'Isaiah Likely':`Likely's four-year YPRR (1. 41→1. 45→1. 53→1. 31) has been consistently average to above-average — but he moved to NYG where the target share is unclear and his PPG fell to 4. 4 PPG in 2025. The model rates Isaiah Likely a strong sell at current market value.`,
   'Cole Kmet':`Kmet's YPRR peaked at 1. 67 (2023) and fell to 1. 00 (2025) — declining efficiency with a 74% miss rate across 70 games. The model rates Cole Kmet a hold at current market value.`,
   'Jake Ferguson':`Ferguson's YPRR has declined from 1. 66 (2022) to 1. 20 (2025) with 4. 8 receptions per game making him high-volume but declining efficiency. The model rates Jake Ferguson a hold at current market value.`,
@@ -3915,6 +3909,11 @@ function recalcTrade(){
         <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
         ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
       </div>
+      ${(()=>{const ctx=SLEEPER.getTradeContext(sA,sB);return ctx&&ctx.length?`
+      <div style="margin:8px 0;padding:8px 12px;background:#1a2332;border-radius:6px;border-left:3px solid #4a90d9">
+        <div style="font-size:10px;font-weight:700;color:#4a90d9;margin-bottom:4px">📋 ROSTER CONTEXT</div>
+        ${ctx.map(c=>`<div style="font-size:11px;color:#a0aec0;margin-top:2px">${c}</div>`).join('')}
+      </div>`:'';})()}
       <div class="breakdown-grid">
         <div><div class="section-label">Team A receives</div>
           ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
@@ -5208,5 +5207,278 @@ if (document.readyState === 'complete') {
 
 </script>
 
+
+<script>
+
+// ── SLEEPER INTEGRATION ──────────────────────────────────────────────────
+const SLEEPER = {
+  leagueId:null, userId:null, roster:null, picks:[], leagueName:null,
+  teamName:null, playerMap:null, allRosters:null,
+
+  async init(leagueId) {
+    try {
+      this.leagueId = leagueId;
+      localStorage.setItem('delta_sleeper_league', leagueId);
+      const [league, rosters, users] = await Promise.all([
+        this.fetch(`/v1/league/${leagueId}`),
+        this.fetch(`/v1/league/${leagueId}/rosters`),
+        this.fetch(`/v1/league/${leagueId}/users`),
+      ]);
+      this.leagueName = league.name;
+      this.allRosters = rosters;
+      const userMap = {};
+      users.forEach(u => { userMap[u.user_id] = u.display_name; });
+      this.showTeamSelector(rosters, userMap);
+      return true;
+    } catch(e) {
+      console.error('[DELTA Sleeper] Init failed:', e.message);
+      return false;
+    }
+  },
+
+  async fetch(path) {
+    const res = await fetch(`https://api.sleeper.app/v1${path}`);
+    if (!res.ok) throw new Error(`Sleeper API ${res.status}`);
+    return res.json();
+  },
+
+  showTeamSelector(rosters, userMap) {
+    const modal = document.getElementById('sleeper-team-modal') || this.createTeamModal();
+    const list = modal.querySelector('#sleeper-team-list');
+    list.innerHTML = rosters.map(r => {
+      const name = userMap[r.owner_id] || `Team ${r.roster_id}`;
+      return `<div onclick="SLEEPER.selectTeam(${r.roster_id},'${name.replace(/'/g,"\\'")}',event)"
+                style="padding:8px 12px;cursor:pointer;border-radius:6px;margin-bottom:4px;
+                       background:#1a2332;border:1px solid #2d3f55;color:#e2e8f0;font-weight:600">${name}</div>`;
+    }).join('');
+    modal.style.display = 'flex';
+  },
+
+  createTeamModal() {
+    const modal = document.createElement('div');
+    modal.id = 'sleeper-team-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:9999';
+    modal.innerHTML = `<div style="background:#0f1724;border:1px solid #2d3f55;border-radius:12px;padding:24px;width:300px;max-height:70vh;overflow-y:auto">
+      <div style="font-weight:700;font-size:13px;color:#7dd3fc;margin-bottom:4px">SELECT YOUR TEAM</div>
+      <div style="font-size:11px;color:#4a5568;margin-bottom:12px">${this.leagueName}</div>
+      <div id="sleeper-team-list"></div>
+      <button onclick="document.getElementById('sleeper-team-modal').style.display='none'"
+              style="margin-top:10px;width:100%;padding:7px;background:#1a2332;border:1px solid #2d3f55;
+                     border-radius:6px;color:#718096;cursor:pointer;font-size:11px">Cancel</button>
+    </div>`;
+    document.body.appendChild(modal);
+    return modal;
+  },
+
+  async selectTeam(rosterId, teamName) {
+    document.getElementById('sleeper-team-modal').style.display = 'none';
+    this.teamName = teamName;
+    const roster = this.allRosters.find(r => r.roster_id === rosterId);
+    if (!roster) return;
+    const playerIds = [...(roster.players||[]), ...(roster.reserve||[])];
+    this.picks = roster.draft_picks || [];
+    await this.buildPlayerMap(playerIds);
+    this.roster = playerIds.map(id => this.playerMap[id]).filter(Boolean);
+    localStorage.setItem('delta_sleeper_roster_id', rosterId);
+    localStorage.setItem('delta_sleeper_team', teamName);
+    this.showMyTeamTab();
+    renderMyTeam();
+  },
+
+  async buildPlayerMap(neededIds) {
+    const cached = sessionStorage.getItem('sleeper_player_map');
+    if (cached) { this.playerMap = JSON.parse(cached); return; }
+    const players = await this.fetch('/v1/players/nfl');
+    const rawNames = {};
+    RAW.forEach(p => { rawNames[p.n.toLowerCase()] = p.n; });
+    const map = {};
+    Object.entries(players).forEach(([id, p]) => {
+      if (!p.first_name || !p.last_name) return;
+      const full = `${p.first_name} ${p.last_name}`.toLowerCase();
+      if (rawNames[full]) map[id] = rawNames[full];
+    });
+    this.playerMap = map;
+    sessionStorage.setItem('sleeper_player_map', JSON.stringify(map));
+  },
+
+  showMyTeamTab() {
+    if (!document.getElementById('tab-myteam')) {
+      const tabs = document.querySelector('.tabs');
+      const tab = document.createElement('button');
+      tab.id = 'tab-myteam'; tab.className = 'tab';
+      tab.textContent = 'My Team';
+      tab.onclick = () => showPanel('myteam');
+      tabs.appendChild(tab);
+      const panel = document.createElement('div');
+      panel.id = 'panel-myteam'; panel.className = 'panel';
+      document.querySelector('.panels').appendChild(panel);
+    }
+    const btn = document.getElementById('sleeper-connect-btn');
+    if (btn) { btn.textContent = `🏈 ${this.teamName}`; btn.style.color = '#6ee7b7'; }
+  },
+
+  disconnect() {
+    ['delta_sleeper_league','delta_sleeper_roster_id','delta_sleeper_team']
+      .forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('sleeper_player_map');
+    Object.assign(this, {leagueId:null,roster:null,teamName:null,playerMap:null,allRosters:null});
+    ['tab-myteam','panel-myteam'].forEach(id => { const el = document.getElementById(id); if(el) el.remove(); });
+    const btn = document.getElementById('sleeper-connect-btn');
+    if (btn) { btn.textContent = '🏈 Connect Sleeper'; btn.style.color = ''; }
+  },
+
+  getTradeContext(giving, receiving) {
+    if (!this.roster?.length) return null;
+    const rp = COMP.filter(p => this.roster.includes(p.n));
+    const givingNames = giving.map(p => p.n);
+    const insights = [];
+    giving.forEach(p => {
+      if (!p.pos||p.ip) return;
+      const rem = rp.filter(r => r.pos===p.pos && !givingNames.includes(r.n));
+      if (rem.length===0) insights.push(`⚠ Giving ${p.n} — no other ${p.pos} on roster`);
+      else if (rem.length===1) insights.push(`Giving ${p.n} — 1 ${p.pos} remaining after trade`);
+    });
+    receiving.forEach(p => {
+      if (!p.pos||p.ip) return;
+      const cur = rp.filter(r => r.pos===p.pos && !givingNames.includes(r.n));
+      if (cur.length===0) insights.push(`✓ Receiving ${p.n} fills empty ${p.pos} spot`);
+      else if (cur.length>=3) insights.push(`Receiving ${p.n} — already have ${cur.length} ${p.pos}s`);
+    });
+    const gPicks = giving.filter(p=>p.ip).length;
+    const rPicks = receiving.filter(p=>p.ip).length;
+    const owned = this.picks.length;
+    if (gPicks>0 && owned<=2) insights.push(`⚠ Giving away picks — only own ${owned} future picks`);
+    if (rPicks>0) insights.push(`✓ Adding picks — currently own ${owned}`);
+    return insights.length ? insights : null;
+  }
+};
+
+function renderMyTeam() {
+  const panel = document.getElementById('panel-myteam');
+  if (!panel || !SLEEPER.roster) return;
+  const rp = COMP.filter(p => SLEEPER.roster.includes(p.n)).sort((a,b)=>b.ktcEff-a.ktcEff);
+  const byPos = {QB:[],RB:[],WR:[],TE:[]};
+  rp.forEach(p => { if(byPos[p.pos]) byPos[p.pos].push(p); });
+
+  const str = pos => {
+    const ps = byPos[pos];
+    if (!ps.length) return {label:'Empty',cls:'bd'};
+    const avg = ps.reduce((s,p)=>s+p.ktcEff,0)/ps.length;
+    return avg>7000?{label:'Elite',cls:'bs'}:avg>5000?{label:'Strong',cls:'bi'}:
+           avg>3000?{label:'Average',cls:'bn'}:{label:'Weak',cls:'bw'};
+  };
+
+  const posRows = pos => byPos[pos].length===0
+    ? `<tr><td colspan="5" style="padding:6px 8px;color:#4a5568;font-size:11px">${pos} — empty</td></tr>`
+    : byPos[pos].map((p,i) => {
+        const v = p.gap>500?{t:'BUY',c:'#6ee7b7'}:p.gap<-500?{t:'SELL',c:'#f87171'}:{t:'HOLD',c:'#fbbf24'};
+        const isR = p.g25===0&&p.ppg25>0;
+        return `<tr style="border-bottom:1px solid #1a2332">
+          <td style="padding:5px 8px;font-weight:${i===0?700:400};color:#e2e8f0;font-size:12px">
+            ${isR?'<span class="badge bi" style="font-size:9px;margin-right:3px">R</span>':''}${p.n}</td>
+          <td style="padding:5px 8px;color:#718096;font-size:11px">${p.t}</td>
+          <td style="padding:5px 8px;color:#7dd3fc;font-size:11px">${p.ktcEff.toLocaleString()}</td>
+          <td style="padding:5px 8px;color:#a0aec0;font-size:11px">${getAdjProj(p).toFixed(1)}</td>
+          <td style="padding:5px 8px;font-size:11px;font-weight:700;color:${v.c}">${v.t}</td>
+        </tr>`;
+      }).join('');
+
+  const posSection = pos => `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <span style="font-size:11px;font-weight:700;color:#7dd3fc">${pos}</span>
+        <span class="badge ${str(pos).cls}" style="font-size:9px">${str(pos).label}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:1px solid #2d3f55">
+          <th style="text-align:left;padding:3px 8px;font-size:10px;color:#4a5568">Player</th>
+          <th style="text-align:left;padding:3px 8px;font-size:10px;color:#4a5568">Team</th>
+          <th style="text-align:left;padding:3px 8px;font-size:10px;color:#4a5568">Mkt</th>
+          <th style="text-align:left;padding:3px 8px;font-size:10px;color:#4a5568">Proj</th>
+          <th style="text-align:left;padding:3px 8px;font-size:10px;color:#4a5568">Signal</th>
+        </tr></thead>
+        <tbody>${posRows(pos)}</tbody>
+      </table>
+    </div>`;
+
+  const sells = rp.filter(p=>p.gap<-800).slice(0,3);
+  const buys = COMP.filter(p=>!SLEEPER.roster.includes(p.n)&&p.gap>800)
+                   .sort((a,b)=>b.gap-a.gap).slice(0,5);
+
+  panel.innerHTML = `<div style="padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#7dd3fc">${SLEEPER.teamName}</div>
+        <div style="font-size:11px;color:#4a5568">${SLEEPER.leagueName}</div>
+      </div>
+      <button onclick="SLEEPER.disconnect()"
+              style="font-size:10px;color:#4a5568;background:none;border:1px solid #2d3f55;
+                     border-radius:4px;padding:3px 7px;cursor:pointer">Disconnect</button>
+    </div>
+    ${['QB','RB','WR','TE'].map(posSection).join('')}
+    ${sells.length?`<div style="margin-top:14px;padding:10px;background:#1a1a2e;border-radius:8px;border-left:3px solid #f87171">
+      <div style="font-size:11px;font-weight:700;color:#f87171;margin-bottom:6px">🔴 SELL CANDIDATES</div>
+      ${sells.map(p=>`<div style="font-size:11px;color:#e2e8f0;margin-bottom:3px">${p.n}
+        <span style="color:#4a5568"> — model ${p.mv.toLocaleString()} vs mkt ${p.ktcEff.toLocaleString()}</span></div>`).join('')}
+    </div>`:''}
+    ${buys.length?`<div style="margin-top:10px;padding:10px;background:#0f2318;border-radius:8px;border-left:3px solid #6ee7b7">
+      <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:6px">🟢 BUY TARGETS</div>
+      ${buys.map(p=>`<div style="font-size:11px;color:#e2e8f0;margin-bottom:3px">${p.n}
+        <span style="color:#4a5568"> — model ${p.mv.toLocaleString()} vs mkt ${p.ktcEff.toLocaleString()}</span></div>`).join('')}
+    </div>`:''}
+  </div>`;
+}
+
+function showSleeperConnect() {
+  const ex = document.getElementById('sleeper-connect-modal');
+  if (ex) { ex.style.display='flex'; return; }
+  const modal = document.createElement('div');
+  modal.id = 'sleeper-connect-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:9999';
+  modal.innerHTML = `<div style="background:#0f1724;border:1px solid #2d3f55;border-radius:12px;padding:24px;width:320px">
+    <div style="font-weight:700;font-size:14px;color:#7dd3fc;margin-bottom:4px">CONNECT SLEEPER</div>
+    <div style="font-size:11px;color:#4a5568;margin-bottom:14px">Enter your Sleeper league ID for personalized roster insights and roster-aware trade analysis. Find it in your league URL or settings.</div>
+    <input id="sleeper-league-input" placeholder="e.g. 1330995308334682112"
+           style="width:100%;padding:8px 12px;background:#1a2332;border:1px solid #2d3f55;border-radius:6px;
+                  color:#e2e8f0;font-size:12px;margin-bottom:10px;box-sizing:border-box"
+           onkeydown="if(event.key==='Enter')connectSleeper()">
+    <div style="display:flex;gap:8px">
+      <button onclick="connectSleeper()"
+              style="flex:1;padding:8px;background:#4a90d9;border:none;border-radius:6px;color:white;font-weight:600;cursor:pointer;font-size:12px">Connect</button>
+      <button onclick="document.getElementById('sleeper-connect-modal').style.display='none'"
+              style="flex:1;padding:8px;background:#1a2332;border:1px solid #2d3f55;border-radius:6px;color:#718096;cursor:pointer;font-size:12px">Cancel</button>
+    </div>
+    <div id="sleeper-connect-status" style="margin-top:8px;font-size:11px;color:#4a5568;text-align:center;min-height:16px"></div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+async function connectSleeper() {
+  const input = document.getElementById('sleeper-league-input');
+  const status = document.getElementById('sleeper-connect-status');
+  const id = (input?.value||'').trim();
+  if (!id) { status.textContent='Please enter a league ID'; return; }
+  status.textContent='Connecting...'; status.style.color='#7dd3fc';
+  const ok = await SLEEPER.init(id);
+  if (ok) {
+    document.getElementById('sleeper-connect-modal').style.display='none';
+  } else {
+    status.textContent='Could not connect — check your league ID';
+    status.style.color='#f87171';
+  }
+}
+
+// Auto-restore from localStorage
+window.addEventListener('load', async () => {
+  const lg = localStorage.getItem('delta_sleeper_league');
+  const rid = localStorage.getItem('delta_sleeper_roster_id');
+  const tm = localStorage.getItem('delta_sleeper_team');
+  if (lg && rid && tm) {
+    const ok = await SLEEPER.init(lg);
+    if (ok) await SLEEPER.selectTeam(parseInt(rid), tm);
+  }
+});
+
+</script>
 </body>
 </html>
