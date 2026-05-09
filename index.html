@@ -5219,11 +5219,18 @@ const SLEEPER = {
     try {
       this.leagueId = leagueId;
       localStorage.setItem('delta_sleeper_league', leagueId);
-      const [league, rosters, users] = await Promise.all([
-        this.fetch(`/v1/league/${leagueId}`),
-        this.fetch(`/v1/league/${leagueId}/rosters`),
-        this.fetch(`/v1/league/${leagueId}/users`),
-      ]);
+      console.log('[DELTA Sleeper] Connecting to league:', leagueId);
+
+      // Fetch sequentially to get better error messages
+      const league = await this.fetch(`/v1/league/${leagueId}`);
+      console.log('[DELTA Sleeper] League found:', league.name);
+
+      const rosters = await this.fetch(`/v1/league/${leagueId}/rosters`);
+      console.log('[DELTA Sleeper] Rosters:', rosters.length);
+
+      const users = await this.fetch(`/v1/league/${leagueId}/users`);
+      console.log('[DELTA Sleeper] Users:', users.length);
+
       this.leagueName = league.name;
       this.allRosters = rosters;
       const userMap = {};
@@ -5231,15 +5238,24 @@ const SLEEPER = {
       this.showTeamSelector(rosters, userMap);
       return true;
     } catch(e) {
-      console.error('[DELTA Sleeper] Init failed:', e.message);
+      console.error('[DELTA Sleeper] Init failed:', e.message, e);
       return false;
     }
   },
 
   async fetch(path) {
-    const res = await fetch(`https://api.sleeper.app/v1${path}`);
-    if (!res.ok) throw new Error(`Sleeper API ${res.status}`);
-    return res.json();
+    const url = path.startsWith('http') ? path : `https://api.sleeper.app/v1${path}`;
+    console.log('[DELTA Sleeper] Fetching:', url);
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!res.ok) throw new Error(`Sleeper API ${res.status} for ${path}`);
+    const data = await res.json();
+    if (data === null || (Array.isArray(data) && data.length === 0 && path.includes('league/'))) {
+      throw new Error(`Empty response for ${path} — check league ID`);
+    }
+    return data;
   },
 
   showTeamSelector(rosters, userMap) {
@@ -5463,7 +5479,7 @@ async function connectSleeper() {
   if (ok) {
     document.getElementById('sleeper-connect-modal').style.display='none';
   } else {
-    status.textContent='Could not connect — check your league ID';
+    status.textContent='Could not connect — check browser console for details';
     status.style.color='#f87171';
   }
 }
