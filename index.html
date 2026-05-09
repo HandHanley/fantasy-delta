@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * https:; img-src * data:; font-src * data:;">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DELTA v1.0 — Dynasty Efficiency & Long-Term Analysis</title>
@@ -5248,7 +5250,12 @@ const SLEEPER = {
     console.log('[DELTA Sleeper] Fetching:', url);
     const res = await fetch(url, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      mode: 'cors',
+      credentials: 'omit',
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
     });
     if (!res.ok) throw new Error(`Sleeper API ${res.status} for ${path}`);
     const data = await res.json();
