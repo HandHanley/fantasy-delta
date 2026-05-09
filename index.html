@@ -5246,23 +5246,32 @@ const SLEEPER = {
   },
 
   async fetch(path) {
-    const url = path.startsWith('http') ? path : `https://api.sleeper.app/v1${path}`;
-    console.log('[DELTA Sleeper] Fetching:', url);
-    const res = await fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      headers: { 
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!res.ok) throw new Error(`Sleeper API ${res.status} for ${path}`);
-    const data = await res.json();
-    if (data === null || (Array.isArray(data) && data.length === 0 && path.includes('league/'))) {
-      throw new Error(`Empty response for ${path} — check league ID`);
+    const sleeperUrl = path.startsWith('http') ? path : `https://api.sleeper.app/v1${path}`;
+    console.log('[DELTA Sleeper] Fetching:', sleeperUrl);
+
+    // Try direct fetch first, fall back to CORS proxy if blocked
+    const attempts = [
+      () => fetch(sleeperUrl, {method:'GET', mode:'cors', credentials:'omit'}),
+      () => fetch(`https://corsproxy.io/?${encodeURIComponent(sleeperUrl)}`),
+      () => fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(sleeperUrl)}`),
+    ];
+
+    let lastErr;
+    for (const attempt of attempts) {
+      try {
+        const res = await attempt();
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data === null || (Array.isArray(data) && data.length === 0 && path.includes('league/'))) {
+          throw new Error(`Empty response — check league ID`);
+        }
+        return data;
+      } catch(e) {
+        console.warn('[DELTA Sleeper] Attempt failed:', e.message);
+        lastErr = e;
+      }
     }
-    return data;
+    throw lastErr;
   },
 
   showTeamSelector(rosters, userMap) {
