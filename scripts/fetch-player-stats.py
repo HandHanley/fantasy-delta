@@ -121,14 +121,38 @@ def fetch_season_stats():
     return result
 
 # ── MATCH NAMES ───────────────────────────────────────────────────────────
+# Hardcoded aliases: DELTA name → nflverse name
+ALIASES = {
+    'Chigoziem Okonkwo': 'Chig Okonkwo',
+    "Ja'Marr Chase":     "Ja'Marr Chase",  # try exact
+    'JaMarr Chase':      "Ja'Marr Chase",
+}
+
 def match_names(agg, delta_names):
     nfl_names = agg['player_name'].unique()
     nfl_norm  = {norm(n): n for n in nfl_names}
+
+    # Debug: show what nflverse has for Chase specifically
+    chase_matches = [(k,v) for k,v in nfl_norm.items() if 'chase' in k or 'marr' in k]
+    print(f"[DELTA] Chase/Marr in nflverse: {chase_matches[:5]}")
 
     matched   = {}
     not_found = []
 
     for name in delta_names:
+        # Check hardcoded alias first
+        if name in ALIASES:
+            alias = ALIASES[name]
+            # Try to find alias in nfl_norm
+            alias_key = norm(alias)
+            if alias_key in nfl_norm:
+                matched[name] = nfl_norm[alias_key]
+                continue
+            # Try exact match in nfl_names
+            if alias in nfl_names:
+                matched[name] = alias
+                continue
+
         key = norm(name)
         if key in nfl_norm:
             matched[name] = nfl_norm[key]
