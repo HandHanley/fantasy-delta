@@ -21,14 +21,25 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch market values and player stats
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install nfl-data-py pandas --quiet
+
+      - name: Fetch FantasyCalc market values
         run: node scripts/fetch-market-values.js
+
+      - name: Fetch NFL player stats
+        run: python scripts/fetch-player-stats.py
 
       - name: Commit updated data
         run: |
           git config user.name "DELTA Bot"
           git config user.email "delta-bot@users.noreply.github.com"
-          git add data/market-values.json data/player-stats.json 2>/dev/null || git add data/market-values.json
+          git add data/market-values.json data/player-stats.json 2>/dev/null || git add data/
           if git diff --staged --quiet; then
             echo "No changes — skipping commit"
           else
