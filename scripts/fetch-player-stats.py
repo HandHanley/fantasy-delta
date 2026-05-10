@@ -146,6 +146,15 @@ def match_names(agg, delta_names):
             else:
                 not_found.append(name)
 
+    # Debug: show what nflverse has for unmatched players
+    for uf in not_found[:5]:
+        key = norm(uf)
+        # Find similar names in nfl_norm
+        similar = [v for k,v in nfl_norm.items() 
+                   if any(w in k for w in key.split() if len(w)>3)][:3]
+        if similar:
+            print(f"  '{uf}' (norm:'{key}') → similar in nflverse: {similar}")
+
     print(f"[DELTA] Matched: {len(matched)}/{len(delta_names)}")
     if not_found:
         print(f"[DELTA] Unmatched: {', '.join(not_found[:25])}")
@@ -209,7 +218,7 @@ def spot_check(players, season=2025):
 
 # ── MAIN ──────────────────────────────────────────────────────────────────
 def main():
-    print(f"[DELTA] Starting at {datetime.datetime.utcnow().isoformat()}")
+    print(f"[DELTA] Starting at {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     delta_names = get_delta_players()
@@ -220,7 +229,7 @@ def main():
     players = build_output(agg, matched)
 
     output = {
-        'fetched': datetime.datetime.utcnow().isoformat() + 'Z',
+        'fetched': datetime.datetime.now(datetime.timezone.utc).isoformat() + 'Z',
         'seasons': SEASONS,
         'note':    'Raw stats — PPG calculated client-side per scoring format dropdown',
         'players': players,
