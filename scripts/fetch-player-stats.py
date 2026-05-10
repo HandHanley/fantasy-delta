@@ -38,8 +38,10 @@ def get_delta_players():
 
 # ── NORMALISE NAME ────────────────────────────────────────────────────────
 def norm(name):
+    # Strip apostrophes/quotes entirely — nflverse omits them (Ja'Marr → Jamarr)
+    name = name.replace("'", "").replace("\u2019", "").replace("`", "")
     return re.sub(r'\s+', ' ',
-           re.sub(r"[^a-z\s']", '',
+           re.sub(r"[^a-z\s]", '',
            re.sub(r'\b(jr|sr|ii|iii|iv)\.?\b', '',
            name.lower()))).strip()
 
