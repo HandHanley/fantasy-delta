@@ -38,12 +38,15 @@ def get_delta_players():
 
 # ── NORMALISE NAME ────────────────────────────────────────────────────────
 def norm(name):
-    # Strip apostrophes/quotes entirely — nflverse omits them (Ja'Marr → Jamarr)
-    name = name.replace("'", "").replace("\u2019", "").replace("`", "")
-    return re.sub(r'\s+', ' ',
-           re.sub(r"[^a-z\s]", '',
-           re.sub(r'\b(jr|sr|ii|iii|iv)\.?\b', '',
-           name.lower()))).strip()
+    # Strip ALL quote/apostrophe variants — nflverse omits them
+    import unicodedata
+    # Normalize unicode (converts curly quotes to ASCII equivalents)
+    name = unicodedata.normalize('NFKD', name)
+    # Remove ALL non-alphanumeric except spaces
+    name = re.sub(r"[^a-z0-9\s]", '', name.lower())
+    # Remove suffixes
+    name = re.sub(r'\b(jr|sr|ii|iii|iv)\b', '', name)
+    return re.sub(r'\s+', ' ', name).strip()
 
 # ── FETCH & AGGREGATE ─────────────────────────────────────────────────────
 def fetch_season_stats():
@@ -185,10 +188,12 @@ def build_output(agg, matched):
 # ── SPOT CHECK ────────────────────────────────────────────────────────────
 def spot_check(players, season=2025):
     checks = [
-        ('Josh Allen',   'QB',  0.0, 4),
-        ("Ja'Marr Chase",'WR',  0.5, 4),
+        ('Josh Allen',    'QB', 0.0, 4),
+        ('JaMarr Chase',  'WR', 0.5, 4),
+        ("Ja'Marr Chase", 'WR', 0.5, 4),
         ('Bijan Robinson','RB', 0.5, 4),
-        ('Trey McBride', 'TE',  1.0, 4),
+        ('Trey McBride',  'TE', 1.0, 4),
+        ('Justin Jefferson','WR',0.5, 4),
     ]
     print(f"\n[DELTA] Spot check ({season}):")
     for name, pos, ppr, pass_td_pts in checks:
