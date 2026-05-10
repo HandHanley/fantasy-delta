@@ -2,9 +2,9 @@ name: Update Market Values
 
 on:
   schedule:
-    # Run daily at 6am UTC (2am ET, 11pm PT)
+    # Run daily at 6am UTC (2am ET)
     - cron: '0 6 * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   update-values:
@@ -21,17 +21,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch market values from FantasyCalc
+      - name: Fetch market values and player stats
         run: node scripts/fetch-market-values.js
 
-      - name: Commit updated values
+      - name: Commit updated data
         run: |
           git config user.name "DELTA Bot"
           git config user.email "delta-bot@users.noreply.github.com"
-          git add data/market-values.json
+          git add data/market-values.json data/player-stats.json 2>/dev/null || git add data/market-values.json
           if git diff --staged --quiet; then
-            echo "No changes to market values — skipping commit"
+            echo "No changes — skipping commit"
           else
-            git commit -m "chore: update market values [skip ci]"
+            git commit -m "chore: update market values and player stats [skip ci]"
             git push
           fi
