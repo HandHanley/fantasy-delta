@@ -186,7 +186,7 @@ tr:hover td{background:#1a202c}
     <select id="sort-rank" onchange="renderRankings()">
       <option value="ktc">Mkt Val</option><option value="mv">Model val</option>
       <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
-      <option value="a">Age</option><option value="sys">System</option>
+      <option value="a">Age</option><option value="ds">Dynasty Score</option><option value="sys">System</option>
     </select>
     <select id="age-rank" onchange="renderRankings()">
       <option value="0">Any age</option><option value="24">≤24</option>
@@ -206,7 +206,7 @@ tr:hover td{background:#1a202c}
       <th onclick="setSortR('ktc')">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')">Age</th><th>Team</th>
       <th>PPG'25</th><th>PPG'24</th><th onclick="setSortR('epaSc')">EPA</th>
-      <th>Role</th><th onclick="setSortR('proj')">Proj PPG</th>
+      <th>Role</th><th onclick="setSortR('ds')" title="Dynasty Score — pure long-term asset value 0-100">DS</th><th onclick="setSortR('proj')">Proj PPG</th>
       <th onclick="setSortR('mv')">Mod val</th><th onclick="setSortR('sys')">Sys</th>
       <th>OC</th><th>Tag</th>
     </tr></thead>
@@ -409,7 +409,7 @@ tr:hover td{background:#1a202c}
           <option value="0.0">Out / DNR</option>
         </select>
       </div>
-      <div class="edit-row"><label>Override Value</label><input id="edit-ktc" placeholder="e.g. 6500"></div>
+      <div class="edit-row"><label>Override Mkt Val</label><input id="edit-ktc" placeholder="e.g. 6500"></div>
       <div class="edit-row"><label>Notes</label><input id="edit-notes" placeholder="e.g. traded, WR1"></div>
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:.5rem">
         <button class="apply-btn" onclick="applyOV()">Apply</button>
@@ -1817,28 +1817,28 @@ const RAW=[
   {n:'Elijah Higgins',t:'ARI',p:'TE',a:24.8,k:2100,ppg25:5.6,ppg24:4.2,ppg23:0,g25:15},
     // Batch 4-7 — WRs
   {n:'Jalen Tolbert',t:'DAL',p:'WR',a:26.3,k:1800,ppg25:5.6,ppg24:13.5,ppg23:8.6,g25:13},
-  {n:'Christian Kirk',t:'FA',p:'WR',a:28.8,k:1200,ppg25:5.8,ppg24:11.0,ppg23:17.4,g25:14},
+  {n:'Christian Kirk',t:'FA',p:'WR',a:28.8,k:1200,ppg25:5.8,ppg24:11.0,ppg23:9.1,g25:14},
   {n:'Jack Bech',t:'LV',p:'WR',a:23.5,k:2400,ppg25:5.2,ppg24:0,ppg23:0,g25:12},
-  {n:'Jerry Jeudy',t:'CLE',p:'WR',a:26.9,k:2100,ppg25:9.6,ppg24:20.7,ppg23:12.6,g25:18},
-  {n:'Cooper Kupp',t:'FA',p:'WR',a:33.1,k:2800,ppg25:10.2,ppg24:19.4,ppg23:20.8,g25:17},
+  {n:'Jerry Jeudy',t:'CLE',p:'WR',a:26.9,k:2100,ppg25:9.6,ppg24:11.5,ppg23:12.6,g25:18},
+  {n:'Cooper Kupp',t:'FA',p:'WR',a:33.1,k:2800,ppg25:10.2,ppg24:11.8,ppg23:11.2,g25:17},
   {n:'Tez Johnson',t:'TB',p:'WR',a:23.3,k:2200,ppg25:9.3,ppg24:0,ppg23:0,g25:17},
-  {n:'Chris Godwin',t:'FA',p:'WR',a:30.4,k:1800,ppg25:12.5,ppg24:23.3,ppg23:17.8,g25:10},
+  {n:'Chris Godwin',t:'FA',p:'WR',a:30.4,k:1800,ppg25:12.5,ppg24:16.1,ppg23:9.9,g25:10},
   {n:'Cedric Tillman',t:'CLE',p:'WR',a:24.4,k:1900,ppg25:5.2,ppg24:11.9,ppg23:5.5,g25:14},
   {n:'Pat Bryant',t:'DEN',p:'WR',a:23.2,k:2600,ppg25:7.8,ppg24:0,ppg23:0,g25:15},
   {n:'Tre Tucker',t:'LV',p:'WR',a:25.6,k:1600,ppg25:11.9,ppg24:11.5,ppg23:7.2,g25:18},
   {n:'Kyle Williams',t:'NE',p:'WR',a:23.4,k:2100,ppg25:5.2,ppg24:0,ppg23:0,g25:17},
-  {n:'Tank Dell',t:'HOU',p:'WR',a:24.1,k:2900,ppg25:0,ppg24:14.7,ppg23:21.8,g25:0},
+  {n:'Tank Dell',t:'HOU',p:'WR',a:24.1,k:2900,ppg25:0,ppg24:14.7,ppg23:14.2,g25:0},
   {n:'DeMario Douglas',t:'NE',p:'WR',a:25.4,k:1900,ppg25:8.4,ppg24:12.6,ppg23:10.6,g25:18},
   {n:'Adonai Mitchell',t:'IND',p:'WR',a:23.4,k:3200,ppg25:8.1,ppg24:4.9,ppg23:0,g25:17},
   {n:'Jaylin Noel',t:'IND',p:'WR',a:22.8,k:1800,ppg25:6.5,ppg24:0,ppg23:0,g25:17},
   {n:'Malik Washington',t:'MIA',p:'WR',a:24.6,k:1600,ppg25:9.7,ppg24:5.9,ppg23:0,g25:18},
   {n:'Kayshon Boutte',t:'NE',p:'WR',a:23.8,k:1400,ppg25:12.7,ppg24:12.4,ppg23:0,g25:15},
-  {n:'Michael Wilson',t:'ARI',p:'WR',a:25.8,k:2000,ppg25:19.7,ppg24:11.2,ppg23:13.0,g25:18},
+  {n:'Michael Wilson',t:'ARI',p:'WR',a:25.8,k:2000,ppg25:10.7,ppg24:11.2,ppg23:13.0,g25:18},
   {n:'Darius Slayton',t:'NYG',p:'WR',a:28.6,k:1400,ppg25:10.2,ppg24:10.1,ppg23:13.4,g25:15},
   {n:'Marquise Brown',t:'FA',p:'WR',a:28.8,k:1500,ppg25:11.8,ppg24:6.8,ppg23:13.1,g25:17},
   // Batch 4-7 — RBs
-  {n:'Tyrone Tracy',t:'NYG',p:'RB',a:24.8,k:3400,ppg25:17.1,ppg24:18.1,ppg23:0,g25:16},
-  {n:'Brian Robinson',t:'WAS',p:'RB',a:27.0,k:2200,ppg25:6.9,ppg24:20.0,ppg23:22.5,g25:17},
+  {n:'Tyrone Tracy',t:'NYG',p:'RB',a:24.8,k:3400,ppg25:9.5,ppg24:9.6,ppg23:0,g25:16},
+  {n:'Brian Robinson',t:'WAS',p:'RB',a:27.0,k:2200,ppg25:6.9,ppg24:10.7,ppg23:12.0,g25:17},
   {n:'George Holani',t:'LV',p:'RB',a:25.2,k:1800,ppg25:6.6,ppg24:0,ppg23:0,g25:6},
   {n:'Keaton Mitchell',t:'CLE',p:'RB',a:24.2,k:2400,ppg25:7.3,ppg24:4.2,ppg23:16.4,g25:14},
   {n:'Chris Rodriguez',t:'JAC',p:'RB',a:25.4,k:2100,ppg25:12.9,ppg24:8.9,ppg23:9.1,g25:14},
@@ -1847,14 +1847,14 @@ const RAW=[
   {n:'Tyler Allgeier',t:'ARI',p:'RB',a:25.4,k:1600,ppg25:12.9,ppg24:11.1,ppg23:14.3,g25:18},
   // Batch 4-7 — TEs
   {n:'Greg Dulcich',t:'FA',p:'TE',a:26.4,k:1200,ppg25:10.2,ppg24:1.1,ppg23:2.3,g25:11},
-  {n:'David Njoku',t:'FA',p:'TE',a:28.8,k:3200,ppg25:12.4,ppg24:24.1,ppg23:22.7,g25:12},
-  {n:'Colby Parkinson',t:'LAR',p:'TE',a:26.8,k:1800,ppg25:17.4,ppg24:6.0,ppg23:6.1,g25:15},
+  {n:'David Njoku',t:'FA',p:'TE',a:28.8,k:3200,ppg25:12.4,ppg24:13.5,ppg23:12.6,g25:12},
+  {n:'Colby Parkinson',t:'LAR',p:'TE',a:26.8,k:1800,ppg25:8.6,ppg24:6.0,ppg23:6.1,g25:15},
   {n:'Terrance Ferguson',t:'LAR',p:'TE',a:23.8,k:1900,ppg25:7.8,ppg24:0,ppg23:0,g25:13},
   {n:'Jake Tonges',t:'SF',p:'TE',a:26.8,k:2000,ppg25:9.9,ppg24:0,ppg23:0,g25:17},
   {n:'Michael Mayer',t:'LV',p:'TE',a:24.2,k:1800,ppg25:9.8,ppg24:6.1,ppg23:9.6,g25:14},
   {n:'JaTavion Sanders',t:'CAR',p:'TE',a:23.8,k:1600,ppg25:6.8,ppg24:8.2,ppg23:0,g25:13},
   {n:'Ben Sinnott',t:'WAS',p:'TE',a:25.0,k:2300,ppg25:3.3,ppg24:1.9,ppg23:0,g25:17},
-  {n:'Zach Ertz',t:'WAS',p:'TE',a:35.8,k:1400,ppg25:16.6,ppg24:18.3,ppg23:10.1,g25:13},
+  {n:'Zach Ertz',t:'WAS',p:'TE',a:35.8,k:1400,ppg25:16.6,ppg24:10.4,ppg23:10.1,g25:13},
   // Batch 4-7 — QBs
   {n:'Mac Jones',t:'NE',p:'QB',a:27.8,k:800,ppg25:0,ppg24:8.2,ppg23:11.4,g25:0},
   {n:'Joe Flacco',t:'CIN',p:'QB',a:41.8,k:500,ppg25:0,ppg24:0,ppg23:14.2,g25:0},
@@ -2515,7 +2515,8 @@ function calcProj(pl){
     const e2=getEff(pl);
     const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
     const ciV2=ci(e2.c);
-    return{...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
+    const ds2=calcDynastyScore({...pl,pos:pl.p});
+    return{...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,ds:ds2,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
       gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:1.0,
       ktcEff:e2.ktc,notes:'',hasOv:true,
@@ -2685,7 +2686,7 @@ function calcProj(pl){
 
   return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
-    ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
+    ds:calcDynastyScore({...pl,pos:pl.p}),ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
     ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22};
 }
@@ -3492,6 +3493,97 @@ const COLLEGES={
 };
 
 const COMP=[];
+// ── DYNASTY SCORE ─────────────────────────────────────────────────────────
+// Pure asset score: age + trajectory + scarcity + contract + opportunity
+// Independent of current QB/system situation — evaluates long-term dynasty value
+const DS_AVG   = {QB:18.0,WR:12.0,RB:11.0,TE:10.0};
+const DS_ELITE = {QB:23.0,WR:17.0,RB:15.0,TE:14.0};
+const DS_SCAR  = {QB:1.35,TE:1.40,WR:1.00,RB:0.82};
+const DS_TRANS = {QB:1.09,WR:1.15,RB:1.10,TE:1.05};
+const DS_ROOKIE_CAP = 89;
+
+function dsAge(age, pos) {
+  const a = Math.floor(age);
+  const curves = {
+    QB:[[21,24,21],[25,27,26],[28,30,28],[31,33,20],[34,36,11],[37,99,3]],
+    WR:[[20,22,24],[23,24,27],[25,26,28],[27,28,26],[29,30,18],[31,32,10],[33,99,3]],
+    RB:[[20,21,24],[22,23,28],[24,25,26],[26,27,17],[28,29,10],[30,99,3]],
+    TE:[[20,22,20],[23,23,26],[24,25,25],[26,28,28],[29,31,25],[32,33,15],[34,99,4]],
+  };
+  for (const [lo,hi,pts] of (curves[pos]||curves.WR)) {
+    if (a>=lo && a<=hi) return pts;
+  }
+  return 2;
+}
+
+function dsTraj(ppg25, ppg24, ppg23, g25, pos) {
+  const elite = DS_ELITE[pos]||14; const avg = DS_AVG[pos]||12;
+  const trans = DS_TRANS[pos]||1.15;
+  const best = Math.max(ppg25, ppg24, ppg23);
+  const isTrans = Math.round(best*100)/100 >= Math.round(elite*trans*100)/100;
+  const isElite = best >= elite;
+  const floor = isTrans ? 21 : isElite ? 16 : best>=avg*1.3 ? 12 : best>=avg ? 8 : 2;
+  if (ppg25===0 && ppg24===0) return 10; // rookie
+  if (g25 < 8) {
+    const delta = (ppg24>0 && ppg23>0) ? ppg24-ppg23 : 0;
+    const raw = delta>2?15:delta>0?13:delta>-2?11:8;
+    return Math.max(floor, raw);
+  }
+  let raw;
+  if (ppg24>0 && ppg25>0) {
+    const delta = ppg25-ppg24;
+    raw = delta>4?22:delta>2?(isTrans?22:19):delta>0?16:delta>-2?13:delta>-4?8:4;
+  } else if (ppg25>=elite) raw=18;
+  else if (ppg25>=avg) raw=13;
+  else raw=7;
+  return Math.max(floor, raw);
+}
+
+function dsScar(ppg25, ppg24, ppg23, pos) {
+  const avg=DS_AVG[pos]||12; const elite=DS_ELITE[pos]||14;
+  const trans=DS_TRANS[pos]||1.15; const mult=DS_SCAR[pos]||1.0;
+  const best=Math.max(ppg25,ppg24,ppg23)||ppg25;
+  const isTrans=Math.round(best*100)/100>=Math.round(elite*trans*100)/100;
+  let raw=(best/avg)*17*mult;
+  if (isTrans) raw+=5; else if (best>=elite) raw+=2;
+  return Math.round(Math.min(28,raw));
+}
+
+function dsCont(p) {
+  // Find contract end year from CONTRACTS array
+  const c = CONTRACTS.find(x => x.n===p.n);
+  if (!c) return 7; // default 2yr if unknown
+  const yrs = (c.end||2027) - 2026;
+  return yrs>=5?15:yrs===4?13:yrs===3?11:yrs===2?7:yrs===1?3:1;
+}
+
+function dsOpp(p) {
+  // Opportunity: starter=7, competing=5, backup=2, rookie=4
+  if (p.g25===0 && p.ppg25>0) return 4; // rookie
+  if (p.ppg25===0 && p.ppg24===0) return 4; // no data
+  return 7; // assume starter if in system
+}
+
+function calcDynastyScore(p) {
+  const pos = p.pos||p.p||'WR';
+  const isRookie = p.g25===0 && p.ppg25>0;
+  const a = dsAge(p.a||22, pos);
+  const t = dsTraj(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos);
+  const s = dsScar(p.ppg25||0, p.ppg24||0, p.ppg23||0, pos);
+  const c = dsCont(p);
+  const y = dsOpp(p);
+  let total = Math.min(100, a+t+s+c+y);
+  if (isRookie) total = Math.min(DS_ROOKIE_CAP, total);
+  return total;
+}
+
+function dsColor(score) {
+  if (score >= 95) return '#6ee7b7'; // teal — elite
+  if (score >= 85) return '#7dd3fc'; // blue — strong
+  if (score >= 70) return '#fbbf24'; // yellow — average
+  return '#718096';                  // grey — weak
+}
+
 RAW.forEach(r=>COMP.push(calcProj(r)));
 const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
 
@@ -3566,6 +3658,8 @@ function applyScoring(){
   renderRankings();
   if(typeof renderProj==='function') renderProj();
   if(typeof renderDepth==='function') renderDepth();
+  // Reload stats with new format
+  if(typeof loadPlayerStats==='function') loadPlayerStats();
 }
 
 function getAdjProj(p){
@@ -3578,7 +3672,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'ds'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
@@ -3601,6 +3695,7 @@ function renderRankings(){
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+    <td style="font-weight:700;font-size:11px;color:${dsColor(p.ds||0)}">${p.ds||'—'}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${mvAsset(p).toLocaleString()}</td>
     <td>${sTag(p.sys)}</td>
@@ -3641,6 +3736,7 @@ function renderProj(){
       <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
       <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
       <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+    <td style="font-weight:700;font-size:11px;color:${dsColor(p.ds||0)}">${p.ds||'—'}</td>
       <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
       <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
       <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
@@ -3780,12 +3876,15 @@ function calcAdjustedSide(arrA, arrB) {
 
   // 4. Relative concentration bonus — only applies when sides differ in count
   // The side with higher avg adjusted value per asset gets the bonus
+  // Exclude throw-ins (ktc < 2000) from avg calculation — they shouldn't
+  // collapse the average of a side that contains elite assets
+  const THROW_IN_THRESHOLD = 2000;
   let concA = 1.0, concB = 1.0;
   if (arrA.length !== arrB.length) {
-    const adjA = detailA.map(d => d.adj);
-    const adjB = detailB.map(d => d.adj);
-    const cmA = concMult(adjA);
-    const cmB = concMult(adjB);
+    const adjA = detailA.filter(d => d.ktc >= THROW_IN_THRESHOLD).map(d => d.adj);
+    const adjB = detailB.filter(d => d.ktc >= THROW_IN_THRESHOLD).map(d => d.adj);
+    const cmA = adjA.length ? concMult(adjA) : 1.0;
+    const cmB = adjB.length ? concMult(adjB) : 1.0;
     if (cmA > cmB) { concA = cmA; }
     else if (cmB > cmA) { concB = cmB; }
     else { if (arrA.length < arrB.length) concA = cmA; else concB = cmB; }
@@ -3894,6 +3993,37 @@ function recalcTrade(){
     else{verdict=mA>mB?'Decisive advantage — Team A':'Decisive advantage — Team B';vc=mA>mB?'bs':'bd';}
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
+    // Build adjustment breakdown
+    const buildBreakdown = (detail, concM, label, color) => {
+      const hasElite = detail.some(d => d.eliteM > 1.0);
+      const hasPosPenalty = detail.some(d => d.posM < 1.0);
+      const hasTeamPenalty = detail.some(d => d.teamM < 1.0);
+      const hasConc = concM > 1.001;
+      const adjustments = [];
+      if (hasElite) adjustments.push(`<span style="color:#6ee7b7">★ Elite premium</span>`);
+      if (hasPosPenalty) adjustments.push(`<span style="color:#fbbf24">⚠ Position clustering discount</span>`);
+      if (hasTeamPenalty) adjustments.push(`<span style="color:#fbbf24">⚠ Same-team discount</span>`);
+      if (hasConc) adjustments.push(`<span style="color:#6ee7b7">◆ Concentration bonus ×${concM.toFixed(2)} applied to side total</span>`);
+      return adjustments.length ? adjustments.join(' · ') : '<span style="color:#4a5568">No adjustments</span>';
+    };
+
+    const breakdownA = buildBreakdown(v4.sideA.detail, v4.sideA.concM, 'A', '#6ee7b7');
+    const breakdownB = buildBreakdown(v4.sideB.detail, v4.sideB.concM, 'B', '#7dd3fc');
+
+    // Per-player adjusted values
+    const playerRowA = (d) => {
+      const mods = [];
+      if (d.eliteM > 1.0) mods.push(`elite ×${d.eliteM.toFixed(2)}`);
+      if (d.posM < 1.0) mods.push(`pos ×${d.posM.toFixed(2)}`);
+      if (d.teamM < 1.0) mods.push(`team ×${d.teamM.toFixed(2)}`);
+      // Concentration is a SIDE-level bonus, not per-player — don't show on each row
+      const modStr = mods.length ? `<span style="font-size:9px;color:#4a5568;margin-left:4px">(${mods.join(', ')})</span>` : '';
+      return `<div class="breakdown-row">
+        <span>${d.name}${modStr}</span>
+        <span style="font-weight:600">${Math.round(d.adj).toLocaleString()}</span>
+      </div>`;
+    };
+
     document.getElementById('verdict-area').innerHTML=`
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
         <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
@@ -3906,15 +4036,41 @@ function recalcTrade(){
       </div>
 
       <div class="breakdown-grid">
-        <div><div class="section-label">Team A receives</div>
-          ${sA.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-          <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mA.toLocaleString()}</span></div>
+        <div>
+          <div class="section-label">Team A receives</div>
+          <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownA}</div>
+          ${v4.sideA.detail.map(playerRowA).join('')}
+          <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
+            <span>Pre-concentration subtotal</span>
+            <span>${v4.sideA.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
+          </div>
+          <div class="breakdown-row" style="font-weight:600">
+            <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:#6ee7b7">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>${mA.toLocaleString()}</span>
+          </div>
         </div>
-        <div><div class="section-label">Team B receives</div>
-          ${sB.map(p=>`<div class="breakdown-row"><span>${p.n}</span><span style="font-weight:600">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
-          <div class="breakdown-row" style="font-weight:600"><span>Total</span><span>${mB.toLocaleString()}</span></div>
+        <div>
+          <div class="section-label">Team B receives</div>
+          <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownB}</div>
+          ${v4.sideB.detail.map(playerRowA).join('')}
+          <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
+            <span>Pre-concentration subtotal</span>
+            <span>${v4.sideB.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
+          </div>
+          <div class="breakdown-row" style="font-weight:600">
+            <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:#6ee7b7">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>${mB.toLocaleString()}</span>
+          </div>
         </div>
       </div>
+
+      <div style="margin-top:8px;padding:8px 10px;background:#0d1b2a;border-radius:6px;font-size:10px;color:#4a5568;line-height:1.6">
+        <span style="color:#718096;font-weight:600">HOW THE CALC WORKS · </span>
+        ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
+        ⚠ Clustering discounts same-position or same-team stacking · 
+        ◆ Concentration bonus rewards fewer, higher-value assets
+      </div>
+
       <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: Team A receives ${nA} and Team B receives ${nB}. Model values Team A at ${mA.toLocaleString()} and Team B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
   } else {
     // Multi-team verdict — show each team's net value and rank by winner
@@ -5187,13 +5343,14 @@ function showDataFreshness(fetchedAt, playerCount) {
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
 // Show badge immediately so we know rendering works
 // Will be updated once fetch completes
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues();
+  await loadLiveMarketValues();
+  await loadPlayerStats();
 });
 if (document.readyState === 'complete') {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues();
+  loadLiveMarketValues().then(() => loadPlayerStats());
 }
 
 </script>
