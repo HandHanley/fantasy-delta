@@ -106,12 +106,12 @@ def fetch_season_stats():
         'rec_td':    rec_td_col,
     }
 
-    # Prefer player_display_name for grouping (more readable)
-    display_col = 'player_display_name' if 'player_display_name' in pdf.columns else name_col
-    group_cols = [display_col, season_col]
+    # Use player_name (not player_display_name) — preserves special chars like Ja'Marr
+    group_col = 'player_name' if 'player_name' in pdf.columns else name_col
+    group_cols = [group_col, season_col]
     if pos_col: group_cols.append(pos_col)
     
-    print(f"[DELTA] Grouping by: {display_col}")
+    print(f"[DELTA] Grouping by: {group_col}")
     grouped = pdf.groupby(group_cols)
 
     result = grouped.agg(
@@ -119,8 +119,11 @@ def fetch_season_stats():
         **{k: (v, 'sum') for k, v in numeric.items() if v and v in pdf.columns}
     ).reset_index()
 
-    display_col = 'player_display_name' if 'player_display_name' in result.columns else name_col
-    result.rename(columns={display_col: 'player_name', season_col: 'season'}, inplace=True)
+    group_col = 'player_name' if 'player_name' in result.columns else name_col
+    if group_col != 'player_name':
+        result.rename(columns={group_col: 'player_name', season_col: 'season'}, inplace=True)
+    elif season_col != 'season':
+        result.rename(columns={season_col: 'season'}, inplace=True)
     print(f"[DELTA] Aggregated: {len(result)} player-seasons")
     return result
 
@@ -136,20 +139,7 @@ def match_names(agg, delta_names):
     nfl_names = agg['player_name'].unique()
     nfl_norm  = {norm(n): n for n in nfl_names}
 
-    # Debug: search for Chase in BOTH name columns
-    all_names_col = agg.get('player_name', agg.iloc[:,0])
-    all_display = agg.get('player_display_name', None)
-    
-    # Search raw dataframe for any 'marr' or 'jamarr'
-    for col_name in ['player_name', 'player_display_name']:
-        if col_name in agg.columns:
-            matches = agg[agg[col_name].str.lower().str.contains('marr|jamarr', na=False)][col_name].unique()
-            print(f"[DELTA] '{col_name}' containing marr/jamarr: {list(matches)[:5]}")
-    
-    # Also check player_id column for known Chase IDs
-    # Ja'Marr Chase sleeper ID is approximately 7564
-    print(f"[DELTA] Total unique players in agg: {len(nfl_norm)}")
-    print(f"[DELTA] Sample nfl_norm keys: {list(nfl_norm.keys())[:5]}")
+    print(f"[DELTA] Total unique players in nfl_norm: {len(nfl_norm)}")
 
     matched   = {}
     not_found = []
