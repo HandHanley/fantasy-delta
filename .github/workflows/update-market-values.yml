@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install polars --quiet
+          pip install polars pyarrow pandas --quiet
           pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' --quiet
 
       - name: Fetch FantasyCalc market values
