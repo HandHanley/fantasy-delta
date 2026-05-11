@@ -10,10 +10,12 @@ from pathlib import Path
 
 try:
     import nflreadpy as nfl
+import pandas as pd
     import polars as pl
 except ImportError:
     os.system("pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' polars pyarrow pandas --quiet")
     import nflreadpy as nfl
+import pandas as pd
     import polars as pl
 
 SEASONS    = [2023, 2024, 2025]
@@ -216,6 +218,88 @@ def spot_check(players, season=2025):
              + s['pass_yds']*0.04 + s['pass_td']*pass_td_pts - s['pass_int']*2)
         print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG")
 
+def fetch_contracts(delta_names):
+    """Fetch active NFL contracts from nflverse (sourced from OTC)"""
+    print("\n[DELTA] Fetching contracts from nflverse/OTC...")
+    
+    try:
+        contracts_df = nfl.load_contracts()
+        pdf = contracts_df.to_pandas() if hasattr(contracts_df, 'to_pandas') else contracts_df
+        
+        # Active contracts only
+        if 'is_active' in pdf.columns:
+            pdf = pdf[pdf['is_active'] == True].copy()
+        
+        print(f"[DELTA] Active contracts: {len(pdf)}")
+        print(f"[DELTA] Contract columns: {list(pdf.columns)[:15]}")
+        
+        # Build name lookup
+        name_col = next((c for c in ['player','player_name','name'] if c in pdf.columns), None)
+        if not name_col:
+            print("[DELTA] Could not find player name column in contracts")
+            return {}
+        
+        # Normalize names for matching
+        pdf['norm_name'] = pdf[name_col].apply(norm)
+        
+        contracts = {}
+        not_found = []
+        
+        for delta_name in delta_names:
+            key = norm(delta_name)
+            match = pdf[pdf['norm_name'] == key]
+            
+            if match.empty:
+                # Try partial match
+                words = key.split()
+                found = None
+                for length in range(len(words), 1, -1):
+                    partial = ' '.join(words[:length])
+                    cands = pdf[pdf['norm_name'].str.startswith(partial)]
+                    if len(cands) == 1:
+                        found = cands.iloc[0]
+                        break
+                if found is not None:
+                    match = pd.DataFrame([found])
+            
+            if not match.empty:
+                row = match.iloc[0]
+                # Calculate contract end year
+                year_signed = int(row.get('year_signed', 2024) or 2024)
+                years = int(row.get('years', 1) or 1)
+                end_year = year_signed + years - 1
+                
+                contracts[delta_name] = {
+                    'team':        str(row.get('team', '')),
+                    'year_signed': year_signed,
+                    'years':       years,
+                    'end_year':    end_year,
+                    'aav':         float(row.get('apy', row.get('aav', 0)) or 0),
+                    'total':       float(row.get('value', row.get('total', 0)) or 0),
+                    'guaranteed':  float(row.get('guaranteed', 0) or 0),
+                    'is_active':   True,
+                }
+            else:
+                not_found.append(delta_name)
+        
+        print(f"[DELTA] Contracts matched: {len(contracts)}/{len(delta_names)}")
+        vet_not_found = [n for n in not_found if n not in [
+            'Jeremiyah Love','Carnell Tate','Fernando Mendoza','Jordyn Tyson',
+            'Kenyon Sadiq','Makai Lemon','Omar Cooper','Jadarian Price',
+            'Denzel Boston','Germie Bernard','Eli Stowers','Marlin Klein',
+            'Max Klare','Carson Beck','Sam Roush','Antonio Williams',
+            'Oscar Delp','Malachi Fields','Zachariah Branch','Chris Brazzell II',
+            'Ted Hurst','Drew Allar','Will Kacmarek'
+        ]]
+        if vet_not_found:
+            print(f"[DELTA] Unmatched veterans: {vet_not_found[:10]}")
+        
+        return contracts
+        
+    except Exception as e:
+        print(f"[DELTA] Contract fetch failed: {e}")
+        return {}
+
 def main():
     print(f"[DELTA] Starting at {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -237,6 +321,30 @@ def main():
     kb = len(json.dumps(output)) // 1024
     print(f"[DELTA] player-stats.json written ({kb}KB, {len(players)} players)")
     spot_check(players)
+    
+    # 2. Fetch contracts
+    contracts = fetch_contracts(delta_names)
+    
+    # Write contracts to separate file
+    import datetime
+    contracts_output = {
+        'fetched': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'note': 'Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.',
+        'contracts': contracts,
+    }
+    contracts_file = OUT_DIR / "player-contracts.json"
+    contracts_file.write_text(json.dumps(contracts_output, indent=2))
+    kb = len(json.dumps(contracts_output)) // 1024
+    print(f"[DELTA] player-contracts.json written ({kb}KB, {len(contracts)} contracts)")
+    
+    # Spot check key contracts
+    print("\n[DELTA] Contract spot check:")
+    for name in ['Josh Allen','Breece Hall',"Ja'Marr Chase",'Bijan Robinson','Trey McBride']:
+        c = contracts.get(name)
+        if c:
+            print(f"  {name}: {c['years']}yr signed {c['year_signed']} → expires {c['end_year']}, AAV ${c['aav']/1e6:.1f}M")
+        else:
+            print(f"  {name}: NOT FOUND")
 
 if __name__ == '__main__':
     main()
