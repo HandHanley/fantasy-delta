@@ -371,7 +371,7 @@ def main():
     for name in ['Josh Allen','Breece Hall',"Ja'Marr Chase",'Bijan Robinson','Trey McBride']:
         c = contracts.get(name)
         if c:
-            print(f"  {name}: {c['years']}yr signed {c['year_signed']} → expires {c['end_year']}, AAV ${c['aav']/1e6:.1f}M")
+            print(f"  {name}: {c['years']}yr signed {c['year_signed']} → expires {c['end_year']}, AAV ${c['aav']:.1f}M, total ${c['total']:.1f}M")
         else:
             print(f"  {name}: NOT FOUND")
 
