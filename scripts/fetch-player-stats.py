@@ -246,9 +246,22 @@ def fetch_contracts(delta_names):
         contracts = {}
         not_found = []
         
+        # Contract-specific aliases
+        CONTRACT_ALIASES = {
+            "Ja'Marr Chase": "Ja'Marr Chase",
+            'Chigoziem Okonkwo': 'Chig Okonkwo',
+        }
+        
         for delta_name in delta_names:
-            key = norm(delta_name)
+            # Try alias first
+            lookup = CONTRACT_ALIASES.get(delta_name, delta_name)
+            key = norm(lookup)
             match = pdf[pdf['norm_name'] == key]
+            
+            # If no match, try the original name too
+            if match.empty and lookup != delta_name:
+                key = norm(delta_name)
+                match = pdf[pdf['norm_name'] == key]
             
             if match.empty:
                 # Try partial match
@@ -264,20 +277,36 @@ def fetch_contracts(delta_names):
                     match = pd.DataFrame([found])
             
             if not match.empty:
-                row = match.iloc[0]
+                # Take the contract with latest end year (most recent extension)
+                match = match.copy()
+                match['_end'] = match.apply(
+                    lambda r: int(r.get('year_signed', 2024) or 2024) + int(r.get('years', 1) or 1) - 1,
+                    axis=1
+                )
+                row = match.sort_values('_end', ascending=False).iloc[0]
                 # Calculate contract end year
                 year_signed = int(row.get('year_signed', 2024) or 2024)
                 years = int(row.get('years', 1) or 1)
                 end_year = year_signed + years - 1
                 
+                # APY/value are in dollars not millions in nflverse
+                # Divide by 1M for display
+                apy_raw   = float(row.get('apy',   0) or 0)
+                value_raw = float(row.get('value', 0) or 0)
+                guar_raw  = float(row.get('guaranteed', 0) or 0)
+                # nflverse stores in thousands or full dollars — detect scale
+                aav_m = apy_raw / 1e6 if apy_raw > 1000 else apy_raw
+                tot_m = value_raw / 1e6 if value_raw > 1000 else value_raw
+                gua_m = guar_raw / 1e6 if guar_raw > 1000 else guar_raw
+
                 contracts[delta_name] = {
                     'team':        str(row.get('team', '')),
                     'year_signed': year_signed,
                     'years':       years,
                     'end_year':    end_year,
-                    'aav':         float(row.get('apy', row.get('aav', 0)) or 0),
-                    'total':       float(row.get('value', row.get('total', 0)) or 0),
-                    'guaranteed':  float(row.get('guaranteed', 0) or 0),
+                    'aav':         round(aav_m, 2),
+                    'total':       round(tot_m, 2),
+                    'guaranteed':  round(gua_m, 2),
                     'is_active':   True,
                 }
             else:
