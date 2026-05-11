@@ -186,7 +186,7 @@ tr:hover td{background:#1a202c}
     <select id="sort-rank" onchange="renderRankings()">
       <option value="ktc">Mkt Val</option><option value="mv">Model val</option>
       <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
-      <option value="a">Age</option><option value="ds">Dynasty Score</option><option value="sys">System</option>
+      <option value="a">Age</option><option value="sys">System</option>
     </select>
     <select id="age-rank" onchange="renderRankings()">
       <option value="0">Any age</option><option value="24">≤24</option>
@@ -206,7 +206,7 @@ tr:hover td{background:#1a202c}
       <th onclick="setSortR('ktc')">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')">Age</th><th>Team</th>
       <th>PPG'25</th><th>PPG'24</th><th onclick="setSortR('epaSc')">EPA</th>
-      <th>Role</th><th onclick="setSortR('ds')" title="Dynasty Score — pure long-term asset value 0-100">DS</th><th onclick="setSortR('proj')">Proj PPG</th>
+      <th>Role</th><th onclick="setSortR('proj')">Proj PPG</th>
       <th onclick="setSortR('mv')">Mod val</th><th onclick="setSortR('sys')">Sys</th>
       <th>OC</th><th>Tag</th>
     </tr></thead>
@@ -1213,7 +1213,7 @@ const EPA={
   'Tua Tagovailoa':{e25:.00,e24:.19,e23:.11,e22:.18,ef25:.00},'Tyler Shough':{e25:-.02,e24:0,e23:0,e22:0,ef25:-.02},
   "Ja'Marr Chase":{e25:2.23,e24:2.46,e23:2.03,e22:2.03,ef25:2.23},'Jaxon Smith-Njigba':{e25:3.67,e24:1.81,e23:1.32,e22:0,ef25:3.67},
   'Puka Nacua':{e25:3.73,e24:3.55,e23:2.56,e22:0,ef25:3.73},'Amon-Ra St. Brown':{e25:2.48,e24:2.30,e23:2.63,e22:2.41,ef25:2.48},
-  'Justin Jefferson':{e25:1.92,e24:2.50,e23:2.92,e22:2.63,ef25:1.92},'CeeDee Lamb':{e25:2.40,e24:2.27,e23:2.79,e22:2.41,ef25:2.40},
+  'Justin Jefferson':{e25:1.92,e24:2.50,e23:2.92,e22:2.63,ef25:1.92},"Ja'Marr Chase":{e25:2.17,e24:2.50,e23:2.40,e22:2.20,ef25:2.17},'CeeDee Lamb':{e25:2.40,e24:2.27,e23:2.79,e22:2.41,ef25:2.40},
   'Malik Nabers':{e25:2.07,e24:2.15,e23:0,e22:0,ef25:2.07},'Drake London':{e25:2.36,e24:2.30,e23:1.86,e22:2.06,ef25:2.36},
   'George Pickens':{e25:2.37,e24:2.06,e23:2.10,e22:1.38,ef25:2.37},'Tetairoa McMillan':{e25:1.88,e24:0,e23:0,e22:0,ef25:1.88},
   'Emeka Egbuka':{e25:1.77,e24:0,e23:0,e22:0,ef25:1.77},'Garrett Wilson':{e25:1.78,e24:1.68,e23:1.55,e22:1.87,ef25:1.78},
@@ -1710,7 +1710,6 @@ const RAW=[
   {n:'Puka Nacua',t:'LAR',p:'WR',a:24.8,k:9394,ppg25:19.4,ppg24:15.2,ppg23:14.5,g25:16},
   {n:'Jaxon Smith-Njigba',t:'SEA',p:'WR',a:24.1,k:9675,ppg25:17.7,ppg24:11.9,ppg23:7.0,g25:17},
   {n:'Amon-Ra St. Brown',t:'DET',p:'WR',a:26.4,k:7658,ppg25:15.6,ppg24:15.2,ppg23:17.0,g25:17},
-  {n:"Ja'Marr Chase",t:'CIN',p:'WR',a:26.0,k:9801,ppg25:15.7,ppg24:20.0,ppg23:13.3,g25:16},
   {n:'George Pickens',t:'DAL',p:'WR',a:25.0,k:6137,ppg25:14.4,ppg24:9.6,ppg23:10.4,g25:17},
   {n:'Chris Olave',t:'NO',p:'WR',a:25.7,k:5644,ppg25:13.7,ppg24:7.6,ppg23:11.7,g25:16},
   {n:'Zay Flowers',t:'BAL',p:'WR',a:25.5,k:4652,ppg25:11.8,ppg24:10.1,ppg23:10.5,g25:17},
@@ -1724,6 +1723,7 @@ const RAW=[
   {n:"Wan'Dale Robinson",t:'TEN',p:'WR',a:25.2,k:3716,ppg25:10.7,ppg24:8.0,ppg23:6.9,g25:16},
   {n:'Drake London',t:'ATL',p:'WR',a:24.6,k:6891,ppg25:14.0,ppg24:13.6,ppg23:8.7,g25:12},
   {n:'Emeka Egbuka',t:'TB',p:'WR',a:23.4,k:6092,ppg25:9.7,ppg24:0,ppg23:0,g25:17},
+  {n:"Ja'Marr Chase",t:'CIN',p:'WR',a:26.0,k:9200,ppg25:15.7,ppg24:20.0,ppg23:18.1,g25:17},
   {n:'CeeDee Lamb',t:'DAL',p:'WR',a:26.9,k:7414,ppg25:11.7,ppg24:14.2,ppg23:19.7,g25:14},
   {n:'DeVonta Smith',t:'PHI',p:'WR',a:27.3,k:4859,ppg25:9.6,ppg24:12.7,ppg23:11.7,g25:17},
   {n:'Michael Pittman Jr.',t:'PIT',p:'WR',a:28.4,k:3562,ppg25:9.6,ppg24:8.2,ppg23:12.2,g25:17},
@@ -1758,7 +1758,7 @@ const RAW=[
   {n:'Keon Coleman',t:'BUF',p:'WR',a:22.5,k:2900,ppg25:6.4,ppg24:7.5,ppg23:0,g25:13},
   {n:'Josh Downs',t:'IND',p:'WR',a:24.6,k:3339,ppg25:6.7,ppg24:10.5,ppg23:7.2,g25:16},
   {n:'Travis Hunter',t:'JAC',p:'WR',a:22.8,k:3701,ppg25:7.1,ppg24:0,ppg23:0,g25:7},
-  {n:'Brandon Aiyuk',t:'FA',p:'WR',a:28.0,k:2609,ppg25:0,ppg24:0,ppg23:0,g25:0},
+  {n:'Brandon Aiyuk',t:'FA',p:'WR',a:28.0,k:2609,ppg25:0,ppg24:7.5,ppg23:13.1,g25:0},
   {n:'Jalen Coker',t:'CAR',p:'WR',a:24.4,k:3085,ppg25:6.7,ppg24:7.0,ppg23:0,g25:11},
   {n:'Malik Nabers',t:'NYG',p:'WR',a:22.6,k:7790,ppg25:12.0,ppg24:14.6,ppg23:0,g25:4},
   {n:'Deebo Samuel',t:'FA',p:'WR',a:29.4,k:2800,ppg25:9.5,ppg24:8.5,ppg23:14.2,g25:16},
@@ -2515,8 +2515,7 @@ function calcProj(pl){
     const e2=getEff(pl);
     const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
     const ciV2=ci(e2.c);
-    const ds2=calcDynastyScore({...pl,pos:pl.p});
-    return{...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,ds:ds2,
+    return{...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
       gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:1.0,
       ktcEff:e2.ktc,notes:'',hasOv:true,
@@ -2686,7 +2685,7 @@ function calcProj(pl){
 
   return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
-    ds:calcDynastyScore({...pl,pos:pl.p}),ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
+    ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
     ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22};
 }
@@ -3499,7 +3498,7 @@ const COMP=[];
 const DS_AVG   = {QB:18.0,WR:12.0,RB:11.0,TE:10.0};
 const DS_ELITE = {QB:23.0,WR:17.0,RB:15.0,TE:14.0};
 const DS_SCAR  = {QB:1.35,TE:1.40,WR:1.00,RB:0.82};
-const DS_TRANS = {QB:1.09,WR:1.15,RB:1.10,TE:1.05};
+const DS_TRANS = {QB:1.05,WR:1.15,RB:1.10,TE:1.05};
 const DS_ROOKIE_CAP = 89;
 
 function dsAge(age, pos) {
@@ -3521,8 +3520,8 @@ function dsTraj(ppg25, ppg24, ppg23, g25, pos) {
   const trans = DS_TRANS[pos]||1.15;
   const best = Math.max(ppg25, ppg24, ppg23);
   const isTrans = Math.round(best*100)/100 >= Math.round(elite*trans*100)/100;
-  const isElite = best >= elite;
-  const floor = isTrans ? 21 : isElite ? 16 : best>=avg*1.3 ? 12 : best>=avg ? 8 : 2;
+  const isElite = best >= elite * 0.98;  // 0.98x threshold — near-elite gets floor protection
+  const floor = isTrans ? 21 : isElite ? 16 : best>=avg*1.2 ? 12 : best>=avg ? 8 : 2;
   if (ppg25===0 && ppg24===0) return 10; // rookie
   if (g25 < 8) {
     const delta = (ppg24>0 && ppg23>0) ? ppg24-ppg23 : 0;
@@ -3672,7 +3671,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'ds'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
@@ -3695,7 +3694,6 @@ function renderRankings(){
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
-    <td style="font-weight:700;font-size:11px;color:${dsColor(p.ds||0)}">${p.ds||'—'}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${mvAsset(p).toLocaleString()}</td>
     <td>${sTag(p.sys)}</td>
@@ -3736,7 +3734,6 @@ function renderProj(){
       <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
       <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
       <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
-    <td style="font-weight:700;font-size:11px;color:${dsColor(p.ds||0)}">${p.ds||'—'}</td>
       <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
       <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
       <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
@@ -5343,14 +5340,58 @@ function showDataFreshness(fetchedAt, playerCount) {
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
 // Show badge immediately so we know rendering works
 // Will be updated once fetch completes
+
+// ── CONTRACT LOADER ───────────────────────────────────────────────────────
+// Reads data/player-contracts.json (from nflverse/OTC via GitHub Action)
+// Updates DELTA contract data automatically
+
+async function loadPlayerContracts() {
+  try {
+    const res = await fetch('./data/player-contracts.json');
+    if (!res.ok) return; // non-fatal
+    const data = await res.json();
+    if (!data?.contracts) return;
+
+    let updated = 0;
+    for (const player of RAW) {
+      if (!player || !player.n) continue;
+      const c = data.contracts[player.n];
+      if (!c) continue;
+
+      // Update contract in CONTRACTS array
+      const existing = CONTRACTS.find(x => x.n === player.n);
+      if (existing) {
+        existing.end     = c.end_year;
+        existing.aav     = Math.round(c.aav);
+        existing.total   = Math.round(c.total);
+        existing.years   = c.years;
+      }
+      updated++;
+    }
+
+    if (updated > 0) {
+      console.log(`[DELTA] Contracts loaded: ${updated} updated`);
+      // Rebuild COMP with fresh contract data
+      COMP.length = 0;
+      RAW.forEach(r => COMP.push(calcProj(r)));
+      ASSETS.length = 0;
+      ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+      if (typeof renderRankings === 'function') renderRankings();
+    }
+  } catch(e) {
+    console.warn('[DELTA] Could not load contracts:', e.message);
+  }
+}
+
 window.addEventListener('load', async function() {
   showDataFreshness(new Date().toISOString(), 0);
   await loadLiveMarketValues();
   await loadPlayerStats();
+  await loadPlayerContracts();
 });
 if (document.readyState === 'complete') {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts());
 }
 
 </script>
