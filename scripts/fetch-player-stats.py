@@ -242,6 +242,10 @@ def fetch_contracts(delta_names):
         
         # Normalize names for matching
         pdf['norm_name'] = pdf[name_col].apply(norm)
+        # Also create a no-apostrophe version for fuzzy matching
+        pdf['norm_name_clean'] = pdf[name_col].apply(
+            lambda x: norm(str(x).replace("'","").replace("’",""))
+        )
         
         contracts = {}
         not_found = []
@@ -262,6 +266,11 @@ def fetch_contracts(delta_names):
             if match.empty and lookup != delta_name:
                 key = norm(delta_name)
                 match = pdf[pdf['norm_name'] == key]
+            
+            # If still no match, try stripping all apostrophes
+            if match.empty:
+                key_clean = key.replace("'","")
+                match = pdf[pdf['norm_name_clean'] == key_clean]
             
             if match.empty:
                 # Try partial match
