@@ -5,7 +5,8 @@ Uses nflreadpy to fetch NFL weekly stats from nflverse.
 Stores raw stat lines in data/player-stats.json.
 """
 
-import json, os, re, datetime
+import json, os, re
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -301,7 +302,7 @@ def fetch_contracts(delta_names):
         return {}
 
 def main():
-    print(f"[DELTA] Starting at {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
+    print(f"[DELTA] Starting at {datetime.now(timezone.utc).isoformat()}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     delta_names = get_delta_players()
@@ -312,7 +313,7 @@ def main():
     players = build_output(agg, matched)
 
     output = {
-        'fetched': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'fetched': datetime.now(timezone.utc).isoformat(),
         'seasons': SEASONS,
         'note':    'Raw stats — PPG calculated client-side per scoring format dropdown',
         'players': players,
@@ -326,9 +327,8 @@ def main():
     contracts = fetch_contracts(delta_names)
     
     # Write contracts to separate file
-    import datetime
     contracts_output = {
-        'fetched': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'fetched': datetime.now(timezone.utc).isoformat(),
         'note': 'Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.',
         'contracts': contracts,
     }
