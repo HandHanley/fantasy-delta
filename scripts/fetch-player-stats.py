@@ -10,13 +10,13 @@ from pathlib import Path
 
 try:
     import nflreadpy as nfl
-import pandas as pd
     import polars as pl
+    import pandas as pd
 except ImportError:
     os.system("pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' polars pyarrow pandas --quiet")
     import nflreadpy as nfl
-import pandas as pd
     import polars as pl
+    import pandas as pd
 
 SEASONS    = [2023, 2024, 2025]
 OUT_DIR    = Path(__file__).parent.parent / "data"
