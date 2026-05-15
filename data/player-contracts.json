@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-14T08:42:52.843564+00:00",
+  "fetched": "2026-05-15T08:53:27.622254+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -2142,6 +2142,16 @@
       "guaranteed": 2.91,
       "is_active": true
     },
+    "David Njoku": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.0,
+      "total": 0.0,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Colby Parkinson": {
       "team": "Rams",
       "year_signed": 2024,
@@ -2579,7 +2589,7 @@
       "end_year": 2029,
       "aav": 1.21,
       "total": 4.83,
-      "guaranteed": 0.0,
+      "guaranteed": 0.45,
       "is_active": true
     },
     "Kaden Wetjen": {
@@ -2729,7 +2739,7 @@
       "end_year": 2029,
       "aav": 1.37,
       "total": 5.47,
-      "guaranteed": 0.0,
+      "guaranteed": 1.09,
       "is_active": true
     },
     "Brenen Thompson": {
