@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-16T08:08:59.846360+00:00",
+  "fetched": "2026-05-17T08:25:47.111445+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1013,13 +1013,13 @@
       "is_active": true
     },
     "DeVonta Smith": {
-      "team": "Eagles",
-      "year_signed": 2024,
+      "team": "Panthers",
+      "year_signed": 2026,
       "years": 3,
-      "end_year": 2026,
-      "aav": 25.0,
-      "total": 75.0,
-      "guaranteed": 34.0,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.27,
       "is_active": true
     },
     "Michael Pittman Jr.": {
@@ -1983,7 +1983,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "IND/NYJ",
+      "team": "NYJ/IND",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2389,7 +2389,7 @@
       "end_year": 2029,
       "aav": 2.05,
       "total": 8.18,
-      "guaranteed": 0.0,
+      "guaranteed": 6.24,
       "is_active": true
     },
     "Max Klare": {
