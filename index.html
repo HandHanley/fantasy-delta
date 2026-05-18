@@ -1402,7 +1402,7 @@ const QBQ={
   ARI:.78,ATL:.83,BAL:1.0,BUF:1.0,CAR:.83,CHI:.92,CIN:.95,CLE:.82,
   DAL:.93,DEN:.93,DET:.95,GB:.96,HOU:.87,IND:.88,JAC:.90,KC:.95,
   LV:.74,LAC:.90,LAR:.96,MIA:.72,MIN:1.0,NE:.99,NO:.85,NYG:.84,
-  NYJ:.76,PHI:.95,PIT:.76,SF:.95,SEA:.91,TB:.90,TEN:.85,WAS:.95,
+  NYJ:.76,PHI:.95,PIT:.79,SF:.95,SEA:.91,TB:.90,TEN:.85,WAS:.95,
 };
 const AC={
   QB:[[20,22,.88],[23,24,.94],[25,26,1.00],[27,28,1.03],[29,30,1.02],[31,32,.97],[33,99,.88]],
@@ -1644,12 +1644,12 @@ const RAW=[
   {n:'Michael Penix Jr.',t:'ATL',p:'QB',a:25.9,k:3153,ppg25:13.7,ppg24:9.4,ppg23:0,g25:9},
   {n:'Shedeur Sanders',t:'CLE',p:'QB',a:24.1,k:2747,ppg25:11.9,ppg24:0,ppg23:0,g25:8},
   {n:'Mason Rudolph',t:'PIT',p:'QB',a:30.0,k:800,ppg25:3.4,ppg24:13.1,ppg23:9.9,g25:5},
+  {n:'Aaron Rodgers',t:'PIT',p:'QB',a:42.3,k:800,ppg25:14.2,ppg24:0,ppg23:18.5,g25:10},
   {n:'Malik Willis',t:'MIA',p:'QB',a:26.8,k:4142,ppg25:12.8,ppg24:7.4,ppg23:0,g25:4},
   {n:'Jacoby Brissett',t:'ARI',p:'QB',a:33.0,k:800,ppg25:16.8,ppg24:6.6,ppg23:0,g25:14},
   // RBs
   {n:'Bijan Robinson',t:'ATL',p:'RB',a:24.1,k:9995,ppg25:19.5,ppg24:18.3,ppg23:19.5,g25:17},
   {n:'Jahmyr Gibbs',t:'DET',p:'RB',a:24.0,k:9695,ppg25:19.3,ppg24:19.8,ppg23:0,g25:17},
-  {n:"De'Von Achane",t:'MIA',p:'RB',a:24.4,k:6851,ppg25:18.1,ppg24:15.3,ppg23:16.1,g25:16},
   {n:'James Cook',t:'BUF',p:'RB',a:26.5,k:6123,ppg25:16.8,ppg24:15.7,ppg23:12.4,g25:17},
   {n:'Jonathan Taylor',t:'IND',p:'RB',a:27.2,k:6020,ppg25:20.0,ppg24:16.8,ppg23:20.0,g25:17},
   {n:'Derrick Henry',t:'BAL',p:'RB',a:32.2,k:3752,ppg25:16.0,ppg24:19.2,ppg23:13.7,g25:17},
@@ -1690,6 +1690,7 @@ const RAW=[
   {n:'Aaron Jones',t:'MIN',p:'RB',a:31.3,k:2045,ppg25:8.7,ppg24:12.7,ppg23:10.9,g25:12},
   {n:'Tyjae Spears',t:'TEN',p:'RB',a:25.4,k:2673,ppg25:6.9,ppg24:8.2,ppg23:7.5,g25:13},
   {n:'Alvin Kamara',t:'NO',p:'RB',a:30.6,k:2156,ppg25:7.7,ppg24:16.5,ppg23:15.0,g25:11},
+  {n:"De'Von Achane",t:'MIA',p:'RB',a:24.0,k:8155,ppg25:12.8,ppg24:18.7,ppg23:0,g25:14},
   {n:'Ollie Gordon',t:'MIA',p:'RB',a:22.2,k:2603,ppg25:3.0,ppg24:0,ppg23:0,g25:16},
   {n:'Isaac Guerendo',t:'SF',p:'RB',a:25.7,k:1689,ppg25:0,ppg24:5.4,ppg23:0,g25:0},
   {n:'Trey Benson',t:'ARI',p:'RB',a:23.6,k:2755,ppg25:5.8,ppg24:3.4,ppg23:0,g25:4},
@@ -2093,6 +2094,7 @@ const DC={
 };
 
 const RIPPLE=[
+  {n:'DK Metcalf',d:'up',reason:'Rodgers arrives — upgrade over Rudolph, still limited upside at 28',delta:'+5%'},
   {n:'Jaylen Waddle',d:'up',reason:'MIA→DEN Payton system',delta:'+18%'},
   {n:'Bhayshul Tuten',d:'up',reason:'Etienne gone, JAC RB1',delta:'+15%'},
   {n:'Travis Etienne',d:'up',reason:'JAC→NO Moore system, role TBD',delta:'+8%'},
@@ -2137,7 +2139,7 @@ const RIPPLE=[
   {n:'Puka Nacua',d:'down',reason:'LAR — Simpson era eventually coming, Stafford lame duck',delta:'-20%'},
   {n:'Cooper Kupp',d:'down',reason:'LAR — aging WR in transitioning offense',delta:'-40%'},
   {n:'Eli Stowers',d:'up',reason:'PHI #54 — TE2 behind Goedert (31). Heir apparent with Hurts throwing',delta:'+22%'},
-  {n:'Germie Bernard',d:'up',reason:'PIT #47 — WR3 behind Metcalf + Pittman. QB unresolved (Howard/Allar/Rodgers)',delta:'+8%'},
+  {n:'Germie Bernard',d:'up',reason:'PIT #47 — WR3 behind Metcalf + Pittman. Rodgers signed 1yr deal as bridge QB',delta:'+8%'},
   {n:'Denzel Boston',d:'up',reason:'CLE #39 — WR2/3 behind Concepcion. Two rookie WRs competing with Jeudy',delta:'+10%'},
   {n:'Antonio Williams',d:'up',reason:'WAS #71 — Jayden Daniels elite QB, WR2 behind McLaurin',delta:'+18%'},
   {n:'Jayden Daniels',d:'up',reason:'WAS — Williams gives Daniels a WR2 threat opposite McLaurin, small efficiency boost',delta:'+10%'},
@@ -2828,7 +2830,7 @@ const CONTRACTS=[
   {n:'Theo Johnson',pos:'TE',team:'NYG',aav:1212859,total:4851436,end:2027,note:'Backup TE on affordable deal'},
   // NEW YORK JETS
   {n:'Garrett Wilson',pos:'WR',team:'NYJ',aav:32500000,total:130000000,end:2030,note:'Elite WR1 locked up long term'},
-  {n:'Breece Hall',pos:'RB',team:'NYJ',aav:14293000,total:14293000,end:2026,note:'⚠ CONTRACT YEAR — extend or trade this offseason'},
+  {n:'Breece Hall',pos:'RB',team:'NYJ',aav:15250000,total:45750000,end:2028,note:'3yr/$45.75M signed May 2026 — $29M guaranteed'},
   {n:'Mason Taylor',pos:'TE',team:'NYJ',aav:2616547,total:10466187,end:2028,note:'Young TE1 locked in through 2028'},
   {n:'Braelon Allen',pos:'RB',team:'NYJ',aav:1137177,total:4548708,end:2027,note:'Cheap ascending RB on rookie deal'},
   {n:'Geno Smith',pos:'QB',team:'NYJ',aav:3300000,total:3300000,end:2026,note:'1yr stop-gap — NYJ will move on'},
@@ -2942,7 +2944,6 @@ const CONTRACTS=[
   {n:'Blake Corum',pos:'RB',team:'LAR',aav:1440941,total:5763762,end:2027,note:'Cheap RB on rookie deal'},
   // MIAMI DOLPHINS
   {n:'Malik Willis',pos:'QB',team:'MIA',aav:22500000,total:67500000,end:2028,note:'3yr committed starter through 2028'},
-  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:1359362,total:5437449,end:2026,note:'Expiring 2026 — extension critical for ascending RB'},
   {n:'Jaylen Wright',pos:'RB',team:'MIA',aav:1195005,total:4780020,end:2027,note:'Cheap ascending RB through 2027'},
   {n:'Ollie Gordon',pos:'RB',team:'MIA',aav:1118166,total:4472664,end:2028,note:'Cheap RB on rookie deal'},
   // DETROIT LIONS
@@ -2962,6 +2963,9 @@ const CONTRACTS=[
   // KANSAS CITY CHIEFS
   {n:'Patrick Mahomes',pos:'QB',team:'KC',aav:45000000,total:450000000,end:2031,note:'Generational deal — locked through 2031'},
   {n:'Kenneth Walker III',pos:'RB',team:'KC',aav:14350000,total:43050000,end:2028,note:'3yr/$43M — major RB1 investment'},
+  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:16000000,total:64000000,end:2029,note:'4yr/$64M signed May 2026'},
+  {n:'Aaron Rodgers',pos:'QB',team:'PIT',aav:4000000,total:4000000,end:2026,note:'1yr bridge deal at 42'},
+  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:16000000,total:64000000,end:2029,note:'4yr/$64M signed May 2026 — elite RB1 deal'},
   {n:'Travis Kelce',pos:'TE',team:'KC',aav:12000000,total:12000000,end:2028,note:'Walk year but likely extends — monitor'},
   {n:'Xavier Worthy',pos:'WR',team:'KC',aav:3447566,total:13790264,end:2028,note:'Cheap ascending WR through 2028'},
   {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2026,note:'Expiring 2026 — extension coming given ascending role'},
@@ -3113,6 +3117,7 @@ const SCOUT={
   'Jacoby Brissett':`Brissett is the ARI bridge starter in 2026 while Jeremiyah Love develops. His 2025 numbers (16.8 PPG in 14 games) are deceptive — he's a one-year placeholder with zero dynasty value. The model rates Jacoby Brissett a strong sell at current market value.`,
   'Mac Jones':`Jones has no 2025 production and no contract. The model rates Mac Jones a strong sell at current market value.`,
   'Joe Flacco':`Flacco is 42. The model rates Joe Flacco a strong sell at current market value.`,
+  'Aaron Rodgers':`Rodgers signed a 1yr bridge deal with PIT at 42 — a short-term veteran stopgap while Drew Allar develops. His 2025 EPA (0.02) was marginal but better than Mason Rudolph. At 42 on a walk year with zero dynasty value, he provides a modest passing upgrade for PIT skill players in 2026 only. The model rates Aaron Rodgers a strong sell at current market value.`,
   'Justin Fields':`Fields has no dynasty relevance as a KC backup. His -0. 06 career EPA average suggests he's a strong athlete but an inconsistent passer. The model rates Justin Fields a sell at current market value.`,
   'Kirk Cousins':`Cousins is 38 with no contract in LV after missing all of 2025. The model rates Kirk Cousins a strong sell at current market value.`,
   'Puka Nacua':`Nacua's YPRR has improved every season (2. 56→3. 55→3. 73) and his 3. 73 in 2025 is the highest of any WR in the model — his efficiency is genuine. The model rates Puka Nacua a strong buy at current market value — one of the best value opportunities at the position.`,
