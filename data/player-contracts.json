@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-18T10:12:41.305283+00:00",
+  "fetched": "2026-05-19T09:53:03.571836+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -300,6 +300,16 @@
       "aav": 3.75,
       "total": 7.5,
       "guaranteed": 3.0,
+      "is_active": true
+    },
+    "Aaron Rodgers": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 15.52,
+      "total": 15.52,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Malik Willis": {
