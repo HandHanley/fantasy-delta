@@ -150,10 +150,18 @@ def fetch_season_stats():
     # Exclude QBs so QB scrambles don't inflate the team carry denominator
     if rush_att_col and rush_att_col in pdf.columns and season_col and team_col and team_col in pdf.columns:
         pc = pos_col if pos_col and pos_col in pdf.columns else None
+        print(f'[DELTA] rush_share: pos_col={pc}, team_col={team_col}, season_col={season_col}')
+        print(f'[DELTA] rush_share: unique positions = {pdf[pc].unique()[:8].tolist() if pc else "N/A"}')
         non_qb = pdf[pdf[pc] != 'QB'].copy() if pc else pdf.copy()
+        print(f'[DELTA] rush_share: total rows={len(pdf)}, non-QB rows={len(non_qb)}')
         team_rush_src = non_qb.groupby([team_col, season_col])[rush_att_col].sum().reset_index()
         team_rush_src.rename(columns={team_col: 'team', season_col: 'season', rush_att_col: 'team_rush_att'}, inplace=True)
         result = result.merge(team_rush_src, on=['team','season'], how='left')
+        # Debug: check BUF non-QB carries vs Josh Allen's carries
+        buf = team_rush_src[team_rush_src['team']=='BUF']
+        print(f'[DELTA] BUF non-QB rush totals: {buf.to_dict("records")}')
+        atl = team_rush_src[team_rush_src['team']=='ATL']
+        print(f'[DELTA] ATL non-QB rush totals: {atl.to_dict("records")}')
         result['rush_share'] = result.apply(
             lambda r: round(float(r['rush_att']) / float(r['team_rush_att']), 4)
             if float(r.get('team_rush_att') or 0) > 0 else 0.0, axis=1
