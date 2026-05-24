@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-24T00:43:10.205460+00:00",
+  "fetched": "2026-05-24T01:17:17.700912+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1100,16 +1100,6 @@
       "aav": 2.5,
       "total": 10.0,
       "guaranteed": 9.19,
-      "is_active": true
-    },
-    "D.J. Moore": {
-      "team": "CHI/BUF",
-      "year_signed": 2024,
-      "years": 4,
-      "end_year": 2027,
-      "aav": 27.5,
-      "total": 110.0,
-      "guaranteed": 43.65,
       "is_active": true
     },
     "Troy Franklin": {
@@ -2780,6 +2770,76 @@
       "aav": 1.22,
       "total": 4.89,
       "guaranteed": 0.51,
+      "is_active": true
+    },
+    "D'Andre Swift": {
+      "team": "Bears",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 8.0,
+      "total": 24.0,
+      "guaranteed": 14.0,
+      "is_active": true
+    },
+    "De'Von Achane": {
+      "team": "Dolphins",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.36,
+      "total": 5.44,
+      "guaranteed": 0.95,
+      "is_active": true
+    },
+    "Wan'Dale Robinson": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 17.5,
+      "total": 70.0,
+      "guaranteed": 38.0,
+      "is_active": true
+    },
+    "Ja'Marr Chase": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 40.25,
+      "total": 161.0,
+      "guaranteed": 73.9,
+      "is_active": true
+    },
+    "D.J. Moore": {
+      "team": "CHI/BUF",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 27.5,
+      "total": 110.0,
+      "guaranteed": 43.65,
+      "is_active": true
+    },
+    "De'Zhaun Stribling": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 3.34,
+      "total": 13.38,
+      "guaranteed": 13.38,
+      "is_active": true
+    },
+    "Ja'Kobi Lane": {
+      "team": "Ravens",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.76,
+      "total": 7.03,
+      "guaranteed": 1.57,
       "is_active": true
     }
   }
