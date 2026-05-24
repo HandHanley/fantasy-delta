@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-24T00:17:54.942708+00:00",
+  "fetched": "2026-05-24T00:43:10.205460+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1100,6 +1100,16 @@
       "aav": 2.5,
       "total": 10.0,
       "guaranteed": 9.19,
+      "is_active": true
+    },
+    "D.J. Moore": {
+      "team": "CHI/BUF",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 27.5,
+      "total": 110.0,
+      "guaranteed": 43.65,
       "is_active": true
     },
     "Troy Franklin": {
