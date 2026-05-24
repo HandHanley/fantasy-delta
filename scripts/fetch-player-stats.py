@@ -92,6 +92,7 @@ def fetch_season_stats():
     tgt_share_col    = col('target_share')
     air_yds_col      = col('receiving_air_yards', 'air_yards')
     air_yds_share_col= col('air_yards_share')
+    team_col         = col('team', 'recent_team', 'posteam')
 
     if not name_col:
         raise ValueError(f"No display name column found. Available: {list(pdf.columns)}")
@@ -120,7 +121,7 @@ def fetch_season_stats():
                 proper_names[norm(dn)] = dn
 
     # Aggregate to season totals — group by display name
-    group_cols = [c for c in [name_col, season_col, pos_col] if c]
+    group_cols = [c for c in [name_col, season_col, pos_col, team_col] if c]
 
     agg_dict = {'games': (week_col or 'week', 'nunique')}
     for stat_name, col_name in [
@@ -144,6 +145,18 @@ def fetch_season_stats():
 
     result = pdf.groupby(group_cols).agg(**agg_dict).reset_index()
     result.rename(columns={name_col: 'player_name', season_col: 'season'}, inplace=True)
+
+    # Compute rush_share: player carries ÷ team total carries per season
+    if 'rush_att' in result.columns and 'team' in result.columns:
+        team_rush = result.groupby(['team','season'])['rush_att'].sum().reset_index()
+        team_rush.rename(columns={'rush_att':'team_rush_att'}, inplace=True)
+        result = result.merge(team_rush, on=['team','season'], how='left')
+        result['rush_share'] = result.apply(
+            lambda r: round(float(r['rush_att']) / float(r['team_rush_att']), 4)
+            if float(r.get('team_rush_att', 0)) > 0 else 0.0, axis=1
+        )
+    else:
+        result['rush_share'] = 0.0
 
     print(f"[DELTA] Aggregated: {len(result)} player-seasons")
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
@@ -283,6 +296,7 @@ def build_output(agg, matched, rz_data=None):
                 "rush_yds":      int(r.get("rush_yds", 0)),
                 "rush_td":       int(r.get("rush_td",  0)),
                 "rush_att":      int(r.get("rush_att", 0)),
+                "rush_share":    round(float(r.get("rush_share", 0)), 4),
                 "pass_yds":      int(r.get("pass_yds", 0)),
                 "pass_td":       int(r.get("pass_td",  0)),
                 "pass_int":      int(r.get("pass_int", 0)),
