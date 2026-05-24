@@ -31,10 +31,18 @@ def get_delta_players():
     start = html.find('const RAW=[')
     end   = html.find('\nconst PICKS=', start)
     block = html[start:end]
-    names = re.findall(r"n:['\"]([^'\"]+)['\"]", block)
-    # Players with g25:0 have no 2025 NFL data — treat as no-data (rookies/inactive)
+    # Match single-quoted names (most players) and double-quoted names (apostrophe players)
+    # Single-quoted: n:'Player Name'
+    single = re.findall(r"n:'([^']+)'", block)
+    # Double-quoted: n:"Ja'Marr Chase"
+    double = re.findall(r'n:"([^"]+)"', block)
+    names = single + double
+    # Players with g25:0 have no 2025 NFL data — skip during matching
     no_data = set()
-    for m in re.finditer(r"n:['\"]([^'\"]+)['\"].*?g25:(\d+)", block):
+    for m in re.finditer(r"n:'([^']+)'.*?g25:(\d+)", block):
+        if m.group(2) == '0':
+            no_data.add(m.group(1))
+    for m in re.finditer(r'n:"([^"]+)".*?g25:(\d+)', block):
         if m.group(2) == '0':
             no_data.add(m.group(1))
     return names, no_data
