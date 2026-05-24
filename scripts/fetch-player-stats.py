@@ -146,14 +146,20 @@ def fetch_season_stats():
     result = pdf.groupby(group_cols).agg(**agg_dict).reset_index()
     result.rename(columns={name_col: 'player_name', season_col: 'season'}, inplace=True)
 
-    # Compute rush_share: player carries ÷ team total carries per season
+    # Compute rush_share: player carries ÷ team non-QB carries per season
+    # Exclude QBs from denominator — scrambles aren't relevant to RB role share
     if 'rush_att' in result.columns and 'team' in result.columns:
-        team_rush = result.groupby(['team','season'])['rush_att'].sum().reset_index()
+        pos_col_name = pos_col if pos_col and pos_col in result.columns else None
+        if pos_col_name:
+            non_qb = result[result[pos_col_name] != 'QB']
+        else:
+            non_qb = result
+        team_rush = non_qb.groupby(['team','season'])['rush_att'].sum().reset_index()
         team_rush.rename(columns={'rush_att':'team_rush_att'}, inplace=True)
         result = result.merge(team_rush, on=['team','season'], how='left')
         result['rush_share'] = result.apply(
             lambda r: round(float(r['rush_att']) / float(r['team_rush_att']), 4)
-            if float(r.get('team_rush_att', 0)) > 0 else 0.0, axis=1
+            if float(r.get('team_rush_att') or 0) > 0 else 0.0, axis=1
         )
     else:
         result['rush_share'] = 0.0
