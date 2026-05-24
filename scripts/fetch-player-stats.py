@@ -67,21 +67,29 @@ def fetch_season_stats():
     pass_yd_col = col('passing_yards', 'pass_yards')
     pass_td_col = col('passing_tds', 'passing_touchdowns')
     pass_int_col= col('passing_interceptions', 'interceptions', 'pass_int')
-    rush_yd_col = col('rushing_yards', 'rush_yards')
-    rush_td_col = col('rushing_tds', 'rushing_touchdowns')
-    rec_col     = col('receptions', 'rec')
-    rec_yd_col  = col('receiving_yards', 'rec_yards')
-    rec_td_col  = col('receiving_tds', 'receiving_touchdowns')
+    rush_yd_col      = col('rushing_yards', 'rush_yards')
+    rush_td_col      = col('rushing_tds', 'rushing_touchdowns')
+    rush_att_col     = col('carries', 'rushing_attempts', 'rush_attempts')
+    rec_col          = col('receptions', 'rec')
+    rec_yd_col       = col('receiving_yards', 'rec_yards')
+    rec_td_col       = col('receiving_tds', 'receiving_touchdowns')
+    tgt_col          = col('targets')
+    tgt_share_col    = col('target_share')
+    air_yds_col      = col('receiving_air_yards', 'air_yards')
+    air_yds_share_col= col('air_yards_share')
 
     if not name_col:
         raise ValueError(f"No display name column found. Available: {list(pdf.columns)}")
 
     print(f"[DELTA] Using name col: {name_col}")
     print(f"[DELTA] Sample names: {pdf[name_col].dropna().unique()[:5].tolist()}")
+    print(f"[DELTA] Opportunity cols — targets:{tgt_col}, tgt_share:{tgt_share_col}, "
+          f"air_yds_share:{air_yds_share_col}, carries:{rush_att_col}")
 
     # Fill nulls
     for c in [pass_yd_col, pass_td_col, pass_int_col, rush_yd_col, rush_td_col,
-              rec_col, rec_yd_col, rec_td_col]:
+              rush_att_col, rec_col, rec_yd_col, rec_td_col,
+              tgt_col, tgt_share_col, air_yds_col, air_yds_share_col]:
         if c and c in pdf.columns:
             pdf[c] = pdf[c].fillna(0)
 
@@ -101,13 +109,23 @@ def fetch_season_stats():
 
     agg_dict = {'games': (week_col or 'week', 'nunique')}
     for stat_name, col_name in [
-        ('pass_yds',  pass_yd_col),  ('pass_td',   pass_td_col),
-        ('pass_int',  pass_int_col), ('rush_yds',  rush_yd_col),
-        ('rush_td',   rush_td_col),  ('rec',       rec_col),
-        ('rec_yds',   rec_yd_col),   ('rec_td',    rec_td_col),
+        ('pass_yds',       pass_yd_col),   ('pass_td',        pass_td_col),
+        ('pass_int',       pass_int_col),  ('rush_yds',       rush_yd_col),
+        ('rush_td',        rush_td_col),   ('rush_att',       rush_att_col),
+        ('rec',            rec_col),       ('rec_yds',        rec_yd_col),
+        ('rec_td',         rec_td_col),    ('targets',        tgt_col),
+        ('air_yds',        air_yds_col),
     ]:
         if col_name and col_name in pdf.columns:
             agg_dict[stat_name] = (col_name, 'sum')
+
+    # target_share and air_yards_share are per-week fractions — average them, not sum
+    for stat_name, col_name in [
+        ('target_share',   tgt_share_col),
+        ('air_yds_share',  air_yds_share_col),
+    ]:
+        if col_name and col_name in pdf.columns:
+            agg_dict[stat_name] = (col_name, 'mean')
 
     result = pdf.groupby(group_cols).agg(**agg_dict).reset_index()
     result.rename(columns={name_col: 'player_name', season_col: 'season'}, inplace=True)
@@ -173,51 +191,127 @@ def match_names(agg, delta_names):
         print(f"[DELTA] Unmatched rookies (expected): {len(rookies)}")
     return matched
 
-def build_output(agg, matched):
+def fetch_redzone(seasons):
+    # Fetch red zone (inside 20) carry and target counts from play-by-play.
+    print("\n[DELTA] Fetching red zone data from PBP...")
+    rz = {}
+    try:
+        for season in seasons:
+            print(f"[DELTA] Loading PBP for {season}...")
+            pbp = nfl.load_pbp(seasons=[season])
+            pdf = pbp.to_pandas() if hasattr(pbp, "to_pandas") else pbp
+
+            if "season_type" in pdf.columns:
+                pdf = pdf[pdf["season_type"] == "REG"].copy()
+            if "yardline_100" not in pdf.columns:
+                print(f"[DELTA] No yardline_100 col in {season} PBP — skipping RZ")
+                continue
+            pdf = pdf[pdf["yardline_100"] <= 20].copy()
+
+            # RZ targets
+            rec_name_col = next((c for c in ["receiver_player_name","receiver_player_display_name"] if c in pdf.columns), None)
+            if rec_name_col:
+                pass_col = next((c for c in ["pass_attempt","pass"] if c in pdf.columns), None)
+                tgt_plays = pdf[pdf[rec_name_col].notna()]
+                if pass_col:
+                    tgt_plays = tgt_plays[tgt_plays[pass_col] == 1]
+                team_rz_tgt   = tgt_plays.groupby("posteam").size().to_dict()
+                player_rz_tgt = tgt_plays.groupby(rec_name_col).size().to_dict()
+            else:
+                team_rz_tgt, player_rz_tgt = {}, {}
+                print(f"[DELTA] No receiver name col in {season} PBP")
+
+            # RZ carries
+            rush_name_col = next((c for c in ["rusher_player_name","rusher_player_display_name"] if c in pdf.columns), None)
+            if rush_name_col:
+                rush_col = next((c for c in ["rush_attempt","rush"] if c in pdf.columns), None)
+                rush_plays = pdf[pdf[rush_name_col].notna()]
+                if rush_col:
+                    rush_plays = rush_plays[rush_plays[rush_col] == 1]
+                team_rz_car   = rush_plays.groupby("posteam").size().to_dict()
+                player_rz_car = rush_plays.groupby(rush_name_col).size().to_dict()
+            else:
+                team_rz_car, player_rz_car = {}, {}
+                print(f"[DELTA] No rusher name col in {season} PBP")
+
+            rz[season] = {
+                "player_rz_tgt": player_rz_tgt,
+                "player_rz_car": player_rz_car,
+                "team_rz_tgt":   team_rz_tgt,
+                "team_rz_car":   team_rz_car,
+            }
+            print(f"[DELTA] RZ {season}: {len(player_rz_tgt)} receivers, {len(player_rz_car)} rushers")
+    except Exception as e:
+        print(f"[DELTA] Red zone fetch failed: {e}")
+    return rz
+
+
+def build_output(agg, matched, rz_data=None):
     players = {}
-    stat_cols = ['games','pass_yds','pass_td','pass_int',
-                 'rush_yds','rush_td','rec','rec_yds','rec_td']
+
+    def _rz_lookup(lookup_dict, nfl_name):
+        if nfl_name in lookup_dict:
+            return int(lookup_dict[nfl_name])
+        # PBP uses abbreviated names (J.Chase) — try first initial + last name
+        parts = nfl_name.split()
+        if len(parts) >= 2:
+            abbr = parts[0][0] + "." + parts[-1]
+            if abbr in lookup_dict:
+                return int(lookup_dict[abbr])
+        return None  # None = not found, 0 = genuinely zero
 
     for delta_name, nfl_name in matched.items():
-        rows = agg[agg['player_name'] == nfl_name]
+        rows = agg[agg["player_name"] == nfl_name]
         player_data = {}
         for season in SEASONS:
-            srow = rows[rows['season'] == season]
-            if srow.empty or int(srow.iloc[0].get('games', 0)) == 0:
+            srow = rows[rows["season"] == season]
+            if srow.empty or int(srow.iloc[0].get("games", 0)) == 0:
                 player_data[season] = None
                 continue
             r = srow.iloc[0]
+            rz  = rz_data.get(season, {}) if rz_data else {}
             player_data[season] = {
-                'games':    int(r.get('games',    0)),
-                'rec':      round(float(r.get('rec',      0)), 1),
-                'rec_yds':  int(r.get('rec_yds',  0)),
-                'rec_td':   int(r.get('rec_td',   0)),
-                'rush_yds': int(r.get('rush_yds', 0)),
-                'rush_td':  int(r.get('rush_td',  0)),
-                'pass_yds': int(r.get('pass_yds', 0)),
-                'pass_td':  int(r.get('pass_td',  0)),
-                'pass_int': int(r.get('pass_int', 0)),
+                "games":         int(r.get("games",    0)),
+                "rec":           round(float(r.get("rec",      0)), 1),
+                "rec_yds":       int(r.get("rec_yds",  0)),
+                "rec_td":        int(r.get("rec_td",   0)),
+                "rush_yds":      int(r.get("rush_yds", 0)),
+                "rush_td":       int(r.get("rush_td",  0)),
+                "rush_att":      int(r.get("rush_att", 0)),
+                "pass_yds":      int(r.get("pass_yds", 0)),
+                "pass_td":       int(r.get("pass_td",  0)),
+                "pass_int":      int(r.get("pass_int", 0)),
+                "targets":       int(r.get("targets",  0)),
+                "target_share":  round(float(r.get("target_share",  0)), 4),
+                "air_yds_share": round(float(r.get("air_yds_share", 0)), 4),
+                "rz_targets":    _rz_lookup(rz.get("player_rz_tgt", {}), nfl_name),
+                "rz_carries":    _rz_lookup(rz.get("player_rz_car", {}), nfl_name),
             }
         players[delta_name] = player_data
     return players
 
 def spot_check(players, season=2025):
     checks = [
-        ('Josh Allen',     0.0, 4),
-        ("Ja'Marr Chase",  0.5, 4),
-        ('Bijan Robinson', 0.5, 4),
-        ('Trey McBride',   1.0, 4),
-        ('Justin Jefferson',0.5,4),
+        ('Josh Allen',      0.0, 4),
+        ("Ja'Marr Chase",   0.5, 4),
+        ('Bijan Robinson',  0.5, 4),
+        ('Trey McBride',    1.0, 4),
+        ('Justin Jefferson',0.5, 4),
     ]
     print(f"\n[DELTA] Spot check ({season}, scoring: 4PT pass TD):")
     for name, ppr, pass_td_pts in checks:
         s = players.get(name, {}).get(season)
-        if not s or not s.get('games'):
+        if not s or not s.get("games"):
             print(f"  {name}: no data"); continue
-        pts = (s['rec']*ppr + s['rec_yds']*0.1 + s['rec_td']*6
-             + s['rush_yds']*0.1 + s['rush_td']*6
-             + s['pass_yds']*0.04 + s['pass_td']*pass_td_pts - s['pass_int']*2)
-        print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG")
+        pts = (s["rec"]*ppr + s["rec_yds"]*0.1 + s["rec_td"]*6
+             + s["rush_yds"]*0.1 + s["rush_td"]*6
+             + s["pass_yds"]*0.04 + s["pass_td"]*pass_td_pts - s["pass_int"]*2)
+        tgt_s  = f"tgt_share:{s.get('target_share','—')}"
+        air_s  = f"air_yds_share:{s.get('air_yds_share','—')}"
+        rz_t   = f"rz_tgt:{s.get('rz_targets','—')}"
+        rz_c   = f"rz_car:{s.get('rz_carries','—')}"
+        ra     = f"rush_att:{s.get('rush_att','—')}"
+        print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG | {tgt_s} {air_s} {ra} {rz_t} {rz_c}")
 
 def fetch_contracts(delta_names):
     """Fetch active NFL contracts from nflverse (sourced from OTC)"""
@@ -346,9 +440,10 @@ def main():
     delta_names = get_delta_players()
     print(f"[DELTA] {len(delta_names)} players in DELTA RAW")
 
-    agg     = fetch_season_stats()
-    matched = match_names(agg, delta_names)
-    players = build_output(agg, matched)
+    agg      = fetch_season_stats()
+    matched  = match_names(agg, delta_names)
+    rz_data  = fetch_redzone(SEASONS)
+    players  = build_output(agg, matched, rz_data)
 
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
