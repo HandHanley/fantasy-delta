@@ -162,8 +162,10 @@ def fetch_season_stats():
         print(f'[DELTA] BUF non-QB rush totals: {buf.to_dict("records")}')
         atl = team_rush_src[team_rush_src['team']=='ATL']
         print(f'[DELTA] ATL non-QB rush totals: {atl.to_dict("records")}')
+        pc_result = pos_col if pos_col and pos_col in result.columns else None
         result['rush_share'] = result.apply(
-            lambda r: round(float(r['rush_att']) / float(r['team_rush_att']), 4)
+            lambda r: 0.0 if (pc_result and r.get(pc_result) == 'QB')
+            else round(float(r['rush_att']) / float(r['team_rush_att']), 4)
             if float(r.get('team_rush_att') or 0) > 0 else 0.0, axis=1
         )
     else:
