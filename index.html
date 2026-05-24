@@ -3531,23 +3531,22 @@ function calcAlphaScore(name) {
 function calcWorkhorseScore(name) {
   const s = PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
-  const games = s.games || 1;
-  const rapg  = (s.rush_att || 0) / games;
-  const tgtS  = s.target_share  || 0;
+  const rushS = s.rush_share   || 0;  // carries ÷ team carries — mirrors target_share
+  const tgtS  = s.target_share || 0;
   const rzC   = s.rz_carries;
   const rzT   = s.rz_targets;
 
   // Ceilings calibrated against 2025 dataset:
-  // rapg: Taylor 19.0, CMC 18.3 → ceil 19
-  // tgt:  CMC .234, Achane .188 → ceil .24
-  // rzC:  CMC 75, Taylor 71 → ceil 75
-  // rzT:  CMC 25, Gibbs 15 → ceil 26
-  const rapgN = Math.min(1, rapg / 19);
-  const tgtN  = Math.min(1, tgtS / 0.24);
-  const rzCN  = rzC != null ? Math.min(1, rzC / 75) : rapgN * 0.6;
-  const rzTN  = rzT != null ? Math.min(1, rzT / 26) : tgtN * 0.6;
+  // rush_share: CMC ~.32, Taylor ~.34, Jeanty ~.31 → ceil .35
+  // tgt_share:  CMC .234, Achane .188 → ceil .24
+  // rzC:        CMC 75, Taylor 71 → ceil 75
+  // rzT:        CMC 25, Gibbs 15 → ceil 26
+  const rushN = Math.min(1, rushS / 0.35);
+  const tgtN  = Math.min(1, tgtS  / 0.24);
+  const rzCN  = rzC != null ? Math.min(1, rzC / 75) : rushN * 0.6;
+  const rzTN  = rzT != null ? Math.min(1, rzT / 26) : tgtN  * 0.6;
 
-  const raw = rapgN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
+  const raw = rushN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
 
   // Scale: 28 floor, 99 theoretical ceiling
   return Math.round(28 + raw * 71);
@@ -4649,13 +4648,13 @@ function renderDeck(p){
       const airS  = st25.air_yds_share || 0;
       const rzT   = st25.rz_targets;
       const rzC   = st25.rz_carries;
-      const rapg  = st25.rush_att ? (st25.rush_att / (st25.games||1)).toFixed(1) : null;
+
       const compRows = isWR ? [
         ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
         ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
         ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
       ] : [
-        ['Rush Att/G',      rapg||'—',                  rapg>=17?'#6ee7b7':rapg>=13?'#7dd3fc':rapg>=9?'#fcd34d':'#fc8181'],
+        ['Rush Share',      ((st25.rush_share||0)*100).toFixed(1)+'%', (st25.rush_share||0)>=.28?'#6ee7b7':(st25.rush_share||0)>=.20?'#7dd3fc':(st25.rush_share||0)>=.13?'#fcd34d':'#fc8181'],
         ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
         ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
         ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
