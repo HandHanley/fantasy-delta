@@ -3537,11 +3537,11 @@ function calcWorkhorseScore(name) {
   const rzT   = s.rz_targets;
 
   // Ceilings calibrated against 2025 dataset:
-  // rush_share: CMC ~.32, Taylor ~.34, Jeanty ~.31 → ceil .35
+  // rush_share: Bijan ~.65 (bellcow/run-heavy), CMC ~.55, Taylor ~.58 → ceil .65
   // tgt_share:  CMC .234, Achane .188 → ceil .24
   // rzC:        CMC 75, Taylor 71 → ceil 75
   // rzT:        CMC 25, Gibbs 15 → ceil 26
-  const rushN = Math.min(1, rushS / 0.35);
+  const rushN = Math.min(1, rushS / 0.65);
   const tgtN  = Math.min(1, tgtS  / 0.24);
   const rzCN  = rzC != null ? Math.min(1, rzC / 75) : rushN * 0.6;
   const rzTN  = rzT != null ? Math.min(1, rzT / 26) : tgtN  * 0.6;
