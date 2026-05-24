@@ -3775,8 +3775,12 @@ function renderRankings(){
     <td>${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600;color:${oppScoreColor(p.oppSc)}">${p.oppSc!=null?oppScoreLabel(p.pos)+' '+p.oppSc:'—'}</td>
-    <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
+    <td style="font-weight:600;color:${oppScoreColor(p.oppSc)};white-space:nowrap">${(()=>{
+      if(p.pos==='QB'){const gl=GAME_LOG[p.n];return gl?'<span style="font-size:11px;color:#7dd3fc">'+gl.elite+'% elite</span>':'—';}
+      if(p.oppSc==null) return '—';
+      const ic=p.pos==='WR'||p.pos==='TE'?'<span style="font-family:Georgia,serif;font-size:13px">α</span>':'<span style="font-size:12px">♞</span>';
+      return ic+' '+p.oppSc;
+    })()}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${mvAsset(p).toLocaleString()}</td>
     <td>${sTag(p.sys)}</td>
