@@ -26,11 +26,18 @@ INDEX_HTML = Path(__file__).parent.parent / "index.html"
 
 def get_delta_players():
     if not INDEX_HTML.exists():
-        return []
+        return [], set()
     html  = INDEX_HTML.read_text(encoding='utf-8')
     start = html.find('const RAW=[')
     end   = html.find('\nconst PICKS=', start)
-    return re.findall(r"n:'([^']+)'", html[start:end])
+    block = html[start:end]
+    names = re.findall(r"n:['\"]([^'\"]+)['\"]", block)
+    # Players with g25:0 have no 2025 NFL data — treat as no-data (rookies/inactive)
+    no_data = set()
+    for m in re.finditer(r"n:['\"]([^'\"]+)['\"].*?g25:(\d+)", block):
+        if m.group(2) == '0':
+            no_data.add(m.group(1))
+    return names, no_data
 
 def norm(name):
     """Normalise to lowercase letters/spaces only, strip suffixes and punctuation."""
@@ -134,19 +141,15 @@ def fetch_season_stats():
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
     return result
 
-def match_names(agg, delta_names):
+def match_names(agg, delta_names, no_data=None):
     nfl_names = agg['player_name'].unique()
     nfl_norm  = {norm(n): n for n in nfl_names}
+    no_data   = no_data or set()
 
     print(f"[DELTA] nfl_norm size: {len(nfl_norm)}")
-    print(f"[DELTA] Sample nfl_norm keys: {list(nfl_norm.keys())[:5]}")
-
-    # Check if Josh Allen matches
     print(f"[DELTA] 'josh allen' in nfl_norm: {'josh allen' in nfl_norm}")
-    if 'josh allen' in nfl_norm:
-        print(f"[DELTA] Josh Allen maps to: {nfl_norm['josh allen']}")
 
-    # Known aliases: DELTA name → nflverse display name
+    # Known aliases: DELTA name -> nflverse display name
     ALIASES = {
         'Chigoziem Okonkwo': 'Chig Okonkwo',
     }
@@ -155,7 +158,9 @@ def match_names(agg, delta_names):
     not_found = []
 
     for name in delta_names:
-        # Check alias first
+        # Skip players with no 2025 NFL data — rookies, long-term IR, etc.
+        if name in no_data:
+            continue
         lookup = ALIASES.get(name, name)
         key    = norm(lookup)
 
@@ -176,19 +181,11 @@ def match_names(agg, delta_names):
             else:
                 not_found.append(name)
 
-    print(f"[DELTA] Matched: {len(matched)}/{len(delta_names)}")
+    eligible = len(delta_names) - len(no_data)
+    print(f"[DELTA] Matched: {len(matched)}/{eligible} eligible players "
+          f"({len(no_data)} skipped — no 2025 NFL data)")
     if not_found:
-        unmatched_vets = [n for n in not_found if not any(
-            n in x for x in ['Love', 'Tate', 'Tyson', 'Simpson', 'Sadiq', 'Lemon',
-                              'Concepcion', 'Cooper', 'Price', 'Boston', 'Bernard',
-                              'Stowers', 'Klein', 'Klare', 'Beck', 'Roush', 'Williams',
-                              'Delp', 'Fields', 'Branch', 'Brazzell', 'Hurst', 'Allar',
-                              'Kacmarek', 'Mendoza', 'Nussmeier', 'Klubnik', 'Burks']
-        )]
-        if unmatched_vets:
-            print(f"[DELTA] Unmatched veterans: {unmatched_vets[:10]}")
-        rookies = [n for n in not_found if n not in unmatched_vets]
-        print(f"[DELTA] Unmatched rookies (expected): {len(rookies)}")
+        print(f"[DELTA] Unmatched veterans (investigate): {not_found}")
     return matched
 
 def fetch_redzone(seasons):
@@ -437,11 +434,11 @@ def main():
     print(f"[DELTA] Starting at {datetime.now(timezone.utc).isoformat()}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    delta_names = get_delta_players()
-    print(f"[DELTA] {len(delta_names)} players in DELTA RAW")
+    delta_names, no_data = get_delta_players()
+    print(f"[DELTA] {len(delta_names)} players in DELTA RAW ({len(no_data)} with no 2025 NFL data)")
 
     agg      = fetch_season_stats()
-    matched  = match_names(agg, delta_names)
+    matched  = match_names(agg, delta_names, no_data)
     rz_data  = fetch_redzone(SEASONS)
     players  = build_output(agg, matched, rz_data)
 
