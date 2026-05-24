@@ -186,7 +186,7 @@ tr:hover td{background:#1a202c}
     <select id="sort-rank" onchange="renderRankings()">
       <option value="ktc">Mkt Val</option><option value="mv">Model val</option>
       <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
-      <option value="a">Age</option><option value="sys">System</option>
+      <option value="a">Age</option><option value="sys">System</option><option value="opp">Alpha / Workhorse</option>
     </select>
     <select id="age-rank" onchange="renderRankings()">
       <option value="0">Any age</option><option value="24">≤24</option>
@@ -2522,7 +2522,7 @@ function calcProj(pl){
       gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:1.0,
       ktcEff:e2.ktc,notes:'',hasOv:true,
       epaSc:1.0,epaFl:false,epaFr:null,epaTr:'flat',
-      role:0,roleLabel:'—',sys:50};
+      role:0,roleLabel:'—',sys:50,oppSc:null};
   }
 
   // ── RULE 2: VOLUME-ADJUSTED YPRR ──────────────────────────────
@@ -2685,11 +2685,12 @@ function calcProj(pl){
   // mv computed via mvAsset (includes all 5 features: contract, injury, scarcity, competition, volatility)
   const mv=mvAsset({...pl,proj,p:pl.p});
 
+  const oppSc=getOppScore(pl.n,pl.p);
   return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
     ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
-    ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22};
+    ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22,oppSc};
 }
 
 function mvAsset(pl){
@@ -2821,7 +2822,7 @@ const CONTRACTS=[
   {n:'Alvin Kamara',pos:'RB',team:'NO',aav:12250000,total:24500000,end:2026,note:'Final contract — walk year 2026'},
   {n:'Chris Olave',pos:'WR',team:'NO',aav:4817969,total:19271874,end:2026,note:'Cheap deal expiring — extension or FA looms'},
   {n:'Juwan Johnson',pos:'TE',team:'NO',aav:10250000,total:30750000,end:2027,note:'Locked in as TE1 through 2027'},
-  {n:'Rashid Shaheed',pos:'WR',team:'NO',aav:1031120,total:4124480,end:2027,note:'Cheap deal, depth WR'},
+
   // NEW YORK GIANTS
   {n:'Malik Nabers',pos:'WR',team:'NYG',aav:7301938,total:29207750,end:2028,note:'Locked in as WR1 through 2028'},
   {n:'Jaxson Dart',pos:'QB',team:'NYG',aav:4244482,total:16977927,end:2029,note:'Franchise QB of the future'},
@@ -2965,7 +2966,6 @@ const CONTRACTS=[
   {n:'Kenneth Walker III',pos:'RB',team:'KC',aav:14350000,total:43050000,end:2028,note:'3yr/$43M — major RB1 investment'},
   {n:"De'Von Achane",pos:'RB',team:'MIA',aav:16000000,total:64000000,end:2029,note:'4yr/$64M signed May 2026'},
   {n:'Aaron Rodgers',pos:'QB',team:'PIT',aav:4000000,total:4000000,end:2026,note:'1yr bridge deal at 42'},
-  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:16000000,total:64000000,end:2029,note:'4yr/$64M signed May 2026 — elite RB1 deal'},
   {n:'Travis Kelce',pos:'TE',team:'KC',aav:12000000,total:12000000,end:2028,note:'Walk year but likely extends — monitor'},
   {n:'Xavier Worthy',pos:'WR',team:'KC',aav:3447566,total:13790264,end:2028,note:'Cheap ascending WR through 2028'},
   {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2026,note:'Expiring 2026 — extension coming given ascending role'},
@@ -3134,7 +3134,7 @@ const SCOUT={
   'Drake London':`London's YPRR has climbed steadily (2. 06→1. 86→2. 30→2. 36) and he's one of the few WRs combining above-average efficiency with a high reception rate (5. 7/game). His walk-year 2026 contract is the risk — if ATL doesn't extend him, roster uncertainty follows. The model rates Drake London a hold at current market value.`,
   'Garrett Wilson':`Wilson's YPRR has declined from 1.87 to 1.55 over four years with a 43% miss rate and Fading tag — the NYJ offensive environment has been chronically limiting. Locked through 2030 at 26 with Omar Cooper and Kenyon Sadiq drafted as new weapons, the upside is real if the QB situation (Frank Reich OC) stabilizes. The model rates Garrett Wilson a strong sell at current market value.`,
   'Emeka Egbuka':`Egbuka's 1. 77 YPRR as a rookie in TB — a developing situation — with a 28% elite rate across 18 games is a strong debut. At 23 locked through 2029 with a lower reception rate (3. The model rates Emeka Egbuka a strong sell at current market value.`,
-  'CeeDee Lamb':`Lamb's 2. 40 YPRR remains elite across four seasons and his 33% elite rate across 67 games is top-tier. His 2025 dip (11. The model rates CeeDee Lamb a buy at current market value.`,
+  'CeeDee Lamb':`Lamb's 2.40 YPRR remains elite across four seasons and his 33% elite rate across 67 games is top-tier. His 2025 dip to 11.7 PPG (from 14.2 in 2024) is worth watching but reflects DAL's broader offensive dysfunction rather than a Lamb-specific decline. He's locked through 2029 on a 4yr/$136M deal — zero contract risk. At 26.9 with elite efficiency and long-term security, he's one of the cleanest WR1 holds in dynasty. The model rates CeeDee Lamb a buy at current market value.`,
   'DeVonta Smith':`Smith's 1. 96 YPRR is stable but unspectacular — consistently above average without elite upside. His 44% miss rate and Fading trend reflect reduced target share in PHI's evolving offense. The model rates DeVonta Smith a strong sell at current market value.`,
   'Michael Pittman Jr.':`Pittman's YPRR declined from 2. 02 (2023) to 1. 49 (2025) and his PPG has fallen three straight seasons — now in PIT, which is an OC change and a lateral move at best. At 28 locked through 2029, the efficiency decline is the concern. The model rates Jaylen Waddle a buy at current market value.`,
   'Alec Pierce':`Pierce's YPRR improved to 2. 19 in 2025 — his best — but his 66% miss rate across 68 games is the worst hold-back. The model rates Alec Pierce a hold at current market value.`,
@@ -3220,7 +3220,7 @@ const SCOUT={
   'Ashton Jeanty':`Jeanty's -0. 24 EPA/rush in a weak LV offense with a 47% miss rate as a rookie is a real concern — but his 3. 24 receptions per game and Rising tag reflect the opportunity in front of him. The model rates Ashton Jeanty a sell at current market value.`,
   'Jaylen Warren':`Warren's 67% miss rate across 64 games and consistently negative EPA across three years are red flags — the model is right to be skeptical. PIT locked him through 2027 at 45% snap share, but the efficiency profile is below average. The model rates Jaylen Warren a strong sell at current market value.`,
   'Rico Dowdle':`Dowdle's -0. 01 EPA/rush (near average) and 47% snap share in PIT are modest — he's a committee back without a clear path to expanded volume. The model rates Rico Dowdle a strong sell at current market value.`,
-  'Breece Hall':`Hall's EPA/rush has been negative for three straight years (-0. 09 to -0. 11) and his walk-year contract in 2026 at 25 is the key inflection point. His 63% snap share and 2. 1 rec/game are positive, but NYJ's offensive environment has been limiting. The model rates Breece Hall a strong sell at current market value.`,
+  'Breece Hall':`Hall's EPA/rush has been negative for three straight years (-0.09 to -0.11) — a persistent efficiency concern for a back with his market value. He signed a 3yr/$45.75M extension in May 2026 ($29M guaranteed through 2028), removing the contract uncertainty but cementing the expectation. His 63% snap share and 2.1 rec/game are positives, but NYJ's offensive environment has been a ceiling for his production. The model rates Breece Hall a strong sell at current market value.`,
   'TreVeyon Henderson':`Henderson's 46% snap share and 2. 1 rec/game in NE's rebuild are modest numbers for a 23-year-old locked through 2028. The 59% miss rate reflects limited usage. The model rates TreVeyon Henderson a buy at current market value.`,
   'Kenneth Gainwell':`Gainwell's 4. 29 receptions per game is genuinely elite for an RB — the most format-sensitive value in the model at his price point. His 85% miss rate and 40% snap share define his ceiling; he's a high-floor specialist in TE-premium full PPR formats but a STRONG SELL in standard. The model rates Kenneth Gainwell a strong sell at current market value.`,
   'RJ Harvey':`Harvey's 2. 8 rec/game and Rising tag reflect opportunity in DEN but his -0. 15 EPA/rush and 50% miss rate across 16 games are concerning. The model rates RJ Harvey a buy at current market value.`,
@@ -3495,6 +3495,83 @@ const COLLEGES={
   'Michael Mayer':'Notre Dame',
   'Zach Ertz':'Stanford'
 };
+
+
+// ── OPPORTUNITY SCORES ────────────────────────────────────────────────────────
+// Alpha Score (WR/TE): target share + air yards share + RZ target share
+// Workhorse Score (RB): rush volume + target share + RZ carry share + RZ targets
+// Scale: 0-99. Elite ~93-97. League avg starter ~65-72. Committee/role ~45-60.
+// Data loaded from player-stats.json via loadPlayerStats()
+
+let PLAYER_STATS = {}; // populated by loadPlayerStats()
+
+function calcAlphaScore(name) {
+  const s = PLAYER_STATS[name]?.['2025'];
+  if (!s || !s.games) return null;
+  const tgtS  = s.target_share  || 0;
+  const airS  = s.air_yds_share || 0;
+  const rzT   = s.rz_targets;
+  const games = s.games || 1;
+
+  // Ceilings calibrated against 2025 dataset:
+  // tgt: Chase .321, JSN .368 → ceil .32 (JSN slightly above = max)
+  // air: JSN .504, Jefferson .402 → ceil .46 (realistic elite)
+  // rz:  Adams 32, Chase 22 → ceil 24 (Adams is historic outlier)
+  const tgtN  = Math.min(1, tgtS  / 0.32);
+  const airN  = Math.min(1, airS  / 0.46);
+  const rzN   = rzT != null ? Math.min(1, rzT / 24) : tgtN * 0.7;
+  const gamesN= Math.min(1, games / 17);
+
+  const raw = tgtN*0.35 + airN*0.30 + rzN*0.25 + gamesN*0.10;
+
+  // Scale: 30 floor, 99 theoretical ceiling
+  return Math.round(30 + raw * 69);
+}
+
+function calcWorkhorseScore(name) {
+  const s = PLAYER_STATS[name]?.['2025'];
+  if (!s || !s.games) return null;
+  const games = s.games || 1;
+  const rapg  = (s.rush_att || 0) / games;
+  const tgtS  = s.target_share  || 0;
+  const rzC   = s.rz_carries;
+  const rzT   = s.rz_targets;
+
+  // Ceilings calibrated against 2025 dataset:
+  // rapg: Taylor 19.0, CMC 18.3 → ceil 19
+  // tgt:  CMC .234, Achane .188 → ceil .24
+  // rzC:  CMC 75, Taylor 71 → ceil 75
+  // rzT:  CMC 25, Gibbs 15 → ceil 26
+  const rapgN = Math.min(1, rapg / 19);
+  const tgtN  = Math.min(1, tgtS / 0.24);
+  const rzCN  = rzC != null ? Math.min(1, rzC / 75) : rapgN * 0.6;
+  const rzTN  = rzT != null ? Math.min(1, rzT / 26) : tgtN * 0.6;
+
+  const raw = rapgN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
+
+  // Scale: 28 floor, 99 theoretical ceiling
+  return Math.round(28 + raw * 71);
+}
+
+function getOppScore(name, pos) {
+  if (pos === 'WR' || pos === 'TE') return calcAlphaScore(name);
+  if (pos === 'RB') return calcWorkhorseScore(name);
+  return null;
+}
+
+function oppScoreColor(score) {
+  if (!score) return '#4a5568';
+  if (score >= 88) return '#6ee7b7';
+  if (score >= 75) return '#7dd3fc';
+  if (score >= 60) return '#fcd34d';
+  return '#fc8181';
+}
+
+function oppScoreLabel(pos) {
+  if (pos === 'WR' || pos === 'TE') return 'ALP';
+  if (pos === 'RB') return 'WHS';
+  return '';
+}
 
 const COMP=[];
 // ── DYNASTY SCORE ─────────────────────────────────────────────────────────
@@ -4549,6 +4626,48 @@ function renderDeck(p){
 
     <div class="dd-divider"></div>
 
+    ${(()=>{
+      const oppSc = getOppScore(p.n, p.pos);
+      const st25  = PLAYER_STATS[p.n]?.['2025'];
+      if (!oppSc || !st25) return '';
+      const isWR  = p.pos==='WR'||p.pos==='TE';
+      const icon  = isWR ? 'α' : '♞';
+      const label = isWR ? 'Alpha Score' : 'Workhorse Score';
+      const sc    = oppSc;
+      const scC   = oppScoreColor(sc);
+      const tier  = sc>=88?(isWR?'Elite alpha':'Elite workhorse'):sc>=75?'Clear starter':sc>=60?'Role player':'Committee/specialist';
+      const tgtS  = st25.target_share  || 0;
+      const airS  = st25.air_yds_share || 0;
+      const rzT   = st25.rz_targets;
+      const rzC   = st25.rz_carries;
+      const rapg  = st25.rush_att ? (st25.rush_att / (st25.games||1)).toFixed(1) : null;
+      const compRows = isWR ? [
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
+        ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
+      ] : [
+        ['Rush Att/G',      rapg||'—',                  rapg>=17?'#6ee7b7':rapg>=13?'#7dd3fc':rapg>=9?'#fcd34d':'#fc8181'],
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
+        ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
+      ];
+      const rowsHtml = compRows.map(([lbl,val,clr])=>
+        '<div class="breakdown-row"><span style="color:#718096">'+lbl+'</span>'
+        +'<span style="font-weight:600;color:'+clr+'">'+val+'</span></div>'
+      ).join('');
+      const iconStyle = isWR
+        ? 'font-size:26px;font-weight:700;font-family:Georgia,serif;color:'+scC+';line-height:1;margin-right:8px'
+        : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
+      return '<div class="dd-section">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
+        +'<div style="display:flex;align-items:center">'
+        +'<span style="'+iconStyle+'">'+icon+'</span>'
+        +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
+        +'<div style="font-size:22px;font-weight:800;color:'+scC+'">'+sc+'</div></div>'
+        +'<div style="font-size:10px;color:'+scC+';margin-bottom:.5rem;font-weight:600">'+tier+'</div>'
+        +rowsHtml+'</div><div class="dd-divider"></div>';
+    })()}
+
     <div class="dd-section">
       <div class="dd-section-label">DELTA Scouting Report</div>
       <div class="dd-writeup loading" id="dd-writeup">Generating report…</div>
@@ -5244,6 +5363,51 @@ const FC_ALIASES = {
   'Samuel LaPorta':        'Sam LaPorta',
   'Javonte Williams':      'Javonte Williams',
 };
+
+
+async function loadPlayerStats() {
+  try {
+    const res = await fetch('./data/player-stats.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data?.players) return;
+
+    PLAYER_STATS = data.players;
+    let updated = 0;
+    for (const player of RAW) {
+      if (!player || !player.n) continue;
+      const s = PLAYER_STATS[player.n];
+      if (!s) continue;
+      // Update baked-in PPG from live stats where available
+      for (const [yr, key] of [['2025','ppg25'],['2024','ppg24'],['2023','ppg23']]) {
+        const row = s[yr];
+        if (!row || !row.games) continue;
+        const ppr = 0.5;
+        const tep = player.p === 'TE' ? 0.5 : 0;
+        const ppg = (
+          (row.rec || 0) * (ppr + tep) +
+          (row.rec_yds || 0) * 0.1 +
+          (row.rec_td  || 0) * 6 +
+          (row.rush_yds|| 0) * 0.1 +
+          (row.rush_td || 0) * 6 +
+          (row.pass_yds|| 0) * 0.04 +
+          (row.pass_td || 0) * 4 -
+          (row.pass_int|| 0) * 2
+        ) / row.games;
+        if (ppg > 0) { player[key] = Math.round(ppg * 10) / 10; updated++; }
+      }
+    }
+    // Rebuild COMP with fresh PPG and opportunity scores now available
+    COMP.length = 0;
+    RAW.forEach(r => COMP.push(calcProj(r)));
+    ASSETS.length = 0;
+    ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+    if (typeof renderRankings === 'function') renderRankings();
+    console.log(`[DELTA] Player stats loaded: ${Object.keys(PLAYER_STATS).length} players, ${updated} PPG values updated`);
+  } catch(e) {
+    console.warn('[DELTA] Could not load player stats:', e.message);
+  }
+}
 
 // ── LOADER ────────────────────────────────────────────────────────────────
 async function loadLiveMarketValues() {
