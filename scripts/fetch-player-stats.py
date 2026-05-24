@@ -316,7 +316,7 @@ def spot_check(players, season=2025):
         rz_t   = f"rz_tgt:{s.get('rz_targets','—')}"
         rz_c   = f"rz_car:{s.get('rz_carries','—')}"
         ra     = f"rush_att:{s.get('rush_att','—')}"
-        print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG | {tgt_s} {air_s} {ra} {rz_t} {rz_c}")
+        print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG | {tgt_s} {air_s} rush_share:{s.get('rush_share','—')} {ra} {rz_t} {rz_c}")
 
 def fetch_contracts(delta_names):
     """Fetch active NFL contracts from nflverse (sourced from OTC)"""
