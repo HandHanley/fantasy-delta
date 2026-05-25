@@ -182,7 +182,6 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('projections',this)">Projections</button>
   <button class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button class="tab" onclick="showTab('epa',this)">EPA Insights</button>
-  <button class="tab" onclick="showTab('watchlist',this)">2026 Flags</button>
   <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
@@ -335,10 +334,6 @@ tr:hover td{background:#1a202c}
   </table></div>
 </div>
 
-<div id="panel-watchlist" class="panel">
-  <div class="info-box">Players on teams with a new 2026 OC — sorted by system score (lowest risk first).</div>
-  <div id="watchlist-body"></div>
-</div>
 
 <div id="panel-ripple" class="panel">
   <div class="info-box">Value changes from offseason moves — sorted by magnitude.</div>
@@ -4243,21 +4238,6 @@ function clearAllTrade(){
   recalcTrade();
 }
 
-
-function renderWatchlist(){
-  const data=COMP.filter(p=>p.och).sort((a,b)=>a.sys-b.sys);
-  document.getElementById('watchlist-body').innerHTML=data.map(p=>`
-    <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a202c;font-size:12px;flex-wrap:wrap">
-      <span style="font-weight:600;min-width:150px;white-space:nowrap">${p.n}</span>
-      <span class="badge bn">${p.pos}</span>
-      <span style="font-size:11px;color:#718096">${p.t} · ${p.oc}</span>
-      ${sTag(p.sys)}${eTag(p.epaSc,p.epaFl,p.epaFr)}
-      <span style="font-size:11px">Proj: <strong>${getAdjProj(p).toFixed(1)}</strong></span>
-      <span style="font-size:11px;color:#718096">Mkt ${p.ktcEff.toLocaleString()}</span>
-      ${vTag(p)}
-    </div>`).join('');
-}
-
 function renderRipple(){
   const sorted=[...RIPPLE].sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
   document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
@@ -4416,7 +4396,7 @@ function clearOV(name){delete OV[name];renderAll();renderOVList();}
 function renderAll(){
   COMP.length=0;RAW.forEach(r=>COMP.push(calcProj(r)));
   ASSETS.length=0;COMP.forEach(p=>ASSETS.push(p));PICKS.forEach(p=>ASSETS.push(p));
-  renderRankings();renderProj();renderWatchlist();renderRipple();renderEPA();recalcTrade();
+  renderRankings();renderProj();renderRipple();renderEPA();recalcTrade();
 }
 
 function showTab(id,el){
