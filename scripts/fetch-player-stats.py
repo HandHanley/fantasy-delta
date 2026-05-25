@@ -285,6 +285,15 @@ def build_output(agg, matched, rz_data=None):
                 return int(lookup_dict[abbr])
         return None  # None = not found, 0 = genuinely zero
 
+    # Build headshot lookup: player_display_name → most recent headshot_url
+    headshots = {}
+    if 'headshot_url' in pdf.columns and name_col in pdf.columns:
+        hs = pdf[[name_col, 'headshot_url']].dropna(subset=['headshot_url'])
+        hs = hs[hs['headshot_url'].str.startswith('http', na=False)]
+        for name, url in hs.groupby(name_col)['headshot_url'].first().items():
+            headshots[name] = url
+    print(f'[DELTA] Headshots found: {len(headshots)}')
+
     for delta_name, nfl_name in matched.items():
         rows = agg[agg["player_name"] == nfl_name]
         player_data = {}
@@ -314,7 +323,12 @@ def build_output(agg, matched, rz_data=None):
                 "rz_carries":    _rz_lookup(rz.get("player_rz_car", {}), nfl_name),
             }
         players[delta_name] = player_data
-    return players
+    # Attach headshots as a separate top-level dict
+    headshot_out = {}
+    for delta_name, nfl_name in matched.items():
+        if nfl_name in headshots:
+            headshot_out[delta_name] = headshots[nfl_name]
+    return players, headshot_out
 
 def spot_check(players, season=2025):
     checks = [
@@ -469,13 +483,14 @@ def main():
     agg      = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     rz_data  = fetch_redzone(SEASONS)
-    players  = build_output(agg, matched, rz_data)
+    players, headshot_out = build_output(agg, matched, rz_data)
 
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
         'seasons': SEASONS,
         'note':    'Raw stats — PPG calculated client-side per scoring format dropdown',
         'players': players,
+        'headshots': headshot_out,
     }
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
