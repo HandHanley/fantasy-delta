@@ -3798,7 +3798,7 @@ function renderRankings(){
       return ic+' '+p.oppSc;
     })()}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
-    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p).toLocaleString()}</td>
+    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=9999?"9,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
@@ -4622,7 +4622,7 @@ function renderDeck(p){
           <div class="dd-stat-lbl">Proj PPG</div>
         </div>
         <div class="dd-stat">
-          <div class="dd-stat-val">${mv.toLocaleString()}</div>
+          <div class="dd-stat-val">${mv>=9999?"9,999+":mv.toLocaleString()}</div>
           <div class="dd-stat-lbl">Model Value</div>
         </div>
         <div class="dd-stat">
