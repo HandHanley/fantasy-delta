@@ -5584,13 +5584,13 @@ async function loadLiveMarketValues() {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
 
-    // Re-render whatever tab is currently active with fresh values
-    const activePanel = document.querySelector('.panel.active');
-    if (activePanel) {
-      // Trigger a re-sort/re-render by simulating a filter change
-      const activeSort = document.querySelector('[data-sort-active]');
-      if (activeSort) activeSort.click();
-    }
+    // Rebuild COMP so ktcEff reflects fresh market values on all tabs
+    COMP.length = 0;
+    RAW.forEach(r => COMP.push(calcProj(r)));
+    ASSETS.length = 0;
+    ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+    if (typeof renderRankings === 'function') renderRankings();
+    if (typeof renderProj === 'function') renderProj();
 
   } catch (err) {
     // Show error in badge so we can debug
