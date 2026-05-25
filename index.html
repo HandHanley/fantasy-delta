@@ -33,17 +33,22 @@ tr:hover td{background:#1a202c}
   body{padding:.5rem}
   .tabs{gap:3px}
   .tab{padding:5px 9px;font-size:11px}
-  .controls{gap:5px}
-  .controls input{width:120px}
+  /* Controls: 2-col grid on mobile so dropdowns don't wrap chaotically */
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .controls input{width:100%;grid-column:1/-1}
+  .controls select{width:100%}
+  /* Quick search full width */
+  #deck-search{font-size:13px;max-width:100%!important}
+  .deck-search-wrap{max-width:100%!important}
   table{font-size:11px}
   th,td{padding:4px 5px}
+  /* Hide lower-priority columns on mobile */
+  .col-hide-mobile{display:none}
   /* Modal mobile */
   .dd-card{border-radius:10px 10px 0 0;max-height:85vh;margin-top:auto}
   .dd-overlay{align-items:flex-end;padding:0}
   .dd-grid{grid-template-columns:repeat(2,1fr)}
   .dd-name{font-size:15px}
-  /* Quick search */
-  #deck-search{font-size:13px}
 }
 @media(max-width:400px){
   .tab{padding:4px 7px;font-size:10px}
@@ -202,13 +207,13 @@ tr:hover td{background:#1a202c}
   </div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
-      <th style="padding-right:6px">Pos#</th>
+      <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
       <th onclick="setSortR('ktc')">Mkt Val</th><th onclick="setSortR('n')">Player</th>
-      <th>Pos</th><th onclick="setSortR('a')">Age</th><th>Team</th>
-      <th>PPG'25</th><th>PPG'24</th><th onclick="setSortR('epaSc')">EPA</th>
+      <th>Pos</th><th onclick="setSortR('a')" class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
+      <th>PPG'25</th><th class="col-hide-mobile">PPG'24</th><th onclick="setSortR('epaSc')" class="col-hide-mobile">EPA</th>
       <th>Role</th><th onclick="setSortR('proj')">Proj PPG</th>
-      <th onclick="setSortR('mv')">Mod val</th><th onclick="setSortR('sys')">Sys</th>
-      <th>OC</th><th>Tag</th>
+      <th onclick="setSortR('mv')" class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" class="col-hide-mobile">Sys</th>
+      <th class="col-hide-mobile">OC</th><th>Tag</th>
     </tr></thead>
     <tbody id="rank-body"></tbody>
   </table></div>
@@ -3504,6 +3509,7 @@ const COLLEGES={
 // Data loaded from player-stats.json via loadPlayerStats()
 
 let PLAYER_STATS = {}; // populated by loadPlayerStats()
+let HEADSHOTS = {};    // player name → headshot URL
 
 function calcAlphaScore(name) {
   const s = PLAYER_STATS[name]?.['2025'];
@@ -3785,9 +3791,9 @@ function renderRankings(){
       return ic+' '+p.oppSc;
     })()}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
-    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${mvAsset(p).toLocaleString()}</td>
-    <td>${sTag(p.sys)}</td>
-    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}">${p.och?'⚠ ':''}${p.oc}</td>
+    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p).toLocaleString()}</td>
+    <td class="col-hide-mobile">${sTag(p.sys)}</td>
+    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
@@ -4447,6 +4453,10 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDeckNow(); })
 function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
+  const hsEl = document.getElementById('dd-headshot');
+  const hsUrl = HEADSHOTS[p.n];
+  if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
+  else { hsEl.style.display='none'; hsEl.src=''; }
   document.getElementById('dd-card').dataset.player=p.n;
   const trend=TREND_TAG[p.n]||'';
   const trendHtml=trend==='rising'?'<span class="badge bi">↑ Rising</span>':
@@ -5347,9 +5357,15 @@ document.addEventListener('click', function(e) {
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
   <div class="dd-card" id="dd-card" data-player="">
     <div class="dd-header">
-      <div>
-        <div class="dd-name" id="dd-name">—</div>
-        <div class="dd-meta" id="dd-meta"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <img id="dd-headshot" src="" alt="" width="48" height="48"
+          style="border-radius:50%;object-fit:cover;border:2px solid #2d3748;
+                 background:#1a202c;flex-shrink:0;display:none"
+          onerror="this.style.display='none'">
+        <div style="min-width:0">
+          <div class="dd-name" id="dd-name">—</div>
+          <div class="dd-meta" id="dd-meta"></div>
+        </div>
       </div>
       <button class="dd-close" onclick="closeDeckNow()">✕</button>
     </div>
@@ -5412,6 +5428,7 @@ async function loadPlayerStats() {
     if (!data?.players) return;
 
     PLAYER_STATS = data.players;
+    if (data.headshots) HEADSHOTS = data.headshots;
     let updated = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
