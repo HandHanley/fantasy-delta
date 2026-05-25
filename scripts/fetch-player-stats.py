@@ -165,9 +165,16 @@ def fetch_season_stats():
     else:
         result['rush_share'] = 0.0
 
-    print(f"[DELTA] Aggregated: {len(result)} player-seasons")
+    # Build headshot lookup from weekly data while pdf is in scope
+    headshots = {}
+    if 'headshot_url' in pdf.columns and name_col in pdf.columns:
+        hs = pdf[[name_col, 'headshot_url']].dropna(subset=['headshot_url'])
+        hs = hs[hs['headshot_url'].str.startswith('http', na=False)]
+        for name, url in hs.groupby(name_col)['headshot_url'].first().items():
+            headshots[name] = url
+    print(f'[DELTA] Aggregated: {len(result)} player-seasons, {len(headshots)} headshots')
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
-    return result
+    return result, headshots
 
 def match_names(agg, delta_names, no_data=None):
     nfl_names = agg['player_name'].unique()
@@ -271,7 +278,7 @@ def fetch_redzone(seasons):
     return rz
 
 
-def build_output(agg, matched, rz_data=None):
+def build_output(agg, matched, rz_data=None, headshots=None):
     players = {}
 
     def _rz_lookup(lookup_dict, nfl_name):
@@ -284,15 +291,6 @@ def build_output(agg, matched, rz_data=None):
             if abbr in lookup_dict:
                 return int(lookup_dict[abbr])
         return None  # None = not found, 0 = genuinely zero
-
-    # Build headshot lookup: player_display_name → most recent headshot_url
-    headshots = {}
-    if 'headshot_url' in pdf.columns and name_col in pdf.columns:
-        hs = pdf[[name_col, 'headshot_url']].dropna(subset=['headshot_url'])
-        hs = hs[hs['headshot_url'].str.startswith('http', na=False)]
-        for name, url in hs.groupby(name_col)['headshot_url'].first().items():
-            headshots[name] = url
-    print(f'[DELTA] Headshots found: {len(headshots)}')
 
     for delta_name, nfl_name in matched.items():
         rows = agg[agg["player_name"] == nfl_name]
@@ -323,11 +321,13 @@ def build_output(agg, matched, rz_data=None):
                 "rz_carries":    _rz_lookup(rz.get("player_rz_car", {}), nfl_name),
             }
         players[delta_name] = player_data
-    # Attach headshots as a separate top-level dict
+    # Build delta_name → headshot_url mapping
     headshot_out = {}
-    for delta_name, nfl_name in matched.items():
-        if nfl_name in headshots:
-            headshot_out[delta_name] = headshots[nfl_name]
+    if headshots:
+        for delta_name, nfl_name in matched.items():
+            if nfl_name in headshots:
+                headshot_out[delta_name] = headshots[nfl_name]
+    print(f'[DELTA] Headshots matched: {len(headshot_out)}')
     return players, headshot_out
 
 def spot_check(players, season=2025):
@@ -480,10 +480,10 @@ def main():
     delta_names, no_data = get_delta_players()
     print(f"[DELTA] {len(delta_names)} players in DELTA RAW ({len(no_data)} with no 2025 NFL data)")
 
-    agg      = fetch_season_stats()
+    agg, headshots = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     rz_data  = fetch_redzone(SEASONS)
-    players, headshot_out = build_output(agg, matched, rz_data)
+    players, headshot_out = build_output(agg, matched, rz_data, headshots)
 
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
