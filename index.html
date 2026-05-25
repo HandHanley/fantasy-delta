@@ -114,6 +114,11 @@ tr:hover td{background:#1a202c}
 .dd-close{background:none;border:none;color:#718096;font-size:20px;cursor:pointer;
   padding:0 4px;line-height:1;flex-shrink:0}
 .dd-close:hover{color:#e2e8f0}
+.dd-copy{background:none;border:1px solid #2d3748;border-radius:6px;color:#718096;
+  font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;
+  padding:3px 8px;line-height:1.4;flex-shrink:0;transition:all .15s}
+.dd-copy:hover{background:#2d3748;color:#e2e8f0}
+.dd-copy.copied{border-color:#6ee7b7;color:#6ee7b7}
 .dd-body{padding:1rem 1.25rem}
 .dd-section{margin-bottom:1.1rem}
 .dd-section-label{font-size:9px;font-weight:700;letter-spacing:.08em;
@@ -121,6 +126,8 @@ tr:hover td{background:#1a202c}
 .dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .dd-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .dd-stat{background:#1a202c;border-radius:7px;padding:8px 10px}
+@keyframes scoreReveal{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.score-reveal{animation:scoreReveal .35s cubic-bezier(.34,1.56,.64,1) forwards}
 .dd-stat-val{font-size:16px;font-weight:700;line-height:1}
 .dd-stat-lbl{font-size:9px;color:#718096;margin-top:2px}
 .dd-arc{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:4px}
@@ -3762,7 +3769,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',opp:'oppSc'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
@@ -3777,13 +3784,13 @@ function renderRankings(){
     }
   });
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
-    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px">${p.pos}${posRankMap[p.n]||''}</td>
+    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
     <td style="font-weight:600;white-space:nowrap">${(p.g25===0&&p.ppg25>0)?'<span class="badge bi" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':'')}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
-    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td>
-    <td>${p.t}</td>
-    <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
-    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+    <td>${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
+    <td class="col-hide-mobile">${p.t}</td>
+    <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
+    <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-weight:600;color:${oppScoreColor(p.oppSc)};white-space:nowrap">${(()=>{
       if(p.pos==='QB'){const gl=GAME_LOG[p.n];return gl?'<span style="font-size:11px;color:#7dd3fc">'+gl.elite+'% elite</span>':'—';}
       if(p.oppSc==null) return '—';
@@ -4431,6 +4438,48 @@ renderAll();renderOVList();
 // DELTA Deck — Player Card Modal
 // ════════════════════════════════════════════════════════════
 
+// Animate a number counting up from 0 to target
+function countUp(el, target, duration=600) {
+  if (!el || target == null) return;
+  const start = performance.now();
+  el.classList.add('score-reveal');
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    el.textContent = Math.round(ease * target);
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+function copyPlayerCard() {
+  const name = document.getElementById('dd-card').dataset.player;
+  if (!name) return;
+  const p = COMP.find(x => x.n === name);
+  if (!p) return;
+  const oppSc = getOppScore(p.n, p.pos);
+  const oppLbl = oppSc != null ? (oppScoreLabel(p.pos) + ' ' + oppSc) : null;
+  const verdict = document.querySelector('.badge') ? 
+    (vTag(p).match(/>([^<]+)<\/span>/) || [])[1] || '—' : '—';
+  const lines = [
+    name + ' · ' + p.pos + ' · ' + (p.t || '—'),
+    'PPG \u201925: ' + (p.ppg25 > 0 ? p.ppg25.toFixed(1) : '—') +
+      (p.ppg24 > 0 ? ' · PPG \u201924: ' + p.ppg24.toFixed(1) : ''),
+    oppLbl ? oppLbl : null,
+    'Model: ' + (p.mv || '—') + ' · Mkt: ' + (p.ktcEff || '—'),
+    'Signal: ' + vTag(p).replace(/<[^>]+>/g, '').trim(),
+    'via DELTA — handhanley.github.io/fantasy-delta',
+  ].filter(Boolean).join('\n');
+  navigator.clipboard.writeText(lines).then(() => {
+    const btn = document.getElementById('dd-copy');
+    if (!btn) return;
+    btn.textContent = 'COPIED';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {});
+}
+
 function openDeck(name){
   const p=COMP.find(x=>x.n===name);
   if(!p) return;
@@ -4458,6 +4507,12 @@ function renderDeck(p){
   if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
   else { hsEl.style.display='none'; hsEl.src=''; }
   document.getElementById('dd-card').dataset.player=p.n;
+  // Score animation fires after innerHTML renders
+  requestAnimationFrame(() => {
+    const scoreEl = document.getElementById('opp-score-val');
+    const score = getOppScore(p.n, p.pos);
+    if (scoreEl && score != null) countUp(scoreEl, score);
+  });
   const trend=TREND_TAG[p.n]||'';
   const trendHtml=trend==='rising'?'<span class="badge bi">↑ Rising</span>':
                   trend==='fading'?'<span class="badge bw">↓ Fading</span>':'';
@@ -4681,7 +4736,7 @@ function renderDeck(p){
         +'<div style="display:flex;align-items:center">'
         +'<span style="'+iconStyle+'">'+icon+'</span>'
         +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
-        +'<div style="font-size:22px;font-weight:800;color:'+scC+'">'+sc+'</div></div>'
+        +'<div id="opp-score-val" style="font-size:22px;font-weight:800;color:'+scC+'">'+sc+'</div></div>'
         +'<div style="font-size:10px;color:'+scC+';margin-bottom:.5rem;font-weight:600">'+tier+'</div>'
         +rowsHtml+'</div><div class="dd-divider"></div>';
     })()}
@@ -5367,7 +5422,10 @@ document.addEventListener('click', function(e) {
           <div class="dd-meta" id="dd-meta"></div>
         </div>
       </div>
-      <button class="dd-close" onclick="closeDeckNow()">✕</button>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button class="dd-copy" id="dd-copy" onclick="copyPlayerCard()">COPY</button>
+        <button class="dd-close" onclick="closeDeckNow()">✕</button>
+      </div>
     </div>
     <div class="dd-body" id="dd-body"></div>
   </div>
