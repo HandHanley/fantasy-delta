@@ -4265,7 +4265,7 @@ function renderRipple(){
 // AAV = average annual value, end = contract end year
 // ============================================================
 function contractStatus(c){
-  const yrsLeft=c.end-2025;
+  const yrsLeft=c.end-2026;
   if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
   if(yrsLeft>=4)return{label:'Locked Up',cls:'bs',icon:'🔒'};
   if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'🔴'};
@@ -4289,6 +4289,8 @@ function renderContracts(){
   const sort=document.getElementById('sort-contracts').value;
 
   let data=CONTRACTS.filter(c=>{
+    // Only show players in COMP — filters out depth/irrelevant players
+    if(!COMP.find(x=>x.n===c.n)) return false;
     if(pos!=='ALL'&&c.pos!==pos)return false;
     if(q&&!c.n.toLowerCase().includes(q)&&!c.team.toLowerCase().includes(q))return false;
     if(statusF!=='ALL'){
@@ -4310,7 +4312,7 @@ function renderContracts(){
 
   document.getElementById('contracts-body').innerHTML=data.map(c=>{
     const st=contractStatus(c);
-    const yrsLeft=c.end-2025;
+    const yrsLeft=c.end-2026;
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:#718096">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
     return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)">
