@@ -5635,8 +5635,9 @@ async function loadPlayerContracts() {
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {
         existing.end     = c.end_year;
-        existing.aav     = Math.round(c.aav);
-        existing.total   = Math.round(c.total);
+        // player-contracts.json stores values in millions — convert to dollars
+        existing.aav     = Math.round((c.aav   || 0) * 1000000);
+        existing.total   = Math.round((c.total || 0) * 1000000);
         existing.years   = c.years;
       }
       updated++;
