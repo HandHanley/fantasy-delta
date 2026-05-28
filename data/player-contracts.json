@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-27T09:59:32.584318+00:00",
+  "fetched": "2026-05-28T10:09:26.870713+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -307,9 +307,9 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 15.52,
-      "total": 15.52,
-      "guaranteed": 0.0,
+      "aav": 22.5,
+      "total": 22.5,
+      "guaranteed": 22.0,
       "is_active": true
     },
     "Malik Willis": {
@@ -485,11 +485,11 @@
     "Breece Hall": {
       "team": "Jets",
       "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 14.29,
-      "total": 14.29,
-      "guaranteed": 0.0,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 14.5,
+      "total": 43.5,
+      "guaranteed": 29.0,
       "is_active": true
     },
     "TreVeyon Henderson": {
@@ -823,7 +823,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -1377,9 +1377,9 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 0.0,
-      "total": 0.0,
-      "guaranteed": 0.0,
+      "aav": 8.0,
+      "total": 8.0,
+      "guaranteed": 6.13,
       "is_active": true
     },
     "Jayden Reed": {
@@ -1463,7 +1463,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1993,7 +1993,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "IND/NYJ",
+      "team": "NYJ/IND",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2157,9 +2157,9 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 0.0,
-      "total": 0.0,
-      "guaranteed": 0.0,
+      "aav": 3.0,
+      "total": 3.0,
+      "guaranteed": 0.85,
       "is_active": true
     },
     "Colby Parkinson": {
@@ -2784,12 +2784,12 @@
     },
     "De'Von Achane": {
       "team": "Dolphins",
-      "year_signed": 2023,
+      "year_signed": 2026,
       "years": 4,
-      "end_year": 2026,
-      "aav": 1.36,
-      "total": 5.44,
-      "guaranteed": 0.95,
+      "end_year": 2029,
+      "aav": 16.0,
+      "total": 64.0,
+      "guaranteed": 17.38,
       "is_active": true
     },
     "Wan'Dale Robinson": {
@@ -2813,7 +2813,7 @@
       "is_active": true
     },
     "D.J. Moore": {
-      "team": "CHI/BUF",
+      "team": "BUF/CHI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
