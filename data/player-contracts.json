@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-05-29T10:00:07.256287+00:00",
+  "fetched": "2026-05-30T08:32:00.220424+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -934,12 +934,12 @@
     },
     "Nico Collins": {
       "team": "Texans",
-      "year_signed": 2024,
-      "years": 3,
-      "end_year": 2026,
-      "aav": 24.25,
-      "total": 72.75,
-      "guaranteed": 32.12,
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 30.0,
+      "total": 60.0,
+      "guaranteed": 57.0,
       "is_active": true
     },
     "Jameson Williams": {
@@ -1463,7 +1463,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2813,7 +2813,7 @@
       "is_active": true
     },
     "D.J. Moore": {
-      "team": "BUF/CHI",
+      "team": "CHI/BUF",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
