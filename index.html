@@ -212,9 +212,9 @@ tr:hover td{background:#1a202c}
       <option value="half">0.5 PPR</option>
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
-      <option value="std">Standard</option>
     </select>
   </div>
+  <div id="sort-explainer" style="display:none;font-size:11px;color:#718096;padding:7px 11px;margin-bottom:8px;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px;line-height:1.5"></div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
       <th onclick="setSortR('ds')" title="DELTA Score — proprietary 0-99 dynasty rating" style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
@@ -3862,6 +3862,17 @@ function renderRankings(){
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
   const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',opp:'oppSc',ds:'dsScore'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
+  // Contextual explainer — only for the three confusable value metrics
+  const explainEl=document.getElementById('sort-explainer');
+  if(explainEl){
+    const explainers={
+      ds:'<strong style="color:#6ee7b7">Δ DELTA Score</strong> (0–99): our proprietary grade of a player&rsquo;s <strong>demonstrated</strong> dynasty value — built on what they have actually produced, their usage, age, and contract, not projections. Compare it to Market Value to spot players the market is over- or under-pricing.',
+      ktc:'<strong style="color:#7dd3fc">Market Value</strong>: consensus player value from FantasyCalc — what the market currently pays in trades. Compare to Model Value to find gaps.',
+      mv:'<strong style="color:#7dd3fc">Model Value</strong>: DELTA&rsquo;s projected player value from our PPG model. When it runs higher than Market Value, the model sees a buy; lower, a sell.'
+    };
+    if(explainers[sortK]){explainEl.innerHTML=explainers[sortK];explainEl.style.display='block';}
+    else{explainEl.style.display='none';}
+  }
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
   // Pre-compute position ranks based on current sort order
