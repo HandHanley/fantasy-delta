@@ -3703,7 +3703,11 @@ function dsOpportunity(p) {
   const noNFL = p.g25===0;
   const { pick, year } = dsDraftInfo(p.n);
   const expW = dsExpWeight(year);
-  const capitalOpp = 3 + dsCapitalScore(pick) * 30; // map capital → 3-33 (same scale)
+  // Draft-capital opportunity is CAPPED below the proven-elite ceiling (max ~26 of 33).
+  // PHILOSOPHY: pedigree earns a strong opportunity FLOOR, but the full max is reserved for
+  // players who've DEMONSTRATED elite usage. Unproven potential < proven production.
+  // (MHJ — elite capital, weak film — must be separable from a pure-capital rookie.)
+  const capitalOpp = 3 + dsCapitalScore(pick) * 23; // map capital → 3-26 (capped)
 
   // Base demonstrated opportunity
   let baseOpp;
@@ -3731,12 +3735,15 @@ function dsRookieProd(p) {
 
 function dsCont(p) {
   // Contract / role security from the live nflverse/OTC feed. Max 10 pts.
-  // Weighted modestly: valuable signal, but the least player-intrinsic of the four.
-  // Missing record → neutral (does NOT penalize for a data gap).
+  // PHILOSOPHY: security is a bonus to be EARNED, not something whose absence is punished.
+  // An expiring deal is NEUTRAL (no security bonus), not a red flag — a young elite player
+  // awaiting his extension shouldn't be cratered for a fact that isn't a negative.
+  // Genuine "old + expiring" risk is handled by the AGE axis, not double-penalized here.
+  // Band: 5 (neutral/expiring) → 10 (long-term security). No sub-5 penalties.
   const c = CONTRACTS.find(x => x.n===p.n);
-  if (!c || !c.end) return 5; // unknown — neutral, don't punish
+  if (!c || !c.end) return 5; // unknown — neutral
   const yrs = c.end - 2026;
-  return yrs>=5?10:yrs===4?9:yrs===3?8:yrs===2?5:yrs===1?2:1;
+  return yrs>=5?10:yrs===4?9:yrs===3?8:yrs===2?7:yrs===1?6:5;
 }
 
 function calcDynastyScore(p) {
