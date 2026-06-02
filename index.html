@@ -197,7 +197,8 @@ tr:hover td{background:#1a202c}
       <option value="ALL">All</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="sort-rank" onchange="renderRankings()">
+    <select id="sort-rank" onchange="setSortRDropdown(this.value)">
+      <option value="ds">Δ DELTA Score</option>
       <option value="ktc">Mkt Val</option><option value="mv">Model val</option>
       <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
       <option value="a">Age</option><option value="sys">System</option><option value="opp">Alpha / Workhorse</option>
@@ -216,6 +217,7 @@ tr:hover td{background:#1a202c}
   </div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
+      <th onclick="setSortR('ds')" title="DELTA Score — proprietary 0-99 dynasty rating" style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
       <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
       <th onclick="setSortR('ktc')">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')" class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
@@ -1831,7 +1833,7 @@ const RAW=[
   {n:'Christian Kirk',t:'FA',p:'WR',a:28.8,k:1200,ppg25:5.8,ppg24:11.0,ppg23:9.1,g25:14},
   {n:'Jack Bech',t:'LV',p:'WR',a:23.5,k:2400,ppg25:5.2,ppg24:0,ppg23:0,g25:12},
   {n:'Jerry Jeudy',t:'CLE',p:'WR',a:26.9,k:2100,ppg25:9.6,ppg24:11.5,ppg23:12.6,g25:18},
-  {n:'Cooper Kupp',t:'FA',p:'WR',a:33.1,k:2800,ppg25:10.2,ppg24:11.8,ppg23:11.2,g25:17},
+  {n:'Cooper Kupp',t:'SEA',p:'WR',a:33.1,k:2800,ppg25:10.2,ppg24:11.8,ppg23:11.2,g25:17},
   {n:'Tez Johnson',t:'TB',p:'WR',a:23.3,k:2200,ppg25:9.3,ppg24:0,ppg23:0,g25:17},
   {n:'Chris Godwin',t:'FA',p:'WR',a:30.4,k:1800,ppg25:12.5,ppg24:16.1,ppg23:9.9,g25:10},
   {n:'Cedric Tillman',t:'CLE',p:'WR',a:24.4,k:1900,ppg25:5.2,ppg24:11.9,ppg23:5.5,g25:14},
@@ -2147,7 +2149,7 @@ const RIPPLE=[
   {n:'Kirk Cousins',d:'down',reason:'LV — Mendoza #1 overall, Cousins pure bridge with zero dynasty value',delta:'-95%'},
   {n:'Ty Simpson',d:'up',reason:'LAR #13 — SF+ dynasty value long-term. Stafford starts 2026, Simpson is 2028 play',delta:'+10%'},
   {n:'Puka Nacua',d:'down',reason:'LAR — Simpson era eventually coming, Stafford lame duck',delta:'-20%'},
-  {n:'Cooper Kupp',d:'down',reason:'LAR — aging WR in transitioning offense',delta:'-40%'},
+  {n:'Cooper Kupp',d:'down',reason:'SEA WR2 behind JSN — aging, high cap hit, uncertain 2027',delta:'-40%'},
   {n:'Eli Stowers',d:'up',reason:'PHI #54 — TE2 behind Goedert (31). Heir apparent with Hurts throwing',delta:'+22%'},
   {n:'Germie Bernard',d:'up',reason:'PIT #47 — WR3 behind Metcalf + Pittman. Rodgers signed 1yr deal as bridge QB',delta:'+8%'},
   {n:'Denzel Boston',d:'up',reason:'CLE #39 — WR2/3 behind Concepcion. Two rookie WRs competing with Jeudy',delta:'+10%'},
@@ -2696,11 +2698,13 @@ function calcProj(pl){
   const mv=mvAsset({...pl,proj,p:pl.p});
 
   const oppSc=getOppScore(pl.n,pl.p);
-  return{...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
+  const result={...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
     ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
     ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22,oppSc};
+  result.dsScore=calcDynastyScore(result);
+  return result;
 }
 
 function mvAsset(pl){
@@ -2917,6 +2921,7 @@ const CONTRACTS=[
   {n:'Bucky Irving',pos:'RB',team:'TB',aav:1187888,total:4751552,end:2027,note:'Cheap ascending RB through 2027'},
   {n:'Cade Otton',pos:'TE',team:'TB',aav:10000000,total:30000000,end:2028,note:'Locked TE1 through 2028'},
   // SEATTLE SEAHAWKS
+  {n:'Cooper Kupp',pos:'WR',team:'SEA',aav:15000000,total:45000000,end:2027,note:'3yr/$45M — SEA WR2 behind JSN, uncertain beyond 2026'},
   {n:'Jaxon Smith-Njigba',pos:'WR',team:'SEA',aav:42150000,total:168600000,end:2031,note:'Franchise deal — locked through 2031, buy at any cost'},
   {n:'Sam Darnold',pos:'QB',team:'SEA',aav:33500000,total:100500000,end:2027,note:'3yr committed starter through 2027'},
   {n:'Rashid Shaheed',pos:'WR',team:'SEA',aav:17000000,total:51000000,end:2028,note:'Locked WR2 through 2028'},
@@ -3115,7 +3120,7 @@ const SCOUT={
   'Cam Ward':`Ward's 82% miss rate across 17 games and -0.17 EPA/play is the weakest profile of any full-time starter in the model. TEN drafted Carnell Tate #4 overall as his WR1 — Ward now has a legitimate top receiver and the offensive ceiling has risen meaningfully heading into Year 2. The model rates Cam Ward a strong sell at current market value.`,
   'Bryce Young':`Young stabilized in 2025 (14.3 PPG, -0.03 EPA/play) after a disastrous 2023 (-0.23) but the 71% miss rate across 45 games is the worst of any expensive QB. The model rates Bryce Young a strong sell at current market value.`,
   'Matthew Stafford':`Stafford is 38 with a walk-year contract in 2026 and declining efficiency (0.17 EPA/play is good but PPG was 21.1 only because of the LAR system). The model rates Matthew Stafford a sell at current market value.`,
-  'Kyler Murray':`Murray's move to MIN gives him Jefferson and Addison as weapons — arguably the best WR room of his career. His 2025 PPG (16.2) came in only 5 games due to injury with a weak ARI cast. The MIN upgrade is real — Jefferson and Addison are the best WR room of his career — but he's on a 1yr deal, making 2026 a prove-it season. The model rates Kyler Murray a buy at current market value.`,
+  'Kyler Murray':`Murray's move to MIN gives him Jefferson and Addison as weapons — arguably the best WR room of his career. His 2025 PPG (16.2) came in only 5 games due to injury with a weak MIN cast. The MIN upgrade is real — Jefferson and Addison are the best WR room of his career — but he's on a 1yr deal, making 2026 a prove-it season. The model rates Kyler Murray a buy at current market value.`,
   'Joe Burrow':`Burrow's 17.4 PPG in 2025 was below his 22.5 peak in 2024 but his 0.11 EPA/play and 31% elite rate across 52 games are legitimate. CIN's pass-heavy system and Chase give him a high floor; locked through 2029 at 29. The model rates Joe Burrow a hold at current market value.`,
   'Tua Tagovailoa':`Tua's move to ATL (exp 2028) after concussion concerns is the defining story — he was effective when healthy (0.19 EPA/play in 2024) but dropped to 0.11 in 2025 before the move. The 58% miss rate across 52 games reflects availability risk more than talent. The model rates Tua Tagovailoa a strong sell at current market value.`,
   'Geno Smith':`Smith is 35 on an expiring 2026 deal with -0.14 EPA/play in 2025 — he was replacement level last season. The model rates Geno Smith a strong sell at current market value.`,
@@ -3197,7 +3202,7 @@ const SCOUT={
   'Christian Kirk':`Kirk is 29, FA, and his 0.85 YPRR in 2025 was the worst of his career. The model rates Christian Kirk a strong sell at current market value.`,
   'Jack Bech':`Bech's 1.15 YPRR across two years in LV is below average with a 92% miss rate as a role player. The model rates Jack Bech a strong sell at current market value.`,
   'Jerry Jeudy':`Jeudy's YPRR declined from 1.72 to 1.02 in CLE — his worst efficiency in the model — with a 61% miss rate across 69 games. The model rates Jerry Jeudy a strong sell at current market value.`,
-  'Cooper Kupp':`Kupp is 33, FA, with no contract after back-to-back injury seasons. His YPRR (1.39) and PPG (10. The model rates Cooper Kupp a strong sell at current market value.`,
+  'Cooper Kupp':`Kupp is in his second year with SEA on a 3yr/$45M deal, playing WR2 behind JSN in a strong offense. His 2025 YPRR (1.39) is a career low and his PPG (10.2) reflects age and a clear secondary role. At 33 with a $17.5M cap hit in 2026 and uncertain 2027, the dynasty trajectory is firmly downward. The model rates Cooper Kupp a strong sell at current market value.`,
   'Tez Johnson':`Johnson's 1.07 YPRR as a rookie in TB is below average with a 71% miss rate. The model rates Tez Johnson a strong sell at current market value.`,
   'Chris Godwin':`Godwin is 30, FA, no contract — his 2024 spike (23.3 PPG) was a career best that won't repeat, and his 52% miss rate across 52 games reflects durability concerns. The model rates Chris Godwin a strong sell at current market value.`,
   'Cedric Tillman':`Tillman's YPRR (0.85) declined sharply in 2025 with an 81% miss rate — he hasn't translated opportunity into efficiency. The model rates Cedric Tillman a strong sell at current market value.`,
@@ -3593,13 +3598,22 @@ const DS_SCAR  = {QB:1.35,TE:1.40,WR:1.00,RB:0.82};
 const DS_TRANS = {QB:1.05,WR:1.15,RB:1.10,TE:1.05};
 const DS_ROOKIE_CAP = 89;
 
+// ============================================================
+// DYNASTY SCORE — season-stable, historical-fact-only composite
+// Four axes from the data pipeline (never projections):
+//   Age (25) + Production (32) + Opportunity (33) + Contract (10)
+// Updates on a season cadence; does NOT react to small in-season samples.
+// Reflects what a player HAS demonstrated, not what their situation implies.
+// ============================================================
 function dsAge(age, pos) {
+  // Positional value curve. Full marks through PRIME; penalty only at decline edge.
+  // Max 25 pts.
   const a = Math.floor(age);
   const curves = {
-    QB:[[21,24,21],[25,27,26],[28,30,28],[31,33,20],[34,36,11],[37,99,3]],
-    WR:[[20,22,24],[23,24,27],[25,26,28],[27,28,26],[29,30,18],[31,32,10],[33,99,3]],
-    RB:[[20,21,24],[22,23,28],[24,25,26],[26,27,17],[28,29,10],[30,99,3]],
-    TE:[[20,22,20],[23,23,26],[24,25,25],[26,28,28],[29,31,25],[32,33,15],[34,99,4]],
+    QB:[[21,30,25],[31,33,22],[34,35,16],[36,37,9],[38,99,3]],
+    WR:[[20,26,25],[27,28,21],[29,30,15],[31,32,8],[33,99,3]],
+    RB:[[20,24,25],[25,26,20],[27,28,12],[29,30,6],[31,99,2]],
+    TE:[[20,27,25],[28,30,20],[31,32,13],[33,34,7],[35,99,3]],
   };
   for (const [lo,hi,pts] of (curves[pos]||curves.WR)) {
     if (a>=lo && a<=hi) return pts;
@@ -3607,72 +3621,143 @@ function dsAge(age, pos) {
   return 2;
 }
 
-function dsTraj(ppg25, ppg24, ppg23, g25, pos) {
-  const elite = DS_ELITE[pos]||14; const avg = DS_AVG[pos]||12;
-  const trans = DS_TRANS[pos]||1.15;
-  const best = Math.max(ppg25, ppg24, ppg23);
-  const isTrans = Math.round(best*100)/100 >= Math.round(elite*trans*100)/100;
-  const isElite = best >= elite * 0.98;  // 0.98x threshold — near-elite gets floor protection
-  const floor = isTrans ? 21 : isElite ? 16 : best>=avg*1.2 ? 12 : best>=avg ? 8 : 2;
-  if (ppg25===0 && ppg24===0) return 10; // rookie
-  if (g25 < 8) {
-    const delta = (ppg24>0 && ppg23>0) ? ppg24-ppg23 : 0;
-    const raw = delta>2?15:delta>0?13:delta>-2?11:8;
-    return Math.max(floor, raw);
+function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
+  // Production QUALITY relative to positional baseline, recency-weighted. Max 32 pts.
+  const avg = DS_AVG[pos]||12, elite = DS_ELITE[pos]||14;
+  const trans = DS_TRANS[pos]||1.15, scarMult = DS_SCAR[pos]||1.0;
+
+  // No NFL data (rookie) — placeholder scales with draft capital (premium picks get benefit of doubt)
+  if (ppg25===0 && ppg24===0 && ppg23===0) return p ? dsRookieProd(p) : 12;
+
+  // Recency-weighted production: most recent completed season weighted most heavily
+  let weighted, wSum;
+  if (g25 >= 8) {
+    weighted = (ppg25||0)*0.60 + (ppg24||0)*0.30 + (ppg23||0)*0.10;
+    wSum = 0.60 + (ppg24>0?0.30:0) + (ppg23>0?0.10:0);
+  } else if (ppg24 > 0) {
+    // Injured/partial recent season — lean on prior full season
+    weighted = (ppg24||0)*0.65 + (ppg23||0)*0.25 + (ppg25||0)*0.10;
+    wSum = 0.65 + (ppg23>0?0.25:0) + (ppg25>0?0.10:0);
+  } else {
+    weighted = ppg25 || 0;
+    wSum = 1;
   }
-  let raw;
-  if (ppg24>0 && ppg25>0) {
-    const delta = ppg25-ppg24;
-    raw = delta>4?22:delta>2?(isTrans?22:19):delta>0?16:delta>-2?13:delta>-4?8:4;
-  } else if (ppg25>=elite) raw=18;
-  else if (ppg25>=avg) raw=13;
-  else raw=7;
-  return Math.max(floor, raw);
+  const prod = wSum > 0 ? weighted / wSum : 0;
+
+  // avg → ~18pts, elite → ~28pts, transcendent → 32pts
+  let raw = (prod / avg) * 18 * scarMult;
+  const best = Math.max(ppg25, ppg24, ppg23);
+  if (best >= elite * trans) raw += 4;       // transcendent ceiling bonus
+  else if (best >= elite) raw += 2;          // elite ceiling bonus
+
+  return Math.round(Math.min(32, Math.max(2, raw)));
 }
 
-function dsScar(ppg25, ppg24, ppg23, pos) {
-  const avg=DS_AVG[pos]||12; const elite=DS_ELITE[pos]||14;
-  const trans=DS_TRANS[pos]||1.15; const mult=DS_SCAR[pos]||1.0;
-  const best=Math.max(ppg25,ppg24,ppg23)||ppg25;
-  const isTrans=Math.round(best*100)/100>=Math.round(elite*trans*100)/100;
-  let raw=(best/avg)*17*mult;
-  if (isTrans) raw+=5; else if (best>=elite) raw+=2;
-  return Math.round(Math.min(28,raw));
+// Draft capital → "organizational investment" signal, decaying by NFL experience.
+// Rookies: capital is the primary opportunity signal (no usage history yet).
+// Yr1-2: blends with demonstrated usage. Yr3+: drops out, pure demonstrated value.
+function dsCapitalScore(overallPick) {
+  if (overallPick == null) return 0.30; // unknown draft slot — neutral-low
+  if (overallPick <= 5)   return 1.00;
+  if (overallPick <= 15)  return 0.88;
+  if (overallPick <= 32)  return 0.75;
+  if (overallPick <= 64)  return 0.55;
+  if (overallPick <= 100) return 0.40;
+  if (overallPick <= 140) return 0.28;
+  if (overallPick <= 180) return 0.18;
+  if (overallPick <= 260) return 0.10;
+  return 0.05;
+}
+
+function dsExpWeight(draftYear) {
+  // Years of NFL experience entering 2026 season. Capital influence decays as evidence accrues.
+  if (draftYear == null) return 0;
+  const yrs = 2026 - draftYear;
+  if (yrs <= 0) return 1.00;  // incoming rookie
+  if (yrs === 1) return 0.55; // after rookie season
+  if (yrs === 2) return 0.30; // after 2 seasons
+  return 0.0;                 // 3+ seasons — demonstrated usage only
+}
+
+function dsDraftInfo(name) {
+  let d = null;
+  try { d = (typeof DRAFT_PICKS !== 'undefined') ? DRAFT_PICKS[name] : null; } catch(e) {}
+  if (d) return { pick: d.p ?? null, year: d.y ?? null };
+  // Fallback to current prospect class (2026) — draft capital maintained there.
+  // try/catch guards the temporal-dead-zone case on first COMP build (PROSPECTS_2026
+  // is declared later in the file; it's available by the post-load rebuild).
+  try {
+    const pr = PROSPECTS_2026.find(x => x.n === name);
+    if (pr && pr.ovr != null) return { pick: pr.ovr, year: 2026 };
+  } catch(e) {}
+  return { pick: null, year: null };
+}
+
+function dsOpportunity(p) {
+  // Opportunity = DEMONSTRATED usage from the most recent completed season, Max 33 pts.
+  // For players with <=2 yrs experience, draft capital (organizational investment) blends in
+  // and decays to zero by year 3 — by then demonstrated usage is the whole story.
+  const pos = p.pos||p.p||'WR';
+  const isRookie = p.g25===0 && p.ppg25>0;
+  const noData = p.ppg25===0 && p.ppg24===0 && p.ppg23===0;
+  const noNFL = p.g25===0;
+  const { pick, year } = dsDraftInfo(p.n);
+  const expW = dsExpWeight(year);
+  const capitalOpp = 3 + dsCapitalScore(pick) * 30; // map capital → 3-33 (same scale)
+
+  // Base demonstrated opportunity
+  let baseOpp;
+  if (pos === 'QB') {
+    const s25 = PLAYER_STATS[p.n]?.['2025'];
+    const rushAtt = s25?.rush_att || 0;
+    const rushPts = rushAtt >= 120 ? 13 : rushAtt >= 90 ? 10 : rushAtt >= 50 ? 6 : 3;
+    baseOpp = (noData && !noNFL) ? 13 : ((noNFL ? 14 : 18) + rushPts);
+  } else {
+    const oppSc = getOppScore(p.n, pos);
+    baseOpp = (oppSc == null) ? (noNFL ? 14 : 13) : (((oppSc - 30) / 69) * 29 + 4);
+  }
+
+  // Blend demonstrated usage with draft-capital signal, weighted by experience
+  const blended = expW > 0 ? baseOpp * (1 - expW) + capitalOpp * expW : baseOpp;
+  return Math.round(Math.min(33, Math.max(3, blended)));
+}
+
+function dsRookieProd(p) {
+  // Rookie production placeholder scales with draft capital — premium picks get
+  // benefit of the doubt on future production; low-capital fliers do not. Max ~18.
+  const { pick } = dsDraftInfo(p.n);
+  return Math.round(4 + dsCapitalScore(pick) * 14);
 }
 
 function dsCont(p) {
-  // Find contract end year from CONTRACTS array
+  // Contract / role security from the live nflverse/OTC feed. Max 10 pts.
+  // Weighted modestly: valuable signal, but the least player-intrinsic of the four.
+  // Missing record → neutral (does NOT penalize for a data gap).
   const c = CONTRACTS.find(x => x.n===p.n);
-  if (!c) return 7; // default 2yr if unknown
-  const yrs = (c.end||2027) - 2026;
-  return yrs>=5?15:yrs===4?13:yrs===3?11:yrs===2?7:yrs===1?3:1;
-}
-
-function dsOpp(p) {
-  // Opportunity: starter=7, competing=5, backup=2, rookie=4
-  if (p.g25===0 && p.ppg25>0) return 4; // rookie
-  if (p.ppg25===0 && p.ppg24===0) return 4; // no data
-  return 7; // assume starter if in system
+  if (!c || !c.end) return 5; // unknown — neutral, don't punish
+  const yrs = c.end - 2026;
+  return yrs>=5?10:yrs===4?9:yrs===3?8:yrs===2?5:yrs===1?2:1;
 }
 
 function calcDynastyScore(p) {
   const pos = p.pos||p.p||'WR';
-  const isRookie = p.g25===0 && p.ppg25>0;
-  const a = dsAge(p.a||22, pos);
-  const t = dsTraj(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos);
-  const s = dsScar(p.ppg25||0, p.ppg24||0, p.ppg23||0, pos);
-  const c = dsCont(p);
-  const y = dsOpp(p);
-  let total = Math.min(100, a+t+s+c+y);
-  if (isRookie) total = Math.min(DS_ROOKIE_CAP, total);
+  const noNFL = p.g25===0;  // rookie or no NFL data — cap applies (unproven)
+  const a = dsAge(p.a||22, pos);                                                // max 25
+  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p); // max 32
+  const opp = dsOpportunity(p);                                                 // max 33
+  const c = dsCont(p);                                                          // max 10
+  let total = Math.min(100, a + prod + opp + c);
+  if (noNFL) total = Math.min(DS_ROOKIE_CAP, total);
   return total;
 }
 
 function dsColor(score) {
-  if (score >= 95) return '#6ee7b7'; // teal — elite
-  if (score >= 85) return '#7dd3fc'; // blue — strong
-  if (score >= 70) return '#fbbf24'; // yellow — average
-  return '#718096';                  // grey — weak
+  // Matches platform color language (oppScoreColor thresholds)
+  if (!score) return '#4a5568';
+  if (score >= 85) return '#6ee7b7'; // teal — elite
+  if (score >= 72) return '#7dd3fc'; // blue — strong
+  if (score >= 55) return '#fcd34d'; // yellow — average
+  return '#fc8181';                  // red — weak
 }
 
 RAW.forEach(r=>COMP.push(calcProj(r)));
@@ -3680,6 +3765,7 @@ const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
 
 let sortK='ktc',sortDir=-1;
 function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
+function setSortRDropdown(k){sortK=k;sortDir=-1;renderRankings();}
 function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
 function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
 function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
@@ -3767,7 +3853,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',opp:'oppSc'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',opp:'oppSc',ds:'dsScore'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
@@ -3782,6 +3868,7 @@ function renderRankings(){
     }
   });
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+    <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
     <td style="font-weight:600;white-space:nowrap">${(p.g25===0&&p.ppg25>0)?'<span class="badge bi" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':'')}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
@@ -4492,11 +4579,13 @@ function renderDeck(p){
   if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
   else { hsEl.style.display='none'; hsEl.src=''; }
   document.getElementById('dd-card').dataset.player=p.n;
-  // Score animation fires after innerHTML renders
+  // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
     const scoreEl = document.getElementById('opp-score-val');
     const score = getOppScore(p.n, p.pos);
     if (scoreEl && score != null) countUp(scoreEl, score);
+    const dsEl = document.getElementById('ds-score-val');
+    if (dsEl && p.dsScore != null) countUp(dsEl, p.dsScore);
   });
   const trend=TREND_TAG[p.n]||'';
   const trendHtml=trend==='rising'?'<span class="badge bi">↑ Rising</span>':
@@ -4598,6 +4687,41 @@ function renderDeck(p){
   const recStr=recPg?`${recPg.toFixed(1)} rec/g`:null;
 
   document.getElementById('dd-body').innerHTML=`
+
+    ${(()=>{
+      const ds = p.dsScore;
+      if (ds == null) return '';
+      const pos = p.pos||p.p||'WR';
+      const noNFL = p.g25===0;
+      // Recompute components for the breakdown display
+      const aPts = dsAge(p.a||22, pos);
+      const prodPts = dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p);
+      const oppPts = dsOpportunity(p);
+      const conPts = dsCont(p);
+      const col = dsColor(ds);
+      const bar = (label,val,max)=>{
+        const pct=Math.round((val/max)*100);
+        return '<div style="margin-bottom:6px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#718096;margin-bottom:2px">'
+          +'<span>'+label+'</span><span style="color:#a0aec0;font-weight:600">'+val+'/'+max+'</span></div>'
+          +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px"></div></div></div>';
+      };
+      return '<div class="dd-section" style="background:linear-gradient(135deg,#0d1117,#141b26);border:1px solid #1f2937;border-radius:10px;padding:14px;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:baseline;gap:7px">'
+        +'<span style="font-family:Georgia,serif;font-size:20px;color:'+col+'">Δ</span>'
+        +'<span style="font-size:13px;font-weight:600;color:#e2e8f0;letter-spacing:.02em">DELTA Score</span>'
+        +(noNFL?'<span style="font-size:9px;color:#718096;margin-left:2px">rookie · capped</span>':'')
+        +'</div>'
+        +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
+        +'</div>'
+        +bar('Age', aPts, 25)
+        +bar('Production', prodPts, 32)
+        +bar('Opportunity', oppPts, 33)
+        +bar('Contract', conPts, 10)
+        +'</div>';
+    })()}
 
     <div class="dd-section">
       <div class="dd-section-label">Projection & Value</div>
@@ -4949,7 +5073,7 @@ const PROSPECTS_2026=[
   {n:'Denzel Boston',pos:'WR',school:'Washington',age:23,pr:2,pp:39,ovr:39,por:5,ds:61,cap:24,bb:19,ag:11,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'CLE',drafted:true,note:'132 rec/1781 yds/20 TDs at Washington — two years Big Ten production. CLE WR2 behind Concepcion. 9 TDs in 2025. Strong producer, crowded room.'},
   {n:'Antonio Williams',pos:'WR',school:'Clemson',age:23,pr:3,pp:71,ovr:71,por:10,ds:48,cap:16,bb:14,ag:11,ath:7,comp:0.95,prod:0.0,scar:1.0,team:'WAS',drafted:true,note:'208 rec/2336 yds/21 TDs — 4yr Clemson PROD+. WAS WR2 behind McLaurin with Jayden Daniels throwing. Slot specialist, 88th pct separation.'},
   {n:'Will Kacmarek',pos:'TE',school:'Ohio State',age:25,pr:3,pp:87,ovr:87,por:9,ds:35,cap:16,bb:8,ag:7,ath:4,comp:1.0,prod:-0.3,scar:1.03,team:'MIA',drafted:true,note:'Blocking-first TE — Miami: \"elite as a blocker.\" 65 rec/761 yds career (MAC+Big Ten). Dynasty blocker, near-zero receiving upside.'},
-  {n:'Germie Bernard',pos:'WR',school:'Alabama',age:23,pr:2,pp:47,ovr:47,por:6,ds:61,cap:24,bb:19,ag:11,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'PIT',drafted:true,note:'155 rec/2203 yds MSU→Washington→Alabama. 114 rec/1656 yds in 2 SEC seasons. PIT WR2 behind Pickens — Howard/Allar/Rodgers at QB, open competition.'},
+  {n:'Germie Bernard',pos:'WR',school:'Alabama',age:23,pr:2,pp:47,ovr:47,por:6,ds:61,cap:24,bb:19,ag:11,ath:7,comp:1.0,prod:0.0,scar:1.0,team:'PIT',drafted:true,note:'155 rec/2203 yds MSU→Washington→Alabama. 114 rec/1656 yds in 2 SEC seasons. PIT WR3 behind Metcalf + Pittman — Rodgers at QB in 2026, ceiling compressed.'},
   {n:'Caleb Douglas',pos:'WR',school:'Texas Tech',age:23,pr:3,pp:75,ovr:75,por:11,ds:50,cap:16,bb:15,ag:11,ath:8,comp:1.0,prod:0.0,scar:1.0,team:'MIA',drafted:true,note:'135 rec/2031 yds at Florida→Texas Tech. 114 rec/1723 yds in Big 12. MIA WR slot — replaces Waddle role. Tua Tagovailoa at QB.'},
   {n:'Zavion Thomas',pos:'WR',school:'LSU',age:23,pr:3,pp:89,ovr:89,por:13,ds:45,cap:16,bb:10,ag:11,ath:8,comp:1.0,prod:-0.1,scar:1.0,team:'CHI',drafted:true,note:'106 rec/1213 yds — thin production. Only 64 rec/706 yds at LSU in 2 years. CHI WR room has DJ Moore — Thomas is WR2 target.'},
   {n:'Kaelon Black',pos:'RB',school:'Indiana',age:23,pr:3,pp:90,ovr:90,por:10,ds:40,cap:16,bb:7,ag:11,ath:6,comp:0.85,prod:-0.2,scar:0.97,team:'SF',drafted:true,note:'2261 rush yds but split FCS/Big Ten. Only 8 rec at Big Ten level — receiving base is FCS-inflated. SF RB behind solid OL. PROD- on P4 receiving.'},
