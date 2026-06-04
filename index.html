@@ -244,6 +244,7 @@ tr:hover td{background:#1a202c}
   </div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
+      <th title="DELTA Score" style="font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
       <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
       <th>Floor</th><th>Proj PPG</th><th>Ceiling</th>
       <th>EPA</th><th>Role</th><th>Mkt Val</th><th>Mod val</th><th>Gap</th><th>CI</th>
@@ -3933,6 +3934,7 @@ function renderProj(){
     const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
     const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
     return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+      <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
       <td style="font-weight:600;white-space:nowrap">${p.n}</td>
       <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
       <td style="color:#fca5a5">${p.floor.toFixed(1)}</td>
@@ -4554,6 +4556,7 @@ function copyPlayerCard() {
     (vTag(p).match(/>([^<]+)<\/span>/) || [])[1] || '—' : '—';
   const lines = [
     name + ' · ' + p.pos + ' · ' + (p.t || '—'),
+    p.dsScore != null ? 'Δ DELTA Score: ' + p.dsScore + '/99' : null,
     'PPG \u201925: ' + (p.ppg25 > 0 ? p.ppg25.toFixed(1) : '—') +
       (p.ppg24 > 0 ? ' · PPG \u201924: ' + p.ppg24.toFixed(1) : ''),
     oppLbl ? oppLbl : null,
