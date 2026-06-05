@@ -2678,7 +2678,11 @@ function calcProj(pl){
   // ── COMBINE ALL DELTAS ─────────────────────────────────────────
   const cap=pl.p==='QB'?0.10:0.18;
   const floorD=pl.p==='QB'?-0.15:-0.25;
-  const totalDelta=rawDelta+d_curve+d_stability+d_volatility+d_decay;
+  // PENALTY SOFTENING (backtest-diagnosed): the stability & volatility penalties
+  // were found to over-correct — they drag down players who actually sustained.
+  // Halved to keep the intuition (spikes regress, boom/bust is real) while trusting
+  // it less. NOT tuned to minimize backtest error; residual bias left uncorrected.
+  const totalDelta=rawDelta+d_curve+0.5*d_stability+0.5*d_volatility+d_decay;
   const delta=Math.max(floorD,Math.min(cap,totalDelta));
   let proj=base*agM*(1+delta)*e.inj;
 
