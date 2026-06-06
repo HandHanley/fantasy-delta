@@ -3758,9 +3758,21 @@ function calcDynastyScore(p) {
   const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p); // max 32
   const opp = dsOpportunity(p);                                                 // max 33
   const c = dsCont(p);                                                          // max 10
-  let total = Math.min(100, a + prod + opp + c);
+  // RB OPPORTUNITY DOWNWEIGHT (backtest-diagnosed): for running backs the usage/Workhorse
+  // axis overlaps production heavily — redundancy held across volume, receiving, trajectory,
+  // and efficiency tests — so the two axes were double-counting the same demonstrated fact.
+  // Keep 65% of the usage axis and reallocate the freed weight (33*0.35 = 11.55 pts) into
+  // production (the direct measure), preserving the 0-100 scale (RB max = 25 + 32*1.361 +
+  // 33*0.65 + 10 = 100). REPRESENTATION fix to stop double-counting, NOT a predictive tune.
+  // The 0.65 strength is a reasoned starting point on limited data; revisit as seasons accrue.
+  let total;
+  if (pos === 'RB') {
+    total = Math.min(100, a + prod * 1.361 + opp * 0.65 + c);
+  } else {
+    total = Math.min(100, a + prod + opp + c);
+  }
   if (noNFL) total = Math.min(DS_ROOKIE_CAP, total);
-  return total;
+  return Math.round(total);
 }
 
 function dsColor(score) {
