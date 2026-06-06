@@ -3602,6 +3602,19 @@ const DS_ELITE = {QB:23.0,WR:17.0,RB:15.0,TE:14.0};
 const DS_SCAR  = {QB:1.35,TE:1.10,WR:1.00,RB:0.82};
 const DS_TRANS = {QB:1.05,WR:1.15,RB:1.10,TE:1.05};
 const DS_ROOKIE_CAP = 89;
+// FORMAT-AWARE PRODUCTION BASELINES: a position's PPG scales with the scoring format
+// (WR PPG ~+21% in Full PPR, TE PPG ~-40% in Standard), so the baseline production is
+// graded against must scale the same way — otherwise changing format spuriously inflates
+// or craters whole positions. Factors are data-derived (per-position PPG ratio vs the
+// half_tep base, 2023-25) and anchored so half_tep = 1.00 (the default is unchanged).
+// QB ~unaffected (no reception points). SCORING only; positional/roster scarcity is separate.
+const DS_FMT_SCALE = {
+  half_tep: {QB:1.00, RB:1.00, WR:1.00, TE:1.00},
+  half:     {QB:1.00, RB:1.00, WR:1.00, TE:0.80},
+  full_tep: {QB:1.00, RB:1.10, WR:1.21, TE:1.20},
+  full:     {QB:1.00, RB:1.10, WR:1.21, TE:1.00},
+  std:      {QB:1.00, RB:0.90, WR:0.79, TE:0.61},
+};
 
 // ============================================================
 // DYNASTY SCORE — season-stable, historical-fact-only composite
@@ -3628,7 +3641,8 @@ function dsAge(age, pos) {
 
 function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
   // Production QUALITY relative to positional baseline, recency-weighted. Max 32 pts.
-  const avg = DS_AVG[pos]||12, elite = DS_ELITE[pos]||14;
+  const _fmtScale = (DS_FMT_SCALE[typeof scoringFmt!=='undefined'?scoringFmt:'half_tep'] || DS_FMT_SCALE.half_tep)[pos] || 1;
+  const avg = (DS_AVG[pos]||12) * _fmtScale, elite = (DS_ELITE[pos]||14) * _fmtScale;
   const trans = DS_TRANS[pos]||1.15, scarMult = DS_SCAR[pos]||1.0;
 
   // No NFL data (rookie) — placeholder scales with draft capital (premium picks get benefit of doubt)
