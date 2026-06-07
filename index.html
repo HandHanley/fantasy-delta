@@ -4100,9 +4100,13 @@ function calcAdjustedSide(arrA, arrB) {
   const LEAGUE_AVG = 4000;
   const CONC_EXP = 0.35;
   const CONC_CAP = 1.18;
+  // SCARCITY REACHES THE 2-TEAM VERDICT: V4 is built on market value (not mvAsset),
+  // so apply the league-settings scarcity factor to each asset's market value here.
+  // Picks pass through. At the 12-team SF default the factor is 1.0 → verdict unchanged.
+  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt));
 
   function peakKtc(arr) {
-    return arr.reduce((mx, p) => Math.max(mx, p.k||0), 0);
+    return arr.reduce((mx, p) => Math.max(mx, skv(p)), 0);
   }
 
   // Concentration multiplier — rewards higher avg value per asset
@@ -4133,7 +4137,7 @@ function calcAdjustedSide(arrA, arrB) {
     const posCount = {}, teamCount = {};
     const detail = [];
     arr.forEach(p => {
-      const ktc = p.k || 0;
+      const ktc = skv(p);
       const pos = p.pos || p.p || 'WR';
       const team = p.t || '';
       const isElite = ktc >= ELITE;
