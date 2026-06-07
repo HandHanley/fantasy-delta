@@ -35,6 +35,9 @@ jobs:
       - name: Fetch FantasyCalc market values
         run: node scripts/fetch-market-values.js
 
+      - name: Fetch scarcity-engine validation
+        run: node scripts/fetch-scarcity-validation.js
+
       - name: Fetch NFL player stats
         run: python scripts/fetch-player-stats.py
 
@@ -46,6 +49,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes — skipping commit"
           else
-            git commit -m "chore: update market values and player stats [skip ci]"
+            git commit -m "chore: update market values, scarcity validation, and player stats [skip ci]"
             git push
           fi
