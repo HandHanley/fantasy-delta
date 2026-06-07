@@ -188,6 +188,7 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
+  <button class="tab" onclick="showTab('audit',this)">Engine Audit</button>
 </div>
 
 <div id="panel-rankings" class="panel active">
@@ -4610,6 +4611,7 @@ function showTab(id,el){
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
   if(id==='contracts')renderContracts();
+  if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
 }
 
 // Depth Charts tab removed — replaced by Contracts tab
@@ -5655,6 +5657,11 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
+<div id="panel-audit" class="panel">
+  <div class="section-label">Scarcity Engine Audit</div>
+  <div id="audit-body"><div style="color:#718096;padding:1rem">Loading…</div></div>
+</div>
+
 <script>
 
 function rescalePickTier(year, rnd, tierName, newTierVal) {
@@ -5895,15 +5902,116 @@ async function loadPlayerContracts() {
   }
 }
 
+// ════════════════════════════════════════════════════════════
+// SCARCITY ENGINE AUDIT — external validation against FantasyCalc
+// ------------------------------------------------------------------
+// FantasyCalc is a YARDSTICK ONLY here: it NEVER enters any DELTA score or
+// ranking. We compare DELTA's own scarcity(pos,teams,qb) — the single source of
+// truth, computed LIVE below — against the market's observed value-by-rank,
+// using the SAME replacement-level (VOR) formula and the SAME 12-team-SF anchor
+// (= 1.00). The only thing differing between the two factors is the curve shape,
+// which is exactly what we're validating. Judged by DIRECTION, not magnitude fit.
+// Data baked offline by scripts/fetch-scarcity-validation.js (no live API calls).
+// ════════════════════════════════════════════════════════════
+let SCARV = null;
+async function loadScarcityValidation(){
+  try{
+    const res = await fetch('./data/scarcity-validation.json');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    SCARV = await res.json();
+  }catch(e){
+    SCARV = null;
+    console.warn('[DELTA] scarcity-validation.json not loaded:', e.message);
+  }
+  if(typeof renderScarcityAudit==='function') renderScarcityAudit();
+}
+
+function renderScarcityAudit(){
+  const host = document.getElementById('audit-body');
+  if(!host) return;
+  if(!SCARV || !Array.isArray(SCARV.settings)){
+    host.innerHTML = '<div style="color:#718096;padding:1rem;line-height:1.7">No validation data yet. Run '
+      + '<code style="color:#7dd3fc">node scripts/fetch-scarcity-validation.js</code> to generate '
+      + '<code style="color:#7dd3fc">data/scarcity-validation.json</code>, then redeploy.</div>';
+    return;
+  }
+  const POS=['QB','RB','WR','TE'], qbLabel={sf:'SF','1qb':'1QB'};
+  // display order: SF block first (default), then 1QB; teams ascending
+  const rows = SCARV.settings.slice().sort((a,b)=> a.qb===b.qb ? a.teams-b.teams : (a.qb==='sf'?-1:1));
+  const dirOf=(f,band=0.02)=> f>1+band?1 : f<1-band?-1 : 0;
+
+  let agree=0, total=0, bad=0, tables='';
+  for(const pos of POS){
+    tables += '<div style="font-weight:700;color:#7dd3fc;font-size:13px;margin:18px 0 6px">'+pos+'</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<tr style="color:#718096;text-align:left">'
+      + '<th style="padding:4px 8px;font-weight:600">Setting</th>'
+      + '<th style="padding:4px 8px;font-weight:600">Repl rank</th>'
+      + '<th style="padding:4px 8px;font-weight:600">DELTA</th>'
+      + '<th style="padding:4px 8px;font-weight:600">Market</th>'
+      + '<th style="padding:4px 8px;font-weight:600">\u0394</th>'
+      + '<th style="padding:4px 8px;font-weight:600;text-align:center">Dir</th></tr>';
+    for(const s of rows){
+      const cell = s.positions[pos]; if(!cell) continue;
+      const dF = scarcity(pos, s.teams, s.qb);   // LIVE from the engine
+      const mF = cell.marketFactor;
+      const isAnchor = (s.teams===12 && s.qb==='sf');
+      let dir='—', diffTxt='n/a';
+      if(mF!=null){
+        const dd=dirOf(dF), dm=dirOf(mF), diffPct=((mF/dF)-1)*100;
+        diffTxt=(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%';
+        total++;
+        let f;
+        if(dd===dm){ agree++; f = Math.abs(diffPct)<8 ? 'ok':'mag'; }
+        else if(dd===0||dm===0){ agree++; f='mag'; }
+        else { bad++; f='bad'; }
+        dir = f==='ok' ? '<span style="color:#6ee7b7">\u2713</span>'
+            : f==='mag'? '<span style="color:#fbbf24">\u2248</span>'
+            : '<span style="color:#fca5a5">\u2717</span>';
+      }
+      const lc = cell.lowConf ? ' <span title="replacement rank beyond FC\u2019s valued pool" style="color:#fbbf24">*</span>':'';
+      tables += '<tr style="border-top:1px solid #1f2937;'+(isAnchor?'background:#13202e':'')+'" title="vTop '+cell.vTop+' \u00b7 vRepl '+cell.vRepl+'">'
+        + '<td style="padding:4px 8px;color:#e2e8f0">'+s.teams+'-team '+qbLabel[s.qb]+(isAnchor?' <span style="color:#718096">(anchor)</span>':'')+'</td>'
+        + '<td style="padding:4px 8px;color:#a0aec0">'+cell.replRank.toFixed(1)+lc+'</td>'
+        + '<td style="padding:4px 8px;color:#cbd5e0">'+dF.toFixed(3)+'</td>'
+        + '<td style="padding:4px 8px;color:#cbd5e0">'+(mF==null?'\u2014':mF.toFixed(3))+'</td>'
+        + '<td style="padding:4px 8px;color:#718096">'+diffTxt+'</td>'
+        + '<td style="padding:4px 8px;text-align:center">'+dir+'</td></tr>';
+    }
+    tables += '</table>';
+  }
+
+  const pct = total? Math.round(100*agree/total):0;
+  const badge = SCARV.sample
+    ? '<div style="background:#3a2a12;border:1px solid #b4791f;color:#fbbf24;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:14px">\u26a0 SAMPLE / SYNTHETIC DATA \u2014 layout preview only. Run the fetch script to populate real FantasyCalc values.</div>'
+    : '';
+  const summary = '<div style="background:#13202e;border:1px solid #2d3748;border-radius:8px;padding:12px 14px;margin-bottom:14px">'
+    + '<div style="font-size:14px;font-weight:700;color:'+(bad===0?'#6ee7b7':'#fbbf24')+'">'+agree+' / '+total+' settings agree directionally ('+pct+'%)</div>'
+    + '<div style="font-size:11.5px;color:#a0aec0;margin-top:5px;line-height:1.65">'
+    + 'Expected divergences (not defects): RB/WR/TE carry one DELTA factor across QB format by design '
+    + '(documented second-order simplification), while the market nudges them slightly in 1QB. '
+    + '<span style="color:#6ee7b7">\u2713</span> aligned \u00b7 <span style="color:#fbbf24">\u2248</span> same direction, magnitude differs \u00b7 '
+    + '<span style="color:#fca5a5">\u2717</span> opposite direction (investigate).'
+    + (SCARV.generated ? ' \u00b7 Data: '+(SCARV.sample?'SAMPLE':new Date(SCARV.generated).toLocaleDateString()) : '')
+    + '</div></div>';
+  const intro = '<p style="color:#a0aec0;font-size:12.5px;line-height:1.65;margin:0 0 4px">'
+    + 'DELTA\u2019s scarcity factor (live from the engine) vs the market\u2019s observed value-by-rank (FantasyCalc), '
+    + 'same replacement-level formula and 12-team-SF anchor (= 1.00). FantasyCalc is a yardstick here \u2014 '
+    + 'it never feeds a score or ranking. Pass = both factors on the same side of 1.00.</p>';
+
+  host.innerHTML = badge + intro + summary + tables;
+}
+
 window.addEventListener('load', async function() {
   showDataFreshness(new Date().toISOString(), 0);
   await loadLiveMarketValues();
   await loadPlayerStats();
   await loadPlayerContracts();
+  await loadScarcityValidation();
 });
 if (document.readyState === 'complete') {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadScarcityValidation());
 }
 
 </script>
