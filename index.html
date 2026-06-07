@@ -213,6 +213,13 @@ tr:hover td{background:#1a202c}
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
     </select>
+      <select id="lg-teams" onchange="applyLeagueSettings('main')" title="League size">
+      <option value="8">8-team</option><option value="10">10-team</option>
+      <option value="12" selected>12-team</option><option value="14">14-team</option>
+    </select>
+      <select id="lg-qb" onchange="applyLeagueSettings('main')" title="QB format">
+      <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
+    </select>
   </div>
   <div id="sort-explainer" style="display:none;font-size:11px;color:#718096;padding:7px 11px;margin-bottom:8px;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px;line-height:1.5"></div>
   <div style="overflow-x:auto"><table>
@@ -265,6 +272,13 @@ tr:hover td{background:#1a202c}
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
       <option value="std">Standard</option>
+    </select>
+      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" title="League size" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+      <option value="8">8-team</option><option value="10">10-team</option>
+      <option value="12" selected>12-team</option><option value="14">14-team</option>
+    </select>
+      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" title="QB format" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+      <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
     </select>
   </div>
 
@@ -2718,7 +2732,7 @@ function mvAsset(pl){
   // Bypasses delta machinery that tanks players with zero snap/YPRR data
   if((pl.g25===0||pl.g25===undefined)&&(pl.ppg25||0)>0){
     const agMrk=am(pl.p||pl.pos,Math.floor(pl.a||22));
-    return Math.min(9999,Math.round((pl.k||0)*agMrk));
+    return Math.min(9999,Math.round((pl.k||0)*agMrk*scarcity(pl.p||pl.pos, leagueTeams, qbFmt)));
   }
   const e=getEff(pl);
   const epa=calcEPA(pl.n,pl.p||pl.pos);
@@ -2832,7 +2846,7 @@ function mvAsset(pl){
     +d_trend+d_fmt
   ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
-  return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
+  return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*scarcity(pos2, leagueTeams, qbFmt)));
 }
 
 const CONTRACTS=[
@@ -3615,6 +3629,41 @@ const DS_FMT_SCALE = {
   full:     {QB:1.00, RB:1.10, WR:1.21, TE:1.00},
   std:      {QB:1.00, RB:0.90, WR:0.79, TE:0.61},
 };
+// ── LEAGUE-SETTINGS SCARCITY ENGINE (replacement-level) ──────────────────────
+// Player value = production ABOVE the best freely-available (replacement) player
+// at his position. Replacement depth = teams × starters, so deeper leagues and
+// superflex push the replacement line down the talent curve (worse replacement),
+// raising scarcity. Curve SHAPES are fixed, documented assumptions from positional
+// PPG-by-rank structure (2025): TE = steep cliff then flat plateau (weak size
+// sensitivity); QB = long tail (strong sensitivity to SF + league size); WR deep;
+// RB moderate. Output is a factor anchored to 1.00 at the representative default
+// (12-team superflex), so the default config is UNCHANGED and the factor only
+// modulates when a knob moves. Position-level (not per-player); judged by DIRECTION
+// not precision. NOTE: market values from the source API are already SF-priced, so
+// the QB factor <1 in 1-QB strips that baked-in premium back out — see audit notes.
+let leagueTeams = 12;          // 8 / 10 / 12 / 14
+let qbFmt = 'sf';              // 'sf' (superflex) | '1qb'
+const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
+const SCAR_CURVE = {
+  QB: [[1,1.0],[6,0.865],[9,0.796],[12,0.769],[15,0.731],[18,0.721],[22,0.647],[26,0.608],[32,0.471]],
+  RB: [[1,1.0],[6,0.798],[12,0.666],[19,0.573],[26,0.511],[34,0.387]],
+  WR: [[1,1.0],[8,0.705],[16,0.588],[24,0.537],[36,0.473],[48,0.362]],
+  TE: [[1,1.0],[3,0.788],[5,0.667],[8,0.605],[11,0.582],[14,0.563],[18,0.507]],
+};
+function scarCurveVal(pos,rank){
+  const c=SCAR_CURVE[pos]; if(!c) return 0.6;
+  if(rank<=c[0][0]) return c[0][1];
+  for(let i=0;i<c.length-1;i++){
+    if(rank<=c[i+1][0]){ const r0=c[i][0],v0=c[i][1],r1=c[i+1][0],v1=c[i+1][1]; return v0+(rank-r0)/(r1-r0)*(v1-v0); }
+  }
+  return c[c.length-1][1];
+}
+function scarcity(pos,teams,qb){
+  const stOf=(p,f)=> p==='QB' ? SCAR_STARTERS.QB[f] : SCAR_STARTERS[p];
+  const gap =1-scarCurveVal(pos,(teams||12)*stOf(pos,qb||'sf'));
+  const gapD=1-scarCurveVal(pos,12*stOf(pos,'sf'));   // default: 12-team superflex
+  return gapD>0 ? gap/gapD : 1;
+}
 
 // ============================================================
 // DYNASTY SCORE — season-stable, historical-fact-only composite
@@ -3643,7 +3692,7 @@ function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
   // Production QUALITY relative to positional baseline, recency-weighted. Max 32 pts.
   const _fmtScale = (DS_FMT_SCALE[typeof scoringFmt!=='undefined'?scoringFmt:'half_tep'] || DS_FMT_SCALE.half_tep)[pos] || 1;
   const avg = (DS_AVG[pos]||12) * _fmtScale, elite = (DS_ELITE[pos]||14) * _fmtScale;
-  const trans = DS_TRANS[pos]||1.15, scarMult = DS_SCAR[pos]||1.0;
+  const trans = DS_TRANS[pos]||1.15, scarMult = (DS_SCAR[pos]||1.0) * scarcity(pos, leagueTeams, qbFmt);
 
   // No NFL data (rookie) — placeholder scales with draft capital (premium picks get benefit of doubt)
   if (ppg25===0 && ppg24===0 && ppg23===0) return p ? dsRookieProd(p) : 12;
@@ -3879,6 +3928,16 @@ function applyScoring(){
   if(typeof renderDepth==='function') renderDepth();
   // Reload stats with new format
   if(typeof loadPlayerStats==='function') loadPlayerStats();
+}
+
+function applyLeagueSettings(src){
+  const tEl=document.getElementById(src==='trade'?'lg-teams-trade':'lg-teams');
+  const qEl=document.getElementById(src==='trade'?'lg-qb-trade':'lg-qb');
+  if(tEl) leagueTeams=parseInt(tEl.value)||12;
+  if(qEl) qbFmt=qEl.value||'sf';
+  ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
+  ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
+  if(typeof renderAll==='function') renderAll();
 }
 
 function getAdjProj(p){
