@@ -1,0 +1,359 @@
+{
+  "generated": "2026-06-07T22:54:41.456Z",
+  "generator": "scripts/fetch-scarcity-validation.js",
+  "sample": true,
+  "isDynasty": true,
+  "ppr": 1,
+  "anchor": {
+    "teams": 12,
+    "qb": "sf"
+  },
+  "starters": {
+    "QB": {
+      "1qb": 1,
+      "sf": 1.8
+    },
+    "RB": 2.4,
+    "WR": 3,
+    "TE": 1.1
+  },
+  "note": "SAMPLE / SYNTHETIC DATA for UI preview only — not real FantasyCalc values. Run scripts/fetch-scarcity-validation.js to replace with live market data.",
+  "settings": [
+    {
+      "teams": 8,
+      "qb": "1qb",
+      "positions": {
+        "QB": {
+          "replRank": 8,
+          "vTop": 6500,
+          "vRepl": 4400,
+          "gap": 0.3231,
+          "marketFactor": 0.352,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 19.2,
+          "vTop": 9900,
+          "vRepl": 1238,
+          "gap": 0.8749,
+          "marketFactor": 0.905,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 24,
+          "vTop": 10050,
+          "vRepl": 1830,
+          "gap": 0.8179,
+          "marketFactor": 0.87,
+          "poolSize": 38,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 8.8,
+          "vTop": 9450,
+          "vRepl": 2822,
+          "gap": 0.7014,
+          "marketFactor": 0.857,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 10,
+      "qb": "1qb",
+      "positions": {
+        "QB": {
+          "replRank": 10,
+          "vTop": 6500,
+          "vRepl": 3800,
+          "gap": 0.4154,
+          "marketFactor": 0.453,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 24,
+          "vTop": 9900,
+          "vRepl": 655,
+          "gap": 0.9338,
+          "marketFactor": 0.966,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 30,
+          "vTop": 10050,
+          "vRepl": 1145,
+          "gap": 0.8861,
+          "marketFactor": 0.942,
+          "poolSize": 38,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 11,
+          "vTop": 9450,
+          "vRepl": 2170,
+          "gap": 0.7704,
+          "marketFactor": 0.941,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 12,
+      "qb": "1qb",
+      "positions": {
+        "QB": {
+          "replRank": 12,
+          "vTop": 6500,
+          "vRepl": 3200,
+          "gap": 0.5077,
+          "marketFactor": 0.554,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 28.8,
+          "vTop": 9900,
+          "vRepl": 359,
+          "gap": 0.9637,
+          "marketFactor": 0.997,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 36,
+          "vTop": 10050,
+          "vRepl": 709,
+          "gap": 0.9295,
+          "marketFactor": 0.988,
+          "poolSize": 38,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 13.2,
+          "vTop": 9450,
+          "vRepl": 1695,
+          "gap": 0.8206,
+          "marketFactor": 1.003,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 14,
+      "qb": "1qb",
+      "positions": {
+        "QB": {
+          "replRank": 14,
+          "vTop": 6500,
+          "vRepl": 2600,
+          "gap": 0.6,
+          "marketFactor": 0.654,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 33.6,
+          "vTop": 9900,
+          "vRepl": 204,
+          "gap": 0.9794,
+          "marketFactor": 1.013,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 42,
+          "vTop": 10050,
+          "vRepl": 603,
+          "gap": 0.94,
+          "marketFactor": 0.999,
+          "poolSize": 38,
+          "lowConf": true
+        },
+        "TE": {
+          "replRank": 15.4,
+          "vTop": 9450,
+          "vRepl": 1346,
+          "gap": 0.8576,
+          "marketFactor": 1.048,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 8,
+      "qb": "sf",
+      "positions": {
+        "QB": {
+          "replRank": 14.4,
+          "vTop": 10000,
+          "vRepl": 2740,
+          "gap": 0.726,
+          "marketFactor": 0.792,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 19.2,
+          "vTop": 9800,
+          "vRepl": 1120,
+          "gap": 0.8857,
+          "marketFactor": 0.916,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 24,
+          "vTop": 10000,
+          "vRepl": 1620,
+          "gap": 0.838,
+          "marketFactor": 0.891,
+          "poolSize": 48,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 8.8,
+          "vTop": 9500,
+          "vRepl": 2884,
+          "gap": 0.6964,
+          "marketFactor": 0.851,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 10,
+      "qb": "sf",
+      "positions": {
+        "QB": {
+          "replRank": 18,
+          "vTop": 10000,
+          "vRepl": 1500,
+          "gap": 0.85,
+          "marketFactor": 0.927,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 24,
+          "vTop": 9800,
+          "vRepl": 580,
+          "gap": 0.9408,
+          "marketFactor": 0.973,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 30,
+          "vTop": 10000,
+          "vRepl": 985,
+          "gap": 0.9015,
+          "marketFactor": 0.958,
+          "poolSize": 48,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 11,
+          "vTop": 9500,
+          "vRepl": 2210,
+          "gap": 0.7674,
+          "marketFactor": 0.938,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 12,
+      "qb": "sf",
+      "positions": {
+        "QB": {
+          "replRank": 21.6,
+          "vTop": 10000,
+          "vRepl": 828,
+          "gap": 0.9172,
+          "marketFactor": 1,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 28.8,
+          "vTop": 9800,
+          "vRepl": 323,
+          "gap": 0.967,
+          "marketFactor": 1,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 36,
+          "vTop": 10000,
+          "vRepl": 594,
+          "gap": 0.9406,
+          "marketFactor": 1,
+          "poolSize": 48,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 13.2,
+          "vTop": 9500,
+          "vRepl": 1724,
+          "gap": 0.8185,
+          "marketFactor": 1,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    },
+    {
+      "teams": 14,
+      "qb": "sf",
+      "positions": {
+        "QB": {
+          "replRank": 25.2,
+          "vTop": 10000,
+          "vRepl": 508,
+          "gap": 0.9492,
+          "marketFactor": 1.035,
+          "poolSize": 26,
+          "lowConf": false
+        },
+        "RB": {
+          "replRank": 33.6,
+          "vTop": 9800,
+          "vRepl": 188,
+          "gap": 0.9808,
+          "marketFactor": 1.014,
+          "poolSize": 34,
+          "lowConf": false
+        },
+        "WR": {
+          "replRank": 42,
+          "vTop": 10000,
+          "vRepl": 358,
+          "gap": 0.9642,
+          "marketFactor": 1.025,
+          "poolSize": 48,
+          "lowConf": false
+        },
+        "TE": {
+          "replRank": 15.4,
+          "vTop": 9500,
+          "vRepl": 1364,
+          "gap": 0.8564,
+          "marketFactor": 1.046,
+          "poolSize": 18,
+          "lowConf": false
+        }
+      }
+    }
+  ]
+}
