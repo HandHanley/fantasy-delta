@@ -188,7 +188,7 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
-  <button class="tab" onclick="showTab('audit',this)">Engine Audit</button>
+  <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
 </div>
 
 <div id="panel-rankings" class="panel active">
@@ -5761,7 +5761,7 @@ async function loadPlayerStats() {
 // ── LOADER ────────────────────────────────────────────────────────────────
 async function loadLiveMarketValues() {
   try {
-    const res = await fetch('./data/market-values.json');
+    const res = await fetch('./data/market-values.json?t=' + Date.now()); // cache-bust: bypass Pages CDN edge cache
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -5913,10 +5913,20 @@ async function loadPlayerContracts() {
 // which is exactly what we're validating. Judged by DIRECTION, not magnitude fit.
 // Data baked offline by scripts/fetch-scarcity-validation.js (no live API calls).
 // ════════════════════════════════════════════════════════════
+// Engine Audit is an internal validation/regression tool, not a public feature.
+// It is gated behind a ?dev flag: visit ...github.io/fantasy-delta/?dev=1 to use it.
+// Public visitors never see the tab and never fetch its data.
+const DELTA_DEV = new URLSearchParams(location.search).has('dev');
+function initEngineAudit(){
+  if(!DELTA_DEV) return;
+  const btn = document.getElementById('tab-audit-btn');
+  if(btn) btn.style.display = '';
+  loadScarcityValidation();
+}
 let SCARV = null;
 async function loadScarcityValidation(){
   try{
-    const res = await fetch('./data/scarcity-validation.json');
+    const res = await fetch('./data/scarcity-validation.json?t=' + Date.now()); // cache-bust: bypass Pages CDN edge cache so refreshed data shows immediately
     if(!res.ok) throw new Error('HTTP '+res.status);
     SCARV = await res.json();
   }catch(e){
@@ -6007,11 +6017,11 @@ window.addEventListener('load', async function() {
   await loadLiveMarketValues();
   await loadPlayerStats();
   await loadPlayerContracts();
-  await loadScarcityValidation();
+  initEngineAudit();
 });
 if (document.readyState === 'complete') {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadScarcityValidation());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => initEngineAudit());
 }
 
 </script>
