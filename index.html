@@ -2796,9 +2796,13 @@ function calcProj(pl){
   const mv=mvAsset({...pl,proj,p:pl.p});
 
   const oppSc=getOppScore(pl.n,pl.p);
+  // ktcEff/gap compare against the MARKET in the SELECTED format (pl.kMkt).
+  // e.ktc stays the 12-SF anchor the model rescales from via scarcity(); a manual
+  // ktc override (OV) is an explicit market value and takes precedence.
+  const kMkt=(OV[pl.n]&&OV[pl.n].ktc!==undefined)?e.ktc:(pl.kMkt!=null?pl.kMkt:e.ktc);
   const result={...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
-    gap:mv-e.ktc,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
-    ktcEff:e.ktc,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
+    gap:mv-kMkt,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
+    ktcEff:kMkt,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
     ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22,oppSc};
   result.dsScore=calcDynastyScore(result);
@@ -2806,7 +2810,7 @@ function calcProj(pl){
 }
 
 function mvAsset(pl){
-  if(pl.ip)return pl.k;
+  if(pl.ip)return (pl.kMkt!=null?pl.kMkt:pl.k);
   // Rookie override: no NFL data yet — use market value × age curve as model value
   // Bypasses delta machinery that tanks players with zero snap/YPRR data
   if((pl.g25===0||pl.g25===undefined)&&(pl.ppg25||0)>0){
@@ -3722,6 +3726,8 @@ const DS_FMT_SCALE = {
 // the QB factor <1 in 1-QB strips that baked-in premium back out — see audit notes.
 let leagueTeams = 12;          // 8 / 10 / 12 / 14
 let qbFmt = 'sf';              // 'sf' (superflex) | '1qb'
+let MARKET_SETTINGS = null;    // {"T|Q": {name:{value,...}}} from market-values.json
+let MARKET_DEFAULT = '12|sf';  // slice used as the model's 12-SF anchor
 const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
 const SCAR_CURVE = {
   QB: [[1,1.0],[6,0.865],[9,0.796],[12,0.769],[15,0.731],[18,0.721],[22,0.647],[26,0.608],[32,0.471]],
@@ -3962,7 +3968,7 @@ function vTag(p){
   // Selling a no-data player is bad advice regardless of model gap
   const totalG=(p.g25||0)+(p.g24||0)+(p.g23||0);
   if(totalG===0) return'<span class="badge bn" title="No NFL data yet">no data</span>';
-  const r=mvAssetBase(p)/Math.max(p.ktcEff||p.k,1);
+  const r=mvAssetBase(p)/Math.max(p.kMkt!=null?p.kMkt:(p.ktcEff||p.k),1);
   const pos=p.p||p.pos||'';
   // TEs use tighter thresholds — market value already prices in TE scarcity
   const sb=pos==='TE'?1.10:1.15, b=pos==='TE'?1.00:1.06,
@@ -4016,7 +4022,29 @@ function applyLeagueSettings(src){
   if(qEl) qbFmt=qEl.value||'sf';
   ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
   ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
+  applyMarketForSetting();           // switch market baseline to the selected format, rebuild COMP
   if(typeof renderAll==='function') renderAll();
+}
+
+function applyMarketForSetting(){
+  // Re-point each player's format-specific market (kMkt) to the selected
+  // league/QB slice, then rebuild COMP so ktcEff/gap/verdict reflect it.
+  // No-op for the legacy flat market file (kMkt already mirrors k).
+  if(MARKET_SETTINGS){
+    const key=leagueTeams+'|'+qbFmt;
+    const slice=MARKET_SETTINGS[key]||MARKET_SETTINGS[MARKET_DEFAULT];
+    if(slice){
+      for(const player of RAW){
+        if(!player||!player.n) continue;
+        const m=slice[(typeof FC_ALIASES!=='undefined'&&FC_ALIASES[player.n])||player.n]||slice[player.n];
+        player.kMkt = m ? m.value : player.k;   // unmatched → fall back to 12-SF anchor
+      }
+    }
+  }
+  if(typeof COMP!=='undefined' && typeof calcProj==='function'){
+    COMP.length=0; RAW.forEach(r=>COMP.push(calcProj(r)));
+    if(typeof ASSETS!=='undefined'){ ASSETS.length=0; ASSETS.push(...COMP, ...PICKS.filter(p=>!p.hidden)); }
+  }
 }
 
 function getAdjProj(p){
@@ -5846,7 +5874,9 @@ async function loadLiveMarketValues() {
       return;
     }
 
-    const values = data.values;
+    // Supports the per-format grid file {settings:{"T|Q":{...}}, default:"12|sf"}
+    // and the legacy flat file {values:{...}}. The default (12-SF) slice is the
+    // model's anchor (player.k); the selected-format slice drives player.kMkt.
     const tierMap = {
       'Early 1st Round Pick':{rnd:1,tier:'Early'},'Mid 1st Round Pick':{rnd:1,tier:'Mid'},
       'Late 1st Round Pick':{rnd:1,tier:'Late'},'Early 2nd Round Pick':{rnd:2,tier:'Early'},
@@ -5854,46 +5884,54 @@ async function loadLiveMarketValues() {
       'Early 3rd Round Pick':{rnd:3,tier:'Early'},'Mid 3rd Round Pick':{rnd:3,tier:'Mid'},
       'Late 3rd Round Pick':{rnd:3,tier:'Late'},
     };
+    const valOf=(map,name)=> map[FC_ALIASES[name]||name] || map[name] || null;
+
+    let anchorSlice;
+    if (data.settings) {
+      MARKET_SETTINGS = data.settings;
+      MARKET_DEFAULT  = data.default || '12|sf';
+      anchorSlice     = MARKET_SETTINGS[MARKET_DEFAULT] || MARKET_SETTINGS[Object.keys(MARKET_SETTINGS)[0]];
+    } else {
+      MARKET_SETTINGS = null;            // legacy flat file
+      anchorSlice     = data.values || {};
+    }
+
+    // Pick tiers: rescale once from the anchor (default) slice — picks are not yet per-format
     for (const [n,m] of Object.entries(tierMap)) {
       for (const yr of [2026,2027,2028]) {
-        const fc = values[yr+' '+n];
+        const fc = anchorSlice[yr+' '+n];
         if (fc) rescalePickTier(yr, m.rnd, m.tier, fc.value);
       }
     }
-    let updated = 0;
-    let notFound = [];
 
-    // RAW is DELTA's main player array — update each player's .k (market value)
+    // Anchor: player.k = default (12-SF) market — the base the model rescales from via scarcity()
+    let updated = 0, notFound = [];
     for (const player of RAW) {
-      if (!player || !player.n) continue; // guard against undefined entries
-      const name = player.n;
-      const alias = FC_ALIASES[name] || name;
-      
-      // Try exact match first, then alias
-      const match = values[alias] || values[name];
-      
+      if (!player || !player.n) continue;
+      const match = valOf(anchorSlice, player.n);
       if (match) {
-        player.k = match.value;            // Update the market value
-        player.fcRank = match.overallRank; // Store overall rank for reference
+        player.k = match.value;
+        player.fcRank = match.overallRank;
         if (match.trend30Day !== undefined) player.fcTrend = match.trend30Day;
         if (match.team && match.team !== player.t) player.fcTeam = match.team;
         updated++;
       } else {
-        notFound.push(name);
+        player.kMkt = player.k;          // keep kMkt defined even if unmatched
+        notFound.push(player.n);
       }
     }
 
-    console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched`);
+    console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched` +
+                (MARKET_SETTINGS ? ` · grid ${Object.keys(MARKET_SETTINGS).length} settings` : ' · legacy flat'));
     showDataFreshness(data.fetched, updated);
     if (notFound.length > 0 && notFound.length < 20) {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
 
-    // Rebuild COMP so ktcEff reflects fresh market values on all tabs
-    COMP.length = 0;
-    RAW.forEach(r => COMP.push(calcProj(r)));
-    ASSETS.length = 0;
-    ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+    // Point kMkt at the currently-selected format and rebuild COMP/ASSETS/render.
+    // (Legacy flat file → kMkt mirrors k, preserving prior behaviour.)
+    if (!MARKET_SETTINGS) { RAW.forEach(p=>{ if(p) p.kMkt = p.k; }); }
+    applyMarketForSetting();
     if (typeof renderRankings === 'function') renderRankings();
     if (typeof renderProj === 'function') renderProj();
 
