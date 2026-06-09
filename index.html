@@ -532,6 +532,11 @@ function computeStartProfile(name,pos){
           missPct:Math.round(100*m/n), hitPct:Math.round(100*h/n), elitePct:Math.round(100*e/n),
           lo:minS, hi:GAMELOGS_MAX, hitLine:hit, eliteLine:elite};
 }
+function glOf(p){
+  if(!p) return null;
+  const sp=computeStartProfile(p.n, p.pos||p.p||'WR');
+  return sp ? {miss:sp.missPct, hit:sp.hitPct, elite:sp.elitePct, g:sp.n} : null;
+}
 function startProfileHTML(p){
   const pos=p.pos||p.p||'WR';
   const sp=computeStartProfile(p.n,pos);
@@ -2521,7 +2526,7 @@ const GAME_LOG = {
 
 };
 function glTag(n){
-  const d=GAME_LOG[n];if(!d)return'';
+  const p=COMP.find(x=>x.n===n); const d=glOf(p);if(!d)return'';
   const mc=d.miss<=35?'#6ee7b7':d.miss<=50?'#fcd34d':'#fca5a5';
   const hc=d.hit>=65?'#6ee7b7':d.hit>=50?'#7dd3fc':'#718096';
   const ec=d.elite>=25?'#6ee7b7':d.elite>=15?'#7dd3fc':'#718096';
@@ -2678,7 +2683,7 @@ function calcProj(pl){
 
   // ── RULE 4: VOLATILITY PENALTY ────────────────────────────────
   let d_volatility = 0;
-  const gl = GAME_LOG[pl.n];
+  const gl = glOf(pl);
   if(gl && gl.g >= 20){
     if(gl.miss > 65) d_volatility = -0.09;
     else if(gl.miss > 55) d_volatility = -0.06;
@@ -2836,7 +2841,7 @@ function mvAsset(pl){
   const rawDelta=getDeltas(pl.n,pos_mv2,adjSysMV,adjContMV,adjRoleMV,roleData.raw,col,epa.sc,rip,qbq);
 
   // Volatility penalty (miss% suppresses value regardless of system)
-  const glMV=GAME_LOG[pl.n];
+  const glMV=glOf(pl);
   let d_vol_mv=0;
   if(glMV && glMV.g>=20){
     if(glMV.miss>65) d_vol_mv=-0.10;
@@ -4058,7 +4063,7 @@ function renderRankings(){
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-weight:600;color:${oppScoreColor(p.oppSc)};white-space:nowrap">${(()=>{
-      if(p.pos==='QB'){const gl=GAME_LOG[p.n];return gl?'<span style="font-size:11px;color:#7dd3fc">'+gl.elite+'% elite</span>':'—';}
+      if(p.pos==='QB'){const gl=glOf(p);return gl?'<span style="font-size:11px;color:#7dd3fc">'+gl.elite+'% elite</span>':'—';}
       if(p.oppSc==null) return '—';
       const ic=p.pos==='WR'||p.pos==='TE'?'<span style="font-family:Georgia,serif;font-size:13px">α</span>':'<span style="font-size:12px">♞</span>';
       return ic+' '+p.oppSc;
@@ -4083,15 +4088,15 @@ function renderProj(){
   else if(activeSort==='ceil')data.sort((a,b)=>b.ceil-a.ceil);
   else if(activeSort==='floor')data.sort((a,b)=>b.floor-a.floor);
   else if(activeSort==='gap')data.sort((a,b)=>b.gap-a.gap);
-  else if(activeSort==='miss')data.sort((a,b)=>(GAME_LOG[a.n]?.miss??99)-(GAME_LOG[b.n]?.miss??99));
-  else if(activeSort==='hit')data.sort((a,b)=>(GAME_LOG[b.n]?.hit??0)-(GAME_LOG[a.n]?.hit??0));
-  else if(activeSort==='elite')data.sort((a,b)=>(GAME_LOG[b.n]?.elite??0)-(GAME_LOG[a.n]?.elite??0));
+  else if(activeSort==='miss')data.sort((a,b)=>(glOf(a)?.miss??99)-(glOf(b)?.miss??99));
+  else if(activeSort==='hit')data.sort((a,b)=>(glOf(b)?.hit??0)-(glOf(a)?.hit??0));
+  else if(activeSort==='elite')data.sort((a,b)=>(glOf(b)?.elite??0)-(glOf(a)?.elite??0));
   document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
     const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
     const fr=p.epaFr==='vol+YAC neutral'
       ?'<span style="color:#6ee7b7;font-size:10px">⌊ neutral (vol+YAC)</span>'
       :p.epaFl?`<span style="color:#fcd34d;font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
-    const gl=GAME_LOG[p.n];
+    const gl=glOf(p);
     const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
     const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
     const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
@@ -4785,7 +4790,7 @@ function renderDeck(p){
     `<span>${p.pos} · ${p.t}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}${trendHtml}`;
 
   // ── Body ──
-  const gl=GAME_LOG[p.n];
+  const gl=glOf(p);
   const adjProj=getAdjProj(p);
   const mv=mvAsset(p);
   const epaLabel=p.pos==='QB'?'EPA/Play':'YPRR';
@@ -4969,12 +4974,6 @@ function renderDeck(p){
 
     <div class="dd-divider"></div>
 
-    <div class="dd-section">
-      <div class="dd-section-label">Start Profile</div>
-      ${glHtml}
-    </div>
-
-    <div class="dd-divider"></div>
 
     <div class="dd-section">
       <div class="dd-section-label">System & Role</div>
@@ -5095,7 +5094,7 @@ function renderDeck(p){
 function askClaudeAbout(name){
   const p=COMP.find(x=>x.n===name);
   if(!p) return;
-  const gl=GAME_LOG[p.n];
+  const gl=glOf(p);
   const mv=mvAsset(p);
   const prompt=`Evaluate ${name} as a dynasty asset. DELTA model data: Proj ${getAdjProj(p).toFixed(1)} PPG, Model Value ${mv.toLocaleString()} vs Mkt ${p.ktcEff.toLocaleString()} (${vTag(p).replace(/<[^>]+>/g,'')}), Age ${p.a.toFixed(1)}, ${p.pos} on ${p.t}, System score ${p.sys}, EPA score ${p.epaSc?.toFixed(2)||'N/A'}${gl?`, Start Profile miss/elite: ${gl.miss}%/${gl.elite}% (${gl.g} games)`:''}. Should I buy, sell, or hold at current market value?`;
   closeDeckNow();
@@ -5112,7 +5111,7 @@ async function generateScoutingReport(p){
   }
   // Fall back to live API (works in Claude artifact environment)
 
-  const gl=GAME_LOG[p.n];
+  const gl=glOf(p);
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const mv=mvAsset(p);
   const trend=TREND_TAG[p.n]||'neutral';
@@ -6092,11 +6091,13 @@ window.addEventListener('load', async function() {
   await loadLiveMarketValues();
   await loadPlayerStats();
   await loadPlayerContracts();
+  await ensureStartData();
+  if(typeof renderAll==='function') renderAll();
   initEngineAudit();
 });
 if (document.readyState === 'complete') {
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => initEngineAudit());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); }).then(() => initEngineAudit());
 }
 
 </script>
