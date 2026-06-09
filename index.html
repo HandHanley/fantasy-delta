@@ -489,6 +489,78 @@ function formatMvShift(name,pos,fmt){
   return Math.max(-REC_FMT_CAP,Math.min(REC_FMT_CAP,shift));
 }
 
+// ════════════════════════════════════════════════════════════
+// START PROFILE — Hit/Miss/Elite distribution from per-game logs.
+// 2-year rolling window, equal weight. Lines = data-derived VOR thresholds
+// (data/start-profile-thresholds.json) keyed pos|fmt|teams|qb. Per-game points
+// use the same scoring as fmtRecPts. DNP exclusion is handled at bake time
+// (game-logs.json contains only ACTIVE games), so a 0-pt game here = a real miss.
+// Data is lazy-loaded on first player-card open (~1.1MB), not on startup.
+// ════════════════════════════════════════════════════════════
+let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle';
+async function ensureStartData(){
+  if(START_DATA_STATE==='loaded'||START_DATA_STATE==='loading') return START_DATA_STATE;
+  START_DATA_STATE='loading';
+  try{
+    const [gl,th]=await Promise.all([
+      fetch('./data/game-logs.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject('logs '+r.status)),
+      fetch('./data/start-profile-thresholds.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
+    ]);
+    GAMELOGS=gl.games||{}; STARTLINES=th.lines||{};
+    let mx=0; for(const k in GAMELOGS){ for(const g of GAMELOGS[k]){ if(g.s>mx) mx=g.s; } }
+    GAMELOGS_MAX=mx; START_DATA_STATE='loaded';
+  }catch(e){ console.warn('[DELTA] Start Profile data load failed:',e); START_DATA_STATE='error'; }
+  return START_DATA_STATE;
+}
+function gamefp(g,pos,fmt){
+  const baseRec = pos==='TE'?1.5 : (pos==='QB'?0:0.5);          // half_tep base per rec (matches fmtRecPts)
+  const recAbs = baseRec + (pos==='QB'?0:fmtRecPts(pos,fmt));
+  return g.py*0.04 + g.pt*4 + g.pi*-2 + g.ry*0.1 + g.rt*6
+       + g.rec*recAbs + g.rey*0.1 + g.ret*6 + g.fl*-2 + g.tp*2 + g.rtd*6;
+}
+function computeStartProfile(name,pos){
+  if(!GAMELOGS||!STARTLINES||!GAMELOGS[name]) return null;
+  const line=STARTLINES[pos+'|'+scoringFmt+'|'+leagueTeams+'|'+qbFmt];
+  if(!line) return null;
+  const [hit,elite]=line, minS=GAMELOGS_MAX-1;
+  const games=GAMELOGS[name].filter(g=>g.s>=minS);
+  if(!games.length) return null;
+  let m=0,h=0,e=0;
+  for(const g of games){ const fp=gamefp(g,pos,scoringFmt); if(fp>=elite)e++; else if(fp>=hit)h++; else m++; }
+  const n=games.length;
+  return {n,miss:m,hit:h,elite:e,
+          missPct:Math.round(100*m/n), hitPct:Math.round(100*h/n), elitePct:Math.round(100*e/n),
+          lo:minS, hi:GAMELOGS_MAX, hitLine:hit, eliteLine:elite};
+}
+function startProfileHTML(p){
+  const pos=p.pos||p.p||'WR';
+  const sp=computeStartProfile(p.n,pos);
+  if(!sp) return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
+    +'<div style="font-size:11px;color:#718096">No recent game data for this player/format.</div></div>';
+  const seg=(pct,col)=> pct>0?'<div style="width:'+pct+'%;background:'+col+'"></div>':'';
+  const cell=(lbl,pct,cnt,col)=>'<div style="text-align:center;flex:1">'
+    +'<div style="font-size:18px;font-weight:800;color:'+col+';line-height:1">'+pct+'%</div>'
+    +'<div style="font-size:9px;color:#718096;letter-spacing:.05em;margin-top:2px">'+lbl+'</div>'
+    +'<div style="font-size:9px;color:#4a5568">'+cnt+' g</div></div>';
+  return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
+    +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:#1a202c;margin-bottom:9px">'
+    + seg(sp.missPct,'#fc8181')+seg(sp.hitPct,'#93c5fd')+seg(sp.elitePct,'#6ee7b7')+'</div>'
+    +'<div style="display:flex;gap:4px">'
+    + cell('MISS',sp.missPct,sp.miss,'#fc8181')+cell('HIT',sp.hitPct,sp.hit,'#93c5fd')+cell('ELITE',sp.elitePct,sp.elite,'#6ee7b7')
+    +'</div>'
+    +'<div style="font-size:9px;color:#4a5568;text-align:center;margin-top:8px">'
+    + sp.n+' starts · '+sp.lo+'\u2013'+String(sp.hi).slice(2)+' · hit \u2265'+sp.hitLine+' · elite \u2265'+sp.eliteLine+' pts</div></div>';
+}
+function renderStartProfile(p){
+  const host=document.getElementById('dd-startprofile');
+  if(!host) return;
+  if(START_DATA_STATE==='loaded'){ host.innerHTML=startProfileHTML(p); return; }
+  if(START_DATA_STATE==='error'){ host.innerHTML=''; return; }
+  host.innerHTML='<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
+    +'<div style="font-size:11px;color:#718096">Loading game logs\u2026</div></div>';
+  ensureStartData().then(()=>{ const h=document.getElementById('dd-startprofile'); if(h) h.innerHTML=startProfileHTML(p); });
+}
+
 const REC_PG={
   'A.J. Brown':4.59,
   'AJ Barner':3.06,
@@ -4697,6 +4769,7 @@ function renderDeck(p){
   document.getElementById('dd-card').dataset.player=p.n;
   // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
+    renderStartProfile(p);
     const scoreEl = document.getElementById('opp-score-val');
     const score = getOppScore(p.n, p.pos);
     if (scoreEl && score != null) countUp(scoreEl, score);
@@ -4838,6 +4911,8 @@ function renderDeck(p){
         +bar('Contract', conPts, 10)
         +'</div>';
     })()}
+
+    <div id="dd-startprofile"></div>
 
     <div class="dd-section">
       <div class="dd-section-label">Projection & Value</div>
