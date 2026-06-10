@@ -471,10 +471,10 @@ const REC_FMT_CAP=0.10; // max +/-10% mv shift from format
 // How many extra rec pts each format gives vs base (0.5PPR + TE Premium)
 function fmtRecPts(pos,fmt){
   if(fmt==='half_tep') return 0;
-  if(fmt==='std')   return pos==='TE'?-1.5:-0.5;
-  if(fmt==='half')  return pos==='TE'?-1.0:0;
+  if(fmt==='std')   return pos==='TE'?-1.0:-0.5;
+  if(fmt==='half')  return pos==='TE'?-0.5:0;
   if(fmt==='full_tep') return 0.5;
-  if(fmt==='full')  return pos==='TE'?-0.5:0.5;
+  if(fmt==='full')  return pos==='TE'?0:0.5;
   return 0;
 }
 
@@ -513,14 +513,14 @@ async function ensureStartData(){
   return START_DATA_STATE;
 }
 function gamefp(g,pos,fmt){
-  const baseRec = pos==='TE'?1.5 : (pos==='QB'?0:0.5);          // half_tep base per rec (matches fmtRecPts)
+  const baseRec = pos==='TE'?1.0 : (pos==='QB'?0:0.5);          // half_tep base per rec: 0.5 PPR + 0.5 TE premium
   const recAbs = baseRec + (pos==='QB'?0:fmtRecPts(pos,fmt));
   return g.py*0.04 + g.pt*4 + g.pi*-2 + g.ry*0.1 + g.rt*6
        + g.rec*recAbs + g.rey*0.1 + g.ret*6 + g.fl*-2 + g.tp*2 + g.rtd*6;
 }
 function computeStartProfile(name,pos){
   if(!GAMELOGS||!STARTLINES||!GAMELOGS[name]) return null;
-  const line=STARTLINES[pos+'|'+scoringFmt+'|'+leagueTeams+'|'+qbFmt];
+  const line=STARTLINES[pos+'|'+scoringFmt];   // league-invariant: game quality depends on position + scoring only
   if(!line) return null;
   const [hit,elite]=line, minS=GAMELOGS_MAX-1;
   const games=GAMELOGS[name].filter(g=>g.s>=minS);
@@ -3991,10 +3991,10 @@ function vTag(p){
 function getScoringDelta(name,pos,fmt){
   const r=REC_PG[name]||0;
   if(fmt==='half_tep') return 0; // current base
-  if(fmt==='half')     return pos==='TE'?-r*1.0:0; // remove TE premium only
+  if(fmt==='half')     return pos==='TE'?-r*0.5:0; // remove 0.5 TE premium
   if(fmt==='full_tep') return r*0.5; // add 0.5 to everyone
-  if(fmt==='full')     return pos==='TE'?-r*0.5:r*0.5; // full for WR/RB, remove TEP for TE
-  if(fmt==='std')      return -(r*0.5)+(pos==='TE'?-r*1.0:0); // remove all rec pts
+  if(fmt==='full')     return pos==='TE'?0:r*0.5; // WR/RB to full; TE base 1.0 already = full
+  if(fmt==='std')      return -(r*0.5)+(pos==='TE'?-r*0.5:0); // remove all rec pts
   return 0;
 }
 
