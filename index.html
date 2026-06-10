@@ -3954,12 +3954,14 @@ function rTag(mult,lbl,pos){
   return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
 }
 function mvAssetBase(p){
-  // mvAsset computed at base format (0.5PPR+TEP) — used for tags/badges
-  // so badges don't flip when user changes scoring format
-  const savedFmt=scoringFmt;
-  scoringFmt='half_tep';
+  // Verdict model is computed at the 12-SF anchor basis (0.5PPR+TEP, 12-team Superflex):
+  // scoring pinned so badges don't flip on format change, AND league size + QB format pinned
+  // so the buy/sell tag is a pure per-player signal (Allen vs Penix) rather than a position-wide
+  // scarcity shift. With scarcity(pos,12,sf)=1.0 the format scaling cancels against the anchor.
+  const savedFmt=scoringFmt, savedTeams=leagueTeams, savedQb=qbFmt;
+  scoringFmt='half_tep'; leagueTeams=12; qbFmt='sf';
   const mv=mvAsset(p);
-  scoringFmt=savedFmt;
+  scoringFmt=savedFmt; leagueTeams=savedTeams; qbFmt=savedQb;
   return mv;
 }
 
@@ -3968,7 +3970,10 @@ function vTag(p){
   // Selling a no-data player is bad advice regardless of model gap
   const totalG=(p.g25||0)+(p.g24||0)+(p.g23||0);
   if(totalG===0) return'<span class="badge bn" title="No NFL data yet">no data</span>';
-  const r=mvAssetBase(p)/Math.max(p.kMkt!=null?p.kMkt:(p.ktcEff||p.k),1);
+  // Denominator is the market at the SAME 12-SF anchor basis the model uses (a manual ktc
+  // override wins, since it's the user's stated market value). Format scaling cancels → per-player gap.
+  const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
+  const r=mvAssetBase(p)/Math.max(mkt12,1);
   const pos=p.p||p.pos||'';
   // TEs use tighter thresholds — market value already prices in TE scarcity
   const sb=pos==='TE'?1.10:1.15, b=pos==='TE'?1.00:1.06,
