@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-06-11T10:42:42.419805+00:00",
+  "fetched": "2026-06-11T15:35:16.775181+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -973,7 +973,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -994,12 +994,12 @@
     },
     "Drake London": {
       "team": "Falcons",
-      "year_signed": 2022,
+      "year_signed": 2026,
       "years": 4,
-      "end_year": 2025,
-      "aav": 5.38,
-      "total": 21.53,
-      "guaranteed": 21.53,
+      "end_year": 2029,
+      "aav": 35.26,
+      "total": 141.05,
+      "guaranteed": 52.87,
       "is_active": true
     },
     "Emeka Egbuka": {
@@ -1043,7 +1043,7 @@
       "is_active": true
     },
     "Jaylen Waddle": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1463,7 +1463,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2339,7 +2339,7 @@
       "end_year": 2029,
       "aav": 4.94,
       "total": 19.75,
-      "guaranteed": 0.0,
+      "guaranteed": 19.75,
       "is_active": true
     },
     "Omar Cooper": {
@@ -2813,7 +2813,7 @@
       "is_active": true
     },
     "D.J. Moore": {
-      "team": "CHI/BUF",
+      "team": "BUF/CHI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
