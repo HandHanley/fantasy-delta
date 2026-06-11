@@ -2547,7 +2547,9 @@ function calcProj(pl){
     else if(gl.miss > 55) proj = Math.min(proj, posCeil * 1.05);  // soft ceiling
   }
 
-  // Model value: additive delta on market value, hard cap 9999
+  // Model value: additive delta on market value, hard cap 19999 (raised from
+  // 9999 after live FC anchors inflated past it and clipped elite model values
+  // — display still reads "9,999+"; the cap is a sanity ceiling only)
   // mv computed via mvAsset (includes all 5 features: contract, injury, scarcity, competition, volatility)
   const mv=mvAsset({...pl,proj,p:pl.p});
 
@@ -2571,7 +2573,7 @@ function mvAsset(pl){
   // Bypasses delta machinery that tanks players with zero snap/YPRR data
   if((pl.g25===0||pl.g25===undefined)&&(pl.ppg25||0)>0){
     const agMrk=am(pl.p||pl.pos,Math.floor(pl.a||22));
-    return Math.min(9999,Math.round((pl.k||0)*agMrk*scarcity(pl.p||pl.pos, leagueTeams, qbFmt)));
+    return Math.min(19999,Math.round((pl.k||0)*agMrk*scarcity(pl.p||pl.pos, leagueTeams, qbFmt)));
   }
   const e=getEff(pl);
   const epa=calcEPA(pl.n,pl.p||pl.pos);
@@ -2685,7 +2687,7 @@ function mvAsset(pl){
     +d_trend+d_fmt
   ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
-  return Math.min(9999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*scarcity(pos2, leagueTeams, qbFmt)));
+  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*scarcity(pos2, leagueTeams, qbFmt)));
 }
 
 const CONTRACTS=[
@@ -3521,6 +3523,40 @@ function mvAssetBase(p){
   return mv;
 }
 
+// ── Verdict recentering ──────────────────────────────────────
+// The mvDelta feature stack is penalty-heavy by construction (competition ≤0
+// for all non-QBs; injury history, stability, and volatility ≤0; clamp is
+// asymmetric at −0.35/+0.25), so the population median of model/market sits
+// below 1.0 — and it MOVES whenever the engine changes. Thresholding against
+// an absolute 1.0 therefore drifts: after the June 2026 engine work the center
+// sat at ~0.87 and 65% of the board read "sell". Tags are now graded against
+// the live population center: buy/sell means "priced better/worse than market
+// RELATIVE to the typical tracked player". Self-calibrating across engine
+// changes; league-invariant (computed at the same pinned 12-SF anchor basis
+// as the per-player ratio); preserves genuine positional leans (e.g. the
+// model's RB discount survives, because the recenter is global, not per-pos).
+let VTAG_CENTER=null;   // cache; reset in renderAll(), recomputed on first vTag
+function vtagCenter(){
+  if(VTAG_CENTER!=null) return VTAG_CENTER;
+  const rs=[];
+  if(typeof COMP!=='undefined'){
+    for(const p of COMP){
+      if(((p.g25||0)+(p.g24||0)+(p.g23||0))===0) continue;  // same gate as vTag's "no data"
+      const mkt=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
+      rs.push(mvAssetBase(p)/Math.max(mkt,1));
+    }
+  }
+  if(!rs.length) return (VTAG_CENTER=1);
+  rs.sort(function(a,b){return a-b;});
+  let c=rs[Math.floor(rs.length/2)];
+  if(c<0.6||c>1.3){
+    console.warn('[DELTA] vTag population center out of range ('+c.toFixed(3)+') — falling back to 1.0; check market/stats data');
+    c=1;
+  }
+  VTAG_CENTER=c;
+  return c;
+}
+
 function vTag(p){
   // No games across all tracked seasons = no signal
   // Selling a no-data player is bad advice regardless of model gap
@@ -3531,9 +3567,11 @@ function vTag(p){
   const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
   const r=mvAssetBase(p)/Math.max(mkt12,1);
   const pos=p.p||p.pos||'';
+  // Bands are scaled by the live population center (see vtagCenter above).
   // TEs use tighter thresholds — market value already prices in TE scarcity
-  const sb=pos==='TE'?1.10:1.15, b=pos==='TE'?1.00:1.06,
-        h=pos==='TE'?0.88:0.94, s=pos==='TE'?0.76:0.82;
+  const C=vtagCenter();
+  const sb=(pos==='TE'?1.10:1.15)*C, b=(pos==='TE'?1.00:1.06)*C,
+        h=(pos==='TE'?0.88:0.94)*C, s=(pos==='TE'?0.76:0.82)*C;
   if(r>=sb)return'<span class="badge bs">strong buy</span>';
   if(r>=b) return'<span class="badge bi">buy</span>';
   if(r>=h) return'<span class="badge bn">hold</span>';
@@ -4270,6 +4308,7 @@ function renderOVList(){
 function clearOV(name){delete OV[name];renderAll();renderOVList();}
 
 function renderAll(){
+  VTAG_CENTER=null;   // verdict recenter: inputs may have changed (data loads, OV edits, stats)
   COMP.length=0;RAW.forEach(r=>COMP.push(calcProj(r)));
   ASSETS.length=0;COMP.forEach(p=>ASSETS.push(p));PICKS.forEach(p=>ASSETS.push(p));
   renderRankings();renderProj();renderRipple();renderEPA();recalcTrade();
