@@ -2280,252 +2280,7 @@ const RIPPLE=[
 // WR/RB tiers: 0-5.9 HY, 6-9.9 DNF, 10-13.9 Svc, 14-17.9 Good, 18-26.9 Great, 27+ GW
 // QB tiers: 0-11.9 HY, 12-15.9 DNF, 16-18.9 Svc, 19-24.9 Good, 25-31.9 Great, 32+ GW
 // ============================================================
-const GAME_LOG = {
-  // WRs — full model coverage
-  "Tre Harris": {miss:93,hit:7,elite:7,g:15},
-  "Matthew Golden": {miss:87,hit:13,elite:7,g:15},
-  "Elic Ayomanor": {miss:76,hit:24,elite:6,g:17},
-  "Jayden Higgins": {miss:72,hit:28,elite:6,g:18},
-  "Travis Hunter": {miss:75,hit:25,elite:25,g:8},
-  "Jalen Coker": {miss:64,hit:36,elite:14,g:22},
-  "Troy Franklin": {miss:73,hit:27,elite:12,g:33},
-  "Parker Washington": {miss:70,hit:30,elite:11,g:37},
-  "Luther Burden": {miss:75,hit:25,elite:19,g:16},
-  "Jauan Jennings": {miss:68,hit:32,elite:11,g:62},
-  "Michael Pittman Jr.": {miss:46,hit:54,elite:14,g:69},
-  "Deebo Samuel": {miss:46,hit:54,elite:25,g:63},
-  "Stefon Diggs": {miss:35,hit:65,elite:32,g:63},
-  "Wan'Dale Robinson": {miss:66,hit:34,elite:10,g:58},
-  "Emeka Egbuka": {miss:61,hit:39,elite:28,g:18},
-  "DK Metcalf": {miss:40,hit:60,elite:16,g:67},
-  "Khalil Shakir": {miss:66,hit:34,elite:10,g:50},
-  "Romeo Doubs": {miss:61,hit:39,elite:10,g:61},
-  "Jakobi Meyers": {miss:49,hit:51,elite:14,g:65},
-  "Alec Pierce": {miss:66,hit:34,elite:13,g:68},
-  "Terry McLaurin": {miss:42,hit:58,elite:20,g:65},
-  "Brandon Aiyuk": {miss:49,hit:51,elite:21,g:43},
-  "Tetairoa McMillan": {miss:50,hit:50,elite:11,g:18},
-  "Jameson Williams": {miss:51,hit:49,elite:21,g:47},
-  "D.J. Moore": {miss:56,hit:44,elite:26,g:72},
-  "Christian Watson": {miss:61,hit:39,elite:24,g:51},
-  "Davante Adams": {miss:39,hit:61,elite:35,g:66},
-  "Courtland Sutton": {miss:43,hit:57,elite:13,g:69},
-  "Mike Evans": {miss:40,hit:60,elite:30,g:57},
-  "A.J. Brown": {miss:29,hit:71,elite:31,g:65},
-  "Justin Jefferson": {miss:29,hit:71,elite:35,g:65},
-  "CeeDee Lamb": {miss:25,hit:75,elite:33,g:67},
-  "Puka Nacua": {miss:21,hit:79,elite:40,g:47},
-  "Ja'Marr Chase": {miss:32,hit:68,elite:43,g:65},
-  "Nico Collins": {miss:47,hit:53,elite:24,g:70},
-  "Amon-Ra St. Brown": {miss:28,hit:72,elite:31,g:87},
-  "DeVonta Smith": {miss:44,hit:56,elite:20,g:85},
-  "Jaylen Waddle": {miss:48,hit:52,elite:20,g:83},
-  "Tee Higgins": {miss:43,hit:57,elite:27,g:92},
-  "Garrett Wilson": {miss:43,hit:57,elite:20,g:60},
-  "Drake London": {miss:52,hit:48,elite:18,g:66},
-  "Chris Olave": {miss:38,hit:62,elite:21,g:58},
-  "George Pickens": {miss:49,hit:51,elite:21,g:68},
-  "Rashid Shaheed": {miss:60,hit:40,elite:13,g:52},
-  "Jaxon Smith-Njigba": {miss:44,hit:56,elite:24,g:54},
-  "Quentin Johnston": {miss:59,hit:41,elite:18,g:49},
-  "Jordan Addison": {miss:53,hit:47,elite:16,g:49},
-  "Zay Flowers": {miss:50,hit:50,elite:17,g:52},
-  "Josh Downs": {miss:64,hit:36,elite:12,g:50},
-  "Rashee Rice": {miss:39,hit:61,elite:32,g:31},
-  "Jayden Reed": {miss:55,hit:45,elite:17,g:42},
-  "Marvin Harrison Jr.": {miss:52,hit:48,elite:16,g:31},
-  "Rome Odunze": {miss:65,hit:35,elite:16,g:31},
-  "Malik Nabers": {miss:33,hit:67,elite:33,g:21},
-  "Brian Thomas Jr.": {miss:42,hit:58,elite:27,g:33},
-  "Ricky Pearsall": {miss:59,hit:41,elite:14,g:22},
-  "Xavier Worthy": {miss:65,hit:35,elite:13,g:31},
-  "Keon Coleman": {miss:75,hit:25,elite:11,g:28},
-  "Ladd McConkey": {miss:41,hit:59,elite:18,g:34},
-  // TEs — full model coverage
-  "Gunnar Helm": {miss:76,hit:24,elite:6,g:17},
-  "Mason Taylor": {miss:64,hit:36,elite:7,g:14},
-  "Isaiah Likely": {miss:74,hit:26,elite:15,g:66},
-  "AJ Barner": {miss:67,hit:33,elite:8,g:36},
-  "Theo Johnson": {miss:62,hit:38,elite:10,g:29},
-  "Oronde Gadsden": {miss:56,hit:44,elite:19,g:16},
-  "Chigoziem Okonkwo": {miss:75,hit:25,elite:10,g:71},
-  "Pat Freiermuth": {miss:64,hit:36,elite:12,g:66},
-  "Cade Otton": {miss:68,hit:32,elite:14,g:66},
-  "Harold Fannin Jr.": {miss:41,hit:59,elite:24,g:17},
-  "Brenton Strange": {miss:61,hit:39,elite:10,g:31},
-  "Mark Andrews": {miss:44,hit:56,elite:25,g:61},
-  "Evan Engram": {miss:53,hit:47,elite:16,g:62},
-  "Kyle Pitts": {miss:59,hit:41,elite:14,g:63},
-  "Juwan Johnson": {miss:57,hit:43,elite:12,g:67},
-  "Dallas Goedert": {miss:47,hit:53,elite:20,g:55},
-  "Dalton Schultz": {miss:59,hit:41,elite:16,g:68},
-  "Hunter Henry": {miss:57,hit:43,elite:13,g:67},
-  "Colston Loveland": {miss:59,hit:41,elite:24,g:17},
-  "T.J. Hockenson": {miss:46,hit:54,elite:18,g:61},
-  "Dalton Kincaid": {miss:59,hit:41,elite:9,g:44},
-  "Tyler Warren": {miss:50,hit:50,elite:17,g:18},
-  "Sam LaPorta": {miss:40,hit:60,elite:27,g:45},
-  "Tucker Kraft": {miss:49,hit:51,elite:16,g:37},
-  "Travis Kelce": {miss:32,hit:68,elite:33,g:69},
-  "Trey McBride": {miss:34,hit:66,elite:35,g:62},
-  "Brock Bowers": {miss:32,hit:68,elite:32,g:31},
-  "George Kittle": {miss:32,hit:68,elite:43,g:60},
-  "Kyren Williams": {miss:30,hit:70,elite:37,g:57},
-  // RBs
-  "Kenneth Gainwell": {miss:85,hit:15,elite:5,g:62},
-  "Ollie Gordon": {miss:82,hit:18,elite:0,g:11},
-  "Jaylen Wright": {miss:90,hit:10,elite:0,g:21},
-  "Trey Benson": {miss:94,hit:6,elite:0,g:16},
-  "Braelon Allen": {miss:90,hit:10,elite:5,g:20},
-  "Dylan Sampson": {miss:86,hit:14,elite:0,g:14},
-  "Blake Corum": {miss:69,hit:31,elite:6,g:16},
-  "Bhayshul Tuten": {miss:85,hit:15,elite:0,g:13},
-  "Isaac Guerendo": {miss:70,hit:30,elite:10,g:10},
-  "Tyjae Spears": {miss:78,hit:22,elite:7,g:41},
-  "Kareem Hunt": {miss:69,hit:31,elite:10,g:59},
-  "Isiah Pacheco": {miss:53,hit:47,elite:9,g:34},
-  "Jacory Croskey-Merritt": {miss:75,hit:25,elite:12,g:16},
-  "Jordan Mason": {miss:71,hit:29,elite:11,g:28},
-  "Aaron Jones": {miss:46,hit:54,elite:15,g:54},
-  "Zach Charbonnet": {miss:65,hit:35,elite:9,g:43},
-  "Kyle Monangai": {miss:62,hit:38,elite:12,g:16},
-  "Rachaad White": {miss:51,hit:49,elite:15,g:53},
-  "Quinshon Judkins": {miss:57,hit:43,elite:14,g:14},
-  "Woody Marks": {miss:62,hit:38,elite:6,g:16},
-  "Tony Pollard": {miss:47,hit:53,elite:15,g:62},
-  "Alvin Kamara": {miss:37,hit:63,elite:19,g:52},
-  "James Conner": {miss:39,hit:61,elite:30,g:44},
-  "Chuba Hubbard": {miss:60,hit:40,elite:15,g:55},
-  "Rhamondre Stevenson": {miss:45,hit:55,elite:21,g:56},
-  "Bucky Irving": {miss:33,hit:67,elite:15,g:27},
-  "Derrick Henry": {miss:23,hit:77,elite:42,g:64},
-  "David Montgomery": {miss:37,hit:63,elite:14,g:57},
-  "Ashton Jeanty": {miss:47,hit:53,elite:18,g:17},
-  "Saquon Barkley": {miss:28,hit:72,elite:33,g:60},
-  "RJ Harvey": {miss:50,hit:50,elite:25,g:16},
-  "Travis Etienne": {miss:45,hit:55,elite:24,g:62},
-  "Javonte Williams": {miss:62,hit:38,elite:11,g:53},
-  "Omarion Hampton": {miss:33,hit:67,elite:22,g:9},
-  "J.K. Dobbins": {miss:47,hit:53,elite:19,g:32},
-  "D'Andre Swift": {miss:48,hit:52,elite:22,g:63},
-  "TreVeyon Henderson": {miss:59,hit:41,elite:18,g:17},
-  "Cam Skattebo": {miss:25,hit:75,elite:25,g:8},
-  "Chase Brown": {miss:27,hit:73,elite:21,g:33},
-  "Josh Jacobs": {miss:29,hit:71,elite:35,g:62},
-  "De'Von Achane": {miss:25,hit:75,elite:41,g:44},
-  "Christian McCaffrey": {miss:11,hit:89,elite:57,g:54},
-  "Bijan Robinson": {miss:22,hit:78,elite:46,g:50},
-  "Jonathan Taylor": {miss:25,hit:75,elite:35,g:52},
-  "Jahmyr Gibbs": {miss:27,hit:73,elite:43,g:49},
-  "Kyren Williams": {miss:32,hit:68,elite:32,g:53},
-  "Breece Hall": {miss:41,hit:59,elite:27,g:56},
-  "Kenneth Walker III": {miss:43,hit:57,elite:19,g:58},
-  "James Cook": {miss:47,hit:53,elite:24,g:66},
-  "Jaylen Warren": {miss:67,hit:33,elite:5,g:64},
-  "Rico Dowdle": {miss:61,hit:39,elite:12,g:49},
-  // QBs
-  "C.J. Stroud": {miss:57,hit:43,elite:7,g:46},
-  "Bryce Young": {miss:71,hit:29,elite:7,g:45},
-  "Lamar Jackson": {miss:22,hit:78,elite:39,g:99},
-  "Malik Willis": {miss:75,hit:25,elite:25,g:8},
-  "Cam Ward": {miss:82,hit:18,elite:0,g:17},
-  "Shedeur Sanders": {miss:86,hit:14,elite:14,g:7},
-  "Jacoby Brissett": {miss:47,hit:53,elite:3,g:30},
-  "Mason Rudolph": {miss:62,hit:38,elite:0,g:13},
-  "Michael Penix Jr.": {miss:67,hit:33,elite:8,g:12},
-  "Geno Smith": {miss:52,hit:48,elite:10,g:63},
-  "J.J. McCarthy": {miss:50,hit:50,elite:0,g:10},
-  "Tua Tagovailoa": {miss:58,hit:42,elite:12,g:52},
-  "Jaxson Dart": {miss:17,hit:83,elite:33,g:12},
-  "Tyler Shough": {miss:25,hit:75,elite:0,g:8},
-  "Sam Darnold": {miss:38,hit:62,elite:12,g:34},
-  "Matthew Stafford": {miss:56,hit:44,elite:16,g:55},
-  "Justin Herbert": {miss:46,hit:54,elite:16,g:63},
-  "Daniel Jones": {miss:47,hit:53,elite:11,g:45},
-  "Baker Mayfield": {miss:41,hit:59,elite:13,g:63},
-  "Jared Goff": {miss:43,hit:57,elite:22,g:68},
-  "Dak Prescott": {miss:34,hit:66,elite:23,g:53},
-  "Trevor Lawrence": {miss:41,hit:59,elite:15,g:59},
-  "Jordan Love": {miss:38,hit:62,elite:19,g:42},
-  "Jalen Hurts": {miss:18,hit:82,elite:32,g:62},
-  "Joe Burrow": {miss:29,hit:71,elite:31,g:52},
-  "Kyler Murray": {miss:37,hit:63,elite:16,g:38},
-  "Patrick Mahomes": {miss:31,hit:69,elite:29,g:62},
-  "Brock Purdy": {miss:32,hit:68,elite:25,g:40},
-  "Josh Allen": {miss:17,hit:83,elite:41,g:64},
-  "Drake Maye": {miss:26,hit:74,elite:15,g:27},
-  "Caleb Williams": {miss:47,hit:53,elite:19,g:32},
-  "Jayden Daniels": {miss:25,hit:75,elite:29,g:24},
-  "Bo Nix": {miss:33,hit:67,elite:18,g:33},
-
-  // Batch 1 + 4-7 game logs
-  "Adonai Mitchell": {miss:85,hit:15,elite:9,g:34},
-  "Ben Sinnott": {miss:94,hit:6,elite:3,g:33},
-  "Brian Robinson": {miss:56,hit:44,elite:13,g:61},
-  "Calvin Ridley": {miss:59,hit:41,elite:23,g:44},
-  "Cedric Tillman": {miss:81,hit:19,elite:11,g:37},
-  "Chris Godwin": {miss:52,hit:48,elite:21,g:52},
-  "Chris Rodriguez": {miss:69,hit:31,elite:14,g:29},
-  "Christian Kirk": {miss:54,hit:46,elite:13,g:54},
-  "Colby Parkinson": {miss:78,hit:22,elite:9,g:69},
-  "Cooper Kupp": {miss:47,hit:53,elite:28,g:53},
-  "Darius Slayton": {miss:73,hit:27,elite:9,g:64},
-  "Darnell Mooney": {miss:69,hit:31,elite:8,g:62},
-  "David Njoku": {miss:46,hit:54,elite:21,g:56},
-  "DeMario Douglas": {miss:82,hit:18,elite:10,g:51},
-  "Devaughn Vele": {miss:79,hit:21,elite:11,g:28},
-  "Dontayvion Wicks": {miss:78,hit:22,elite:12,g:49},
-  "George Holani": {miss:83,hit:17,elite:17,g:6},
-  "Greg Dulcich": {miss:76,hit:24,elite:6,g:33},
-  "JaTavion Sanders": {miss:83,hit:17,elite:7,g:30},
-  "Jack Bech": {miss:92,hit:8,elite:8,g:12},
-  "Jake Tonges": {miss:65,hit:35,elite:12,g:17},
-  "Jalen Nailor": {miss:80,hit:20,elite:11,g:46},
-  "Jalen Tolbert": {miss:76,hit:24,elite:10,g:42},
-  "Jaylin Noel": {miss:88,hit:12,elite:6,g:17},
-  "Jerry Jeudy": {miss:61,hit:39,elite:13,g:69},
-  "Joe Flacco": {miss:47,hit:53,elite:30,g:30},
-  "Justin Fields": {miss:36,hit:64,elite:32,g:44},
-  "Kayshon Boutte": {miss:68,hit:32,elite:16,g:31},
-  "Keaton Mitchell": {miss:80,hit:20,elite:12,g:25},
-  "Kirk Cousins": {miss:48,hit:52,elite:21,g:52},
-  "Kyle Williams": {miss:82,hit:18,elite:6,g:17},
-  "Mac Jones": {miss:61,hit:39,elite:11,g:44},
-  "Malik Washington": {miss:84,hit:16,elite:6,g:32},
-  "Marquise Brown": {miss:66,hit:34,elite:11,g:47},
-  "Michael Mayer": {miss:77,hit:23,elite:8,g:39},
-  "Michael Wilson": {miss:65,hit:35,elite:14,g:49},
-  "Pat Bryant": {miss:80,hit:20,elite:7,g:15},
-  "Rashod Bateman": {miss:75,hit:25,elite:11,g:56},
-  "Ray Davis": {miss:78,hit:22,elite:8,g:36},
-  "Sean Tucker": {miss:83,hit:17,elite:14,g:29},
-  "Tank Dell": {miss:56,hit:44,elite:22,g:27},
-  "Terrance Ferguson": {miss:69,hit:31,elite:8,g:13},
-  "Tez Johnson": {miss:71,hit:29,elite:12,g:17},
-  "Tre Tucker": {miss:77,hit:23,elite:11,g:53},
-  "Tyler Allgeier": {miss:66,hit:34,elite:10,g:71},
-  "Tyrone Tracy": {miss:59,hit:41,elite:18,g:34},
-  "Zach Ertz": {miss:44,hit:56,elite:16,g:50},
-  "Cole Kmet": {miss:74,hit:26,elite:9,g:70},
-  "Jake Ferguson": {miss:61,hit:39,elite:8,g:66},
-  "Dawson Knox": {miss:82,hit:17,elite:3,g:63},
-  // Batch 3 — Start Profiles
-  "Jalen McMillan": {miss:58,hit:42,elite:21,g:19},
-  "Xavier Legette": {miss:76,hit:24,elite:9,g:33},
-  "Tank Bigsby": {miss:78,hit:22,elite:10,g:40},
-  "Isaac TeSlaa": {miss:78,hit:22,elite:6,g:18},
-  "Marvin Mims": {miss:77,hit:23,elite:15,g:48},
-  "Charlie Kolar": {miss:89,hit:11,elite:6,g:35},
-  "Audric Estime": {miss:75,hit:25,elite:10,g:20},
-  "Chimere Dike": {miss:62,hit:38,elite:12,g:16},
-  "Noah Fant": {miss:75,hit:25,elite:6,g:63},
-  "Elijah Higgins": {miss:90,hit:10,elite:7,g:29},
-  "Kimani Vidal": {miss:74,hit:26,elite:15,g:34},
-  "Jonnu Smith": {miss:66,hit:34,elite:16,g:68},
-  "K.J. Osborn": {miss:73,hit:27,elite:9,g:44},
-  "Alexander Mattison": {miss:67,hit:33,elite:8,g:48},
-
-};
+// (legacy hardcoded GAME_LOG removed — game logs live in data/game-logs.json via glOf())
 function glTag(n){
   const p=COMP.find(x=>x.n===n); const d=glOf(p);if(!d)return'';
   const mc=d.miss<=35?'#6ee7b7':d.miss<=50?'#fcd34d':'#fca5a5';
@@ -3512,6 +3267,22 @@ let leagueTeams = 12;          // 8 / 10 / 12 / 14
 let qbFmt = 'sf';              // 'sf' (superflex) | '1qb'
 let MARKET_SETTINGS = null;    // {"T|Q": {name:{value,...}}} from market-values.json
 let MARKET_DEFAULT = '12|sf';  // slice used as the model's 12-SF anchor
+
+// ── Persist league/scoring settings across visits ──
+try{
+  const saved=JSON.parse(localStorage.getItem('delta_settings')||'{}');
+  if([8,10,12,14].includes(saved.teams)) leagueTeams=saved.teams;
+  if(['sf','1qb'].includes(saved.qb)) qbFmt=saved.qb;
+  if(['std','half','half_tep','full','full_tep'].includes(saved.fmt)) scoringFmt=saved.fmt;
+}catch(e){}
+function saveLeaguePrefs(){
+  try{ localStorage.setItem('delta_settings', JSON.stringify({teams:leagueTeams,qb:qbFmt,fmt:scoringFmt})); }catch(e){}
+}
+function syncSettingsUI(){
+  ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
+  ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
+  ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=scoringFmt;});
+}
 const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
 const SCAR_CURVE = {
   QB: [[1,1.0],[6,0.865],[9,0.796],[12,0.769],[15,0.731],[18,0.721],[22,0.647],[26,0.608],[32,0.471]],
@@ -3790,6 +3561,7 @@ function getScoringDelta(name,pos,fmt){
 
 function applyScoring(){
   scoringFmt=document.getElementById('scoring-fmt').value;
+  saveLeaguePrefs();
   // Update disclaimer text
   const labels={
     'half_tep':'0.5 PPR + TE Premium','half':'0.5 PPR (no TE Prem)',
@@ -3812,6 +3584,7 @@ function applyLeagueSettings(src){
   ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
   ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
   applyMarketForSetting();           // switch market baseline to the selected format, rebuild COMP
+  saveLeaguePrefs();
   if(typeof renderAll==='function') renderAll();
 }
 
@@ -4124,6 +3897,7 @@ function applyTradeScoring(){
   // Sync trade tab format with global scoringFmt
   const sel=document.getElementById('trade-scoring-fmt');
   if(sel) scoringFmt=sel.value;
+  saveLeaguePrefs();
   // Also keep main selector in sync if it exists
   const main=document.getElementById('scoring-fmt');
   if(main) main.value=scoringFmt;
@@ -5556,7 +5330,7 @@ const FC_ALIASES = {
 
 async function loadPlayerStats() {
   try {
-    const res = await fetch('./data/player-stats.json');
+    const res = await fetch('./data/player-stats.json?t='+Date.now());
     if (!res.ok) return;
     const data = await res.json();
     if (!data?.players) return;
@@ -5720,7 +5494,7 @@ function showDataFreshness(fetchedAt, playerCount) {
 
 async function loadPlayerContracts() {
   try {
-    const res = await fetch('./data/player-contracts.json');
+    const res = await fetch('./data/player-contracts.json?t='+Date.now());
     if (!res.ok) return; // non-fatal
     const data = await res.json();
     if (!data?.contracts) return;
@@ -5868,6 +5642,7 @@ function renderScarcityAudit(){
 }
 
 window.addEventListener('load', async function() {
+  syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
   await loadLiveMarketValues();
   await loadPlayerStats();
@@ -5877,6 +5652,7 @@ window.addEventListener('load', async function() {
   initEngineAudit();
 });
 if (document.readyState === 'complete') {
+  syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
   loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); }).then(() => initEngineAudit());
 }
