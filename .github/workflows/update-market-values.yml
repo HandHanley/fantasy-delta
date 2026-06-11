@@ -55,3 +55,11 @@ jobs:
             git commit -m "chore: update market values, scarcity validation, player stats, and game logs [skip ci]"
             git push
           fi
+
+      # Regression gate: recompute the Engine Audit (32/32 directional check)
+      # against the freshly fetched market data and the SHIPPED engine in
+      # index.html. Runs AFTER commit on purpose — fresh data always publishes;
+      # a directional flip is an engine alarm (workflow fails -> email), not a
+      # reason to serve stale data.
+      - name: Engine Audit gate (scarcity directional validation)
+        run: node scripts/engine-audit-gate.js
