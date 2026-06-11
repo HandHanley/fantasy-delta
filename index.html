@@ -188,6 +188,7 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
+  <button class="tab" onclick="showTab('myteam',this)">My Team</button>
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
 </div>
 
@@ -4281,6 +4282,7 @@ function showTab(id,el){
   el.classList.add('active');
   if(id==='contracts')renderContracts();
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
+  if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
 }
 
 // Depth Charts tab removed — replaced by Contracts tab
@@ -5276,6 +5278,23 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
+<div id="panel-myteam" class="panel">
+  <div class="section-label">My Team — Sleeper</div>
+  <div id="myteam-connect">
+    <div style="max-width:540px;background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:18px 20px">
+      <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px">Connect your Sleeper league</div>
+      <div style="font-size:11.5px;color:#718096;line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0" onkeydown="if(event.key==='Enter')sleeperConnect()">
+        <button onclick="sleeperConnect()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid #2d4a3e;background:#16241e;color:#6ee7b7;cursor:pointer">Connect</button>
+      </div>
+      <div id="slp-status" style="font-size:11px;color:#718096;margin-top:9px;min-height:14px"></div>
+      <div id="slp-pickers"></div>
+    </div>
+  </div>
+  <div id="myteam-roster" style="display:none"></div>
+</div>
+
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:#718096;padding:1rem">Loading…</div></div>
@@ -5640,6 +5659,445 @@ function renderScarcityAudit(){
 
   host.innerHTML = badge + intro + summary + tables;
 }
+
+// ════════════════════════════════════════════════════════════
+// SLEEPER INTEGRATION — Phase 1 (connect · match · auto-format · My Team)
+// Fully optional: DELTA behaves identically with no connection.
+// All Sleeper calls are BROWSER-SIDE ONLY — api.sleeper.app blocks
+// server-side requests (the reason the old stats pipeline died).
+// Lazy: nothing here runs until the My Team tab is opened.
+// ════════════════════════════════════════════════════════════
+const SLP_API='https://api.sleeper.app/v1';
+const SLP_LS_CONN='delta_sleeper';            // saved connection state
+const SLP_LS_PLAYERS='delta_sleeper_players'; // trimmed player-ID→name cache
+const SLP_PLAYERS_TTL=7*24*3600*1000;         // 7 days — Sleeper player IDs are stable
+
+const SLP={ conn:null, league:null, rosters:null, users:null, leagues:null,
+            pendingUser:null, players:null, match:null, unmatched:[],
+            detected:null, loaded:false, busy:false, restoreError:null };
+
+function slpLog(){ try{ console.log.apply(console,['[DELTA Sleeper]'].concat([].slice.call(arguments))); }catch(e){} }
+
+async function slpFetch(path){
+  const url=SLP_API+path;
+  slpLog('GET',url);
+  const r=await fetch(url);
+  slpLog('\u2192 HTTP',r.status,path);
+  if(!r.ok) throw new Error('Sleeper API returned '+r.status+' for '+path);
+  return r.json();
+}
+
+function slpStatus(msg,isErr){
+  const el=document.getElementById('slp-status');
+  if(el){ el.textContent=msg||''; el.style.color=isErr?'#fc8181':'#718096'; }
+  if(msg) slpLog(isErr?'STATUS(err):':'STATUS:',msg);
+}
+
+// ── Name matching ────────────────────────────────────────────
+// Normalize both Sleeper full_name and DELTA RAW names the same way:
+// lowercase, strip punctuation (covers the Ja'Marr apostrophe quirk in
+// either curly/straight form), collapse spaces, strip Jr/Sr/II/III/IV.
+function slpNorm(n){
+  return String(n||'').toLowerCase()
+    .replace(/[.'\u2019`\-]/g,'')
+    .replace(/\s+/g,' ').trim()
+    .replace(/\s+(jr|sr|ii|iii|iv)$/,'');
+}
+function slpBuildDeltaIndex(){
+  const idx={};
+  const rawNames=new Set();
+  for(const p of RAW){ if(p&&p.n){ idx[slpNorm(p.n)]=p.n; rawNames.add(p.n); } }
+  // FC_ALIASES (alias → DELTA name) covers known external-source variants;
+  // Sleeper tends to share the same Jr./initials quirks FantasyCalc has.
+  // RAW-derived entries win, and an alias is only used if its target actually
+  // exists in RAW (guards against stale aliases like 'DK Metcalf'→'D.K. Metcalf'
+  // when RAW spells him 'DK Metcalf').
+  if(typeof FC_ALIASES!=='undefined'){
+    for(const k in FC_ALIASES){
+      const key=slpNorm(k);
+      if(!idx[key]&&rawNames.has(FC_ALIASES[k])) idx[key]=FC_ALIASES[k];
+    }
+  }
+  return idx;
+}
+
+// ── Player database (~5MB raw, fetched once, trimmed before caching) ──
+async function slpEnsurePlayers(force){
+  if(SLP.players&&!force) return SLP.players;
+  if(!force){
+    try{
+      const c=JSON.parse(localStorage.getItem(SLP_LS_PLAYERS)||'null');
+      if(c&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
+        SLP.players=c.map;
+        slpLog('player DB cache HIT:',Object.keys(c.map).length,'players, age',Math.round((Date.now()-c.ts)/3600000)+'h');
+        return SLP.players;
+      }
+      slpLog('player DB cache MISS'+(c?' (stale)':''));
+    }catch(e){ slpLog('player DB cache read failed:',e); }
+  }
+  slpStatus('Downloading Sleeper player database (~5MB, one-time, cached 7 days)\u2026');
+  const all=await slpFetch('/players/nfl');
+  const keep={QB:1,RB:1,WR:1,TE:1}, map={};
+  let total=0;
+  for(const id in all){
+    total++;
+    const pl=all[id];
+    if(!pl||!keep[pl.position]) continue;
+    const nm=pl.full_name||((pl.first_name||'')+' '+(pl.last_name||'')).trim();
+    if(!nm) continue;
+    map[id]={n:nm,p:pl.position,t:pl.team||null};
+  }
+  SLP.players=map;
+  slpLog('player DB fetched:',total,'total \u2192',Object.keys(map).length,'QB/RB/WR/TE kept');
+  try{
+    const blob=JSON.stringify({ts:Date.now(),map});
+    localStorage.setItem(SLP_LS_PLAYERS,blob);
+    slpLog('player DB cached to localStorage ('+Math.round(blob.length/1024)+'KB)');
+  }catch(e){ slpLog('player DB cache WRITE failed (quota?) \u2014 kept in memory only:',e); }
+  return map;
+}
+
+// ── Connect flow ─────────────────────────────────────────────
+async function sleeperConnect(){
+  if(SLP.busy) return;
+  const v=((document.getElementById('slp-input')||{}).value||'').trim();
+  if(!v){ slpStatus('Enter your Sleeper username or a league ID.',true); return; }
+  SLP.busy=true; SLP.leagues=null;
+  const pk=document.getElementById('slp-pickers'); if(pk) pk.innerHTML='';
+  try{
+    if(/^\d{10,}$/.test(v)){
+      slpLog('input looks like a league ID:',v);
+      await slpLoadLeague(v,null);
+    }else{
+      slpStatus('Looking up Sleeper user "'+v+'"\u2026');
+      const u=await slpFetch('/user/'+encodeURIComponent(v));
+      if(!u||!u.user_id) throw new Error('user "'+v+'" not found');
+      slpLog('user_id:',u.user_id,'display_name:',u.display_name);
+      SLP.pendingUser={id:u.user_id,name:u.username||u.display_name||v};
+      const season=new Date().getFullYear();
+      let lgs=await slpFetch('/user/'+u.user_id+'/leagues/nfl/'+season);
+      if(!lgs||!lgs.length){
+        slpLog('no '+season+' leagues yet (offseason rollover) \u2014 trying '+(season-1));
+        lgs=await slpFetch('/user/'+u.user_id+'/leagues/nfl/'+(season-1));
+      }
+      if(!lgs||!lgs.length) throw new Error('no NFL leagues found for this user');
+      slpLog(lgs.length+' league(s):',lgs.map(function(l){return l.name+' ['+l.league_id+']';}).join(' \u00b7 '));
+      if(lgs.length===1){ await slpLoadLeague(lgs[0].league_id,SLP.pendingUser); }
+      else{ SLP.leagues=lgs; renderSlpLeaguePicker(); slpStatus('Found '+lgs.length+' leagues \u2014 pick one.'); }
+    }
+  }catch(e){
+    slpLog('connect FAILED:',e);
+    slpStatus('Connection failed: '+(e.message||e),true);
+  }finally{ SLP.busy=false; }
+}
+
+async function slpPickLeague(leagueId){
+  if(SLP.busy) return;
+  SLP.busy=true;
+  try{ await slpLoadLeague(leagueId,SLP.pendingUser); }
+  catch(e){ slpLog('league load FAILED:',e); slpStatus('Could not load league: '+(e.message||e),true); }
+  finally{ SLP.busy=false; }
+}
+
+async function slpLoadLeague(leagueId,user){
+  slpStatus('Loading league\u2026');
+  const res=await Promise.all([
+    slpFetch('/league/'+leagueId),
+    slpFetch('/league/'+leagueId+'/rosters'),
+    slpFetch('/league/'+leagueId+'/users')
+  ]);
+  const league=res[0];
+  if(!league||!league.league_id) throw new Error('league '+leagueId+' not found');
+  SLP.league=league; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+  slpLog('league:',league.name,'\u00b7 season',league.season,'\u00b7',league.total_rosters,'teams \u00b7',
+         SLP.rosters.length,'rosters,',SLP.users.length,'users');
+  let rid=null;
+  if(user){
+    const mine=SLP.rosters.find(function(r){ return r.owner_id===user.id||((r.co_owners||[]).indexOf(user.id)>=0); });
+    if(mine){ rid=mine.roster_id; slpLog('auto-selected roster_id',rid,'for user',user.name); }
+    else slpLog('user owns no roster in this league \u2014 showing team picker');
+  }
+  if(rid!=null){ await slpSelectTeam(rid,user); }
+  else{ renderSlpTeamPicker(); slpStatus('Select your team.'); }
+}
+
+function slpTeamLabel(roster){
+  const owner=(SLP.users||[]).find(function(u){ return u.user_id===roster.owner_id; });
+  return (owner&&owner.metadata&&owner.metadata.team_name)||(owner&&owner.display_name)||('Roster '+roster.roster_id);
+}
+
+async function slpSelectTeam(rosterId,user){
+  user=user||SLP.pendingUser||null;
+  const roster=(SLP.rosters||[]).find(function(r){ return String(r.roster_id)===String(rosterId); });
+  if(!roster){ slpStatus('Team not found in this league.',true); return; }
+  SLP.conn={
+    leagueId:SLP.league.league_id, leagueName:SLP.league.name, season:SLP.league.season,
+    rosterId:roster.roster_id, teamName:slpTeamLabel(roster),
+    userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
+  };
+  try{ localStorage.setItem(SLP_LS_CONN,JSON.stringify(SLP.conn)); }catch(e){ slpLog('conn save failed:',e); }
+  slpLog('CONNECTED:',JSON.stringify(SLP.conn));
+  slpStatus('Connected \u2014 matching players\u2026');
+  await slpEnsurePlayers();
+  slpRunMatch();
+  slpDetectAndApplyFormat();   // connect-time only; later manual dropdown changes are respected
+  SLP.loaded=true; SLP.restoreError=null;
+  renderMyTeam();
+}
+
+// ── Matching: Sleeper player_id → DELTA RAW name ─────────────
+function slpRunMatch(){
+  const idx=slpBuildDeltaIndex();
+  SLP.match={}; SLP.unmatched=[];
+  let matched=0, skipped=0;
+  for(const r of (SLP.rosters||[])){
+    for(const pid of (r.players||[])){
+      if(SLP.match[pid]!==undefined) continue;
+      if(!/^\d+$/.test(String(pid))){ SLP.match[pid]=null; skipped++; continue; }   // team DEF ids like "SF"
+      const sp=SLP.players?SLP.players[pid]:null;
+      if(!sp){ SLP.match[pid]=null; skipped++; continue; }                          // K / IDP / unknown — not QB/RB/WR/TE
+      const dn=idx[slpNorm(sp.n)];
+      if(dn){ SLP.match[pid]=dn; matched++; }
+      else{ SLP.match[pid]=null; SLP.unmatched.push({id:pid,n:sp.n,p:sp.p,t:sp.t}); }
+    }
+  }
+  slpLog('match complete:',matched,'matched \u00b7',SLP.unmatched.length,'unmatched QB/RB/WR/TE \u00b7',skipped,'skipped (DEF/K/IDP)');
+  if(SLP.unmatched.length){
+    // Most of these are simply outside DELTA's 292-player universe (deep benches).
+    // A NAME MISMATCH would show here too — scan for anyone who obviously should be tracked.
+    slpLog('UNMATCHED (not tracked OR name mismatch \u2014 add to FC_ALIASES if mismatch):');
+    SLP.unmatched.forEach(function(u){ slpLog('  \u2022',u.n,'('+u.p,(u.t||'FA')+')','id='+u.id); });
+  }
+}
+
+// ── Format auto-detection ────────────────────────────────────
+// NOTE: deliberately does NOT route through applyScoring() — that function
+// reads the value back from the dropdown, which has no 'std' option, so a
+// 0-PPR league would get silently clobbered. We set globals directly and
+// reuse the same downstream calls applyScoring/applyLeagueSettings make.
+function slpDetectAndApplyFormat(){
+  const lg=SLP.league; if(!lg) return;
+  const rp=lg.roster_positions||[];
+  const qbSlots=rp.filter(function(x){return x==='QB';}).length;
+  const sfSlots=rp.filter(function(x){return x==='SUPER_FLEX';}).length;
+  const qb=(sfSlots>0||qbSlots>=2)?'sf':'1qb';
+  const tr=lg.total_rosters||12;
+  const teams=[8,10,12,14].reduce(function(a,b){ return Math.abs(b-tr)<Math.abs(a-tr)?b:a; });
+  const sc=lg.scoring_settings||{};
+  const rec=+sc.rec||0, tep=+sc.bonus_rec_te||0;
+  let fmt;
+  if(rec>=0.75)      fmt=(tep>=0.25)?'full_tep':'full';
+  else if(rec>=0.25) fmt=(tep>=0.25)?'half_tep':'half';
+  else               fmt='std';
+  slpLog('format detect: total_rosters='+tr+' \u2192 '+teams+'-team \u00b7 QBslots='+qbSlots+' SFslots='+sfSlots+
+         ' \u2192 '+qb+' \u00b7 rec='+rec+' bonus_rec_te='+tep+' \u2192 '+fmt);
+  SLP.detected={teams:teams,qb:qb,fmt:fmt};
+  slpApplyFormat(teams,qb,fmt);
+}
+
+function slpApplyFormat(teams,qb,fmt){
+  leagueTeams=teams; qbFmt=qb; scoringFmt=fmt;
+  syncSettingsUI();
+  const labels={half_tep:'0.5 PPR + TE Premium',half:'0.5 PPR (no TE Prem)',
+                full_tep:'Full PPR + TE Premium',full:'Full PPR (no TE Prem)',std:'Standard'};
+  const disc=document.getElementById('scoring-disc');
+  if(disc&&labels[fmt]) disc.textContent=labels[fmt]+' \u00b7 4PT Pass TD \u00b7 6PT Rush/Rec TD \u00b7 DELTA v1.0';
+  applyMarketForSetting();   // re-point kMkt to the detected slice, rebuild COMP/ASSETS
+  saveLeaguePrefs();
+  if(typeof renderAll==='function') renderAll();
+  // stats payload is scoring-format-aware — reload it, then re-render once it lands
+  if(typeof loadPlayerStats==='function'){
+    Promise.resolve(loadPlayerStats()).then(function(){
+      if(typeof renderAll==='function') renderAll();
+      renderMyTeam();
+    }).catch(function(e){ slpLog('post-detect stats reload failed:',e); });
+  }
+  slpLog('format applied \u2192 '+teams+'-team / '+qb+' / '+fmt+' (saved to delta_settings)');
+}
+
+// ── Refresh / disconnect ─────────────────────────────────────
+async function sleeperRefresh(){
+  if(SLP.busy||!SLP.conn) return;
+  SLP.busy=true; renderMyTeam();
+  try{
+    slpLog('refreshing league',SLP.conn.leagueId);
+    const res=await Promise.all([
+      slpFetch('/league/'+SLP.conn.leagueId),
+      slpFetch('/league/'+SLP.conn.leagueId+'/rosters'),
+      slpFetch('/league/'+SLP.conn.leagueId+'/users')
+    ]);
+    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+    slpRunMatch();
+    slpLog('refresh complete');
+  }catch(e){
+    slpLog('refresh FAILED:',e);
+    SLP.restoreError='Refresh failed: '+(e.message||e);
+  }finally{ SLP.busy=false; renderMyTeam(); }
+}
+
+function sleeperDisconnect(){
+  slpLog('disconnecting (player DB cache kept)');
+  try{ localStorage.removeItem(SLP_LS_CONN); }catch(e){}
+  SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
+  SLP.leagues=null; SLP.pendingUser=null; SLP.match=null; SLP.unmatched=[];
+  SLP.detected=null; SLP.loaded=false; SLP.restoreError=null;
+  renderMyTeam();
+  slpStatus('Disconnected. DELTA settings were left as-is.');
+}
+
+// ── Tab entry point (lazy init + saved-connection restore) ───
+async function openMyTeamTab(){
+  if(SLP.loaded||SLP.busy){ renderMyTeam(); return; }
+  let saved=null;
+  try{ saved=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
+  if(!saved||!saved.leagueId){ renderMyTeam(); return; }   // no saved connection → connect UI
+  SLP.busy=true; SLP.conn=saved; renderMyTeam();           // shows restoring state
+  try{
+    slpLog('restoring saved connection:',JSON.stringify(saved));
+    const res=await Promise.all([
+      slpFetch('/league/'+saved.leagueId),
+      slpFetch('/league/'+saved.leagueId+'/rosters'),
+      slpFetch('/league/'+saved.leagueId+'/users')
+    ]);
+    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+    await slpEnsurePlayers();
+    slpRunMatch();
+    SLP.loaded=true; SLP.restoreError=null;
+    slpLog('restore complete');
+    // NOTE: format is NOT re-applied on restore — delta_settings already carries
+    // it, and any manual dropdown changes you made since connecting are respected.
+  }catch(e){
+    slpLog('restore FAILED:',e);
+    SLP.conn=null;   // fall back to connect UI but keep saved key for next attempt
+    SLP.restoreError='Could not reach Sleeper to restore "'+(saved.leagueName||saved.leagueId)+'": '+(e.message||e);
+  }finally{ SLP.busy=false; renderMyTeam(); }
+}
+
+// ── Rendering ────────────────────────────────────────────────
+function renderSlpLeaguePicker(){
+  const host=document.getElementById('slp-pickers'); if(!host) return;
+  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Your leagues</div>'
+    +(SLP.leagues||[]).map(function(l){
+      return '<button onclick="slpPickLeague(\''+l.league_id+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">'
+        +'<span style="font-weight:700">'+l.name+'</span>'
+        +'<span style="color:#718096;font-size:10.5px"> \u00b7 '+(l.total_rosters||'?')+'-team \u00b7 '+l.season+'</span></button>';
+    }).join('')+'</div>';
+}
+
+function renderSlpTeamPicker(){
+  const host=document.getElementById('slp-pickers'); if(!host) return;
+  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Which team is yours? \u00b7 '+(SLP.league?SLP.league.name:'')+'</div>'
+    +(SLP.rosters||[]).map(function(r){
+      return '<button onclick="slpSelectTeam('+r.roster_id+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">'
+        +slpTeamLabel(r)+'</button>';
+    }).join('')+'</div>';
+}
+
+function slpFmtChips(){
+  const labels={half_tep:'0.5PPR+TEP',half:'0.5PPR',full_tep:'FullPPR+TEP',full:'FullPPR',std:'Standard'};
+  const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:#7dd3fc;background:#16202e;border:1px solid #2d3748;border-radius:4px;padding:2px 7px">'+t+'</span>'; };
+  return chip(leagueTeams+'-team')+' '+chip(qbFmt==='sf'?'Superflex':'1-QB')+' '+chip(labels[scoringFmt]||scoringFmt)
+    +(SLP.detected?'<span style="font-size:9.5px;color:#4a5568;margin-left:6px">auto-detected from league settings</span>':'');
+}
+
+function renderMyTeam(){
+  const connectDiv=document.getElementById('myteam-connect');
+  const rosterDiv=document.getElementById('myteam-roster');
+  if(!connectDiv||!rosterDiv) return;
+
+  // Restoring / busy with a known connection
+  if(SLP.busy&&SLP.conn){
+    connectDiv.style.display='none'; rosterDiv.style.display='block';
+    rosterDiv.innerHTML='<div style="color:#718096;font-size:12px;padding:1rem">Loading '+(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
+    return;
+  }
+  // Not connected → connect card
+  if(!SLP.conn||!SLP.loaded){
+    connectDiv.style.display='block'; rosterDiv.style.display='none';
+    if(SLP.restoreError) slpStatus(SLP.restoreError,true);
+    return;
+  }
+
+  connectDiv.style.display='none'; rosterDiv.style.display='block';
+
+  const roster=(SLP.rosters||[]).find(function(r){ return String(r.roster_id)===String(SLP.conn.rosterId); });
+  if(!roster){
+    rosterDiv.innerHTML='<div style="color:#fc8181;font-size:12px;padding:1rem">Your roster was not found in this league anymore. <button onclick="sleeperDisconnect()" style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">Disconnect</button></div>';
+    return;
+  }
+
+  const starters=new Set(roster.starters||[]);
+  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+
+  const mine=[], myUnmatched=[];
+  for(const pid of (roster.players||[])){
+    const dn=SLP.match?SLP.match[pid]:null;
+    if(dn&&byName[dn]) mine.push({pid:pid,p:byName[dn],starter:starters.has(pid)});
+    else if(SLP.players&&SLP.players[pid]) myUnmatched.push(SLP.players[pid]);  // QB/RB/WR/TE not tracked (or mismatch)
+  }
+
+  const order=['QB','RB','WR','TE'];
+  const groups={QB:[],RB:[],WR:[],TE:[]};
+  mine.forEach(function(m){ if(groups[m.p.pos]) groups[m.p.pos].push(m); });
+  order.forEach(function(pos){ groups[pos].sort(function(a,b){ return (b.p.ktcEff||0)-(a.p.ktcEff||0); }); });
+
+  const totalMkt=mine.reduce(function(s,m){ return s+(m.p.ktcEff||0); },0);
+
+  const header='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
+    +'<div><div style="font-size:15px;font-weight:800;color:#e2e8f0">'+SLP.conn.teamName+'</div>'
+    +'<div style="font-size:11px;color:#718096">'+SLP.conn.leagueName+' \u00b7 Sleeper \u00b7 '+SLP.conn.season+' season</div></div>'
+    +'<div style="flex:1"></div>'
+    +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">\u21bb Refresh</button>'
+    +'<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer">Disconnect</button>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px">'+slpFmtChips()
+    +'<span style="flex:1"></span>'
+    +'<span style="font-size:11px;color:#718096">'+mine.length+' tracked players \u00b7 roster market value <span style="color:#7dd3fc;font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
+    +'</div>';
+
+  const rows=function(pos){
+    const g=groups[pos];
+    if(!g.length) return '';
+    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+g.length+'</span></td></tr>';
+    return head+g.map(function(m){
+      const p=m.p;
+      const gl=(typeof glOf==='function')?glOf(p):null;
+      const spCell=gl
+        ?'<span style="color:#fc8181">'+gl.miss+'</span><span style="color:#4a5568">/</span><span style="color:#93c5fd">'+gl.hit+'</span><span style="color:#4a5568">/</span><span style="color:#6ee7b7">'+gl.elite+'</span>'
+        :'<span style="color:#4a5568">\u2014</span>';
+      const mv=(typeof mvAsset==='function')?mvAsset(p):0;
+      const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
+      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
+        +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap">'+(m.starter?'<span title="In your starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+p.n+'</td>'
+        +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
+        +'<td class="col-hide-mobile">'+p.t+'</td>'
+        +'<td class="col-hide-mobile">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
+        +'<td style="font-size:11px;font-weight:700;white-space:nowrap" title="Start Profile: Miss / Hit / Elite %">'+spCell+'</td>'
+        +'<td style="font-weight:600">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
+        +'<td style="font-weight:600;color:'+mvCol+'" class="col-hide-mobile">'+(mv>=9999?'9,999+':mv.toLocaleString())+'</td>'
+        +'<td>'+vTag(p)+'</td></tr>';
+    }).join('');
+  };
+
+  const table='<div style="overflow-x:auto"><table>'
+    +'<thead><tr>'
+    +'<th title="DELTA Score \u2014 proprietary 0-99 dynasty rating" style="font-family:Georgia,serif;font-size:15px;color:#6ee7b7">\u0394</th>'
+    +'<th>Player</th><th class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>'
+    +'<th class="col-hide-mobile">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %">M/H/E</th>'
+    +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th>'
+    +'</tr></thead><tbody>'+order.map(rows).join('')+'</tbody></table></div>';
+
+  const unmatchedBox=myUnmatched.length
+    ?'<div style="margin-top:14px;font-size:11px;color:#718096;background:#11161f;border:1px solid #2d3748;border-radius:6px;padding:10px 12px;line-height:1.6">'
+      +'<span style="font-weight:700;color:#a0aec0">Not shown ('+myUnmatched.length+'):</span> '
+      +myUnmatched.map(function(u){ return u.n+' ('+u.p+')'; }).join(' \u00b7 ')
+      +'<div style="color:#4a5568;margin-top:4px">These players are outside DELTA\u2019s tracked universe. If one of them obviously should be here, it\u2019s a name mismatch \u2014 check the [DELTA Sleeper] console log and add an alias.</div></div>'
+    :'';
+
+  rosterDiv.innerHTML=header+table+unmatchedBox;
+}
+
 
 window.addEventListener('load', async function() {
   syncSettingsUI();
