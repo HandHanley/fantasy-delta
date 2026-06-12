@@ -215,21 +215,28 @@ def fetch_season_stats():
         hs = hs[hs['headshot_url'].str.startswith('http', na=False)]
         for name, url in hs.groupby(name_col)['headshot_url'].first().items():
             headshots[name] = url
-    # 2025 start counts (weeks with >=15 pass attempts) for the QB role flags.
-    # "Started" is approximated by meaningful attempt volume — factual, robust to
-    # garbage-time relief appearances.
-    qb_starts25 = {}
+    # Start counts (weeks with >=15 pass attempts) for the QB role flags,
+    # broken out per (player, team) for 2025 AND 2024. Per-team granularity is
+    # what distinguishes a true incumbent (started for THIS team) from an
+    # established-elsewhere newcomer (Tua arriving in Atlanta), and 2024 counts
+    # power the franchise-starter exemption (Burrow's injury fill-in must not
+    # read as an incumbent over him).
+    qb_starts = {'2025': {}, '2024': {}}
     att_col = col('attempts', 'passing_attempts', 'pass_attempts')
-    if att_col and season_col and name_col:
-        qb_rows = pdf[(pdf[season_col] == 2025) & (pdf[att_col].fillna(0) >= 15)]
-        qb_starts25 = qb_rows.groupby(name_col).size().to_dict()
-        print(f'[DELTA] 2025 start counts computed for {len(qb_starts25)} players (attempts>=15 weeks)')
+    if att_col and season_col and name_col and team_col:
+        for season in (2025, 2024):
+            rows = pdf[(pdf[season_col] == season) & (pdf[att_col].fillna(0) >= 15)]
+            for (nm, tm), cnt in rows.groupby([name_col, team_col]).size().items():
+                e = qb_starts[str(season)].setdefault(nm, {'total': 0, 'teams': {}})
+                e['total'] += int(cnt)
+                e['teams'][tm] = int(cnt)
+        print(f"[DELTA] start counts: {len(qb_starts['2025'])} players in 2025, {len(qb_starts['2024'])} in 2024")
     else:
-        print('[DELTA] WARNING: no attempts column — QB role flags will be empty')
+        print('[DELTA] WARNING: no attempts/team column — QB role flags will be empty')
 
     print(f'[DELTA] Aggregated: {len(result)} player-seasons, {len(headshots)} headshots')
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
-    return result, headshots, qb_starts25
+    return result, headshots, qb_starts
 
 def fetch_depth_chart_qbs():
     """Best-effort 2026 QB depth chart: {team: [qb display names in depth order]}.
@@ -268,7 +275,40 @@ def fetch_depth_chart_qbs():
         print(f'[DELTA] depth charts unavailable ({e}) — falling back to 2025 incumbency')
         return None
 
-def compute_qb_backup_flags(meta, matched, qb_starts25, depth):
+def fetch_current_teams():
+    """Best-effort current-team map from nflverse 2026 rosters:
+    {display_name: team}. This is what keeps DELTA's team fields live across
+    trades and FA moves (A.J. Brown PHI→NE) without hand edits — emitted into
+    player-stats.json as `teams` and applied to RAW at runtime. Returns None
+    when unavailable; callers fall back to RAW's baked teams (status quo)."""
+    try:
+        loader = getattr(nfl, 'load_rosters', None) or getattr(nfl, 'load_rosters_weekly', None)
+        if loader is None:
+            print('[DELTA] roster feed: loader not available in nflreadpy — skipping')
+            return None
+        df = loader(seasons=[2026])
+        pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
+        if pdf is None or len(pdf) == 0:
+            print('[DELTA] roster feed: empty for 2026 — skipping')
+            return None
+        def c(*opts):
+            return next((o for o in opts if o in pdf.columns), None)
+        name_c = c('full_name', 'player_name', 'display_name', 'football_name')
+        team_c = c('team', 'club_code', 'recent_team')
+        week_c = c('week')
+        if not name_c or not team_c:
+            print(f'[DELTA] roster feed: unrecognized schema {list(pdf.columns)[:10]} — skipping')
+            return None
+        if week_c:
+            pdf = pdf[pdf[week_c] == pdf[week_c].max()]
+        out = dict(pdf.dropna(subset=[name_c, team_c]).groupby(name_c)[team_c].last())
+        print(f'[DELTA] roster feed: 2026 current teams for {len(out)} players')
+        return out
+    except Exception as e:
+        print(f'[DELTA] roster feed unavailable ({e}) — using RAW baked teams')
+        return None
+
+def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
     """Conservative QB backup flags — only when an UNAMBIGUOUS established
     incumbent sits ahead. Rules (binary, asymmetric, QB-only by design — depth
     info is never read for other positions, where snap/target share already
@@ -279,28 +319,55 @@ def compute_qb_backup_flags(meta, matched, qb_starts25, depth):
       · incumbency fallback (offseason): flag a <10-start QB sharing a RAW
         team with an established QB; two established QBs on one roster =
         ambiguous = no flag (innocent until proven backup)"""
-    ESTABLISHED = 10
+    ESTABLISHED = 10      # 2025 start-weeks to count as an established starter
+    TEAM_INCUMBENT = 6    # starts WITH this team in 2025 to be a true incumbent
+    CLEAR_BACKUP = 2      # q's own 2025 starts at/below this = clearly not a starter
+    FRANCHISE_PRIOR = 10  # 2024 starts with THIS team = franchise starter (injury exemption)
+    EMPTY = {'total': 0, 'teams': {}}
+    s25, s24 = qb_starts.get('2025', {}), qb_starts.get('2024', {})
     flags = {}
     qb_team = {n: tp[0] for n, tp in meta.items() if tp[1] == 'QB'}
-    for q, team in qb_team.items():
+    for q, raw_team in qb_team.items():
         nfl_q = matched.get(q, q)
-        starts_q = qb_starts25.get(nfl_q, 0)
+        team = (roster_teams or {}).get(nfl_q) or raw_team   # roster feed wins (FA/trade moves)
+        q25 = s25.get(nfl_q, EMPTY)
         if depth and team in depth:
+            # Depth-chart layer: present-state truth, may flag anyone behind an
+            # established rank-1 — including exemption cases, since a published
+            # camp chart outranks our offseason inference.
             order = depth[team]
             if nfl_q in order and order.index(nfl_q) > 0:
                 starter = order[0]
-                if qb_starts25.get(starter, 0) >= ESTABLISHED:
+                if s25.get(starter, EMPTY)['total'] >= ESTABLISHED:
                     flags[q] = {'role': 'backup', 'behind': starter, 'source': 'depth-chart'}
             continue  # depth chart spoke for this team — no fallback
-        if starts_q >= ESTABLISHED:
+        if q25['total'] >= ESTABLISHED:
             continue  # established themselves — never flagged by incumbency
+        # Franchise-starter exemption (the Burrow case): a QB who started >=10
+        # games for THIS team in 2024 and missed 2025 to injury must not read
+        # as a backup to his own fill-in — the fill-in's starts are a symptom
+        # of the injury, not an incumbency.
+        if s24.get(nfl_q, EMPTY)['teams'].get(team, 0) >= FRANCHISE_PRIOR:
+            continue
         best = None
-        for o, oteam in qb_team.items():
-            if o == q or oteam != team:
+        for o, o_raw_team in qb_team.items():
+            if o == q:
                 continue
-            s = qb_starts25.get(matched.get(o, o), 0)
-            if s >= ESTABLISHED and (best is None or s > best[1]):
-                best = (o, s)
+            nfl_o = matched.get(o, o)
+            o_team = (roster_teams or {}).get(nfl_o) or o_raw_team
+            if o_team != team:
+                continue
+            o25 = s25.get(nfl_o, EMPTY)
+            if o25['total'] < ESTABLISHED:
+                continue
+            # Newcomer-vet rule (the Penix case): an established-ELSEWHERE
+            # arrival does not unseat the team's own recent starter — that is
+            # an open competition, not a depth fact. He IS an incumbent over
+            # clear backups and rookies (q with <=2 starts of his own).
+            if o25['teams'].get(team, 0) < TEAM_INCUMBENT and q25['total'] > CLEAR_BACKUP:
+                continue
+            if best is None or o25['total'] > best[1]:
+                best = (o, o25['total'])
         if best:
             flags[q] = {'role': 'backup', 'behind': best[0], 'source': 'incumbency-2025'}
     print(f'[DELTA] QB backup flags ({len(flags)}):')
@@ -612,9 +679,20 @@ def main():
     delta_names, no_data, meta = get_delta_players()
     print(f"[DELTA] {len(delta_names)} players in DELTA RAW ({len(no_data)} with no 2025 NFL data)")
 
-    agg, headshots, qb_starts25 = fetch_season_stats()
+    agg, headshots, qb_starts = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
-    qb_roles = compute_qb_backup_flags(meta, matched, qb_starts25, fetch_depth_chart_qbs())
+    roster_teams = fetch_current_teams()
+    qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
+    # Team overrides for the runtime: only DELTA players the roster feed
+    # resolves; RAW's baked team stays the fallback for everyone else.
+    team_overrides = {}
+    if roster_teams:
+        for dn, nfl_name in matched.items():
+            t = roster_teams.get(nfl_name)
+            if t:
+                team_overrides[dn] = t
+        moved = [dn for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
+        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:12]}')
     rz_data  = fetch_redzone(SEASONS)
     players, headshot_out = build_output(agg, matched, rz_data, headshots)
 
@@ -625,6 +703,7 @@ def main():
         'players': players,
         'headshots': headshot_out,
         'qb_roles': qb_roles,
+        'teams': team_overrides,
     }
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
@@ -633,6 +712,12 @@ def main():
     
     # 2. Fetch contracts
     contracts = fetch_contracts(delta_names)
+    # Visibility: DELTA players with no active contract upstream (e.g. Stafford
+    # June 2026 — extension signed but absent from the nflverse/OTC release).
+    # The runtime falls back to the baked CONTRACTS entry for these, silently;
+    # this log makes the gap auditable in the Actions output.
+    missing_contracts = [n for n in delta_names if n not in contracts]
+    print(f'[DELTA] players with NO active upstream contract ({len(missing_contracts)}): {missing_contracts[:15]}')
     
     # Write contracts to separate file
     contracts_output = {
