@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-06-12T14:32:06.986308+00:00",
+  "fetched": "2026-06-12T21:25:40.852285+00:00",
   "seasons": [
     2023,
     2024,
@@ -11193,5 +11193,57 @@
     "Wan'Dale Robinson": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/yzcvyhmilvxedfjfjglc",
     "Ja'Marr Chase": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/qya3dtjb5kgofcuj2tuw",
     "D.J. Moore": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/qphturmeiifnqrnf5pax"
+  },
+  "qb_roles": {
+    "Joe Burrow": {
+      "role": "backup",
+      "behind": "Joe Flacco",
+      "source": "incumbency-2025"
+    },
+    "Michael Penix Jr.": {
+      "role": "backup",
+      "behind": "Tua Tagovailoa",
+      "source": "incumbency-2025"
+    },
+    "Mason Rudolph": {
+      "role": "backup",
+      "behind": "Aaron Rodgers",
+      "source": "incumbency-2025"
+    },
+    "Mac Jones": {
+      "role": "backup",
+      "behind": "Drake Maye",
+      "source": "incumbency-2025"
+    },
+    "Justin Fields": {
+      "role": "backup",
+      "behind": "Patrick Mahomes",
+      "source": "incumbency-2025"
+    },
+    "Ty Simpson": {
+      "role": "backup",
+      "behind": "Matthew Stafford",
+      "source": "incumbency-2025"
+    },
+    "Carson Beck": {
+      "role": "backup",
+      "behind": "Jacoby Brissett",
+      "source": "incumbency-2025"
+    },
+    "Drew Allar": {
+      "role": "backup",
+      "behind": "Aaron Rodgers",
+      "source": "incumbency-2025"
+    },
+    "Garrett Nussmeier": {
+      "role": "backup",
+      "behind": "Patrick Mahomes",
+      "source": "incumbency-2025"
+    },
+    "Cade Klubnik": {
+      "role": "backup",
+      "behind": "Geno Smith",
+      "source": "incumbency-2025"
+    }
   }
 }
