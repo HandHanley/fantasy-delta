@@ -123,7 +123,8 @@ def fetch_season_stats():
     # Aggregate to season totals — group by display name
     group_cols = [c for c in [name_col, season_col, pos_col, team_col] if c]
 
-    agg_dict = {'games': (week_col or 'week', 'nunique')}
+    agg_dict = {'games': (week_col or 'week', 'nunique'),
+                '_last_week': (week_col or 'week', 'max')}
     for stat_name, col_name in [
         ('pass_yds',       pass_yd_col),   ('pass_td',        pass_td_col),
         ('pass_int',       pass_int_col),  ('rush_yds',       rush_yd_col),
@@ -164,6 +165,41 @@ def fetch_season_stats():
         )
     else:
         result['rush_share'] = 0.0
+
+    # ── Collapse multi-team (traded) player-seasons into ONE row ────────────
+    # The groupby above includes team (required for per-stint rush_share
+    # denominators), so a traded player yields one row per stint and only one
+    # stint used to survive into the JSON — e.g. Tank Bigsby 2025 showed
+    # games=1 instead of 12, poisoning ppg overrides. Collapse rules:
+    #   · counting stats and games SUM across stints (weeks are disjoint —
+    #     nflverse weekly data has one row per player-week)
+    #   · target/air-yard/rush shares are stint-games-weighted means
+    #   · team/identity fields come from the most recent stint (max week)
+    key_cols = ['player_name', 'season'] + ([pos_col] if pos_col and pos_col in result.columns else [])
+    dup_mask = result.duplicated(subset=key_cols, keep=False)
+    if dup_mask.any():
+        n_traded = result.loc[dup_mask, 'player_name'].nunique()
+        sum_cols = [c for c in ['games','pass_yds','pass_td','pass_int','rush_yds','rush_td',
+                                'rush_att','rec','rec_yds','rec_td','targets','air_yds']
+                    if c in result.columns]
+        share_cols = [c for c in ['target_share','air_yds_share','rush_share'] if c in result.columns]
+
+        def _collapse(gr):
+            gr = gr.sort_values('_last_week')
+            out = gr.iloc[-1].copy()          # most recent stint: team + identity fields
+            w = gr['games'].clip(lower=1)
+            for c in sum_cols:
+                out[c] = gr[c].sum()
+            for c in share_cols:
+                out[c] = round(float((gr[c] * w).sum() / w.sum()), 4)
+            return out
+
+        collapsed = (result[dup_mask]
+                     .groupby(key_cols, as_index=False, group_keys=False)
+                     .apply(_collapse))
+        result = __import__('pandas').concat([result[~dup_mask], collapsed], ignore_index=True)
+        print(f'[DELTA] Collapsed multi-team seasons for {n_traded} traded players')
+    result = result.drop(columns=['_last_week'], errors='ignore')
 
     # Build headshot lookup from weekly data while pdf is in scope
     headshots = {}
