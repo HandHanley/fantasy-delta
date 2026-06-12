@@ -2581,6 +2581,21 @@ function calcProj(pl){
 // Note: the 2-team trade verdict (calcAdjustedSide) is built on market value,
 // not mvAsset — calibration does not move trade verdicts.
 let MV_CENTER=1;   // 1 = raw basis; computed per render in renderAll()
+function marketSpread(pl){
+  // Format rescale for MODEL VALUES: the market's own observed per-player
+  // spread (kMkt/k from the per-format grid), NOT the theoretical scarcity
+  // curve. DELTA's curve diverges from the market's actual format spread
+  // (e.g. QBs: −19% vs −2% going 12→10 teams), and that POSITION-level
+  // disagreement was landing inside per-player rows as phantom gap. With the
+  // observed spread, the displayed Mod/Mkt ratio is identical at every format
+  // to the league-invariant anchor-basis ratio that vTag thresholds — tags
+  // and displayed gaps always agree. The scarcity curve still owns the
+  // trade-calc verdict (calcAdjustedSide), where it is externally validated.
+  if(leagueTeams===12&&qbFmt==='sf') return 1;              // anchor basis (also covers mvAssetBase's pin)
+  if(OV[pl.n]&&OV[pl.n].ktc!=null) return 1;                // manual market override is anchor-basis at all formats
+  if(pl.kMkt!=null&&(pl.k||0)>0) return pl.kMkt/pl.k;       // observed market spread for this player
+  return scarcity(pl.p||pl.pos||'WR', leagueTeams, qbFmt);  // pre-grid / unmatched fallback: theoretical curve
+}
 function computeMvCenter(){
   // Call ONLY while MV_CENTER===1 (raw basis) — mvAssetBase must return raw here.
   const rs=[];
@@ -2607,7 +2622,7 @@ function mvAsset(pl){
   // (market-based, so NOT divided by the center)
   if((pl.g25===0||pl.g25===undefined)&&(pl.ppg25||0)>0){
     const agMrk=am(pl.p||pl.pos,Math.floor(pl.a||22));
-    return Math.min(19999,Math.round((pl.k||0)*agMrk*scarcity(pl.p||pl.pos, leagueTeams, qbFmt)));
+    return Math.min(19999,Math.round((pl.k||0)*agMrk*marketSpread(pl)));
   }
   return Math.min(19999,Math.round(mvAssetRaw(pl)/(MV_CENTER||1)));
 }
@@ -2724,7 +2739,7 @@ function mvAssetRaw(pl){
     +d_trend+d_fmt
   ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
-  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*scarcity(pos2, leagueTeams, qbFmt)));
+  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*marketSpread(pl)));
 }
 
 const CONTRACTS=[
