@@ -45,7 +45,14 @@ def get_delta_players():
     for m in re.finditer(r'n:"([^"]+)"[^}]*?,g25:(\d+)', block):
         if m.group(2) == '0':
             no_data.add(m.group(1))
-    return names, no_data
+    # name → (team, pos): RAW's team field is the maintained current-team source
+    # (it tracks FA moves, e.g. Fields NYJ→KC), which the QB role flags rely on.
+    meta = {}
+    for m in re.finditer(r"n:'([^']+)',t:'([^']+)',p:'([^']+)'", block):
+        meta[m.group(1)] = (m.group(2), m.group(3))
+    for m in re.finditer(r'n:"([^"]+)",t:\'([^\']+)\',p:\'([^\']+)\'', block):
+        meta[m.group(1)] = (m.group(2), m.group(3))
+    return names, no_data, meta
 
 def norm(name):
     """Normalise to lowercase letters/spaces only, strip suffixes and punctuation."""
@@ -208,9 +215,98 @@ def fetch_season_stats():
         hs = hs[hs['headshot_url'].str.startswith('http', na=False)]
         for name, url in hs.groupby(name_col)['headshot_url'].first().items():
             headshots[name] = url
+    # 2025 start counts (weeks with >=15 pass attempts) for the QB role flags.
+    # "Started" is approximated by meaningful attempt volume — factual, robust to
+    # garbage-time relief appearances.
+    qb_starts25 = {}
+    att_col = col('attempts', 'passing_attempts', 'pass_attempts')
+    if att_col and season_col and name_col:
+        qb_rows = pdf[(pdf[season_col] == 2025) & (pdf[att_col].fillna(0) >= 15)]
+        qb_starts25 = qb_rows.groupby(name_col).size().to_dict()
+        print(f'[DELTA] 2025 start counts computed for {len(qb_starts25)} players (attempts>=15 weeks)')
+    else:
+        print('[DELTA] WARNING: no attempts column — QB role flags will be empty')
+
     print(f'[DELTA] Aggregated: {len(result)} player-seasons, {len(headshots)} headshots')
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
-    return result, headshots
+    return result, headshots, qb_starts25
+
+def fetch_depth_chart_qbs():
+    """Best-effort 2026 QB depth chart: {team: [qb display names in depth order]}.
+    Returns None when unavailable (common pre-camp) — callers fall back to
+    2025 incumbency. Defensive on schema: nflverse depth-chart columns vary."""
+    try:
+        loader = getattr(nfl, 'load_depth_charts', None)
+        if loader is None:
+            print('[DELTA] depth charts: loader not available in nflreadpy — skipping')
+            return None
+        df = loader(seasons=[2026])
+        pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
+        if pdf is None or len(pdf) == 0:
+            print('[DELTA] depth charts: empty for 2026 — skipping')
+            return None
+        def c(*opts):
+            return next((o for o in opts if o in pdf.columns), None)
+        team_c = c('club_code', 'team', 'team_abbr')
+        pos_c  = c('position', 'pos', 'depth_chart_position')
+        rank_c = c('depth_team', 'depth_position', 'rank')
+        name_c = c('full_name', 'player_name', 'football_name')
+        week_c = c('week')
+        if not all([team_c, pos_c, rank_c, name_c]):
+            print(f'[DELTA] depth charts: unrecognized schema {list(pdf.columns)[:12]} — skipping')
+            return None
+        qb = pdf[pdf[pos_c] == 'QB'].copy()
+        if week_c:
+            qb = qb[qb[week_c] == qb[week_c].max()]
+        qb['_rank'] = qb[rank_c].astype(str).str.extract(r'(\d+)').astype(float)
+        out = {}
+        for team, gr in qb.groupby(team_c):
+            out[team] = list(gr.sort_values('_rank')[name_c])
+        print(f'[DELTA] depth charts: 2026 QB order loaded for {len(out)} teams')
+        return out
+    except Exception as e:
+        print(f'[DELTA] depth charts unavailable ({e}) — falling back to 2025 incumbency')
+        return None
+
+def compute_qb_backup_flags(meta, matched, qb_starts25, depth):
+    """Conservative QB backup flags — only when an UNAMBIGUOUS established
+    incumbent sits ahead. Rules (binary, asymmetric, QB-only by design — depth
+    info is never read for other positions, where snap/target share already
+    measure opportunity):
+      · incumbent = QB with >=10 start-weeks in 2025 (attempts>=15)
+      · depth-chart layer (when published): flag rank>1 QBs behind an
+        established rank-1
+      · incumbency fallback (offseason): flag a <10-start QB sharing a RAW
+        team with an established QB; two established QBs on one roster =
+        ambiguous = no flag (innocent until proven backup)"""
+    ESTABLISHED = 10
+    flags = {}
+    qb_team = {n: tp[0] for n, tp in meta.items() if tp[1] == 'QB'}
+    for q, team in qb_team.items():
+        nfl_q = matched.get(q, q)
+        starts_q = qb_starts25.get(nfl_q, 0)
+        if depth and team in depth:
+            order = depth[team]
+            if nfl_q in order and order.index(nfl_q) > 0:
+                starter = order[0]
+                if qb_starts25.get(starter, 0) >= ESTABLISHED:
+                    flags[q] = {'role': 'backup', 'behind': starter, 'source': 'depth-chart'}
+            continue  # depth chart spoke for this team — no fallback
+        if starts_q >= ESTABLISHED:
+            continue  # established themselves — never flagged by incumbency
+        best = None
+        for o, oteam in qb_team.items():
+            if o == q or oteam != team:
+                continue
+            s = qb_starts25.get(matched.get(o, o), 0)
+            if s >= ESTABLISHED and (best is None or s > best[1]):
+                best = (o, s)
+        if best:
+            flags[q] = {'role': 'backup', 'behind': best[0], 'source': 'incumbency-2025'}
+    print(f'[DELTA] QB backup flags ({len(flags)}):')
+    for q, f in flags.items():
+        print(f"  {q} → behind {f['behind']} ({f['source']})")
+    return flags
 
 def match_names(agg, delta_names, no_data=None):
     nfl_names = agg['player_name'].unique()
@@ -513,11 +609,12 @@ def main():
     print(f"[DELTA] Starting at {datetime.now(timezone.utc).isoformat()}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    delta_names, no_data = get_delta_players()
+    delta_names, no_data, meta = get_delta_players()
     print(f"[DELTA] {len(delta_names)} players in DELTA RAW ({len(no_data)} with no 2025 NFL data)")
 
-    agg, headshots = fetch_season_stats()
+    agg, headshots, qb_starts25 = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
+    qb_roles = compute_qb_backup_flags(meta, matched, qb_starts25, fetch_depth_chart_qbs())
     rz_data  = fetch_redzone(SEASONS)
     players, headshot_out = build_output(agg, matched, rz_data, headshots)
 
@@ -527,6 +624,7 @@ def main():
         'note':    'Raw stats — PPG calculated client-side per scoring format dropdown',
         'players': players,
         'headshots': headshot_out,
+        'qb_roles': qb_roles,
     }
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
