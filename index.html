@@ -5489,6 +5489,22 @@ async function loadPlayerStats() {
     if (data.headshots) HEADSHOTS = data.headshots;
     QB_ROLES = data.qb_roles || {};
     if (Object.keys(QB_ROLES).length) console.log('[DELTA] QB backup flags loaded:', Object.keys(QB_ROLES).join(', '));
+    // Team fields are live data: the pipeline emits `teams` from the nflverse
+    // 2026 roster feed, so trades and FA moves (A.J. Brown PHI→NE, Mac Jones
+    // NE→SF) flow into RAW nightly instead of waiting on hand edits. Baked
+    // RAW.t remains the first-paint fallback and covers players the roster
+    // feed can't resolve.
+    if (data.teams) {
+      let moved = 0;
+      for (const player of RAW) {
+        const t = data.teams[player.n];
+        if (t && player.t !== t) {
+          console.log('[DELTA] team update:', player.n, player.t, '\u2192', t);
+          player.t = t; moved++;
+        }
+      }
+      if (moved) console.log('[DELTA] ' + moved + ' team field(s) updated from roster feed');
+    }
     let updated = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
