@@ -510,6 +510,26 @@ async function ensureStartData(){
     GAMELOGS=gl.games||{}; STARTLINES=th.lines||{};
     let mx=0; for(const k in GAMELOGS){ for(const g of GAMELOGS[k]){ if(g.s>mx) mx=g.s; } }
     GAMELOGS_MAX=mx; START_DATA_STATE='loaded';
+    // ── g25 sync from game logs ──────────────────────────────
+    // Game logs are the canonical played-games count under the locked DNP rule
+    // (a game counts iff ≥1 offensive snap; 0-snap weeks never enter the logs).
+    // Baked g25 values drift (hand-entry era), and the stats file's `games`
+    // field undercounts traded players (one row per team stint), so this is
+    // the one true source. Distinct weeks guards against any future duplicate
+    // rows; 18 games IS legitimate for a player traded across different byes.
+    // Conservative: never zeroes g25 (absent/empty logs leave the baked value),
+    // so 2026 rookies (g25:0, no logs) are untouched and the rookie path holds.
+    if(typeof RAW!=='undefined'){
+      let synced=0;
+      for(const p of RAW){
+        const logs=GAMELOGS[p.n];
+        if(!logs||!logs.length) continue;
+        const wk=new Set();
+        for(const g of logs){ if(g.s===2025) wk.add(g.w); }
+        if(wk.size>0&&p.g25!==wk.size){ p.g25=wk.size; synced++; }
+      }
+      if(synced) console.log('[DELTA] g25 synced from game logs for '+synced+' players');
+    }
   }catch(e){ console.warn('[DELTA] Start Profile data load failed:',e); START_DATA_STATE='error'; }
   return START_DATA_STATE;
 }
@@ -5442,6 +5462,10 @@ async function loadPlayerStats() {
       for (const [yr, key] of [['2025','ppg25'],['2024','ppg24'],['2023','ppg23']]) {
         const row = s[yr];
         if (!row || !row.games) continue;
+        // NOTE: g25 is deliberately NOT synced from these rows — the stats file
+        // undercounts multi-team (traded) seasons (one row per team stint, only
+        // one survives). Game logs are the canonical played-games source under
+        // the locked DNP rule; g25 syncs in ensureStartData() instead.
         const ppg = (
           (row.rec     || 0) * recPts +
           (row.rec_yds || 0) * 0.1 +
