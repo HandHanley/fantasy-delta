@@ -5745,6 +5745,7 @@ const SLP_PLAYERS_TTL=7*24*3600*1000;         // 7 days — Sleeper player IDs a
 
 const SLP={ conn:null, league:null, rosters:null, users:null, leagues:null,
             pendingUser:null, players:null, match:null, unmatched:[],
+            tradedPicks:null, view:'rosters', viewRosterId:null,
             detected:null, loaded:false, busy:false, restoreError:null };
 
 function slpLog(){ try{ console.log.apply(console,['[DELTA Sleeper]'].concat([].slice.call(arguments))); }catch(e){} }
@@ -5798,7 +5799,7 @@ async function slpEnsurePlayers(force){
   if(!force){
     try{
       const c=JSON.parse(localStorage.getItem(SLP_LS_PLAYERS)||'null');
-      if(c&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
+      if(c&&c.v===2&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
         SLP.players=c.map;
         slpLog('player DB cache HIT:',Object.keys(c.map).length,'players, age',Math.round((Date.now()-c.ts)/3600000)+'h');
         return SLP.players;
@@ -5816,12 +5817,12 @@ async function slpEnsurePlayers(force){
     if(!pl||!keep[pl.position]) continue;
     const nm=pl.full_name||((pl.first_name||'')+' '+(pl.last_name||'')).trim();
     if(!nm) continue;
-    map[id]={n:nm,p:pl.position,t:pl.team||null};
+    map[id]={n:nm,p:pl.position,t:pl.team||null,a:(typeof pl.age==='number'?pl.age:null)};
   }
   SLP.players=map;
   slpLog('player DB fetched:',total,'total \u2192',Object.keys(map).length,'QB/RB/WR/TE kept');
   try{
-    const blob=JSON.stringify({ts:Date.now(),map});
+    const blob=JSON.stringify({v:2,ts:Date.now(),map});
     localStorage.setItem(SLP_LS_PLAYERS,blob);
     slpLog('player DB cached to localStorage ('+Math.round(blob.length/1024)+'KB)');
   }catch(e){ slpLog('player DB cache WRITE failed (quota?) \u2014 kept in memory only:',e); }
@@ -5875,11 +5876,12 @@ async function slpLoadLeague(leagueId,user){
   const res=await Promise.all([
     slpFetch('/league/'+leagueId),
     slpFetch('/league/'+leagueId+'/rosters'),
-    slpFetch('/league/'+leagueId+'/users')
+    slpFetch('/league/'+leagueId+'/users'),
+    slpFetch('/league/'+leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
   ]);
   const league=res[0];
   if(!league||!league.league_id) throw new Error('league '+leagueId+' not found');
-  SLP.league=league; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+  SLP.league=league; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
   slpLog('league:',league.name,'\u00b7 season',league.season,'\u00b7',league.total_rosters,'teams \u00b7',
          SLP.rosters.length,'rosters,',SLP.users.length,'users');
   let rid=null;
@@ -5907,6 +5909,7 @@ async function slpSelectTeam(rosterId,user){
     userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
   };
   try{ localStorage.setItem(SLP_LS_CONN,JSON.stringify(SLP.conn)); }catch(e){ slpLog('conn save failed:',e); }
+  SLP.viewRosterId=roster.roster_id; SLP.view='rosters';
   slpLog('CONNECTED:',JSON.stringify(SLP.conn));
   slpStatus('Connected \u2014 matching players\u2026');
   await slpEnsurePlayers();
@@ -5995,9 +5998,10 @@ async function sleeperRefresh(){
     const res=await Promise.all([
       slpFetch('/league/'+SLP.conn.leagueId),
       slpFetch('/league/'+SLP.conn.leagueId+'/rosters'),
-      slpFetch('/league/'+SLP.conn.leagueId+'/users')
+      slpFetch('/league/'+SLP.conn.leagueId+'/users'),
+      slpFetch('/league/'+SLP.conn.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
     ]);
-    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
     slpRunMatch();
     slpLog('refresh complete');
   }catch(e){
@@ -6011,6 +6015,7 @@ function sleeperDisconnect(){
   try{ localStorage.removeItem(SLP_LS_CONN); }catch(e){}
   SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
   SLP.leagues=null; SLP.pendingUser=null; SLP.match=null; SLP.unmatched=[];
+  SLP.tradedPicks=null; SLP.view='rosters'; SLP.viewRosterId=null;
   SLP.detected=null; SLP.loaded=false; SLP.restoreError=null;
   renderMyTeam();
   slpStatus('Disconnected. DELTA settings were left as-is.');
@@ -6022,15 +6027,16 @@ async function openMyTeamTab(){
   let saved=null;
   try{ saved=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
   if(!saved||!saved.leagueId){ renderMyTeam(); return; }   // no saved connection → connect UI
-  SLP.busy=true; SLP.conn=saved; renderMyTeam();           // shows restoring state
+  SLP.busy=true; SLP.conn=saved; SLP.viewRosterId=saved.rosterId; renderMyTeam();   // shows restoring state
   try{
     slpLog('restoring saved connection:',JSON.stringify(saved));
     const res=await Promise.all([
       slpFetch('/league/'+saved.leagueId),
       slpFetch('/league/'+saved.leagueId+'/rosters'),
-      slpFetch('/league/'+saved.leagueId+'/users')
+      slpFetch('/league/'+saved.leagueId+'/users'),
+      slpFetch('/league/'+saved.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
     ]);
-    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[];
+    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
     await slpEnsurePlayers();
     slpRunMatch();
     SLP.loaded=true; SLP.restoreError=null;
@@ -6061,7 +6067,7 @@ function renderSlpTeamPicker(){
     +(SLP.rosters||[]).map(function(r){
       return '<button onclick="slpSelectTeam('+r.roster_id+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">'
         +slpTeamLabel(r)+'</button>';
-    }).join('')+'</div>';
+    }).join('');
 }
 
 function slpFmtChips(){
@@ -6071,67 +6077,153 @@ function slpFmtChips(){
     +(SLP.detected?'<span style="font-size:9.5px;color:#4a5568;margin-left:6px">auto-detected from league settings</span>':'');
 }
 
+// Normalized name → FC market entry for the CURRENT format slice. Lets
+// rostered-but-unmodeled players (outside DELTA's RAW universe) still show a
+// real market value when FantasyCalc tracks them. Cached per format key.
+let SLP_FC_IDX=null, SLP_FC_KEY='';
+function slpFcIndex(){
+  const key=leagueTeams+'|'+qbFmt;
+  if(SLP_FC_IDX&&SLP_FC_KEY===key) return SLP_FC_IDX;
+  SLP_FC_IDX={}; SLP_FC_KEY=key;
+  if(typeof MARKET_SETTINGS!=='undefined'&&MARKET_SETTINGS){
+    const slice=MARKET_SETTINGS[key]||MARKET_SETTINGS[MARKET_DEFAULT]||{};
+    for(const n in slice){ if(slice[n]&&slice[n].value>0) SLP_FC_IDX[slpNorm(n)]={value:slice[n].value}; }
+  }
+  return SLP_FC_IDX;
+}
+
+// Draft-pick inventory for a roster. Sleeper convention: every team owns its
+// own future picks unless a traded_picks entry reassigns one (roster_id =
+// original team, owner_id = current holder; both are roster ids). We show the
+// next three seasons AFTER the league's current season — current-season picks
+// are typically already drafted by June, and valuing slotted picks is the
+// trade-calc's job (Phase 3), so this is inventory only.
+function slpPickInventory(rosterId){
+  const lg=SLP.league||{};
+  const rounds=(lg.settings&&lg.settings.draft_rounds)||4;
+  const start=parseInt(lg.season||new Date().getFullYear(),10)+1;
+  const traded=SLP.tradedPicks||[];
+  const out=[];
+  for(let s=start;s<start+3;s++){
+    for(let rd=1;rd<=rounds;rd++){
+      for(const r of (SLP.rosters||[])){
+        let ownerId=r.roster_id;
+        const t=traded.find(function(x){ return String(x.season)===String(s)&&x.round===rd&&x.roster_id===r.roster_id; });
+        if(t) ownerId=t.owner_id;
+        if(ownerId===rosterId) out.push({season:s,round:rd,from:r.roster_id});
+      }
+    }
+  }
+  return out;
+}
+function slpOrd(n){ return n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th'; }
+
+function slpRosterById(rid){
+  return (SLP.rosters||[]).find(function(r){ return String(r.roster_id)===String(rid); });
+}
+function slpTagText(p){
+  const m=(vTag(p)||'').match(/>([a-z ]+)<\/span>/);
+  return m?m[1]:'';
+}
+
+function slpViewRoster(rid){ SLP.view='rosters'; SLP.viewRosterId=rid; renderMyTeam(); }
+function slpShowBoard(){ SLP.view='board'; renderMyTeam(); }
+
+function renderSlpSubNav(){
+  const mine=SLP.conn?SLP.conn.rosterId:null;
+  const pills=(SLP.rosters||[]).slice().sort(function(a,b){
+    if(a.roster_id===mine) return -1; if(b.roster_id===mine) return 1;
+    return slpTeamLabel(a).localeCompare(slpTeamLabel(b));
+  }).map(function(r){
+    const active=SLP.view==='rosters'&&String(r.roster_id)===String(SLP.viewRosterId);
+    return '<button onclick="slpViewRoster('+r.roster_id+')" style="font-size:10.5px;font-weight:'+(active?'800':'600')+';padding:4px 10px;border-radius:12px;border:1px solid '+(active?'#2d4a3e':'#2d3748')+';background:'+(active?'#16241e':'#1a202c')+';color:'+(active?'#6ee7b7':'#a0aec0')+';cursor:pointer;white-space:nowrap">'
+      +slpTeamLabel(r)+(r.roster_id===mine?' \u2605':'')+'</button>';
+  }).join('');
+  const boardActive=SLP.view==='board';
+  return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
+    +pills
+    +'<span style="flex-basis:100%;height:0"></span>'
+    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'#2d4a3e':'#2d3748')+';background:'+(boardActive?'#16241e':'#11161f')+';color:'+(boardActive?'#6ee7b7':'#7dd3fc')+';cursor:pointer">\u26a1 League Board \u2014 buy/sell targets</button>'
+    +'</div>';
+}
+
 function renderMyTeam(){
   const connectDiv=document.getElementById('myteam-connect');
   const rosterDiv=document.getElementById('myteam-roster');
   if(!connectDiv||!rosterDiv) return;
 
-  // Restoring / busy with a known connection
   if(SLP.busy&&SLP.conn){
     connectDiv.style.display='none'; rosterDiv.style.display='block';
     rosterDiv.innerHTML='<div style="color:#718096;font-size:12px;padding:1rem">Loading '+(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
     return;
   }
-  // Not connected → connect card
   if(!SLP.conn||!SLP.loaded){
     connectDiv.style.display='block'; rosterDiv.style.display='none';
     if(SLP.restoreError) slpStatus(SLP.restoreError,true);
     return;
   }
-
   connectDiv.style.display='none'; rosterDiv.style.display='block';
 
-  const roster=(SLP.rosters||[]).find(function(r){ return String(r.roster_id)===String(SLP.conn.rosterId); });
-  if(!roster){
-    rosterDiv.innerHTML='<div style="color:#fc8181;font-size:12px;padding:1rem">Your roster was not found in this league anymore. <button onclick="sleeperDisconnect()" style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">Disconnect</button></div>';
-    return;
-  }
-
-  const starters=new Set(roster.starters||[]);
-  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
-
-  const mine=[], myUnmatched=[];
-  for(const pid of (roster.players||[])){
-    const dn=SLP.match?SLP.match[pid]:null;
-    if(dn&&byName[dn]) mine.push({pid:pid,p:byName[dn],starter:starters.has(pid)});
-    else if(SLP.players&&SLP.players[pid]) myUnmatched.push(SLP.players[pid]);  // QB/RB/WR/TE not tracked (or mismatch)
-  }
-
-  const order=['QB','RB','WR','TE'];
-  const groups={QB:[],RB:[],WR:[],TE:[]};
-  mine.forEach(function(m){ if(groups[m.p.pos]) groups[m.p.pos].push(m); });
-  order.forEach(function(pos){ groups[pos].sort(function(a,b){ return (b.p.ktcEff||0)-(a.p.ktcEff||0); }); });
-
-  const totalMkt=mine.reduce(function(s,m){ return s+(m.p.ktcEff||0); },0);
-
   const header='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
-    +'<div><div style="font-size:15px;font-weight:800;color:#e2e8f0">'+SLP.conn.teamName+'</div>'
-    +'<div style="font-size:11px;color:#718096">'+SLP.conn.leagueName+' \u00b7 Sleeper \u00b7 '+SLP.conn.season+' season</div></div>'
+    +'<div><div style="font-size:15px;font-weight:800;color:#e2e8f0">'+SLP.conn.leagueName+'</div>'
+    +'<div style="font-size:11px;color:#718096">Sleeper \u00b7 '+SLP.conn.season+' season \u00b7 you are <span style="color:#a0aec0;font-weight:700">'+SLP.conn.teamName+'</span></div></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">\u21bb Refresh</button>'
     +'<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer">Disconnect</button>'
     +'</div>'
-    +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px">'+slpFmtChips()
+    +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+slpFmtChips()+'</div>'
+    +renderSlpSubNav();
+
+  rosterDiv.innerHTML=header+(SLP.view==='board'?renderSlpBoard():renderSlpRoster(SLP.viewRosterId));
+}
+
+function renderSlpRoster(rid){
+  const roster=slpRosterById(rid);
+  if(!roster) return '<div style="color:#fc8181;font-size:12px;padding:1rem">Roster not found \u2014 try Refresh.</div>';
+
+  const isMine=SLP.conn&&String(rid)===String(SLP.conn.rosterId);
+  const starters=new Set(roster.starters||[]);
+  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+  const fcIdx=slpFcIndex();
+
+  // Split the full roster into modeled (in DELTA's universe) and unmodeled
+  // (rostered, but outside RAW — shown with FC market value when available).
+  const modeled=[], unmodeled=[];
+  for(const pid of (roster.players||[])){
+    const dn=SLP.match?SLP.match[pid]:null;
+    if(dn&&byName[dn]){ modeled.push({pid:pid,p:byName[dn],starter:starters.has(pid)}); continue; }
+    const sp=SLP.players?SLP.players[pid]:null;
+    if(sp){  // QB/RB/WR/TE only (the trimmed DB excludes K/DEF/IDP)
+      const fc=fcIdx[slpNorm(sp.n)];
+      unmodeled.push({pid:pid,u:sp,mkt:fc?fc.value:0,starter:starters.has(pid)});
+    }
+  }
+
+  const order=['QB','RB','WR','TE'];
+  const groups={QB:{m:[],u:[]},RB:{m:[],u:[]},WR:{m:[],u:[]},TE:{m:[],u:[]}};
+  modeled.forEach(function(x){ if(groups[x.p.pos]) groups[x.p.pos].m.push(x); });
+  unmodeled.forEach(function(x){ if(groups[x.u.p]) groups[x.u.p].u.push(x); });
+  order.forEach(function(pos){
+    groups[pos].m.sort(function(a,b){ return (b.p.ktcEff||0)-(a.p.ktcEff||0); });
+    groups[pos].u.sort(function(a,b){ return (b.mkt||0)-(a.mkt||0); });
+  });
+
+  const totalMkt=modeled.reduce(function(s,x){ return s+(x.p.ktcEff||0); },0)
+               +unmodeled.reduce(function(s,x){ return s+(x.mkt||0); },0);
+  const totalRostered=modeled.length+unmodeled.length;
+
+  const summary='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">'
+    +'<span style="font-size:13px;font-weight:800;color:#e2e8f0">'+slpTeamLabel(roster)+(isMine?' <span style="color:#fcd34d;font-size:11px">(you)</span>':'')+'</span>'
     +'<span style="flex:1"></span>'
-    +'<span style="font-size:11px;color:#718096">'+mine.length+' tracked players \u00b7 roster market value <span style="color:#7dd3fc;font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
+    +'<span style="font-size:11px;color:#718096">'+totalRostered+' rostered \u00b7 '+modeled.length+' modeled \u00b7 market value <span style="color:#7dd3fc;font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
     +'</div>';
 
   const rows=function(pos){
     const g=groups[pos];
-    if(!g.length) return '';
-    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+g.length+'</span></td></tr>';
-    return head+g.map(function(m){
-      const p=m.p;
+    if(!g.m.length&&!g.u.length) return '';
+    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</span></td></tr>';
+    const mRows=g.m.map(function(x){
+      const p=x.p;
       const gl=(typeof glOf==='function')?glOf(p):null;
       const spCell=gl
         ?'<span style="color:#fc8181">'+gl.miss+'</span><span style="color:#4a5568">/</span><span style="color:#93c5fd">'+gl.hit+'</span><span style="color:#4a5568">/</span><span style="color:#6ee7b7">'+gl.elite+'</span>'
@@ -6140,7 +6232,7 @@ function renderMyTeam(){
       const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
       return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
         +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
-        +'<td style="font-weight:600;white-space:nowrap">'+(m.starter?'<span title="In your starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+p.n+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap">'+(x.starter?'<span title="In the starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+p.n+'</td>'
         +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
         +'<td class="col-hide-mobile">'+p.t+'</td>'
         +'<td class="col-hide-mobile">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
@@ -6149,6 +6241,19 @@ function renderMyTeam(){
         +'<td style="font-weight:600;color:'+mvCol+'" class="col-hide-mobile">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
         +'<td>'+vTag(p)+'</td></tr>';
     }).join('');
+    const uRows=g.u.map(function(x){
+      return '<tr style="opacity:.72">'
+        +'<td style="font-weight:800;font-size:14px;color:#4a5568">\u2014</td>'
+        +'<td style="font-weight:600;white-space:nowrap;color:#a0aec0">'+(x.starter?'<span title="In the starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+x.u.n+'</td>'
+        +'<td class="col-hide-mobile">'+(x.u.a!=null?x.u.a:'-')+'</td>'
+        +'<td class="col-hide-mobile">'+(x.u.t||'FA')+'</td>'
+        +'<td class="col-hide-mobile">-</td>'
+        +'<td style="font-size:11px;color:#4a5568">\u2014</td>'
+        +'<td style="font-weight:600;color:#a0aec0">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'
+        +'<td class="col-hide-mobile" style="color:#4a5568">-</td>'
+        +'<td><span class="badge bn" title="Outside DELTA modeled universe \u2014 market value shown when FantasyCalc tracks the player">not modeled</span></td></tr>';
+    }).join('');
+    return head+mRows+uRows;
   };
 
   const table='<div style="overflow-x:auto"><table>'
@@ -6159,14 +6264,85 @@ function renderMyTeam(){
     +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th>'
     +'</tr></thead><tbody>'+order.map(rows).join('')+'</tbody></table></div>';
 
-  const unmatchedBox=myUnmatched.length
-    ?'<div style="margin-top:14px;font-size:11px;color:#718096;background:#11161f;border:1px solid #2d3748;border-radius:6px;padding:10px 12px;line-height:1.6">'
-      +'<span style="font-weight:700;color:#a0aec0">Not shown ('+myUnmatched.length+'):</span> '
-      +myUnmatched.map(function(u){ return u.n+' ('+u.p+')'; }).join(' \u00b7 ')
-      +'<div style="color:#4a5568;margin-top:4px">These players are outside DELTA\u2019s tracked universe. If one of them obviously should be here, it\u2019s a name mismatch \u2014 check the [DELTA Sleeper] console log and add an alias.</div></div>'
-    :'';
+  // Draft-pick inventory
+  const picks=slpPickInventory(roster.roster_id);
+  const bySeason={};
+  picks.forEach(function(pk){ (bySeason[pk.season]=bySeason[pk.season]||[]).push(pk); });
+  const seasons=Object.keys(bySeason).sort();
+  const pickLines=seasons.map(function(s){
+    const items=bySeason[s].sort(function(a,b){ return a.round-b.round; }).map(function(pk){
+      const via=String(pk.from)!==String(roster.roster_id);
+      const fr=via?slpRosterById(pk.from):null;
+      return '<span style="color:#e2e8f0;font-weight:600">'+slpOrd(pk.round)+'</span>'+(via?'<span style="color:#718096;font-size:10px"> (via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
+    }).join('<span style="color:#4a5568"> \u00b7 </span>');
+    return '<div style="margin-bottom:3px"><span style="color:#7dd3fc;font-weight:700;margin-right:8px">'+s+'</span>'+items+'</div>';
+  }).join('');
+  const picksBox='<div style="margin-top:14px;font-size:11.5px;background:#11161f;border:1px solid #2d3748;border-radius:6px;padding:10px 12px;line-height:1.7">'
+    +'<div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">Draft picks (next 3 seasons)</div>'
+    +(pickLines||'<span style="color:#4a5568">none</span>')
+    +'</div>';
 
-  rosterDiv.innerHTML=header+table+unmatchedBox;
+  return summary+table+picksBox;
+}
+
+function renderSlpBoard(){
+  const mine=SLP.conn?SLP.conn.rosterId:null;
+  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+  const labelByRid={}; (SLP.rosters||[]).forEach(function(r){ labelByRid[r.roster_id]=slpTeamLabel(r); });
+
+  // Cross every modeled rostered player in the league with DELTA's tag.
+  const targets=[], ship=[];
+  const seen={};
+  for(const r of (SLP.rosters||[])){
+    for(const pid of (r.players||[])){
+      if(seen[pid]) continue; seen[pid]=1;
+      const dn=SLP.match?SLP.match[pid]:null;
+      const p=dn?byName[dn]:null;
+      if(!p) continue;
+      const tg=slpTagText(p);
+      const isMine=String(r.roster_id)===String(mine);
+      if(!isMine&&(tg==='buy'||tg==='strong buy')) targets.push({p:p,rid:r.roster_id,tg:tg});
+      if(isMine&&(tg==='sell'||tg==='strong sell')) ship.push({p:p,rid:r.roster_id,tg:tg});
+    }
+  }
+  const rank=function(t){ return t==='strong buy'?0:t==='buy'?1:t==='strong sell'?0:1; };
+  targets.sort(function(a,b){ return rank(a.tg)-rank(b.tg)||(b.p.ktcEff||0)-(a.p.ktcEff||0); });
+  ship.sort(function(a,b){ return rank(a.tg)-rank(b.tg)||(b.p.ktcEff||0)-(a.p.ktcEff||0); });
+
+  const rowsOf=function(list,showOwner){
+    return list.map(function(x){
+      const p=x.p, mv=mvAsset(p);
+      const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
+      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
+        +'<td style="font-weight:800;font-size:13px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
+        +'<td>'+p.pos+'</td>'
+        +'<td class="col-hide-mobile">'+p.t+'</td>'
+        +(showOwner?'<td style="color:#a0aec0;font-size:11px">'+(labelByRid[x.rid]||'?')+'</td>':'')
+        +'<td style="font-weight:600">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
+        +'<td style="font-weight:600;color:'+mvCol+'" class="col-hide-mobile">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
+        +'<td>'+vTag(p)+'</td></tr>';
+    }).join('');
+  };
+  const thead=function(showOwner){
+    return '<thead><tr><th style="font-family:Georgia,serif;color:#6ee7b7">\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th>'
+      +(showOwner?'<th>Owned by</th>':'')
+      +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th></tr></thead>';
+  };
+
+  const targetsTbl=targets.length
+    ?'<div style="overflow-x:auto"><table>'+thead(true)+'<tbody>'+rowsOf(targets,true)+'</tbody></table></div>'
+    :'<div style="color:#4a5568;font-size:11.5px;padding:6px 0">No buy-tagged players on other rosters right now.</div>';
+  const shipTbl=ship.length
+    ?'<div style="overflow-x:auto"><table>'+thead(false)+'<tbody>'+rowsOf(ship,false)+'</tbody></table></div>'
+    :'<div style="color:#4a5568;font-size:11.5px;padding:6px 0">Nothing on your roster is sell-tagged. Clean sheet.</div>';
+
+  return '<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:#e2e8f0">\u26a1 League Board</span>'
+    +'<span style="font-size:10.5px;color:#718096;margin-left:8px">every rostered player in the league, crossed with DELTA\u2019s verdicts \u00b7 tags are league-invariant per-player signals</span></div>'
+    +'<div style="font-size:10px;font-weight:700;color:#6ee7b7;letter-spacing:.06em;text-transform:uppercase;margin:12px 0 4px">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
+    +targetsTbl
+    +'<div style="font-size:10px;font-weight:700;color:#fca5a5;letter-spacing:.06em;text-transform:uppercase;margin:16px 0 4px">Your ship list \u2014 sell-tagged on your roster \u00b7 '+ship.length+'</div>'
+    +shipTbl;
 }
 
 
