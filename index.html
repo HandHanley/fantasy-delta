@@ -2619,6 +2619,16 @@ function marketSpread(pl){
   if(pl.kMkt!=null&&(pl.k||0)>0) return pl.kMkt/pl.k;       // observed market spread for this player
   return scarcity(pl.p||pl.pos||'WR', leagueTeams, qbFmt);  // pre-grid / unmatched fallback: theoretical curve
 }
+// Option B calibration (June 2026): correct the one-directional penalty bias
+// ONLY where it exists — players whose RAW value is below market. A raw value
+// already at/above market earned it despite the penalties, so it is NOT scaled
+// up (a flat multiplier used to stack conviction, e.g. Walker 6.8k→8.0k). raw
+// and mkt are both anchor-basis (pl.k or an OV override).
+function applyCenter(raw, mkt){
+  if(MV_CENTER===1) return raw;            // pass 1 / no center yet
+  if(raw>=mkt && mkt>0) return raw;        // already above market — no bias to correct
+  return raw/MV_CENTER;
+}
 function computeMvCenter(){
   // Call ONLY while MV_CENTER===1 (raw basis) — mvAssetBase must return raw here.
   const rs=[];
@@ -2647,14 +2657,22 @@ function mvAsset(pl){
     const agMrk=am(pl.p||pl.pos,Math.floor(pl.a||22));
     return Math.min(19999,Math.round((pl.k||0)*agMrk*marketSpread(pl)));
   }
-  return Math.min(19999,Math.round(mvAssetRaw(pl)/(MV_CENTER||1)));
+  const rawMV=mvAssetRaw(pl);                                   // anchor basis
+  const mktMV=(OV[pl.n]&&OV[pl.n].ktc!=null)?OV[pl.n].ktc:(pl.k||0);
+  const calibrated=applyCenter(rawMV,mktMV);                   // Option B, anchor basis
+  return Math.min(19999,Math.round(calibrated*marketSpread(pl))); // format rescale last
 }
 function mvAssetRaw(pl){
   const e=getEff(pl);
   const epa=calcEPA(pl.n,pl.p||pl.pos);
   const roleData=getRoleData(pl.n,pl.p||pl.pos);
   const col=CB[pl.n]||1.0;
-  const rip=RP[pl.n]||1.0;
+  // Ripple (RP) is a FORWARD-LOOKING speculation lever (trade/role-change) that
+  // already flows into Projected PPG via calcProj. Letting it ALSO vote in model
+  // value double-counted the same speculation (Walker's KC +8% landed twice).
+  // Model value stays neutral on ripple; the projection owns the forward view.
+  // Removed June 2026.
+  const rip=1.0;
   const qbq=(pl.p||pl.pos)!=='QB'?(QBQ[AL[e.team]||e.team]||0.85):1.0;
 
   // Use same proven-player adjustments as calcProj so vTag matches rankings
@@ -2762,7 +2780,10 @@ function mvAssetRaw(pl){
     +d_trend+d_fmt
   ));
   const agM=am(pl.p||pl.pos,Math.floor(pl.a||26));
-  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj*marketSpread(pl)));
+  // Anchor-basis raw (NO marketSpread here). Format rescale is applied by the
+  // caller AFTER calibration so applyCenter compares anchor-raw vs anchor-market
+  // consistently — composing marketSpread into raw broke that at 1QB formats.
+  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
 }
 
 const CONTRACTS=[
@@ -4400,7 +4421,9 @@ function renderAll(){
   if(MV_CENTER!==1){
     for(const p of COMP){
       if((p.g25===0||p.g25===undefined)&&(p.ppg25||0)>0) continue;  // rookie path
-      p.mv=Math.min(19999,Math.round(p.mv/MV_CENTER));
+      // mvAsset now composes calibration (anchor) then marketSpread (format)
+      // correctly, so recompute fresh rather than patching the pass-1 value.
+      p.mv=mvAsset(p);
       p.gap=p.mv-p.ktcEff;
     }
   }
@@ -4511,8 +4534,10 @@ function renderDeck(p){
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}</span>`:'<span style="color:#4a5568">No contract data</span>';
+  const collMeta=COLLEGES[p.n]?`<span>🎓 ${COLLEGES[p.n]}</span>`:'';
+  const dpMeta=(()=>{const dp=DRAFT_PICKS[p.n];if(!dp)return'';const clr=dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096';return`<span style="color:${clr};font-weight:600">🏈 ${dp.y} Rd${dp.r} #${dp.p}</span>`;})();
   document.getElementById('dd-meta').innerHTML=
-    `<span>${p.pos} · ${p.t}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}${trendHtml}`;
+    `<span>${p.pos} · ${p.t}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}${dpMeta}${collMeta}`;
 
   // ── Body ──
   const gl=glOf(p);
@@ -4635,6 +4660,7 @@ function renderDeck(p){
         +'</div>'
         +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
         +'</div>'
+        +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age & draft capital — no speculation</div>'
         +bar('Age', aPts, 25)
         +bar('Production', prodPts, 32)
         +bar('Opportunity', oppPts, 33)
@@ -4642,14 +4668,62 @@ function renderDeck(p){
         +'</div>';
     })()}
 
+    ${(()=>{
+      // The Read weaves all THREE signals so they stop competing:
+      //   proof   = DELTA Score (demonstrated, no speculation)
+      //   worth   = model value (proof + projected role/situation)
+      //   price   = market
+      // The story is the TENSION between them. A median-proof player whose
+      // worth & price both sit high is "priced on a bet, not a track record"
+      // (Walker); a high-proof player the market underpays is the real buy.
+      const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
+      if(!mk||ds==null) return '';
+      const r=mvv/mk;
+      const verdict=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
+      // proof tier from dsScore distribution (p75≈50, median≈59, p25≈69)
+      const proof = ds>=72?'elite':ds>=62?'strong':ds>=52?'middling':'thin';
+      const proofClr = ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#fcd34d':'#fca5a5';
+      // is the model leaning on the projection vs the demonstrated profile?
+      const projLean = (p.proj||0) > 0 && mvv > mk*1.04 && proof!=='elite' && proof!=='strong';
+      let read, clr;
+      if(projLean){
+        read='Proof is '+proof+', but model value and market both ride his projected role — you\'re paying for expectation, not a track record. Buy only if you believe the situation holds.';
+        clr='#fcd34d';
+      } else if(r>=1.06){
+        read=(proof==='elite'||proof==='strong')
+          ? 'Strong demonstrated profile the market underprices — DELTA\'s model sees more than the tag. The kind of gap to capitalize on.'
+          : 'Model values him above market on the full picture (role, age, contract) — modest edge.';
+        clr='#6ee7b7';
+      } else if(r<=0.94){
+        read=(proof==='thin'||proof==='middling')
+          ? 'Market pays well above what he\'s demonstrated — priced on name/draft pedigree more than production. Let someone else hold the bag.'
+          : 'Market pays above DELTA\'s model despite a solid profile — fair-to-rich; hold rather than chase.';
+        clr='#fca5a5';
+      } else {
+        read='Proof, model value, and market roughly agree — fairly priced on the facts. No real edge either way.';
+        clr='#a0aec0';
+      }
+      return '<div class="dd-section" style="border:1px solid #1f2937;border-radius:10px;padding:12px 14px;margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
+        +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
+        +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+clr+'">'+verdict+'</span></div>'
+        +'<div style="font-size:11.5px;color:#cbd5e0;line-height:1.5">'+read+'</div>'
+        +'<div style="display:flex;gap:10px;margin-top:8px;font-size:10px">'
+        +'<span style="color:'+proofClr+'">Proof <b>'+proof+'</b> (Δ'+ds+')</span>'
+        +'<span style="color:#718096">Model '+(mvv>=19999?'19,999+':mvv.toLocaleString())+'</span>'
+        +'<span style="color:#718096">Market '+mk.toLocaleString()+'</span>'
+        +'<span style="color:#4a5568">ratio '+r.toFixed(2)+'</span>'
+        +'</div></div>';
+    })()}
+
     <div id="dd-startprofile"></div>
 
     <div class="dd-section">
-      <div class="dd-section-label">Projection & Value</div>
+      <div class="dd-section-label">Projection &amp; Value · forward-looking</div>
       <div class="dd-grid">
         <div class="dd-stat">
           <div class="dd-stat-val" style="color:#6ee7b7">${adjProj.toFixed(1)}</div>
-          <div class="dd-stat-lbl">Proj PPG</div>
+          <div class="dd-stat-lbl">Proj PPG · next yr</div>
         </div>
         <div class="dd-stat">
           <div class="dd-stat-val">${mv>=19999?"19,999+":mv.toLocaleString()}</div>
@@ -4672,12 +4746,8 @@ function renderDeck(p){
       </div>
       <div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         ${vTag(p)}
-        ${trendHtml}
-        <span style="font-size:10px;color:#718096">${ct?`Exp ${ct.end}`:'No contract'}</span>
         ${recStr?`<span style="font-size:10px;color:#718096">${recStr}</span>`:''}
-        ${COLLEGES[p.n]?`<span style="font-size:10px;color:#4a5568">🎓 ${COLLEGES[p.n]}</span>`:''}
       </div>
-        ${(()=>{const dp=DRAFT_PICKS[p.n];if(!dp)return'';const clr=dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096';return`<span style="font-size:10px;font-weight:600;color:${clr}">🏈 ${dp.y} · Rd${dp.r} · #${dp.p}</span>`;})()}
       </div>
 
     <div class="dd-divider"></div>
