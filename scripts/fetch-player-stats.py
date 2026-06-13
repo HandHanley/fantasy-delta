@@ -276,11 +276,18 @@ def fetch_depth_chart_qbs():
         return None
 
 def fetch_current_teams():
-    """Best-effort current-team map from nflverse 2026 rosters:
-    {display_name: team}. This is what keeps DELTA's team fields live across
-    trades and FA moves (A.J. Brown PHI→NE) without hand edits — emitted into
-    player-stats.json as `teams` and applied to RAW at runtime. Returns None
-    when unavailable; callers fall back to RAW's baked teams (status quo)."""
+    """Best-effort current-team map from nflverse 2026 rosters, keyed by
+    (name, position): {(display_name, pos): team}. Position is REQUIRED in the
+    key — matching on name alone let same-named defenders/rookies hijack skill
+    players (the June 2026 bug: WR DeVonta Smith dragged to CAR by a Panthers
+    UDFA cornerback; WR Justin Jefferson to CLE by a Browns rookie LB; RB
+    Quinshon Judkins to GB). We also drop any (name,pos) that is itself
+    ambiguous *within offensive skill positions* (two real skill players, same
+    name, same position on different teams) — there is no safe pick, so we
+    defer to RAW. Returns None when unavailable; callers fall back to baked
+    teams. Restricted to QB/RB/WR/TE: DELTA never tracks other positions, and
+    excluding them removes the entire cross-position collision surface."""
+    SKILL = {'QB', 'RB', 'WR', 'TE'}
     try:
         loader = getattr(nfl, 'load_rosters', None) or getattr(nfl, 'load_rosters_weekly', None)
         if loader is None:
@@ -295,14 +302,29 @@ def fetch_current_teams():
             return next((o for o in opts if o in pdf.columns), None)
         name_c = c('full_name', 'player_name', 'display_name', 'football_name')
         team_c = c('team', 'club_code', 'recent_team')
+        pos_c  = c('position', 'pos', 'depth_chart_position')
         week_c = c('week')
-        if not name_c or not team_c:
-            print(f'[DELTA] roster feed: unrecognized schema {list(pdf.columns)[:10]} — skipping')
+        if not name_c or not team_c or not pos_c:
+            print(f'[DELTA] roster feed: unrecognized schema {list(pdf.columns)[:10]} — skipping (need name/team/POSITION)')
             return None
         if week_c:
             pdf = pdf[pdf[week_c] == pdf[week_c].max()]
-        out = dict(pdf.dropna(subset=[name_c, team_c]).groupby(name_c)[team_c].last())
-        print(f'[DELTA] roster feed: 2026 current teams for {len(out)} players')
+        pdf = pdf.dropna(subset=[name_c, team_c, pos_c])
+        pdf = pdf[pdf[pos_c].isin(SKILL)]
+        # (name, pos) -> set of teams seen; only emit unambiguous ones
+        from collections import defaultdict
+        seen = defaultdict(set)
+        for _, row in pdf.iterrows():
+            seen[(row[name_c], row[pos_c])].add(row[team_c])
+        out, ambiguous = {}, []
+        for (nm, pos), teams in seen.items():
+            if len(teams) == 1:
+                out[(nm, pos)] = next(iter(teams))
+            else:
+                ambiguous.append(f'{nm}/{pos}:{sorted(teams)}')
+        if ambiguous:
+            print(f'[DELTA] roster feed: {len(ambiguous)} ambiguous (name,pos) skipped — {ambiguous[:6]}')
+        print(f'[DELTA] roster feed: 2026 skill-position teams for {len(out)} (name,pos) keys')
         return out
     except Exception as e:
         print(f'[DELTA] roster feed unavailable ({e}) — using RAW baked teams')
@@ -329,7 +351,7 @@ def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
     qb_team = {n: tp[0] for n, tp in meta.items() if tp[1] == 'QB'}
     for q, raw_team in qb_team.items():
         nfl_q = matched.get(q, q)
-        team = (roster_teams or {}).get(nfl_q) or raw_team   # roster feed wins (FA/trade moves)
+        team = (roster_teams or {}).get((nfl_q, 'QB')) or raw_team   # roster feed wins (FA/trade moves)
         q25 = s25.get(nfl_q, EMPTY)
         if depth and team in depth:
             # Depth-chart layer: present-state truth, may flag anyone behind an
@@ -354,7 +376,7 @@ def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
             if o == q:
                 continue
             nfl_o = matched.get(o, o)
-            o_team = (roster_teams or {}).get(nfl_o) or o_raw_team
+            o_team = (roster_teams or {}).get((nfl_o, 'QB')) or o_raw_team
             if o_team != team:
                 continue
             o25 = s25.get(nfl_o, EMPTY)
@@ -688,11 +710,14 @@ def main():
     team_overrides = {}
     if roster_teams:
         for dn, nfl_name in matched.items():
-            t = roster_teams.get(nfl_name)
+            pos = meta.get(dn, (None, None))[1]
+            if not pos:
+                continue
+            t = roster_teams.get((nfl_name, pos))   # name AND position must agree
             if t:
                 team_overrides[dn] = t
-        moved = [dn for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
-        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:12]}')
+        moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
+        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:20]}')
     rz_data  = fetch_redzone(SEASONS)
     players, headshot_out = build_output(agg, matched, rz_data, headshots)
 
