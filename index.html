@@ -1723,12 +1723,14 @@ const TREND_TAG={
   "Isaiah Likely":"fading",
   "Terry McLaurin":"fading",
 };
-function trendTag(n){
-  const t=TREND_TAG[n];
-  if(!t)return'';
-  if(t==='rising')return'<span style="font-size:9px;background:#064e3b;color:#6ee7b7;border:1px solid #065f46;border-radius:3px;padding:1px 5px;margin-left:3px;font-weight:700">↑ Rising</span>';
-  return'<span style="font-size:9px;background:#4c1d1d;color:#fca5a5;border:1px solid #7f1d1d;border-radius:3px;padding:1px 5px;margin-left:3px;font-weight:700">↓ Fading</span>';
-}
+// Rising/Fading BADGE removed June 2026 — the hand-maintained TREND_TAG table
+// went stale and contradicted the live verdict (e.g. DeVonta Smith "fading"
+// right after becoming Philly's WR1; D'Andre Swift "fading" + strong-buy).
+// The table itself is intentionally retained: it still feeds the model-value
+// nudge (d_trend) and the QB rising-CI multiplier in mvAssetRaw. Only the
+// visual badge is gone. To revisit later as an ENGINE-DERIVED signal, drive it
+// off nightly DELTA Score deltas, not a manual list.
+function trendTag(n){ return ''; }
 const OV={};let editTarget=null;
 function getEff(pl){
   const o=OV[pl.n]||{};
@@ -4506,9 +4508,7 @@ function renderDeck(p){
     const dsEl = document.getElementById('ds-score-val');
     if (dsEl && p.dsScore != null) countUp(dsEl, p.dsScore);
   });
-  const trend=TREND_TAG[p.n]||'';
-  const trendHtml=trend==='rising'?'<span class="badge bi">↑ Rising</span>':
-                  trend==='fading'?'<span class="badge bw">↓ Fading</span>':'';
+  const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}</span>`:'<span style="color:#4a5568">No contract data</span>';
   document.getElementById('dd-meta').innerHTML=
