@@ -1091,7 +1091,7 @@ const SYS={
   TEN:{s:58,c:.35,oc:'Daboll',ch:true},WAS:{s:55,c:.35,oc:'Blough',ch:true},
   FA:{s:50,c:.20,oc:'Unknown',ch:true}
 };
-const AL={NEP:'NE',NOS:'NO',LVR:'LV',GBP:'GB',TBB:'TB',KCC:'KC',SFO:'SF',OAK:'LV',RFA:'FA'};
+const AL={NEP:'NE',NOS:'NO',LVR:'LV',GBP:'GB',TBB:'TB',KCC:'KC',SFO:'SF',OAK:'LV',RFA:'FA',LA:'LAR',JAX:'JAC',WSH:'WAS',ARZ:'ARI'};
 function gs(t){return SYS[AL[t]||t]||SYS.FA;}
 
 // ============================================================
@@ -4534,10 +4534,20 @@ function renderDeck(p){
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}</span>`:'<span style="color:#4a5568">No contract data</span>';
-  const collMeta=COLLEGES[p.n]?`<span>🎓 ${COLLEGES[p.n]}</span>`:'';
-  const dpMeta=(()=>{const dp=DRAFT_PICKS[p.n];if(!dp)return'';const clr=dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096';return`<span style="color:${clr};font-weight:600">🏈 ${dp.y} Rd${dp.r} #${dp.p}</span>`;})();
-  document.getElementById('dd-meta').innerHTML=
-    `<span>${p.pos} · ${p.t}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}${dpMeta}${collMeta}`;
+  const dp=DRAFT_PICKS[p.n];
+  const dpClr=dp?(dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096'):'#718096';
+  // Row 1: position · team · age · contract.  Row 2: college · draft capital.
+  const dispTeam=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
+  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`;
+  const bgParts=[];
+  if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
+  if(dp) bgParts.push(`<span style="color:${dpClr};font-weight:600">${dp.y} Rd${dp.r} #${dp.p}</span>`);
+  const row2=bgParts.length?`<div class="dd-meta" style="margin-top:2px">${bgParts.join('')}</div>`:'';
+  document.getElementById('dd-meta').innerHTML=row1;
+  // second row injected right after the meta line
+  const metaEl=document.getElementById('dd-meta');
+  if(metaEl){ const ex=document.getElementById('dd-meta-2'); if(ex) ex.remove();
+    if(row2){ const d=document.createElement('div'); d.id='dd-meta-2'; d.className='dd-meta'; d.style.marginTop='2px'; d.innerHTML=bgParts.join(''); metaEl.parentNode.insertBefore(d, metaEl.nextSibling); } }
 
   // ── Body ──
   const gl=glOf(p);
@@ -4603,9 +4613,11 @@ function renderDeck(p){
   :'<div style="font-size:11px;color:#4a5568">Insufficient game data</div>';
 
   // Role label
-  const roleStr=p.pos==='RB'?(RB_SNAP[p.n]?`${RB_SNAP[p.n][0].toFixed(0)}% snap share`:'—'):
-    (p.pos==='WR'&&YPRR_WR[p.n]?`${YPRR_WR[p.n][0].toFixed(2)} YPRR`:
-    (p.pos==='TE'&&YPRR_TE[p.n]?`${YPRR_TE[p.n][0].toFixed(2)} YPRR`:'—'));
+  // Utilization: snap share for RBs; target share for WR/TE (NOT YPRR — that's
+  // already shown in the arc right above this section). Falls back to '—'.
+  const _ts25=PLAYER_STATS[p.n]?.['2025']?.target_share;
+  const roleStr=p.pos==='RB'?(RB_SNAP[p.n]?`${RB_SNAP[p.n][0].toFixed(0)}% snaps`:'—'):
+    ((p.pos==='WR'||p.pos==='TE')&&_ts25!=null?`${(_ts25*100).toFixed(1)}% tgt share`:'—');
   
   // TS_DELTA
   const tsDelta=TS_DELTA[p.n]||0;
@@ -4627,8 +4639,6 @@ function renderDeck(p){
   const ctNote=ct&&ct.note?`<div style="font-size:10px;color:#718096;margin-top:6px;font-style:italic">${ct.note}</div>`:'';
 
   // Rec / game for format note
-  const recPg=REC_PG[p.n];
-  const recStr=recPg?`${recPg.toFixed(1)} rec/g`:null;
 
   document.getElementById('dd-body').innerHTML=`
 
@@ -4669,51 +4679,75 @@ function renderDeck(p){
     })()}
 
     ${(()=>{
-      // The Read weaves all THREE signals so they stop competing:
-      //   proof   = DELTA Score (demonstrated, no speculation)
-      //   worth   = model value (proof + projected role/situation)
-      //   price   = market
-      // The story is the TENSION between them. A median-proof player whose
-      // worth & price both sit high is "priced on a bet, not a track record"
-      // (Walker); a high-proof player the market underpays is the real buy.
+      // THE READ — a specific, plain-language sentence built from THIS player's
+      // numbers (not a per-verdict template). Three signals:
+      //   proof = DELTA Score (demonstrated, position-ranked)
+      //   model = what DELTA thinks he's worth (proof + projected role)
+      //   market = what the league is paying
+      // The story is the size & direction of the model-vs-market gap, read in
+      // light of how much he's actually proven.
       const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
       if(!mk||ds==null) return '';
       const r=mvv/mk;
+      const pct=Math.round((r-1)*100);            // model vs market, %
       const verdict=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
-      // proof tier from dsScore distribution (p75≈50, median≈59, p25≈69)
-      const proof = ds>=72?'elite':ds>=62?'strong':ds>=52?'middling':'thin';
-      const proofClr = ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#fcd34d':'#fca5a5';
-      // is the model leaning on the projection vs the demonstrated profile?
-      const projLean = (p.proj||0) > 0 && mvv > mk*1.04 && proof!=='elite' && proof!=='strong';
+      const pos=p.pos||p.p||'';
+      // position rank by Model value and by proven DELTA Score
+      const peers=COMP.filter(x=>(x.pos||x.p)===pos&&((x.g25||0)+(x.g24||0)+(x.g23||0))>0);
+      const rankMv=peers.slice().sort((a,b)=>mvAsset(b)-mvAsset(a)).findIndex(x=>x.n===p.n)+1;
+      const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
+      const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
+      const proof = ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
+      const proofClr = ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#7dd3fc':ds>=42?'#fcd34d':'#fca5a5';
+      // does worth outrun proof? (model rank materially better than proof rank)
+      const worthOutrunsProof = (rankDs - rankMv) >= 6;
+      const proofOutrunsMkt   = (rankMk - rankDs) >= 6;
+      const mag = Math.abs(pct)>=20?'well ':Math.abs(pct)>=10?'':'slightly ';
       let read, clr;
-      if(projLean){
-        read='Proof is '+proof+', but model value and market both ride his projected role — you\'re paying for expectation, not a track record. Buy only if you believe the situation holds.';
-        clr='#fcd34d';
-      } else if(r>=1.06){
-        read=(proof==='elite'||proof==='strong')
-          ? 'Strong demonstrated profile the market underprices — DELTA\'s model sees more than the tag. The kind of gap to capitalize on.'
-          : 'Model values him above market on the full picture (role, age, contract) — modest edge.';
-        clr='#6ee7b7';
-      } else if(r<=0.94){
-        read=(proof==='thin'||proof==='middling')
-          ? 'Market pays well above what he\'s demonstrated — priced on name/draft pedigree more than production. Let someone else hold the bag.'
-          : 'Market pays above DELTA\'s model despite a solid profile — fair-to-rich; hold rather than chase.';
-        clr='#fca5a5';
+      if(verdict==='no data'){
+        read='No NFL production yet — nothing demonstrated to value him on. Anything here is a bet on draft capital and situation.'; clr='#718096';
+      } else if(r>=1.04){
+        // model above market — a buy signal. Distinguish proof-backed vs role-bet.
+        if(worthOutrunsProof){
+          read=`The model likes him as ${pos}${rankMv} on his projected role, but he's only proven ${pos}${rankDs}. The ${mag}${Math.abs(pct)}% edge over market is riding expectation — real if the role holds, thin if it doesn't.`;
+          clr='#fcd34d';
+        } else {
+          read=`DELTA values him ${mag}above market (${pos}${rankMv} model vs ${pos}${rankMk} price) and the production backs it — proven ${pos}${rankDs}. The market hasn't fully caught up; this is the kind of gap to buy.`;
+          clr='#6ee7b7';
+        }
+      } else if(r<=0.96){
+        // market above model — a sell/fade signal.
+        if(proofOutrunsMkt){
+          read=`Market prices him ${pos}${rankMk}, below what he's shown (proven ${pos}${rankDs}) — DELTA would buy at this discount, not sell.`;
+          clr='#9ae6b4';
+        } else {
+          read=`The model values him ${mag}${Math.abs(pct)}% below his ${pos}${rankMk} price tag (model ${pos}${rankMv}, proven ${pos}${rankDs}) — the market's paying for name and situation more than the production supports. Fade it.`;
+          clr='#fca5a5';
+        }
       } else {
-        read='Proof, model value, and market roughly agree — fairly priced on the facts. No real edge either way.';
+        read=`Model (${pos}${rankMv}), market (${pos}${rankMk}) and proven production (${pos}${rankDs}) all line up — he's priced about right on the facts. No real edge either way.`;
         clr='#a0aec0';
       }
-      return '<div class="dd-section" style="border:1px solid #1f2937;border-radius:10px;padding:12px 14px;margin-bottom:10px">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
+      // visual proof/model/market mini-bars (rank-based, lower rank = longer bar)
+      const N=peers.length||1;
+      const barFor=(rank,c,lbl,sub)=>{
+        const w=Math.max(4,Math.round((1-(rank-1)/N)*100));
+        return '<div style="margin-bottom:5px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px">'
+          +'<span style="color:#718096">'+lbl+'</span>'
+          +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:#4a5568;font-weight:400"> · '+sub+'</span></span></div>'
+          +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+w+'%;background:'+c+';border-radius:3px"></div></div></div>';
+      };
+      return '<div class="dd-section" style="border:1px solid #1f2937;border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,#0d1117,#11161f)">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
         +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
-        +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+clr+'">'+verdict+'</span></div>'
-        +'<div style="font-size:11.5px;color:#cbd5e0;line-height:1.5">'+read+'</div>'
-        +'<div style="display:flex;gap:10px;margin-top:8px;font-size:10px">'
-        +'<span style="color:'+proofClr+'">Proof <b>'+proof+'</b> (Δ'+ds+')</span>'
-        +'<span style="color:#718096">Model '+(mvv>=19999?'19,999+':mvv.toLocaleString())+'</span>'
-        +'<span style="color:#718096">Market '+mk.toLocaleString()+'</span>'
-        +'<span style="color:#4a5568">ratio '+r.toFixed(2)+'</span>'
-        +'</div></div>';
+        +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
+        +'<div style="font-size:12px;color:#e2e8f0;line-height:1.55;margin-bottom:11px">'+read+'</div>'
+        +barFor(rankDs, proofClr, 'PROVEN (DELTA Score Δ'+ds+')', proof)
+        +barFor(rankMv, '#a78bfa', 'MODEL VALUE', (mvv>=19999?'19,999+':mvv.toLocaleString()))
+        +barFor(rankMk, '#7dd3fc', 'MARKET PRICE', mk.toLocaleString())
+        +'</div>';
     })()}
 
     <div id="dd-startprofile"></div>
@@ -4743,10 +4777,6 @@ function renderDeck(p){
           <div style="position:absolute;left:0;right:0;height:100%;background:linear-gradient(90deg,#fc8181,#fcd34d,#6ee7b7);opacity:.4;border-radius:3px"></div>
           <div style="position:absolute;left:${Math.max(0,Math.min(90,(adjProj-(p.floor||0))/Math.max((p.ceil||adjProj)-(p.floor||0),1)*90))}%;top:0;width:10%;height:100%;background:#e2e8f0;border-radius:2px"></div>
         </div>
-      </div>
-      <div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        ${vTag(p)}
-        ${recStr?`<span style="font-size:10px;color:#718096">${recStr}</span>`:''}
       </div>
       </div>
 
@@ -4825,6 +4855,8 @@ function renderDeck(p){
       const iconStyle = isWR
         ? 'font-size:26px;font-weight:700;font-family:Georgia,serif;color:'+scC+';line-height:1;margin-right:8px'
         : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
+      const gms = st25.games;
+      const sampleNote = gms ? '<div style="font-size:9px;color:#4a5568;margin-top:6px">Usage from '+gms+' games · 2025 season</div>' : '';
       return '<div class="dd-section">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
         +'<div style="display:flex;align-items:center">'
@@ -4832,7 +4864,7 @@ function renderDeck(p){
         +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
         +'<div id="opp-score-val" style="font-size:22px;font-weight:800;color:'+scC+'">'+sc+'</div></div>'
         +'<div style="font-size:10px;color:'+scC+';margin-bottom:.5rem;font-weight:600">'+tier+'</div>'
-        +rowsHtml+'</div><div class="dd-divider"></div>';
+        +rowsHtml+sampleNote+'</div><div class="dd-divider"></div>';
     })()}
 
     ${(()=>{
@@ -4871,15 +4903,6 @@ function renderDeck(p){
       <div class="dd-writeup loading" id="dd-writeup">Generating report…</div>
     </div>
 
-    ${ct?`<div class="dd-section" style="margin-top:-.25rem">
-      <div class="dd-section-label">Contract</div>
-      <div style="font-size:11px">${ct.note||'Contract data available'}</div>
-    </div>`:''}
-
-    <div class="dd-actions">
-      <button class="dd-btn primary" onclick="askClaudeAbout('${p.n.replace(/'/g,"\'")}')">Ask Claude ↗</button>
-      <button class="dd-btn" onclick="closeDeckNow()">Close</button>
-    </div>
   `;
 
   // Generate the scouting report via Claude API
