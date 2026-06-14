@@ -4752,6 +4752,78 @@ function renderDeck(p){
 
     <div id="dd-startprofile"></div>
 
+    ${(()=>{
+      const oppSc = getOppScore(p.n, p.pos);
+      const st25  = PLAYER_STATS[p.n]?.['2025'];
+      // QBs (and anyone without an opportunity score) don't get an Alpha/
+      // Workhorse grade, but scheme context still matters — render a compact
+      // Offense / scheme block so System Score etc. aren't lost.
+      if (!oppSc || !st25) {
+        const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
+        const tsLine = tsDelta!==0 ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+        if (p.sys==null) return '';
+        return '<div class="dd-section">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">'
+          +'<div class="dd-section-label" style="margin-bottom:0">Offense / Scheme</div>'
+          +'<div style="font-size:22px;font-weight:800;color:'+sysColor+'">'+p.sys+'</div></div>'
+          +(ocLine?'<div style="font-size:10px;color:#718096">'+ocLine+'</div>':'')
+          +tsLine+fmtLine+'</div><div class="dd-divider"></div>';
+      }
+      const isWR  = p.pos==='WR'||p.pos==='TE';
+      const icon  = isWR ? 'α' : '♞';
+      const label = isWR ? 'Alpha Score' : 'Workhorse Score';
+      const sc    = oppSc;
+      const scC   = oppScoreColor(sc);
+      const tier  = sc>=88?(isWR?'Elite alpha':'Elite workhorse'):sc>=75?'Clear starter':sc>=60?'Role player':'Committee/specialist';
+      const tgtS  = st25.target_share  || 0;
+      const airS  = st25.air_yds_share || 0;
+      const rzT   = st25.rz_targets;
+      const rzC   = st25.rz_carries;
+
+      const compRows = isWR ? [
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
+        ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
+      ] : [
+        ['Rush Share',      ((st25.rush_share||0)*100).toFixed(1)+'%', (st25.rush_share||0)>=.28?'#6ee7b7':(st25.rush_share||0)>=.20?'#7dd3fc':(st25.rush_share||0)>=.13?'#fcd34d':'#fc8181'],
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
+        ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
+      ];
+      const rowsHtml = compRows.map(([lbl,val,clr])=>
+        '<div class="breakdown-row"><span style="color:#718096">'+lbl+'</span>'
+        +'<span style="font-weight:600;color:'+clr+'">'+val+'</span></div>'
+      ).join('');
+      const iconStyle = isWR
+        ? 'font-size:26px;font-weight:700;font-family:Georgia,serif;color:'+scC+';line-height:1;margin-right:8px'
+        : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
+      const gms = st25.games;
+      const sampleNote = gms ? '<div style="font-size:9px;color:#4a5568;margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
+      // Folded-in scheme/context (the non-redundant survivors of System & Role):
+      // system score, OC-change risk, target-share TREND (direction, not the
+      // static share shown above), and format sensitivity.
+      const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
+      const tsLine = tsDelta!==0 ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+      const schemeBlock =
+        '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid #1f2937">'
+        +'<div style="display:flex;justify-content:space-between;align-items:baseline">'
+        +'<span style="font-size:10px;color:#718096">Offense / scheme</span>'
+        +'<span style="font-size:13px;font-weight:700;color:'+sysColor+'">System '+p.sys+'</span></div>'
+        +(ocLine?'<div style="margin-top:3px;font-size:10px;color:#718096">'+ocLine+'</div>':'')
+        +tsLine+fmtLine+'</div>';
+      return '<div class="dd-section">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
+        +'<div style="display:flex;align-items:center">'
+        +'<span style="'+iconStyle+'">'+icon+'</span>'
+        +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
+        +'<div id="opp-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+scC+'">'+sc+'</div></div>'
+        +'<div style="font-size:10px;color:'+scC+';margin-bottom:.6rem;font-weight:600">'+tier+'</div>'
+        +rowsHtml+sampleNote+schemeBlock+'</div><div class="dd-divider"></div>';
+    })()}
+
+
     <div class="dd-section">
       <div class="dd-section-label">Projection &amp; Value · forward-looking</div>
       <div class="dd-grid">
@@ -4800,72 +4872,6 @@ function renderDeck(p){
     <div class="dd-divider"></div>
 
 
-    <div class="dd-section">
-      <div class="dd-section-label">System & Role</div>
-      <div class="dd-grid-2">
-        <div class="dd-stat">
-          <div class="dd-stat-val" style="color:${sysColor}">${p.sys}</div>
-          <div class="dd-stat-lbl">System Score</div>
-        </div>
-        <div class="dd-stat">
-          <div class="dd-stat-val" style="font-size:13px">${roleStr}</div>
-          <div class="dd-stat-lbl">Utilization</div>
-        </div>
-      </div>
-      <div style="margin-top:6px;font-size:10px;color:${p.och?'#fcd34d':'#718096'}">
-        ${p.och?'⚠ OC change — scheme risk':''} ${p.oc||''}
-      </div>
-      ${tsDelta!==0?`<div style="margin-top:5px;font-size:10px;color:${tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096'}">
-        Target share trend: ${tsDelta>0?'+':''}${(tsDelta*100).toFixed(1)}% YoY</div>`:''}
-      ${fmtSensitivity?`<div style="margin-top:4px;font-size:10px;color:#718096">
-        Format sensitivity: ${fmtSensitivity}</div>`:''}
-    </div>
-
-    <div class="dd-divider"></div>
-
-    ${(()=>{
-      const oppSc = getOppScore(p.n, p.pos);
-      const st25  = PLAYER_STATS[p.n]?.['2025'];
-      if (!oppSc || !st25) return '';
-      const isWR  = p.pos==='WR'||p.pos==='TE';
-      const icon  = isWR ? 'α' : '♞';
-      const label = isWR ? 'Alpha Score' : 'Workhorse Score';
-      const sc    = oppSc;
-      const scC   = oppScoreColor(sc);
-      const tier  = sc>=88?(isWR?'Elite alpha':'Elite workhorse'):sc>=75?'Clear starter':sc>=60?'Role player':'Committee/specialist';
-      const tgtS  = st25.target_share  || 0;
-      const airS  = st25.air_yds_share || 0;
-      const rzT   = st25.rz_targets;
-      const rzC   = st25.rz_carries;
-
-      const compRows = isWR ? [
-        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
-        ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
-        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
-      ] : [
-        ['Rush Share',      ((st25.rush_share||0)*100).toFixed(1)+'%', (st25.rush_share||0)>=.28?'#6ee7b7':(st25.rush_share||0)>=.20?'#7dd3fc':(st25.rush_share||0)>=.13?'#fcd34d':'#fc8181'],
-        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
-        ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
-        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
-      ];
-      const rowsHtml = compRows.map(([lbl,val,clr])=>
-        '<div class="breakdown-row"><span style="color:#718096">'+lbl+'</span>'
-        +'<span style="font-weight:600;color:'+clr+'">'+val+'</span></div>'
-      ).join('');
-      const iconStyle = isWR
-        ? 'font-size:26px;font-weight:700;font-family:Georgia,serif;color:'+scC+';line-height:1;margin-right:8px'
-        : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
-      const gms = st25.games;
-      const sampleNote = gms ? '<div style="font-size:9px;color:#4a5568;margin-top:6px">Usage from '+gms+' games · 2025 season</div>' : '';
-      return '<div class="dd-section">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
-        +'<div style="display:flex;align-items:center">'
-        +'<span style="'+iconStyle+'">'+icon+'</span>'
-        +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
-        +'<div id="opp-score-val" style="font-size:22px;font-weight:800;color:'+scC+'">'+sc+'</div></div>'
-        +'<div style="font-size:10px;color:'+scC+';margin-bottom:.5rem;font-weight:600">'+tier+'</div>'
-        +rowsHtml+sampleNote+'</div><div class="dd-divider"></div>';
-    })()}
 
     ${(()=>{
       if(p.pos!=='QB') return '';
