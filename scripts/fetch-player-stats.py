@@ -641,6 +641,37 @@ def build_output(agg, matched, rz_data=None, headshots=None):
                 "rz_carries":    _rz_lookup(rz.get("player_rz_car", {}), nfl_name),
             }
         players[delta_name] = player_data
+
+    # ---- Derived metrics (no extra fetch — from the per-season data above) ----
+    # REC_PG: receptions per game in the most recent season with games.
+    # TS_DELTA: target-share change, latest season minus prior season (decimal).
+    rec_pg, ts_delta = {}, {}
+    for delta_name, pdata in players.items():
+        latest = None
+        for season in sorted(SEASONS, reverse=True):
+            if pdata.get(season) and pdata[season].get('games'):
+                latest = season
+                break
+        if latest is None:
+            continue
+        cur = pdata[latest]
+        g = cur.get('games') or 0
+        if g:
+            rpg = (cur.get('rec') or 0) / g
+            if rpg > 0:
+                rec_pg[delta_name] = round(rpg, 2)
+        # target-share delta vs the immediately prior season WITH games
+        prior = None
+        for season in sorted([s for s in SEASONS if s < latest], reverse=True):
+            if pdata.get(season) and pdata[season].get('games'):
+                prior = season
+                break
+        if prior is not None:
+            d = (cur.get('target_share') or 0) - (pdata[prior].get('target_share') or 0)
+            if abs(d) >= 0.005:  # only emit a meaningful move
+                ts_delta[delta_name] = round(d, 3)
+    print(f'[DELTA] Derived: {len(rec_pg)} rec/g, {len(ts_delta)} target-share deltas')
+
     # Build delta_name → headshot_url mapping
     headshot_out = {}
     if headshots:
@@ -648,7 +679,7 @@ def build_output(agg, matched, rz_data=None, headshots=None):
             if nfl_name in headshots:
                 headshot_out[delta_name] = headshots[nfl_name]
     print(f'[DELTA] Headshots matched: {len(headshot_out)}')
-    return players, headshot_out
+    return players, headshot_out, rec_pg, ts_delta
 
 def spot_check(players, season=2025):
     checks = [
@@ -672,6 +703,157 @@ def spot_check(players, season=2025):
         rz_c   = f"rz_car:{s.get('rz_carries','—')}"
         ra     = f"rush_att:{s.get('rush_att','—')}"
         print(f"  {name}: {s['games']}g → {round(pts/s['games'],1)} PPG | {tgt_s} {air_s} rush_share:{s.get('rush_share','—')} {ra} {rz_t} {rz_c}")
+
+def fetch_rb_snap_share(delta_names, meta):
+    """Per-season RB snap share from nflverse snap counts, mapped to DELTA names.
+    Returns {delta_name: [pct_2025, pct_2024, pct_2023, pct_2022]} (most-recent
+    first, matching the hand RB_SNAP shape). Only RBs are emitted. A season the
+    player didn't register snaps is 0. Returns {} on failure — runtime falls
+    back to the hand RB_SNAP table."""
+    out = {}
+    try:
+        SNAP_SEASONS = [2025, 2024, 2023, 2022]
+        # per-season {nflverse_name: mean offense_pct across that player's games}
+        by_season = {}
+        for season in SNAP_SEASONS:
+            try:
+                df = nfl.load_snap_counts(seasons=[season])
+                pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
+            except Exception as e:
+                print(f'[DELTA] snap counts {season} failed: {e}')
+                by_season[season] = {}
+                continue
+            cols = set(pdf.columns)
+            name_col = next((c for c in ['player','player_name','full_name','pfr_player_name'] if c in cols), None)
+            pos_col  = next((c for c in ['position'] if c in cols), None)
+            pct_col  = next((c for c in ['offense_pct','offense_snaps_pct','off_pct'] if c in cols), None)
+            if not (name_col and pct_col):
+                print(f'[DELTA] snap counts {season}: missing columns — skipping')
+                by_season[season] = {}
+                continue
+            df2 = pdf
+            if pos_col:
+                df2 = df2[df2[pos_col] == 'RB']
+            # offense_pct may be a fraction (0-1) or a percent (0-100); normalize to %.
+            def to_pct(v):
+                try:
+                    v = float(v)
+                except (ValueError, TypeError):
+                    return None
+                return v * 100.0 if v <= 1.0 else v
+            agg = {}
+            for _, row in df2.iterrows():
+                nm = row.get(name_col)
+                p = to_pct(row.get(pct_col))
+                if nm and p is not None:
+                    agg.setdefault(nm, []).append(p)
+            by_season[season] = {nm: round(sum(v)/len(v), 1) for nm, v in agg.items()}
+
+        # build a normalized index per season for matching
+        rb_names = [dn for dn in delta_names if meta.get(dn, (None, None))[1] == 'RB']
+        def season_norm_idx(d):
+            idx = {}
+            for k in d:
+                idx.setdefault(norm(k), k)
+            return idx
+        norm_idx = {s: season_norm_idx(by_season.get(s, {})) for s in SNAP_SEASONS}
+        for dn in rb_names:
+            arr = []
+            any_val = False
+            for s in SNAP_SEASONS:
+                hit = norm_idx[s].get(norm(dn))
+                val = by_season[s].get(hit, 0) if hit else 0
+                if val:
+                    any_val = True
+                arr.append(val)
+            if any_val:
+                out[dn] = arr
+        print(f'[DELTA] RB snap share: {len(out)} RBs matched')
+    except Exception as e:
+        print(f'[DELTA] RB snap share fetch failed: {e}')
+    return out
+
+
+def fetch_draft_and_college(delta_names, meta):
+    """Pull draft capital (year/round/pick) and college from nflverse, mapped to
+    DELTA names. Retires the hand DRAFT_PICKS and COLLEGES tables and auto-fills
+    them for the expanded universe. Returns (draft_map, college_map):
+      draft_map[delta_name]   = {'y': year, 'r': round, 'p': overall_pick}
+      college_map[delta_name] = 'College Name'
+    Returns ({}, {}) on failure — runtime falls back to the baked tables."""
+    draft_map, college_map = {}, {}
+
+    # Lightweight matcher: DELTA name -> key in a raw{nflverse_name: value} dict.
+    # Reuses norm() (period/suffix/case-insensitive). Exact-normalized match
+    # only; we do NOT do partial/startswith here because draft+college are
+    # identity facts where a fuzzy hit (e.g. two "Mike Williams") is worse than
+    # a miss that falls back to the baked table.
+    DRAFT_ALIASES = {'Chigoziem Okonkwo': 'Chig Okonkwo'}
+    def _match(raw, delta_names):
+        rawnorm = {}
+        for k in raw:
+            rawnorm.setdefault(norm(k), k)
+        out = {}
+        for dn in delta_names:
+            lk = DRAFT_ALIASES.get(dn, dn)
+            hit = rawnorm.get(norm(lk))
+            if hit is not None:
+                out[dn] = hit
+        return out
+
+    # ---- DRAFT PICKS ----
+    try:
+        df = nfl.load_draft_picks()
+        pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
+        cols = set(pdf.columns)
+        name_col = next((c for c in ['pfr_player_name','player_name','full_name','display_name'] if c in cols), None)
+        yr_col   = next((c for c in ['season','draft_year','year'] if c in cols), None)
+        rd_col   = next((c for c in ['round'] if c in cols), None)
+        pk_col   = next((c for c in ['pick','overall','selection'] if c in cols), None)
+        if name_col and yr_col and rd_col and pk_col:
+            # newest pick per name wins (handles rare re-entry); build raw map by nflverse name
+            raw = {}
+            for _, row in pdf.iterrows():
+                nm = row.get(name_col)
+                if not nm or row.get(pk_col) is None:
+                    continue
+                try:
+                    raw[nm] = {'y': int(row[yr_col]), 'r': int(row[rd_col]), 'p': int(row[pk_col])}
+                except (ValueError, TypeError):
+                    continue
+            matched = _match(raw, delta_names)
+            for dn, nfl_name in matched.items():
+                draft_map[dn] = raw[nfl_name]
+            print(f'[DELTA] draft capital: {len(draft_map)} DELTA players matched')
+        else:
+            print(f'[DELTA] draft picks: missing expected columns (have {sorted(cols)[:8]}...) — skipping')
+    except Exception as e:
+        print(f'[DELTA] draft picks fetch failed: {e}')
+
+    # ---- COLLEGE ----
+    try:
+        df = nfl.load_players()
+        pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
+        cols = set(pdf.columns)
+        name_col = next((c for c in ['display_name','full_name','player_name','football_name'] if c in cols), None)
+        col_col  = next((c for c in ['college','college_name','college_conference'] if c in cols and 'conference' not in c), None)
+        if name_col and col_col:
+            raw = {}
+            for _, row in pdf.iterrows():
+                nm = row.get(name_col); cg = row.get(col_col)
+                if nm and cg and str(cg).strip() and str(cg).lower() != 'none':
+                    raw[nm] = str(cg).strip()
+            matched = _match(raw, delta_names)
+            for dn, nfl_name in matched.items():
+                college_map[dn] = raw[nfl_name]
+            print(f'[DELTA] college: {len(college_map)} DELTA players matched')
+        else:
+            print(f'[DELTA] college: missing expected columns — skipping')
+    except Exception as e:
+        print(f'[DELTA] college fetch failed: {e}')
+
+    return draft_map, college_map
+
 
 def fetch_contracts(delta_names):
     """Fetch active NFL contracts from nflverse (sourced from OTC)"""
@@ -818,7 +1000,7 @@ def main():
         moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
         print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:20]}')
     rz_data, epa_raw = fetch_pbp(SEASONS)
-    players, headshot_out = build_output(agg, matched, rz_data, headshots)
+    players, headshot_out, rec_pg, ts_delta = build_output(agg, matched, rz_data, headshots)
 
     # Map computed QB/RB EPA onto DELTA names. Only QB/RB are emitted — WR/TE
     # efficiency is the hand-curated YPRR layer (no free routes source), so the
@@ -836,6 +1018,9 @@ def main():
             epa_out[dn] = vals
     print(f'[DELTA] EPA mapped to {len(epa_out)} DELTA QB/RB players')
 
+    draft_map, college_map = fetch_draft_and_college(delta_names, meta)
+    rb_snap_map = fetch_rb_snap_share(delta_names, meta)
+
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
         'seasons': SEASONS,
@@ -845,6 +1030,11 @@ def main():
         'qb_roles': qb_roles,
         'teams': team_overrides,
         'epa': epa_out,
+        'draft': draft_map,
+        'college': college_map,
+        'rb_snap': rb_snap_map,
+        'rec_pg': rec_pg,
+        'ts_delta': ts_delta,
     }
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
