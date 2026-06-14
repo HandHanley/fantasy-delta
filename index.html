@@ -4699,33 +4699,72 @@ function renderDeck(p){
       const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
       const proof = ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
       const proofClr = ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#7dd3fc':ds>=42?'#fcd34d':'#fca5a5';
-      // does worth outrun proof? (model rank materially better than proof rank)
       const worthOutrunsProof = (rankDs - rankMv) >= 6;
       const proofOutrunsMkt   = (rankMk - rankDs) >= 6;
-      const mag = Math.abs(pct)>=20?'well ':Math.abs(pct)>=10?'':'slightly ';
+      const absPct = Math.abs(pct);
+      const magWord = absPct>=20?'well ':absPct>=8?'':'a touch ';
+
+      // ── Player-specific EVIDENCE clauses (the anti-template engine) ──
+      // Each Read pairs a gap-framing with a clause built from THIS player's
+      // actual profile, so two same-verdict players read differently.
+      const gl = (typeof glOf==='function') ? glOf(p) : null;
+      const age = p.a||0;
+      const a25=p.ppg25||0, a24=p.ppg24||0, a23=p.ppg23||0;
+      const arc = (a25&&a24) ? (a25-a24) : 0;       // recent YoY PPG direction
+      const oppSc = (typeof getOppScore==='function') ? getOppScore(p.n,p.pos) : null;
+      // collect candidate evidence phrases, pick the most salient 1–2
+      const ev=[];
+      if(gl){
+        if(gl.elite>=30) ev.push(`an elite game in ${gl.elite}% of starts`);
+        else if(gl.elite>=18) ev.push(`league-winning weeks ${gl.elite}% of the time`);
+        if(gl.miss>=45) ev.push(`but he busts ${gl.miss}% of weeks`);
+        else if(gl.miss<=18 && gl.hit>=75) ev.push(`a hit in ${gl.hit}% of starts — rock-steady`);
+      }
+      if(arc>=3) ev.push(`production climbing (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
+      else if(arc<=-3) ev.push(`production sliding (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
+      if(age>=31 && (pos==='RB')) ev.push(`and at ${age.toFixed(0)} the dynasty runway is short`);
+      else if(age>=33) ev.push(`and at ${age.toFixed(0)} he's near the end`);
+      else if(age<=23 && proof!=='thin') ev.push(`all before turning ${Math.ceil(age)}`);
+      else if(age<=25 && proof!=='thin' && (pos==='WR'||pos==='TE')) ev.push(`still just ${age.toFixed(0)}`);
+      if(oppSc!=null){
+        if(oppSc>=88) ev.push(`a true bell-cow role (${oppSc} opportunity)`);
+        else if(oppSc<=55) ev.push(`a committee role (${oppSc} opportunity) capping the ceiling`);
+      }
+      if(p.och) ev.push(`with a new OC adding scheme risk`);
+      const evJoin = (arr)=> arr.length>=2 ? arr.slice(0,2).join(', ') : (arr[0]||'');
+      const posBacking = evJoin(ev.filter(e=>!/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
+      const negBacking = evJoin(ev.filter(e=>/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
+      // magnitude qualifier as a trailing parenthetical (clean grammar)
+      const gapQual = absPct>=20?', a wide gap':absPct>=10?'':', a slim one';
+
       let read, clr;
       if(verdict==='no data'){
-        read='No NFL production yet — nothing demonstrated to value him on. Anything here is a bet on draft capital and situation.'; clr='#718096';
+        read=`No NFL production yet — nothing demonstrated to value him on. At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a track record.`;
+        clr='#718096';
       } else if(r>=1.04){
-        // model above market — a buy signal. Distinguish proof-backed vs role-bet.
         if(worthOutrunsProof){
-          read=`The model likes him as ${pos}${rankMv} on his projected role, but he's only proven ${pos}${rankDs}. The ${mag}${Math.abs(pct)}% edge over market is riding expectation — real if the role holds, thin if it doesn't.`;
+          // worth riding a projected role he hasn't proven
+          const why = negBacking || (p.proj>a25? `a projection (${(p.proj||0).toFixed(1)} ppg) ahead of his ${a25.toFixed(1)} ppg history` : `an unproven role`);
+          read=`Model has him ${pos}${rankMv}, but the tape says ${pos}${rankDs} — the ${absPct}% premium${gapQual} rides ${why}. A buy only if you trust the situation over the résumé.`;
           clr='#fcd34d';
         } else {
-          read=`DELTA values him ${mag}above market (${pos}${rankMv} model vs ${pos}${rankMk} price) and the production backs it — proven ${pos}${rankDs}. The market hasn't fully caught up; this is the kind of gap to buy.`;
+          const why = posBacking || (gl&&gl.hit>=70?`a hit in ${gl.hit}% of starts`:`a steady ${pos}${rankDs} profile`);
+          read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA sees ${pos}${rankMv} — a ${absPct}% discount${gapQual} to buy before the price catches up.`;
           clr='#6ee7b7';
         }
       } else if(r<=0.96){
-        // market above model — a sell/fade signal.
         if(proofOutrunsMkt){
-          read=`Market prices him ${pos}${rankMk}, below what he's shown (proven ${pos}${rankDs}) — DELTA would buy at this discount, not sell.`;
+          const why = posBacking || `a ${pos}${rankDs} profile`;
+          read=`The market sleeps on him at ${pos}${rankMk} despite ${why} (proven ${pos}${rankDs}). DELTA would be buying this discount, not selling.`;
           clr='#9ae6b4';
         } else {
-          read=`The model values him ${mag}${Math.abs(pct)}% below his ${pos}${rankMk} price tag (model ${pos}${rankMv}, proven ${pos}${rankDs}) — the market's paying for name and situation more than the production supports. Fade it.`;
+          const why = negBacking || `a thin ${pos}${rankDs} demonstrated profile`;
+          read=`Priced ${pos}${rankMk} on name and situation, ${negBacking?'':'with '}${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the tag${gapQual}. Sell into the market's optimism.`;
           clr='#fca5a5';
         }
       } else {
-        read=`Model (${pos}${rankMv}), market (${pos}${rankMk}) and proven production (${pos}${rankDs}) all line up — he's priced about right on the facts. No real edge either way.`;
+        const tone = proof==='elite'||proof==='strong' ? `a genuine ${pos}${rankDs}` : `a ${pos}${rankDs} profile`;
+        read=`Proof (${pos}${rankDs}), model (${pos}${rankMv}) and price (${pos}${rankMk}) all converge — the market has ${tone} priced right. Fair value, no edge either way.`;
         clr='#a0aec0';
       }
       // visual proof/model/market mini-bars (rank-based, lower rank = longer bar)
