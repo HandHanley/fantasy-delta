@@ -5703,6 +5703,29 @@ async function loadPlayerStats() {
       }
       if (moved) console.log('[DELTA] ' + moved + ' team field(s) updated from roster feed');
     }
+    // EPA: the pipeline computes QB/RB EPA-per-play from nflverse play-by-play
+    // and emits it as data.epa (keyed by DELTA name). It is merged OVER the hand
+    // EPA table so QB/RB efficiency is now data-driven and auto-populates the
+    // expanded universe. WR/TE entries in the hand table are intentionally left
+    // alone — their efficiency input is hand-curated YPRR (no free routes-run
+    // source), so the pipeline never touches receiver rows. ef25 (a secondary
+    // RB display metric) is preserved from the hand table when present.
+    if (data.epa && typeof EPA !== 'undefined') {
+      let epaUpd = 0;
+      for (const name in data.epa) {
+        const v = data.epa[name];
+        const prev = EPA[name] || {};
+        EPA[name] = {
+          e25: v.e25 != null ? v.e25 : (prev.e25 || 0),
+          e24: v.e24 != null ? v.e24 : (prev.e24 || 0),
+          e23: v.e23 != null ? v.e23 : (prev.e23 || 0),
+          e22: v.e22 != null ? v.e22 : (prev.e22 || 0),
+          ef25: prev.ef25 != null ? prev.ef25 : (v.e25 != null ? v.e25 : 0)
+        };
+        epaUpd++;
+      }
+      if (epaUpd) console.log('[DELTA] ' + epaUpd + ' QB/RB EPA entries updated from pipeline');
+    }
     let updated = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
