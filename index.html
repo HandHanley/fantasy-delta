@@ -4697,7 +4697,11 @@ function renderDeck(p){
       const verdict=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
       const pos=p.pos||p.p||'';
       // position rank by Model value and by proven DELTA Score
-      const peers=COMP.filter(x=>(x.pos||x.p)===pos&&((x.g25||0)+(x.g24||0)+(x.g23||0))>0);
+      // Rank against the SAME population the rankings page uses (full COMP by
+      // position, no games filter) so The Read never disagrees with the rest of
+      // the platform. Filtering to games>0 here shifted ranks vs the rankings
+      // page (e.g. Walker RB8 here vs RB9 there).
+      const peers=COMP.filter(x=>(x.pos||x.p)===pos);
       const rankMv=peers.slice().sort((a,b)=>mvAsset(b)-mvAsset(a)).findIndex(x=>x.n===p.n)+1;
       const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
       const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
