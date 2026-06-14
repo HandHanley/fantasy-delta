@@ -444,6 +444,105 @@ def match_names(agg, delta_names, no_data=None):
         print(f"[DELTA] Unmatched veterans (investigate): {not_found}")
     return matched
 
+def _epa_from_pbp(pdf, season, epa_out):
+    """Compute QB and RB EPA/play for one season's PBP frame, accumulate into
+    epa_out[name][f'e{yy}']. QB = mean(qb_epa) over dropbacks; RB = mean(epa)
+    over rush attempts. WR/TE are intentionally NOT computed here — their
+    efficiency input is hand-curated YPRR (no free routes-run source), so the
+    runtime keeps the hand EPA/YPRR table for receivers."""
+    yy = str(season)[-2:]
+    key = f'e{yy}'
+    cols = set(pdf.columns)
+    # ---- QB EPA/play ----
+    qb_epa_col = 'qb_epa' if 'qb_epa' in cols else ('epa' if 'epa' in cols else None)
+    passer_col = next((c for c in ['passer_player_name','passer_player_display_name','passer'] if c in cols), None)
+    if qb_epa_col and passer_col:
+        db_col = next((c for c in ['qb_dropback','pass'] if c in cols), None)
+        qb_plays = pdf[pdf[passer_col].notna()]
+        if db_col:
+            qb_plays = qb_plays[qb_plays[db_col] == 1]
+        g = qb_plays.groupby(passer_col)[qb_epa_col].agg(['mean','count'])
+        for name, row in g.iterrows():
+            if row['count'] >= 50:  # min dropbacks for a stable season figure
+                epa_out.setdefault(name, {})[key] = round(float(row['mean']), 3)
+    # ---- RB EPA/play (rushing) ----
+    epa_col = 'epa' if 'epa' in cols else None
+    rusher_col = next((c for c in ['rusher_player_name','rusher_player_display_name','rusher'] if c in cols), None)
+    if epa_col and rusher_col:
+        rush_col = next((c for c in ['rush_attempt','rush'] if c in cols), None)
+        rush_plays = pdf[pdf[rusher_col].notna()]
+        if rush_col:
+            rush_plays = rush_plays[rush_plays[rush_col] == 1]
+        g = rush_plays.groupby(rusher_col)[epa_col].agg(['mean','count'])
+        for name, row in g.iterrows():
+            if row['count'] >= 40:  # min carries for a stable season figure
+                # don't overwrite a QB entry (scrambling QBs appear as rushers)
+                e = epa_out.setdefault(name, {})
+                if key not in e:
+                    e[key] = round(float(row['mean']), 3)
+
+
+def fetch_pbp(seasons):
+    """Single PBP pass per season computing BOTH red-zone counts and QB/RB EPA.
+    Loads one extra prior season for EPA depth (calcEPA weights e22 at 0.5)."""
+    print("\n[DELTA] Fetching PBP (red zone + EPA)...")
+    rz = {}
+    epa_out = {}
+    # EPA looks back one more year than the stats seasons (e22 weight in calcEPA)
+    epa_seasons = sorted(set(seasons) | {min(seasons) - 1})
+    for season in epa_seasons:
+        try:
+            print(f"[DELTA] Loading PBP for {season}...")
+            pbp = nfl.load_pbp(seasons=[season])
+            pdf = pbp.to_pandas() if hasattr(pbp, "to_pandas") else pbp
+            if "season_type" in pdf.columns:
+                pdf = pdf[pdf["season_type"] == "REG"].copy()
+            # EPA for every season we load
+            _epa_from_pbp(pdf, season, epa_out)
+            # Red zone only for the core stats seasons
+            if season in seasons:
+                _redzone_from_pbp(pdf, season, rz)
+        except Exception as e:
+            print(f"[DELTA] PBP {season} failed: {e}")
+    print(f"[DELTA] EPA computed for {len(epa_out)} players (QB/RB)")
+    return rz, epa_out
+
+
+def _redzone_from_pbp(pdf, season, rz):
+    # Red zone (inside 20) carry and target counts for one season frame.
+    if "yardline_100" not in pdf.columns:
+        print(f"[DELTA] No yardline_100 col in {season} PBP — skipping RZ")
+        return
+    rzdf = pdf[pdf["yardline_100"] <= 20].copy()
+    rec_name_col = next((c for c in ["receiver_player_name","receiver_player_display_name"] if c in rzdf.columns), None)
+    if rec_name_col:
+        pass_col = next((c for c in ["pass_attempt","pass"] if c in rzdf.columns), None)
+        tgt_plays = rzdf[rzdf[rec_name_col].notna()]
+        if pass_col:
+            tgt_plays = tgt_plays[tgt_plays[pass_col] == 1]
+        team_rz_tgt   = tgt_plays.groupby("posteam").size().to_dict()
+        player_rz_tgt = tgt_plays.groupby(rec_name_col).size().to_dict()
+    else:
+        team_rz_tgt, player_rz_tgt = {}, {}
+    rush_name_col = next((c for c in ["rusher_player_name","rusher_player_display_name"] if c in rzdf.columns), None)
+    if rush_name_col:
+        rush_col = next((c for c in ["rush_attempt","rush"] if c in rzdf.columns), None)
+        rush_plays = rzdf[rzdf[rush_name_col].notna()]
+        if rush_col:
+            rush_plays = rush_plays[rush_plays[rush_col] == 1]
+        team_rz_car   = rush_plays.groupby("posteam").size().to_dict()
+        player_rz_car = rush_plays.groupby(rush_name_col).size().to_dict()
+    else:
+        team_rz_car, player_rz_car = {}, {}
+    rz[season] = {
+        "player_rz_tgt": player_rz_tgt,
+        "player_rz_car": player_rz_car,
+        "team_rz_tgt":   team_rz_tgt,
+        "team_rz_car":   team_rz_car,
+    }
+    print(f"[DELTA] RZ {season}: {len(player_rz_tgt)} receivers, {len(player_rz_car)} rushers")
+
+
 def fetch_redzone(seasons):
     # Fetch red zone (inside 20) carry and target counts from play-by-play.
     print("\n[DELTA] Fetching red zone data from PBP...")
@@ -718,8 +817,24 @@ def main():
                 team_overrides[dn] = t
         moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
         print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:20]}')
-    rz_data  = fetch_redzone(SEASONS)
+    rz_data, epa_raw = fetch_pbp(SEASONS)
     players, headshot_out = build_output(agg, matched, rz_data, headshots)
+
+    # Map computed QB/RB EPA onto DELTA names. Only QB/RB are emitted — WR/TE
+    # efficiency is the hand-curated YPRR layer (no free routes source), so the
+    # runtime keeps the hand EPA table for receivers and merges this over it for
+    # QB/RB. epa_raw is keyed by nflverse name; resolve via the same matcher.
+    nfl_to_delta = {v: k for k, v in matched.items()}
+    epa_out = {}
+    qb_rb = {dn for dn, mt in meta.items() if mt[1] in ('QB', 'RB')}
+    for nfl_name, vals in epa_raw.items():
+        dn = nfl_to_delta.get(nfl_name)
+        if not dn:
+            # try normalized match
+            dn = next((d for d, n2 in matched.items() if norm(n2) == norm(nfl_name)), None)
+        if dn and dn in qb_rb and vals:
+            epa_out[dn] = vals
+    print(f'[DELTA] EPA mapped to {len(epa_out)} DELTA QB/RB players')
 
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
@@ -729,6 +844,7 @@ def main():
         'headshots': headshot_out,
         'qb_roles': qb_roles,
         'teams': team_overrides,
+        'epa': epa_out,
     }
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
