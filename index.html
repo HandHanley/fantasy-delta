@@ -3737,9 +3737,13 @@ function applyMarketForSetting(){
     const key=leagueTeams+'|'+qbFmt;
     const slice=MARKET_SETTINGS[key]||MARKET_SETTINGS[MARKET_DEFAULT];
     if(slice){
+      const nidx=fcNormIndex(slice);
       for(const player of RAW){
         if(!player||!player.n) continue;
-        const m=slice[(typeof FC_ALIASES!=='undefined'&&FC_ALIASES[player.n])||player.n]||slice[player.n];
+        // direct → alias → NORMALIZED (punctuation/suffix-insensitive) → anchor
+        let m=slice[player.n]
+          || (typeof FC_ALIASES!=='undefined' && FC_ALIASES[player.n] && slice[FC_ALIASES[player.n]])
+          || slice[nidx[fcNorm(player.n)]];
         player.kMkt = m ? m.value : player.k;   // unmatched → fall back to 12-SF anchor
       }
     }
@@ -4737,35 +4741,41 @@ function renderDeck(p){
       // magnitude qualifier as a trailing parenthetical (clean grammar)
       const gapQual = absPct>=20?', a wide gap':absPct>=10?'':', a slim one';
 
+      // Narrative is driven by the ACTUAL verdict (never re-derived from r, so
+      // it can't contradict the badge). Within each verdict, evidence + rank
+      // relationships vary the sentence.
+      const ranksAgree = Math.abs(rankMv - rankMk) <= 1;   // model & market same tier
+      // strip any leading conjunction — the sentence templates supply their own
+      const stripConj = (s)=> s.replace(/^(but|and)\s+/i,'');
+      const posWhy = stripConj(posBacking || (gl&&gl.hit>=70?`a hit in ${gl.hit}% of starts`:''));
+      const negWhy = stripConj(negBacking || '');
       let read, clr;
       if(verdict==='no data'){
         read=`No NFL production yet — nothing demonstrated to value him on. At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a track record.`;
         clr='#718096';
-      } else if(r>=1.04){
+      } else if(verdict==='strong buy' || verdict==='buy'){
+        clr = verdict==='strong buy' ? '#6ee7b7' : '#9ae6b4';
         if(worthOutrunsProof){
-          // worth riding a projected role he hasn't proven
-          const why = negBacking || (p.proj>a25? `a projection (${(p.proj||0).toFixed(1)} ppg) ahead of his ${a25.toFixed(1)} ppg history` : `an unproven role`);
-          read=`Model has him ${pos}${rankMv}, but the tape says ${pos}${rankDs} — the ${absPct}% premium${gapQual} rides ${why}. A buy only if you trust the situation over the résumé.`;
-          clr='#fcd34d';
+          const why = negWhy || (p.proj>a25? `a projection (${(p.proj||0).toFixed(1)} ppg) ahead of his ${a25.toFixed(1)} history` : `a projected step up in role`);
+          read=`Model has him ${pos}${rankMv} on ${why}, ahead of his proven ${pos}${rankDs}. The ${absPct}% edge${gapQual} is real if the situation holds — a ${verdict} that's a bet on the role, not the résumé.`;
+        } else if(ranksAgree){
+          // consensus elite: market already ranks him here — edge is in the value, not the rank
+          const why = posWhy || `a ${proof} ${pos}${rankDs} profile`;
+          read=`The market already rates him a ${pos}${rankMk}, and DELTA agrees on the talent (${why}) — but the model still sees ${absPct}% more value than the price${gapQual}. A ${verdict} at the top of the board.`;
         } else {
-          const why = posBacking || (gl&&gl.hit>=70?`a hit in ${gl.hit}% of starts`:`a steady ${pos}${rankDs} profile`);
-          read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA sees ${pos}${rankMv} — a ${absPct}% discount${gapQual} to buy before the price catches up.`;
-          clr='#6ee7b7';
+          const why = posWhy || `a steady ${pos}${rankDs} profile`;
+          read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA's model lands at ${pos}${rankMv} — a ${absPct}% discount${gapQual} the market hasn't caught up to. ${verdict==='strong buy'?'A clear buy.':'Worth buying.'}`;
         }
-      } else if(r<=0.96){
-        if(proofOutrunsMkt){
-          const why = posBacking || `a ${pos}${rankDs} profile`;
-          read=`The market sleeps on him at ${pos}${rankMk} despite ${why} (proven ${pos}${rankDs}). DELTA would be buying this discount, not selling.`;
-          clr='#9ae6b4';
-        } else {
-          const why = negBacking || `a thin ${pos}${rankDs} demonstrated profile`;
-          read=`Priced ${pos}${rankMk} on name and situation, ${negBacking?'':'with '}${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the tag${gapQual}. Sell into the market's optimism.`;
-          clr='#fca5a5';
-        }
+      } else if(verdict==='sell' || verdict==='strong sell'){
+        clr = verdict==='strong sell' ? '#fca5a5' : '#fc8181';
+        const why = negWhy || (gl&&gl.miss>=40?`he busts ${gl.miss}% of weeks`:`a thin ${pos}${rankDs} demonstrated profile`);
+        read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
       } else {
-        const tone = proof==='elite'||proof==='strong' ? `a genuine ${pos}${rankDs}` : `a ${pos}${rankDs} profile`;
-        read=`Proof (${pos}${rankDs}), model (${pos}${rankMv}) and price (${pos}${rankMk}) all converge — the market has ${tone} priced right. Fair value, no edge either way.`;
-        clr='#a0aec0';
+        // HOLD — genuine fair value. Acknowledge small lean without contradicting.
+        const dir = r>=1.0 ? `a hair above` : `a hair under`;
+        const tone = (proof==='elite'||proof==='strong') ? `a genuine ${pos}${rankDs}` : `a ${pos}${rankDs} profile`;
+        read=`Proof (${pos}${rankDs}), model (${pos}${rankMv}) and price (${pos}${rankMk}) all land within a tier — the model is ${dir} market, not enough to act on. Fair value: hold ${tone} unless an overpay comes.`;
+        clr='#cbd5e0';
       }
       // visual proof/model/market mini-bars (rank-based, lower rank = longer bar)
       const N=peers.length||1;
@@ -5587,6 +5597,23 @@ function rescalePickTier(year, rnd, tierName, newTierVal) {
 // ── NAME ALIASES ──────────────────────────────────────────────────────────
 // Add entries here whenever you notice a player isn't getting updated.
 // Format: 'FantasyCalc name': 'DELTA name'
+// Normalize a player name for fuzzy FC↔DELTA matching: lowercase, drop
+// punctuation (periods/apostrophes/hyphens) and common suffixes. This catches
+// the whole class of stale-value bugs where FC and DELTA disagree only on
+// punctuation — e.g. FC 'Marvin Harrison Jr' vs DELTA 'Marvin Harrison Jr.',
+// FC "Tre' Harris" vs DELTA 'Tre Harris', FC 'Ja'Tavion' vs DELTA 'JaTavion'.
+function fcNorm(s){
+  return String(s||'').toLowerCase()
+    .replace(/[.''\u2019\-]/g,'')
+    .replace(/\b(jr|sr|ii|iii|iv)\b/g,'')
+    .replace(/\s+/g,' ').trim();
+}
+// Build a normalized index of an FC slice once: {normalizedName: originalKey}.
+function fcNormIndex(slice){
+  const idx={};
+  for(const k in slice){ const n=fcNorm(k); if(!(n in idx)) idx[n]=k; }
+  return idx;
+}
 const FC_ALIASES = {
   // FC name → DELTA name (when FC uses different format)
   'CeeDee Lamb':           'CeeDee Lamb',
@@ -5710,7 +5737,18 @@ async function loadLiveMarketValues() {
       'Early 3rd Round Pick':{rnd:3,tier:'Early'},'Mid 3rd Round Pick':{rnd:3,tier:'Mid'},
       'Late 3rd Round Pick':{rnd:3,tier:'Late'},
     };
-    const valOf=(map,name)=> map[FC_ALIASES[name]||name] || map[name] || null;
+    // direct → alias → NORMALIZED (punctuation/suffix-insensitive). The
+    // normalized fallback fixes stale anchors for names FC spells differently
+    // (MHJ 'Marvin Harrison Jr' vs DELTA 'Marvin Harrison Jr.', etc.).
+    const _nidxCache = new WeakMap();
+    const valOf=(map,name)=>{
+      let v = map[name] || (FC_ALIASES[name] && map[FC_ALIASES[name]]);
+      if(v) return v;
+      let idx=_nidxCache.get(map);
+      if(!idx){ idx=fcNormIndex(map); _nidxCache.set(map,idx); }
+      const k=idx[fcNorm(name)];
+      return k? map[k] : null;
+    };
 
     let anchorSlice;
     if (data.settings) {
@@ -5991,7 +6029,7 @@ function slpStatus(msg,isErr){
 // either curly/straight form), collapse spaces, strip Jr/Sr/II/III/IV.
 function slpNorm(n){
   return String(n||'').toLowerCase()
-    .replace(/[.'\u2019`\-]/g,'')
+    .replace(/[.'\u2019\-]/g,'')
     .replace(/\s+/g,' ').trim()
     .replace(/\s+(jr|sr|ii|iii|iv)$/,'');
 }
