@@ -988,6 +988,11 @@ def main():
     qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
     # Team overrides for the runtime: only DELTA players the roster feed
     # resolves; RAW's baked team stays the fallback for everyone else.
+    # Normalize feed abbreviations to DELTA's convention so we don't churn the
+    # team field on pure abbreviation differences (feed JAX/LA/WSH/ARZ vs DELTA
+    # JAC/LAR/WAS/ARI) — the runtime AL map aliases these anyway, but writing the
+    # canonical form keeps the data clean and the "moved" log honest.
+    TEAM_CANON = {'JAX': 'JAC', 'LA': 'LAR', 'WSH': 'WAS', 'ARZ': 'ARI'}
     team_overrides = {}
     if roster_teams:
         for dn, nfl_name in matched.items():
@@ -996,26 +1001,43 @@ def main():
                 continue
             t = roster_teams.get((nfl_name, pos))   # name AND position must agree
             if t:
-                team_overrides[dn] = t
+                team_overrides[dn] = TEAM_CANON.get(t, t)
         moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
-        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} differ from RAW: {moved[:20]}')
+        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} genuine moves: {moved[:20]}')
     rz_data, epa_raw = fetch_pbp(SEASONS)
     players, headshot_out, rec_pg, ts_delta = build_output(agg, matched, rz_data, headshots)
 
     # Map computed QB/RB EPA onto DELTA names. Only QB/RB are emitted — WR/TE
     # efficiency is the hand-curated YPRR layer (no free routes source), so the
     # runtime keeps the hand EPA table for receivers and merges this over it for
-    # QB/RB. epa_raw is keyed by nflverse name; resolve via the same matcher.
-    nfl_to_delta = {v: k for k, v in matched.items()}
+    # QB/RB. epa_raw is keyed by nflverse PBP names, which are ABBREVIATED
+    # (J.Allen, B.Robinson) — NOT the full display names in `matched`. So we
+    # match each DELTA QB/RB by building its abbreviated form (first initial +
+    # last name) and looking it up in epa_raw, same approach as _rz_lookup.
     epa_out = {}
-    qb_rb = {dn for dn, mt in meta.items() if mt[1] in ('QB', 'RB')}
+    qb_rb = [dn for dn, mt in meta.items() if mt[1] in ('QB', 'RB')]
+    # normalized index of abbreviated PBP names → value
+    epa_norm = {}
     for nfl_name, vals in epa_raw.items():
-        dn = nfl_to_delta.get(nfl_name)
-        if not dn:
-            # try normalized match
-            dn = next((d for d, n2 in matched.items() if norm(n2) == norm(nfl_name)), None)
-        if dn and dn in qb_rb and vals:
-            epa_out[dn] = vals
+        epa_norm[norm(nfl_name)] = vals
+    def _abbr(full):
+        parts = full.replace("'", "").split()
+        if len(parts) >= 2:
+            return parts[0][0] + "." + " ".join(parts[1:])
+        return full
+    for dn in qb_rb:
+        nfl_full = matched.get(dn)
+        cand_names = []
+        if nfl_full:
+            cand_names += [nfl_full, _abbr(nfl_full)]
+        cand_names += [dn, _abbr(dn)]
+        hit = None
+        for cn in cand_names:
+            if norm(cn) in epa_norm:
+                hit = epa_norm[norm(cn)]
+                break
+        if hit:
+            epa_out[dn] = hit
     print(f'[DELTA] EPA mapped to {len(epa_out)} DELTA QB/RB players')
 
     draft_map, college_map = fetch_draft_and_college(delta_names, meta)
