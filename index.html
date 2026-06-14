@@ -5726,6 +5726,53 @@ async function loadPlayerStats() {
       }
       if (epaUpd) console.log('[DELTA] ' + epaUpd + ' QB/RB EPA entries updated from pipeline');
     }
+    // Draft capital + college: the pipeline pulls these from nflverse (draft
+    // picks dataset + player bios) and emits data.draft {name:{y,r,p}} and
+    // data.college {name:'College'}. Merged OVER the hand DRAFT_PICKS/COLLEGES
+    // tables so they auto-populate the expanded universe and stop going stale.
+    // Hand tables remain the fallback for anyone the feed doesn't resolve
+    // (incoming rookies before the draft dataset updates, name-match misses).
+    if (data.draft && typeof DRAFT_PICKS !== 'undefined') {
+      let n = 0;
+      for (const name in data.draft) {
+        const v = data.draft[name];
+        if (v && v.p != null) { DRAFT_PICKS[name] = { y: v.y, r: v.r, p: v.p }; n++; }
+      }
+      if (n) console.log('[DELTA] ' + n + ' draft-capital entries from pipeline');
+    }
+    if (data.college && typeof COLLEGES !== 'undefined') {
+      let n = 0;
+      for (const name in data.college) {
+        if (data.college[name]) { COLLEGES[name] = data.college[name]; n++; }
+      }
+      if (n) console.log('[DELTA] ' + n + ' college entries from pipeline');
+    }
+    // RB snap share, receptions/game, target-share delta: all pipeline-derived
+    // (snap share from nflverse snap counts; rec/g and ts-delta computed from
+    // per-season stats). Merged OVER the hand RB_SNAP / REC_PG / TS_DELTA tables
+    // so they auto-populate the expanded universe. Hand tables stay as fallback.
+    if (data.rb_snap && typeof RB_SNAP !== 'undefined') {
+      let n = 0;
+      for (const name in data.rb_snap) {
+        const v = data.rb_snap[name];
+        if (Array.isArray(v) && v.length) { RB_SNAP[name] = v; n++; }
+      }
+      if (n) console.log('[DELTA] ' + n + ' RB snap-share entries from pipeline');
+    }
+    if (data.rec_pg && typeof REC_PG !== 'undefined') {
+      let n = 0;
+      for (const name in data.rec_pg) {
+        if (data.rec_pg[name] != null) { REC_PG[name] = data.rec_pg[name]; n++; }
+      }
+      if (n) console.log('[DELTA] ' + n + ' rec/g entries from pipeline');
+    }
+    if (data.ts_delta && typeof TS_DELTA !== 'undefined') {
+      let n = 0;
+      for (const name in data.ts_delta) {
+        if (data.ts_delta[name] != null) { TS_DELTA[name] = data.ts_delta[name]; n++; }
+      }
+      if (n) console.log('[DELTA] ' + n + ' target-share-delta entries from pipeline');
+    }
     let updated = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
