@@ -3648,11 +3648,38 @@ function vTag(p){
   // TEs use tighter thresholds — market value already prices in TE scarcity
   const sb=pos==='TE'?1.10:1.15, b=pos==='TE'?1.00:1.06,
         h=pos==='TE'?0.88:0.94, s=pos==='TE'?0.76:0.82;
-  if(r>=sb)return'<span class="badge bs">strong buy</span>';
+  // ── Thin-sample conviction dampener (June 2026) ──
+  // DELTA only gets loud when the facts back it up. A "strong" tag on a tiny
+  // sample (a hot 7-game rookie run) overclaims — those stretches fizzle and the
+  // dynasty market overreacts. Below 12 CAREER games, conviction is capped one
+  // level: strong buy → buy, strong sell → sell. The player keeps a directional
+  // tag (a short elite stretch is still signal, à la Skattebo) — he just can't
+  // carry max conviction until he's shown it across enough games.
+  //
+  // CAREER games come from PLAYER_STATS (real per-season game counts), NOT the
+  // RAW record — RAW only carries g25, so g25+g24+g23 wrongly counted every
+  // player as if their career started in 2025 (e.g. veteran James Conner read as
+  // 3 career games and got dampened; he has 32). Falls back to RAW totals only
+  // if stats are unavailable.
+  const THIN_GAMES = 12;
+  let careerG = 0;
+  const _st = (typeof PLAYER_STATS !== 'undefined') ? PLAYER_STATS[p.n] : null;
+  if(_st){
+    careerG = ((_st['2023']&&_st['2023'].games)||0)
+            + ((_st['2024']&&_st['2024'].games)||0)
+            + ((_st['2025']&&_st['2025'].games)||0);
+  }
+  if(!careerG) careerG = totalG;   // fallback: RAW totals (rare — stats missing)
+  const thin = careerG < THIN_GAMES;
+  if(r>=sb) return thin
+    ? '<span class="badge bi" title="Strong signal capped — only '+careerG+' career games (thin sample)">buy</span>'
+    : '<span class="badge bs">strong buy</span>';
   if(r>=b) return'<span class="badge bi">buy</span>';
   if(r>=h) return'<span class="badge bn">hold</span>';
   if(r>=s) return'<span class="badge bw">sell</span>';
-  return'<span class="badge bd">strong sell</span>';
+  return thin
+    ? '<span class="badge bw" title="Strong signal capped — only '+careerG+' career games (thin sample)">sell</span>'
+    : '<span class="badge bd">strong sell</span>';
 }
 
 // ── FEATURE 5: Scoring Format Adjustment ─────────────────────
@@ -4765,7 +4792,8 @@ function renderDeck(p){
         } else if(ranksAgree){
           // consensus elite: market already ranks him here — edge is in the value, not the rank
           const why = posWhy || `a ${proof} ${pos}${rankDs} profile`;
-          read=`The market already rates him a ${pos}${rankMk}, and DELTA agrees on the talent (${why}) — but the model still sees ${absPct}% more value than the price${gapQual}. A ${verdict} at the top of the board.`;
+          const tierTail = rankMv<=8 ? ' at the top of the board' : (absPct>=10 ? ' — a quiet edge' : '');
+          read=`The market already rates him a ${pos}${rankMk}, and DELTA agrees on the talent (${why}) — but the model still sees ${absPct}% more value than the price${gapQual}. A ${verdict}${tierTail}.`;
         } else {
           const why = posWhy || `a steady ${pos}${rankDs} profile`;
           read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA's model lands at ${pos}${rankMv} — a ${absPct}% discount${gapQual} the market hasn't caught up to. ${verdict==='strong buy'?'A clear buy.':'Worth buying.'}`;
@@ -5634,6 +5662,7 @@ const FC_ALIASES = {
   'Marvin Harrison':       'Marvin Harrison Jr.',
   'Michael Penix':         'Michael Penix Jr.',
   'Harold Fannin':         'Harold Fannin Jr.',
+  'Chigoziem Okonkwo':     'Chig Okonkwo',
   'Brian Thomas':          'Brian Thomas Jr.',
   // Initials without dots
   'CJ Stroud':             'C.J. Stroud',
