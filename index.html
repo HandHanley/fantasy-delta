@@ -2402,12 +2402,21 @@ function calcProj(pl){
     const e2=getEff(pl);
     const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
     const ciV2=ci(e2.c);
-    return{...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
+    const rookieResult={...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
       gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:1.0,
       ktcEff:e2.ktc,notes:'',hasOv:true,
       epaSc:1.0,epaFl:false,epaFr:null,epaTr:'flat',
       role:0,roleLabel:'—',sys:50,oppSc:null};
+    // Projected rookies (drafted, ppg25 set as a forward projection, no NFL
+    // games yet) still get a DELTA Score — every player on the platform has one.
+    // calcDynastyScore handles g25:0 correctly: it scores age + the projected
+    // production + draft-capital-driven opportunity + contract, capped at the
+    // rookie ceiling (DS_ROOKIE_CAP). Without this, projected rookies fell
+    // through scoreless while rookies who logged any 2025 snap got a score —
+    // an inconsistency (e.g. #33 pick Stribling blank, later picks scored).
+    rookieResult.dsScore=calcDynastyScore(rookieResult);
+    return rookieResult;
   }
 
   // ── RULE 2: VOLUME-ADJUSTED YPRR ──────────────────────────────
