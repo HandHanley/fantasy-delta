@@ -781,7 +781,7 @@ def fetch_draft_and_college(delta_names, meta):
       draft_map[delta_name]   = {'y': year, 'r': round, 'p': overall_pick}
       college_map[delta_name] = 'College Name'
     Returns ({}, {}) on failure — runtime falls back to the baked tables."""
-    draft_map, college_map = {}, {}
+    draft_map, college_map, age_map = {}, {}, {}
 
     # Lightweight matcher: DELTA name -> key in a raw{nflverse_name: value} dict.
     # Reuses norm() (period/suffix/case-insensitive). Exact-normalized match
@@ -837,22 +837,44 @@ def fetch_draft_and_college(delta_names, meta):
         cols = set(pdf.columns)
         name_col = next((c for c in ['display_name','full_name','player_name','football_name'] if c in cols), None)
         col_col  = next((c for c in ['college','college_name','college_conference'] if c in cols and 'conference' not in c), None)
+        # age (years, 1-decimal) from birth_date if present — same dataset, one pass
+        bd_col = next((c for c in ['birth_date','birthdate','birth_year'] if c in cols), None)
         if name_col and col_col:
             raw = {}
+            raw_age = {}
+            from datetime import date
+            today = date.today()
             for _, row in pdf.iterrows():
-                nm = row.get(name_col); cg = row.get(col_col)
-                if nm and cg and str(cg).strip() and str(cg).lower() != 'none':
+                nm = row.get(name_col)
+                if not nm:
+                    continue
+                cg = row.get(col_col)
+                if cg and str(cg).strip() and str(cg).lower() != 'none':
                     raw[nm] = str(cg).strip()
+                if bd_col:
+                    bd = row.get(bd_col)
+                    if bd is not None and str(bd).strip() and str(bd).lower() != 'none':
+                        try:
+                            s = str(bd)[:10]
+                            y, m, d = int(s[0:4]), int(s[5:7]), int(s[8:10])
+                            age_yrs = (today - date(y, m, d)).days / 365.25
+                            if 18 <= age_yrs <= 50:
+                                raw_age[nm] = round(age_yrs, 1)
+                        except (ValueError, TypeError):
+                            pass
             matched = _match(raw, delta_names)
             for dn, nfl_name in matched.items():
                 college_map[dn] = raw[nfl_name]
-            print(f'[DELTA] college: {len(college_map)} DELTA players matched')
+            age_matched = _match(raw_age, delta_names)
+            for dn, nfl_name in age_matched.items():
+                age_map[dn] = raw_age[nfl_name]
+            print(f'[DELTA] college: {len(college_map)} matched · age: {len(age_map)} matched')
         else:
             print(f'[DELTA] college: missing expected columns — skipping')
     except Exception as e:
         print(f'[DELTA] college fetch failed: {e}')
 
-    return draft_map, college_map
+    return draft_map, college_map, age_map
 
 
 def fetch_contracts(delta_names):
@@ -1040,7 +1062,7 @@ def main():
             epa_out[dn] = hit
     print(f'[DELTA] EPA mapped to {len(epa_out)} DELTA QB/RB players')
 
-    draft_map, college_map = fetch_draft_and_college(delta_names, meta)
+    draft_map, college_map, age_map = fetch_draft_and_college(delta_names, meta)
     rb_snap_map = fetch_rb_snap_share(delta_names, meta)
 
     output = {
@@ -1054,6 +1076,7 @@ def main():
         'epa': epa_out,
         'draft': draft_map,
         'college': college_map,
+        'age': age_map,
         'rb_snap': rb_snap_map,
         'rec_pg': rec_pg,
         'ts_delta': ts_delta,
