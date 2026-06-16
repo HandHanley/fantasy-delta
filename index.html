@@ -3540,14 +3540,19 @@ function scarcity(pos,teams,qb){
 // Reflects what a player HAS demonstrated, not what their situation implies.
 // ============================================================
 function dsAge(age, pos) {
-  // Positional value curve. Full marks through PRIME; penalty only at decline edge.
-  // Max 25 pts.
+  // Positional value curve — calibrated to a 2-3 YEAR dynasty window (the
+  // horizon most managers actually operate on, and roughly where the market
+  // prices). Smooth one-step-per-year decline rather than cliffs: a player is
+  // penalized in proportion to how much of the next ~3 productive years they're
+  // likely to retain, NOT their theoretical decline to retirement. Onset of
+  // decline is position-specific (RB earliest ~26, WR ~28, TE ~29, QB latest
+  // ~33). Max 25 pts.
   const a = Math.floor(age);
   const curves = {
-    QB:[[21,30,25],[31,33,22],[34,35,16],[36,37,9],[38,99,3]],
-    WR:[[20,26,25],[27,28,21],[29,30,15],[31,32,8],[33,99,3]],
-    RB:[[20,24,25],[25,26,20],[27,28,12],[29,30,6],[31,32,5],[33,34,3],[35,99,2]],
-    TE:[[20,27,25],[28,30,20],[31,32,13],[33,34,7],[35,99,3]],
+    QB:[[21,32,25],[33,33,23],[34,34,20],[35,35,16],[36,36,12],[37,37,8],[38,38,5],[39,99,3]],
+    WR:[[20,26,25],[27,27,23],[28,28,21],[29,29,18],[30,30,14],[31,31,10],[32,32,7],[33,33,5],[34,99,3]],
+    RB:[[20,25,25],[26,26,23],[27,27,21],[28,28,18],[29,29,15],[30,30,11],[31,31,8],[32,32,6],[33,33,4],[34,99,2]],
+    TE:[[20,27,25],[28,28,23],[29,29,20],[30,30,17],[31,31,13],[32,32,10],[33,33,7],[34,34,4],[35,99,3]],
   };
   for (const [lo,hi,pts] of (curves[pos]||curves.WR)) {
     if (a>=lo && a<=hi) return pts;
@@ -5879,12 +5884,25 @@ async function loadPlayerStats() {
     // self-correct to real age on the first pipeline run (age feeds the DELTA
     // Score age axis, so a wrong seed would distort the score until corrected).
     if (data.age) {
-      let n = 0;
+      let n = 0, rejected = 0;
       for (const player of RAW) {
         const a = data.age[player.n];
-        if (a != null && a > 0) { player.a = a; n++; }
+        if (a == null || a <= 0) continue;
+        // Collision guard: load_players matches on name, and a few real players
+        // share a normalized name (e.g. WR D.J. Moore vs an older DB D.J. Moore).
+        // A wrong match shows up as a wild age jump from the baked value. Accept
+        // the pipeline age only when it's close to baked (normal correction) OR
+        // baked age is missing. >6yr divergence = almost certainly a bad match;
+        // keep the hand-baked age instead.
+        const baked = player.a;
+        if (baked != null && baked > 0 && Math.abs(a - baked) > 6) {
+          rejected++;
+          continue;
+        }
+        player.a = a; n++;
       }
       if (n) console.log('[DELTA] ' + n + ' ages updated from pipeline');
+      if (rejected) console.log('[DELTA] ' + rejected + ' pipeline ages rejected (collision guard)');
     }
     // RB snap share, receptions/game, target-share delta: all pipeline-derived
     // (snap share from nflverse snap counts; rec/g and ts-delta computed from
