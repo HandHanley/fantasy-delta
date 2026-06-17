@@ -57,18 +57,21 @@ def match_names(nfl_names, delta_names, no_data=None):
     ALIASES  = {'Chigoziem Okonkwo': 'Chig Okonkwo'}
     matched, not_found = {}, []
     for name in delta_names:
-        if name in no_data:
-            continue
         key = norm(ALIASES.get(name, name))
         if key in nfl_norm:
             matched[name] = nfl_norm[key]; continue
+        # Seeded-zero players (g25:0 from expansion): attempt exact match above
+        # so veterans get their logs, but skip the risky partial fallback so a
+        # genuine no-NFL rookie can't partial-match a similarly named veteran.
+        if name in no_data:
+            continue
         words, found = key.split(), None
         for length in range(len(words), 1, -1):
             cands = [v for k, v in nfl_norm.items() if k.startswith(' '.join(words[:length]))]
             if len(cands) == 1: found = cands[0]; break
         if found: matched[name] = found
         else: not_found.append(name)
-    print(f"[DELTA] Matched {len(matched)}/{len(delta_names)-len(no_data)} eligible; unmatched: {not_found[:10]}")
+    print(f"[DELTA] Matched {len(matched)}/{len(delta_names)} players; unmatched: {not_found[:10]}")
     return matched
 
 # ── column detection (nflverse names drift across versions) ──

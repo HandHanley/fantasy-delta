@@ -414,16 +414,21 @@ def match_names(agg, delta_names, no_data=None):
     not_found = []
 
     for name in delta_names:
-        # Skip players with no 2025 NFL data — rookies, long-term IR, etc.
-        if name in no_data:
-            continue
         lookup = ALIASES.get(name, name)
         key    = norm(lookup)
 
         if key in nfl_norm:
             matched[name] = nfl_norm[key]
+        elif name in no_data:
+            # Seeded-zero player (g25:0 placeholder from the universe expansion).
+            # We STILL attempt an exact normalized match above — that's how
+            # veterans like Najee Harris / Nick Chubb / Tank Dell get their real
+            # stats. But we do NOT use the risky partial-match fallback for them,
+            # because a genuine no-NFL rookie could partial-match a similarly
+            # named veteran. No exact hit → genuinely no data, leave unmatched.
+            pass
         else:
-            # Partial match fallback
+            # Partial match fallback (core roster players only)
             words  = key.split()
             found  = None
             for length in range(len(words), 1, -1):
@@ -437,9 +442,8 @@ def match_names(agg, delta_names, no_data=None):
             else:
                 not_found.append(name)
 
-    eligible = len(delta_names) - len(no_data)
-    print(f"[DELTA] Matched: {len(matched)}/{eligible} eligible players "
-          f"({len(no_data)} skipped — no 2025 NFL data)")
+    print(f"[DELTA] Matched: {len(matched)}/{len(delta_names)} players "
+          f"({len(delta_names) - len(matched)} unmatched — genuine no-NFL-data + name misses)")
     if not_found:
         print(f"[DELTA] Unmatched veterans (investigate): {not_found}")
     return matched
