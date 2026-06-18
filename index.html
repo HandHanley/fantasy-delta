@@ -3569,13 +3569,32 @@ function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
   // No NFL data (rookie) — placeholder scales with draft capital (premium picks get benefit of doubt)
   if (ppg25===0 && ppg24===0 && ppg23===0) return p ? dsRookieProd(p) : 12;
 
-  // Recency-weighted production: most recent completed season weighted most heavily
+  // Recency-weighted production: most recent completed season weighted most heavily.
+  // FULL-SEASON THRESHOLD = 12 games. A player who appeared in <12 of 17 games
+  // missed roughly a third+ of the year — an injury-disrupted sample whose lower
+  // per-game average partly reflects playing hurt. Weighting that partial year at
+  // full recency (60%) wrongly buries proven stars off one injury season (Burrow
+  // at 8g, Mike Evans at 8g were landing just over the old 8-game line). For
+  // 8-11 games we lean on the prior FULL season instead; <8 is too thin to trust.
   let weighted, wSum;
-  if (g25 >= 8) {
+  if (g25 >= 12) {
     weighted = (ppg25||0)*0.60 + (ppg24||0)*0.30 + (ppg23||0)*0.10;
     wSum = 0.60 + (ppg24>0?0.30:0) + (ppg23>0?0.10:0);
+  } else if (g25 === 0 && ppg25 === 0 && ppg24 > 0) {
+    // AVAILABILITY PENALTY — missed the ENTIRE most recent season. Unlike the
+    // partial-injury branch below, we do NOT erase the missed year from the
+    // average: it counts as a real ZERO holding ~40% weight. Being available is
+    // itself part of a dynasty asset's value, and a player who produced nothing
+    // for a full season (major injury, role loss, or no team) should be dinged
+    // for it — many never return to form. The prior body of work still carries
+    // the majority weight, so a proven player isn't zeroed out, just honestly
+    // discounted (Tank Dell, Joe Mixon, Aiyuk, Watson). If the market believes
+    // in the bounce-back, that shows up as a buy in the DELTA-vs-market gap, not
+    // by the Score pretending the missed season never happened.
+    weighted = 0*0.40 + (ppg24||0)*0.42 + (ppg23||0)*0.18;
+    wSum = 0.40 + 0.42 + (ppg23>0?0.18:0);
   } else if (ppg24 > 0) {
-    // Injured/partial recent season — lean on prior full season
+    // Injured/partial recent season (1-11 games) — lean on prior full season
     weighted = (ppg24||0)*0.65 + (ppg23||0)*0.25 + (ppg25||0)*0.10;
     wSum = 0.65 + (ppg23>0?0.25:0) + (ppg25>0?0.10:0);
   } else {
@@ -3654,7 +3673,17 @@ function dsOpportunity(p) {
   if (pos === 'QB') {
     const s25 = PLAYER_STATS[p.n]?.['2025'];
     const rushAtt = s25?.rush_att || 0;
-    const rushPts = rushAtt >= 120 ? 13 : rushAtt >= 90 ? 10 : rushAtt >= 50 ? 6 : 3;
+    const rushG = s25?.games || 0;
+    // Rushing opportunity bonus keyed to rush attempts PER GAME, not season total.
+    // Total-attempts over-credited mere scramblers: Dak (53) and Baker (55) cleared
+    // the old 50-att line and got the same bonus as genuine rushing QBs, despite
+    // running ~3/g vs 7-8/g for Allen/Daniels. Per-game rate isolates "running is
+    // part of his game" from "ran a few bootlegs." Tiers: 7+/g elite dual-threat
+    // (Allen, Daniels), 5-7/g real rushing QB (Hurts, Maye, Dart, Lamar, Herbert),
+    // 4-5/g moderate mobility (Mahomes, Caleb), <4/g pocket passer/scrambler (no
+    // bonus beyond the base — their rushing is incidental and already in their PPG).
+    const rushPG = rushG > 0 ? rushAtt / rushG : 0;
+    const rushPts = rushPG >= 7 ? 13 : rushPG >= 5 ? 9 : rushPG >= 4 ? 6 : 3;
     // QB ROLE FLAG (pipeline-emitted, conservative): the flat 18 baseline treats
     // every QB with NFL data as a starter — backups (Fields-behind-Mahomes) were
     // scoring 60s-70s. A flagged backup's seat drops to 9 (floor, not cliff:
