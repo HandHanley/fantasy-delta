@@ -340,7 +340,7 @@ tr:hover td{background:#1a202c}
       <option value="ALL">All</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="sort-epa" onchange="renderEPA()">
+    <select id="sort-epa" onchange="setSortEPA(this.value)">
       <option value="epaSc">EPA score</option><option value="epaTr">Trend</option>
       <option value="ef">Efficiency</option><option value="ktc">Mkt Val</option>
     </select>
@@ -349,9 +349,9 @@ tr:hover td{background:#1a202c}
   <div class="info-box">RB floor: ≥140 rushes + YAC/carry ≥3.0 → EPA treated as neutral. WR/TE: ≥80 targets → floor 0.92. QB: ≥300 plays → floor 0.88.</div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
-      <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
-      <th>EPA'25</th><th>EPA'24</th><th>EPA'23</th><th>EPA'22</th>
-      <th>Raw</th><th>Applied</th><th>Floor</th><th>Trend</th><th>Eff</th><th>Mkt Val</th><th>Tag</th>
+      <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" style="cursor:pointer">Age</th><th>Team</th>
+      <th onclick="setSortEPA('e25')" style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" style="cursor:pointer">EPA'22</th>
+      <th>Raw</th><th onclick="setSortEPA('epaSc')" style="cursor:pointer">Applied</th><th>Floor</th><th onclick="setSortEPA('epaTr')" style="cursor:pointer">Trend</th><th onclick="setSortEPA('ef')" style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
     </tr></thead>
     <tbody id="epa-body"></tbody>
   </table></div>
@@ -377,7 +377,7 @@ tr:hover td{background:#1a202c}
       <option value="walkyr">⚠ Walk Year</option>
       <option value="expiring">🔴 Expiring Soon</option>
     </select>
-    <select id="sort-contracts" onchange="renderContracts()">
+    <select id="sort-contracts" onchange="setSortContracts(this.value)">
       <option value="aav">Sort: AAV ↓</option>
       <option value="end">Sort: Yrs Left ↑</option>
       <option value="total">Sort: Total Value ↓</option>
@@ -386,8 +386,8 @@ tr:hover td{background:#1a202c}
   </div>
   <table>
     <thead><tr>
-      <th>Player</th><th>Pos</th><th>Team</th><th>Age</th>
-      <th>AAV</th><th>Total</th><th>Ends</th><th>Yrs Left</th>
+      <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" style="cursor:pointer">Age</th>
+      <th onclick="setSortContracts('aav')" style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" style="cursor:pointer">Yrs Left</th>
       <th>Status</th><th>Dynasty Signal</th>
     </tr></thead>
     <tbody id="contracts-body"></tbody>
@@ -3765,6 +3765,10 @@ const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
 let sortK='ktc',sortDir=-1;
 function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
 function setSortRDropdown(k){sortK=k;sortDir=-1;renderRankings();}
+let sortKContracts='aav',sortDirContracts=1;
+function setSortContracts(k){if(sortKContracts===k)sortDirContracts*=-1;else{sortKContracts=k;sortDirContracts=1;}renderContracts();}
+let sortKEPA='epaSc',sortDirEPA=1;
+function setSortEPA(k){if(sortKEPA===k)sortDirEPA*=-1;else{sortKEPA=k;sortDirEPA=1;}renderEPA();}
 function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
 function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
 function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
@@ -4046,13 +4050,20 @@ function renderProj(){
 
 function renderEPA(){
   const pos=document.getElementById('pos-epa').value;
-  const sort=document.getElementById('sort-epa').value;
   const q=(document.getElementById('s-epa').value||'').toLowerCase();
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q)&&(p.epaSc!==1.0||p.epaFl));
-  if(sort==='epaTr')data.sort((a,b)=>({up:2,flat:1,down:0}[b.epaTr]||0)-({up:2,flat:1,down:0}[a.epaTr]||0));
-  else if(sort==='ef')data.sort((a,b)=>(b.ef25||0)-(a.ef25||0));
-  else if(sort==='ktc')data.sort((a,b)=>b.ktcEff-a.ktcEff);
-  else data.sort((a,b)=>b.epaSc-a.epaSc);
+  const d=sortDirEPA;
+  const tV=t=>({up:2,flat:1,down:0}[t]||0);
+  if(sortKEPA==='name') data.sort((a,b)=>d*a.n.localeCompare(b.n));
+  else if(sortKEPA==='age') data.sort((a,b)=>d*(a.a-b.a));
+  else if(sortKEPA==='e25') data.sort((a,b)=>d*((b.e25||0)-(a.e25||0)));
+  else if(sortKEPA==='e24') data.sort((a,b)=>d*((b.e24||0)-(a.e24||0)));
+  else if(sortKEPA==='e23') data.sort((a,b)=>d*((b.e23||0)-(a.e23||0)));
+  else if(sortKEPA==='e22') data.sort((a,b)=>d*((b.e22||0)-(a.e22||0)));
+  else if(sortKEPA==='epaTr') data.sort((a,b)=>d*(tV(b.epaTr)-tV(a.epaTr)));
+  else if(sortKEPA==='ef') data.sort((a,b)=>d*((b.ef25||b.ef24||0)-(a.ef25||a.ef24||0)));
+  else if(sortKEPA==='ktc') data.sort((a,b)=>d*(b.ktcEff-a.ktcEff));
+  else data.sort((a,b)=>d*(b.epaSc-a.epaSc)); // default: epaSc descending
   const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
   const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
   document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
@@ -4293,7 +4304,7 @@ function recalcTrade(){
       const mv=mvAsset(p);const e=p.ip?null:getEff(p);
       return`<div class="added">
         <div style="flex:1;min-width:0">
-          <div class="added-name">${p.n}</div>
+          <div class="added-name">${p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`}</div>
           <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}<span style="color:#a0aec0">${getAdjProj(p).toFixed(1)} PPG</span>`}</div>
         </div>
         <div class="added-vals">
@@ -4551,7 +4562,6 @@ function renderContracts(){
   const q=(document.getElementById('s-contracts').value||'').toLowerCase();
   const pos=document.getElementById('pos-contracts').value;
   const statusF=document.getElementById('status-contracts').value;
-  const sort=document.getElementById('sort-contracts').value;
 
   let data=CONTRACTS.filter(c=>{
     // Only show players in COMP — filters out depth/irrelevant players
@@ -4567,10 +4577,14 @@ function renderContracts(){
     return true;
   });
 
-  if(sort==='aav')data.sort((a,b)=>b.aav-a.aav);
-  else if(sort==='end')data.sort((a,b)=>a.end-b.end);
-  else if(sort==='total')data.sort((a,b)=>b.total-a.total);
-  else data.sort((a,b)=>a.n.localeCompare(b.n));
+  const d=sortDirContracts;
+  const cAge=c=>{const pl=COMP.find(x=>x.n===c.n);return pl&&pl.a<90?pl.a:99;};
+  if(sortKContracts==='pos') data.sort((a,b)=>d*a.pos.localeCompare(b.pos));
+  else if(sortKContracts==='age') data.sort((a,b)=>d*(cAge(a)-cAge(b)));
+  else if(sortKContracts==='total') data.sort((a,b)=>d*(b.total-a.total));
+  else if(sortKContracts==='end'||sortKContracts==='yrs') data.sort((a,b)=>d*(a.end-b.end));
+  else if(sortKContracts==='name') data.sort((a,b)=>d*a.n.localeCompare(b.n));
+  else data.sort((a,b)=>d*(b.aav-a.aav)); // default: aav descending
 
   const fmt=n=>n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+n.toLocaleString();
   const yrsColor=yrs=>yrs<=1?'#fca5a5':yrs<=2?'#fcd34d':yrs>=4?'#6ee7b7':'#7dd3fc';
@@ -4975,7 +4989,7 @@ function renderDeck(p){
       if(gl){
         if(gl.elite>=30) ev.push(`an elite game in ${gl.elite}% of starts`);
         else if(gl.elite>=18) ev.push(`league-winning weeks ${gl.elite}% of the time`);
-        if(gl.miss>=45) ev.push(`but he busts ${gl.miss}% of weeks`);
+        if(gl.miss>=45) ev.push(rankDs<=22?`but he busts ${gl.miss}% of weeks`:`a ${gl.miss}% weekly floor rate`);
         else if(gl.miss<=18 && gl.hit>=75) ev.push(`a hit in ${gl.hit}% of starts — rock-steady`);
       }
       if(arc>=3) ev.push(`production climbing (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
@@ -5023,7 +5037,8 @@ function renderDeck(p){
         }
       } else if(verdict==='sell' || verdict==='strong sell'){
         clr = verdict==='strong sell' ? '#fca5a5' : '#fc8181';
-        const why = negWhy || (gl&&gl.miss>=40?`he busts ${gl.miss}% of weeks`:`a thin ${pos}${rankDs} demonstrated profile`);
+        const bustNote=gl&&gl.miss>=40?(rankMk<=18?`he busts ${gl.miss}% of weeks for a ${pos}${rankMk} price`:''):'';
+        const why = negWhy || bustNote || (gl&&gl.miss>=40?`a ${gl.miss}% bust rate consistent with his ${pos}${rankDs} tier`:`a thin ${pos}${rankDs} demonstrated profile`);
         read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
       } else {
         // HOLD — genuine fair value. Acknowledge small lean without contradicting.
