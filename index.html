@@ -2196,9 +2196,9 @@ const PICKS=[
   {n:'2026 2.10',k:2894,ip:true},
   {n:'2026 2.11',k:2780,ip:true},
   {n:'2026 2.12',k:2667,ip:true},
-  {n:'2026 Early 2st Round Pick',k:3355,ip:true,hidden:true},
-  {n:'2026 Mid 2st Round Pick',k:3042,ip:true,hidden:true},
-  {n:'2026 Late 2st Round Pick',k:2837,ip:true,hidden:true},
+  {n:'2026 Early 2nd Round Pick',k:3355,ip:true,hidden:true},
+  {n:'2026 Mid 2nd Round Pick',k:3042,ip:true,hidden:true},
+  {n:'2026 Late 2nd Round Pick',k:2837,ip:true,hidden:true},
   {n:'2026 3.01',k:2805,ip:true},
   {n:'2026 3.02',k:2543,ip:true},
   {n:'2026 3.03',k:2282,ip:true},
@@ -2211,9 +2211,9 @@ const PICKS=[
   {n:'2026 3.10',k:2194,ip:true},
   {n:'2026 3.11',k:2108,ip:true},
   {n:'2026 3.12',k:2022,ip:true},
-  {n:'2026 Early 3st Round Pick',k:2377,ip:true,hidden:true},
-  {n:'2026 Mid 3st Round Pick',k:2272,ip:true,hidden:true},
-  {n:'2026 Late 3st Round Pick',k:2151,ip:true,hidden:true},
+  {n:'2026 Early 3rd Round Pick',k:2377,ip:true,hidden:true},
+  {n:'2026 Mid 3rd Round Pick',k:2272,ip:true,hidden:true},
+  {n:'2026 Late 3rd Round Pick',k:2151,ip:true,hidden:true},
   {n:'2027 1.01',k:8031,ip:true},
   {n:'2027 1.02',k:7282,ip:true},
   {n:'2027 1.03',k:6534,ip:true},
@@ -2241,9 +2241,9 @@ const PICKS=[
   {n:'2027 2.10',k:3149,ip:true},
   {n:'2027 2.11',k:3025,ip:true},
   {n:'2027 2.12',k:2902,ip:true},
-  {n:'2027 Early 2st Round Pick',k:3732,ip:true,hidden:true},
-  {n:'2027 Mid 2st Round Pick',k:3452,ip:true,hidden:true},
-  {n:'2027 Late 2st Round Pick',k:3087,ip:true,hidden:true},
+  {n:'2027 Early 2nd Round Pick',k:3732,ip:true,hidden:true},
+  {n:'2027 Mid 2nd Round Pick',k:3452,ip:true,hidden:true},
+  {n:'2027 Late 2nd Round Pick',k:3087,ip:true,hidden:true},
   {n:'2027 3.01',k:3030,ip:true},
   {n:'2027 3.02',k:2748,ip:true},
   {n:'2027 3.03',k:2465,ip:true},
@@ -2256,9 +2256,9 @@ const PICKS=[
   {n:'2027 3.10',k:2256,ip:true},
   {n:'2027 3.11',k:2168,ip:true},
   {n:'2027 3.12',k:2079,ip:true},
-  {n:'2027 Early 3st Round Pick',k:2568,ip:true,hidden:true},
-  {n:'2027 Mid 3st Round Pick',k:2395,ip:true,hidden:true},
-  {n:'2027 Late 3st Round Pick',k:2212,ip:true,hidden:true},
+  {n:'2027 Early 3rd Round Pick',k:2568,ip:true,hidden:true},
+  {n:'2027 Mid 3rd Round Pick',k:2395,ip:true,hidden:true},
+  {n:'2027 Late 3rd Round Pick',k:2212,ip:true,hidden:true},
   {n:'2028 1.01',k:5889,ip:true},
   {n:'2028 1.02',k:5340,ip:true},
   {n:'2028 1.03',k:4791,ip:true},
@@ -2286,9 +2286,9 @@ const PICKS=[
   {n:'2028 2.10',k:2652,ip:true},
   {n:'2028 2.11',k:2548,ip:true},
   {n:'2028 2.12',k:2444,ip:true},
-  {n:'2028 Early 2st Round Pick',k:3091,ip:true,hidden:true},
-  {n:'2028 Mid 2st Round Pick',k:2862,ip:true,hidden:true},
-  {n:'2028 Late 2st Round Pick',k:2600,ip:true,hidden:true},
+  {n:'2028 Early 2nd Round Pick',k:3091,ip:true,hidden:true},
+  {n:'2028 Mid 2nd Round Pick',k:2862,ip:true,hidden:true},
+  {n:'2028 Late 2nd Round Pick',k:2600,ip:true,hidden:true},
   {n:'2028 3.01',k:2554,ip:true},
   {n:'2028 3.02',k:2316,ip:true},
   {n:'2028 3.03',k:2077,ip:true},
@@ -2301,9 +2301,9 @@ const PICKS=[
   {n:'2028 3.10',k:1974,ip:true},
   {n:'2028 3.11',k:1896,ip:true},
   {n:'2028 3.12',k:1819,ip:true},
-  {n:'2028 Early 3st Round Pick',k:2164,ip:true,hidden:true},
-  {n:'2028 Mid 3st Round Pick',k:2117,ip:true,hidden:true},
-  {n:'2028 Late 3st Round Pick',k:1935,ip:true,hidden:true}
+  {n:'2028 Early 3rd Round Pick',k:2164,ip:true,hidden:true},
+  {n:'2028 Mid 3rd Round Pick',k:2117,ip:true,hidden:true},
+  {n:'2028 Late 3rd Round Pick',k:1935,ip:true,hidden:true}
 ];
 
 const DC={
@@ -4158,9 +4158,9 @@ function calcAdjustedSide(arrA, arrB) {
         adj = Math.round(adj * posM);
       }
 
-      // 3. Team clustering
+      // 3. Team clustering (QBs exempt — QB+skill stacking is positive correlation, not a discount risk)
       let teamM = 1.0;
-      if (team && team !== 'PICK' && team !== '') {
+      if (team && team !== 'PICK' && team !== '' && pos !== 'QB') {
         teamCount[team] = (teamCount[team] || 0) + 1;
         teamM = Math.pow(0.90, teamCount[team] - 1);
         adj = Math.round(adj * teamM);
@@ -4200,6 +4200,42 @@ function calcAdjustedSide(arrA, arrB) {
     sideA: {total: totalA, detail: detailA, concM: concA},
     sideB: {total: totalB, detail: detailB, concM: concB}
   };
+}
+
+// Single-side adjusted value — same elite/position/team/concentration logic as calcAdjustedSide
+// but without cross-side peak comparison. Used by the multi-team (3-4 way) trade path.
+function calcSingleSideAdjusted(arr) {
+  const ELITE = 7500, LEAGUE_AVG = 4000, CONC_EXP = 0.35, CONC_CAP = 1.18, THROW_IN = 2000;
+  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt));
+  const peakKtc = arr.reduce((mx,p) => Math.max(mx, skv(p)), 0);
+  const posCount = {}, teamCount = {};
+  const detail = [];
+  arr.forEach(p => {
+    const ktc = skv(p);
+    const pos = p.pos || p.p || 'WR';
+    const team = p.t || '';
+    const isElite = ktc >= ELITE;
+    const isPeak = isElite && ktc === peakKtc;
+    const eliteM = isPeak ? 1.12 : isElite ? 1.04 : 1.00;
+    let adj = Math.round(ktc * eliteM);
+    let posM = 1.0;
+    if (!isElite) {
+      posCount[pos] = (posCount[pos] || 0) + 1;
+      posM = Math.pow(0.85, posCount[pos] - 1);
+      adj = Math.round(adj * posM);
+    }
+    let teamM = 1.0;
+    if (team && team !== 'PICK' && team !== '' && pos !== 'QB') {
+      teamCount[team] = (teamCount[team] || 0) + 1;
+      teamM = Math.pow(0.90, teamCount[team] - 1);
+      adj = Math.round(adj * teamM);
+    }
+    detail.push({name: p.n, ktc, adj, pos, team, eliteM, posM, teamM, isElite});
+  });
+  const adjVals = detail.filter(d => d.ktc >= THROW_IN).map(d => d.adj);
+  const concM = adjVals.length ? Math.min(CONC_CAP, Math.max(1.0, Math.pow(adjVals.reduce((s,v)=>s+v,0)/adjVals.length/LEAGUE_AVG, CONC_EXP))) : 1.0;
+  detail.forEach(d => { d.concM = concM; d.final = Math.round(d.adj * concM); });
+  return { total: detail.reduce((s,d) => s+d.final, 0), detail, concM };
 }
 
 function verdictFromGap(gap, maxVal) {
@@ -4374,28 +4410,39 @@ function recalcTrade(){
 
       <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: Team A receives ${nA} and Team B receives ${nB}. Model values Team A at ${mA.toLocaleString()} and Team B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
   } else {
-    // Multi-team verdict — show each team's net value and rank by winner
-    const grandTotal=totals.reduce((s,t)=>s+t.mod,0);
-    const maxMod=Math.max(...totals.map(t=>t.mod));
-    const sorted=[...totals].sort((a,b)=>b.mod-a.mod);
-    const winner=sorted[0];
-    const allEqual=totals.every(t=>Math.abs(t.mod-totals[0].mod)/Math.max(grandTotal/tradeTeams,1)<0.08);
-
-    const playerLists=totals.map(t=>t.arr.map(x=>x.n).join(', ')||'nothing');
-    const promptText=totals.map((t,i)=>`${t.label} receives ${playerLists[i]} (value: ${t.mod.toLocaleString()})`).join('; ');
-
+    // Multi-team verdict — compute adjusted values for each team via calcSingleSideAdjusted
+    const adjResults = totals.map(t => ({ ...t, adjResult: calcSingleSideAdjusted(t.arr) }));
+    // Update displayed model values with adjusted figures (mirrors 2-team V4 behaviour)
+    adjResults.forEach(t => {
+      document.getElementById('mod-'+t.id).textContent = t.adjResult.total > 0 ? t.adjResult.total.toLocaleString() : '—';
+    });
+    const maxAdj = Math.max(...adjResults.map(t => t.adjResult.total));
+    const sorted = [...adjResults].sort((a,b) => b.adjResult.total - a.adjResult.total);
+    const winner = sorted[0];
+    const grandTotal = adjResults.reduce((s,t) => s + t.adjResult.total, 0);
+    const allEqual = adjResults.every(t => Math.abs(t.adjResult.total - adjResults[0].adjResult.total) / Math.max(grandTotal/tradeTeams, 1) < 0.08);
+    const playerLists = adjResults.map(t => t.arr.map(x=>x.n).join(', ')||'nothing');
+    const promptText = adjResults.map((t,i) => `${t.label} receives ${playerLists[i]} (value: ${t.adjResult.total.toLocaleString()})`).join('; ');
+    const buildBadge = r => {
+      const b = [];
+      if (r.detail.some(d => d.eliteM > 1.0)) b.push('<span style="color:#6ee7b7">★ Elite</span>');
+      if (r.detail.some(d => d.posM < 1.0)) b.push('<span style="color:#fbbf24">⚠ Pos stack</span>');
+      if (r.detail.some(d => d.teamM < 1.0)) b.push('<span style="color:#fbbf24">⚠ Team stack</span>');
+      if (r.concM > 1.001) b.push('<span style="color:#6ee7b7">◆ Conc ×'+r.concM.toFixed(2)+'</span>');
+      return b.length ? b.join(' · ') : '<span style="color:#4a5568">No adj</span>';
+    };
     document.getElementById('verdict-area').innerHTML=`
       <div style="margin-bottom:1rem">
         <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#718096;margin-bottom:.5rem">
           ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS THIS TRADE'}
         </div>
         ${sorted.map((t,i)=>{
-          const pct=Math.round(t.mod/Math.max(maxMod,1)*100);
+          const pct=Math.round(t.adjResult.total/Math.max(maxAdj,1)*100);
           const isWinner=i===0&&!allEqual;
           return`<div style="margin-bottom:.5rem">
             <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
               <span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
-              <span style="color:${t.color};font-weight:600">${t.mod.toLocaleString()}</span>
+              <span style="color:${t.color};font-weight:600">${t.adjResult.total.toLocaleString()}</span>
             </div>
             <div style="background:#1a202c;border-radius:3px;height:6px;overflow:hidden">
               <div style="background:${t.color};width:${pct}%;height:100%;border-radius:3px;opacity:${isWinner?1:0.5}"></div>
@@ -4404,15 +4451,30 @@ function recalcTrade(){
         }).join('')}
       </div>
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
-        ${totals.map(t=>`
+        ${adjResults.map(t=>`
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid #2d3748;padding-bottom:.3rem">${t.label} RECEIVES</div>
-            ${t.arr.map(p=>`<div class="breakdown-row"><span style="font-size:11px">${p.n}</span><span style="font-weight:600;font-size:11px">${mvAsset(p).toLocaleString()}</span></div>`).join('')}
+            ${t.adjResult.detail.map(d=>{
+              const mods=[];
+              if(d.eliteM>1.0)mods.push('elite \xd7'+d.eliteM.toFixed(2));
+              if(d.posM<1.0)mods.push('pos \xd7'+d.posM.toFixed(2));
+              if(d.teamM<1.0)mods.push('team \xd7'+d.teamM.toFixed(2));
+              const modStr=mods.length?'<span style="font-size:9px;color:#4a5568;margin-left:4px">('+mods.join(', ')+')</span>':'';
+              return'<div class="breakdown-row"><span style="font-size:11px">'+d.name+modStr+'</span><span style="font-weight:600;font-size:11px">'+Math.round(d.adj).toLocaleString()+'</span></div>';
+            }).join('')}
             ${t.arr.length===0?'<div style="font-size:11px;color:#4a5568">Nothing</div>':''}
+            <div style="font-size:9px;margin-top:4px;line-height:1.5">${buildBadge(t.adjResult)}</div>
             <div class="breakdown-row" style="font-weight:700;border-top:1px solid #2d3748;margin-top:4px;padding-top:4px">
-              <span style="font-size:11px">Total</span><span style="color:${t.color};font-size:11px">${t.mod.toLocaleString()}</span>
+              <span style="font-size:11px">Adj Total${t.adjResult.concM>1.001?' <span style="font-size:9px;color:#6ee7b7">(\xd7'+t.adjResult.concM.toFixed(2)+' conc)</span>':''}</span>
+              <span style="color:${t.color};font-size:11px">${t.adjResult.total.toLocaleString()}</span>
             </div>
           </div>`).join('')}
+      </div>
+      <div style="margin-top:8px;padding:8px 10px;background:#0d1b2a;border-radius:6px;font-size:10px;color:#4a5568;line-height:1.6">
+        <span style="color:#718096;font-weight:600">HOW THE CALC WORKS · </span>
+        ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
+        ⚠ Clustering discounts same-position or same-team stacking · 
+        ◆ Concentration bonus rewards fewer, higher-value assets
       </div>
       <button class="send-btn" onclick="sendPrompt('Evaluate this ${tradeTeams}-team dynasty trade: ${promptText}. Who wins?')">Ask Claude to evaluate ↗</button>`;
   }
