@@ -55,9 +55,11 @@ tr:hover td{background:#1a202c}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }}
-.tc-btn{font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;border:1px solid #2d3748;background:#0d1117;color:#718096;cursor:pointer;transition:all .15s}
-.tc-btn:hover{border-color:#4a5568;color:#a0aec0;background:#111827}
-.tc-active{background:#1e2a3a;border-color:#4a5568;color:#e2e8f0;font-weight:600}
+.tc-wrap{display:flex;border:1px solid #2d3748;border-radius:6px;overflow:hidden}
+.tc-btn{font-size:11px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer;transition:all .15s}
+.tc-btn:last-child{border-right:none}
+.tc-btn:hover{background:#2d3748;color:#a0aec0}
+.tc-active{background:#0d2a1f;color:#6ee7b7;font-weight:600}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
 .trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -184,14 +186,14 @@ tr:hover td{background:#1a202c}
 </div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;position:relative">
   <div style="position:relative;flex:1;max-width:280px">
-    <input id="deck-search" type="text" placeholder="⚡ Quick player lookup…"
+    <input id="deck-search" type="text" placeholder="Search players…"
       oninput="deckSearchInput()"
       onkeydown="deckSearchKey(event)"
       style="width:100%;font-size:12px;padding:6px 10px 6px 28px;border-radius:7px;
         border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;outline:none"
       autocomplete="off">
     <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);
-      font-size:11px;color:#4a5568;pointer-events:none">🔍</span>
+      font-size:13px;color:#4a5568;pointer-events:none">⌕</span>
     <div id="deck-drop" style="display:none;position:absolute;top:100%;left:0;right:0;
       background:#1a202c;border:1px solid #2d3748;border-radius:7px;z-index:50;
       max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 8px 24px rgba(0,0,0,.5)">
@@ -309,10 +311,10 @@ tr:hover td{background:#1a202c}
   <!-- Team count toggle -->
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
     <span style="font-size:11px;color:#718096;font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
-    <div style="display:flex;gap:0;border-bottom:1px solid #2d3748">
-      <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2-Team</button>
-      <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3-Team</button>
-      <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4-Team</button>
+    <div class="tc-wrap">
+      <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2 Teams</button>
+      <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3 Teams</button>
+      <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4 Teams</button>
     </div>
     <button onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer">Clear all</button>
   </div>
@@ -321,7 +323,7 @@ tr:hover td{background:#1a202c}
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team A — you receive</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team A</div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
@@ -329,7 +331,7 @@ tr:hover td{background:#1a202c}
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team B — you give</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team B</div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
@@ -381,6 +383,9 @@ tr:hover td{background:#1a202c}
 
 <div id="panel-ripple" class="panel">
   <div class="info-box">Value changes from offseason moves — sorted by magnitude.</div>
+  <div class="controls" style="margin-bottom:.75rem">
+    <input type="text" id="s-ripple" placeholder="Search player..." oninput="renderRipple()">
+  </div>
   <div id="ripple-body"></div>
 </div>
 
@@ -4002,7 +4007,7 @@ function renderRankings(){
       posRankMap[p.n]=tmpCounts[p.pos];
     }
   });
-  document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+  document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
@@ -4052,7 +4057,7 @@ function renderProj(){
     const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
     const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
     const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
-    return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+    return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
       <td style="font-weight:600;white-space:nowrap">${p.n}</td>
       <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
@@ -4090,7 +4095,7 @@ function renderEPA(){
   else data.sort((a,b)=>d*(b.epaSc-a.epaSc)); // default: epaSc descending
   const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
   const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
-  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)">
+  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td style="font-weight:600;white-space:nowrap">${p.n}</td>
     <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
     <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
@@ -4542,10 +4547,13 @@ function clearAllTrade(){
 }
 
 function renderRipple(){
-  const sorted=[...RIPPLE].sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
+  const q=(document.getElementById('s-ripple')?.value||'').toLowerCase().trim();
+  const sorted=[...RIPPLE]
+    .filter(r=>!q||r.n.toLowerCase().includes(q))
+    .sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
   document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
     const p=COMP.find(x=>x.n===r.n);
-    return`<div class="ripple-card" style="cursor:pointer" data-name="${r.n}" onclick="openDeck(this.dataset.name)">
+    return`<div class="ripple-card" style="cursor:pointer" data-name="${r.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
         <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
         <div style="display:flex;gap:6px;align-items:center">
@@ -4618,7 +4626,7 @@ function renderContracts(){
     const yrsLeft=c.end-2026;
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:#718096">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
-    return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)">
+    return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <td style="font-weight:600;white-space:nowrap">${c.n}${pl?glTag(c.n)+trendTag(c.n):''}</td>
       <td><span class="badge bn">${c.pos}</span></td>
       <td style="color:#718096">${c.team}</td>
@@ -4720,6 +4728,9 @@ function renderAll(){
     }
   }
   renderRankings();renderProj();renderRipple();renderEPA();recalcTrade();
+  // Auto-open player card if ?player= URL param is present (right-click → open in new tab)
+  const urlPlayer=new URLSearchParams(location.search).get('player');
+  if(urlPlayer) setTimeout(()=>openDeck(decodeURIComponent(urlPlayer)),150);
 }
 
 function showTab(id,el){
@@ -4790,6 +4801,7 @@ function copyPlayerCard() {
 function openAbout(){document.getElementById('about-overlay').classList.add('open');}
 function closeAbout(){document.getElementById('about-overlay').classList.remove('open');}
 function closeAboutOverlay(e){if(e.target===document.getElementById('about-overlay'))closeAbout();}
+function openDeckNewTab(e,name){e.preventDefault();window.open(location.href.split('?')[0]+'?player='+encodeURIComponent(name),'_blank');}
 
 function openDeck(name){  const p=COMP.find(x=>x.n===name);
   if(!p) return;
@@ -5301,7 +5313,9 @@ function deckSearchInput(){
   drop.innerHTML=matches.map((p,i)=>{
     const mv=mvAsset(p);
     const ratio=mv/Math.max(p.ktcEff,1);
-    const dot=ratio>=1.06?'🟢':ratio>=0.94?'🟡':'🔴';
+    const dotColor=ratio>=1.06?'#6ee7b7':ratio>=0.94?'#fcd34d':'#fca5a5';
+    const dotLabel=ratio>=1.06?'Buy':ratio>=0.94?'Hold':'Sell';
+    const dot=`<span style="font-size:9px;font-weight:700;color:${dotColor}">${dotLabel}</span>`;
     return`<div class="drop-item" data-name="${p.n}" data-idx="${i}"
       onclick="deckSearchSelect(this.dataset.name)"
       style="display:flex;justify-content:space-between;align-items:center">
@@ -6944,7 +6958,7 @@ function renderSlpRoster(rid){
         :'<span style="color:#4a5568">\u2014</span>';
       const mv=(typeof mvAsset==='function')?mvAsset(p):0;
       const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
-      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
+      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
         +'<td style="font-weight:600;white-space:nowrap">'+(x.starter?'<span title="In the starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+p.n+'</td>'
         +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
@@ -7027,7 +7041,7 @@ function renderSlpBoard(){
     return list.map(function(x){
       const p=x.p, mv=mvAsset(p);
       const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
-      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
+      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +'<td style="font-weight:800;font-size:13px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
         +'<td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
         +'<td>'+p.pos+'</td>'
