@@ -267,20 +267,20 @@ tr:hover td{background:#1a202c}
       <option value="ALL">All</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="sort-proj" onchange="projSort=this.value;renderProj()">
+    <select id="sort-proj" onchange="projSort=this.value;projSortDir=1;renderProj()">
       <option value="proj">Proj PPG</option><option value="ceil">Ceiling</option>
       <option value="floor">Floor</option><option value="gap">Model gap</option>
     </select>
   </div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
-      <th title="DELTA Score" style="font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
-      <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
-      <th>Floor</th><th>Proj PPG</th><th>Ceiling</th>
-      <th>EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th>Mkt Val</th><th>Mod val</th><th>Gap</th><th>CI</th>
-      <th onclick="setSortP('miss')" style="cursor:pointer;color:#fca5a5">Miss%▾</th>
-      <th onclick="setSortP('hit')" style="cursor:pointer;color:#7dd3fc">Hit%▾</th>
-      <th onclick="setSortP('elite')" style="cursor:pointer;color:#6ee7b7">Elite%▾</th>
+      <th onclick="setSortP('ds')" style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7" title="DELTA Score">Δ</th>
+      <th onclick="setSortP('name')" style="cursor:pointer">Player</th><th onclick="setSortP('pos')" style="cursor:pointer">Pos</th><th onclick="setSortP('age')" style="cursor:pointer">Age</th><th onclick="setSortP('team')" style="cursor:pointer">Team</th>
+      <th onclick="setSortP('floor')" style="cursor:pointer;color:#fca5a5">Floor</th><th onclick="setSortP('proj')" style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" style="cursor:pointer;color:#6ee7b7">Ceiling</th>
+      <th onclick="setSortP('epa')" style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" style="cursor:pointer">Gap</th><th>CI</th>
+      <th onclick="setSortP('miss')" style="cursor:pointer;color:#fca5a5">Miss%</th>
+      <th onclick="setSortP('hit')" style="cursor:pointer;color:#7dd3fc">Hit%</th>
+      <th onclick="setSortP('elite')" style="cursor:pointer;color:#6ee7b7">Elite%</th>
     </tr></thead>
     <tbody id="proj-body"></tbody>
   </table></div>
@@ -4019,21 +4019,30 @@ function renderRankings(){
   </tr>`).join('');
 }
 
-let projSort='proj';
-function setSortP(k){projSort=k;renderProj();}
+let projSort='proj', projSortDir=1;
+function setSortP(k){if(projSort===k)projSortDir*=-1;else{projSort=k;projSortDir=1;}renderProj();}
 function renderProj(){
   const q=(document.getElementById('s-proj').value||'').toLowerCase();
   const pos=document.getElementById('pos-proj').value;
   const sort=document.getElementById('sort-proj').value;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&p.n.toLowerCase().includes(q));
   const activeSort=projSort||sort;
-  if(activeSort==='proj')data.sort((a,b)=>b.proj-a.proj);
-  else if(activeSort==='ceil')data.sort((a,b)=>b.ceil-a.ceil);
-  else if(activeSort==='floor')data.sort((a,b)=>b.floor-a.floor);
-  else if(activeSort==='gap')data.sort((a,b)=>b.gap-a.gap);
-  else if(activeSort==='miss')data.sort((a,b)=>(glOf(a)?.miss??99)-(glOf(b)?.miss??99));
-  else if(activeSort==='hit')data.sort((a,b)=>(glOf(b)?.hit??0)-(glOf(a)?.hit??0));
-  else if(activeSort==='elite')data.sort((a,b)=>(glOf(b)?.elite??0)-(glOf(a)?.elite??0));
+  const d=projSortDir;
+  if(activeSort==='ds') data.sort((a,b)=>d*((b.dsScore??0)-(a.dsScore??0)));
+  else if(activeSort==='name') data.sort((a,b)=>d*a.n.localeCompare(b.n));
+  else if(activeSort==='pos') data.sort((a,b)=>d*a.pos.localeCompare(b.pos));
+  else if(activeSort==='age') data.sort((a,b)=>d*(a.a-b.a));
+  else if(activeSort==='team') data.sort((a,b)=>d*a.t.localeCompare(b.t));
+  else if(activeSort==='proj') data.sort((a,b)=>d*(b.proj-a.proj));
+  else if(activeSort==='ceil') data.sort((a,b)=>d*(b.ceil-a.ceil));
+  else if(activeSort==='floor') data.sort((a,b)=>d*(b.floor-a.floor));
+  else if(activeSort==='gap') data.sort((a,b)=>d*(b.gap-a.gap));
+  else if(activeSort==='epa') data.sort((a,b)=>d*(b.epaSc-a.epaSc));
+  else if(activeSort==='ktc') data.sort((a,b)=>d*(b.ktcEff-a.ktcEff));
+  else if(activeSort==='mv') data.sort((a,b)=>d*(b.mv-a.mv));
+  else if(activeSort==='miss') data.sort((a,b)=>d*((glOf(a)?.miss??99)-(glOf(b)?.miss??99)));
+  else if(activeSort==='hit') data.sort((a,b)=>d*((glOf(b)?.hit??0)-(glOf(a)?.hit??0)));
+  else if(activeSort==='elite') data.sort((a,b)=>d*((glOf(b)?.elite??0)-(glOf(a)?.elite??0)));
   document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
     const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
     const fr=p.epaFr==='vol+YAC neutral'
