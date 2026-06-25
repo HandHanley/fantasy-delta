@@ -148,6 +148,10 @@ tr:hover td{background:#1a202c}
 .dd-btn.primary{background:#064e3b;border-color:#065f46;color:#6ee7b7}
 .dd-btn.primary:hover{background:#065f46}
 .dd-divider{height:1px;background:#1f2937;margin:.75rem 0}
+/* ── Column header tooltips ─────────────────────────────────────────────── */
+[data-tip]{position:relative}
+[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#0d1117;color:#e2e8f0;font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid #2d3748;width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
+[data-tip]:hover::after,[data-tip].tip-show::after{opacity:1}
 </style>
 </head>
 <body>
@@ -226,13 +230,13 @@ tr:hover td{background:#1a202c}
   <div id="sort-explainer" style="display:none;font-size:11px;color:#718096;padding:7px 11px;margin-bottom:8px;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px;line-height:1.5"></div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
-      <th onclick="setSortR('ds')" title="DELTA Score — proprietary 0-99 dynasty rating" style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
+      <th onclick="setSortR('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
       <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
-      <th onclick="setSortR('ktc')">Mkt Val</th><th onclick="setSortR('n')">Player</th>
-      <th>Pos</th><th onclick="setSortR('a')" class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
-      <th>PPG'25</th><th class="col-hide-mobile">PPG'24</th><th onclick="setSortR('epaSc')" class="col-hide-mobile">EPA</th>
-      <th>Role</th><th onclick="setSortR('proj')">Proj PPG</th>
-      <th onclick="setSortR('mv')" class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" class="col-hide-mobile">Sys</th>
+      <th onclick="setSortR('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades.">Mkt Val</th><th onclick="setSortR('n')">Player</th>
+      <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
+      <th data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.">PPG'25</th><th data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
+      <th onclick="setSortR('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.">Proj PPG</th>
+      <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Applied as a modifier to projected PPG. OC mark = coordinator change; model discounts until new system shows in production data." class="col-hide-mobile">Sys</th>
       <th class="col-hide-mobile">OC</th><th>Tag</th>
     </tr></thead>
     <tbody id="rank-body"></tbody>
@@ -256,7 +260,7 @@ tr:hover td{background:#1a202c}
       <th title="DELTA Score" style="font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
       <th>Player</th><th>Pos</th><th>Age</th><th>Team</th>
       <th>Floor</th><th>Proj PPG</th><th>Ceiling</th>
-      <th>EPA</th><th>Role</th><th>Mkt Val</th><th>Mod val</th><th>Gap</th><th>CI</th>
+      <th>EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th>Mkt Val</th><th>Mod val</th><th>Gap</th><th>CI</th>
       <th onclick="setSortP('miss')" style="cursor:pointer;color:#fca5a5">Miss%▾</th>
       <th onclick="setSortP('hit')" style="cursor:pointer;color:#7dd3fc">Hit%▾</th>
       <th onclick="setSortP('elite')" style="cursor:pointer;color:#6ee7b7">Elite%▾</th>
@@ -349,9 +353,9 @@ tr:hover td{background:#1a202c}
   <div class="info-box">RB floor: ≥140 rushes + YAC/carry ≥3.0 → EPA treated as neutral. WR/TE: ≥80 targets → floor 0.92. QB: ≥300 plays → floor 0.88.</div>
   <div style="overflow-x:auto"><table>
     <thead><tr>
-      <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" style="cursor:pointer">Age</th><th>Team</th>
-      <th onclick="setSortEPA('e25')" style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" style="cursor:pointer">EPA'22</th>
-      <th>Raw</th><th onclick="setSortEPA('epaSc')" style="cursor:pointer">Applied</th><th>Floor</th><th onclick="setSortEPA('epaTr')" style="cursor:pointer">Trend</th><th onclick="setSortEPA('ef')" style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
+      <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th><th>Team</th>
+      <th onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there." style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'22</th>
+      <th data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — only differs when a Floor rule kicks in (see Floor)." style="cursor:pointer">Applied</th><th data-tip="A protection for heavy-workload players. If a player sees enough touches, the model won't penalize them too hard for being slightly below average per play — consistent volume has real dynasty value even when efficiency dips.">Floor</th><th onclick="setSortEPA('epaTr')" data-tip="Is this player producing more or less value per play compared to prior years? Up = improving; Down = declining; Flat = holding steady." style="cursor:pointer">Trend</th><th onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers." style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
     </tr></thead>
     <tbody id="epa-body"></tbody>
   </table></div>
@@ -386,9 +390,9 @@ tr:hover td{background:#1a202c}
   </div>
   <table>
     <thead><tr>
-      <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" style="cursor:pointer">Age</th>
-      <th onclick="setSortContracts('aav')" style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" style="cursor:pointer">Yrs Left</th>
-      <th>Status</th><th>Dynasty Signal</th>
+      <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th>
+      <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer">Yrs Left</th>
+      <th>Status</th><th data-tip="DELTA's read on dynasty contract outlook. Long-term deals for ascending players score well; expensive contracts near expiry score lower.">Dynasty Signal</th>
     </tr></thead>
     <tbody id="contracts-body"></tbody>
   </table>
@@ -3956,7 +3960,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',opp:'oppSc',ds:'dsScore'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Contextual explainer — only for the three confusable value metrics
   const explainEl=document.getElementById('sort-explainer');
@@ -3990,12 +3994,6 @@ function renderRankings(){
     <td class="col-hide-mobile">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600;color:${oppScoreColor(p.oppSc)};white-space:nowrap">${(()=>{
-      if(p.pos==='QB'){const gl=glOf(p);return gl?'<span style="font-size:11px;color:#7dd3fc">'+gl.elite+'% elite</span>':'—';}
-      if(p.oppSc==null) return '—';
-      const ic=p.pos==='WR'||p.pos==='TE'?'<span style="font-family:Georgia,serif;font-size:13px">α</span>':'<span style="font-size:12px">♞</span>';
-      return ic+' '+p.oppSc;
-    })()}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
@@ -4781,6 +4779,13 @@ function closeDeck(e){
 }
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDeckNow(); });
+
+// ── Tooltip tap-to-show on mobile ────────────────────────────────────────────
+document.addEventListener('touchstart',function(e){
+  const el=e.target.closest('[data-tip]');
+  document.querySelectorAll('.tip-show').forEach(t=>{if(t!==el)t.classList.remove('tip-show');});
+  if(el){el.classList.toggle('tip-show');if(el.classList.contains('tip-show'))setTimeout(()=>el.classList.remove('tip-show'),3000);}
+},{passive:true});
 
 function renderDeck(p){
   // ── Header ──
