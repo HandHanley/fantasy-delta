@@ -152,6 +152,24 @@ tr:hover td{background:#1a202c}
 [data-tip]{position:relative}
 [data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#0d1117;color:#e2e8f0;font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid #2d3748;width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
 [data-tip]:hover::after,[data-tip].tip-show::after{opacity:1}
+/* ── About DELTA modal ──────────────────────────────────────────────────── */
+.about-tab{margin-left:auto;padding:7px 12px;border:none;background:transparent;
+  color:#4a5568;font-size:11px;cursor:pointer;align-self:center;
+  transition:color .15s;white-space:nowrap}
+.about-tab:hover{color:#a0aec0}
+.about-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1001;
+  display:flex;align-items:center;justify-content:center;padding:1.25rem;
+  opacity:0;transition:opacity .2s;pointer-events:none;overflow-y:auto}
+.about-overlay.open{opacity:1;pointer-events:auto}
+.about-card{background:#111827;border:1px solid #2d3748;border-radius:14px;
+  width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
+  transform:translateY(16px);transition:transform .2s;position:relative}
+.about-overlay.open .about-card{transform:translateY(0)}
+.about-section{margin-bottom:1.1rem}
+.about-heading{font-size:11px;font-weight:700;color:#e2e8f0;letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:.45rem}
+.about-list{padding-left:1.1rem;margin:0;list-style:disc}
+.about-list li{margin-bottom:.5rem}
 </style>
 </head>
 <body>
@@ -164,8 +182,6 @@ tr:hover td{background:#1a202c}
     </div>
   </div>
 </div>
-
-<!-- DELTA Deck Quick Search -->
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;position:relative">
   <div style="position:relative;flex:1;max-width:280px">
     <input id="deck-search" type="text" placeholder="⚡ Quick player lookup…"
@@ -194,6 +210,7 @@ tr:hover td{background:#1a202c}
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button class="tab" onclick="showTab('myteam',this)">My Team</button>
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
+  <button class="about-tab" onclick="openAbout()">About DELTA</button>
 </div>
 
 <div id="panel-rankings" class="panel active">
@@ -4761,8 +4778,11 @@ function copyPlayerCard() {
   }).catch(() => {});
 }
 
-function openDeck(name){
-  const p=COMP.find(x=>x.n===name);
+function openAbout(){document.getElementById('about-overlay').classList.add('open');}
+function closeAbout(){document.getElementById('about-overlay').classList.remove('open');}
+function closeAboutOverlay(e){if(e.target===document.getElementById('about-overlay'))closeAbout();}
+
+function openDeck(name){  const p=COMP.find(x=>x.n===name);
   if(!p) return;
   document.getElementById('dd-overlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -4778,7 +4798,7 @@ function closeDeck(e){
   if(e.target===document.getElementById('dd-overlay')) closeDeckNow();
 }
 
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDeckNow(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();} });
 
 // ── Tooltip tap-to-show on mobile ────────────────────────────────────────────
 document.addEventListener('touchstart',function(e){
@@ -5807,6 +5827,45 @@ document.addEventListener('click', function(e) {
     <button class="pos-filter-btn" onclick="filterRookies('TE',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">TE</button>
   </div>
   <div id="rookie-board"></div>
+</div>
+
+<!-- About DELTA modal -->
+<div class="about-overlay" id="about-overlay" onclick="closeAboutOverlay(event)">
+  <div class="about-card">
+    <div class="dd-header">
+      <div>
+        <div class="dd-name">About DELTA</div>
+        <div class="dd-meta">Dynasty Efficiency &amp; Long-Term Analysis</div>
+      </div>
+      <button class="dd-close" onclick="closeAbout()">×</button>
+    </div>
+    <div style="padding:1.25rem;font-size:12px;line-height:1.65;color:#a0aec0">
+      <div class="about-section">
+        <div class="about-heading">What is DELTA?</div>
+        <p>DELTA evaluates dynasty players over a 2–3 year window using what they've actually done — production history, age relative to their position's prime, opportunity depth, and contract situation. It deliberately ignores market prices as an input, so the model can find gaps between what a player is worth and what the market pays.</p>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">Why ignore the market?</div>
+        <p>Most dynasty tools are self-referential — they reflect what other managers think, which reflects what other managers think. DELTA starts from first principles. Market value appears in the app as a comparison point and yardstick, never as an input to the score or verdict. The gap between model value and market value is the signal.</p>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">What the model can't see</div>
+        <ul class="about-list">
+          <li>Recent injuries or transactions not yet reflected in production data — check the data freshness badge.</li>
+          <li>How a new offensive coordinator will actually deploy a player. The ⚠ OC flag applies a discount, but the model can't predict scheme fit.</li>
+          <li>Any future performance. DELTA scores what a player has demonstrated, not what they might become.</li>
+          <li>Situational upside from teammate changes — if a player signed with a new team this offseason, the model scores their historical production and new system score, but hasn't seen them in that role yet.</li>
+        </ul>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">Reading the verdicts</div>
+        <p>Strong Buy / Buy / Hold / Sell / Strong Sell reflect market pricing relative to DELTA's model — not absolute player quality. A Sell on an RB35 means the market is paying more than the model thinks the player is worth at that tier, not that the player is useless. The Read section in each player card explains the specific gap driving the verdict.</p>
+      </div>
+      <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1f2937;font-size:10px;color:#4a5568">
+        Data refreshes nightly via the nflverse pipeline. Model calibrated against the 2023–2024 NFL seasons.
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
