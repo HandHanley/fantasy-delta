@@ -11,7 +11,7 @@
  *   bad:   strictly opposite directions  ← the gate condition
  *
  * The engine (SCAR_STARTERS/SCAR_CURVE/curveVal/scarcity) is extracted from
- * index.html at run time so the gate always audits the SHIPPED logic — if
+ * delta-engine.js at run time so the gate always audits the SHIPPED logic — if
  * extraction fails because the code moved, the gate fails loudly instead of
  * silently testing a stale copy.
  *
@@ -29,26 +29,26 @@ function fail(msg) {
   process.exit(1);
 }
 
-// ── 1. Extract the live scarcity engine from index.html ──
-function extractEngine(html) {
-  const startIdx = html.indexOf('const SCAR_STARTERS');
-  if (startIdx === -1) fail('Could not find SCAR_STARTERS in index.html — engine moved or renamed.');
-  const fnIdx = html.indexOf('function scarcity(', startIdx);
+// ── 1. Extract the live scarcity engine from delta-engine.js ──
+function extractEngine(src) {
+  const startIdx = src.indexOf('const SCAR_STARTERS');
+  if (startIdx === -1) fail('Could not find SCAR_STARTERS in delta-engine.js — engine moved or renamed.');
+  const fnIdx = src.indexOf('function scarcity(', startIdx);
   if (fnIdx === -1) fail('Could not find function scarcity() after SCAR_STARTERS.');
   // brace-match to the end of function scarcity
-  const braceStart = html.indexOf('{', fnIdx);
+  const braceStart = src.indexOf('{', fnIdx);
   let depth = 0, end = -1;
-  for (let i = braceStart; i < html.length; i++) {
-    if (html[i] === '{') depth++;
-    else if (html[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
+  for (let i = braceStart; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
   }
   if (end === -1) fail('Brace matching failed extracting scarcity().');
-  return html.slice(startIdx, end + 1);
+  return src.slice(startIdx, end + 1);
 }
 
-const htmlPath = path.join(process.cwd(), 'index.html');
-if (!fs.existsSync(htmlPath)) fail('index.html not found at ' + htmlPath);
-const engineSrc = extractEngine(fs.readFileSync(htmlPath, 'utf8'));
+const enginePath = path.join(process.cwd(), 'delta-engine.js');
+if (!fs.existsSync(enginePath)) fail('delta-engine.js not found at ' + enginePath);
+const engineSrc = extractEngine(fs.readFileSync(enginePath, 'utf8'));
 
 let scarcity;
 try {

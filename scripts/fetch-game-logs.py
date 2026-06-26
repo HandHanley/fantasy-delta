@@ -27,7 +27,7 @@ from pathlib import Path
 SEASONS    = [2023, 2024, 2025]   # matches player-stats.json; extend for deeper history (costs file size)
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "game-logs.json"
-INDEX_HTML = Path(__file__).parent.parent / "index.html"
+INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
 
 # ── helpers mirrored from fetch-player-stats.py (kept in sync intentionally) ──
 def norm(name):

@@ -22,7 +22,7 @@ except ImportError:
 SEASONS    = [2023, 2024, 2025]
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "player-stats.json"
-INDEX_HTML = Path(__file__).parent.parent / "index.html"
+INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
 
 def get_delta_players():
     if not INDEX_HTML.exists():
