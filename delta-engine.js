@@ -3752,7 +3752,7 @@ async function loadLiveMarketValues() {
 
     console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched` +
                 (MARKET_SETTINGS ? ` · grid ${Object.keys(MARKET_SETTINGS).length} settings` : ' · legacy flat'));
-    showDataFreshness(data.fetched, updated);
+    if (typeof showDataFreshness === 'function') showDataFreshness(data.fetched, updated);
     if (notFound.length > 0 && notFound.length < 20) {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
@@ -3767,7 +3767,7 @@ async function loadLiveMarketValues() {
   } catch (err) {
     // Show error in badge so we can debug
     console.warn('[DELTA] Could not load live market values:', err.message);
-    showDataFreshness(new Date().toISOString(), -1);
+    if (typeof showDataFreshness === 'function') showDataFreshness(new Date().toISOString(), -1);
   }
 }
 
