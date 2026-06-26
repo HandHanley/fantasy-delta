@@ -3826,3 +3826,152 @@ async function loadPlayerContracts() {
 // It is gated behind a ?dev flag: visit ...github.io/fantasy-delta/?dev=1 to use it.
 // Public visitors never see the tab and never fetch its data.
 const DELTA_DEV = new URLSearchParams(location.search).has('dev');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared player card HTML builders — used by both index.html (popup) and
+// player.html (full page). Return HTML strings; touch no DOM directly.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function contractStatus(c){
+  const yrsLeft=c.end-2026;
+  if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
+  if(yrsLeft>=4)return{label:'Locked Up',cls:'bs',icon:'🔒'};
+  if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'🔴'};
+  return{label:'Stable',cls:'bi',icon:'✓'};
+}
+
+function dynastySignal(c){
+  const yrsLeft=c.end-2025;
+  if(c.end===2026)return'<span style="color:#fca5a5;font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  if(yrsLeft>=4&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
+  if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
+  if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Buy window closing · '+yrsLeft+' yrs left</span>';
+  return'<span style="color:#718096;font-size:10px">'+c.note+'</span>';
+}
+
+function buildDSBreakdownHTML(p){
+  const ds=p.dsScore;
+  if(ds==null) return '';
+  const pos=p.pos||p.p||'WR';
+  const noNFL=p.g25===0;
+  const aPts=dsAge(p.a||22,pos);
+  const prodPts=dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p);
+  const oppPts=dsOpportunity(p);
+  const conPts=dsCont(p);
+  const col=dsColor(ds);
+  const bar=(label,val,max)=>{
+    const pct=Math.round((val/max)*100);
+    return'<div style="margin-bottom:6px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#718096;margin-bottom:2px">'
+      +'<span>'+label+'</span><span style="color:#a0aec0;font-weight:600">'+val+'/'+max+'</span></div>'
+      +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px"></div></div></div>';
+  };
+  return'<div class="dd-section" style="background:linear-gradient(135deg,#0d1117,#141b26);border:1px solid #1f2937;border-radius:10px;padding:14px;margin-bottom:10px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+    +'<div style="display:flex;align-items:baseline;gap:7px">'
+    +'<span style="font-family:Georgia,serif;font-size:20px;color:'+col+'">Δ</span>'
+    +'<span style="font-size:13px;font-weight:600;color:#e2e8f0;letter-spacing:.02em">DELTA Score</span>'
+    +(noNFL?'<span style="font-size:9px;color:#718096;margin-left:2px">rookie · capped</span>':'')
+    +'</div>'
+    +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
+    +'</div>'
+    +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
+    +bar('Age',aPts,25)+bar('Production',prodPts,32)+bar('Opportunity',oppPts,33)+bar('Contract',conPts,10)
+    +'</div>';
+}
+
+function buildReadHTML(p){
+  const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
+  if(!mk||ds==null) return '';
+  const r=mvv/mk;
+  const pct=Math.round((r-1)*100);
+  const verdict=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
+  const pos=p.pos||p.p||'';
+  const peers=COMP.filter(x=>(x.pos||x.p)===pos);
+  const rankMv=peers.slice().sort((a,b)=>mvAsset(b)-mvAsset(a)).findIndex(x=>x.n===p.n)+1;
+  const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
+  const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
+  const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
+  const proofClr=ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#7dd3fc':ds>=42?'#fcd34d':'#fca5a5';
+  const worthOutrunsProof=(rankDs-rankMv)>=6;
+  const ranksAgree=Math.abs(rankMv-rankMk)<=1;
+  const absPct=Math.abs(pct);
+  const gapQual=absPct>=20?', a wide gap':absPct>=10?'':', a slim one';
+  const gl=glOf(p);
+  const age=p.a||0;
+  const a25=p.ppg25||0,a24=p.ppg24||0;
+  const arc=(a25&&a24)?(a25-a24):0;
+  const oppSc=getOppScore(p.n,p.pos);
+  const ev=[];
+  if(gl){
+    if(gl.elite>=30) ev.push(`an elite game in ${gl.elite}% of starts`);
+    else if(gl.elite>=18) ev.push(`league-winning weeks ${gl.elite}% of the time`);
+    if(gl.miss>=45) ev.push(rankDs<=22?`but he busts ${gl.miss}% of weeks`:`a ${gl.miss}% weekly floor rate`);
+    else if(gl.miss<=18&&gl.hit>=75) ev.push(`a hit in ${gl.hit}% of starts — rock-steady`);
+  }
+  if(arc>=3) ev.push(`production climbing (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
+  else if(arc<=-3) ev.push(`production sliding (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
+  if(age>=31&&pos==='RB') ev.push(`and at ${age.toFixed(0)} the dynasty runway is short`);
+  else if(age>=33) ev.push(`and at ${age.toFixed(0)} he's near the end`);
+  else if(age<=23&&proof!=='thin') ev.push(`all before turning ${Math.ceil(age)}`);
+  else if(age<=25&&proof!=='thin'&&(pos==='WR'||pos==='TE')) ev.push(`still just ${age.toFixed(0)}`);
+  if(oppSc!=null){
+    if(oppSc>=88) ev.push(`a true bell-cow role (${oppSc} opportunity)`);
+    else if(oppSc<=55) ev.push(`a committee role (${oppSc} opportunity) capping the ceiling`);
+  }
+  if(p.och) ev.push('with a new OC adding scheme risk');
+  const evJoin=arr=>arr.length>=2?arr.slice(0,2).join(', '):(arr[0]||'');
+  const posBacking=evJoin(ev.filter(e=>!/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
+  const negBacking=evJoin(ev.filter(e=>/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
+  const stripConj=s=>s.replace(/^(but|and)\s+/i,'');
+  const posWhy=stripConj(posBacking||(gl&&gl.hit>=70?`a hit in ${gl.hit}% of starts`:''));
+  const negWhy=stripConj(negBacking||'');
+  let read,clr;
+  if(verdict==='no data'){
+    read=`No NFL production yet — nothing demonstrated to value him on. At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a track record.`;
+    clr='#718096';
+  } else if(verdict==='strong buy'||verdict==='buy'){
+    clr=verdict==='strong buy'?'#6ee7b7':'#9ae6b4';
+    if(worthOutrunsProof){
+      const why=negWhy||(p.proj>a25?`a projection (${(p.proj||0).toFixed(1)} ppg) ahead of his ${a25.toFixed(1)} history`:`a projected step up in role`);
+      read=`Model has him ${pos}${rankMv} on ${why}, ahead of his proven ${pos}${rankDs}. The ${absPct}% edge${gapQual} is real if the situation holds — a ${verdict} that's a bet on the role, not the résumé.`;
+    } else if(ranksAgree){
+      const why=posWhy||`a ${proof} ${pos}${rankDs} profile`;
+      const tierTail=rankMv<=8?' at the top of the board':(absPct>=10?' — a quiet edge':'');
+      read=`The market already rates him a ${pos}${rankMk}, and DELTA agrees on the talent (${why}) — but the model still sees ${absPct}% more value than the price${gapQual}. A ${verdict}${tierTail}.`;
+    } else {
+      const why=posWhy||`a steady ${pos}${rankDs} profile`;
+      read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA's model lands at ${pos}${rankMv} — a ${absPct}% discount${gapQual} the market hasn't caught up to. ${verdict==='strong buy'?'A clear buy.':'Worth buying.'}`;
+    }
+  } else if(verdict==='sell'||verdict==='strong sell'){
+    clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
+    const bustNote=gl&&gl.miss>=40?(rankMk<=18?`he busts ${gl.miss}% of weeks for a ${pos}${rankMk} price`:''):'';
+    const why=negWhy||bustNote||(gl&&gl.miss>=40?`a ${gl.miss}% bust rate consistent with his ${pos}${rankDs} tier`:`a thin ${pos}${rankDs} demonstrated profile`);
+    read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
+  } else {
+    const dir=r>=1.0?'a hair above':'a hair under';
+    const tone=(proof==='elite'||proof==='strong')?`a genuine ${pos}${rankDs}`:`a ${pos}${rankDs} profile`;
+    read=`Proof (${pos}${rankDs}), model (${pos}${rankMv}) and price (${pos}${rankMk}) all land within a tier — the model is ${dir} market, not enough to act on. Fair value: hold ${tone} unless an overpay comes.`;
+    clr='#cbd5e0';
+  }
+  const N=peers.length||1;
+  const barFor=(rank,c,lbl,sub)=>{
+    const w=Math.max(4,Math.round((1-(rank-1)/N)*100));
+    return'<div style="margin-bottom:5px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px">'
+      +'<span style="color:#718096">'+lbl+'</span>'
+      +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:#4a5568;font-weight:400"> · '+sub+'</span></span></div>'
+      +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+w+'%;background:'+c+';border-radius:3px"></div></div></div>';
+  };
+  return'<div class="dd-section" style="border:1px solid #1f2937;border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,#0d1117,#11161f)">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+    +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
+    +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
+    +'<div style="font-size:12px;color:#e2e8f0;line-height:1.55;margin-bottom:11px">'+read+'</div>'
+    +barFor(rankDs,proofClr,'PROVEN (DELTA Score Δ'+ds+')',proof)
+    +barFor(rankMv,'#a78bfa','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
+    +barFor(rankMk,'#7dd3fc','MARKET PRICE',mk.toLocaleString())
+    +'</div>';
+}

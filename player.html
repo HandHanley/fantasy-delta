@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DELTA</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0e17;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:#6ee7b7;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Layout */
+.page{max-width:680px;margin:0 auto;padding:16px 14px 48px}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #1f2937}
+.nav-back{font-size:12px;color:#4a5568;display:flex;align-items:center;gap:5px}
+.nav-back:hover{color:#a0aec0}
+.nav-brand{font-size:11px;font-weight:700;color:#6ee7b7;letter-spacing:.05em}
+
+/* Hero */
+.hero{margin-bottom:16px}
+.hero-name{font-size:26px;font-weight:800;letter-spacing:-.5px;color:#e2e8f0;line-height:1.1;margin-bottom:6px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:#718096;margin-bottom:8px}
+.hero-meta span{display:flex;align-items:center;gap:3px}
+.hero-verdict{display:flex;align-items:center;gap:10px;margin-top:8px}
+.verdict-badge{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+
+/* Badges — mirrors index.html */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em}
+.bs{background:#064e3b;color:#6ee7b7}
+.bi{background:#0c4a6e;color:#7dd3fc}
+.bn{background:#1f2937;color:#9ca3af}
+.bw{background:#451a03;color:#fcd34d}
+.bd{background:#3b0d0d;color:#fca5a5}
+
+/* Cards */
+.card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:10px}
+.dd-section{margin-bottom:0}
+.dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:8px}
+.dd-divider{height:1px;background:#1f2937;margin:.75rem 0}
+
+/* Progress bars (start profile) */
+.dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.dd-prog-label{font-size:10px;color:#718096;width:36px;flex-shrink:0}
+.dd-prog-bar{flex:1;height:5px;background:#1a202c;border-radius:3px;overflow:hidden}
+.dd-prog-fill{height:100%;border-radius:3px}
+.dd-prog-val{font-size:10px;font-weight:600;width:32px;text-align:right;flex-shrink:0}
+
+/* Arc bars (PPG/EPA charts) */
+.dd-arc{display:flex;align-items:flex-end;gap:3px;width:100%}
+.dd-arc-bar{border-radius:2px 2px 0 0;flex:1;min-width:10px}
+.dd-arc-yr{font-size:9px;color:#4a5568;margin-top:3px;text-align:center}
+
+/* Breakdown rows */
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1f2937;font-size:11px}
+.breakdown-row:last-child{border-bottom:none}
+
+/* Stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-box{background:#0d1117;border-radius:6px;padding:8px 10px;text-align:center}
+.stat-val{font-size:18px;font-weight:700;line-height:1.1;margin-bottom:2px}
+.stat-lbl{font-size:9px;color:#4a5568;letter-spacing:.03em}
+
+/* Production table */
+.prod-table{width:100%;border-collapse:collapse;font-size:11px}
+.prod-table th{font-size:9px;font-weight:600;color:#4a5568;letter-spacing:.04em;text-align:right;padding:0 6px 6px}
+.prod-table th:first-child{text-align:left}
+.prod-table td{text-align:right;padding:5px 6px;border-top:1px solid #1f2937}
+.prod-table td:first-child{text-align:left;color:#718096;font-weight:600}
+
+/* Ripple card */
+.ripple-card{background:#0d1117;border-radius:6px;padding:10px;margin-bottom:6px}
+.ripple-card:last-child{margin-bottom:0}
+
+/* Scout */
+.scout-text{font-size:12px;color:#a0aec0;line-height:1.65}
+
+/* Loading / error */
+.state-msg{text-align:center;padding:60px 20px;color:#4a5568;font-size:13px}
+
+/* Freshness */
+.freshness{font-size:10px;color:#374151;margin-top:6px;text-align:right}
+
+/* Mobile */
+@media(max-width:480px){
+  .hero-name{font-size:22px}
+  .stat-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a class="nav-back" href="index.html">← Rankings</a>
+    <span class="nav-brand">DELTA v1.0</span>
+  </nav>
+  <div id="state-loading" class="state-msg">Loading player data…</div>
+  <div id="state-error" class="state-msg" style="display:none"></div>
+  <div id="player-content" style="display:none"></div>
+</div>
+
+<script src="delta-engine.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const PLAYER_NAME = decodeURIComponent(params.get('name') || params.get('player') || '');
+
+function showError(msg) {
+  document.getElementById('state-loading').style.display = 'none';
+  const el = document.getElementById('state-error');
+  el.style.display = '';
+  el.innerHTML = msg + '<br><br><a href="index.html">← Back to Rankings</a>';
+}
+
+function showContent(html) {
+  document.getElementById('state-loading').style.display = 'none';
+  const el = document.getElementById('player-content');
+  el.style.display = '';
+  el.innerHTML = html;
+}
+
+// ── Rendering helpers ───────────────────────────────────────────────────────
+
+function ppgColor(v) {
+  return v >= 18 ? '#6ee7b7' : v >= 14 ? '#7dd3fc' : v >= 10 ? '#fcd34d' : v > 0 ? '#fc8181' : '#2d3748';
+}
+
+function buildHeroHTML(p) {
+  const ct = CONTRACTS.find(c => c.n === p.n);
+  const dp = DRAFT_PICKS[p.n];
+  const dpClr = dp ? (dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096') : '';
+  const dispTeam = (typeof AL !== 'undefined' && AL[p.t]) ? AL[p.t] : p.t;
+  const verdictText = (vTag(p).match(/>([a-z ]+)</) || [,''])[1];
+  const verdictClr = verdictText.includes('strong buy') ? '#6ee7b7'
+    : verdictText === 'buy' ? '#9ae6b4'
+    : verdictText === 'hold' ? '#cbd5e0'
+    : verdictText.includes('strong sell') ? '#fca5a5' : '#fc8181';
+  const mv = mvAsset(p);
+  const adjP = getAdjProj(p);
+
+  return `
+    <div class="hero">
+      <div class="hero-name">${p.n}</div>
+      <div class="hero-meta">
+        <span><span class="badge bn">${p.pos}</span></span>
+        <span>${dispTeam}</span>
+        <span>Age ${p.a.toFixed(1)}</span>
+        ${ct ? `<span>Contract thru ${ct.end}</span>` : ''}
+        ${COLLEGES[p.n] ? `<span>${COLLEGES[p.n]}</span>` : ''}
+        ${dp ? `<span style="color:${dpClr};font-weight:600">${dp.y} Rd${dp.r} #${dp.p}</span>` : ''}
+      </div>
+      <div class="hero-verdict">
+        <span class="verdict-badge" style="color:${verdictClr}">${verdictText}</span>
+        <span style="font-size:11px;color:#4a5568">Mkt ${p.ktcEff.toLocaleString()} · Model ${mv >= 19999 ? '19,999+' : mv.toLocaleString()} · Proj ${adjP.toFixed(1)} PPG</span>
+      </div>
+    </div>`;
+}
+
+function buildProductionHTML(p) {
+  const years = [
+    { yr: '2022', ppg: p.ppg22 || 0, g: p.g22 || 0 },
+    { yr: '2023', ppg: p.ppg23 || 0, g: p.g23 || 0 },
+    { yr: '2024', ppg: p.ppg24 || 0, g: p.g24 || 0 },
+    { yr: '2025', ppg: p.ppg25 || 0, g: p.g25 || 0 },
+  ].filter(y => y.ppg > 0 || y.g > 0);
+
+  if (!years.length) return '';
+
+  const maxPpg = Math.max(...years.map(y => y.ppg), 1);
+  const bars = years.map(y => {
+    const h = y.ppg > 0 ? Math.max(8, Math.round((y.ppg / maxPpg) * 52)) : 3;
+    const c = ppgColor(y.ppg);
+    return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+      <div style="font-size:9px;color:#718096;margin-bottom:2px">${y.ppg > 0 ? y.ppg.toFixed(1) : '—'}</div>
+      <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
+      <div class="dd-arc-yr">${y.yr.slice(2)}</div>
+    </div>`;
+  }).join('');
+
+  const posAvgPpg = (DS_AVG[p.pos] || 12);
+  const tableRows = years.map(y => {
+    const diff = y.ppg > 0 ? (y.ppg - posAvgPpg).toFixed(1) : null;
+    const diffClr = diff > 0 ? '#6ee7b7' : diff < 0 ? '#fca5a5' : '#718096';
+    return `<tr>
+      <td>${y.yr}</td>
+      <td style="color:${ppgColor(y.ppg)};font-weight:600">${y.ppg > 0 ? y.ppg.toFixed(1) : '—'}</td>
+      <td style="color:#718096">${y.g > 0 ? y.g : '—'}</td>
+      <td style="color:${diffClr}">${diff !== null ? (diff > 0 ? '+' : '') + diff : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="card-label">PPG Trend</div>
+    <div class="dd-arc" style="height:60px;margin-bottom:12px">${bars}</div>
+    <table class="prod-table">
+      <thead><tr>
+        <th>Season</th><th>PPG</th><th>Games</th><th>vs avg</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </div>`;
+}
+
+function buildEPAHTML(p) {
+  const epas = [
+    { yr: "'22", v: p.e22 || 0 },
+    { yr: "'23", v: p.e23 || 0 },
+    { yr: "'24", v: p.e24 || 0 },
+    { yr: "'25", v: p.e25 || 0 },
+  ].filter(x => x.v !== 0);
+
+  if (!epas.length) return '';
+
+  const maxEpa = Math.max(...epas.map(x => Math.abs(x.v)), 0.01);
+  const qbEpaColor = v => v >= 0.15 ? '#6ee7b7' : v >= 0.05 ? '#7dd3fc' : v >= -0.05 ? '#fcd34d' : '#fc8181';
+  const wrEpaColor = v => v >= 1.8 ? '#6ee7b7' : v >= 1.4 ? '#7dd3fc' : v >= 1.0 ? '#fcd34d' : '#fc8181';
+  const rbEpaColor = v => v >= 0.05 ? '#6ee7b7' : v >= -0.05 ? '#fcd34d' : '#fc8181';
+  const epaColor = p.pos === 'QB' ? qbEpaColor : p.pos === 'RB' ? rbEpaColor : wrEpaColor;
+
+  const bars = epas.map(x => {
+    const h = Math.max(5, Math.round((Math.abs(x.v) / maxEpa) * 52));
+    return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v.toFixed(2)}</div>
+      <div class="dd-arc-bar" style="height:${h}px;background:${epaColor(x.v)};width:100%"></div>
+      <div class="dd-arc-yr">${x.yr}</div>
+    </div>`;
+  }).join('');
+
+  const trendHtml = p.epaTr ? `<span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'#6ee7b7':p.epaTr==='down'?'#fc8181':'#718096'}">
+    ${p.epaTr==='up'?'↑ Improving':p.epaTr==='down'?'↓ Declining':'→ Flat'}</span>` : '';
+
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="card-label" style="margin-bottom:0">${p.pos === 'QB' ? 'EPA/Play' : 'YPRR'} Arc</div>
+      ${trendHtml}
+    </div>
+    <div class="dd-arc" style="height:60px;margin-bottom:10px">${bars}</div>
+    <div class="breakdown-row">
+      <span style="color:#718096">Applied score</span>
+      <span>${p.epaSc ? p.epaSc.toFixed(2) : '—'} ${p.epaFl ? '<span class="badge bn" style="font-size:9px">floor ⌊</span>' : ''}</span>
+    </div>
+  </div>`;
+}
+
+function buildContractHTML(p) {
+  const ct = CONTRACTS.find(c => c.n === p.n);
+  if (!ct) return '';
+
+  const fmt = n => n >= 1000000 ? '$' + (n / 1000000).toFixed(1) + 'M' : '$' + n.toLocaleString();
+  const st = contractStatus(ct);
+  const yrsLeft = ct.end - 2026;
+  const yrsClr = yrsLeft <= 1 ? '#fca5a5' : yrsLeft <= 2 ? '#fcd34d' : yrsLeft >= 4 ? '#6ee7b7' : '#7dd3fc';
+
+  return `<div class="card">
+    <div class="card-label">Contract</div>
+    <div class="stat-grid" style="margin-bottom:10px">
+      <div class="stat-box">
+        <div class="stat-val">${fmt(ct.aav)}</div>
+        <div class="stat-lbl">AAV</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${fmt(ct.total)}</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div>
+        <div class="stat-lbl">Yrs Left</div>
+      </div>
+    </div>
+    <div class="breakdown-row">
+      <span style="color:#718096">Status</span>
+      <span class="badge ${st.cls}">${st.label}</span>
+    </div>
+    <div class="breakdown-row">
+      <span style="color:#718096">Expires</span>
+      <span>${ct.end}${ct.end <= 2026 ? ' <span style="color:#fcd34d">⚠ walk year</span>' : ''}</span>
+    </div>
+    <div style="margin-top:8px">${dynastySignal(ct)}</div>
+    ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
+  </div>`;
+}
+
+function buildRippleHTML(p) {
+  const entries = RIPPLE.filter(r => r.n === p.n);
+  if (!entries.length) return '';
+
+  const cards = entries.map(r => `
+    <div class="ripple-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span class="badge ${r.d === 'up' ? 'bs' : 'bd'}">${r.d === 'up' ? '▲' : '▼'} ${r.delta}</span>
+      </div>
+      <div style="font-size:11px;color:#a0aec0;line-height:1.5">${r.reason}</div>
+    </div>`).join('');
+
+  return `<div class="card">
+    <div class="card-label">Ripple Effect</div>
+    ${cards}
+  </div>`;
+}
+
+function buildStartProfileCard(p) {
+  const gl = glOf(p);
+  if (!gl) return '';
+  return `<div class="card">
+    <div class="card-label">Start Profile · ${gl.g} games</div>
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Elite</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#6ee7b7"></div></div>
+      <div class="dd-prog-val" style="color:#6ee7b7">${gl.elite}%</div>
+    </div>
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Hit</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100 - gl.miss}%;background:#7dd3fc"></div></div>
+      <div class="dd-prog-val" style="color:#7dd3fc">${100 - gl.miss}%</div>
+    </div>
+    <div class="dd-prog-row">
+      <div class="dd-prog-label">Miss</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#fc8181"></div></div>
+      <div class="dd-prog-val" style="color:#fc8181">${gl.miss}%</div>
+    </div>
+  </div>`;
+}
+
+// ── Main render ─────────────────────────────────────────────────────────────
+
+function renderPlayerPage(p) {
+  // Fetch scout report async
+  ensureScoutData().then(() => {
+    const scoutEl = document.getElementById('scout-text');
+    if (scoutEl) {
+      scoutEl.textContent = SCOUT[p.n] || 'No scouting report available yet — regenerate data/scout-reports.json to add coverage.';
+      scoutEl.classList.remove('scout-loading');
+    }
+  });
+
+  const html = `
+    ${buildHeroHTML(p)}
+    ${buildDSBreakdownHTML(p)}
+    ${buildReadHTML(p)}
+    ${buildProductionHTML(p)}
+    ${buildEPAHTML(p)}
+    ${buildStartProfileCard(p)}
+    ${buildContractHTML(p)}
+    ${buildRippleHTML(p)}
+    <div class="card">
+      <div class="card-label">DELTA Scouting Report</div>
+      <div id="scout-text" class="scout-text scout-loading" style="color:#4a5568">Loading report…</div>
+    </div>
+    <div class="freshness" id="freshness-badge">—</div>
+  `;
+
+  showContent(html);
+  document.title = p.n + ' — DELTA';
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+
+if (!PLAYER_NAME) {
+  showError('No player specified. <br>Use <code>player.html?name=Josh+Allen</code>');
+} else {
+  loadLiveMarketValues()
+    .then(() => loadPlayerStats())
+    .then(() => loadPlayerContracts())
+    .then(() => ensureStartData())
+    .then(() => {
+      const p = COMP.find(x => x.n === PLAYER_NAME);
+      if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
+      renderPlayerPage(p);
+      // Freshness badge
+      const fb = document.getElementById('freshness-badge');
+      if (fb && typeof MARKET_SETTINGS !== 'undefined') {
+        const key = Object.keys(MARKET_SETTINGS || {})[0];
+        fb.textContent = 'Data refreshes nightly · ' + new Date().toLocaleDateString();
+      }
+    })
+    .catch(e => showError('Failed to load player data. ' + e.message));
+}
+</script>
+</body>
+</html>
