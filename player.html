@@ -10,22 +10,25 @@ body{background:#0a0e17;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 a{color:#6ee7b7;text-decoration:none}
 a:hover{text-decoration:underline}
 
-/* Layout */
 .page{max-width:680px;margin:0 auto;padding:16px 14px 48px}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #1f2937}
-.nav-back{font-size:12px;color:#4a5568;display:flex;align-items:center;gap:5px}
-.nav-back:hover{color:#a0aec0}
+.nav-back{font-size:12px;color:#718096;display:flex;align-items:center;gap:5px;transition:color .15s}
+.nav-back:hover{color:#e2e8f0;text-decoration:none}
 .nav-brand{font-size:11px;font-weight:700;color:#6ee7b7;letter-spacing:.05em}
 
 /* Hero */
-.hero{margin-bottom:16px}
-.hero-name{font-size:26px;font-weight:800;letter-spacing:-.5px;color:#e2e8f0;line-height:1.1;margin-bottom:6px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:#718096;margin-bottom:8px}
-.hero-meta span{display:flex;align-items:center;gap:3px}
-.hero-verdict{display:flex;align-items:center;gap:10px;margin-top:8px}
+.hero{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.hero-headshot{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #2d4a3e;background:#1a202c;flex-shrink:0}
+.hero-headshot-placeholder{width:72px;height:72px;border-radius:50%;background:#1a202c;border:1px solid #2d3748;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4a5568}
+.hero-info{flex:1;min-width:0}
+.hero-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:#e2e8f0;line-height:1.1;margin-bottom:5px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:#a0aec0;margin-bottom:3px}
+.hero-bg{font-size:11px;color:#718096;margin-bottom:8px}
+.hero-verdict{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .verdict-badge{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.hero-vals{font-size:11px;color:#a0aec0}
 
-/* Badges — mirrors index.html */
+/* Badges */
 .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em}
 .bs{background:#064e3b;color:#6ee7b7}
 .bi{background:#0c4a6e;color:#7dd3fc}
@@ -36,57 +39,63 @@ a:hover{text-decoration:underline}
 /* Cards */
 .card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:12px}
 .card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:10px}
-.dd-section{margin-bottom:0}
+.card-sublabel{font-size:9px;color:#374151;margin-top:2px;font-weight:400;text-transform:none;letter-spacing:0}
 .dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:8px}
 .dd-divider{height:1px;background:#1f2937;margin:.75rem 0}
 
-/* Progress bars (start profile) */
+/* Progress bars */
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:#718096;width:36px;flex-shrink:0}
 .dd-prog-bar{flex:1;height:5px;background:#1a202c;border-radius:3px;overflow:hidden}
 .dd-prog-fill{height:100%;border-radius:3px}
 .dd-prog-val{font-size:10px;font-weight:600;width:32px;text-align:right;flex-shrink:0}
 
-/* Arc bars (PPG/EPA charts) */
-.dd-arc{display:flex;align-items:flex-end;gap:3px;width:100%}
+/* Arc bars */
+.dd-arc{display:flex;align-items:flex-end;gap:4px;width:100%}
 .dd-arc-bar{border-radius:2px 2px 0 0;flex:1;min-width:10px}
 .dd-arc-yr{font-size:9px;color:#4a5568;margin-top:3px;text-align:center}
 
-/* Breakdown rows */
-.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1f2937;font-size:11px}
-.breakdown-row:last-child{border-bottom:none}
+/* Production table */
+.prod-table{width:100%;border-collapse:collapse;font-size:11px}
+.prod-table th{font-size:9px;font-weight:600;color:#4a5568;letter-spacing:.04em;text-align:right;padding:0 8px 8px}
+.prod-table th:first-child{text-align:left}
+.prod-table td{text-align:right;padding:6px 8px;border-top:1px solid #1a202c}
+.prod-table td:first-child{text-align:left;color:#718096;font-weight:600}
+.prod-table tr:last-child td{font-weight:600}
+
+/* EPA year rows */
+.epa-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a202c}
+.epa-row:last-child{border-bottom:none}
+.epa-yr{font-size:10px;color:#718096;width:32px;flex-shrink:0}
+.epa-bar-wrap{flex:1;height:6px;background:#1a202c;border-radius:3px;overflow:hidden}
+.epa-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.epa-val{font-size:11px;font-weight:600;width:42px;text-align:right;flex-shrink:0}
 
 /* Stat grid */
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-box{background:#0d1117;border-radius:6px;padding:8px 10px;text-align:center}
 .stat-val{font-size:18px;font-weight:700;line-height:1.1;margin-bottom:2px}
 .stat-lbl{font-size:9px;color:#4a5568;letter-spacing:.03em}
 
-/* Production table */
-.prod-table{width:100%;border-collapse:collapse;font-size:11px}
-.prod-table th{font-size:9px;font-weight:600;color:#4a5568;letter-spacing:.04em;text-align:right;padding:0 6px 6px}
-.prod-table th:first-child{text-align:left}
-.prod-table td{text-align:right;padding:5px 6px;border-top:1px solid #1f2937}
-.prod-table td:first-child{text-align:left;color:#718096;font-weight:600}
+/* Breakdown rows */
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #1a202c;font-size:11px}
+.breakdown-row:last-child{border-bottom:none}
 
-/* Ripple card */
+/* Ripple */
 .ripple-card{background:#0d1117;border-radius:6px;padding:10px;margin-bottom:6px}
 .ripple-card:last-child{margin-bottom:0}
 
 /* Scout */
 .scout-text{font-size:12px;color:#a0aec0;line-height:1.65}
 
-/* Loading / error */
-.state-msg{text-align:center;padding:60px 20px;color:#4a5568;font-size:13px}
+/* Section labels for named sections */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 
-/* Freshness */
+/* Loading/error */
+.state-msg{text-align:center;padding:60px 20px;color:#4a5568;font-size:13px}
 .freshness{font-size:10px;color:#374151;margin-top:6px;text-align:right}
 
-/* Mobile */
-@media(max-width:480px){
-  .hero-name{font-size:22px}
-  .stat-grid{grid-template-columns:repeat(3,1fr)}
-}
+@media(max-width:480px){.hero-name{font-size:20px}.hero-headshot,.hero-headshot-placeholder{width:58px;height:58px}}
 </style>
 </head>
 <body>
@@ -119,12 +128,12 @@ function showContent(html) {
   el.innerHTML = html;
 }
 
-// ── Rendering helpers ───────────────────────────────────────────────────────
-
+// ── Color helpers ────────────────────────────────────────────────────────────
 function ppgColor(v) {
   return v >= 18 ? '#6ee7b7' : v >= 14 ? '#7dd3fc' : v >= 10 ? '#fcd34d' : v > 0 ? '#fc8181' : '#2d3748';
 }
 
+// ── Hero section ─────────────────────────────────────────────────────────────
 function buildHeroHTML(p) {
   const ct = CONTRACTS.find(c => c.n === p.n);
   const dp = DRAFT_PICKS[p.n];
@@ -137,92 +146,161 @@ function buildHeroHTML(p) {
     : verdictText.includes('strong sell') ? '#fca5a5' : '#fc8181';
   const mv = mvAsset(p);
   const adjP = getAdjProj(p);
+  const hsUrl = (typeof HEADSHOTS !== 'undefined') && HEADSHOTS[p.n];
 
-  return `
-    <div class="hero">
+  const headshotHtml = hsUrl
+    ? `<img class="hero-headshot" src="${hsUrl}" alt="${p.n}" onerror="this.parentNode.innerHTML='<div class=hero-headshot-placeholder>👤</div>'">`
+    : `<div class="hero-headshot-placeholder">👤</div>`;
+
+  const bgParts = [];
+  if (COLLEGES[p.n]) bgParts.push(COLLEGES[p.n]);
+  if (dp) bgParts.push(`<span style="color:${dpClr};font-weight:600">${dp.y} Rd${dp.r} #${dp.p}</span>`);
+  const bgLine = bgParts.length ? `<div class="hero-bg">${bgParts.join(' · ')}</div>` : '';
+
+  return `<div class="hero">
+    ${headshotHtml}
+    <div class="hero-info">
       <div class="hero-name">${p.n}</div>
       <div class="hero-meta">
-        <span><span class="badge bn">${p.pos}</span></span>
+        <span class="badge bn">${p.pos}</span>
         <span>${dispTeam}</span>
         <span>Age ${p.a.toFixed(1)}</span>
-        ${ct ? `<span>Contract thru ${ct.end}</span>` : ''}
-        ${COLLEGES[p.n] ? `<span>${COLLEGES[p.n]}</span>` : ''}
-        ${dp ? `<span style="color:${dpClr};font-weight:600">${dp.y} Rd${dp.r} #${dp.p}</span>` : ''}
+        ${ct ? `<span style="color:#718096">Thru ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠</span>':''}</span>` : ''}
       </div>
+      ${bgLine}
       <div class="hero-verdict">
         <span class="verdict-badge" style="color:${verdictClr}">${verdictText}</span>
-        <span style="font-size:11px;color:#4a5568">Mkt ${p.ktcEff.toLocaleString()} · Model ${mv >= 19999 ? '19,999+' : mv.toLocaleString()} · Proj ${adjP.toFixed(1)} PPG</span>
+        <span class="hero-vals">Mkt ${p.ktcEff.toLocaleString()} · Model ${mv >= 19999 ? '19,999+' : mv.toLocaleString()} · Proj ${adjP.toFixed(1)} PPG</span>
       </div>
-    </div>`;
+    </div>
+  </div>`;
 }
 
+// ── Projection range ─────────────────────────────────────────────────────────
+function buildProjectionHTML(p) {
+  const adjP = getAdjProj(p);
+  const mv = mvAsset(p);
+  if (!p.proj) return '';
+  const pos = Math.max(0, Math.min(90, ((adjP - (p.floor||0)) / Math.max((p.ceil||adjP) - (p.floor||0), 1)) * 90));
+  return `<div class="card">
+    <div class="card-label">Projection &amp; Value</div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat-box">
+        <div class="stat-val" style="color:#6ee7b7">${adjP.toFixed(1)}</div>
+        <div class="stat-lbl">Proj PPG</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${mv >= 19999 ? '19,999+' : mv.toLocaleString()}</div>
+        <div class="stat-lbl">Model Value</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${p.ktcEff.toLocaleString()}</div>
+        <div class="stat-lbl">Market Value</div>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#4a5568;margin-bottom:3px">
+        <span>Floor ${p.floor ? p.floor.toFixed(1) : '—'}</span>
+        <span>Ceiling ${p.ceil ? p.ceil.toFixed(1) : '—'}</span>
+      </div>
+      <div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden;position:relative">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,#fc8181,#fcd34d,#6ee7b7);opacity:.35;border-radius:3px"></div>
+        <div style="position:absolute;left:${pos}%;top:0;width:10%;height:100%;background:#e2e8f0;border-radius:2px"></div>
+      </div>
+      <div style="font-size:9px;color:#4a5568;margin-top:4px;text-align:center">Projected outcome within the floor–ceiling range</div>
+    </div>
+  </div>`;
+}
+
+// ── Production trend ─────────────────────────────────────────────────────────
 function buildProductionHTML(p) {
   const years = [
-    { yr: '2022', ppg: p.ppg22 || 0, g: p.g22 || 0 },
-    { yr: '2023', ppg: p.ppg23 || 0, g: p.g23 || 0 },
-    { yr: '2024', ppg: p.ppg24 || 0, g: p.g24 || 0 },
-    { yr: '2025', ppg: p.ppg25 || 0, g: p.g25 || 0 },
-  ].filter(y => y.ppg > 0 || y.g > 0);
+    { yr: '2022', ppg: p.ppg22 || 0, g: p.g22 || null },
+    { yr: '2023', ppg: p.ppg23 || 0, g: p.g23 || null },
+    { yr: '2024', ppg: p.ppg24 || 0, g: p.g24 || null },
+    { yr: '2025', ppg: p.ppg25 || 0, g: p.g25 || null },
+  ].filter(y => y.ppg > 0);
 
   if (!years.length) return '';
 
+  const posAvgPpg = DS_AVG[p.pos] || 12;
   const maxPpg = Math.max(...years.map(y => y.ppg), 1);
+
+  // Bar chart — no labels above bars (table handles the numbers)
   const bars = years.map(y => {
-    const h = y.ppg > 0 ? Math.max(8, Math.round((y.ppg / maxPpg) * 52)) : 3;
-    const c = ppgColor(y.ppg);
+    const h = Math.max(10, Math.round((y.ppg / maxPpg) * 56));
     return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
-      <div style="font-size:9px;color:#718096;margin-bottom:2px">${y.ppg > 0 ? y.ppg.toFixed(1) : '—'}</div>
-      <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
+      <div class="dd-arc-bar" style="height:${h}px;background:${ppgColor(y.ppg)};width:100%"></div>
       <div class="dd-arc-yr">${y.yr.slice(2)}</div>
     </div>`;
   }).join('');
 
-  const posAvgPpg = (DS_AVG[p.pos] || 12);
+  // Table rows
   const tableRows = years.map(y => {
-    const diff = y.ppg > 0 ? (y.ppg - posAvgPpg).toFixed(1) : null;
+    const diff = (y.ppg - posAvgPpg).toFixed(1);
     const diffClr = diff > 0 ? '#6ee7b7' : diff < 0 ? '#fca5a5' : '#718096';
+    const gStr = y.g != null && y.g > 0 ? String(y.g) : '—';
     return `<tr>
       <td>${y.yr}</td>
-      <td style="color:${ppgColor(y.ppg)};font-weight:600">${y.ppg > 0 ? y.ppg.toFixed(1) : '—'}</td>
-      <td style="color:#718096">${y.g > 0 ? y.g : '—'}</td>
-      <td style="color:${diffClr}">${diff !== null ? (diff > 0 ? '+' : '') + diff : '—'}</td>
+      <td style="color:${ppgColor(y.ppg)};font-weight:600">${y.ppg.toFixed(1)}</td>
+      <td style="color:#718096">${gStr}</td>
+      <td style="color:${diffClr}">${diff > 0 ? '+' : ''}${diff}</td>
     </tr>`;
   }).join('');
 
   return `<div class="card">
-    <div class="card-label">PPG Trend</div>
-    <div class="dd-arc" style="height:60px;margin-bottom:12px">${bars}</div>
+    <div class="section-header">
+      <div>
+        <div class="card-label" style="margin-bottom:2px">PPG Trend</div>
+        <div class="card-sublabel">Adjusted for current scoring format</div>
+      </div>
+    </div>
+    <div class="dd-arc" style="height:64px;margin-bottom:10px">${bars}</div>
     <table class="prod-table">
       <thead><tr>
-        <th>Season</th><th>PPG</th><th>Games</th><th>vs avg</th>
+        <th>Season</th><th>PPG</th><th>Games</th>
+        <th title="vs positional average PPG">vs pos avg</th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
+    <div style="font-size:9px;color:#374151;margin-top:6px">Pos avg = ${posAvgPpg} PPG · Games shown when available from pipeline</div>
   </div>`;
 }
 
+// ── EPA / YPRR trend ─────────────────────────────────────────────────────────
 function buildEPAHTML(p) {
+  const isQB = p.pos === 'QB';
+  const isRB = p.pos === 'RB';
+  const label = isQB ? 'EPA/Play Arc' : 'YPRR Arc';
+  const sublabel = isQB ? 'EPA per play vs league average' : isRB ? 'Rushing EPA trend' : 'Yards per route run by season';
+
   const epas = [
-    { yr: "'22", v: p.e22 || 0 },
-    { yr: "'23", v: p.e23 || 0 },
-    { yr: "'24", v: p.e24 || 0 },
-    { yr: "'25", v: p.e25 || 0 },
+    { yr: '2022', v: p.e22 || 0 },
+    { yr: '2023', v: p.e23 || 0 },
+    { yr: '2024', v: p.e24 || 0 },
+    { yr: '2025', v: p.e25 || 0 },
   ].filter(x => x.v !== 0);
 
   if (!epas.length) return '';
 
-  const maxEpa = Math.max(...epas.map(x => Math.abs(x.v)), 0.01);
-  const qbEpaColor = v => v >= 0.15 ? '#6ee7b7' : v >= 0.05 ? '#7dd3fc' : v >= -0.05 ? '#fcd34d' : '#fc8181';
-  const wrEpaColor = v => v >= 1.8 ? '#6ee7b7' : v >= 1.4 ? '#7dd3fc' : v >= 1.0 ? '#fcd34d' : '#fc8181';
-  const rbEpaColor = v => v >= 0.05 ? '#6ee7b7' : v >= -0.05 ? '#fcd34d' : '#fc8181';
-  const epaColor = p.pos === 'QB' ? qbEpaColor : p.pos === 'RB' ? rbEpaColor : wrEpaColor;
+  const qbClr = v => v >= 0.15 ? '#6ee7b7' : v >= 0.05 ? '#7dd3fc' : v >= -0.05 ? '#fcd34d' : '#fc8181';
+  const rbClr = v => v >= 0.05 ? '#6ee7b7' : v >= -0.05 ? '#fcd34d' : '#fc8181';
+  const wrClr = v => v >= 1.8 ? '#6ee7b7' : v >= 1.4 ? '#7dd3fc' : v >= 1.0 ? '#fcd34d' : '#fc8181';
+  const getClr = isQB ? qbClr : isRB ? rbClr : wrClr;
 
-  const bars = epas.map(x => {
-    const h = Math.max(5, Math.round((Math.abs(x.v) / maxEpa) * 52));
-    return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
-      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v.toFixed(2)}</div>
-      <div class="dd-arc-bar" style="height:${h}px;background:${epaColor(x.v)};width:100%"></div>
-      <div class="dd-arc-yr">${x.yr}</div>
+  // For horizontal bar display — normalize to max absolute value
+  const maxV = Math.max(...epas.map(x => Math.abs(x.v)), 0.01);
+
+  const rows = epas.map(x => {
+    const pct = Math.round((Math.abs(x.v) / maxV) * 100);
+    const clr = getClr(x.v);
+    const valStr = isQB || isRB ? x.v.toFixed(2) : x.v.toFixed(2);
+    return `<div class="epa-row">
+      <div class="epa-yr">${x.yr.slice(2)}</div>
+      <div class="epa-bar-wrap">
+        <div class="epa-bar-fill" style="width:${pct}%;background:${clr}"></div>
+      </div>
+      <div class="epa-val" style="color:${clr}">${x.v >= 0 ? '' : ''}${valStr}</div>
     </div>`;
   }).join('');
 
@@ -230,79 +308,82 @@ function buildEPAHTML(p) {
     ${p.epaTr==='up'?'↑ Improving':p.epaTr==='down'?'↓ Declining':'→ Flat'}</span>` : '';
 
   return `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div class="card-label" style="margin-bottom:0">${p.pos === 'QB' ? 'EPA/Play' : 'YPRR'} Arc</div>
+    <div class="section-header">
+      <div>
+        <div class="card-label" style="margin-bottom:2px">${label}</div>
+        <div class="card-sublabel">${sublabel}</div>
+      </div>
       ${trendHtml}
     </div>
-    <div class="dd-arc" style="height:60px;margin-bottom:10px">${bars}</div>
-    <div class="breakdown-row">
+    ${rows}
+    <div class="breakdown-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #1a202c;border-bottom:none">
       <span style="color:#718096">Applied score</span>
       <span>${p.epaSc ? p.epaSc.toFixed(2) : '—'} ${p.epaFl ? '<span class="badge bn" style="font-size:9px">floor ⌊</span>' : ''}</span>
     </div>
   </div>`;
 }
 
-function buildContractHTML(p) {
-  const ct = CONTRACTS.find(c => c.n === p.n);
-  if (!ct) return '';
+// ── Opportunity / scheme ──────────────────────────────────────────────────────
+function buildOpportunityHTML(p) {
+  const oppSc = getOppScore(p.n, p.pos);
+  const st25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
+  if (!oppSc || !st25) return '';
 
-  const fmt = n => n >= 1000000 ? '$' + (n / 1000000).toFixed(1) + 'M' : '$' + n.toLocaleString();
-  const st = contractStatus(ct);
-  const yrsLeft = ct.end - 2026;
-  const yrsClr = yrsLeft <= 1 ? '#fca5a5' : yrsLeft <= 2 ? '#fcd34d' : yrsLeft >= 4 ? '#6ee7b7' : '#7dd3fc';
+  const isWR = p.pos === 'WR' || p.pos === 'TE';
+  const scC = oppScoreColor(oppSc);
+  const tier = oppSc >= 88 ? (isWR ? 'Elite alpha' : 'Elite workhorse')
+    : oppSc >= 75 ? 'Clear starter' : oppSc >= 60 ? 'Role player' : 'Committee/specialist';
+
+  const tgtS = st25.target_share || 0;
+  const airS = st25.air_yds_share || 0;
+  const rzT = st25.rz_targets;
+  const rzC = st25.rz_carries;
+  const sysColor = p.sys >= 70 ? '#6ee7b7' : p.sys >= 55 ? '#7dd3fc' : p.sys >= 40 ? '#fcd34d' : '#fc8181';
+
+  const rows = isWR ? [
+    ['Target Share', (tgtS * 100).toFixed(1) + '%', tgtS >= .28 ? '#6ee7b7' : tgtS >= .20 ? '#7dd3fc' : tgtS >= .14 ? '#fcd34d' : '#fc8181'],
+    ['Air Yards Share', (airS * 100).toFixed(1) + '%', airS >= .38 ? '#6ee7b7' : airS >= .28 ? '#7dd3fc' : airS >= .18 ? '#fcd34d' : '#fc8181'],
+    ['RZ Targets', rzT != null ? rzT : '—', rzT >= 18 ? '#6ee7b7' : rzT >= 12 ? '#7dd3fc' : rzT >= 7 ? '#fcd34d' : '#fc8181'],
+  ] : [
+    ['Rush Share', ((st25.rush_share || 0) * 100).toFixed(1) + '%', (st25.rush_share || 0) >= .28 ? '#6ee7b7' : (st25.rush_share || 0) >= .20 ? '#7dd3fc' : (st25.rush_share || 0) >= .13 ? '#fcd34d' : '#fc8181'],
+    ['Target Share', (tgtS * 100).toFixed(1) + '%', tgtS >= .18 ? '#6ee7b7' : tgtS >= .12 ? '#7dd3fc' : tgtS >= .08 ? '#fcd34d' : '#fc8181'],
+    ['RZ Carries', rzC != null ? rzC : '—', rzC >= 55 ? '#6ee7b7' : rzC >= 35 ? '#7dd3fc' : rzC >= 20 ? '#fcd34d' : '#fc8181'],
+    ['RZ Targets', rzT != null ? rzT : '—', rzT >= 12 ? '#6ee7b7' : rzT >= 7 ? '#7dd3fc' : rzT >= 3 ? '#fcd34d' : '#fc8181'],
+  ];
+
+  const rowsHtml = rows.map(([lbl, val, clr]) =>
+    `<div class="breakdown-row"><span style="color:#718096">${lbl}</span><span style="font-weight:600;color:${clr}">${val}</span></div>`
+  ).join('');
+
+  const gms = st25.games;
+  const ocLine = p.och ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px">⚠ OC change — scheme risk · ${p.oc || ''}</div>` : '';
 
   return `<div class="card">
-    <div class="card-label">Contract</div>
-    <div class="stat-grid" style="margin-bottom:10px">
-      <div class="stat-box">
-        <div class="stat-val">${fmt(ct.aav)}</div>
-        <div class="stat-lbl">AAV</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div>
+        <div class="card-label" style="margin-bottom:2px">${isWR ? 'Alpha' : 'Workhorse'} Score · Usage 2025</div>
+        <div class="card-sublabel" style="color:${scC};font-weight:600">${tier}</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-val">${fmt(ct.total)}</div>
-        <div class="stat-lbl">Total</div>
+      <div style="font-size:32px;font-weight:800;line-height:1;color:${scC}">${oppSc}</div>
+    </div>
+    ${rowsHtml}
+    ${gms ? `<div style="font-size:9px;color:#374151;margin-top:6px">${gms} games sampled · 2025 season</div>` : ''}
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a202c">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:10px;color:#718096">Offensive System Score</span>
+        <span style="font-size:14px;font-weight:700;color:${sysColor}">${p.sys}</span>
       </div>
-      <div class="stat-box">
-        <div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div>
-        <div class="stat-lbl">Yrs Left</div>
-      </div>
+      ${ocLine}
     </div>
-    <div class="breakdown-row">
-      <span style="color:#718096">Status</span>
-      <span class="badge ${st.cls}">${st.label}</span>
-    </div>
-    <div class="breakdown-row">
-      <span style="color:#718096">Expires</span>
-      <span>${ct.end}${ct.end <= 2026 ? ' <span style="color:#fcd34d">⚠ walk year</span>' : ''}</span>
-    </div>
-    <div style="margin-top:8px">${dynastySignal(ct)}</div>
-    ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
   </div>`;
 }
 
-function buildRippleHTML(p) {
-  const entries = RIPPLE.filter(r => r.n === p.n);
-  if (!entries.length) return '';
-
-  const cards = entries.map(r => `
-    <div class="ripple-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span class="badge ${r.d === 'up' ? 'bs' : 'bd'}">${r.d === 'up' ? '▲' : '▼'} ${r.delta}</span>
-      </div>
-      <div style="font-size:11px;color:#a0aec0;line-height:1.5">${r.reason}</div>
-    </div>`).join('');
-
-  return `<div class="card">
-    <div class="card-label">Ripple Effect</div>
-    ${cards}
-  </div>`;
-}
-
-function buildStartProfileCard(p) {
+// ── Start Profile ────────────────────────────────────────────────────────────
+function buildStartProfileHTML_card(p) {
   const gl = glOf(p);
   if (!gl) return '';
   return `<div class="card">
-    <div class="card-label">Start Profile · ${gl.g} games</div>
+    <div class="card-label">Start Profile · ${gl.g} games sampled</div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Elite</div>
       <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#6ee7b7"></div></div>
@@ -318,18 +399,84 @@ function buildStartProfileCard(p) {
       <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#fc8181"></div></div>
       <div class="dd-prog-val" style="color:#fc8181">${gl.miss}%</div>
     </div>
+    <div style="font-size:9px;color:#374151;margin-top:6px">Elite = top-12 weekly scorer at position · Hit = startable · Miss = bust</div>
   </div>`;
 }
 
-// ── Main render ─────────────────────────────────────────────────────────────
+// ── Contract ─────────────────────────────────────────────────────────────────
+function buildContractHTML(p) {
+  const ct = CONTRACTS.find(c => c.n === p.n);
+  if (!ct) return '';
+  const fmt = n => n >= 1000000 ? '$' + (n / 1000000).toFixed(1) + 'M' : '$' + n.toLocaleString();
+  const st = contractStatus(ct);
+  const yrsLeft = ct.end - 2026;
+  const yrsClr = yrsLeft <= 1 ? '#fca5a5' : yrsLeft <= 2 ? '#fcd34d' : yrsLeft >= 4 ? '#6ee7b7' : '#7dd3fc';
+  return `<div class="card">
+    <div class="card-label">Contract</div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat-box">
+        <div class="stat-val">${fmt(ct.aav)}</div>
+        <div class="stat-lbl">Per Year (AAV)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${fmt(ct.total)}</div>
+        <div class="stat-lbl">Total Value</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div>
+        <div class="stat-lbl">Years Left</div>
+      </div>
+    </div>
+    <div class="breakdown-row">
+      <span style="color:#718096">Status</span>
+      <span class="badge ${st.cls}">${st.label}</span>
+    </div>
+    <div class="breakdown-row">
+      <span style="color:#718096">Expires</span>
+      <span>${ct.end}${ct.end <= 2026 ? ' <span style="color:#fcd34d">⚠ walk year</span>' : ''}</span>
+    </div>
+    <div style="margin-top:8px">${dynastySignal(ct)}</div>
+    ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
+    <div style="font-size:9px;color:#374151;margin-top:8px">Note: First-round rookie 5th-year options not yet reflected in contract data.</div>
+  </div>`;
+}
 
+// ── Ripple Effects ────────────────────────────────────────────────────────────
+function buildRippleHTML(p) {
+  const entries = RIPPLE.filter(r => r.n === p.n);
+  if (!entries.length) return '';
+  return `<div class="card">
+    <div class="card-label">Ripple Effect</div>
+    ${entries.map(r => `<div class="ripple-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span class="badge ${r.d === 'up' ? 'bs' : 'bd'}">${r.d === 'up' ? '▲' : '▼'} ${r.delta}</span>
+      </div>
+      <div style="font-size:11px;color:#a0aec0;line-height:1.5">${r.reason}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── Scout Report ─────────────────────────────────────────────────────────────
+function buildScoutHTML() {
+  return `<div class="card">
+    <div class="section-header" style="margin-bottom:6px">
+      <div>
+        <div class="card-label" style="margin-bottom:2px">DELTA Scouting Report</div>
+        <div class="card-sublabel">AI-generated narrative — context, history &amp; dynasty outlook</div>
+      </div>
+    </div>
+    <div id="scout-text" class="scout-text" style="color:#4a5568">Loading…</div>
+  </div>`;
+}
+
+// ── Main render ──────────────────────────────────────────────────────────────
 function renderPlayerPage(p) {
-  // Fetch scout report async
+  // Load scout report async
   ensureScoutData().then(() => {
-    const scoutEl = document.getElementById('scout-text');
-    if (scoutEl) {
-      scoutEl.textContent = SCOUT[p.n] || 'No scouting report available yet — regenerate data/scout-reports.json to add coverage.';
-      scoutEl.classList.remove('scout-loading');
+    const el = document.getElementById('scout-text');
+    if (el) {
+      el.style.color = '#a0aec0';
+      el.textContent = SCOUT[p.n] || 'No scouting report available yet — regenerate data/scout-reports.json to add coverage.';
     }
   });
 
@@ -337,26 +484,24 @@ function renderPlayerPage(p) {
     ${buildHeroHTML(p)}
     ${buildDSBreakdownHTML(p)}
     ${buildReadHTML(p)}
+    ${buildStartProfileHTML_card(p)}
+    ${buildProjectionHTML(p)}
     ${buildProductionHTML(p)}
     ${buildEPAHTML(p)}
-    ${buildStartProfileCard(p)}
+    ${buildOpportunityHTML(p)}
     ${buildContractHTML(p)}
     ${buildRippleHTML(p)}
-    <div class="card">
-      <div class="card-label">DELTA Scouting Report</div>
-      <div id="scout-text" class="scout-text scout-loading" style="color:#4a5568">Loading report…</div>
-    </div>
-    <div class="freshness" id="freshness-badge">—</div>
+    ${buildScoutHTML()}
+    <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `;
 
   showContent(html);
   document.title = p.n + ' — DELTA';
 }
 
-// ── Init ────────────────────────────────────────────────────────────────────
-
+// ── Init ─────────────────────────────────────────────────────────────────────
 if (!PLAYER_NAME) {
-  showError('No player specified. <br>Use <code>player.html?name=Josh+Allen</code>');
+  showError('No player specified. Use <code>player.html?name=Josh+Allen</code>');
 } else {
   loadLiveMarketValues()
     .then(() => loadPlayerStats())
@@ -366,12 +511,6 @@ if (!PLAYER_NAME) {
       const p = COMP.find(x => x.n === PLAYER_NAME);
       if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
       renderPlayerPage(p);
-      // Freshness badge
-      const fb = document.getElementById('freshness-badge');
-      if (fb && typeof MARKET_SETTINGS !== 'undefined') {
-        const key = Object.keys(MARKET_SETTINGS || {})[0];
-        fb.textContent = 'Data refreshes nightly · ' + new Date().toLocaleDateString();
-      }
     })
     .catch(e => showError('Failed to load player data. ' + e.message));
 }
