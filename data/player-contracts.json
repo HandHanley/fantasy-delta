@@ -1,5 +1,3926 @@
 {
-  "fetched": "2026-06-26T16:40:15.210062+00:00",
+  "fetched": "2026-06-26T16:51:44.725187+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
-  "contracts": {}
+  "contracts": {
+    "Josh Allen": {
+      "team": "Bills",
+      "year_signed": 2025,
+      "years": 6,
+      "end_year": 2030,
+      "aav": 55.0,
+      "total": 330.0,
+      "guaranteed": 147.0,
+      "is_active": true
+    },
+    "Drake Maye": {
+      "team": "Patriots",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 9.16,
+      "total": 36.64,
+      "guaranteed": 36.64,
+      "is_active": true
+    },
+    "Jayden Daniels": {
+      "team": "Commanders",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 9.44,
+      "total": 37.75,
+      "guaranteed": 37.75,
+      "is_active": true
+    },
+    "Caleb Williams": {
+      "team": "Bears",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 9.87,
+      "total": 39.49,
+      "guaranteed": 39.49,
+      "is_active": true
+    },
+    "Lamar Jackson": {
+      "team": "Ravens",
+      "year_signed": 2023,
+      "years": 5,
+      "end_year": 2027,
+      "aav": 52.0,
+      "total": 260.0,
+      "guaranteed": 135.0,
+      "is_active": true
+    },
+    "Patrick Mahomes": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 7,
+      "end_year": 2032,
+      "aav": 64.0,
+      "total": 448.0,
+      "guaranteed": 95.55,
+      "is_active": true
+    },
+    "Jalen Hurts": {
+      "team": "Eagles",
+      "year_signed": 2023,
+      "years": 5,
+      "end_year": 2027,
+      "aav": 51.0,
+      "total": 255.0,
+      "guaranteed": 110.0,
+      "is_active": true
+    },
+    "Justin Herbert": {
+      "team": "Chargers",
+      "year_signed": 2023,
+      "years": 5,
+      "end_year": 2027,
+      "aav": 52.5,
+      "total": 262.5,
+      "guaranteed": 133.74,
+      "is_active": true
+    },
+    "Bo Nix": {
+      "team": "Broncos",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 4.65,
+      "total": 18.61,
+      "guaranteed": 18.61,
+      "is_active": true
+    },
+    "Trevor Lawrence": {
+      "team": "Jaguars",
+      "year_signed": 2024,
+      "years": 5,
+      "end_year": 2028,
+      "aav": 55.0,
+      "total": 275.0,
+      "guaranteed": 142.0,
+      "is_active": true
+    },
+    "Jared Goff": {
+      "team": "Lions",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 53.0,
+      "total": 212.0,
+      "guaranteed": 113.61,
+      "is_active": true
+    },
+    "Dak Prescott": {
+      "team": "Cowboys",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 60.0,
+      "total": 240.0,
+      "guaranteed": 129.0,
+      "is_active": true
+    },
+    "Brock Purdy": {
+      "team": "49ers",
+      "year_signed": 2025,
+      "years": 5,
+      "end_year": 2029,
+      "aav": 53.0,
+      "total": 265.0,
+      "guaranteed": 100.0,
+      "is_active": true
+    },
+    "Jordan Love": {
+      "team": "Packers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 55.0,
+      "total": 220.0,
+      "guaranteed": 100.8,
+      "is_active": true
+    },
+    "Baker Mayfield": {
+      "team": "Buccaneers",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 33.33,
+      "total": 100.0,
+      "guaranteed": 40.0,
+      "is_active": true
+    },
+    "Sam Darnold": {
+      "team": "Seahawks",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 33.5,
+      "total": 100.5,
+      "guaranteed": 37.5,
+      "is_active": true
+    },
+    "C.J. Stroud": {
+      "team": "Texans",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 9.07,
+      "total": 36.28,
+      "guaranteed": 36.28,
+      "is_active": true
+    },
+    "Jaxson Dart": {
+      "team": "Giants",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 4.24,
+      "total": 16.98,
+      "guaranteed": 16.98,
+      "is_active": true
+    },
+    "Cam Ward": {
+      "team": "Titans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 12.21,
+      "total": 48.84,
+      "guaranteed": 48.84,
+      "is_active": true
+    },
+    "Bryce Young": {
+      "team": "Panthers",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 9.49,
+      "total": 37.96,
+      "guaranteed": 37.96,
+      "is_active": true
+    },
+    "Kyler Murray": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.3,
+      "total": 1.3,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Joe Burrow": {
+      "team": "Bengals",
+      "year_signed": 2023,
+      "years": 5,
+      "end_year": 2027,
+      "aav": 55.0,
+      "total": 275.0,
+      "guaranteed": 146.51,
+      "is_active": true
+    },
+    "Tua Tagovailoa": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.22,
+      "total": 1.22,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Geno Smith": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.3,
+      "total": 3.3,
+      "guaranteed": 3.3,
+      "is_active": true
+    },
+    "J.J. McCarthy": {
+      "team": "Vikings",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 5.46,
+      "total": 21.85,
+      "guaranteed": 21.85,
+      "is_active": true
+    },
+    "Daniel Jones": {
+      "team": "Colts",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 44.0,
+      "total": 88.0,
+      "guaranteed": 49.49,
+      "is_active": true
+    },
+    "Tyler Shough": {
+      "team": "Saints",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.7,
+      "total": 10.8,
+      "guaranteed": 10.8,
+      "is_active": true
+    },
+    "Michael Penix Jr.": {
+      "team": "Falcons",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 5.72,
+      "total": 22.88,
+      "guaranteed": 22.88,
+      "is_active": true
+    },
+    "Shedeur Sanders": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.16,
+      "total": 4.65,
+      "guaranteed": 0.45,
+      "is_active": true
+    },
+    "Mason Rudolph": {
+      "team": "Steelers",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 3.75,
+      "total": 7.5,
+      "guaranteed": 3.0,
+      "is_active": true
+    },
+    "Aaron Rodgers": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 22.5,
+      "total": 22.5,
+      "guaranteed": 22.0,
+      "is_active": true
+    },
+    "Malik Willis": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 22.5,
+      "total": 67.5,
+      "guaranteed": 45.0,
+      "is_active": true
+    },
+    "Jacoby Brissett": {
+      "team": "Cardinals",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 6.25,
+      "total": 12.5,
+      "guaranteed": 6.5,
+      "is_active": true
+    },
+    "Bijan Robinson": {
+      "team": "Falcons",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 5.49,
+      "total": 21.96,
+      "guaranteed": 21.96,
+      "is_active": true
+    },
+    "Jahmyr Gibbs": {
+      "team": "Lions",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 4.46,
+      "total": 17.85,
+      "guaranteed": 17.85,
+      "is_active": true
+    },
+    "James Cook": {
+      "team": "Bills",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 11.5,
+      "total": 46.0,
+      "guaranteed": 15.28,
+      "is_active": true
+    },
+    "Jonathan Taylor": {
+      "team": "Colts",
+      "year_signed": 2023,
+      "years": 3,
+      "end_year": 2025,
+      "aav": 14.0,
+      "total": 42.0,
+      "guaranteed": 19.35,
+      "is_active": true
+    },
+    "Derrick Henry": {
+      "team": "Ravens",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 15.0,
+      "total": 30.0,
+      "guaranteed": 25.0,
+      "is_active": true
+    },
+    "Kyren Williams": {
+      "team": "Rams",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 11.0,
+      "total": 33.0,
+      "guaranteed": 15.14,
+      "is_active": true
+    },
+    "Saquon Barkley": {
+      "team": "Eagles",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 20.6,
+      "total": 41.2,
+      "guaranteed": 36.0,
+      "is_active": true
+    },
+    "Christian McCaffrey": {
+      "team": "49ers",
+      "year_signed": 2024,
+      "years": 2,
+      "end_year": 2025,
+      "aav": 19.0,
+      "total": 38.0,
+      "guaranteed": 24.0,
+      "is_active": true
+    },
+    "Chase Brown": {
+      "team": "Bengals",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.03,
+      "total": 4.13,
+      "guaranteed": 0.29,
+      "is_active": true
+    },
+    "Travis Etienne": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 12.0,
+      "total": 48.0,
+      "guaranteed": 24.0,
+      "is_active": true
+    },
+    "Javonte Williams": {
+      "team": "Cowboys",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 8.0,
+      "total": 24.0,
+      "guaranteed": 16.0,
+      "is_active": true
+    },
+    "Josh Jacobs": {
+      "team": "Packers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 12.0,
+      "total": 48.0,
+      "guaranteed": 12.5,
+      "is_active": true
+    },
+    "Ashton Jeanty": {
+      "team": "Raiders",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 8.97,
+      "total": 35.9,
+      "guaranteed": 35.9,
+      "is_active": true
+    },
+    "Jaylen Warren": {
+      "team": "Steelers",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 5.95,
+      "total": 11.9,
+      "guaranteed": 11.77,
+      "is_active": true
+    },
+    "Rico Dowdle": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 6.12,
+      "total": 12.25,
+      "guaranteed": 5.0,
+      "is_active": true
+    },
+    "Breece Hall": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 14.5,
+      "total": 43.5,
+      "guaranteed": 29.0,
+      "is_active": true
+    },
+    "TreVeyon Henderson": {
+      "team": "Patriots",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.79,
+      "total": 11.14,
+      "guaranteed": 11.14,
+      "is_active": true
+    },
+    "Kenneth Gainwell": {
+      "team": "Buccaneers",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 7.0,
+      "total": 14.0,
+      "guaranteed": 9.83,
+      "is_active": true
+    },
+    "RJ Harvey": {
+      "team": "Broncos",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.84,
+      "total": 7.36,
+      "guaranteed": 4.73,
+      "is_active": true
+    },
+    "Kenneth Walker III": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 14.35,
+      "total": 43.05,
+      "guaranteed": 28.7,
+      "is_active": true
+    },
+    "Zach Charbonnet": {
+      "team": "Seahawks",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.72,
+      "total": 6.88,
+      "guaranteed": 3.81,
+      "is_active": true
+    },
+    "Tony Pollard": {
+      "team": "Titans",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 7.25,
+      "total": 21.75,
+      "guaranteed": 10.49,
+      "is_active": true
+    },
+    "Rhamondre Stevenson": {
+      "team": "Patriots",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 9.0,
+      "total": 36.0,
+      "guaranteed": 17.12,
+      "is_active": true
+    },
+    "Quinshon Judkins": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.85,
+      "total": 11.4,
+      "guaranteed": 11.4,
+      "is_active": true
+    },
+    "David Montgomery": {
+      "team": "Texans",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 8.25,
+      "total": 16.5,
+      "guaranteed": 1.0,
+      "is_active": true
+    },
+    "Woody Marks": {
+      "team": "Texans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.3,
+      "total": 5.2,
+      "guaranteed": 1.0,
+      "is_active": true
+    },
+    "Kyle Monangai": {
+      "team": "Bears",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.33,
+      "guaranteed": 0.13,
+      "is_active": true
+    },
+    "Jacory Croskey-Merritt": {
+      "team": "Commanders",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.31,
+      "guaranteed": 0.11,
+      "is_active": true
+    },
+    "Bucky Irving": {
+      "team": "Buccaneers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.19,
+      "total": 4.75,
+      "guaranteed": 0.73,
+      "is_active": true
+    },
+    "Rachaad White": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 2.0,
+      "total": 2.0,
+      "guaranteed": 1.72,
+      "is_active": true
+    },
+    "Jordan Mason": {
+      "team": "Vikings",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 5.25,
+      "total": 10.5,
+      "guaranteed": 7.23,
+      "is_active": true
+    },
+    "Omarion Hampton": {
+      "team": "Chargers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 4.44,
+      "total": 17.77,
+      "guaranteed": 17.77,
+      "is_active": true
+    },
+    "Blake Corum": {
+      "team": "Rams",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.44,
+      "total": 5.76,
+      "guaranteed": 1.01,
+      "is_active": true
+    },
+    "Cam Skattebo": {
+      "team": "Giants",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.32,
+      "total": 5.27,
+      "guaranteed": 1.07,
+      "is_active": true
+    },
+    "J.K. Dobbins": {
+      "team": "Broncos",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 8.0,
+      "total": 16.0,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Chuba Hubbard": {
+      "team": "Panthers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 8.3,
+      "total": 33.2,
+      "guaranteed": 12.06,
+      "is_active": true
+    },
+    "Bhayshul Tuten": {
+      "team": "Jaguars",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.33,
+      "total": 5.32,
+      "guaranteed": 1.08,
+      "is_active": true
+    },
+    "Aaron Jones": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 5.56,
+      "total": 5.56,
+      "guaranteed": 5.0,
+      "is_active": true
+    },
+    "Tyjae Spears": {
+      "team": "Titans",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.37,
+      "total": 5.49,
+      "guaranteed": 0.99,
+      "is_active": true
+    },
+    "Alvin Kamara": {
+      "team": "Saints",
+      "year_signed": 2024,
+      "years": 2,
+      "end_year": 2025,
+      "aav": 12.25,
+      "total": 24.5,
+      "guaranteed": 19.23,
+      "is_active": true
+    },
+    "Ollie Gordon": {
+      "team": "Dolphins",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.12,
+      "total": 4.47,
+      "guaranteed": 0.27,
+      "is_active": true
+    },
+    "Isaac Guerendo": {
+      "team": "49ers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.18,
+      "total": 4.72,
+      "guaranteed": 0.7,
+      "is_active": true
+    },
+    "Trey Benson": {
+      "team": "Cardinals",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.51,
+      "total": 6.06,
+      "guaranteed": 1.23,
+      "is_active": true
+    },
+    "Dylan Sampson": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.28,
+      "total": 5.13,
+      "guaranteed": 0.93,
+      "is_active": true
+    },
+    "Jaylen Wright": {
+      "team": "Dolphins",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.2,
+      "total": 4.78,
+      "guaranteed": 0.76,
+      "is_active": true
+    },
+    "Braelon Allen": {
+      "team": "Jets",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.14,
+      "total": 4.55,
+      "guaranteed": 0.53,
+      "is_active": true
+    },
+    "James Conner": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.0,
+      "total": 3.0,
+      "guaranteed": 2.1,
+      "is_active": true
+    },
+    "Isiah Pacheco": {
+      "team": "Lions",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.81,
+      "total": 1.81,
+      "guaranteed": 1.81,
+      "is_active": true
+    },
+    "Jonathon Brooks": {
+      "team": "Panthers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 2.1,
+      "total": 8.42,
+      "guaranteed": 6.24,
+      "is_active": true
+    },
+    "Tank Bigsby": {
+      "team": "JAX/PHI",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.35,
+      "total": 5.39,
+      "guaranteed": 0.92,
+      "is_active": true
+    },
+    "Audric Estime": {
+      "team": "Saints",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 1.02,
+      "total": 2.04,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "MarShawn Lloyd": {
+      "team": "Packers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.42,
+      "total": 5.69,
+      "guaranteed": 0.96,
+      "is_active": true
+    },
+    "Kimani Vidal": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.07,
+      "total": 1.07,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Puka Nacua": {
+      "team": "Rams",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.02,
+      "total": 4.08,
+      "guaranteed": 0.24,
+      "is_active": true
+    },
+    "Jaxon Smith-Njigba": {
+      "team": "Seahawks",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 42.15,
+      "total": 168.6,
+      "guaranteed": 69.13,
+      "is_active": true
+    },
+    "Amon-Ra St. Brown": {
+      "team": "Lions",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 30.0,
+      "total": 120.01,
+      "guaranteed": 34.67,
+      "is_active": true
+    },
+    "George Pickens": {
+      "team": "Cowboys",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 27.3,
+      "total": 27.3,
+      "guaranteed": 27.3,
+      "is_active": true
+    },
+    "Chris Olave": {
+      "team": "Saints",
+      "year_signed": 2022,
+      "years": 4,
+      "end_year": 2025,
+      "aav": 4.82,
+      "total": 19.27,
+      "guaranteed": 19.27,
+      "is_active": true
+    },
+    "Zay Flowers": {
+      "team": "Ravens",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 3.51,
+      "total": 14.04,
+      "guaranteed": 14.04,
+      "is_active": true
+    },
+    "Davante Adams": {
+      "team": "Rams",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 22.0,
+      "total": 44.0,
+      "guaranteed": 26.0,
+      "is_active": true
+    },
+    "Nico Collins": {
+      "team": "Texans",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 30.0,
+      "total": 60.0,
+      "guaranteed": 57.0,
+      "is_active": true
+    },
+    "Jameson Williams": {
+      "team": "Lions",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 26.67,
+      "total": 80.0,
+      "guaranteed": 30.58,
+      "is_active": true
+    },
+    "Courtland Sutton": {
+      "team": "Broncos",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 23.0,
+      "total": 92.0,
+      "guaranteed": 40.0,
+      "is_active": true
+    },
+    "Tee Higgins": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 28.75,
+      "total": 115.0,
+      "guaranteed": 30.0,
+      "is_active": true
+    },
+    "A.J. Brown": {
+      "team": "NE/PHI",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 32.0,
+      "total": 96.0,
+      "guaranteed": 51.0,
+      "is_active": true
+    },
+    "Tetairoa McMillan": {
+      "team": "Panthers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 6.98,
+      "total": 27.93,
+      "guaranteed": 27.93,
+      "is_active": true
+    },
+    "Drake London": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 35.26,
+      "total": 141.05,
+      "guaranteed": 52.87,
+      "is_active": true
+    },
+    "Emeka Egbuka": {
+      "team": "Buccaneers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 4.54,
+      "total": 18.17,
+      "guaranteed": 18.17,
+      "is_active": true
+    },
+    "CeeDee Lamb": {
+      "team": "Cowboys",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 34.0,
+      "total": 136.0,
+      "guaranteed": 67.0,
+      "is_active": true
+    },
+    "DeVonta Smith": {
+      "team": "Panthers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.27,
+      "is_active": true
+    },
+    "Michael Pittman Jr.": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 17.5,
+      "total": 35.0,
+      "guaranteed": 24.0,
+      "is_active": true
+    },
+    "Jaylen Waddle": {
+      "team": "MIA/DEN",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 28.25,
+      "total": 84.75,
+      "guaranteed": 35.98,
+      "is_active": true
+    },
+    "Alec Pierce": {
+      "team": "Colts",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 28.5,
+      "total": 114.0,
+      "guaranteed": 60.0,
+      "is_active": true
+    },
+    "Justin Jefferson": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.23,
+      "total": 4.9,
+      "guaranteed": 0.52,
+      "is_active": true
+    },
+    "DK Metcalf": {
+      "team": "Steelers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 33.0,
+      "total": 132.0,
+      "guaranteed": 60.0,
+      "is_active": true
+    },
+    "Parker Washington": {
+      "team": "Jaguars",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.01,
+      "total": 4.03,
+      "guaranteed": 0.19,
+      "is_active": true
+    },
+    "Ladd McConkey": {
+      "team": "Chargers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 2.5,
+      "total": 10.0,
+      "guaranteed": 9.19,
+      "is_active": true
+    },
+    "Troy Franklin": {
+      "team": "Broncos",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.22,
+      "total": 4.89,
+      "guaranteed": 0.85,
+      "is_active": true
+    },
+    "Jakobi Meyers": {
+      "team": "Jaguars",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 20.0,
+      "total": 60.0,
+      "guaranteed": 30.0,
+      "is_active": true
+    },
+    "Romeo Doubs": {
+      "team": "Patriots",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 17.0,
+      "total": 68.0,
+      "guaranteed": 35.0,
+      "is_active": true
+    },
+    "Quentin Johnston": {
+      "team": "Chargers",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 3.55,
+      "total": 14.19,
+      "guaranteed": 14.19,
+      "is_active": true
+    },
+    "Khalil Shakir": {
+      "team": "Bills",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 13.25,
+      "total": 53.0,
+      "guaranteed": 18.1,
+      "is_active": true
+    },
+    "Rome Odunze": {
+      "team": "Bears",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 5.68,
+      "total": 22.72,
+      "guaranteed": 22.72,
+      "is_active": true
+    },
+    "Rashee Rice": {
+      "team": "Chiefs",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.62,
+      "total": 6.5,
+      "guaranteed": 3.52,
+      "is_active": true
+    },
+    "Christian Watson": {
+      "team": "Packers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 23.0,
+      "total": 92.0,
+      "guaranteed": 31.0,
+      "is_active": true
+    },
+    "Brian Thomas Jr.": {
+      "team": "Jaguars",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 3.66,
+      "total": 14.66,
+      "guaranteed": 14.66,
+      "is_active": true
+    },
+    "Jordan Addison": {
+      "team": "Vikings",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 3.43,
+      "total": 13.73,
+      "guaranteed": 13.73,
+      "is_active": true
+    },
+    "Luther Burden": {
+      "team": "Bears",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.74,
+      "total": 10.96,
+      "guaranteed": 10.96,
+      "is_active": true
+    },
+    "Elic Ayomanor": {
+      "team": "Titans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.22,
+      "total": 4.87,
+      "guaranteed": 0.67,
+      "is_active": true
+    },
+    "Terry McLaurin": {
+      "team": "Commanders",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 29.0,
+      "total": 87.0,
+      "guaranteed": 44.65,
+      "is_active": true
+    },
+    "Tre Harris": {
+      "team": "Chargers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.95,
+      "total": 7.82,
+      "guaranteed": 5.58,
+      "is_active": true
+    },
+    "Jayden Higgins": {
+      "team": "Texans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.93,
+      "total": 11.7,
+      "guaranteed": 11.7,
+      "is_active": true
+    },
+    "Matthew Golden": {
+      "team": "Packers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 4.39,
+      "total": 17.58,
+      "guaranteed": 17.58,
+      "is_active": true
+    },
+    "Ricky Pearsall": {
+      "team": "49ers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 3.13,
+      "total": 12.54,
+      "guaranteed": 12.54,
+      "is_active": true
+    },
+    "Mike Evans": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 14.17,
+      "total": 42.5,
+      "guaranteed": 14.3,
+      "is_active": true
+    },
+    "Marvin Harrison Jr.": {
+      "team": "Cardinals",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 8.84,
+      "total": 35.37,
+      "guaranteed": 35.37,
+      "is_active": true
+    },
+    "Garrett Wilson": {
+      "team": "Jets",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 32.5,
+      "total": 130.0,
+      "guaranteed": 38.32,
+      "is_active": true
+    },
+    "Xavier Worthy": {
+      "team": "Chiefs",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 3.45,
+      "total": 13.79,
+      "guaranteed": 13.79,
+      "is_active": true
+    },
+    "Keon Coleman": {
+      "team": "Bills",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 2.52,
+      "total": 10.07,
+      "guaranteed": 9.64,
+      "is_active": true
+    },
+    "Josh Downs": {
+      "team": "Colts",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.38,
+      "total": 5.52,
+      "guaranteed": 1.01,
+      "is_active": true
+    },
+    "Travis Hunter": {
+      "team": "Jaguars",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 11.66,
+      "total": 46.65,
+      "guaranteed": 46.65,
+      "is_active": true
+    },
+    "Brandon Aiyuk": {
+      "team": "49ers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 30.0,
+      "total": 120.0,
+      "guaranteed": 45.0,
+      "is_active": true
+    },
+    "Jalen Coker": {
+      "team": "Panthers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 11.33,
+      "total": 34.0,
+      "guaranteed": 12.5,
+      "is_active": true
+    },
+    "Malik Nabers": {
+      "team": "Giants",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 7.3,
+      "total": 29.21,
+      "guaranteed": 29.21,
+      "is_active": true
+    },
+    "Jauan Jennings": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 8.0,
+      "total": 8.0,
+      "guaranteed": 6.13,
+      "is_active": true
+    },
+    "Jayden Reed": {
+      "team": "Packers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 16.75,
+      "total": 50.25,
+      "guaranteed": 20.0,
+      "is_active": true
+    },
+    "Calvin Ridley": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 17.62,
+      "total": 35.25,
+      "guaranteed": 12.49,
+      "is_active": true
+    },
+    "Rashid Shaheed": {
+      "team": "Seahawks",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 17.0,
+      "total": 51.0,
+      "guaranteed": 23.0,
+      "is_active": true
+    },
+    "Darnell Mooney": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.0,
+      "total": 3.0,
+      "guaranteed": 3.0,
+      "is_active": true
+    },
+    "Rashod Bateman": {
+      "team": "Ravens",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 12.25,
+      "total": 36.75,
+      "guaranteed": 16.5,
+      "is_active": true
+    },
+    "Jalen McMillan": {
+      "team": "Buccaneers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.42,
+      "total": 5.66,
+      "guaranteed": 0.94,
+      "is_active": true
+    },
+    "Isaac TeSlaa": {
+      "team": "Lions",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.67,
+      "total": 6.66,
+      "guaranteed": 1.49,
+      "is_active": true
+    },
+    "Xavier Legette": {
+      "team": "Panthers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 3.09,
+      "total": 12.36,
+      "guaranteed": 12.36,
+      "is_active": true
+    },
+    "Devaughn Vele": {
+      "team": "DEN/NO",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.03,
+      "total": 4.12,
+      "guaranteed": 0.1,
+      "is_active": true
+    },
+    "Chimere Dike": {
+      "team": "Titans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.35,
+      "total": 5.4,
+      "guaranteed": 1.1,
+      "is_active": true
+    },
+    "Jalen Nailor": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 11.68,
+      "total": 35.03,
+      "guaranteed": 18.0,
+      "is_active": true
+    },
+    "Marvin Mims": {
+      "team": "Broncos",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.52,
+      "total": 6.07,
+      "guaranteed": 3.19,
+      "is_active": true
+    },
+    "K.J. Osborn": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.22,
+      "total": 1.22,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Dontayvion Wicks": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 10.25,
+      "total": 10.25,
+      "guaranteed": 9.0,
+      "is_active": true
+    },
+    "Trey McBride": {
+      "team": "Cardinals",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 19.0,
+      "total": 76.0,
+      "guaranteed": 32.5,
+      "is_active": true
+    },
+    "Brock Bowers": {
+      "team": "Raiders",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 4.53,
+      "total": 18.14,
+      "guaranteed": 18.14,
+      "is_active": true
+    },
+    "George Kittle": {
+      "team": "49ers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 19.1,
+      "total": 76.4,
+      "guaranteed": 35.0,
+      "is_active": true
+    },
+    "Sam LaPorta": {
+      "team": "Lions",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 2.37,
+      "total": 9.47,
+      "guaranteed": 7.83,
+      "is_active": true
+    },
+    "Kyle Pitts": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 15.04,
+      "total": 15.04,
+      "guaranteed": 15.04,
+      "is_active": true
+    },
+    "Travis Kelce": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 12.0,
+      "total": 12.0,
+      "guaranteed": 12.0,
+      "is_active": true
+    },
+    "Tyler Warren": {
+      "team": "Colts",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 5.24,
+      "total": 20.96,
+      "guaranteed": 20.96,
+      "is_active": true
+    },
+    "Harold Fannin Jr.": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.69,
+      "total": 6.74,
+      "guaranteed": 1.54,
+      "is_active": true
+    },
+    "Dallas Goedert": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 7.0,
+      "total": 7.0,
+      "guaranteed": 7.0,
+      "is_active": true
+    },
+    "Juwan Johnson": {
+      "team": "Saints",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 10.25,
+      "total": 30.75,
+      "guaranteed": 21.25,
+      "is_active": true
+    },
+    "Hunter Henry": {
+      "team": "Patriots",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 9.0,
+      "total": 27.0,
+      "guaranteed": 15.8,
+      "is_active": true
+    },
+    "Dalton Schultz": {
+      "team": "Texans",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 12.6,
+      "total": 12.6,
+      "guaranteed": 17.6,
+      "is_active": true
+    },
+    "Colston Loveland": {
+      "team": "Bears",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 6.66,
+      "total": 26.64,
+      "guaranteed": 26.64,
+      "is_active": true
+    },
+    "AJ Barner": {
+      "team": "Seahawks",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.19,
+      "total": 4.78,
+      "guaranteed": 0.76,
+      "is_active": true
+    },
+    "Oronde Gadsden": {
+      "team": "Chargers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.14,
+      "total": 4.57,
+      "guaranteed": 0.37,
+      "is_active": true
+    },
+    "Mark Andrews": {
+      "team": "Ravens",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 13.09,
+      "total": 39.27,
+      "guaranteed": 20.94,
+      "is_active": true
+    },
+    "Theo Johnson": {
+      "team": "Giants",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.21,
+      "total": 4.85,
+      "guaranteed": 0.83,
+      "is_active": true
+    },
+    "Dalton Kincaid": {
+      "team": "Bills",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 3.36,
+      "total": 13.43,
+      "guaranteed": 13.43,
+      "is_active": true
+    },
+    "Chigoziem Okonkwo": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 9.0,
+      "total": 27.0,
+      "guaranteed": 16.7,
+      "is_active": true
+    },
+    "Cade Otton": {
+      "team": "Buccaneers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 10.0,
+      "total": 30.0,
+      "guaranteed": 20.0,
+      "is_active": true
+    },
+    "Brenton Strange": {
+      "team": "Jaguars",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.53,
+      "total": 6.11,
+      "guaranteed": 3.22,
+      "is_active": true
+    },
+    "Tucker Kraft": {
+      "team": "Packers",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.38,
+      "total": 5.54,
+      "guaranteed": 1.03,
+      "is_active": true
+    },
+    "Pat Freiermuth": {
+      "team": "Steelers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 12.1,
+      "total": 48.4,
+      "guaranteed": 11.6,
+      "is_active": true
+    },
+    "T.J. Hockenson": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 10.25,
+      "total": 10.25,
+      "guaranteed": 10.15,
+      "is_active": true
+    },
+    "Evan Engram": {
+      "team": "Broncos",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 11.5,
+      "total": 23.0,
+      "guaranteed": 16.5,
+      "is_active": true
+    },
+    "Gunnar Helm": {
+      "team": "Titans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.29,
+      "total": 5.17,
+      "guaranteed": 0.97,
+      "is_active": true
+    },
+    "Mason Taylor": {
+      "team": "Jets",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.62,
+      "total": 10.47,
+      "guaranteed": 9.56,
+      "is_active": true
+    },
+    "Isaiah Likely": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 13.33,
+      "total": 40.0,
+      "guaranteed": 20.5,
+      "is_active": true
+    },
+    "Cole Kmet": {
+      "team": "Bears",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 12.5,
+      "total": 50.0,
+      "guaranteed": 22.89,
+      "is_active": true
+    },
+    "Jake Ferguson": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 12.5,
+      "total": 50.0,
+      "guaranteed": 20.66,
+      "is_active": true
+    },
+    "Dawson Knox": {
+      "team": "Bills",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 6.67,
+      "total": 20.0,
+      "guaranteed": 10.0,
+      "is_active": true
+    },
+    "Noah Fant": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 4.38,
+      "total": 8.75,
+      "guaranteed": 4.5,
+      "is_active": true
+    },
+    "Charlie Kolar": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 8.1,
+      "total": 24.3,
+      "guaranteed": 17.0,
+      "is_active": true
+    },
+    "Elijah Higgins": {
+      "team": "MIA/ARI",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.0,
+      "total": 4.02,
+      "guaranteed": 0.18,
+      "is_active": true
+    },
+    "Jalen Tolbert": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.4,
+      "total": 1.4,
+      "guaranteed": 1.26,
+      "is_active": true
+    },
+    "Christian Kirk": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.0,
+      "total": 3.0,
+      "guaranteed": 2.78,
+      "is_active": true
+    },
+    "Jack Bech": {
+      "team": "Raiders",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.89,
+      "total": 7.56,
+      "guaranteed": 5.08,
+      "is_active": true
+    },
+    "Jerry Jeudy": {
+      "team": "Browns",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 17.5,
+      "total": 52.5,
+      "guaranteed": 41.0,
+      "is_active": true
+    },
+    "Cooper Kupp": {
+      "team": "Seahawks",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 15.0,
+      "total": 45.0,
+      "guaranteed": 17.5,
+      "is_active": true
+    },
+    "Tez Johnson": {
+      "team": "Buccaneers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.32,
+      "guaranteed": 0.12,
+      "is_active": true
+    },
+    "Chris Godwin": {
+      "team": "Buccaneers",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 22.0,
+      "total": 66.0,
+      "guaranteed": 44.0,
+      "is_active": true
+    },
+    "Cedric Tillman": {
+      "team": "Browns",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.4,
+      "total": 5.61,
+      "guaranteed": 1.08,
+      "is_active": true
+    },
+    "Pat Bryant": {
+      "team": "Broncos",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.65,
+      "total": 6.58,
+      "guaranteed": 1.43,
+      "is_active": true
+    },
+    "Tre Tucker": {
+      "team": "Raiders",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.33,
+      "total": 5.3,
+      "guaranteed": 0.86,
+      "is_active": true
+    },
+    "Kyle Williams": {
+      "team": "Patriots",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.68,
+      "total": 6.7,
+      "guaranteed": 1.52,
+      "is_active": true
+    },
+    "Tank Dell": {
+      "team": "Texans",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.42,
+      "total": 5.69,
+      "guaranteed": 1.14,
+      "is_active": true
+    },
+    "DeMario Douglas": {
+      "team": "Patriots",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 0.99,
+      "total": 3.97,
+      "guaranteed": 0.13,
+      "is_active": true
+    },
+    "Adonai Mitchell": {
+      "team": "NYJ/IND",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.85,
+      "total": 7.39,
+      "guaranteed": 4.82,
+      "is_active": true
+    },
+    "Jaylin Noel": {
+      "team": "Texans",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.62,
+      "total": 6.47,
+      "guaranteed": 1.34,
+      "is_active": true
+    },
+    "Malik Washington": {
+      "team": "Dolphins",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.05,
+      "total": 4.22,
+      "guaranteed": 0.2,
+      "is_active": true
+    },
+    "Kayshon Boutte": {
+      "team": "Patriots",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.01,
+      "total": 4.03,
+      "guaranteed": 0.19,
+      "is_active": true
+    },
+    "Michael Wilson": {
+      "team": "Cardinals",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.33,
+      "total": 5.34,
+      "guaranteed": 0.88,
+      "is_active": true
+    },
+    "Darius Slayton": {
+      "team": "Giants",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 12.0,
+      "total": 36.0,
+      "guaranteed": 22.0,
+      "is_active": true
+    },
+    "Marquise Brown": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 5.0,
+      "total": 5.0,
+      "guaranteed": 5.0,
+      "is_active": true
+    },
+    "Tyrone Tracy": {
+      "team": "Giants",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.08,
+      "total": 4.31,
+      "guaranteed": 0.29,
+      "is_active": true
+    },
+    "Brian Robinson": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 2.5,
+      "total": 2.5,
+      "guaranteed": 0.78,
+      "is_active": true
+    },
+    "George Holani": {
+      "team": "Seahawks",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.07,
+      "total": 1.07,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Keaton Mitchell": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 4.62,
+      "total": 9.25,
+      "guaranteed": 5.0,
+      "is_active": true
+    },
+    "Chris Rodriguez": {
+      "team": "Jaguars",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 5.0,
+      "total": 10.0,
+      "guaranteed": 6.2,
+      "is_active": true
+    },
+    "Sean Tucker": {
+      "team": "Buccaneers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.52,
+      "total": 3.52,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Ray Davis": {
+      "team": "Bills",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.18,
+      "total": 4.73,
+      "guaranteed": 0.71,
+      "is_active": true
+    },
+    "Tyler Allgeier": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 6.12,
+      "total": 12.25,
+      "guaranteed": 8.0,
+      "is_active": true
+    },
+    "Greg Dulcich": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.25,
+      "total": 3.25,
+      "guaranteed": 2.91,
+      "is_active": true
+    },
+    "David Njoku": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 3.0,
+      "total": 3.0,
+      "guaranteed": 0.85,
+      "is_active": true
+    },
+    "Colby Parkinson": {
+      "team": "Rams",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 7.5,
+      "total": 22.5,
+      "guaranteed": 10.25,
+      "is_active": true
+    },
+    "Terrance Ferguson": {
+      "team": "Rams",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.43,
+      "total": 9.71,
+      "guaranteed": 8.05,
+      "is_active": true
+    },
+    "Jake Tonges": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 4.0,
+      "total": 8.0,
+      "guaranteed": 5.5,
+      "is_active": true
+    },
+    "Michael Mayer": {
+      "team": "Raiders",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 2.33,
+      "total": 9.31,
+      "guaranteed": 7.6,
+      "is_active": true
+    },
+    "JaTavion Sanders": {
+      "team": "Panthers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.26,
+      "total": 5.04,
+      "guaranteed": 0.87,
+      "is_active": true
+    },
+    "Ben Sinnott": {
+      "team": "Commanders",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.81,
+      "total": 7.23,
+      "guaranteed": 4.6,
+      "is_active": true
+    },
+    "Mac Jones": {
+      "team": "49ers",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 3.5,
+      "total": 7.0,
+      "guaranteed": 4.75,
+      "is_active": true
+    },
+    "Joe Flacco": {
+      "team": "Bengals",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 6.0,
+      "total": 6.0,
+      "guaranteed": 4.0,
+      "is_active": true
+    },
+    "Justin Fields": {
+      "team": "Chiefs",
+      "year_signed": 2025,
+      "years": 1,
+      "end_year": 2025,
+      "aav": 11.0,
+      "total": 11.0,
+      "guaranteed": 11.0,
+      "is_active": true
+    },
+    "Kirk Cousins": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 11.3,
+      "total": 11.3,
+      "guaranteed": 11.3,
+      "is_active": true
+    },
+    "Fernando Mendoza": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 14.32,
+      "total": 57.27,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Jeremiyah Love": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 13.26,
+      "total": 53.02,
+      "guaranteed": 53.02,
+      "is_active": true
+    },
+    "Carnell Tate": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 12.78,
+      "total": 51.13,
+      "guaranteed": 51.13,
+      "is_active": true
+    },
+    "Jordyn Tyson": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 8.12,
+      "total": 32.49,
+      "guaranteed": 32.49,
+      "is_active": true
+    },
+    "Ty Simpson": {
+      "team": "Rams",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 6.35,
+      "total": 25.41,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Kenyon Sadiq": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 5.59,
+      "total": 22.34,
+      "guaranteed": 22.34,
+      "is_active": true
+    },
+    "Makai Lemon": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 5.2,
+      "total": 20.81,
+      "guaranteed": 20.81,
+      "is_active": true
+    },
+    "KC Concepcion": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 4.94,
+      "total": 19.75,
+      "guaranteed": 19.75,
+      "is_active": true
+    },
+    "Omar Cooper": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 4.37,
+      "total": 17.47,
+      "guaranteed": 17.47,
+      "is_active": true
+    },
+    "Jadarian Price": {
+      "team": "Seahawks",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 4.2,
+      "total": 16.78,
+      "guaranteed": 16.78,
+      "is_active": true
+    },
+    "Denzel Boston": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 3.1,
+      "total": 12.39,
+      "guaranteed": 12.39,
+      "is_active": true
+    },
+    "Germie Bernard": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 2.64,
+      "total": 10.54,
+      "guaranteed": 10.54,
+      "is_active": true
+    },
+    "Eli Stowers": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 2.22,
+      "total": 8.89,
+      "guaranteed": 7.28,
+      "is_active": true
+    },
+    "Marlin Klein": {
+      "team": "Texans",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 2.05,
+      "total": 8.18,
+      "guaranteed": 6.24,
+      "is_active": true
+    },
+    "Max Klare": {
+      "team": "Rams",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 2.0,
+      "total": 8.02,
+      "guaranteed": 5.98,
+      "is_active": true
+    },
+    "Carson Beck": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.85,
+      "total": 7.41,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Sam Roush": {
+      "team": "Bears",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.83,
+      "total": 7.34,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Antonio Williams": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.81,
+      "total": 7.26,
+      "guaranteed": 1.74,
+      "is_active": true
+    },
+    "Oscar Delp": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.8,
+      "total": 7.21,
+      "guaranteed": 1.7,
+      "is_active": true
+    },
+    "Malachi Fields": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.8,
+      "total": 7.19,
+      "guaranteed": 1.69,
+      "is_active": true
+    },
+    "Zachariah Branch": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.76,
+      "total": 7.06,
+      "guaranteed": 1.59,
+      "is_active": true
+    },
+    "Chris Brazzell II": {
+      "team": "Panthers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.74,
+      "total": 6.94,
+      "guaranteed": 1.51,
+      "is_active": true
+    },
+    "Ted Hurst": {
+      "team": "Buccaneers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.73,
+      "total": 6.92,
+      "guaranteed": 1.49,
+      "is_active": true
+    },
+    "Drew Allar": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.78,
+      "total": 7.1,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Will Kacmarek": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.71,
+      "total": 6.85,
+      "guaranteed": 1.44,
+      "is_active": true
+    },
+    "Chris Bell": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.69,
+      "total": 6.77,
+      "guaranteed": 1.38,
+      "is_active": true
+    },
+    "Eli Raridon": {
+      "team": "Patriots",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.69,
+      "total": 6.75,
+      "guaranteed": 1.37,
+      "is_active": true
+    },
+    "Caleb Douglas": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.79,
+      "total": 7.17,
+      "guaranteed": 1.67,
+      "is_active": true
+    },
+    "Zavion Thomas": {
+      "team": "Bears",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.71,
+      "total": 6.83,
+      "guaranteed": 1.43,
+      "is_active": true
+    },
+    "Kaelon Black": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.71,
+      "total": 6.83,
+      "guaranteed": 1.43,
+      "is_active": true
+    },
+    "Barion Brown": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.17,
+      "total": 4.67,
+      "guaranteed": 0.29,
+      "is_active": true
+    },
+    "Cyrus Allen": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.19,
+      "total": 4.76,
+      "guaranteed": 0.38,
+      "is_active": true
+    },
+    "Reggie Virgil": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.23,
+      "total": 4.94,
+      "guaranteed": 0.56,
+      "is_active": true
+    },
+    "Kendrick Law": {
+      "team": "Lions",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.21,
+      "total": 4.83,
+      "guaranteed": 0.45,
+      "is_active": true
+    },
+    "Kaden Wetjen": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.38,
+      "total": 5.51,
+      "guaranteed": 1.13,
+      "is_active": true
+    },
+    "Colbie Young": {
+      "team": "Bengals",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.29,
+      "total": 5.17,
+      "guaranteed": 0.79,
+      "is_active": true
+    },
+    "Emmett Johnson": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.22,
+      "total": 4.87,
+      "guaranteed": 0.49,
+      "is_active": true
+    },
+    "Jonah Coleman": {
+      "team": "Broncos",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.4,
+      "total": 5.61,
+      "guaranteed": 1.23,
+      "is_active": true
+    },
+    "Mike Washington Jr.": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.37,
+      "total": 5.5,
+      "guaranteed": 1.12,
+      "is_active": true
+    },
+    "Adam Randall": {
+      "team": "Ravens",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.19,
+      "total": 4.76,
+      "guaranteed": 0.38,
+      "is_active": true
+    },
+    "Kaytron Allen": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.17,
+      "total": 4.68,
+      "guaranteed": 0.3,
+      "is_active": true
+    },
+    "Demond Claiborne": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.16,
+      "total": 4.65,
+      "guaranteed": 0.27,
+      "is_active": true
+    },
+    "Deion Burks": {
+      "team": "Colts",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.13,
+      "total": 4.5,
+      "guaranteed": 0.12,
+      "is_active": true
+    },
+    "Garrett Nussmeier": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.13,
+      "total": 4.5,
+      "guaranteed": 0.12,
+      "is_active": true
+    },
+    "Cade Klubnik": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.4,
+      "total": 5.6,
+      "guaranteed": 1.22,
+      "is_active": true
+    },
+    "Taylen Green": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.18,
+      "total": 4.72,
+      "guaranteed": 0.34,
+      "is_active": true
+    },
+    "Bryce Lance": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.29,
+      "total": 5.17,
+      "guaranteed": 0.79,
+      "is_active": true
+    },
+    "Elijah Sarratt": {
+      "team": "Ravens",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.39,
+      "total": 5.56,
+      "guaranteed": 1.18,
+      "is_active": true
+    },
+    "Skyler Bell": {
+      "team": "Bills",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.37,
+      "total": 5.47,
+      "guaranteed": 1.09,
+      "is_active": true
+    },
+    "Brenen Thompson": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.41,
+      "total": 5.63,
+      "guaranteed": 1.25,
+      "is_active": true
+    },
+    "Justin Joly": {
+      "team": "Broncos",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.22,
+      "total": 4.89,
+      "guaranteed": 0.51,
+      "is_active": true
+    },
+    "Deshaun Watson": {
+      "team": "Browns",
+      "year_signed": 2022,
+      "years": 5,
+      "end_year": 2026,
+      "aav": 46.0,
+      "total": 230.0,
+      "guaranteed": 230.0,
+      "is_active": true
+    },
+    "Anthony Richardson": {
+      "team": "Colts",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 8.5,
+      "total": 33.99,
+      "guaranteed": 33.99,
+      "is_active": true
+    },
+    "Jalen Milroe": {
+      "team": "Seahawks",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.57,
+      "total": 6.26,
+      "guaranteed": 1.2,
+      "is_active": true
+    },
+    "Will Howard": {
+      "team": "Steelers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.11,
+      "total": 4.45,
+      "guaranteed": 0.25,
+      "is_active": true
+    },
+    "Cole Payton": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.19,
+      "total": 4.76,
+      "guaranteed": 0.38,
+      "is_active": true
+    },
+    "Marcus Mariota": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 7.0,
+      "total": 7.0,
+      "guaranteed": 6.39,
+      "is_active": true
+    },
+    "Riley Leonard": {
+      "team": "Colts",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.11,
+      "total": 4.44,
+      "guaranteed": 0.24,
+      "is_active": true
+    },
+    "Quinn Ewers": {
+      "team": "Dolphins",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.33,
+      "guaranteed": 0.13,
+      "is_active": true
+    },
+    "Jameis Winston": {
+      "team": "Giants",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 4.0,
+      "total": 8.0,
+      "guaranteed": 5.25,
+      "is_active": true
+    },
+    "Joe Milton": {
+      "team": "NE/DAL",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.05,
+      "total": 4.2,
+      "guaranteed": 0.18,
+      "is_active": true
+    },
+    "Dillon Gabriel": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.56,
+      "total": 6.23,
+      "guaranteed": 1.17,
+      "is_active": true
+    },
+    "Gardner Minshew": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 5.75,
+      "total": 5.75,
+      "guaranteed": 5.14,
+      "is_active": true
+    },
+    "Kenny Pickett": {
+      "team": "Panthers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 4.0,
+      "total": 4.0,
+      "guaranteed": 4.0,
+      "is_active": true
+    },
+    "Tyler Huntley": {
+      "team": "Ravens",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 2.5,
+      "total": 5.0,
+      "guaranteed": 3.5,
+      "is_active": true
+    },
+    "Will Levis": {
+      "team": "Titans",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 2.39,
+      "total": 9.54,
+      "guaranteed": 8.73,
+      "is_active": true
+    },
+    "Tyson Bagent": {
+      "team": "Bears",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 5.0,
+      "total": 10.0,
+      "guaranteed": 2.53,
+      "is_active": true
+    },
+    "Trey Lance": {
+      "team": "Chargers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 2.5,
+      "total": 2.5,
+      "guaranteed": 2.0,
+      "is_active": true
+    },
+    "Tyrod Taylor": {
+      "team": "Packers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 2.5,
+      "total": 2.5,
+      "guaranteed": 0.7,
+      "is_active": true
+    },
+    "Davis Mills": {
+      "team": "Texans",
+      "year_signed": 2025,
+      "years": 1,
+      "end_year": 2025,
+      "aav": 7.0,
+      "total": 7.0,
+      "guaranteed": 10.25,
+      "is_active": true
+    },
+    "Tanner McKee": {
+      "team": "Eagles",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.01,
+      "total": 4.03,
+      "guaranteed": 0.19,
+      "is_active": true
+    },
+    "Kaleb Johnson": {
+      "team": "Steelers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.59,
+      "total": 6.37,
+      "guaranteed": 1.27,
+      "is_active": true
+    },
+    "Jordan James": {
+      "team": "49ers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.16,
+      "total": 4.64,
+      "guaranteed": 0.44,
+      "is_active": true
+    },
+    "Eli Heidenreich": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.13,
+      "total": 4.54,
+      "guaranteed": 0.16,
+      "is_active": true
+    },
+    "Jaydon Blue": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.16,
+      "total": 4.63,
+      "guaranteed": 0.43,
+      "is_active": true
+    },
+    "Seth McGowan": {
+      "team": "Colts",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.13,
+      "total": 4.51,
+      "guaranteed": 0.13,
+      "is_active": true
+    },
+    "DJ Giddens": {
+      "team": "Colts",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.16,
+      "total": 4.62,
+      "guaranteed": 0.42,
+      "is_active": true
+    },
+    "Jam Miller": {
+      "team": "Patriots",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.13,
+      "total": 4.5,
+      "guaranteed": 0.12,
+      "is_active": true
+    },
+    "Emanuel Wilson": {
+      "team": "Seahawks",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.59,
+      "total": 1.59,
+      "guaranteed": 0.55,
+      "is_active": true
+    },
+    "Devin Neal": {
+      "team": "Saints",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.11,
+      "total": 4.45,
+      "guaranteed": 0.25,
+      "is_active": true
+    },
+    "LeQuint Allen": {
+      "team": "Jaguars",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.32,
+      "guaranteed": 0.12,
+      "is_active": true
+    },
+    "Trevor Etienne": {
+      "team": "Panthers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.3,
+      "total": 5.21,
+      "guaranteed": 1.01,
+      "is_active": true
+    },
+    "Tahj Brooks": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.11,
+      "total": 4.43,
+      "guaranteed": 0.23,
+      "is_active": true
+    },
+    "Robert Henry": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.22,
+      "is_active": true
+    },
+    "Isaiah Davis": {
+      "team": "Jets",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.07,
+      "total": 4.27,
+      "guaranteed": 0.25,
+      "is_active": true
+    },
+    "Roman Hemby": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.22,
+      "is_active": true
+    },
+    "Brashard Smith": {
+      "team": "Chiefs",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.33,
+      "guaranteed": 0.13,
+      "is_active": true
+    },
+    "Malik Davis": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 1.09,
+      "total": 2.17,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Kendre Miller": {
+      "team": "Saints",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.41,
+      "total": 5.65,
+      "guaranteed": 1.11,
+      "is_active": true
+    },
+    "Jarquez Hunter": {
+      "team": "Rams",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.3,
+      "total": 5.2,
+      "guaranteed": 1.0,
+      "is_active": true
+    },
+    "Justice Hill": {
+      "team": "Ravens",
+      "year_signed": 2024,
+      "years": 2,
+      "end_year": 2025,
+      "aav": 3.0,
+      "total": 6.0,
+      "guaranteed": 4.44,
+      "is_active": true
+    },
+    "Emari Demercado": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.25,
+      "total": 1.25,
+      "guaranteed": 0.55,
+      "is_active": true
+    },
+    "Ty Johnson": {
+      "team": "Bills",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 2.5,
+      "total": 5.0,
+      "guaranteed": 2.49,
+      "is_active": true
+    },
+    "Devin Singletary": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.3,
+      "total": 1.3,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Jerome Ford": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.4,
+      "total": 1.4,
+      "guaranteed": 0.44,
+      "is_active": true
+    },
+    "Will Shipley": {
+      "team": "Eagles",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.18,
+      "total": 4.74,
+      "guaranteed": 0.72,
+      "is_active": true
+    },
+    "Phil Mafah": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.31,
+      "guaranteed": 0.11,
+      "is_active": true
+    },
+    "Damien Martinez": {
+      "team": "Packers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.89,
+      "total": 0.89,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Samaje Perine": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 1.8,
+      "total": 3.6,
+      "guaranteed": 0.4,
+      "is_active": true
+    },
+    "Michael Carter": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.22,
+      "total": 1.22,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Zonovan Knight": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.2,
+      "total": 1.2,
+      "guaranteed": 0.03,
+      "is_active": true
+    },
+    "Roschon Johnson": {
+      "team": "Bears",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.15,
+      "total": 4.61,
+      "guaranteed": 0.77,
+      "is_active": true
+    },
+    "Kenny McIntosh": {
+      "team": "Seahawks",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 0.98,
+      "total": 3.93,
+      "guaranteed": 0.09,
+      "is_active": true
+    },
+    "Raheim Sanders": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 0.99,
+      "total": 2.97,
+      "guaranteed": 0.06,
+      "is_active": true
+    },
+    "Michael Trigg": {
+      "team": "Cowboys",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.13,
+      "guaranteed": 0.28,
+      "is_active": true
+    },
+    "Elijah Arroyo": {
+      "team": "Seahawks",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 2.2,
+      "total": 8.81,
+      "guaranteed": 6.87,
+      "is_active": true
+    },
+    "Jack Endries": {
+      "team": "Bengals",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.14,
+      "total": 4.55,
+      "guaranteed": 0.17,
+      "is_active": true
+    },
+    "Tanner Koziol": {
+      "team": "Jaguars",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.21,
+      "total": 4.86,
+      "guaranteed": 0.48,
+      "is_active": true
+    },
+    "John Michael Gyllenborg": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.27,
+      "is_active": true
+    },
+    "Darnell Washington": {
+      "team": "Steelers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 10.5,
+      "total": 42.0,
+      "guaranteed": 11.25,
+      "is_active": true
+    },
+    "Jaren Kanak": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.14,
+      "total": 4.54,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Mike Gesicki": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 8.5,
+      "total": 25.5,
+      "guaranteed": 6.5,
+      "is_active": true
+    },
+    "Nate Boerkircher": {
+      "team": "Jaguars",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 2.13,
+      "total": 8.54,
+      "guaranteed": 6.74,
+      "is_active": true
+    },
+    "Luke Musgrave": {
+      "team": "Packers",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 2.12,
+      "total": 8.48,
+      "guaranteed": 6.35,
+      "is_active": true
+    },
+    "Joe Royer": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.2,
+      "total": 4.81,
+      "guaranteed": 0.43,
+      "is_active": true
+    },
+    "Noah Gray": {
+      "team": "Chiefs",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 6.0,
+      "total": 18.0,
+      "guaranteed": 10.02,
+      "is_active": true
+    },
+    "Tyler Higbee": {
+      "team": "Rams",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 3.0,
+      "total": 6.0,
+      "guaranteed": 4.0,
+      "is_active": true
+    },
+    "Erick All": {
+      "team": "Bengals",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.2,
+      "total": 4.81,
+      "guaranteed": 0.79,
+      "is_active": true
+    },
+    "Tory Horton": {
+      "team": "Seahawks",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.14,
+      "total": 4.57,
+      "guaranteed": 0.37,
+      "is_active": true
+    },
+    "Kevin Coleman": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.19,
+      "total": 4.76,
+      "guaranteed": 0.38,
+      "is_active": true
+    },
+    "Ryan Flournoy": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 1.02,
+      "total": 2.04,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "CJ Daniels": {
+      "team": "Rams",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.16,
+      "total": 4.66,
+      "guaranteed": 0.28,
+      "is_active": true
+    },
+    "Isaiah Bond": {
+      "team": "Browns",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 1.01,
+      "total": 3.02,
+      "guaranteed": 3.02,
+      "is_active": true
+    },
+    "Jalen Royals": {
+      "team": "Chiefs",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.27,
+      "total": 5.07,
+      "guaranteed": 0.87,
+      "is_active": true
+    },
+    "Josh Cameron": {
+      "team": "Jaguars",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.17,
+      "total": 4.67,
+      "guaranteed": 0.29,
+      "is_active": true
+    },
+    "Jeff Caldwell": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.12,
+      "guaranteed": 0.27,
+      "is_active": true
+    },
+    "Jaylin Lane": {
+      "team": "Commanders",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.28,
+      "total": 5.11,
+      "guaranteed": 0.91,
+      "is_active": true
+    },
+    "Jahan Dotson": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 7.5,
+      "total": 15.0,
+      "guaranteed": 10.0,
+      "is_active": true
+    },
+    "Tyquan Thornton": {
+      "team": "Chiefs",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 5.5,
+      "total": 11.0,
+      "guaranteed": 7.4,
+      "is_active": true
+    },
+    "Malik Benson": {
+      "team": "Raiders",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.16,
+      "total": 4.66,
+      "guaranteed": 0.28,
+      "is_active": true
+    },
+    "Savion Williams": {
+      "team": "Packers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.57,
+      "total": 6.29,
+      "guaranteed": 1.22,
+      "is_active": true
+    },
+    "Odell Beckham": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.3,
+      "total": 1.3,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Andrei Iosivas": {
+      "team": "Bengals",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.0,
+      "total": 4.0,
+      "guaranteed": 0.16,
+      "is_active": true
+    },
+    "Calvin Austin": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.5,
+      "total": 1.5,
+      "guaranteed": 0.45,
+      "is_active": true
+    },
+    "KeAndre Lambert-Smith": {
+      "team": "Chargers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.15,
+      "total": 4.61,
+      "guaranteed": 0.41,
+      "is_active": true
+    },
+    "John Metchie": {
+      "team": "Panthers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.9,
+      "total": 1.9,
+      "guaranteed": 1.0,
+      "is_active": true
+    },
+    "Luke McCaffrey": {
+      "team": "Commanders",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.4,
+      "total": 5.6,
+      "guaranteed": 0.89,
+      "is_active": true
+    },
+    "Noah Thomas": {
+      "team": "Bengals",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.11,
+      "guaranteed": 0.01,
+      "is_active": true
+    },
+    "Treylon Burks": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 2.35,
+      "total": 2.35,
+      "guaranteed": 0.4,
+      "is_active": true
+    },
+    "Jahdae Walker": {
+      "team": "Bears",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 0.99,
+      "total": 2.98,
+      "guaranteed": 0.17,
+      "is_active": true
+    },
+    "KaVontae Turpin": {
+      "team": "Cowboys",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 4.5,
+      "total": 13.5,
+      "guaranteed": 5.0,
+      "is_active": true
+    },
+    "Xavier Hutchinson": {
+      "team": "Texans",
+      "year_signed": 2023,
+      "years": 4,
+      "end_year": 2026,
+      "aav": 1.0,
+      "total": 4.0,
+      "guaranteed": 0.16,
+      "is_active": true
+    },
+    "Kendrick Bourne": {
+      "team": "Cardinals",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 5.0,
+      "total": 10.0,
+      "guaranteed": 6.5,
+      "is_active": true
+    },
+    "Roman Wilson": {
+      "team": "Steelers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.44,
+      "total": 5.75,
+      "guaranteed": 1.0,
+      "is_active": true
+    },
+    "Mack Hollins": {
+      "team": "Patriots",
+      "year_signed": 2025,
+      "years": 2,
+      "end_year": 2026,
+      "aav": 4.2,
+      "total": 8.4,
+      "guaranteed": 3.5,
+      "is_active": true
+    },
+    "Tai Felton": {
+      "team": "Vikings",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.54,
+      "total": 6.16,
+      "guaranteed": 1.12,
+      "is_active": true
+    },
+    "Jimmy Horn": {
+      "team": "Panthers",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.1,
+      "total": 4.4,
+      "guaranteed": 0.2,
+      "is_active": true
+    },
+    "Konata Mumpfield": {
+      "team": "Rams",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.08,
+      "total": 4.31,
+      "guaranteed": 0.11,
+      "is_active": true
+    },
+    "Arian Smith": {
+      "team": "Jets",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.31,
+      "total": 5.24,
+      "guaranteed": 1.04,
+      "is_active": true
+    },
+    "Jordan Whittington": {
+      "team": "Rams",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.04,
+      "total": 4.16,
+      "guaranteed": 0.14,
+      "is_active": true
+    },
+    "Xavier Restrepo": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 0.97,
+      "total": 1.94,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Kameron Johnson": {
+      "team": "Buccaneers",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 0.95,
+      "total": 2.84,
+      "guaranteed": 0.01,
+      "is_active": true
+    },
+    "Tutu Atwell": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.4,
+      "total": 1.4,
+      "guaranteed": 1.07,
+      "is_active": true
+    },
+    "Olamide Zaccheaus": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 2.25,
+      "total": 4.5,
+      "guaranteed": 2.3,
+      "is_active": true
+    },
+    "Jacob Cowing": {
+      "team": "49ers",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 1.14,
+      "total": 4.55,
+      "guaranteed": 0.53,
+      "is_active": true
+    },
+    "Efton Chism": {
+      "team": "Patriots",
+      "year_signed": 2025,
+      "years": 3,
+      "end_year": 2027,
+      "aav": 1.0,
+      "total": 2.99,
+      "guaranteed": 0.26,
+      "is_active": true
+    },
+    "D'Andre Swift": {
+      "team": "Bears",
+      "year_signed": 2024,
+      "years": 3,
+      "end_year": 2026,
+      "aav": 8.0,
+      "total": 24.0,
+      "guaranteed": 14.0,
+      "is_active": true
+    },
+    "De'Von Achane": {
+      "team": "Dolphins",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 16.0,
+      "total": 64.0,
+      "guaranteed": 17.38,
+      "is_active": true
+    },
+    "Wan'Dale Robinson": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 17.5,
+      "total": 70.0,
+      "guaranteed": 38.0,
+      "is_active": true
+    },
+    "Ja'Marr Chase": {
+      "team": "Bengals",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 40.25,
+      "total": 161.0,
+      "guaranteed": 73.9,
+      "is_active": true
+    },
+    "D.J. Moore": {
+      "team": "CHI/BUF",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 27.5,
+      "total": 110.0,
+      "guaranteed": 43.65,
+      "is_active": true
+    },
+    "De'Zhaun Stribling": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 3.34,
+      "total": 13.38,
+      "guaranteed": 13.38,
+      "is_active": true
+    },
+    "Ja'Kobi Lane": {
+      "team": "Ravens",
+      "year_signed": 2026,
+      "years": 4,
+      "end_year": 2029,
+      "aav": 1.76,
+      "total": 7.03,
+      "guaranteed": 1.57,
+      "is_active": true
+    },
+    "J'Mari Taylor": {
+      "team": "Jaguars",
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 1.04,
+      "total": 3.13,
+      "guaranteed": 0.28,
+      "is_active": true
+    },
+    "Dont'e Thornton": {
+      "team": "Raiders",
+      "year_signed": 2025,
+      "years": 4,
+      "end_year": 2028,
+      "aav": 1.31,
+      "total": 5.25,
+      "guaranteed": 1.05,
+      "is_active": true
+    },
+    "Ja'Lynn Polk": {
+      "team": "NO/NE",
+      "year_signed": 2024,
+      "years": 4,
+      "end_year": 2027,
+      "aav": 2.42,
+      "total": 9.69,
+      "guaranteed": 8.21,
+      "is_active": true
+    }
+  }
 }
