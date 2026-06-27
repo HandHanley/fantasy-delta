@@ -1540,12 +1540,17 @@ function renderDeck(p){
       const rzT   = st25.rz_targets;
       const rzC   = st25.rz_carries;
 
+      const g25 = st25.games || 17;
+      const rsRaw = st25.rush_share || 0;
+      const rsAdj = Math.min(1, rsRaw * (17 / g25));
+      const rsLabel = g25 < 17 ? 'Rush Share/game · '+g25+'g' : 'Rush Share';
+
       const compRows = isWR ? [
         ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
         ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
         ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
       ] : [
-        ['Rush Share',      ((st25.rush_share||0)*100).toFixed(1)+'%', (st25.rush_share||0)>=.28?'#6ee7b7':(st25.rush_share||0)>=.20?'#7dd3fc':(st25.rush_share||0)>=.13?'#fcd34d':'#fc8181'],
+        [rsLabel,           (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'#6ee7b7':rsAdj>=.40?'#7dd3fc':rsAdj>=.25?'#fcd34d':'#fc8181'],
         ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
         ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
         ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],

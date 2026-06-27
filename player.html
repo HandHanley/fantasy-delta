@@ -480,10 +480,10 @@ function buildAgeCurveHTML(p) {
 
   return '<div class="card">'
     + '<div class="card-label" style="margin-bottom:2px">Age Curve · ' + pos + '</div>'
-    + '<div class="card-sub" style="margin-bottom:8px">Dynasty value score vs age — shaded area is the prime window</div>'
+    + '<div class="card-sub" style="margin-bottom:8px">Dynasty value score vs age — green shading marks the prime window</div>'
     + '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block;overflow:visible">'
 
-    // Peak zone
+    // Peak zone shading
     + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="#6ee7b7" opacity="0.07" rx="2"/>'
 
     // Fill under curve
@@ -502,8 +502,7 @@ function buildAgeCurveHTML(p) {
     // Age labels
     + ageLabels
 
-    // Peak label
-    + '<text x="' + ((pkX1+pkX2)/2).toFixed(1) + '" y="' + (padT-3) + '" fill="#6ee7b7" font-size="7" text-anchor="middle" opacity="0.8">prime</text>'
+    // No floating "prime" label in SVG — the green shading shows the window; footer note carries the text
 
     // Player dot + vertical guide
     + '<line x1="' + mx.toFixed(1) + '" y1="' + (padT+plotH) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>'
