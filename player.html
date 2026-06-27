@@ -131,56 +131,64 @@ function buildHeroHTML(p) {
   </div>`;
 }
 
-// ── DELTA Score trajectory ────────────────────────────────────────────────────
+// ── DELTA Score Arc ──────────────────────────────────────────────────────────
 function buildDSTrajectoryHTML(p) {
   const ds = p.dsScore;
   if (ds == null) return '';
   const pos = p.pos || p.p || 'WR';
 
-  // Project next year DS: age+1, projected PPG as new ppg25, shift history
+  // 2024 estimate: age-1, use ppg24 as recent production, same opp/contract as approx
+  const prevAge = (p.a || 22) - 1;
+  const pA = dsAge(prevAge, pos);
+  const pP = dsProduction(p.ppg24||0, p.ppg23||0, p.ppg22||0, p.g24||16, pos, p);
+  const pO = dsOpportunity(p);
+  const pC = dsCont(p);
+  const ds2024 = Math.round(Math.min(99, pA + pP + pO + pC));
+
+  // 2026 projection: age+1, projected PPG as new recent season
   const nextAge = (p.a || 22) + 1;
-  const nextPpg = p.proj || p.ppg25 || 0;
   const nA = dsAge(nextAge, pos);
-  const nP = dsProduction(nextPpg, p.ppg25||0, p.ppg24||0, p.g25||0, pos, p);
+  const nP = dsProduction(p.proj||p.ppg25||0, p.ppg25||0, p.ppg24||0, p.g25||0, pos, p);
   const nO = dsOpportunity(p);
   const nC = dsCont(p);
-  const nextDS = Math.round(Math.min(p.g25===0 ? 89 : 99, nA + nP + nO + nC));
+  const ds2026 = Math.round(Math.min(p.g25===0 ? 89 : 99, nA + nP + nO + nC));
 
-  const dir = nextDS > ds ? '↑' : nextDS < ds ? '↓' : '→';
-  const dirClr = nextDS > ds ? '#6ee7b7' : nextDS < ds ? '#fca5a5' : '#718096';
-  const gap = Math.abs(nextDS - ds);
-  const reason = nextDS < ds
-    ? (nA < dsAge(p.a||22, pos) ? `Age curve declining at ${nextAge.toFixed(0)}` : 'Production or opportunity shift')
-    : nextDS > ds ? 'Projected improvement in production' : 'Score stable into next season';
   const dsC = dsColor(ds);
-  const ndC = dsColor(nextDS);
+  const d4C = dsColor(ds2024);
+  const d6C = dsColor(ds2026);
 
-  // Bar: current and projected side by side
-  const maxW = 99;
-  const curPct = Math.round((ds / maxW) * 100);
-  const nxtPct = Math.round((nextDS / maxW) * 100);
+  const bar = (score, color) => `
+    <div style="height:4px;background:#1a202c;border-radius:3px;overflow:hidden;margin-bottom:4px">
+      <div style="width:${Math.round((score/99)*100)}%;height:100%;background:${color};border-radius:3px"></div>
+    </div>`;
+
+  const pt = (yr, score, color, note) => `
+    <div style="flex:1;text-align:center">
+      <div style="font-size:9px;color:#4a5568;margin-bottom:5px">${yr}</div>
+      ${bar(score, color)}
+      <div style="font-size:24px;font-weight:800;line-height:1;color:${color}">${score}</div>
+      <div style="font-size:9px;color:#374151;margin-top:3px">${note}</div>
+    </div>`;
+
+  const arr = (from, to) => {
+    const c = to > from ? '#6ee7b7' : to < from ? '#fca5a5' : '#718096';
+    const sym = to > from ? '↑' : to < from ? '↓' : '→';
+    return `<div style="font-size:18px;color:${c};padding-top:18px;flex-shrink:0">${sym}</div>`;
+  };
 
   return `<div class="card">
-    <div class="card-label" style="margin-bottom:2px">DELTA Score Trajectory</div>
-    <div class="card-sub" style="margin-bottom:12px">Current season vs projected next season</div>
-    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:6px">
-      <div style="flex:1">
-        <div style="font-size:9px;color:#4a5568;margin-bottom:3px;text-align:center">2025 · Current</div>
-        <div style="height:4px;background:#1a202c;border-radius:3px;overflow:hidden">
-          <div style="width:${curPct}%;height:100%;background:${dsC};border-radius:3px"></div>
-        </div>
-        <div style="font-size:22px;font-weight:800;color:${dsC};text-align:center;margin-top:4px">${ds}</div>
-      </div>
-      <div style="font-size:20px;color:${dirClr};padding-bottom:26px">${dir}</div>
-      <div style="flex:1">
-        <div style="font-size:9px;color:#4a5568;margin-bottom:3px;text-align:center">2026 · Projected</div>
-        <div style="height:4px;background:#1a202c;border-radius:3px;overflow:hidden">
-          <div style="width:${nxtPct}%;height:100%;background:${ndC};border-radius:3px"></div>
-        </div>
-        <div style="font-size:22px;font-weight:800;color:${ndC};text-align:center;margin-top:4px">${nextDS}</div>
-      </div>
+    <div class="card-label" style="margin-bottom:2px">DELTA Score Arc</div>
+    <div class="card-sub" style="margin-bottom:14px">Estimated 2024 · Current 2025 · Projected 2026</div>
+    <div style="display:flex;align-items:flex-start;gap:8px">
+      ${pt('2024 est', ds2024, d4C, 'approx')}
+      ${arr(ds2024, ds)}
+      ${pt('2025', ds, dsC, 'current')}
+      ${arr(ds, ds2026)}
+      ${pt('2026 proj', ds2026, d6C, 'if proj holds')}
     </div>
-    <div style="font-size:10px;color:#4a5568;text-align:center">${dir} ${gap > 0 ? gap + ' pts — ' : ''}${reason}</div>
+    <div style="font-size:9px;color:#374151;margin-top:10px;text-align:center">
+      2024 uses age−1 and prior production · opportunity &amp; contract approximated from current values
+    </div>
   </div>`;
 }
 
@@ -244,12 +252,8 @@ function buildProductionHTML(p) {
 
 // ── EPA / Efficiency ──────────────────────────────────────────────────────────
 function buildEPAHTML(p) {
-  const isQB = p.pos === 'QB';
-  const isRB = p.pos === 'RB';
-  const label = isQB ? 'EPA Efficiency' : isRB ? 'Rushing EPA' : 'Route Efficiency (YPRR)';
-  const sublabel = isQB ? 'EPA per passing play by season — positive = above average'
-    : isRB ? 'EPA per rushing play by season — positive = above average'
-    : 'Yards per route run by season — 1.4+ is above average';
+  const posLabel = p.pos === 'QB' ? 'Passing' : p.pos === 'RB' ? 'Rushing' : 'Receiving';
+  const sublabel = `${posLabel} EPA per play by season — how much scoring value this player added above average on each touch or route`;
 
   const epas = [
     { yr: '2022', v: p.e22 || 0 },
@@ -260,25 +264,30 @@ function buildEPAHTML(p) {
 
   if (!epas.length) return '';
 
-  // Color based on ABSOLUTE thresholds, not relative normalization
+  // Absolute scale: 0.25 EPA/play fills the bar fully (elite level for any position)
+  const SCALE = 0.25;
+
   const getClr = v => {
-    if (isRB) return v >= 0.05 ? '#6ee7b7' : v >= -0.05 ? '#fcd34d' : '#fc8181';
-    if (isQB) return v >= 0.15 ? '#6ee7b7' : v >= 0.05 ? '#7dd3fc' : v >= -0.05 ? '#fcd34d' : '#fc8181';
-    // WR/TE: YPRR scale
-    return v >= 1.8 ? '#6ee7b7' : v >= 1.4 ? '#7dd3fc' : v >= 1.0 ? '#fcd34d' : '#fc8181';
+    const a = Math.abs(v);
+    if (v >= 0) return a >= 0.12 ? '#6ee7b7' : a >= 0.04 ? '#a7f3d0' : '#fcd34d';
+    else        return a >= 0.12 ? '#fc8181' : a >= 0.04 ? '#fca5a5' : '#fcd34d';
   };
 
-  // Use absolute scale for bar width (not relative to max) so values are comparable
-  const absScale = isQB ? 0.35 : isRB ? 0.15 : 2.5; // 100% bar width at this value
   const rows = epas.map(x => {
-    const pct = Math.min(100, Math.round((Math.abs(x.v) / absScale) * 100));
+    const pct = Math.min(100, Math.round((Math.abs(x.v) / SCALE) * 100));
     const clr = getClr(x.v);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a202c">
-      <div style="font-size:10px;color:#718096;width:28px;flex-shrink:0">${x.yr.slice(2)}</div>
-      <div style="flex:1;height:6px;background:#1a202c;border-radius:3px;overflow:hidden">
-        <div style="width:${pct}%;height:100%;background:${clr};border-radius:3px"></div>
+    const isPos = x.v >= 0;
+    const sign = x.v > 0 ? '+' : '';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a202c">
+      <div style="font-size:10px;color:#718096;width:26px;flex-shrink:0">${x.yr.slice(2)}</div>
+      <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;height:8px">
+        ${!isPos ? `<div style="width:${pct}%;height:100%;background:${clr};border-radius:3px 0 0 3px"></div>` : ''}
       </div>
-      <div style="font-size:11px;font-weight:600;color:${clr};width:42px;text-align:right">${x.v.toFixed(2)}</div>
+      <div style="width:2px;height:14px;background:#374151;flex-shrink:0;border-radius:1px"></div>
+      <div style="flex:1;display:flex;justify-content:flex-start;align-items:center;height:8px">
+        ${isPos ? `<div style="width:${pct}%;height:100%;background:${clr};border-radius:0 3px 3px 0"></div>` : ''}
+      </div>
+      <div style="font-size:11px;font-weight:600;color:${clr};width:42px;text-align:right">${sign}${x.v.toFixed(2)}</div>
     </div>`;
   }).join('');
 
@@ -288,12 +297,16 @@ function buildEPAHTML(p) {
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
-        <div class="card-label" style="margin-bottom:2px">${label}</div>
+        <div class="card-label" style="margin-bottom:2px">EPA per Play</div>
         <div class="card-sub">${sublabel}</div>
       </div>
-      ${p.epaTr ? `<span style="font-size:10px;font-weight:600;color:${trendClr}">${trendTxt}</span>` : ''}
+      ${p.epaTr ? `<span style="font-size:10px;font-weight:600;color:${trendClr};flex-shrink:0;margin-left:10px">${trendTxt}</span>` : ''}
     </div>
     ${rows}
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:#374151;margin-top:6px;padding:0 34px 0 0">
+      <span>← below avg</span>
+      <span>above avg →</span>
+    </div>
   </div>`;
 }
 
