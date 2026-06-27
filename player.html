@@ -359,9 +359,15 @@ function buildOpportunityHTML(p) {
         ['RZ targets', rzT!=null?rzT:'—', rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
       ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:#718096">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
     } else {
-      const rs = st25.rush_share||0;
+      const g = st25.games || 17;
+      const rsRaw = st25.rush_share || 0;
+      // Apply same 17/g adjustment used in workhorse score — rush_share in the pipeline
+      // is a season total ratio (player carries / team carries), so it's diluted by missed
+      // games. Adjusted value reflects true per-game role intensity when active.
+      const rsAdj = Math.min(1, rsRaw * (17 / g));
+      const rsLabel = g < 17 ? `Rush share/game · ${g}g` : 'Rush share';
       usageRows = [
-        ['Rush share', (rs*100).toFixed(1)+'%', rs>=.28?'#6ee7b7':rs>=.20?'#7dd3fc':rs>=.13?'#fcd34d':'#fc8181'],
+        [rsLabel, (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'#6ee7b7':rsAdj>=.40?'#7dd3fc':rsAdj>=.25?'#fcd34d':'#fc8181'],
         ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
         ['RZ carries', rzC!=null?rzC:'—', rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
         ['RZ targets', rzT!=null?rzT:'—', rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
