@@ -1397,7 +1397,7 @@ const RAW=[
   {n:'Michael Pittman Jr.',t:'PIT',p:'WR',a:28.4,k:3562,ppg25:9.6,ppg24:8.2,ppg23:12.2,g25:17},
   {n:'Jaylen Waddle',t:'DEN',p:'WR',a:27.3,k:4917,ppg25:10.1,ppg24:7.5,ppg23:11.6,g25:16},
   {n:'Alec Pierce',t:'IND',p:'WR',a:25.9,k:4429,ppg25:10.7,ppg24:8.9,ppg23:4.7,g25:15},
-  {n:'Justin Jefferson',t:'MIN',p:'WR',a:26.8,k:7697,ppg25:9.4,ppg24:15.6,ppg23:16.8,g25:17},
+  {n:'Justin Jefferson',t:'MIN',p:'WR',a:27.0,k:7697,ppg25:9.4,ppg24:15.6,ppg23:16.8,g25:17},
   {n:'DK Metcalf',t:'PIT',p:'WR',a:28.3,k:3709,ppg25:10.5,ppg24:10.5,ppg23:12.0,g25:15},
   {n:'Parker Washington',t:'JAC',p:'WR',a:24.0,k:3580,ppg25:9.7,ppg24:4.8,ppg23:3.5,g25:16},
   {n:'Ladd McConkey',t:'LAC',p:'WR',a:24.4,k:5349,ppg25:9.2,ppg24:12.5,ppg23:0,g25:16},
@@ -2952,20 +2952,27 @@ function calcAlphaScore(name) {
 function calcWorkhorseScore(name) {
   const s = PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
-  const rushS = s.rush_share   || 0;  // carries ÷ team carries — mirrors target_share
-  const tgtS  = s.target_share || 0;
-  const rzC   = s.rz_carries;
-  const rzT   = s.rz_targets;
+  const rushS = s.rush_share   || 0;  // carries ÷ team carries — already a per-game rate
+  const tgtS  = s.target_share || 0;  // targets ÷ team targets — already a per-game rate
+  const rzC   = s.rz_carries;         // season TOTAL — must convert to per-game rate
+  const rzT   = s.rz_targets;         // season TOTAL — must convert to per-game rate
 
-  // Ceilings calibrated against 2025 dataset:
-  // rush_share: Bijan ~.65 (bellcow/run-heavy), CMC ~.55, Taylor ~.58 → ceil .65
+  // Ceilings calibrated against 2025 full-season dataset:
+  // rush_share: Bijan ~.65 (bellcow), CMC ~.55 → ceil .65
   // tgt_share:  CMC .234, Achane .188 → ceil .24
-  // rzC:        CMC 75, Taylor 71 → ceil 75
-  // rzT:        CMC 25, Gibbs 15 → ceil 26
+  // rzC/game:   CMC 75/17≈4.4, Taylor 71/17≈4.2 → ceil 4.41 (=75/17)
+  // rzT/game:   CMC 25/17≈1.5, Gibbs 15/17≈0.9 → ceil 1.53 (=26/17)
   const rushN = Math.min(1, rushS / 0.65);
   const tgtN  = Math.min(1, tgtS  / 0.24);
-  const rzCN  = rzC != null ? Math.min(1, rzC / 75) : rushN * 0.6;
-  const rzTN  = rzT != null ? Math.min(1, rzT / 26) : tgtN  * 0.6;
+  // Convert RZ totals to per-game rates so injury absences don't penalise
+  // players who are genuine bellcows — what matters is role intensity per game,
+  // not raw volume diluted by missed weeks. (Motivating case: Omarion Hampton
+  // 9 games 2025 — his RZ rate was elite but totals dragged score down 9pts.)
+  const g       = s.games;
+  const rzCpg   = rzC != null ? rzC / g : null;
+  const rzTpg   = rzT != null ? rzT / g : null;
+  const rzCN    = rzCpg != null ? Math.min(1, rzCpg / (75/17)) : rushN * 0.6;
+  const rzTN    = rzTpg != null ? Math.min(1, rzTpg / (26/17)) : tgtN  * 0.6;
 
   const raw = rushN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
 
@@ -3608,10 +3615,12 @@ async function loadPlayerStats() {
         // collision guard must only protect REAL baked ages: for a seed, the
         // pipeline age is strictly better, so accept it even if it diverges a
         // lot (e.g. Tyreek Hill seeded 24 → real 32.3). For a real decimal baked
-        // age, a >6yr jump signals a name-collision bad match (e.g. WR D.J. Moore
+        // age, a >3yr jump signals a name-collision bad match (e.g. Justin Jefferson
+        // baked 26.8 vs a 23yr nflverse player with the same name, or D.J. Moore
         // 28.9 vs an older DB D.J. Moore 39) → keep the trusted baked value.
+        // Tightened from >6 to >3 after two confirmed collisions at 3.5yr diff.
         const bakedIsSeed = baked != null && Number.isInteger(baked);
-        if (!bakedIsSeed && baked != null && baked > 0 && Math.abs(a - baked) > 6) {
+        if (!bakedIsSeed && baked != null && baked > 0 && Math.abs(a - baked) > 3) {
           rejected++;
           continue;
         }
