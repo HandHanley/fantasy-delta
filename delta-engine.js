@@ -2502,7 +2502,7 @@ const CONTRACTS=[
   {n:'Tetairoa McMillan',pos:'WR',team:'CAR',aav:6982598,total:27930390,end:2028,note:'Locked WR1 through 2028 — ascending rookie'},
   {n:'Jonathon Brooks',pos:'RB',team:'CAR',aav:2104271,total:8417082,end:2027,note:'Cheap rookie deal — monitor health'},
   {n:'Xavier Legette',pos:'WR',team:'CAR',aav:3089294,total:12357176,end:2028,note:'Locked WR2 through 2028'},
-  {n:'Jalen Coker',pos:'WR',team:'CAR',aav:1075000,total:1075000,end:2026,note:'Walk year — cheap rookie deal expiring 2026'},
+  {n:'Jalen Coker',pos:'WR',team:'CAR',aav:1075000,total:1075000,end:2028,note:'Walk year — cheap rookie deal expiring 2026'},
   // WASHINGTON COMMANDERS
   {n:'Terry McLaurin',pos:'WR',team:'WAS',aav:32333333,total:97000000,end:2028,note:'Elite WR1 locked through 2028'},
   {n:'Jayden Daniels',pos:'QB',team:'WAS',aav:9436663,total:37746650,end:2028,note:'Franchise QB locked — ascending'},
@@ -2532,7 +2532,7 @@ const CONTRACTS=[
   // ATLANTA FALCONS
   {n:'Tua Tagovailoa',pos:'QB',team:'ATL',aav:53100000,total:212400000,end:2028,note:'Franchise QB locked through 2028'},
   {n:'Bijan Robinson',pos:'RB',team:'ATL',aav:5489634,total:21958535,end:2027,note:'Locked through 2027 — cheap deal, RB1 secure'},
-  {n:'Drake London',pos:'WR',team:'ATL',aav:5383617,total:21534468,end:2026,note:'WALK YEAR 2026 — ATL must extend or lose WR1'},
+  {n:'Drake London',pos:'WR',team:'ATL',aav:5383617,total:21534468,end:2029,note:'WALK YEAR 2026 — ATL must extend or lose WR1'},
   {n:'Kyle Pitts',pos:'TE',team:'ATL',aav:15045000,total:15045000,end:2026,note:'WALK YEAR 2026 — extension or departure imminent'},
   // TAMPA BAY BUCCANEERS
   {n:'Baker Mayfield',pos:'QB',team:'TB',aav:33333333,total:100000000,end:2026,note:'WALK YEAR 2026 — TB must extend or move on'},
@@ -2556,7 +2556,7 @@ const CONTRACTS=[
   {n:'George Pickens',pos:'WR',team:'DAL',aav:27298000,total:27298000,end:2026,note:'WALK YEAR 2026 — DAL must extend WR2'},
   {n:'Javonte Williams',pos:'RB',team:'DAL',aav:8000000,total:24000000,end:2028,note:'3yr/$24M locked — role security confirmed'},
   // DENVER BRONCOS
-    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2028,note:'Locked WR2 through 2028 — big investment'},
+    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2027,note:'Locked WR2 through 2028 — big investment'},
   {n:'Bo Nix',pos:'QB',team:'DEN',aav:4653292,total:18613166,end:2028,note:'Franchise QB locked through 2028'},
   {n:'RJ Harvey',pos:'RB',team:'DEN',aav:1839920,total:7359680,end:2028,note:'Cheap ascending RB locked through 2028'},
   {n:'Troy Franklin',pos:'WR',team:'DEN',aav:1218709,total:4874836,end:2027,note:'Cheap WR on rookie deal through 2027'},
@@ -2566,7 +2566,7 @@ const CONTRACTS=[
   {n:'Jordan Love',pos:'QB',team:'GB',aav:55000000,total:220000000,end:2028,note:'Franchise QB locked through 2028'},
   {n:'Josh Jacobs',pos:'RB',team:'GB',aav:12000000,total:48000000,end:2027,note:'Locked RB1 through 2027'},
       {n:'Tucker Kraft',pos:'TE',team:'GB',aav:1384484,total:5537934,end:2026,note:'Expiring 2026 — extension expected'},
-  {n:'Jayden Reed',pos:'WR',team:'GB',aav:1795195,total:7180778,end:2026,note:'Expiring 2026 — extension coming'},
+  {n:'Jayden Reed',pos:'WR',team:'GB',aav:1795195,total:7180778,end:2028,note:'Expiring 2026 — extension coming'},
   // LOS ANGELES CHARGERS
   {n:'Justin Herbert',pos:'QB',team:'LAC',aav:52500000,total:262500000,end:2029,note:'Franchise locked through 2029'},
   {n:'Omarion Hampton',pos:'RB',team:'LAC',aav:4443616,total:17774464,end:2029,note:'Cheap ascending RB locked through 2029'},
@@ -2603,10 +2603,10 @@ const CONTRACTS=[
   {n:'Aaron Rodgers',pos:'QB',team:'PIT',aav:4000000,total:4000000,end:2026,note:'1yr bridge deal at 42'},
   {n:'Travis Kelce',pos:'TE',team:'KC',aav:12000000,total:12000000,end:2028,note:'Walk year but likely extends — monitor'},
   {n:'Xavier Worthy',pos:'WR',team:'KC',aav:3447566,total:13790264,end:2028,note:'Cheap ascending WR through 2028'},
-  {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2026,note:'Expiring 2026 — extension coming given ascending role'},
+  {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2029,note:'Expiring 2026 — extension coming given ascending role'},
   // MINNESOTA VIKINGS
   {n:'Justin Jefferson',pos:'WR',team:'MIN',aav:35000000,total:140000000,end:2028,note:'Elite WR1 locked through 2028'},
-  {n:'Kyler Murray',pos:'QB',team:'MIN',aav:1300000,total:1300000,end:2026,note:'1yr bridge deal — expected QB1 starter in 2026'},
+  {n:'Kyler Murray',pos:'QB',team:'MIN',aav:1300000,total:1300000,end:2028,note:'1yr bridge deal — expected QB1 starter in 2026'},
   {n:'T.J. Hockenson',pos:'TE',team:'MIN',aav:16500000,total:66000000,end:2026,note:'WALK YEAR 2026 — confirms Fading signal'},
   {n:'J.J. McCarthy',pos:'QB',team:'MIN',aav:5463699,total:21854796,end:2028,note:'Franchise QB locked through 2028'},
   {n:'Jordan Addison',pos:'WR',team:'MIN',aav:3432935,total:13731739,end:2027,note:'Cheap WR locked through 2027'},
@@ -2638,7 +2638,7 @@ const CONTRACTS=[
   {n:'Rhamondre Stevenson',pos:'RB',team:'NE',aav:9000000,total:36000000,end:2028,note:'Locked RB1 through 2028'},
   {n:'Hunter Henry',pos:'TE',team:'NE',aav:9000000,total:27000000,end:2026,note:'Walk year — NE TE1 expiring 2026'},
   {n:'TreVeyon Henderson',pos:'RB',team:'NE',aav:2785809,total:11143234,end:2028,note:'Cheap ascending RB locked through 2028'},
-  {n:'Jonathan Taylor',pos:'RB',team:'IND',aav:14000000,total:42000000,end:2026,note:'WALK YEAR 2026 — IND must extend or sell'},
+  {n:'Jonathan Taylor',pos:'RB',team:'IND',aav:14000000,total:42000000,end:2027,note:'WALK YEAR 2026 — IND must extend or sell'},
   {n:'Tyler Warren',pos:'TE',team:'IND',aav:5240163,total:20960650,end:2029,note:'Locked TE1 through 2029 — IND committed'},
   {n:'Josh Downs',pos:'WR',team:'IND',aav:1380115,total:5520459,end:2026,note:'Expiring 2026 — extension likely'},
   // Batch — contracts from screenshots
@@ -2654,7 +2654,7 @@ const CONTRACTS=[
   {n:'Courtland Sutton',pos:'WR',team:'DEN',aav:23000000,total:92000000,end:2029,note:'Locked through 2029 — potential out after 2026 worth monitoring'},
   {n:'Daniel Jones',pos:'QB',team:'IND',aav:44000000,total:88000000,end:2027,note:'2yr/$88M transition tag extension — IND QB1'},
   {n:'Alec Pierce',pos:'WR',team:'IND',aav:28500000,total:114000000,end:2029,note:'Major extension — IND WR1 locked through 2029'},
-  {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2026,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
+  {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2029,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
   // 2026 Draft Rounds 4-7
   {n:'Brenen Thompson',pos:'WR',team:'LAC',aav:980000,total:3920000,end:2029,note:'Rd4 #105 — LAC speed WR, 4.26 40'},
   {n:'Jonah Coleman',pos:'RB',team:'DEN',aav:960000,total:3840000,end:2029,note:'Rd4 #109 — DEN RB, Payton system'},
@@ -3804,14 +3804,15 @@ async function loadPlayerContracts() {
       const c = data.contracts[player.n];
       if (!c) continue;
 
-      // Update contract in CONTRACTS array
+      // Update contract in CONTRACTS array.
+      // end year is NOT overwritten from pipeline — OTC end_year is frequently
+      // off by 1-2 years due to extension-start vs signing-year counting.
+      // Baked end years are hand-curated and more reliable. Only update
+      // financial values (aav, total) which OTC tracks accurately.
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {
-        existing.end     = c.end_year;
-        // player-contracts.json stores values in millions — convert to dollars
-        existing.aav     = Math.round((c.aav   || 0) * 1000000);
-        existing.total   = Math.round((c.total || 0) * 1000000);
-        existing.years   = c.years;
+        if (c.aav   > 0) existing.aav   = Math.round((c.aav)   * 1000000);
+        if (c.total > 0) existing.total = Math.round((c.total) * 1000000);
       }
       updated++;
     }
