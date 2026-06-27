@@ -411,7 +411,6 @@ function buildContractHTML(p) {
     <div class="bdr-row"><span style="color:#718096">Expires</span><span>${ct.end}${ct.end<=2026?' ⚠':''}</span></div>
     <div style="margin-top:8px">${dynastySignal(ct)}</div>
     ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
-    <div style="font-size:9px;color:#374151;margin-top:8px">Note: First-round rookie 5th-year options not yet reflected.</div>
   </div>`;
 }
 
@@ -629,6 +628,7 @@ if (!PLAYER_NAME) {
     .then(() => {
       const p = COMP.find(x => x.n === PLAYER_NAME);
       if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
+      MV_CENTER = computeMvCenter(); // calibrate to population median — same as renderAll() in index.html
       renderPlayerPage(p);
     })
     .catch(e => showError('Failed to load player data. ' + e.message));

@@ -2537,7 +2537,7 @@ const CONTRACTS=[
   // TAMPA BAY BUCCANEERS
   {n:'Baker Mayfield',pos:'QB',team:'TB',aav:33333333,total:100000000,end:2026,note:'WALK YEAR 2026 — TB must extend or move on'},
   {n:'Kenneth Gainwell',pos:'RB',team:'TB',aav:7000000,total:14000000,end:2027,note:'2yr/$14M — committed RB role confirmed'},
-  {n:'Emeka Egbuka',pos:'WR',team:'TB',aav:4543183,total:18172730,end:2028,note:'4yr rookie deal through 2028 · 1st-round 5th-yr option eligible 2027'},
+  {n:'Emeka Egbuka',pos:'WR',team:'TB',aav:4543183,total:18172730,end:2028,note:'Year 2 of 4yr rookie deal · 5th-yr option (2029) at Tampa\'s discretion before \'28 season'},
   {n:'Bucky Irving',pos:'RB',team:'TB',aav:1187888,total:4751552,end:2027,note:'Cheap ascending RB through 2027'},
   {n:'Cade Otton',pos:'TE',team:'TB',aav:10000000,total:30000000,end:2028,note:'Locked TE1 through 2028'},
   // SEATTLE SEAHAWKS
