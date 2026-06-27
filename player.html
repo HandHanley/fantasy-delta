@@ -471,11 +471,11 @@ function buildAgeCurveHTML(p) {
   // Y-axis ticks at 0, 12, 25
   const yTicks = [0, 12, 25].map(s =>
     '<line x1="' + (padL-3) + '" y1="' + toY(s).toFixed(1) + '" x2="' + padL + '" y2="' + toY(s).toFixed(1) + '" stroke="#2d3748" stroke-width="1"/>'
-    + '<text x="' + (padL-5) + '" y="' + (toY(s)+3).toFixed(1) + '" fill="#374151" font-size="7" text-anchor="end">' + s + '</text>'
+    + '<text x="' + (padL-5) + '" y="' + (toY(s)+3).toFixed(1) + '" fill="#374151" font-size="6" text-anchor="end">' + s + '</text>'
   ).join('');
 
   const ageLabels = [20, 24, 28, 32, 36, 38].map(a =>
-    '<text x="' + toX(a).toFixed(1) + '" y="' + (padT+plotH+13) + '" fill="#4a5568" font-size="7" text-anchor="middle">' + a + '</text>'
+    '<text x="' + toX(a).toFixed(1) + '" y="' + (padT+plotH+13) + '" fill="#4a5568" font-size="6" text-anchor="middle">' + a + '</text>'
   ).join('');
 
   return '<div class="card">'
@@ -510,8 +510,8 @@ function buildAgeCurveHTML(p) {
 
     // Player age label — above dot normally, below when near top to avoid colliding with "prime" label
     + (playerScore >= 22
-      ? '<text x="' + mx.toFixed(1) + '" y="' + (my+16).toFixed(1) + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
-      : '<text x="' + mx.toFixed(1) + '" y="' + (my-8).toFixed(1)  + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+      ? '<text x="' + mx.toFixed(1) + '" y="' + (my+16).toFixed(1) + '" fill="' + col + '" font-size="6" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+      : '<text x="' + mx.toFixed(1) + '" y="' + (my-8).toFixed(1)  + '" fill="' + col + '" font-size="6" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
     )
 
     + '</svg>'
@@ -613,7 +613,7 @@ function renderPlayerPage(p) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 // Sync league preferences from main app so scores & verdicts match
 try {
-  const prefs = JSON.parse(localStorage.getItem('delta_prefs') || '{}');
+  const prefs = JSON.parse(localStorage.getItem('delta_settings') || '{}');
   if (prefs.teams) leagueTeams = parseInt(prefs.teams);
   if (prefs.qb)    qbFmt       = prefs.qb;
   if (prefs.fmt)   scoringFmt  = prefs.fmt;
