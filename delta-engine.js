@@ -2556,7 +2556,7 @@ const CONTRACTS=[
   {n:'George Pickens',pos:'WR',team:'DAL',aav:27298000,total:27298000,end:2026,note:'WALK YEAR 2026 — DAL must extend WR2'},
   {n:'Javonte Williams',pos:'RB',team:'DAL',aav:8000000,total:24000000,end:2028,note:'3yr/$24M locked — role security confirmed'},
   // DENVER BRONCOS
-    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2027,note:'Locked WR2 through 2028 — big investment'},
+    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2027,note:'Committed through 2027 — Broncos hold 2028 option'},
   {n:'Bo Nix',pos:'QB',team:'DEN',aav:4653292,total:18613166,end:2028,note:'Franchise QB locked through 2028'},
   {n:'RJ Harvey',pos:'RB',team:'DEN',aav:1839920,total:7359680,end:2028,note:'Cheap ascending RB locked through 2028'},
   {n:'Troy Franklin',pos:'WR',team:'DEN',aav:1218709,total:4874836,end:2027,note:'Cheap WR on rookie deal through 2027'},
@@ -3800,28 +3800,36 @@ async function loadPlayerContracts() {
     const data = await res.json();
     if (!data?.contracts) return;
 
+    // Explicit overrides for cases where the pipeline formula still gives the wrong year.
+    // Add entries here ONLY when Steve has personally confirmed the correct end year.
+    // Everything else comes from the pipeline automatically.
+    const CONTRACT_OVERRIDES = {
+      'Josh Allen': 2030,  // pipeline vet+1 gives 2031; new deal starts 2025 as year 1
+    };
+
     let updated = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
       const c = data.contracts[player.n];
       if (!c) continue;
 
-      // Update contract in CONTRACTS array.
-      // end year is NOT overwritten from pipeline — OTC end_year is frequently
-      // off by 1-2 years due to extension-start vs signing-year counting.
-      // Baked end years are hand-curated and more reliable. Only update
-      // financial values (aav, total) which OTC tracks accurately.
+      // All pipeline entries are trustworthy — OTC doesn't report restructured base
+      // salary separately from the full contract. A 1yr/$1.3M entry means the player
+      // genuinely signed a 1-year deal (e.g. Kyler Murray with Minnesota in 2026).
+      const isVet = (c.aav || 0) >= 5;
+      const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isVet ? c.end_year + 1 : c.end_year);
+
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {
-        if (c.aav   > 0) existing.aav   = Math.round((c.aav)   * 1000000);
-        if (c.total > 0) existing.total = Math.round((c.total) * 1000000);
+        if (c.aav   > 0) existing.aav   = Math.round(c.aav   * 1000000);
+        if (c.total > 0) existing.total = Math.round(c.total * 1000000);
+        existing.end = pipeEnd; // pipeline is the source of truth; overwrites baked
+        updated++;
       }
-      updated++;
     }
 
     if (updated > 0) {
-      console.log(`[DELTA] Contracts loaded: ${updated} updated`);
-      // Rebuild COMP with fresh contract data
+      console.log(`[DELTA] Contracts updated: ${updated} players`);
       COMP.length = 0;
       RAW.forEach(r => COMP.push(calcProj(r)));
       ASSETS.length = 0;
