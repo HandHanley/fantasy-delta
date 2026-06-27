@@ -2975,7 +2975,7 @@ function calcWorkhorseScore(name) {
   const rzCN  = rzCpg != null ? Math.min(1, rzCpg / (75/17)) : rushN * 0.6;
   const rzTN  = rzTpg != null ? Math.min(1, rzTpg / (26/17)) : tgtN  * 0.6;
 
-  const raw = rushN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
+  const raw = rushN*0.50 + tgtN*0.15 + rzCN*0.30 + rzTN*0.05;
   return Math.round(28 + raw * 71);
 }
 
