@@ -1583,34 +1583,6 @@ function renderDeck(p){
     })()}
 
 
-    <div class="dd-section">
-      <div class="dd-section-label">Projection &amp; Value · forward-looking</div>
-      <div class="dd-grid">
-        <div class="dd-stat">
-          <div class="dd-stat-val" style="color:#6ee7b7">${adjProj.toFixed(1)}</div>
-          <div class="dd-stat-lbl">Proj PPG · next yr</div>
-        </div>
-        <div class="dd-stat">
-          <div class="dd-stat-val">${mv>=19999?"19,999+":mv.toLocaleString()}</div>
-          <div class="dd-stat-lbl">Model Value</div>
-        </div>
-        <div class="dd-stat">
-          <div class="dd-stat-val">${p.ktcEff.toLocaleString()}</div>
-          <div class="dd-stat-lbl">Mkt Val</div>
-        </div>
-      </div>
-      <div style="margin-top:5px">
-        <div style="display:flex;justify-content:space-between;font-size:9px;color:#4a5568;margin-bottom:2px">
-          <span>Floor ${p.floor?p.floor.toFixed(1):'—'}</span>
-          <span>Ceiling ${p.ceil?p.ceil.toFixed(1):'—'}</span>
-        </div>
-        <div style="height:4px;background:#1a202c;border-radius:3px;overflow:hidden;position:relative">
-          <div style="position:absolute;left:0;right:0;height:100%;background:linear-gradient(90deg,#fc8181,#fcd34d,#6ee7b7);opacity:.4;border-radius:3px"></div>
-          <div style="position:absolute;left:${Math.max(0,Math.min(90,(adjProj-(p.floor||0))/Math.max((p.ceil||adjProj)-(p.floor||0),1)*90))}%;top:0;width:10%;height:100%;background:#e2e8f0;border-radius:2px"></div>
-        </div>
-      </div>
-      </div>
-
     <div class="dd-divider"></div>
 
     <div class="dd-section">
