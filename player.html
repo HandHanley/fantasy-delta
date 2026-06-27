@@ -431,6 +431,148 @@ function buildScoutHTML() {
   </div>`;
 }
 
+// ── Age Curve ─────────────────────────────────────────────────────────────────
+function buildAgeCurveHTML(p) {
+  const pos = p.pos || p.p || 'WR';
+  const ages = Array.from({length: 19}, (_, i) => i + 20); // 20–38
+  const scores = ages.map(a => dsAge(a, pos));
+  const W = 320, H = 90, padL = 28, padR = 8, padT = 14, padB = 22;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const toX = a => padL + ((a - 20) / 18) * plotW;
+  const toY = s => padT + plotH - (s / 25) * plotH;
+
+  const points = ages.map((a, i) => toX(a).toFixed(1) + ',' + toY(scores[i]).toFixed(1)).join(' ');
+
+  // Peak zone — ages where score >= 23
+  const peakAges = ages.filter(a => dsAge(a, pos) >= 23);
+  const peakStart = peakAges[0] || 20;
+  const peakEnd = peakAges[peakAges.length - 1] || 27;
+  const pkX1 = toX(peakStart), pkX2 = toX(peakEnd);
+
+  // Fill path under curve (area chart feel)
+  const fillPts = ages.map((a, i) => toX(a).toFixed(1) + ',' + toY(scores[i]).toFixed(1)).join(' ');
+  const fillPath = 'M ' + toX(20).toFixed(1) + ',' + toY(0).toFixed(1)
+    + ' L ' + fillPts.split(' ').join(' L ')
+    + ' L ' + toX(38).toFixed(1) + ',' + toY(0).toFixed(1) + ' Z';
+
+  // Player marker
+  const clampedAge = Math.min(38, Math.max(20, p.a || 25));
+  const playerScore = dsAge(clampedAge, pos);
+  const mx = toX(clampedAge), my = toY(playerScore);
+  const col = dsColor(p.dsScore || 50);
+
+  // Y-axis ticks at 0, 12, 25
+  const yTicks = [0, 12, 25].map(s =>
+    '<line x1="' + (padL-3) + '" y1="' + toY(s).toFixed(1) + '" x2="' + padL + '" y2="' + toY(s).toFixed(1) + '" stroke="#2d3748" stroke-width="1"/>'
+    + '<text x="' + (padL-5) + '" y="' + (toY(s)+3).toFixed(1) + '" fill="#374151" font-size="7" text-anchor="end">' + s + '</text>'
+  ).join('');
+
+  const ageLabels = [20, 24, 28, 32, 36, 38].map(a =>
+    '<text x="' + toX(a).toFixed(1) + '" y="' + (padT+plotH+13) + '" fill="#4a5568" font-size="7" text-anchor="middle">' + a + '</text>'
+  ).join('');
+
+  return '<div class="card">'
+    + '<div class="card-label" style="margin-bottom:2px">Age Curve · ' + pos + '</div>'
+    + '<div class="card-sub" style="margin-bottom:8px">Dynasty value score vs age — shaded area is the prime window</div>'
+    + '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block;overflow:visible">'
+
+    // Peak zone
+    + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="#6ee7b7" opacity="0.07" rx="2"/>'
+
+    // Fill under curve
+    + '<path d="' + fillPath + '" fill="#374151" opacity="0.2"/>'
+
+    // Curve line
+    + '<polyline points="' + points + '" fill="none" stroke="#4a5568" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'
+
+    // Axes
+    + '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT+plotH) + '" stroke="#1f2937" stroke-width="1"/>'
+    + '<line x1="' + padL + '" y1="' + (padT+plotH) + '" x2="' + (W-padR) + '" y2="' + (padT+plotH) + '" stroke="#1f2937" stroke-width="1"/>'
+
+    // Y ticks + labels
+    + yTicks
+
+    // Age labels
+    + ageLabels
+
+    // Peak label
+    + '<text x="' + ((pkX1+pkX2)/2).toFixed(1) + '" y="' + (padT-3) + '" fill="#6ee7b7" font-size="7" text-anchor="middle" opacity="0.8">prime</text>'
+
+    // Player dot + vertical guide
+    + '<line x1="' + mx.toFixed(1) + '" y1="' + (padT+plotH) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>'
+    + '<circle cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="4.5" fill="' + col + '" stroke="#0a0e17" stroke-width="1.5"/>'
+
+    // Player age label above dot
+    + '<text x="' + mx.toFixed(1) + '" y="' + (my-8).toFixed(1) + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+
+    + '</svg>'
+    + '<div style="font-size:9px;color:#374151;text-align:center;margin-top:2px">'
+    + pos + ' prime: ages ' + peakStart + '–' + peakEnd + ' · Age score ' + playerScore + '/25'
+    + '</div>'
+    + '</div>';
+}
+
+// ── Comparable Players ────────────────────────────────────────────────────────
+function buildComparableHTML(p) {
+  const pos = p.pos || p.p || 'WR';
+  const ds = p.dsScore;
+  if (ds == null) return '';
+
+  const myOpp = getOppScore(p.n, pos) || 50;
+
+  const peers = COMP.filter(x =>
+    (x.pos||x.p) === pos &&
+    x.n !== p.n &&
+    x.dsScore != null &&
+    Math.abs((x.dsScore||0) - ds) <= 22
+  );
+
+  const scored = peers.map(peer => {
+    const dsDiff = Math.abs((peer.dsScore||0) - ds);
+    const ageDiff = Math.abs((peer.a||0) - (p.a||0));
+    const peerOpp = getOppScore(peer.n, peer.pos) || 50;
+    const oppDiff = Math.abs(peerOpp - myOpp);
+    const sim = dsDiff * 2.5 + ageDiff * 4.0 + oppDiff * 0.4;
+    return { peer, sim, dsDiff, ageDiff };
+  });
+
+  const comps = scored.sort((a, b) => a.sim - b.sim).slice(0, 3);
+  if (!comps.length) return '';
+
+  const cards = comps.map(({peer, dsDiff, ageDiff}) => {
+    const vt = (vTag(peer).match(/>([a-z ]+)</) || [,''])[1];
+    const vc = vt.includes('strong buy') ? '#6ee7b7' : vt === 'buy' ? '#9ae6b4'
+      : vt === 'hold' ? '#cbd5e0' : vt.includes('strong sell') ? '#fca5a5' : '#fc8181';
+    const dsc = dsColor(peer.dsScore);
+    const team = (typeof AL !== 'undefined' && AL[peer.t]) ? AL[peer.t] : peer.t;
+    const note = dsDiff <= 2 ? 'near-identical score'
+      : ageDiff <= 0.8 ? 'same age tier'
+      : ageDiff <= 1.5 ? (peer.a > p.a ? 'slightly older' : 'slightly younger')
+      : 'similar profile';
+
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0d1117;border-radius:6px">'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:12px;font-weight:600;margin-bottom:2px">'
+      + '<a href="player.html?name=' + encodeURIComponent(peer.n) + '" style="color:#e2e8f0;text-decoration:none" '
+      + 'onmouseover="this.style.color=\'#6ee7b7\'" onmouseout="this.style.color=\'#e2e8f0\'">' + peer.n + '</a>'
+      + '</div>'
+      + '<div style="font-size:10px;color:#718096">' + team + ' · Age ' + peer.a.toFixed(1) + ' · ' + note + '</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0">'
+      + '<div style="font-size:20px;font-weight:800;color:' + dsc + ';line-height:1">' + peer.dsScore + '</div>'
+      + '<div style="font-size:10px;font-weight:700;color:' + vc + ';text-transform:uppercase;letter-spacing:.04em">' + vt + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  return '<div class="card">'
+    + '<div class="card-label" style="margin-bottom:2px">Comparable Players</div>'
+    + '<div class="card-sub" style="margin-bottom:10px">Closest DELTA matches at ' + pos + ' — ranked by score, age, and opportunity similarity</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">' + cards + '</div>'
+    + '</div>';
+}
+
 // ── Main render ───────────────────────────────────────────────────────────────
 function renderPlayerPage(p) {
   ensureScoutData().then(() => {
@@ -444,6 +586,7 @@ function renderPlayerPage(p) {
   showContent(`
     ${buildHeroHTML(p)}
     ${buildDSBreakdownHTML(p)}
+    ${buildAgeCurveHTML(p)}
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
     ${buildDSTrajectoryHTML(p)}
@@ -452,6 +595,7 @@ function renderPlayerPage(p) {
     ${buildOpportunityHTML(p)}
     ${buildContractHTML(p)}
     ${buildRippleHTML(p)}
+    ${buildComparableHTML(p)}
     ${buildScoutHTML()}
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
