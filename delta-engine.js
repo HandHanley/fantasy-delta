@@ -3859,13 +3859,16 @@ function buildDSBreakdownHTML(p){
   const oppPts=dsOpportunity(p);
   const conPts=dsCont(p);
   const col=dsColor(ds);
+  // Each axis gets its own color based on that axis's individual score ratio
+  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#6ee7b7':r>=0.6?'#7dd3fc':r>=0.4?'#fcd34d':'#fc8181';};
   const bar=(label,val,max)=>{
     const pct=Math.round((val/max)*100);
+    const c=axisClr(val,max);
     return'<div style="margin-bottom:6px">'
       +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#718096;margin-bottom:2px">'
-      +'<span>'+label+'</span><span style="color:#a0aec0;font-weight:600">'+val+'/'+max+'</span></div>'
+      +'<span>'+label+'</span><span style="color:'+c+';font-weight:600">'+val+'/'+max+'</span></div>'
       +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
-      +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px"></div></div></div>';
+      +'<div style="height:100%;width:'+pct+'%;background:'+c+';border-radius:3px"></div></div></div>';
   };
   return'<div class="dd-section" style="background:linear-gradient(135deg,#0d1117,#141b26);border:1px solid #1f2937;border-radius:10px;padding:14px;margin-bottom:10px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
