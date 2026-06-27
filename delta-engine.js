@@ -3262,8 +3262,11 @@ function dsCont(p) {
   // so a 4yr deal genuinely IS maximum security and fully covers DELTA's 2-3yr window.
   const c = CONTRACTS.find(x => x.n===p.n);
   if (!c || !c.end) return 5; // unknown — neutral
-  const yrs = c.end - 2026;
-  return yrs>=4?10:yrs===3?9:yrs===2?7:yrs===1?6:5;
+  // Base 2025 (last completed season) so yrs counts remaining seasons
+  // including the current 2026 season. Thresholds shifted +1 vs old base 2026
+  // so all contract scores remain identical — only display changes.
+  const yrs = c.end - 2025;
+  return yrs>=5?10:yrs===4?9:yrs===3?7:yrs===2?6:5;
 }
 
 function calcDynastyScore(p) {
@@ -3863,17 +3866,17 @@ const DELTA_DEV = new URLSearchParams(location.search).has('dev');
 // ─────────────────────────────────────────────────────────────────────────────
 
 function contractStatus(c){
-  const yrsLeft=c.end-2026;
   if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
-  if(yrsLeft>=4)return{label:'Locked Up',cls:'bs',icon:'🔒'};
+  const yrsLeft=c.end-2025; // inclusive of current 2026 season
+  if(yrsLeft>=5)return{label:'Locked Up',cls:'bs',icon:'🔒'};
   if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'🔴'};
   return{label:'Stable',cls:'bi',icon:'✓'};
 }
 
 function dynastySignal(c){
-  const yrsLeft=c.end-2026;
   if(c.end===2026)return'<span style="color:#fca5a5;font-size:10px">Sell before walk year · Contract leverage gone</span>';
-  if(yrsLeft>=4&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
+  const yrsLeft=c.end-2025; // inclusive of current 2026 season
+  if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
   if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Buy window closing · '+yrsLeft+' yrs left</span>';
   return'<span style="color:#718096;font-size:10px">'+c.note+'</span>';

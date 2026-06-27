@@ -1169,11 +1169,11 @@ function renderContracts(){
   else data.sort((a,b)=>d*(b.aav-a.aav)); // default: aav descending
 
   const fmt=n=>n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+n.toLocaleString();
-  const yrsColor=yrs=>yrs<=1?'#fca5a5':yrs<=2?'#fcd34d':yrs>=4?'#6ee7b7':'#7dd3fc';
+  const yrsColor=yrs=>yrs<=2?'#fca5a5':yrs<=3?'#fcd34d':yrs>=5?'#6ee7b7':'#7dd3fc';
 
   document.getElementById('contracts-body').innerHTML=data.map(c=>{
     const st=contractStatus(c);
-    const yrsLeft=c.end-2026;
+    const yrsLeft=c.end-2025; // inclusive of current 2026 season
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:#718096">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
     return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
@@ -1485,6 +1485,8 @@ function renderDeck(p){
   
   // TS_DELTA
   const tsDelta=TS_DELTA[p.n]||0;
+  // Suppress TS delta for rookies — pipeline compares 2025 debut against 0 baseline
+  const isRookieSeason = !p.ppg24 && !p.ppg23;
   
   // Format sensitivity
   const rpg=REC_PG[p.n]||0;
@@ -1519,7 +1521,7 @@ function renderDeck(p){
       // Offense / scheme block so System Score etc. aren't lost.
       if (!oppSc || !st25) {
         const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
-        const tsLine = tsDelta!==0 ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
         const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
         return '<div class="dd-section">'
@@ -1568,7 +1570,7 @@ function renderDeck(p){
       // system score, OC-change risk, target-share TREND (direction, not the
       // static share shown above), and format sensitivity.
       const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
-      const tsLine = tsDelta!==0 ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
       const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
       const schemeBlock =
         '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid #1f2937">'
