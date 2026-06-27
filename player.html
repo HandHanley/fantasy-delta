@@ -503,8 +503,11 @@ function buildAgeCurveHTML(p) {
     + '<line x1="' + mx.toFixed(1) + '" y1="' + (padT+plotH) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>'
     + '<circle cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="4.5" fill="' + col + '" stroke="#0a0e17" stroke-width="1.5"/>'
 
-    // Player age label above dot
-    + '<text x="' + mx.toFixed(1) + '" y="' + (my-8).toFixed(1) + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+    // Player age label — above dot normally, below when near top to avoid colliding with "prime" label
+    + (playerScore >= 22
+      ? '<text x="' + mx.toFixed(1) + '" y="' + (my+16).toFixed(1) + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+      : '<text x="' + mx.toFixed(1) + '" y="' + (my-8).toFixed(1)  + '" fill="' + col + '" font-size="8" text-anchor="middle" font-weight="bold">' + clampedAge.toFixed(1) + '</text>'
+    )
 
     + '</svg>'
     + '<div style="font-size:9px;color:#374151;text-align:center;margin-top:2px">'

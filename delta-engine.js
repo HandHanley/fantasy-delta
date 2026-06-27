@@ -2952,31 +2952,30 @@ function calcAlphaScore(name) {
 function calcWorkhorseScore(name) {
   const s = PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
-  const rushS = s.rush_share   || 0;  // carries ÷ team carries — already a per-game rate
-  const tgtS  = s.target_share || 0;  // targets ÷ team targets — already a per-game rate
-  const rzC   = s.rz_carries;         // season TOTAL — must convert to per-game rate
-  const rzT   = s.rz_targets;         // season TOTAL — must convert to per-game rate
+  const g     = s.games;
+  // rush_share = player_rush_att / team_rush_att (season totals) — diluted by
+  // missed games because the team's denominator includes all 17 games. Adjust
+  // to per-game equivalent so injury absences don't misrepresent role intensity.
+  // target_share is already a games-weighted per-game mean (from nflverse weekly
+  // data), so no adjustment needed there.
+  const rushS = Math.min(1, (s.rush_share || 0) * (17 / g));
+  const tgtS  = s.target_share || 0;
+  const rzC   = s.rz_carries;
+  const rzT   = s.rz_targets;
 
   // Ceilings calibrated against 2025 full-season dataset:
-  // rush_share: Bijan ~.65 (bellcow), CMC ~.55 → ceil .65
-  // tgt_share:  CMC .234, Achane .188 → ceil .24
-  // rzC/game:   CMC 75/17≈4.4, Taylor 71/17≈4.2 → ceil 4.41 (=75/17)
-  // rzT/game:   CMC 25/17≈1.5, Gibbs 15/17≈0.9 → ceil 1.53 (=26/17)
+  // rush_share/g: Bijan ~.65, CMC ~.55, Taylor ~.58 → ceil .65
+  // tgt_share:    CMC .234, Achane .188 → ceil .24
+  // rzC/game:     CMC 75/17≈4.4, Taylor 71/17≈4.2 → ceil 4.41 (=75/17)
+  // rzT/game:     CMC 25/17≈1.5, Gibbs 15/17≈0.9 → ceil 1.53 (=26/17)
   const rushN = Math.min(1, rushS / 0.65);
   const tgtN  = Math.min(1, tgtS  / 0.24);
-  // Convert RZ totals to per-game rates so injury absences don't penalise
-  // players who are genuine bellcows — what matters is role intensity per game,
-  // not raw volume diluted by missed weeks. (Motivating case: Omarion Hampton
-  // 9 games 2025 — his RZ rate was elite but totals dragged score down 9pts.)
-  const g       = s.games;
-  const rzCpg   = rzC != null ? rzC / g : null;
-  const rzTpg   = rzT != null ? rzT / g : null;
-  const rzCN    = rzCpg != null ? Math.min(1, rzCpg / (75/17)) : rushN * 0.6;
-  const rzTN    = rzTpg != null ? Math.min(1, rzTpg / (26/17)) : tgtN  * 0.6;
+  const rzCpg = rzC != null ? rzC / g : null;
+  const rzTpg = rzT != null ? rzT / g : null;
+  const rzCN  = rzCpg != null ? Math.min(1, rzCpg / (75/17)) : rushN * 0.6;
+  const rzTN  = rzTpg != null ? Math.min(1, rzTpg / (26/17)) : tgtN  * 0.6;
 
   const raw = rushN*0.40 + tgtN*0.30 + rzCN*0.20 + rzTN*0.10;
-
-  // Scale: 28 floor, 99 theoretical ceiling
   return Math.round(28 + raw * 71);
 }
 
@@ -3861,7 +3860,7 @@ function contractStatus(c){
 }
 
 function dynastySignal(c){
-  const yrsLeft=c.end-2025;
+  const yrsLeft=c.end-2026;
   if(c.end===2026)return'<span style="color:#fca5a5;font-size:10px">Sell before walk year · Contract leverage gone</span>';
   if(yrsLeft>=4&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
@@ -3971,7 +3970,14 @@ function buildReadHTML(p){
     clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
     const bustNote=gl&&gl.miss>=40?(rankMk<=18?`he busts ${gl.miss}% of weeks for a ${pos}${rankMk} price`:''):'';
     const why=negWhy||bustNote||(gl&&gl.miss>=40?`a ${gl.miss}% bust rate consistent with his ${pos}${rankDs} tier`:`a thin ${pos}${rankDs} demonstrated profile`);
-    read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
+    if(Math.abs(rankMv-rankMk)<=1){
+      // Ranks agree — model sees a small discount but position is the same.
+      // Soften: this reads as a lean hold or "don't overpay to buy," not a clear sell.
+      read=`Model and market both land at ${pos}${rankMv} — the ${absPct}% gap${gapQual} is real but slim. ${posWhy?'Evidence: '+posWhy+'. ':''}Worth holding unless someone overpays; only lean sell if a clear premium offer comes.`;
+      clr='#cbd5e0';
+    } else {
+      read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
+    }
   } else {
     const dir=r>=1.0?'a hair above':'a hair under';
     const tone=(proof==='elite'||proof==='strong')?`a genuine ${pos}${rankDs}`:`a ${pos}${rankDs} profile`;
