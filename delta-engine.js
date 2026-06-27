@@ -2532,7 +2532,7 @@ const CONTRACTS=[
   // ATLANTA FALCONS
   {n:'Tua Tagovailoa',pos:'QB',team:'ATL',aav:53100000,total:212400000,end:2028,note:'Franchise QB locked through 2028'},
   {n:'Bijan Robinson',pos:'RB',team:'ATL',aav:5489634,total:21958535,end:2027,note:'Locked through 2027 — cheap deal, RB1 secure'},
-  {n:'Drake London',pos:'WR',team:'ATL',aav:5383617,total:21534468,end:2029,note:'WALK YEAR 2026 — ATL must extend or lose WR1'},
+  {n:'Drake London',pos:'WR',team:'ATL',aav:35260000,total:141040000,end:2030,note:'Locked through 2030 — $35M/yr elite WR commitment'},
   {n:'Kyle Pitts',pos:'TE',team:'ATL',aav:15045000,total:15045000,end:2026,note:'WALK YEAR 2026 — extension or departure imminent'},
   // TAMPA BAY BUCCANEERS
   {n:'Baker Mayfield',pos:'QB',team:'TB',aav:33333333,total:100000000,end:2026,note:'WALK YEAR 2026 — TB must extend or move on'},
@@ -3258,10 +3258,12 @@ function dsCont(p) {
   // awaiting his extension shouldn't be cratered for a fact that isn't a negative.
   // Genuine "old + expiring" risk is handled by the AGE axis, not double-penalized here.
   // Band: 5 (neutral/expiring) → 10 (long-term security). No sub-5 penalties.
+  // Threshold: 4+ years = 10/10 — skill-position NFL contracts rarely exceed 4 years,
+  // so a 4yr deal genuinely IS maximum security and fully covers DELTA's 2-3yr window.
   const c = CONTRACTS.find(x => x.n===p.n);
   if (!c || !c.end) return 5; // unknown — neutral
   const yrs = c.end - 2026;
-  return yrs>=5?10:yrs===4?9:yrs===3?8:yrs===2?7:yrs===1?6:5;
+  return yrs>=4?10:yrs===3?9:yrs===2?7:yrs===1?6:5;
 }
 
 function calcDynastyScore(p) {
