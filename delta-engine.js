@@ -3509,6 +3509,17 @@ async function loadPlayerStats() {
     if (data.headshots) HEADSHOTS = data.headshots;
     QB_ROLES = data.qb_roles || {};
     if (Object.keys(QB_ROLES).length) console.log('[DELTA] QB backup flags loaded:', Object.keys(QB_ROLES).join(', '));
+    // Backfill g24 and g23 (games played in prior seasons) from the pipeline onto
+    // RAW player objects. These aren't baked into RAW — the pipeline is the only
+    // source. Required for the player page PPG trend games column.
+    let gUpd = 0;
+    for (const player of RAW) {
+      const pdata = data.players[player.n];
+      if (!pdata) continue;
+      if (pdata['2024'] && pdata['2024'].games > 0) { player.g24 = pdata['2024'].games; gUpd++; }
+      if (pdata['2023'] && pdata['2023'].games > 0) { player.g23 = pdata['2023'].games; }
+    }
+    if (gUpd) console.log('[DELTA] ' + gUpd + ' players updated with prior-season game counts (g24/g23)');
     // Team fields are live data: the pipeline emits `teams` from the nflverse
     // 2026 roster feed, so trades and FA moves (A.J. Brown PHI→NE, Mac Jones
     // NE→SF) flow into RAW nightly instead of waiting on hand edits. Baked

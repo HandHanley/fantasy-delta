@@ -1405,7 +1405,7 @@ function renderDeck(p){
   const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`;
   const bgParts=[];
   if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
-  if(dp) bgParts.push(`<span style="color:${dpClr};font-weight:600">${dp.y} Rd${dp.r} #${dp.p}</span>`);
+  if(dp) bgParts.push(`<span>${dp.y} Rd${dp.r} Pick ${dp.p}</span>`);
   const row2=bgParts.length?`<div class="dd-meta" style="margin-top:2px">${bgParts.join('')}</div>`:'';
   document.getElementById('dd-meta').innerHTML=row1;
   // second row injected right after the meta line
