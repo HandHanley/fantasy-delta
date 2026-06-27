@@ -436,7 +436,7 @@ function buildAgeCurveHTML(p) {
   const pos = p.pos || p.p || 'WR';
   const ages = Array.from({length: 19}, (_, i) => i + 20); // 20–38
   const scores = ages.map(a => dsAge(a, pos));
-  const W = 320, H = 90, padL = 28, padR = 8, padT = 14, padB = 22;
+  const W = 320, H = 72, padL = 28, padR = 8, padT = 10, padB = 18;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
   const toX = a => padL + ((a - 20) / 18) * plotW;
@@ -586,10 +586,10 @@ function renderPlayerPage(p) {
   showContent(`
     ${buildHeroHTML(p)}
     ${buildDSBreakdownHTML(p)}
-    ${buildAgeCurveHTML(p)}
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
     ${buildDSTrajectoryHTML(p)}
+    ${buildAgeCurveHTML(p)}
     ${buildProductionHTML(p)}
     ${buildEPAHTML(p)}
     ${buildOpportunityHTML(p)}
