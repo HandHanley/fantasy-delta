@@ -3928,8 +3928,8 @@ function buildDSBreakdownHTML(p){
   const aW=Math.round((aPts/25)*15*10)/10;
   const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*10)/10;
   const oppW=Math.round((oppPts/33)*30*10)/10;
-  const multLbl=mult>1.00?' ×'+mult.toFixed(2):'';
-  const multTipContent=mult>1.00
+  const multLbl=(mult>1.00 && prodPts>0)?' ×'+mult.toFixed(2):'';
+  const multTipContent=(mult>1.00 && prodPts>0)
     ?'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than at 30+.'
      +'<br><span style="color:#4a5568">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
     :'';
