@@ -1889,8 +1889,10 @@ const RIPPLE=[
   {n:'Shedeur Sanders',d:'up',reason:'Named CLE QB1',delta:'+5%'},
   {n:'Harold Fannin Jr.',d:'up',reason:'Clear CLE TE1',delta:'+5%'},
   {n:'Colston Loveland',d:'up',reason:'CHI TE1, Caleb Williams system',delta:'+8%'},
-  {n:'Justin Jefferson',d:'up',reason:'MIN — Kyler Murray arrives as QB1, elite weapons upgraded to top-5 dynasty situation',delta:'+12%'},
-  {n:'Jordan Addison',d:'up',reason:'MIN — Kyler Murray arrival transforms WR2 role. Addison in prime with elite QB',delta:'+10%'},
+  {n:'Justin Jefferson',d:'up',reason:'MIN — Kyler Murray signed 1yr deal, elite QB upgrade regardless of who wins the starting job',delta:'+12%'},
+  {n:'Jordan Addison',d:'up',reason:'MIN — Kyler Murray arrival elevates the offense. Addison in prime with elite QB competition',delta:'+10%'},
+  {n:'J.J. McCarthy',d:'down',reason:'MIN signed Kyler Murray on 1yr deal to compete for starting job — role genuinely uncertain heading into 2026',delta:'-12%'},
+  {n:'Kyler Murray',d:'up',reason:'MIN 1yr deal — competing with McCarthy for starting job in an elite offense. Major opportunity if he wins the job',delta:'+10%'},
   {n:'Javonte Williams',d:'up',reason:'68% snap share in 2025, true DAL bellcow',delta:'+12%'},
   {n:'Kenneth Gainwell',d:'up',reason:'50% snap share as TB RB1',delta:'+10%'},
   {n:'Davante Adams',d:'up',reason:'LAR WR — YPRR 1.98 in 2025, age curve undersold him. Rams offense',delta:'+8%'},
@@ -3927,26 +3929,27 @@ function buildDSBreakdownHTML(p){
   const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*10)/10;
   const oppW=Math.round((oppPts/33)*30*10)/10;
   const multLbl=mult>1.00?' ×'+mult.toFixed(2):'';
-  const multTip=mult>1.00
-    ?'<div style="margin:-2px 0 8px;text-align:right">'
-      +'<span onclick="var d=this.parentNode.nextElementSibling;d.style.display=d.style.display===\'block\'?\'none\':\'block\'" '
-      +'style="font-size:8px;color:#4a5568;cursor:pointer;user-select:none">why this boost? ▾</span>'
-      +'</div>'
-      +'<div style="display:none;font-size:9px;color:#718096;margin:-4px 0 8px;padding:6px 8px;background:#0a0f1a;border-radius:4px;border:1px solid #1f2937;line-height:1.5">'
-      +'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than the same output at 30+.'
-      +'<br><span style="color:#4a5568">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
-      +'</div>'
+  const multTipContent=mult>1.00
+    ?'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than at 30+.'
+     +'<br><span style="color:#4a5568">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
     :'';
   // Each axis gets its own color based on that axis's individual score ratio
   const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#6ee7b7':r>=0.6?'#7dd3fc':r>=0.4?'#fcd34d':'#fc8181';};
-  const bar=(label,val,max)=>{
+  const bar=(label,val,max,tip)=>{
     const pct=Math.round((val/max)*100);
     const c=axisClr(val,max);
+    // ⓘ button navigates: span → label span → header div → bar container → last child (tooltip)
+    const iBtn=tip
+      ?' <span onclick="var t=this.parentNode.parentNode.parentNode.lastElementChild;t.style.display=t.style.display===\'block\'?\'none\':\'block\'" '
+       +'style="cursor:pointer;color:#4a5568;font-size:8px;border:1px solid #2d3748;border-radius:50%;padding:0 2.5px;vertical-align:middle;line-height:1.4">ⓘ</span>'
+      :'';
     return'<div style="margin-bottom:6px">'
       +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#718096;margin-bottom:2px">'
-      +'<span>'+label+'</span><span style="color:'+c+';font-weight:600">'+val+'/'+max+'</span></div>'
+      +'<span>'+label+iBtn+'</span><span style="color:'+c+';font-weight:600">'+val+'/'+max+'</span></div>'
       +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
-      +'<div style="height:100%;width:'+pct+'%;background:'+c+';border-radius:3px"></div></div></div>';
+      +'<div style="height:100%;width:'+pct+'%;background:'+c+';border-radius:3px"></div></div>'
+      +(tip?'<div style="display:none;font-size:9px;color:#718096;margin-top:4px;padding:5px 7px;background:#0a0f1a;border-radius:4px;border:1px solid #1f2937;line-height:1.5">'+tip+'</div>':'')
+      +'</div>';
   };
   return'<div class="dd-section" style="background:linear-gradient(135deg,#0d1117,#141b26);border:1px solid #1f2937;border-radius:10px;padding:14px;margin-bottom:10px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
@@ -3958,7 +3961,7 @@ function buildDSBreakdownHTML(p){
     +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
     +'</div>'
     +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
-    +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45)+multTip+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
+    +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
 
