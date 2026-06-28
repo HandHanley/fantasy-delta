@@ -1940,7 +1940,8 @@ const RIPPLE=[
   {n:'Chris Bell',d:'up',reason:'MIA #94 — same opportunity as Douglas, open WR room to prove himself',delta:'+8%'},
   {n:'Malik Willis',d:'up',reason:'MIA — Bell + Douglas + Kacmarek drafted. Best offensive weapons Willis has had',delta:'+10%'},
   {n:'Kaelon Black',d:'up',reason:'SF #90 — elite OL system but McCaffrey is still the feature back. Backup role only',delta:'+5%'},
-  {n:'Zavion Thomas',d:'up',reason:'CHI #89 — DJ Moore returns as WR1, Thomas projects WR2 with upside',delta:'+6%'},
+  {n:'Luther Burden',d:'up',reason:'DJ Moore departed to BUF — major target share opens in CHI, contested WR1 role with Odunze',delta:'+12%'},
+  {n:'Rome Odunze',d:'up',reason:'DJ Moore departed to BUF — major target share opens in CHI, contested WR1 role with Burden',delta:'+8%'},
   {n:'Colby Parkinson',d:'down',reason:'LAR — Klare drafted Rd2 #61, impacts Parkinson target share as TE1',delta:'-12%'},
   {n:'Darius Slayton',d:'down',reason:'NYG — Fields drafted Rd3 WR2 behind Nabers, Slayton falls to WR3',delta:'-15%'},
   {n:'Tyjae Spears',d:'down',reason:'TEN — Singleton drafted Rd5 #165, Spears loses carries in backfield',delta:'-18%'},
@@ -2683,7 +2684,7 @@ const CONTRACTS=[
   {n:'Garrett Nussmeier',pos:'QB',team:'KC',aav:755000,total:3020000,end:2029,note:'Rd7 #249 — KC backup QB behind Mahomes'},
   {n:'Seth McGowan',pos:'RB',team:'IND',aav:750000,total:3000000,end:2029,note:'Rd7 #237 — IND depth RB'},
   {n:'Caleb Douglas',pos:'WR',team:'MIA',aav:1390000,total:5560000,end:2029,note:'Rd3 #75 — 4yr rookie deal. MIA WR — Malik Willis at QB (Tua moved to ATL). Low-volume situation hurts dynasty ceiling significantly'},
-  {n:'Zavion Thomas',pos:'WR',team:'CHI',aav:1310000,total:5240000,end:2029,note:'Rd3 #89 — 4yr rookie deal. CHI WR — DJ Moore returns WR1, Thomas WR2'},
+  {n:'Zavion Thomas',pos:'WR',team:'CHI',aav:1310000,total:5240000,end:2029,note:'Rd3 #89 — 4yr rookie deal. CHI WR depth — Moore departed to BUF, upside as WR3+'},
   {n:'Kaelon Black',pos:'RB',team:'SF',aav:1305000,total:5220000,end:2029,note:'Rd3 #90 — 4yr rookie deal. SF RB — strong OL system but crowded room'},
   // 2026 Day 2 Rookies
   {n:"De'Zhaun Stribling",pos:'WR',team:'SF',aav:1800000,total:7200000,end:2029,note:'Rd2 #33 — 4yr rookie deal. SF WR — Deebo/Aiyuk departed, real target share available'},
@@ -3807,7 +3808,8 @@ async function loadPlayerContracts() {
     // Add entries here ONLY when Steve has personally confirmed the correct end year.
     // Everything else comes from the pipeline automatically.
     const CONTRACT_OVERRIDES = {
-      'Josh Allen': 2030,  // pipeline vet+1 gives 2031; new deal starts 2025 as year 1
+      'Josh Allen':    2030,  // year_signed=2025 new deal — OTC correct, no +1 needed (handled by rule below too)
+      'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
     };
 
     let updated = 0;
@@ -3816,11 +3818,18 @@ async function loadPlayerContracts() {
       const c = data.contracts[player.n];
       if (!c) continue;
 
-      // All pipeline entries are trustworthy — OTC doesn't report restructured base
-      // salary separately from the full contract. A 1yr/$1.3M entry means the player
-      // genuinely signed a 1-year deal (e.g. Kyler Murray with Minnesota in 2026).
+      // vet+1 correction: OTC undercounts extensions signed before the current year
+      // because it counts year_signed as year 1, but for old extensions year 1 is
+      // actually year_signed + 1. Only apply when:
+      //   - established player (aav ≥ $5M)
+      //   - multi-year deal (years > 1 — franchise tags and 1yr deals always start year_signed)
+      //   - signed before 2025 (year_signed < 2025 — recent new deals have OTC computing correctly)
+      // Franchise tags (years=1) like Pickens 2026 → no +1
+      // New 2025-2026 deals (Walker, Hall year_signed=2026) → no +1
+      // Old extensions (Waddle year_signed=2024) → +1 applied
       const isVet = (c.aav || 0) >= 5;
-      const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isVet ? c.end_year + 1 : c.end_year);
+      const isOldExtension = isVet && (c.years || 0) > 1 && (c.year_signed || 0) < 2025;
+      const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isOldExtension ? c.end_year + 1 : c.end_year);
 
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {
