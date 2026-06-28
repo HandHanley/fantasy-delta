@@ -3270,25 +3270,44 @@ function dsCont(p) {
   return yrs>=5?10:yrs===4?9:yrs===3?7:yrs===2?6:5;
 }
 
+// Youth production multiplier — boost only, no penalty for veterans.
+// Principle: the same production level achieved at 22 is a stronger forward dynasty
+// signal than at 30. A young player clearing elite production thresholds early has
+// already beaten the development curve; a veteran doing the same is at his ceiling.
+// Multiplier amplifies early production; 28+ gets full credit with no discount.
+function dsYouthMult(age) {
+  if (age <= 24) return 1.25;
+  if (age <= 26) return 1.12;
+  if (age <= 28) return 1.04;
+  return 1.00;   // 28+ gets full credit, no penalty
+}
+
 function calcDynastyScore(p) {
   const pos = p.pos||p.p||'WR';
   const noNFL = p.g25===0;  // rookie or no NFL data — cap applies (unproven)
-  const a = dsAge(p.a||22, pos);                                                // max 25
-  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p); // max 32
-  const opp = dsOpportunity(p);                                                 // max 33
-  const c = dsCont(p);                                                          // max 10
-  // RB OPPORTUNITY DOWNWEIGHT (backtest-diagnosed): for running backs the usage/Workhorse
-  // axis overlaps production heavily — redundancy held across volume, receiving, trajectory,
-  // and efficiency tests — so the two axes were double-counting the same demonstrated fact.
-  // Keep 65% of the usage axis and reallocate the freed weight (33*0.35 = 11.55 pts) into
-  // production (the direct measure), preserving the 0-100 scale (RB max = 25 + 32*1.361 +
-  // 33*0.65 + 10 = 100). REPRESENTATION fix to stop double-counting, NOT a predictive tune.
-  // The 0.65 strength is a reasoned starting point on limited data; revisit as seasons accrue.
+  const age = p.a || 22;
+  const a    = dsAge(age, pos);                                                       // raw max 25
+  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p);  // raw max 32
+  const opp  = dsOpportunity(p);                                                     // raw max 33
+  const c    = dsCont(p);                                                            // max 10
+
+  // Axis weights: 15 / 45 / 30 / 10 — shifts emphasis from age and opportunity
+  // toward demonstrated production, aligning with the 2-3 year dynasty window.
+  // Production scaled with youth multiplier (boost-only): early elite production
+  // predicts the next 2-3 seasons more reliably than the same output at 30+.
+  const mult  = dsYouthMult(age);
+  const aW    = (a / 25)  * 15;
+  const prodW = Math.min(45, (prod / 32) * 45 * mult);
+  const oppW  = (opp / 33) * 30;
+
+  // RB OPPORTUNITY DOWNWEIGHT (backtest-diagnosed): usage/Workhorse axis overlaps
+  // production heavily for RBs. Keep 65% of opp axis and reallocate freed weight into
+  // production. Scale preserved: RB max = 15 + 45*1.233 + 30*0.65 + 10 = 100.
   let total;
   if (pos === 'RB') {
-    total = Math.min(100, a + prod * 1.361 + opp * 0.65 + c);
+    total = Math.min(100, aW + prodW * 1.233 + oppW * 0.65 + c);
   } else {
-    total = Math.min(100, a + prod + opp + c);
+    total = Math.min(100, aW + prodW + oppW + c);
   }
   if (noNFL) total = Math.min(DS_ROOKIE_CAP, total);
   return Math.round(total);
@@ -3896,11 +3915,18 @@ function buildDSBreakdownHTML(p){
   if(ds==null) return '';
   const pos=p.pos||p.p||'WR';
   const noNFL=p.g25===0;
-  const aPts=dsAge(p.a||22,pos);
+  const age=p.a||22;
+  const aPts=dsAge(age,pos);
   const prodPts=dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p);
   const oppPts=dsOpportunity(p);
   const conPts=dsCont(p);
   const col=dsColor(ds);
+  // Scale to effective weighted values (mirrors calcDynastyScore)
+  const mult=dsYouthMult(age);
+  const aW=Math.round((aPts/25)*15*10)/10;
+  const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*10)/10;
+  const oppW=Math.round((oppPts/33)*30*10)/10;
+  const multLbl=mult>1.00?' ×'+mult.toFixed(2):'';
   // Each axis gets its own color based on that axis's individual score ratio
   const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#6ee7b7':r>=0.6?'#7dd3fc':r>=0.4?'#fcd34d':'#fc8181';};
   const bar=(label,val,max)=>{
@@ -3922,7 +3948,7 @@ function buildDSBreakdownHTML(p){
     +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
     +'</div>'
     +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
-    +bar('Age',aPts,25)+bar('Production',prodPts,32)+bar('Opportunity',oppPts,33)+bar('Contract',conPts,10)
+    +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
 
@@ -4003,8 +4029,9 @@ function buildReadHTML(p){
     }
   } else {
     const dir=r>=1.0?'a hair above':'a hair under';
-    const tone=(proof==='elite'||proof==='strong')?`a genuine ${pos}${rankDs}`:`a ${pos}${rankDs} profile`;
-    read=`Proof (${pos}${rankDs}), model (${pos}${rankMv}) and price (${pos}${rankMk}) all land within a tier — the model is ${dir} market, not enough to act on. Fair value: hold ${tone} unless an overpay comes.`;
+    const dsGap=Math.abs(rankDs-rankMv)>8;
+    const dsNote=dsGap?` DELTA scores him ${pos}${rankDs} on the dynasty window — age-adjusted.`:'';
+    read=`Model (${pos}${rankMv}) and price (${pos}${rankMk}) align — ${dir} market, not enough to act on.${dsNote} Fair value at ${pos}${rankMk}: hold unless a clear overpay comes.`;
     clr='#cbd5e0';
   }
   const N=peers.length||1;
@@ -4022,7 +4049,7 @@ function buildReadHTML(p){
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
     +'<div style="font-size:12px;color:#e2e8f0;line-height:1.55;margin-bottom:11px">'+read+'</div>'
-    +barFor(rankDs,proofClr,'PROVEN (DELTA Score Δ'+ds+')',proof)
+    +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
     +barFor(rankMv,'#a78bfa','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
     +barFor(rankMk,'#7dd3fc','MARKET PRICE',mk.toLocaleString())
     +'</div>';
