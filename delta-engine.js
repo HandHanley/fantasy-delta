@@ -3927,6 +3927,16 @@ function buildDSBreakdownHTML(p){
   const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*10)/10;
   const oppW=Math.round((oppPts/33)*30*10)/10;
   const multLbl=mult>1.00?' ×'+mult.toFixed(2):'';
+  const multTip=mult>1.00
+    ?'<div style="margin:-2px 0 8px;text-align:right">'
+      +'<span onclick="var d=this.parentNode.nextElementSibling;d.style.display=d.style.display===\'block\'?\'none\':\'block\'" '
+      +'style="font-size:8px;color:#4a5568;cursor:pointer;user-select:none">why this boost? ▾</span>'
+      +'</div>'
+      +'<div style="display:none;font-size:9px;color:#718096;margin:-4px 0 8px;padding:6px 8px;background:#0a0f1a;border-radius:4px;border:1px solid #1f2937;line-height:1.5">'
+      +'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than the same output at 30+.'
+      +'<br><span style="color:#4a5568">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
+      +'</div>'
+    :'';
   // Each axis gets its own color based on that axis's individual score ratio
   const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#6ee7b7':r>=0.6?'#7dd3fc':r>=0.4?'#fcd34d':'#fc8181';};
   const bar=(label,val,max)=>{
@@ -3948,7 +3958,7 @@ function buildDSBreakdownHTML(p){
     +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
     +'</div>'
     +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
-    +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
+    +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45)+multTip+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
 
