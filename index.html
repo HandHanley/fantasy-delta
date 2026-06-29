@@ -238,6 +238,7 @@ tr:hover td{background:#1a202c}
       <option value="half">0.5 PPR</option>
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
+      <option value="std">Standard</option>
     </select>
       <select id="lg-teams" onchange="applyLeagueSettings('main')" title="League size">
       <option value="8">8-team</option><option value="10">10-team</option>
@@ -2655,10 +2656,11 @@ function slpRunMatch(){
 }
 
 // ── Format auto-detection ────────────────────────────────────
-// NOTE: deliberately does NOT route through applyScoring() — that function
-// reads the value back from the dropdown, which has no 'std' option, so a
-// 0-PPR league would get silently clobbered. We set globals directly and
-// reuse the same downstream calls applyScoring/applyLeagueSettings make.
+// NOTE: sets the scoring/league globals directly rather than routing through
+// applyScoring()/applyLeagueSettings(), then reuses the same downstream calls
+// they make. ('std' is now a valid option in both scoring dropdowns, kept in
+// sync via syncSettingsUI() below — so the detected format is no longer at
+// risk of being clobbered by a UI round-trip.)
 function slpDetectAndApplyFormat(){
   const lg=SLP.league; if(!lg) return;
   const rp=lg.roster_positions||[];
