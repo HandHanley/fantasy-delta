@@ -1,0 +1,51 @@
+name: Ripple Proposals (nightly)
+
+# Detects roster moves off the live Sleeper feed and opens a review PR with
+# proposed ripples. Nothing here reaches users: the engine reads data/ripple.json,
+# which only changes when you MERGE the PR this opens.
+on:
+  schedule:
+    - cron: '30 9 * * *'      # 09:30 UTC nightly (after rosters settle)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Detect moves and build ripple proposals
+        run: node scripts/detect-ripples.js
+
+      # One rolling PR (fixed branch) updated each run — review the
+      # data/ripple-pending.json diff; the snapshot is a one-line mechanical blob.
+      # Merging accepts the proposals and advances the snapshot atomically.
+      - name: Open / update review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: |
+            data/ripple-pending.json
+            data/roster-snapshot.json
+          branch: ripple-proposals
+          delete-branch: false
+          commit-message: "ripple: proposed effects from latest roster moves"
+          title: "DELTA: ripple proposals for review"
+          body: |
+            Auto-generated from the nightly Sleeper roster diff.
+
+            **Review `data/ripple-pending.json`** — each proposal lists the move,
+            the projected absorber, and the incumbent deltas. Edit any magnitudes
+            you disagree with directly in this PR. Merging accepts these and
+            advances the roster snapshot.
+
+            (The snapshot file is a minified one-line blob — no need to review it.)
