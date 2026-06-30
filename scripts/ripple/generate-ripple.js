@@ -6,15 +6,19 @@ const ROOKIE={
   TE:[[5,6.5],[12,5.1],[32,5.8],[64,2.8],[100,1.9],[999,1.8]],
 };
 const SAFETY_CAP=0.50, GATE=3.0, ARRIVAL_GATE=5.0;
-// Measured across 8 seasons (2018-2025), controlling for regression-to-the-mean:
-// per-incumbent opportunity change per 1 opp/g of vacated (absorption) and of
-// arriving (displacement) talent. Absorption ≈ 0 — incumbents do NOT inherit a
-// departed teammate's work; it goes to replacements. Displacement is small but
-// consistently negative. Δopp_incumbent = VAC_COEF·vacated + ARR_COEF·arrival.
-// (full-sample OLS, N=844/536/509, R²≈0.12 — opportunity shifts are mostly
-// idiosyncratic, so honest ripples are small.)
-const VAC_COEF={WR:0.005,RB:0.018,TE:0.042};
-const ARR_COEF={WR:-0.048,RB:-0.073,TE:-0.086};
+// Measured across 8 seasons (2018-2025): an incumbent's opportunity change tracks
+// the NET talent change in his room (arrival_opp - vacated_opp), and the slope
+// depends on his role. Lead RBs move hard with net (gain when a back leaves, lose
+// when a workhorse arrives); lead WRs barely move (WR1 volume is sticky — the
+// apparent effect was regression-to-mean, not roster change). Slopes are per-tier
+// net-change regressions, prior-tier controlled. R² are low — opportunity shifts
+// are mostly idiosyncratic, so the system stays deliberately small.
+const NET_COEF={
+  WR:{lead:-0.014, rot:-0.048},
+  RB:{lead:-0.073, rot: 0.000},   // rotational-RB slope measured +0.014 @ R²=0 — noise
+  TE:{lead:-0.039, rot:-0.057},   // and wrong-signed (a backup doesn't gain when a stud
+};                                // arrives), so treated as no measurable effect
+const LEAD_OPP=7.0;   // ≥7 opp/g = lead-tier incumbent; 3-7 = rotational
 const NEG_PCT=0.02;   // below ±2% it's noise, not a ripple
 const MIN_BASE=8.0;   // floor the %-denominator at a flex workload so a deep
                       // player's near-zero projection can't blow a tiny opp
@@ -43,23 +47,25 @@ function generateRipple(move){
     ripples.push({n:a.name,role:'arrival',proj_opp_pg:+a.proj_opp.toFixed(1),
       proj_ppg:+(INTCPT[pos]+coef*a.proj_opp).toFixed(1),
       reason:`${a.rookie?`rookie (pick ${a.pick})`:'vet, prior '+a.prior_opp_pg+' opp/g'} → ${a.proj_opp.toFixed(1)} opp/g into ${move.team} ${pos}`});
-  // the measured opportunity change applies per gated incumbent (team-level
-  // vacated/arrival predicts each incumbent's shift; regression-to-mean is a
-  // baseline effect DELTA already handles, so it is NOT applied here).
-  const dOpp = VAC_COEF[pos]*vacated + ARR_COEF[pos]*arrival;
+  // an incumbent's shift tracks the NET talent change in his room, at a slope
+  // that depends on his role tier (lead vs rotational). Computed per incumbent.
+  const net = arrival - vacated;
   const deps=sigDep.map(d=>d.name).join(' + ');
   const arrs=arrivals.map(a=>a.name).join(' + ');
   let emitted=0;
   for(const inc of gated){
+    const tier = inc.opp_pg>=LEAD_OPP ? 'lead' : 'rot';
+    const dOpp = NET_COEF[pos][tier]*net;
     const dPpg=coef*dOpp;
     if(Math.abs(dPpg)<MIN_PPG) continue;                // immaterial absolute change
     const pct=clamp(dPpg/Math.max(inc.baseline_ppg,MIN_BASE),-SAFETY_CAP,SAFETY_CAP);
     if(Math.abs(pct)<NEG_PCT) continue;                 // below noise floor — no ripple
     emitted++;
     const up=dOpp>=0;
+    const ctx=[arrs&&`${arrs} in`,deps&&`${deps} out`].filter(Boolean).join(', ');
     const reason = up
-      ? `slight bump from ~${vacated.toFixed(1)} opp/g vacated${deps?` (${deps} out)`:''}`
-      : `cedes ~${Math.abs(dOpp).toFixed(1)} opp/g to arrivals${arrs?` (${arrs} in${deps?`, ${deps} out`:''})`:''}`;
+      ? `gains from net room opening ~${(-net).toFixed(1)} opp/g${ctx?` (${ctx})`:''}`
+      : `cedes ~${Math.abs(dOpp).toFixed(1)} opp/g to net talent added${ctx?` (${ctx})`:''}`;
     ripples.push({n:inc.name,role:'incumbent',d:up?'up':'down',delta:`${pct>=0?'+':''}${(pct*100).toFixed(0)}%`,
       reason, d_opp:+dOpp.toFixed(2), new_opp_pg:+(inc.opp_pg+dOpp).toFixed(1)});
   }
@@ -68,6 +74,6 @@ function generateRipple(move){
              : (!emitted) ? 'effects below ±2% — no material ripple'
              : 'ok';
   return {team:move.team,pos,vacated:+vacated.toFixed(1),arrival:+arrival.toFixed(1),
-          d_opp:+dOpp.toFixed(2),gated_out:filtered,flag,ripples};
+          net:+net.toFixed(1),gated_out:filtered,flag,ripples};
 }
 module.exports={generateRipple,COEF,rookiePrior};
