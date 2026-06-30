@@ -2,7 +2,7 @@
 // Compares the current Sleeper /players/nfl snapshot to the previously stored
 // snapshot and emits skill-position team-change events. Live pull runs in CI;
 // the diff logic is plain and testable on sample snapshots.
-const SKILL=new Set(['QB','RB','WR','TE']);
+const SKILL=new Set(['RB','WR','TE']);  // QB excluded
 
 // snapshots: { player_id: { full_name, position, team } }  (trimmed Sleeper shape)
 function detectMoves(prev, curr){

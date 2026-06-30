@@ -14,7 +14,9 @@ const absorb=(cur,raw,ceil)=>{const h=Math.max(0,ceil-cur);return (h<=0||raw<=0)
 const cede=(cur,raw)=>{const c=Math.max(0,cur-FLOOR);return (c<=0||raw<=0)?0:c*(1-Math.exp(-raw/c));};
 
 function generateRipple(move){
-  const {pos}=move, coef=COEF[pos], ceil=CEIL[pos];
+  const {pos}=move;
+  if(!COEF[pos]) return {team:move.team,pos,vacated:0,claimed:0,residual:0,absorbed:0,leaked:0,gated_out:[],flag:'position not modeled (QB excluded)',ripples:[]};
+  const coef=COEF[pos], ceil=CEIL[pos];
   const vacated=move.departures.reduce((s,d)=>s+d.opp_pg,0);
   const arrivals=move.arrivals.map(a=>({...a,proj_opp:a.rookie?rookiePrior(pos,a.pick):a.prior_opp_pg}));
   const claimed=arrivals.reduce((s,a)=>s+a.proj_opp,0);
