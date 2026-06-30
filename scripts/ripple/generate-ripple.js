@@ -17,14 +17,18 @@ function generateRipple(move){
   const {pos}=move;
   if(!COEF[pos]) return {team:move.team,pos,vacated:0,claimed:0,residual:0,absorbed:0,leaked:0,gated_out:[],flag:'position not modeled (QB excluded)',ripples:[]};
   const coef=COEF[pos], ceil=CEIL[pos];
-  const vacated=move.departures.reduce((s,d)=>s+d.opp_pg,0);
-  const arrivals=move.arrivals.map(a=>({...a,proj_opp:a.rookie?rookiePrior(pos,a.pick):a.prior_opp_pg}));
+  // MOVE GATE — only rotation-level moves shift opportunity. Without this, a
+  // handful of depth/late-rookie bodies each project a little volume, sum into a
+  // fake 6-7 opp/g, and crater a starter. Same bar we apply to incumbents.
+  const sigDep=move.departures.filter(d=>d.opp_pg>=GATE);
+  const arrivals=move.arrivals.map(a=>({...a,proj_opp:a.rookie?rookiePrior(pos,a.pick):a.prior_opp_pg}))
+                              .filter(a=>a.proj_opp>=GATE);
+  const vacated=sigDep.reduce((s,d)=>s+d.opp_pg,0);
   const claimed=arrivals.reduce((s,a)=>s+a.proj_opp,0);
   const residual=vacated-claimed;
   const gated=move.incumbents.filter(i=>i.opp_pg>=GATE);
   const filtered=move.incumbents.filter(i=>i.opp_pg<GATE).map(i=>i.name);
-  // SIGNIFICANCE GATE — if the net opportunity actually changing hands is tiny,
-  // the move is a non-factor (e.g. a depth player joining): no incumbent ripples.
+  // if the net opportunity actually changing hands is tiny, the move is a non-factor
   const negligible = Math.abs(residual) < 3.0;
   const ripples=[];
   for(const a of arrivals)
@@ -36,7 +40,7 @@ function generateRipple(move){
     const realized=residual>=0?absorb(inc.opp_pg,rawShare,ceil):-cede(inc.opp_pg,Math.abs(rawShare));
     absorbedTotal+=Math.max(0,realized);
     const pct=inc.baseline_ppg>0?clamp(coef*realized/inc.baseline_ppg,-SAFETY_CAP,SAFETY_CAP):0;
-    const deps=move.departures.map(d=>d.name).join(' + ');
+    const deps=sigDep.map(d=>d.name).join(' + ');
     const arrs=arrivals.map(a=>a.name).join(' + ');
     const reason = realized>=0
       ? `absorbs ~${realized.toFixed(1)} opp/g${deps?` (${deps} out`:''}${arrs?`, ${arrs} in)`:deps?')':''}`
