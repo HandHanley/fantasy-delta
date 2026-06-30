@@ -19,7 +19,7 @@ const NEG_PCT=0.02;   // below ±2% it's noise, not a ripple
 const MIN_BASE=8.0;   // floor the %-denominator at a flex workload so a deep
                       // player's near-zero projection can't blow a tiny opp
                       // change up into a huge percentage
-const MIN_PPG=0.4;    // and drop any projected change under ~0.4 PPG as immaterial
+const MIN_PPG=0.25;   // and drop any projected change under ~0.25 PPG as immaterial
 const rookiePrior=(pos,pick)=>{for(const[m,o]of ROOKIE[pos])if(pick<=m)return o;return 0;};
 const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
 
