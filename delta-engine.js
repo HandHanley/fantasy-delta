@@ -1079,18 +1079,11 @@ function am(pos,age){const c=AC[pos]||AC.WR;for(const[lo,hi,m]of c)if(age>=lo&&a
 function sm(s){return s>=70?1.12:s>=55?1.03:s>=40?.92:.78;}
 function cm(c){return c>=.95?1.00:c>=.70?.96:c>=.50?.88:c>=.30?.80:.72;}
 function ci(c){return c>=.95?.10:c>=.70?.15:c>=.50?.22:.32;}
-const RP={
-  'Jaylen Waddle':1.18,'Courtland Sutton':1.08,'RJ Harvey':1.10,"De'Von Achane":1.05,
-  'Bhayshul Tuten':1.15,'Travis Etienne':1.08,'Ricky Pearsall':1.12,'Mike Evans':1.15,
-  'Mason Rudolph':.80,'DK Metcalf':.82,'Michael Pittman Jr.':.85,'Jaylen Warren':.90,
-  'Rico Dowdle':.92,'Kenneth Walker III':1.08,'Rashee Rice':1.05,'Shedeur Sanders':1.05,
-  'Harold Fannin Jr.':1.05,'Quinshon Judkins':.95,'Trey McBride':.92,
-  'Marvin Harrison Jr.':.88,'Tua Tagovailoa':.70,'Kyle Pitts':.92,
-  'Colston Loveland':1.08,'Mason Taylor':.85,'Breece Hall':.90,'Garrett Wilson':.88,
-  'Jaxson Dart':1.05,'Cam Skattebo':1.08,'Justin Jefferson':1.08,
-  'Jordan Addison':1.06,'T.J. Hockenson':1.05,'Kyren Williams':1.05,
-  'Puka Nacua':1.05,'Zach Charbonnet':.90,'Brandon Aiyuk':0.0,
-};
+// Ripple multipliers (name -> projection multiplier). Populated from
+// data/ripple.json by loadRipples(); empty until then (no phantom values).
+// Single source of truth — the display array RIPPLE is built from the same file,
+// so the shown reason and the modeled effect can never drift.
+let RP={};
 
 // Target Share Trend Deltas — computed from 3-year weekly target share data
 // Weighted: H1→H2 2025 trend (50%) + YoY 24→25 (30%) + YoY 23→24 (20%)
@@ -1878,80 +1871,10 @@ const DC={
   WAS:{QB:['Jayden Daniels'],RB:['Jacory Croskey-Merritt','Rachaad White'],WR:['Terry McLaurin'],TE:['Chigoziem Okonkwo']},
 };
 
-const RIPPLE=[
-  {n:'DK Metcalf',d:'up',reason:'Rodgers arrives — upgrade over Rudolph, still limited upside at 28',delta:'+5%'},
-  {n:'Jaylen Waddle',d:'up',reason:'MIA→DEN Payton system',delta:'+18%'},
-  {n:'Bhayshul Tuten',d:'up',reason:'Etienne gone, JAC RB1',delta:'+15%'},
-  {n:'Travis Etienne',d:'up',reason:'JAC→NO Moore system, role TBD',delta:'+8%'},
-  {n:'Mike Evans',d:'up',reason:'SF WR1 — Aiyuk DNR, Shanahan offense',delta:'+15%'},
-  {n:'Ricky Pearsall',d:'down',reason:'SF — Evans arrives as WR1, then Rd2 WR drafted. Pearsall falls to WR3',delta:'-18%'},
-  {n:'Kenneth Walker III',d:'up',reason:'KC RB1 — Reid/Mahomes system, elite opportunity',delta:'+8%'},
-  {n:'Shedeur Sanders',d:'up',reason:'Named CLE QB1',delta:'+5%'},
-  {n:'Harold Fannin Jr.',d:'up',reason:'Clear CLE TE1',delta:'+5%'},
-  {n:'Colston Loveland',d:'up',reason:'CHI TE1, Caleb Williams system',delta:'+8%'},
-  {n:'Justin Jefferson',d:'up',reason:'MIN — Kyler Murray signed 1yr deal, elite QB upgrade regardless of who wins the starting job',delta:'+12%'},
-  {n:'Jordan Addison',d:'up',reason:'MIN — Kyler Murray arrival elevates the offense. Addison in prime with elite QB competition',delta:'+10%'},
-  {n:'J.J. McCarthy',d:'down',reason:'MIN signed Kyler Murray on 1yr deal to compete for starting job — role genuinely uncertain heading into 2026',delta:'-12%'},
-  {n:'Kyler Murray',d:'up',reason:'MIN 1yr deal — competing with McCarthy for starting job in an elite offense. Major opportunity if he wins the job',delta:'+10%'},
-  {n:'Javonte Williams',d:'up',reason:'68% snap share in 2025, true DAL bellcow',delta:'+12%'},
-  {n:'Kenneth Gainwell',d:'up',reason:'50% snap share as TB RB1',delta:'+10%'},
-  {n:'Davante Adams',d:'up',reason:'LAR WR — YPRR 1.98 in 2025, age curve undersold him. Rams offense',delta:'+8%'},
-  {n:'Parker Washington',d:'up',reason:'YPRR 2.10 in 2025, steep ascending arc',delta:'+15%'},
-  {n:'George Pickens',d:'down',reason:'DAL — franchise tagged 2026, long-term deal unknown. Contract uncertainty is real dynasty risk',delta:'-8%'},
-  {n:'CeeDee Lamb',d:'down',reason:'DAL — Pickens as WR2 compresses targets slightly',delta:'-6%'},
-  {n:'Jeremiyah Love',d:'up',reason:'ARI #3 — RB1 immediately. Conner re-signed as committee back only',delta:'+28%'},
-  {n:'James Conner',d:'down',reason:'ARI — Love drafted #3, Conner now committee back not cut',delta:'-40%'},
-  {n:'Trey McBride',d:'up',reason:'ARI — Love draws box safeties, opens middle for McBride',delta:'+10%'},
-  {n:'Carnell Tate',d:'up',reason:'TEN #4 — immediate WR1 with Cam Ward at QB',delta:'+28%'},
-  {n:'Calvin Ridley',d:'down',reason:'TEN — loses WR1 role to Tate immediately',delta:'-30%'},
-  {n:'Cam Ward',d:'up',reason:'TEN — Tate gives Ward an elite WR1 target immediately',delta:'+12%'},
-  {n:'Jordyn Tyson',d:'up',reason:'NO #8 — Kellen Moore HC, Tyler Shough showed promise in 2025',delta:'+18%'},
-  {n:'Chris Olave',d:'down',reason:'NO — Tyson drafted WR heir, Olave loses target share',delta:'-18%'},
-  {n:'Tyler Shough',d:'up',reason:'NO — Tyson gives Shough an explosive WR1 to target',delta:'+15%'},
-  {n:'Kenyon Sadiq',d:'up',reason:'NYJ #16 — immediate TE1, no competition. Geno Smith limits upside',delta:'+14%'},
-  {n:'Mason Taylor',d:'down',reason:'NYJ — Sadiq takes over TE1 immediately',delta:'-65%'},
-  {n:'Tyler Conklin',d:'down',reason:'NYJ — Sadiq drafted, Conklin is cut candidate',delta:'-80%'},
-  {n:'Makai Lemon',d:'up',reason:'PHI #20 — Hurts offense. AJ Brown still on roster, WR3 for now',delta:'+10%'},
-  {n:'DeVonta Smith',d:'down',reason:'PHI — Lemon added, Brown trade likely June 1. Three-way split coming',delta:'-8%'},
-  {n:'KC Concepcion',d:'up',reason:'CLE #24 — WR1 path in thin Browns room',delta:'+15%'},
-  {n:'Jerry Jeudy',d:'down',reason:'CLE — demoted to WR2 behind Concepcion, then Boston also added. Three rookie WRs crowding room',delta:'-30%'},
-  {n:'Omar Cooper',d:'up',reason:'NYJ #30 — WR2 behind Wilson. Geno Smith limits ceiling',delta:'+10%'},
-  {n:'Garrett Wilson',d:'down',reason:'NYJ — Cooper drafted WR2, Wilson remains WR1 but shares',delta:'-8%'},
-  {n:'Geno Smith',d:'up',reason:'NYJ — Sadiq + Cooper give Geno two first-round skill players',delta:'+8%'},
-  {n:'Jadarian Price',d:'up',reason:'SEA #32 — strong OL, run-heavy scheme. Walker injury history opens door',delta:'+18%'},
-  {n:'Zach Charbonnet',d:'down',reason:'SEA — Price arrival further reduces role',delta:'-20%'},
-  {n:'Fernando Mendoza',d:'up',reason:'LV #1 — franchise QB. Cousins starts 2026, Mendoza takes over mid-year or 2027',delta:'+25%'},
-  {n:'Kirk Cousins',d:'down',reason:'LV — Mendoza #1 overall, Cousins pure bridge with zero dynasty value',delta:'-95%'},
-  {n:'Ty Simpson',d:'up',reason:'LAR #13 — SF+ dynasty value long-term. Stafford starts 2026, Simpson is 2028 play',delta:'+10%'},
-  {n:'Puka Nacua',d:'down',reason:'LAR — Simpson era eventually coming, Stafford lame duck',delta:'-20%'},
-  {n:'Cooper Kupp',d:'down',reason:'SEA WR2 behind JSN — aging, high cap hit, uncertain 2027',delta:'-40%'},
-  {n:'Eli Stowers',d:'up',reason:'PHI #54 — TE2 behind Goedert (31). Heir apparent with Hurts throwing',delta:'+22%'},
-  {n:'Germie Bernard',d:'up',reason:'PIT #47 — WR3 behind Metcalf + Pittman. Rodgers signed 1yr deal as bridge QB',delta:'+8%'},
-  {n:'Denzel Boston',d:'up',reason:'CLE #39 — WR2/3 behind Concepcion. Two rookie WRs competing with Jeudy',delta:'+10%'},
-  {n:'Antonio Williams',d:'up',reason:'WAS #71 — Jayden Daniels elite QB, WR2 behind McLaurin',delta:'+18%'},
-  {n:'Jayden Daniels',d:'up',reason:'WAS — Williams gives Daniels a WR2 threat opposite McLaurin, small efficiency boost',delta:'+10%'},
-  {n:'Terry McLaurin',d:'down',reason:'WAS — Williams drafted WR2, mild target share compression',delta:'-6%'},
-  {n:'Zachariah Branch',d:'up',reason:'ATL #79 — WR2 behind London. Penix Jr likely starter, Tua competing in camp',delta:'+10%'},
-  {n:'Drake London',d:'up',reason:'ATL — Branch adds another weapon, Penix Jr/Tua competition. Net neutral to slight positive',delta:'+4%'},
-  {n:'Tua Tagovailoa',d:'up',reason:'ATL — competing with Penix Jr for starter role. Value contingent on camp outcome',delta:'+6%'},
-  {n:'Max Klare',d:'up',reason:'LAR #61 — Rd2 TE in Stafford era pass-heavy system',delta:'+8%'},
-  {n:'Drew Allar',d:'up',reason:'PIT #76 — QB competition with Howard, possible long-term franchise QB',delta:'+8%'},
-  {n:'Ted Hurst',d:'up',reason:'TB #84 — Baker Mayfield solid QB, open WR depth chart',delta:'+8%'},
-  {n:'Eli Raridon',d:'up',reason:'NE #95 — starter-level TE opportunity in thin NE roster',delta:'+6%'},
-  {n:'Caleb Douglas',d:'up',reason:'MIA #75 — ample opportunity with thin WR room. Malik Willis at QB limits ceiling',delta:'+8%'},
-  {n:'Chris Bell',d:'up',reason:'MIA #94 — same opportunity as Douglas, open WR room to prove himself',delta:'+8%'},
-  {n:'Malik Willis',d:'up',reason:'MIA — Bell + Douglas + Kacmarek drafted. Best offensive weapons Willis has had',delta:'+10%'},
-  {n:'Kaelon Black',d:'up',reason:'SF #90 — elite OL system but McCaffrey is still the feature back. Backup role only',delta:'+5%'},
-  {n:'Luther Burden',d:'up',reason:'DJ Moore departed to BUF — major target share opens in CHI, contested WR1 role with Odunze',delta:'+12%'},
-  {n:'Rome Odunze',d:'up',reason:'DJ Moore departed to BUF — major target share opens in CHI, contested WR1 role with Burden',delta:'+8%'},
-  {n:'Colby Parkinson',d:'down',reason:'LAR — Klare drafted Rd2 #61, impacts Parkinson target share as TE1',delta:'-12%'},
-  {n:'Darius Slayton',d:'down',reason:'NYG — Fields drafted Rd3 WR2 behind Nabers, Slayton falls to WR3',delta:'-15%'},
-  {n:'Tyjae Spears',d:'down',reason:'TEN — Singleton drafted Rd5 #165, Spears loses carries in backfield',delta:'-18%'},
-  {n:'Tony Pollard',d:'down',reason:'TEN — Singleton drafted, Pollard also loses share in three-way backfield',delta:'-12%'},
-  {n:'Jaleel McLaughlin',d:'down',reason:'DEN — Coleman drafted Rd4 #109, McLaughlin loses RB depth role',delta:'-20%'},
-  {n:'Dallas Goedert',d:'down',reason:'PHI — Stowers drafted Rd2 #54 as heir apparent, Goedert long-term dynasty value hurt',delta:'-15%'},
-  {n:'Olamide Zaccheaus',d:'down',reason:'WAS — Williams takes WR2 role opposite McLaurin, Zaccheaus loses target share',delta:'-20%'}
-];
+// Ripple display entries {n,d,reason,delta}. Populated from data/ripple.json by
+// loadRipples() — the SAME file that builds RP, so display and math share one
+// data-backed source (no hand-authored phantom values, no drift).
+let RIPPLE=[];
 
 // ============================================================
 // GAME LOG CONSISTENCY DATA
@@ -3871,6 +3794,35 @@ async function loadPlayerContracts() {
     }
   } catch(e) {
     console.warn('[DELTA] Could not load contracts:', e.message);
+  }
+}
+
+// Ripple effects — single data-backed source for BOTH the projection multiplier
+// (RP) and the displayed reasons (RIPPLE). Generated by the ripple pipeline and
+// reviewed via PR before landing in data/ripple.json. Mirrors the other loaders:
+// fetch → rebuild → recompute projections → re-render.
+async function loadRipples() {
+  try {
+    const res = await fetch('./data/ripple.json?t='+Date.now());
+    if (!res.ok) throw new Error('ripple '+res.status);
+    const data = await res.json();
+    const arr = Array.isArray(data) ? data : (data.ripples || []);
+    RIPPLE = arr;                                  // display array
+    RP = {};                                       // math multipliers, derived from the SAME entries
+    for (const r of arr) {
+      if (!r || !r.n || r.delta == null) continue;
+      RP[r.n] = 1 + (parseFloat(r.delta) || 0) / 100;   // '+12%' -> 1.12, '-40%' -> 0.60
+    }
+    console.log('[DELTA] Ripples loaded:', arr.length, 'entries');
+    if (RAW && RAW.length && typeof calcProj === 'function') {
+      COMP.length = 0;
+      RAW.forEach(r => COMP.push(calcProj(r)));
+      ASSETS.length = 0;
+      ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+      if (typeof renderRankings === 'function') renderRankings();
+    }
+  } catch(e) {
+    console.warn('[DELTA] Could not load ripples (none applied):', e.message);
   }
 }
 

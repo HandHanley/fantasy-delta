@@ -624,6 +624,7 @@ if (!PLAYER_NAME) {
   loadLiveMarketValues()
     .then(() => loadPlayerStats())
     .then(() => loadPlayerContracts())
+    .then(() => loadRipples())
     .then(() => ensureStartData())
     .then(() => {
       const p = COMP.find(x => x.n === PLAYER_NAME);
