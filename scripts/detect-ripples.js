@@ -175,14 +175,18 @@ const teamNorm = t => TEAM_ALIAS[t] || t;
 function seedSnapshotFromBacktest(bt, cross) {
   const gsisToSleeper = {};
   for (const [sid, x] of Object.entries(cross)) if (x.gsis_id) gsisToSleeper[x.gsis_id] = sid;
+  // Only the LAST COMPLETED season counts as "on a roster". Taking each player's
+  // own latest season would resurrect retirees (Adrian Peterson on his 2018 team),
+  // making them look like fresh departures against the current roster.
+  const LATEST = Math.max(...Object.values(bt.players)
+    .flatMap(p => Object.keys(p.seasons).map(Number)));
   const snap = {};
   for (const [name, p] of Object.entries(bt.players)) {
-    const ys = Object.keys(p.seasons).map(Number).sort((a, b) => b - a);
-    if (!ys.length) continue;
-    const team = teamNorm(p.seasons[String(ys[0])].team);
+    const s = p.seasons[String(LATEST)];
+    if (!s) continue;                            // not active last season → not on a roster, skip
     const sid = p.gsis_id && gsisToSleeper[p.gsis_id];
-    if (!sid) continue;                          // no crosswalk match → skip (name fallback handled live)
-    snap[sid] = { full_name: name, position: p.pos, team };
+    if (!sid) continue;                          // no crosswalk match → name fallback handles it live
+    snap[sid] = { full_name: name, position: p.pos, team: teamNorm(s.team) };
   }
   return snap;
 }
