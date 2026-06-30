@@ -16,6 +16,10 @@ const SAFETY_CAP=0.50, GATE=3.0, ARRIVAL_GATE=5.0;
 const VAC_COEF={WR:0.005,RB:0.018,TE:0.042};
 const ARR_COEF={WR:-0.048,RB:-0.073,TE:-0.086};
 const NEG_PCT=0.02;   // below ±2% it's noise, not a ripple
+const MIN_BASE=8.0;   // floor the %-denominator at a flex workload so a deep
+                      // player's near-zero projection can't blow a tiny opp
+                      // change up into a huge percentage
+const MIN_PPG=0.4;    // and drop any projected change under ~0.4 PPG as immaterial
 const rookiePrior=(pos,pick)=>{for(const[m,o]of ROOKIE[pos])if(pick<=m)return o;return 0;};
 const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
 
@@ -47,7 +51,9 @@ function generateRipple(move){
   const arrs=arrivals.map(a=>a.name).join(' + ');
   let emitted=0;
   for(const inc of gated){
-    const pct=inc.baseline_ppg>0?clamp(coef*dOpp/inc.baseline_ppg,-SAFETY_CAP,SAFETY_CAP):0;
+    const dPpg=coef*dOpp;
+    if(Math.abs(dPpg)<MIN_PPG) continue;                // immaterial absolute change
+    const pct=clamp(dPpg/Math.max(inc.baseline_ppg,MIN_BASE),-SAFETY_CAP,SAFETY_CAP);
     if(Math.abs(pct)<NEG_PCT) continue;                 // below noise floor — no ripple
     emitted++;
     const up=dOpp>=0;
