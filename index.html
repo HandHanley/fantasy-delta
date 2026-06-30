@@ -258,7 +258,7 @@ tr:hover td{background:#1a202c}
       <th data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.">PPG'25</th><th data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
       <th onclick="setSortR('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.">Proj PPG</th>
       <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Applied as a modifier to projected PPG. OC mark = coordinator change; model discounts until new system shows in production data." class="col-hide-mobile">Sys</th>
-      <th class="col-hide-mobile">OC</th><th>Tag</th>
+      <th data-tip="Offensive coordinator. ⚠ flags a coordinator change this cycle — the scheme is unproven, so DELTA applies an OC-continuity discount to the projection and won't credit the new system until it shows up in production data. No flag = stable staff." class="col-hide-mobile">OC</th><th>Tag</th>
     </tr></thead>
     <tbody id="rank-body"></tbody>
   </table></div>
@@ -588,7 +588,7 @@ function renderRankings(){
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
-    <td style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
+    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
