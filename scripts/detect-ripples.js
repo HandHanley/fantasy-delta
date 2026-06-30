@@ -117,6 +117,21 @@ function buildArrival(name, sleeperId, pos, cross, idx) {
   return { name, rookie: false, prior_opp_pg: rec ? rec.opp_pg : 0 };
 }
 
+// Keep only players we actually model: those in the backtest universe (via
+// crosswalk gsis) plus this year's rookies. Without this, the full live Sleeper
+// roster (deep depth, practice squad) shows up as phantom "arrivals" against the
+// smaller modeled seed, squeezing every incumbent.
+function restrictToTracked(snap, cross, idx) {
+  const out = {};
+  for (const [sid, p] of Object.entries(snap)) {
+    const x = cross[sid];
+    const known = x && x.gsis_id && idx.byGsis[x.gsis_id];
+    const rookie = x && x.draft_year === ROOKIE_YEAR;
+    if (known || rookie) out[sid] = p;
+  }
+  return out;
+}
+
 function buildProposals(prevSnap, currSnap, cross, idx) {
   const groups = groupByTeam(detectMoves(prevSnap, currSnap));
   // sleeper_id lookup by name within a team (to resolve incumbents/moves to ids)
@@ -206,6 +221,8 @@ async function main() {
     console.log('[ripple] fetching Sleeper players + crosswalk ...');
     currSnap = trimSleeper(await fetchJSON(SLEEPER_URL));
     cross = parseCrosswalk(await fetchText(CROSSWALK_URL));
+    currSnap = restrictToTracked(currSnap, cross, idx);   // modeled vets + this year's rookies only
+    console.log(`[ripple] live roster restricted to ${Object.keys(currSnap).length} tracked players`);
     const snapPath = path.join(DATA, 'roster-snapshot.json');
     if (!fs.existsSync(snapPath)) {
       // First run: backfill the whole offseason by seeding from LAST SEASON's
