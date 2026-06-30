@@ -117,17 +117,15 @@ function buildArrival(name, sleeperId, pos, cross, idx) {
   return { name, rookie: false, prior_opp_pg: rec ? rec.opp_pg : 0 };
 }
 
-// Keep only players we actually model: those in the backtest universe (via
-// crosswalk gsis) plus this year's rookies. Without this, the full live Sleeper
-// roster (deep depth, practice squad) shows up as phantom "arrivals" against the
-// smaller modeled seed, squeezing every incumbent.
-function restrictToTracked(snap, cross, idx) {
+// Keep only players in the SAME universe as the prior snapshot (last season's
+// tracked roster) plus this year's rookies. Anchoring to the seed's id set —
+// not the all-time backtest list — keeps both sides of the diff the same size,
+// so the full live roster's depth/practice-squad bodies don't read as arrivals.
+function restrictToTracked(snap, allowedIds, cross) {
   const out = {};
   for (const [sid, p] of Object.entries(snap)) {
-    const x = cross[sid];
-    const known = x && x.gsis_id && idx.byGsis[x.gsis_id];
-    const rookie = x && x.draft_year === ROOKIE_YEAR;
-    if (known || rookie) out[sid] = p;
+    const rookie = cross[sid] && cross[sid].draft_year === ROOKIE_YEAR;
+    if (allowedIds.has(sid) || rookie) out[sid] = p;
   }
   return out;
 }
@@ -221,18 +219,20 @@ async function main() {
     console.log('[ripple] fetching Sleeper players + crosswalk ...');
     currSnap = trimSleeper(await fetchJSON(SLEEPER_URL));
     cross = parseCrosswalk(await fetchText(CROSSWALK_URL));
-    currSnap = restrictToTracked(currSnap, cross, idx);   // modeled vets + this year's rookies only
-    console.log(`[ripple] live roster restricted to ${Object.keys(currSnap).length} tracked players`);
     const snapPath = path.join(DATA, 'roster-snapshot.json');
     if (!fs.existsSync(snapPath)) {
       // First run: backfill the whole offseason by seeding from LAST SEASON's
-      // teams (so the diff vs current Sleeper surfaces every move), instead of
-      // seeding from current (which would detect nothing on run one).
+      // teams (so the diff vs current Sleeper surfaces every move).
       prevSnap = seedSnapshotFromBacktest(bt, cross);
-      console.log(`[ripple] no snapshot — seeded prev from backtest 2025 (${Object.keys(prevSnap).length} players) for offseason backfill`);
+      console.log(`[ripple] no snapshot — seeded prev from backtest 2025 (${Object.keys(prevSnap).length} players)`);
     } else {
       prevSnap = JSON.parse(fs.readFileSync(snapPath, 'utf8'));
     }
+    // Restrict the live roster to the prior universe + this year's rookies so
+    // both sides of the diff cover the same players.
+    const allowed = new Set(Object.keys(prevSnap));
+    currSnap = restrictToTracked(currSnap, allowed, cross);
+    console.log(`[ripple] live roster restricted to ${Object.keys(currSnap).length} tracked players (seed universe + rookies)`);
   }
 
   const proposals = buildProposals(prevSnap, currSnap, cross, idx)
