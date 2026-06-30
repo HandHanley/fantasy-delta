@@ -6,6 +6,11 @@ const ROOKIE={
   TE:[[5,6.5],[12,5.1],[32,5.8],[64,2.8],[100,1.9],[999,1.8]],
 };
 const CEIL={RB:22.2,WR:10.1,TE:8.4}, SAFETY_CAP=0.50, GATE=3.0;
+// A departing 3-opp/g role vacates real, absorbable work; but an *arriving*
+// 3-4 opp/g depth piece slots to the bottom of the chart and rides the bench —
+// it doesn't displace an established starter. So arrivals need a higher bar
+// (~flex-starter volume) before they squeeze anyone. Asymmetric on purpose.
+const ARRIVAL_GATE=5.0;
 const rookiePrior=(pos,pick)=>{for(const[m,o]of ROOKIE[pos])if(pick<=m)return o;return 0;};
 const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
 const FLOOR=0.5;  // a rostered player can't be squeezed below ~replacement level
@@ -22,7 +27,7 @@ function generateRipple(move){
   // fake 6-7 opp/g, and crater a starter. Same bar we apply to incumbents.
   const sigDep=move.departures.filter(d=>d.opp_pg>=GATE);
   const arrivals=move.arrivals.map(a=>({...a,proj_opp:a.rookie?rookiePrior(pos,a.pick):a.prior_opp_pg}))
-                              .filter(a=>a.proj_opp>=GATE);
+                              .filter(a=>a.proj_opp>=ARRIVAL_GATE);
   const vacated=sigDep.reduce((s,d)=>s+d.opp_pg,0);
   const claimed=arrivals.reduce((s,a)=>s+a.proj_opp,0);
   const residual=vacated-claimed;
