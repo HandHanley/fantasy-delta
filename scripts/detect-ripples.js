@@ -27,7 +27,7 @@ const { generateRipple } = require('./ripple/generate-ripple.js');
 const DATA = path.join(__dirname, '..', 'data');
 const SLEEPER_URL = 'https://api.sleeper.app/v1/players/nfl';
 const CROSSWALK_URL = 'https://raw.githubusercontent.com/dynastyprocess/data/master/files/db_playerids.csv';
-const SKILL = new Set(['QB', 'RB', 'WR', 'TE']);
+const SKILL = new Set(['RB', 'WR', 'TE']);  // QB excluded — opportunity model doesn't cover QB
 const ROOKIE_YEAR = new Date().getMonth() >= 2 ? new Date().getFullYear() : new Date().getFullYear() - 1; // draft is in spring
 
 const norm = s => (s || '').toLowerCase().replace(/[.'’`]/g, '')
