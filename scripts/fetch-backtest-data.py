@@ -64,6 +64,7 @@ def fetch_player_seasons():
     print(f"[BT] Rows: {len(pdf)}")
 
     name_col   = col(pdf, 'player_display_name')          # FULL names, never player_name (abbrev)
+    gsis_col   = col(pdf, 'player_id', 'gsis_id')          # stable ID for the bulletproof Sleeper join
     season_col = col(pdf, 'season', 'year')
     week_col   = col(pdf, 'week', 'game_week')
     pos_col    = col(pdf, 'position', 'pos')
@@ -148,6 +149,12 @@ def fetch_player_seasons():
 
     # Reshape to {name: {pos, seasons:{year:{...}}}}
     players = {}
+    # name -> gsis_id (constant per player; pulled from the weekly frame)
+    gsis_map = {}
+    if gsis_col:
+        gm_df = pdf[[name_col, gsis_col]].dropna().drop_duplicates(subset=[name_col])
+        gsis_map = dict(zip(gm_df[name_col], gm_df[gsis_col].astype(str)))
+
     for _, r in g.iterrows():
         nm = r['name']
         if not nm:
@@ -173,7 +180,7 @@ def fetch_player_seasons():
             'pass_td':      int(r.get('pass_td', 0) or 0),
             'pass_int':     int(r.get('pass_int', 0) or 0),
         }
-        e = players.setdefault(nm, {'pos': str(r['pos']), 'seasons': {}})
+        e = players.setdefault(nm, {'pos': str(r['pos']), 'gsis_id': gsis_map.get(nm), 'seasons': {}})
         e['seasons'][str(int(r['season']))] = rec
     print(f"[BT] Player-seasons built for {len(players)} skill players")
     return players
