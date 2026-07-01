@@ -580,7 +580,7 @@ function renderRankings(){
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
-    <td style="font-weight:600">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+    <td style="font-weight:600${p.mktStale?';color:#718096':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:#fcd34d;cursor:help">†</span>':''}</td>
     <td style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bi" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''); })()}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
     <td>${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${p.t}</td>
@@ -2427,7 +2427,7 @@ document.addEventListener('click', function(e) {
 
 <script>
 
-function showDataFreshness(fetchedAt, playerCount) {
+function showDataFreshness(fetchedAt, playerCount, staleCount) {
   const date = new Date(fetchedAt);
   const hoursAgo = Math.round((Date.now() - date.getTime()) / 3600000);
   const label = hoursAgo < 2 ? 'Just updated' : 
@@ -2449,7 +2449,8 @@ function showDataFreshness(fetchedAt, playerCount) {
     ].join(';');
     document.body.appendChild(badge);
   }
-  badge.textContent = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}`;
+  badge.innerHTML = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}` +
+    (staleCount > 0 ? ` · <span style="color:#fcd34d" title="Players not in the latest FantasyCalc fetch — their baked market value may be stale">${staleCount} stale</span>` : '');
 }
 
 // ── KICK IT OFF ───────────────────────────────────────────────────────────

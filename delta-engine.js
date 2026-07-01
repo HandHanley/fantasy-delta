@@ -3710,18 +3710,20 @@ async function loadLiveMarketValues() {
       if (match) {
         player.k = match.value;
         player.fcRank = match.overallRank;
+        player.mktStale = false;
         if (match.trend30Day !== undefined) player.fcTrend = match.trend30Day;
         if (match.team && match.team !== player.t) player.fcTeam = match.team;
         updated++;
       } else {
         player.kMkt = player.k;          // keep kMkt defined even if unmatched
+        player.mktStale = true;          // not in latest FC fetch — baked value persisting
         notFound.push(player.n);
       }
     }
 
     console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched` +
                 (MARKET_SETTINGS ? ` · grid ${Object.keys(MARKET_SETTINGS).length} settings` : ' · legacy flat'));
-    if (typeof showDataFreshness === 'function') showDataFreshness(data.fetched, updated);
+    if (typeof showDataFreshness === 'function') showDataFreshness(data.fetched, updated, notFound.length);
     if (notFound.length > 0 && notFound.length < 20) {
       console.log('[DELTA] Unmatched players:', notFound.join(', '));
     }
