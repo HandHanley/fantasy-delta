@@ -1390,7 +1390,7 @@ const RAW=[
   {n:'Michael Pittman Jr.',t:'PIT',p:'WR',a:28.4,k:3562,ppg25:9.6,ppg24:8.2,ppg23:12.2,g25:17},
   {n:'Jaylen Waddle',t:'DEN',p:'WR',a:27.3,k:4917,ppg25:10.1,ppg24:7.5,ppg23:11.6,g25:16},
   {n:'Alec Pierce',t:'IND',p:'WR',a:25.9,k:4429,ppg25:10.7,ppg24:8.9,ppg23:4.7,g25:15},
-  {n:'Justin Jefferson',t:'MIN',p:'WR',a:27.0,k:7697,ppg25:9.4,ppg24:15.6,ppg23:16.8,g25:17},
+  {n:'Justin Jefferson',t:'MIN',p:'WR',a:27.04,k:7697,ppg25:9.4,ppg24:15.6,ppg23:16.8,g25:17},
   {n:'DK Metcalf',t:'PIT',p:'WR',a:28.3,k:3709,ppg25:10.5,ppg24:10.5,ppg23:12.0,g25:15},
   {n:'Parker Washington',t:'JAC',p:'WR',a:24.0,k:3580,ppg25:9.7,ppg24:4.8,ppg23:3.5,g25:16},
   {n:'Ladd McConkey',t:'LAC',p:'WR',a:24.4,k:5349,ppg25:9.2,ppg24:12.5,ppg23:0,g25:16},
@@ -1434,7 +1434,7 @@ const RAW=[
     {n:'Jalen McMillan',t:'TB',p:'WR',a:23.1,k:3200,ppg25:7.8,ppg24:0,ppg23:0,g25:14},
   {n:'Isaac TeSlaa',t:'DET',p:'WR',a:23.8,k:2800,ppg25:6.4,ppg24:0,ppg23:0,g25:15},
   {n:'Xavier Legette',t:'CAR',p:'WR',a:24.2,k:3100,ppg25:7.2,ppg24:5.8,ppg23:0,g25:16},
-  {n:'Devaughn Vele',t:'DEN',p:'WR',a:25.1,k:2600,ppg25:7.6,ppg24:4.2,ppg23:0,g25:14},
+  {n:'Devaughn Vele',t:'DEN',p:'WR',a:28.7,k:2600,ppg25:7.6,ppg24:4.2,ppg23:0,g25:14},
   {n:'Chimere Dike',t:'TEN',p:'WR',a:23.4,k:2400,ppg25:5.8,ppg24:0,ppg23:0,g25:13},
       {n:'Jalen Nailor',t:'LV',p:'WR',a:26.8,k:2900,ppg25:9.6,ppg24:7.8,ppg23:4.2,g25:15},
   {n:'Marvin Mims',t:'DEN',p:'WR',a:23.8,k:2700,ppg25:6.8,ppg24:6.2,ppg23:3.4,g25:14},
@@ -3553,11 +3553,18 @@ async function loadPlayerStats() {
     // for the universe-expansion players seeded with a placeholder age, which
     // self-correct to real age on the first pipeline run (age feeds the DELTA
     // Score age axis, so a wrong seed would distort the score until corrected).
+    // Names whose baked age is authoritative — pipeline NEVER overwrites,
+    // regardless of the seed heuristic. Protects manual DOB fixes from the
+    // x.0-is-an-integer trap (Number.isInteger(27.0)===true) and from known
+    // nflverse name collisions (a different, younger Justin Jefferson; an
+    // older DB D.J. Moore).
+    const AGE_LOCK = new Set(['Justin Jefferson', 'D.J. Moore', 'Devaughn Vele']);
     if (data.age) {
       let n = 0, rejected = 0;
       for (const player of RAW) {
         const a = data.age[player.n];
         if (a == null || a <= 0) continue;
+        if (AGE_LOCK.has(player.n)) { rejected++; continue; }
         const baked = player.a;
         // The 117 universe-expansion players were seeded with PLACEHOLDER ages —
         // whole integers (24, 25). Real baked ages carry a decimal (28.9). The
@@ -3920,6 +3927,33 @@ function buildDSBreakdownHTML(p){
     +'</div>';
 }
 
+// ── AUTHORED READS ─────────────────────────────────────────────────────────
+// Per-player authored cores for The Read, from data/reads.json. Each entry:
+// {n, team, authored, core}. The core is VERDICT-AGNOSTIC — it describes the
+// player; the live math sentence (always computed fresh) carries the verdict.
+// Staleness guard: a core only renders while the player is still on the team
+// it was written under; otherwise the template fallback takes over silently.
+let READS={};
+async function loadReads(){
+  try{
+    const res=await fetch('./data/reads.json?t='+Date.now());
+    if(!res.ok) return;                       // absent file = template-only mode
+    const arr=await res.json();
+    if(!Array.isArray(arr)) return;
+    READS={}; for(const e of arr) if(e&&e.n&&e.core) READS[e.n]=e;
+    console.log('[DELTA] Authored reads loaded: '+Object.keys(READS).length);
+  }catch(e){ console.warn('[DELTA] reads.json skipped:',e.message); }
+}
+function authoredCore(p){
+  const e=READS[p.n]; if(!e) return null;
+  const cur=(AL&&AL[p.t])||p.t, wrote=(AL&&AL[e.team])||e.team;
+  return (cur&&wrote&&cur===wrote)?e.core:null;   // team changed → stale → fallback
+}
+// deterministic per-player variant picker: stable across renders, differs
+// across adjacent players — kills the shared-skeleton problem
+function readSeed(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return h;}
+const pick=(seed,arr)=>arr[seed%arr.length];
+
 function buildReadHTML(p){
   const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
   if(!mk||ds==null) return '';
@@ -3936,72 +3970,127 @@ function buildReadHTML(p){
   const worthOutrunsProof=(rankDs-rankMv)>=6;
   const ranksAgree=Math.abs(rankMv-rankMk)<=1;
   const absPct=Math.abs(pct);
-  const gapQual=absPct>=20?', a wide gap':absPct>=10?'':', a slim one';
+  const gapQual=absPct>=20?' \u2014 a wide gap':absPct>=10?'':' \u2014 slim but real';
   const gl=glOf(p);
   const age=p.a||0;
   const a25=p.ppg25||0,a24=p.ppg24||0;
   const arc=(a25&&a24)?(a25-a24):0;
   const oppSc=getOppScore(p.n,p.pos);
-  const ev=[];
+  // ── evidence fragments: clean clauses, no nested parens ──
+  const ev=[];   // {t:text, s:'+'|'-', w:weight}
   if(gl){
-    if(gl.elite>=30) ev.push(`an elite game in ${gl.elite}% of starts`);
-    else if(gl.elite>=18) ev.push(`league-winning weeks ${gl.elite}% of the time`);
-    if(gl.miss>=45) ev.push(rankDs<=22?`but he busts ${gl.miss}% of weeks`:`a ${gl.miss}% weekly floor rate`);
-    else if(gl.miss<=18&&gl.hit>=75) ev.push(`a hit in ${gl.hit}% of starts — rock-steady`);
+    if(gl.elite>=30) ev.push({t:`an elite week in ${gl.elite}% of starts`,s:'+',w:3});
+    else if(gl.elite>=18) ev.push({t:`league-winning weeks ${gl.elite}% of the time`,s:'+',w:2});
+    if(gl.miss>=45) ev.push({t:`busts in ${gl.miss}% of starts`,s:'-',w:3});
+    else if(gl.miss<=18&&gl.hit>=75) ev.push({t:`hits in ${gl.hit}% of starts`,s:'+',w:2});
   }
-  if(arc>=3) ev.push(`production climbing (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
-  else if(arc<=-3) ev.push(`production sliding (${a24.toFixed(1)}\u2192${a25.toFixed(1)} ppg)`);
-  if(age>=31&&pos==='RB') ev.push(`and at ${age.toFixed(0)} the dynasty runway is short`);
-  else if(age>=33) ev.push(`and at ${age.toFixed(0)} he's near the end`);
-  else if(age<=23&&proof!=='thin') ev.push(`all before turning ${Math.ceil(age)}`);
-  else if(age<=25&&proof!=='thin'&&(pos==='WR'||pos==='TE')) ev.push(`still just ${age.toFixed(0)}`);
+  if(arc>=3) ev.push({t:`production climbing ${a24.toFixed(1)}→${a25.toFixed(1)} ppg`,s:'+',w:2});
+  else if(arc<=-3) ev.push({t:`production sliding ${a24.toFixed(1)}→${a25.toFixed(1)} ppg`,s:'-',w:2});
   if(oppSc!=null){
-    if(oppSc>=88) ev.push(`a true bell-cow role (${oppSc} opportunity)`);
-    else if(oppSc<=55) ev.push(`a committee role (${oppSc} opportunity) capping the ceiling`);
+    if(oppSc>=88) ev.push({t:`a true bell-cow role`,s:'+',w:2});
+    else if(oppSc<=55) ev.push({t:`a committee role capping the ceiling`,s:'-',w:1});
   }
-  if(p.och) ev.push('with a new OC adding scheme risk');
-  const evJoin=arr=>arr.length>=2?arr.slice(0,2).join(', '):(arr[0]||'');
-  const posBacking=evJoin(ev.filter(e=>!/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
-  const negBacking=evJoin(ev.filter(e=>/but he busts|sliding|short|end|committee|scheme risk/.test(e)));
-  const stripConj=s=>s.replace(/^(but|and)\s+/i,'');
-  const posWhy=stripConj(posBacking||(gl&&gl.hit>=70?`a hit in ${gl.hit}% of starts`:''));
-  const negWhy=stripConj(negBacking||'');
-  let read,clr;
+  if(age>=31&&pos==='RB') ev.push({t:`a short runway at ${age.toFixed(0)}`,s:'-',w:3});
+  else if(age>=33) ev.push({t:`age ${age.toFixed(0)} closing the window`,s:'-',w:3});
+  else if(age<=23&&proof!=='thin') ev.push({t:`all before age ${Math.ceil(age)}`,s:'+',w:2});
+  else if(age<=25&&proof!=='thin'&&(pos==='WR'||pos==='TE')) ev.push({t:`still just ${age.toFixed(0)}`,s:'+',w:1});
+  if(p.och) ev.push({t:`a new OC adding scheme risk`,s:'-',w:1});
+  ev.sort((a,b)=>b.w-a.w);
+  const posEv=ev.filter(e=>e.s==='+').slice(0,2).map(e=>e.t);
+  if(posEv[0]&&posEv[0].startsWith('all before')) posEv[0]=`a ${proof} résumé before age ${Math.ceil(age)}`;
+  const negEv=ev.filter(e=>e.s==='-').slice(0,2).map(e=>e.t);
+  const joinEv=a=>a.length===2?a[0]+' and '+a[1]:(a[0]||'');
+  const seed=readSeed(p.n);
+
+  // ── tier by market rank (phrasing must not treat a WR60 like a WR8) ──
+  const tierCut=(pos==='QB'||pos==='TE')?[6,12,24]:[12,24,48];
+  const tier=rankMk<=tierCut[0]?'elite':rankMk<=tierCut[1]?'starter':rankMk<=tierCut[2]?'fringe':'deep';
+
+  // ── CORE: authored if fresh, else tier-aware template ──
+  let core=authoredCore(p);
+  if(!core){
+    const posTxt={QB:'quarterback',RB:'back',WR:'receiver',TE:'tight end'}[pos]||pos;
+    if(proof==='thin'&&tier!=='elite'){
+      core=pick(seed,[
+        `Thin demonstrated base — the ${pos}${rankDs} production profile is the whole story so far`+(negEv[0]?`, with ${negEv[0]}`:'')+`.`,
+        `Not much on tape to price yet: demonstrated production ranks ${pos}${rankDs}`+(negEv[0]?` and ${negEv[0]}`:'')+`.`,
+      ]);
+    } else if(tier==='elite'){
+      core=pick(seed,[
+        `${proof==='elite'?'Elite':'Front-line'} ${posTxt}${posEv.length?' — '+joinEv(posEv):''}${negEv[0]?`; the flag is ${negEv[0]}`:''}.`,
+        `As ${proof==='elite'?'proven as the position gets':'solid a profile as they come'}${posEv.length?': '+joinEv(posEv):''}${negEv[0]?`, though ${negEv[0]}`:''}.`,
+        `${posEv.length?joinEv(posEv).charAt(0).toUpperCase()+joinEv(posEv).slice(1):'A '+proof+' demonstrated profile'} — top-of-position stuff${negEv[0]?`, with ${negEv[0]} the one concern`:''}.`,
+      ]);
+    } else if(tier==='starter'){
+      core=pick(seed,[
+        `A ${proof} ${pos}${rankDs} demonstrated profile${posEv.length?' built on '+joinEv(posEv):''}${negEv[0]?`; ${negEv[0]}`:''}.`,
+        `${posEv.length===2?joinEv(posEv).charAt(0).toUpperCase()+joinEv(posEv).slice(1)+' back a':'A'} ${proof} starter profile${posEv.length===1?' anchored by '+posEv[0]:''}${negEv[0]?`, against ${negEv[0]}`:''}.`,
+      ]);
+    } else if(tier==='fringe'){
+      core=pick(seed,[
+        `Fringe-starter profile — production ranks ${pos}${rankDs}${posEv.length?', with '+joinEv(posEv):''}${negEv[0]?` but ${negEv[0]}`:''}.`,
+        `Roster-edge ${posTxt}: ${posEv.length?joinEv(posEv):'a '+proof+' demonstrated base'}${negEv[0]?`, offset by ${negEv[0]}`:''}.`,
+      ]);
+    } else {
+      core=pick(seed,[
+        `Deep-roster ${posTxt} — ${negEv[0]||posEv[0]||'little demonstrated volume to price'}.`,
+        `Down-roster profile: ${negEv[0]||posEv[0]||'the production base is minimal'}.`,
+      ]);
+    }
+  }
+
+  // ── MATH sentence: always computed fresh; verdict + gap carried here ──
+  let math,clr;
   if(verdict==='no data'){
-    read=`No NFL production yet — nothing demonstrated to value him on. At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a track record.`;
+    const dc=(typeof DRAFT_PICKS!=='undefined'&&DRAFT_PICKS[p.n])||null;
+    const cap=!dc?null:dc.p<=10?`top-10 capital (pick ${dc.p})`:dc.r===1?`first-round capital (pick ${dc.p})`
+      :dc.r===2?`second-round capital`:dc.r===3?`third-round capital`:`Day-3 capital (round ${dc.r})`;
+    core=`No NFL production yet — nothing demonstrated to value him on.`;
+    math=cap
+      ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but at ${age?age.toFixed(0):'his age'} the price is a bet on landing spot, not a résumé.`
+      : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
     clr='#718096';
   } else if(verdict==='strong buy'||verdict==='buy'){
     clr=verdict==='strong buy'?'#6ee7b7':'#9ae6b4';
     if(worthOutrunsProof){
-      const why=negWhy||(p.proj>a25?`a projection (${(p.proj||0).toFixed(1)} ppg) ahead of his ${a25.toFixed(1)} history`:`a projected step up in role`);
-      read=`Model has him ${pos}${rankMv} on ${why}, ahead of his proven ${pos}${rankDs}. The ${absPct}% edge${gapQual} is real if the situation holds — a ${verdict} that's a bet on the role, not the résumé.`;
+      math=pick(seed,[
+        `The model prices the role, not the résumé: ${pos}${rankMv} against a ${pos}${rankDs} track record — ${absPct}% over the market if the situation holds. ${verdict==='strong buy'?'Strong buy':'Buy'}, eyes open.`,
+        `Model ${pos}${rankMv} runs ahead of the proven ${pos}${rankDs} — a ${absPct}% edge that's a bet on opportunity. ${verdict==='strong buy'?'Strong buy':'Buy'} if you believe the role.`,
+      ]);
     } else if(ranksAgree){
-      const why=posWhy||`a ${proof} ${pos}${rankDs} profile`;
-      const tierTail=rankMv<=8?' at the top of the board':(absPct>=10?' — a quiet edge':'');
-      read=`The market already rates him a ${pos}${rankMk}, and DELTA agrees on the talent (${why}) — but the model still sees ${absPct}% more value than the price${gapQual}. A ${verdict}${tierTail}.`;
+      math=pick(seed,[
+        `Market already pays ${pos}${rankMk} and the model agrees on the rank — it just wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
+        `No rank dispute — priced ${pos}${rankMk}, modeled ${pos}${rankMv} — but the model has him ${absPct}% under-priced${gapQual}. ${verdict==='strong buy'?'Strong buy':'A quiet buy'}.`,
+        `Priced ${pos}${rankMk}; the model sees ${absPct}% more value at the same rank${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
+      ]);
     } else {
-      const why=posWhy||`a steady ${pos}${rankDs} profile`;
-      read=`Proven ${pos}${rankDs} with ${why}, yet the market only pays ${pos}${rankMk}. DELTA's model lands at ${pos}${rankMv} — a ${absPct}% discount${gapQual} the market hasn't caught up to. ${verdict==='strong buy'?'A clear buy.':'Worth buying.'}`;
+      math=pick(seed,[
+        `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv} — a ${absPct}% discount${gapQual} it hasn't caught up to. ${verdict==='strong buy'?'A clear buy':'Worth buying'}.`,
+        `Priced ${pos}${rankMk} but modeled ${pos}${rankMv}: ${absPct}% of value the market is leaving on the table${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
+      ]);
     }
   } else if(verdict==='sell'||verdict==='strong sell'){
     clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
-    const bustNote=gl&&gl.miss>=40?(rankMk<=18?`he busts ${gl.miss}% of weeks for a ${pos}${rankMk} price`:''):'';
-    const why=negWhy||bustNote||(gl&&gl.miss>=40?`a ${gl.miss}% bust rate consistent with his ${pos}${rankDs} tier`:`a thin ${pos}${rankDs} demonstrated profile`);
     if(Math.abs(rankMv-rankMk)<=1){
-      // Ranks agree — model sees a small discount but position is the same.
-      // Soften: this reads as a lean hold or "don't overpay to buy," not a clear sell.
-      read=`Model and market both land at ${pos}${rankMv} — the ${absPct}% gap${gapQual} is real but slim. ${posWhy?'Evidence: '+posWhy+'. ':''}Worth holding unless someone overpays; only lean sell if a clear premium offer comes.`;
+      math=`Model and market both land ${pos}${rankMv}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
       clr='#cbd5e0';
     } else {
-      read=`Market pays ${pos}${rankMk}, but ${why} — DELTA's model lands at ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value.':'Lean sell; the price is ahead of the production.'}`;
+      math=pick(seed,[
+        `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value':'Lean sell — the price is ahead of the production'}.`,
+        `Priced ${pos}${rankMk} against a modeled ${pos}${rankMv} — the market is paying ${absPct}% over the model${gapQual}. ${verdict==='strong sell'?'Strong sell':'Sell'}.`,
+      ]);
     }
   } else {
     const dir=r>=1.0?'a hair above':'a hair under';
     const dsGap=Math.abs(rankDs-rankMv)>8;
-    const dsNote=dsGap?` DELTA scores him ${pos}${rankDs} on the dynasty window — age-adjusted.`:'';
-    read=`Model (${pos}${rankMv}) and price (${pos}${rankMk}) align — ${dir} market, not enough to act on.${dsNote} Fair value at ${pos}${rankMk}: hold unless a clear overpay comes.`;
+    const dsNote=dsGap?` The dynasty-window score says ${pos}${rankDs}, age-adjusted.`:'';
+    math=pick(seed,[
+      `Model ${pos}${rankMv} and price ${pos}${rankMk} align — ${dir} market, not enough to act on.${dsNote} Hold.`,
+      `Fair value: modeled ${pos}${rankMv}, priced ${pos}${rankMk} — ${dir} market.${dsNote} Hold unless a clear overpay comes.`,
+    ]);
     clr='#cbd5e0';
   }
+  const read=(verdict==='no data')?core+' '+math:core+' '+math;
   const N=peers.length||1;
   const barFor=(rank,c,lbl,sub)=>{
     const w=Math.max(4,Math.round((1-(rank-1)/N)*100));

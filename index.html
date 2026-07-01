@@ -3255,7 +3255,7 @@ window.addEventListener('load', async function() {
   await loadLiveMarketValues();
   await loadPlayerStats();
   await loadPlayerContracts();
-  await loadRipples();
+  await loadRipples(); await loadReads();
   await ensureStartData();
   if(typeof renderAll==='function') renderAll();
   initEngineAudit();
@@ -3263,7 +3263,7 @@ window.addEventListener('load', async function() {
 if (document.readyState === 'complete') {
   syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); }).then(() => initEngineAudit());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); }).then(() => initEngineAudit());
 }
 
 </script>
