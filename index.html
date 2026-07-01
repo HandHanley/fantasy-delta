@@ -325,7 +325,7 @@ tr:hover td{background:#1a202c}
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team A</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team A<select onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
@@ -333,7 +333,7 @@ tr:hover td{background:#1a202c}
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team B</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team B<select onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
@@ -341,7 +341,7 @@ tr:hover td{background:#1a202c}
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#d8b4fe;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team C</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#d8b4fe;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team C<select onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
@@ -349,7 +349,7 @@ tr:hover td{background:#1a202c}
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#fdba74;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Team D</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#fdba74;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team D<select onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
       <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
@@ -980,8 +980,8 @@ function recalcTrade(){
       <div style="text-align:center;margin-bottom:.75rem">
         <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
         ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
-        ${pct>3?`<div style="margin-top:7px"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}
       </div>
+      ${windowFraming()}
 
       <div class="breakdown-grid">
         <div>
@@ -1019,7 +1019,7 @@ function recalcTrade(){
         ◆ Concentration bonus rewards fewer, higher-value assets
       </div>
 
-      <button class="send-btn" onclick="sendPrompt('Evaluate this dynasty trade: Team A receives ${nA} and Team B receives ${nB}. Model values Team A at ${mA.toLocaleString()} and Team B at ${mB.toLocaleString()}. Should I make this trade?')">Ask Claude to evaluate ↗</button>`;
+      ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
   } else {
     // Multi-team verdict — compute adjusted values for each team via calcSingleSideAdjusted
     const adjResults = totals.map(t => ({ ...t, adjResult: calcSingleSideAdjusted(t.arr) }));
@@ -1061,6 +1061,7 @@ function recalcTrade(){
           </div>`;
         }).join('')}
       </div>
+      ${windowFraming()}
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
         ${adjResults.map(t=>`
           <div>
@@ -1086,8 +1087,7 @@ function recalcTrade(){
         ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
         ⚠ Clustering discounts same-position or same-team stacking · 
         ◆ Concentration bonus rewards fewer, higher-value assets
-      </div>
-      <button class="send-btn" onclick="sendPrompt('Evaluate this ${tradeTeams}-team dynasty trade: ${promptText}. Who wins?')">Ask Claude to evaluate ↗</button>`;
+      </div>`;
   }
   if(gapFillerOpen) renderGapFiller();
 }
@@ -1099,6 +1099,48 @@ function recalcTrade(){
 // adjusted-trade math and only calls addAsset(); changes no values.
 let gapFillerOpen=false;
 function toggleGapFiller(){ gapFillerOpen=!gapFillerOpen; renderGapFiller(); recalcTrade(); }
+
+// ── Per-team window (Contender / Neutral / Rebuilder) ────────
+// Copy-only context under the verdict — classifies what each team RECEIVES as
+// win-now vs. future (by value) and frames it against that team's window.
+// Changes no player values or scores.
+let teamWindow={a:'neutral',b:'neutral',c:'neutral',d:'neutral'};
+function setWindow(team,val){ teamWindow[team]=val; recalcTrade(); }
+function windowFraming(){
+  const sides=[{id:'a',arr:sA,label:'Team A'},{id:'b',arr:sB,label:'Team B'}];
+  if(tradeTeams>2) sides.push({id:'c',arr:sC,label:'Team C'});
+  if(tradeTeams>3) sides.push({id:'d',arr:sD,label:'Team D'});
+  const lines=[];
+  for(const s of sides){
+    const w=teamWindow[s.id];
+    if(w==='neutral'||!s.arr.length) continue;
+    let fut=0,now=0,tot=0,top=null,topV=-1;
+    for(const a of s.arr){
+      const v=a.k||0; tot+=v;
+      if(v>topV){topV=v;top=a;}
+      if(a.ip || (typeof a.age==='number'&&a.age<=23)) fut+=v;
+      else if(!a.ip && typeof a.age==='number' && a.age>=27) now+=v;
+    }
+    if(tot<=0) continue;
+    const tilt = (fut/tot)>0.55?'future':(now/tot)>0.55?'now':'balanced';
+    const topN = top?top.n:'this package';
+    let ok,msg;
+    if(w==='contender'){
+      if(tilt==='now'){ok=true; msg=`proven win-now value (${topN}) — fits your window.`;}
+      else if(tilt==='future'){ok=false; msg=`picks/youth (${topN}) — leans against a win-now window.`;}
+      else{ok=null; msg=`a balanced return; the win-now pieces are what serve your window.`;}
+    } else {
+      if(tilt==='future'){ok=true; msg=`youth/picks (${topN}) — fits your rebuild timeline.`;}
+      else if(tilt==='now'){ok=false; msg=`aging win-now value (${topN}) — against a rebuild timeline.`;}
+      else{ok=null; msg=`a mixed return; the youth/picks are what serve your build.`;}
+    }
+    const mark = ok===true?'<span style="color:#6ee7b7">✓</span>':ok===false?'<span style="color:#fcd34d">⚠</span>':'<span style="color:#718096">•</span>';
+    const wlab = w.charAt(0).toUpperCase()+w.slice(1);
+    lines.push(`<div style="margin:2px 0">${mark} <b>${s.label}</b> (${wlab}) receiving ${msg}</div>`);
+  }
+  if(!lines.length) return '';
+  return `<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:9px 12px;font-size:10.5px;color:#a0aec0;line-height:1.7;margin-bottom:.75rem"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#718096;margin-bottom:3px">Window fit · context only</div>${lines.join('')}</div>`;
+}
 function gapNote(msg){ return `<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:10px 12px;font-size:11px;color:#718096">${msg}</div>`; }
 function gapFillerPool(light){
   const inTrade=new Set([...sA,...sB,...sC,...sD].map(x=>x.n));
