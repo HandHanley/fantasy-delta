@@ -935,9 +935,9 @@ function recalcTrade(){
     const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
     let verdict,vc;
     if(pct<=3){verdict='Essentially even — personal preference decides';vc='bi';}
-    else if(pct<=8){verdict=mA>mB?'Slight edge — Team A':'Slight edge — Team B';vc='bi';}
-    else if(pct<=15){verdict=mA>mB?'Clear winner — Team A':'Clear winner — Team B';vc=mA>mB?'bs':'bd';}
-    else{verdict=mA>mB?'Decisive advantage — Team A':'Decisive advantage — Team B';vc=mA>mB?'bs':'bd';}
+    else if(pct<=8){verdict=mA<mB?'Slight edge — Team A':'Slight edge — Team B';vc='bi';}
+    else if(pct<=15){verdict=mA<mB?'Clear winner — Team A':'Clear winner — Team B';vc=mA<mB?'bs':'bd';}
+    else{verdict=mA<mB?'Decisive advantage — Team A':'Decisive advantage — Team B';vc=mA<mB?'bs':'bd';}
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
     // Build adjustment breakdown
@@ -973,8 +973,8 @@ function recalcTrade(){
 
     document.getElementById('verdict-area').innerHTML=`
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-        <span style="color:#6ee7b7;font-weight:600">A: ${mA.toLocaleString()}</span>
-        <span style="color:#7dd3fc;font-weight:600">B: ${mB.toLocaleString()}</span>
+        <span style="color:#6ee7b7;font-weight:600">A gives: ${mA.toLocaleString()}</span>
+        <span style="color:#7dd3fc;font-weight:600">B gives: ${mB.toLocaleString()}</span>
       </div>
       <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
       <div style="text-align:center;margin-bottom:.75rem">
@@ -985,7 +985,7 @@ function recalcTrade(){
 
       <div class="breakdown-grid">
         <div>
-          <div class="section-label">Team A receives</div>
+          <div class="section-label">Team A gives up</div>
           <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownA}</div>
           ${v4.sideA.detail.map(playerRowA).join('')}
           <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
@@ -998,7 +998,7 @@ function recalcTrade(){
           </div>
         </div>
         <div>
-          <div class="section-label">Team B receives</div>
+          <div class="section-label">Team B gives up</div>
           <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownB}</div>
           ${v4.sideB.detail.map(playerRowA).join('')}
           <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
@@ -1028,7 +1028,7 @@ function recalcTrade(){
       document.getElementById('mod-'+t.id).textContent = t.adjResult.total > 0 ? t.adjResult.total.toLocaleString() : '—';
     });
     const maxAdj = Math.max(...adjResults.map(t => t.adjResult.total));
-    const sorted = [...adjResults].sort((a,b) => b.adjResult.total - a.adjResult.total);
+    const sorted = [...adjResults].sort((a,b) => a.adjResult.total - b.adjResult.total); // gives-up model: least given wins
     const winner = sorted[0];
     const grandTotal = adjResults.reduce((s,t) => s + t.adjResult.total, 0);
     const allEqual = adjResults.every(t => Math.abs(t.adjResult.total - adjResults[0].adjResult.total) / Math.max(grandTotal/tradeTeams, 1) < 0.08);
@@ -1065,7 +1065,7 @@ function recalcTrade(){
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
         ${adjResults.map(t=>`
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid #2d3748;padding-bottom:.3rem">${t.label} RECEIVES</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid #2d3748;padding-bottom:.3rem">${t.label} GIVES UP</div>
             ${t.adjResult.detail.map(d=>{
               const mods=[];
               if(d.eliteM>1.0)mods.push('elite \xd7'+d.eliteM.toFixed(2));
@@ -1107,32 +1107,33 @@ function toggleGapFiller(){ gapFillerOpen=!gapFillerOpen; renderGapFiller(); rec
 let teamWindow={a:'neutral',b:'neutral',c:'neutral',d:'neutral'};
 function setWindow(team,val){ teamWindow[team]=val; recalcTrade(); }
 function windowFraming(){
-  const sides=[{id:'a',arr:sA,label:'Team A'},{id:'b',arr:sB,label:'Team B'}];
-  if(tradeTeams>2) sides.push({id:'c',arr:sC,label:'Team C'});
-  if(tradeTeams>3) sides.push({id:'d',arr:sD,label:'Team D'});
+  if(tradeTeams!==2) return '';   // "receives" is only a clean 1:1 in a 2-team swap
+  const sides=[{id:'a',arr:sB,label:'Team A'},{id:'b',arr:sA,label:'Team B'}];  // each team RECEIVES the other side
   const lines=[];
   for(const s of sides){
     const w=teamWindow[s.id];
     if(w==='neutral'||!s.arr.length) continue;
-    let fut=0,now=0,tot=0,top=null,topV=-1;
+    let fut=0,now=0,core=0,tot=0,top=null,topV=-1;
     for(const a of s.arr){
       const v=a.k||0; tot+=v;
       if(v>topV){topV=v;top=a;}
-      if(a.ip || (typeof a.age==='number'&&a.age<=23)) fut+=v;
-      else if(!a.ip && typeof a.age==='number' && a.age>=27) now+=v;
+      const age=typeof a.age==='number'?a.age:null;
+      if(a.ip || (age!==null && age<=22 && v<2500)) fut+=v;   // picks + unproven youth (upside, not producing)
+      else if(!a.ip && age!==null && age>=27) now+=v;          // aging vets (produce now, declining)
+      else core+=v;                                            // prime + young studs — serve both windows
     }
     if(tot<=0) continue;
-    const tilt = (fut/tot)>0.55?'future':(now/tot)>0.55?'now':'balanced';
+    const tilt = (fut/tot)>0.55?'future':(now/tot)>0.55?'now':'core';
     const topN = top?top.n:'this package';
     let ok,msg;
     if(w==='contender'){
-      if(tilt==='now'){ok=true; msg=`proven win-now value (${topN}) — fits your window.`;}
-      else if(tilt==='future'){ok=false; msg=`picks/youth (${topN}) — leans against a win-now window.`;}
-      else{ok=null; msg=`a balanced return; the win-now pieces are what serve your window.`;}
+      if(tilt==='future'){ok=false; msg=`picks/unproven youth (${topN}) — light on win-now value for your window.`;}
+      else if(tilt==='now'){ok=true; msg=`proven win-now value (${topN}) — fits your window.`;}
+      else{ok=true; msg=`productive core (${topN}) — fits your window.`;}
     } else {
-      if(tilt==='future'){ok=true; msg=`youth/picks (${topN}) — fits your rebuild timeline.`;}
-      else if(tilt==='now'){ok=false; msg=`aging win-now value (${topN}) — against a rebuild timeline.`;}
-      else{ok=null; msg=`a mixed return; the youth/picks are what serve your build.`;}
+      if(tilt==='now'){ok=false; msg=`aging win-now value (${topN}) — against a rebuild timeline.`;}
+      else if(tilt==='future'){ok=true; msg=`youth/picks (${topN}) — fits your rebuild timeline.`;}
+      else{ok=null; msg=`young/prime core (${topN}) — reasonable for a rebuild.`;}
     }
     const mark = ok===true?'<span style="color:#6ee7b7">✓</span>':ok===false?'<span style="color:#fcd34d">⚠</span>':'<span style="color:#718096">•</span>';
     const wlab = w.charAt(0).toUpperCase()+w.slice(1);
