@@ -357,6 +357,7 @@ tr:hover td{background:#1a202c}
     </div>
   </div>
   <div id="verdict-area"></div>
+  <div id="gap-filler" style="margin-top:.5rem"></div>
 </div>
 
 <div id="panel-epa" class="panel">
@@ -920,7 +921,7 @@ function recalcTrade(){
   });
 
   const anyPlayers=totals.some(t=>t.arr.length>0);
-  if(!anyPlayers){document.getElementById('verdict-area').innerHTML='';return;}
+  if(!anyPlayers){document.getElementById('verdict-area').innerHTML='';renderGapFiller();return;}
 
   if(tradeTeams===2){
     // V4 adjusted totals — replace simple mod sums with adjusted values
@@ -979,6 +980,7 @@ function recalcTrade(){
       <div style="text-align:center;margin-bottom:.75rem">
         <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
         ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+        ${pct>3?`<div style="margin-top:7px"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}
       </div>
 
       <div class="breakdown-grid">
@@ -1087,6 +1089,74 @@ function recalcTrade(){
       </div>
       <button class="send-btn" onclick="sendPrompt('Evaluate this ${tradeTeams}-team dynasty trade: ${promptText}. Who wins?')">Ask Claude to evaluate ↗</button>`;
   }
+  if(gapFillerOpen) renderGapFiller();
+}
+
+// ── Gap-filler (on-demand) ───────────────────────────────────
+// Suggests the single asset that best evens an uneven 2-team trade. When a
+// Sleeper trade is loaded, candidates are limited to the light side's actual
+// roster (yours if you're light, the partner's if they are). Reads the existing
+// adjusted-trade math and only calls addAsset(); changes no values.
+let gapFillerOpen=false;
+function toggleGapFiller(){ gapFillerOpen=!gapFillerOpen; renderGapFiller(); recalcTrade(); }
+function gapNote(msg){ return `<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:10px 12px;font-size:11px;color:#718096">${msg}</div>`; }
+function gapFillerPool(light){
+  const inTrade=new Set([...sA,...sB,...sC,...sD].map(x=>x.n));
+  const sleeper=!!(typeof SLP!=='undefined'&&SLP.trade&&SLP.trade.withRid&&SLP.conn);
+  let pool=[];
+  if(sleeper){
+    const rid=light==='a'?SLP.conn.rosterId:SLP.trade.withRid;
+    const roster=slpRosterById(rid);
+    if(roster){
+      const byName={}; COMP.forEach(p=>{byName[p.n]=p;});
+      for(const pid of (roster.players||[])){
+        const dn=SLP.match?SLP.match[pid]:null;
+        if(dn&&byName[dn]){ const a=ASSETS.find(x=>x.n===dn); if(a) pool.push(a); }
+      }
+      for(const pk of slpPickInventory(roster.roster_id)){
+        const nm=pk.season+' '+slpOrd(pk.round);
+        const a=ASSETS.find(x=>x.n===nm); if(a) pool.push(a);
+      }
+    }
+  } else {
+    pool=ASSETS.slice();
+  }
+  return {pool:pool.filter(a=>!inTrade.has(a.n)), sleeper};
+}
+function renderGapFiller(){
+  const host=document.getElementById('gap-filler'); if(!host) return;
+  if(!gapFillerOpen){ host.innerHTML=''; return; }
+  if(tradeTeams!==2){ host.innerHTML=gapNote('Gap-filler works on 2-team trades for now.'); return; }
+  const v4=calcAdjustedSide(sA,sB); const mA=v4.sideA.total||0, mB=v4.sideB.total||0;
+  if(mA<=0||mB<=0){ host.innerHTML=gapNote('Add players to both sides, then reopen to see what bridges the gap.'); return; }
+  const gap=Math.abs(mA-mB), pct=Math.round(gap/Math.max(mA,mB,1)*100);
+  if(pct<=3){ host.innerHTML=gapNote('This trade is already essentially even — nothing to bridge.'); return; }
+  const light=mA<mB?'a':'b';
+  const {pool,sleeper}=gapFillerPool(light);
+  let cands=pool;
+  if(!sleeper) cands=pool.filter(a=>{const k=a.k||0; return k>=gap*0.35 && k<=gap*2.2;});
+  if(!cands.length){ host.innerHTML=gapNote(sleeper?`No available assets on the light side's roster to bridge with.`:`No comparable assets found near a ${gap.toLocaleString()} gap.`); return; }
+  const scored=cands.map(a=>{
+    const v=light==='a'?calcAdjustedSide([...sA,a],sB):calcAdjustedSide(sA,[...sB,a]);
+    const nmA=v.sideA.total, nmB=v.sideB.total, ng=Math.abs(nmA-nmB);
+    return {a, ng, np:Math.round(ng/Math.max(nmA,nmB,1)*100), added:(light==='a'?nmA-mA:nmB-mB)};
+  }).sort((x,y)=>x.ng-y.ng).slice(0,4);
+  const lightName=light==='a'?'Team A':'Team B';
+  const whose=sleeper?(light==='a'?'your roster':'their roster'):'the market';
+  const best=scored[0];
+  const header=best.np<=3
+    ? `<b style="color:#6ee7b7">${lightName}</b> is ~${gap.toLocaleString()} light — any of these evens it${sleeper?` from ${whose}`:''}:`
+    : `No single asset fully evens it — closest gets <b>${lightName}</b> to within ~${best.np}%${sleeper?` (${whose})`:''}:`;
+  const chips=scored.map(s=>{
+    const even=s.np<=3;
+    const label=`${s.a.n} <span style="color:#718096">+${Math.round(s.added).toLocaleString()} → ${even?'even ✓':'within '+s.np+'%'}</span>`;
+    return `<button onclick="addAsset('${light}','${s.a.n.replace(/'/g,"\\'")}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;border:1px solid ${even?'#2f6f57':'#2d3748'};background:#1a202c;color:#e2e8f0;cursor:pointer;margin:0 5px 5px 0">${label}</button>`;
+  }).join('');
+  host.innerHTML=`<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:11px 13px">
+    <div style="font-size:11px;color:#a0aec0;margin-bottom:7px">${header}</div>
+    <div>${chips}</div>
+    ${sleeper?'':'<div style="font-size:9.5px;color:#4a5568;margin-top:6px">Tip: load a Sleeper trade to limit suggestions to a real roster.</div>'}
+  </div>`;
 }
 
 function setTradeTeams(n){
