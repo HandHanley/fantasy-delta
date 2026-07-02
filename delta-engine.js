@@ -4049,7 +4049,7 @@ function buildReadHTML(p){
     const dc=(typeof DRAFT_PICKS!=='undefined'&&DRAFT_PICKS[p.n])||null;
     const cap=!dc?null:dc.p<=10?`top-10 capital (pick ${dc.p})`:dc.r===1?`first-round capital (pick ${dc.p})`
       :dc.r===2?`second-round capital`:dc.r===3?`third-round capital`:`Day-3 capital (round ${dc.r})`;
-    core=`No NFL production yet — nothing demonstrated to value him on.`;
+    if(!authoredCore(p)) core=`No NFL production yet — nothing demonstrated to value him on.`;
     math=cap
       ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but at ${age?age.toFixed(0):'his age'} the price is a bet on landing spot, not a résumé.`
       : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
@@ -4076,7 +4076,9 @@ function buildReadHTML(p){
   } else if(verdict==='sell'||verdict==='strong sell'){
     clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
     if(Math.abs(rankMv-rankMk)<=1){
-      math=`Model and market both land ${pos}${rankMv}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
+      math=absPct>=15
+        ? `Model and market agree on ${pos}${rankMv}, but the market pays ${absPct}% more for that rank than the model would. Sell only into an overpay.`
+        : `Model and market both land ${pos}${rankMv}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
       clr='#cbd5e0';
     } else {
       math=pick(seed,[
