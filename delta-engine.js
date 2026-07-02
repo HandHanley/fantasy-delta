@@ -2572,7 +2572,7 @@ const CONTRACTS=[
   {n:'Kyle Monangai',pos:'RB',team:'CHI',aav:1082035,total:4328140,end:2028,note:'Cheap rookie deal through 2028 — CHI ascending RB'},
   {n:'Matthew Golden',pos:'WR',team:'GB',aav:4393835,total:17575338,end:2029,note:'Fully guaranteed rookie deal through 2029 — locked up'},
   {n:'David Montgomery',pos:'RB',team:'HOU',aav:8250000,total:16500000,end:2027,note:'2yr/$16.5M — HOU RB1 committed through 2027'},
-  {n:'Tyrone Tracy',pos:'RB',team:'NYG',aav:1076588,total:4306352,end:2027,note:'Cheap rookie deal through 2027 — NYG ascending RB'},
+  {n:'Tyrone Tracy',pos:'RB',team:'NYG',aav:1076588,total:4306352,end:2027,note:'Cheap rookie deal through 2027 — NYG committee back'},
   {n:'Jameson Williams',pos:'WR',team:'DET',aav:26666667,total:80000000,end:2029,note:'Major extension — locked through 2029 as DET WR2'},
   {n:'Oronde Gadsden',pos:'TE',team:'LAC',aav:1143509,total:4574036,end:2028,note:'Cheap rookie deal through 2028 — ascending LAC TE1'},
   {n:'Brock Purdy',pos:'QB',team:'SF',aav:53000000,total:265000000,end:2030,note:'Franchise QB locked through 2030'},
@@ -3761,6 +3761,7 @@ async function loadPlayerContracts() {
     // Add entries here ONLY when Steve has personally confirmed the correct end year.
     // Everything else comes from the pipeline automatically.
     const CONTRACT_OVERRIDES = {
+      'Jahmyr Gibbs': 2027,          // 5th-year option exercised — through 2027 (pipeline says 2026)
       'Josh Allen':    2030,  // year_signed=2025 new deal — OTC correct, no +1 needed (handled by rule below too)
       'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
     };
@@ -3869,7 +3870,7 @@ function dynastySignal(c){
   const yrsLeft=c.end-2025; // inclusive of current 2026 season
   if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
-  if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Buy window closing · '+yrsLeft+' yrs left</span>';
+  if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
   return'<span style="color:#718096;font-size:10px">'+c.note+'</span>';
 }
 
@@ -4051,7 +4052,7 @@ function buildReadHTML(p){
       :dc.r===2?`second-round capital`:dc.r===3?`third-round capital`:`Day-3 capital (round ${dc.r})`;
     if(!authoredCore(p)) core=`No NFL production yet — nothing demonstrated to value him on.`;
     math=cap
-      ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but at ${age?age.toFixed(0):'his age'} the price is a bet on landing spot, not a résumé.`
+      ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but the price is a bet on that capital converting — there's no résumé behind it yet.`
       : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
     clr='#718096';
   } else if(verdict==='strong buy'||verdict==='buy'){
