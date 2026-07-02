@@ -4016,15 +4016,19 @@ function buildReadHTML(p){
         `Not much on tape to price yet: demonstrated production ranks ${pos}${rankDs}`+(negEv[0]?` and ${negEv[0]}`:'')+`.`,
       ]);
     } else if(tier==='elite'){
+      // no catchphrases at this tier — compose entirely from the player's own
+      // evidence; only clause ORDER varies by seed, so no phrase can repeat
+      // recognizably across adjacent players
+      const lead=posEv.length?joinEv(posEv):`a ${proof} demonstrated base`;
       core=pick(seed,[
-        `${proof==='elite'?'Elite':'Front-line'} ${posTxt}${posEv.length?' — '+joinEv(posEv):''}${negEv[0]?`; the flag is ${negEv[0]}`:''}.`,
-        `As ${proof==='elite'?'proven as the position gets':'solid a profile as they come'}${posEv.length?': '+joinEv(posEv):''}${negEv[0]?`, though ${negEv[0]}`:''}.`,
-        `${posEv.length?joinEv(posEv).charAt(0).toUpperCase()+joinEv(posEv).slice(1):'A '+proof+' demonstrated profile'} — top-of-position stuff${negEv[0]?`, with ${negEv[0]} the one concern`:''}.`,
+        `${lead.charAt(0).toUpperCase()+lead.slice(1)}${negEv[0]?`; ${negEv[0]} is the flag`:''}.`,
+        `${negEv[0]?negEv[0].charAt(0).toUpperCase()+negEv[0].slice(1)+' cuts against ':'Nothing currently cuts against '}${posEv.length?lead:'the profile'}.`,
       ]);
     } else if(tier==='starter'){
+      const lead=posEv.length?joinEv(posEv):`a ${proof} ${pos}${rankDs} demonstrated base`;
       core=pick(seed,[
-        `A ${proof} ${pos}${rankDs} demonstrated profile${posEv.length?' built on '+joinEv(posEv):''}${negEv[0]?`; ${negEv[0]}`:''}.`,
-        `${posEv.length===2?joinEv(posEv).charAt(0).toUpperCase()+joinEv(posEv).slice(1)+' back a':'A'} ${proof} starter profile${posEv.length===1?' anchored by '+posEv[0]:''}${negEv[0]?`, against ${negEv[0]}`:''}.`,
+        `${lead.charAt(0).toUpperCase()+lead.slice(1)}${negEv[0]?`, against ${negEv[0]}`:''}.`,
+        `Demonstrated production ranks ${pos}${rankDs}${posEv.length?' on '+lead:''}${negEv[0]?`; ${negEv[0]}`:''}.`,
       ]);
     } else if(tier==='fringe'){
       core=pick(seed,[
