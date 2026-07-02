@@ -3955,6 +3955,62 @@ function authoredCore(p){
 function readSeed(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return h;}
 const pick=(seed,arr)=>arr[seed%arr.length];
 
+// ── SCHEME / SYSTEM CONTEXT ─────────────────────────────────────────────────
+// Shared explainer for the Offensive System Score: what the number means, the
+// exact projection impact (mirrors calcProj's d_sys/d_oc tables, incl. the
+// proven-producer softening), and OC-change context. Single source for the
+// popup and the full player card so the two can never disagree.
+function explainSystem(p){
+  if(p.sys==null) return null;
+  const pos=p.pos||p.p||'WR', isQB=pos==='QB';
+  const e={s:p.sys, c:(gs(p.t)||{}).c ?? 0.95};
+  const provenThreshold = pos==='WR'?13.0:pos==='TE'?12.0:pos==='RB'?15.0:22.0;
+  const provenPPG25 = pos==='WR'?15.0:pos==='TE'?13.0:pos==='RB'?16.0:24.0;
+  const proven = (p.base||0)>=provenThreshold || (p.ppg25||0)>=provenPPG25;
+  const adjCont = proven && e.c<0.70 ? e.c+(0.70-e.c)*0.60 : e.c;
+  const adjSys  = proven && e.s<55 ? Math.min(e.s+10,55) : e.s;
+  const dSys=isQB?(adjSys>=70?.01:adjSys>=55?0:adjSys>=40?-.03:-.07)
+                 :(adjSys>=70?.04:adjSys>=55?.01:adjSys>=40?-.04:-.10);
+  const ocFranchise=typeof COMP_EXEMPT!=='undefined'&&COMP_EXEMPT.has(p.n);
+  const dOc=isQB?(adjCont>=.95?.01:adjCont>=.70?0:adjCont>=.50?-.04:adjCont>=.30?-.07:-.11)
+      :pos==='RB'?(adjCont>=.95?.01:adjCont>=.70?.01:adjCont>=.50?-.02:adjCont>=.30?-.03:-.05)
+      :ocFranchise?(adjCont>=.95?.03:adjCont>=.70?.01:adjCont>=.50?-.02:adjCont>=.30?-.04:-.06)
+                  :(adjCont>=.95?.03:adjCont>=.70?.01:adjCont>=.50?-.04:adjCont>=.30?-.08:-.12);
+  const tier=p.sys>=70?'a strong offensive environment':p.sys>=55?'a league-average environment'
+            :p.sys>=40?'a below-average environment':'a poor offensive environment';
+  return {sys:p.sys,tier,proven,softened:proven&&(e.s<55||e.c<0.70),dSys,dOc,net:dSys+dOc,och:!!p.och,oc:p.oc||''};
+}
+function buildSchemeHTML(p){
+  const x=explainSystem(p); if(!x) return '';
+  const sysClr=p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
+  const fp=v=>`${v>0?'+':''}${(v*100).toFixed(0)}%`;
+  const netClr=x.net>0?'#6ee7b7':x.net<0?'#fc8181':'#718096';
+  const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
+    +(x.softened?` <span style="color:#718096">(softened — proven producers carry their role through scheme change)</span>`:'');
+  const ocCtx=x.och
+    ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
+    : '';
+  return '<div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+    +'<span style="font-size:10px;color:#718096">Offensive System Score <span style="color:#4a5568">· league median ≈ 60</span></span>'
+    +`<span style="font-size:15px;font-weight:800;color:${sysClr}">${p.sys}</span></div>`
+    +`<div style="font-size:10px;color:#a0aec0">${p.sys}/100 — ${x.tier} (coordinator quality, scheme fit, role clarity).</div>`
+    +`<div style="font-size:10px;color:#a0aec0;margin-top:3px">${applied}</div>`
+    +ocCtx
+    +'</div>';
+}
+// receptions/game with a game-log fallback so RBs outside the pipeline's
+// coverage still get a format-sensitivity readout
+function recPgOf(p){
+  const r=REC_PG[p.n]||0; if(r>0) return r;
+  const arr=(typeof GAMELOGS!=='undefined')&&GAMELOGS&&GAMELOGS[p.n];
+  if(!Array.isArray(arr)||!arr.length) return 0;
+  const latest=Math.max(...arr.map(g=>g.s||0));
+  const gs=arr.filter(g=>g&&g.s===latest&&g.rec!=null);
+  if(gs.length>=6) return gs.reduce((s,g)=>s+(g.rec||0),0)/gs.length;
+  return 0;
+}
+
 function buildReadHTML(p){
   const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
   if(!mk||ds==null) return '';

@@ -339,7 +339,15 @@ function buildStartProfileCard(p) {
 // ── Opportunity ───────────────────────────────────────────────────────────────
 function buildOpportunityHTML(p) {
   const oppSc = getOppScore(p.n, p.pos);
-  if (!oppSc) return '';
+  if (!oppSc) {
+    // QBs (and anyone ungraded for opportunity) still get the scheme context —
+    // popup ⊆ full card: nothing shown in the popup may be missing here.
+    if (p.sys == null) return '';
+    return `<div class="card">
+      <div class="card-label" style="margin-bottom:8px">Offense / Scheme</div>
+      ${buildSchemeHTML(p)}
+    </div>`;
+  }
   const st25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
   const isWR = p.pos === 'WR' || p.pos === 'TE';
   const scC = oppScoreColor ? oppScoreColor(oppSc) : (oppSc>=88?'#6ee7b7':oppSc>=70?'#7dd3fc':oppSc>=55?'#fcd34d':'#fc8181');
@@ -384,11 +392,9 @@ function buildOpportunityHTML(p) {
       <div style="font-size:32px;font-weight:800;line-height:1;color:${scC}">${oppSc}</div>
     </div>
     ${usageRows}
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a202c;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:10px;color:#718096">Offensive System Score</span>
-      <span style="font-size:14px;font-weight:700;color:${sysClr}">${p.sys}</span>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a202c">
+      ${buildSchemeHTML(p)}
     </div>
-    ${p.och ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px">⚠ Coordinator change — model applies a discount until new scheme shows in data</div>` : ''}
   </div>`;
 }
 

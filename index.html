@@ -1496,7 +1496,7 @@ function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
   const hsEl = document.getElementById('dd-headshot');
-  const hsUrl = HEADSHOTS[p.n];
+  const hsUrl = (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_350');
   if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
   else { hsEl.style.display='none'; hsEl.src=''; }
   document.getElementById('dd-card').dataset.player=p.n;
@@ -1603,12 +1603,15 @@ function renderDeck(p){
   const isRookieSeason = !p.ppg24 && !p.ppg23;
   
   // Format sensitivity
-  const rpg=REC_PG[p.n]||0;
+  const rpg=recPgOf(p);   // pipeline rec/g with a game-log fallback (covers RBs)
   const posAvg=REC_PG_POS_AVG[p.p||p.pos]||3;
   const fmtDiff=rpg-posAvg;
+  const fmtDir=fmtDiff>0?'PPR gains':'standard favored';
+  // bands scale to the position's average rec/g — an RB at half his position's
+  // volume is just as format-skewed as a WR at half of his
   const fmtSensitivity=rpg>0?(
-    Math.abs(fmtDiff)>3?`High (${rpg.toFixed(1)} rec/g — ${fmtDiff>0?'PPR gains':'standard favored'})`:
-    Math.abs(fmtDiff)>1.5?`Moderate (${rpg.toFixed(1)} rec/g)`:
+    Math.abs(fmtDiff)>posAvg*0.9?`High (${rpg.toFixed(1)} rec/g — ${fmtDir})`:
+    Math.abs(fmtDiff)>posAvg*0.45?`Moderate (${rpg.toFixed(1)} rec/g — ${fmtDir})`:
     `Low (${rpg.toFixed(1)} rec/g — format-neutral)`
   ):null;
 
@@ -1634,15 +1637,12 @@ function renderDeck(p){
       // Workhorse grade, but scheme context still matters — render a compact
       // Offense / scheme block so System Score etc. aren't lost.
       if (!oppSc || !st25) {
-        const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
         const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
         const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
         return '<div class="dd-section">'
-          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">'
-          +'<div class="dd-section-label" style="margin-bottom:0">Offense / Scheme</div>'
-          +'<div style="font-size:22px;font-weight:800;color:'+sysColor+'">'+p.sys+'</div></div>'
-          +(ocLine?'<div style="font-size:10px;color:#718096">'+ocLine+'</div>':'')
+          +'<div class="dd-section-label">Offense / Scheme</div>'
+          +buildSchemeHTML(p)
           +tsLine+fmtLine+'</div><div class="dd-divider"></div>';
       }
       const isWR  = p.pos==='WR'||p.pos==='TE';
@@ -1688,10 +1688,7 @@ function renderDeck(p){
       const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
       const schemeBlock =
         '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid #1f2937">'
-        +'<div style="display:flex;justify-content:space-between;align-items:baseline">'
-        +'<span style="font-size:10px;color:#718096">Offense / scheme</span>'
-        +'<span style="font-size:13px;font-weight:700;color:'+sysColor+'">System '+p.sys+'</span></div>'
-        +(ocLine?'<div style="margin-top:3px;font-size:10px;color:#718096">'+ocLine+'</div>':'')
+        +buildSchemeHTML(p)
         +tsLine+fmtLine+'</div>';
       return '<div class="dd-section">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
@@ -1740,7 +1737,7 @@ function renderDeck(p){
         return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid #1f2937">'
           +'<div style="display:flex;align-items:center;gap:8px">'
           +'<span style="font-size:10px;color:#4a5568;width:18px">'+p2.pos+'</span>'
-          +'<span style="font-size:12px;font-weight:500">'+p2.n+'</span>'
+          +'<span onclick="openDeck(\''+p2.n.replace(/'/g,"\\'")+'\')" style="font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px">'+p2.n+'</span>'
           +'</div>'
           +'<div style="display:flex;align-items:center;gap:10px">'
           +tag
