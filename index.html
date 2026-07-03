@@ -358,6 +358,19 @@ tr:hover td{background:#1a202c}
   </div>
   <div id="verdict-area"></div>
   <div id="gap-filler" style="margin-top:.5rem"></div>
+
+  <div style="margin-top:1.25rem;border-top:1px solid #1a202c;padding-top:1rem">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;color:#a0aec0;letter-spacing:.06em">⚖ PLAYER COMPARE</span>
+      <input id="cmp-a" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
+        style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
+      <span style="color:#4a5568;font-size:11px">vs</span>
+      <input id="cmp-b" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()"
+        style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
+    </div>
+    <datalist id="cmp-names"></datalist>
+    <div id="cmp-out" style="margin-top:.85rem"></div>
+  </div>
 </div>
 
 <div id="panel-epa" class="panel">
@@ -1090,6 +1103,72 @@ function recalcTrade(){
       </div>`;
   }
   if(gapFillerOpen) renderGapFiller();
+}
+
+// ── Player Compare (v1: two players, winner pips, model-value edge) ─────────
+// Lives with the trade calc because "should I move X for Y" is when you want
+// it. Deliberately NO second verdict engine — the model-value edge is the
+// summary; buy/sell stays the trade calc's job.
+function cmpFill(){
+  const dl=document.getElementById('cmp-names');
+  if(!dl||dl.children.length||typeof COMP==='undefined') return;
+  dl.innerHTML=COMP.map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'">').join('');
+}
+function cmpFind(id){
+  const v=(document.getElementById(id)||{}).value||'';
+  return COMP.find(p=>p.n===v)||null;
+}
+function renderCompare(){
+  const host=document.getElementById('cmp-out'); if(!host) return;
+  const a=cmpFind('cmp-a'), b=cmpFind('cmp-b');
+  if(!a||!b){ host.innerHTML=''; return; }
+  if(a.n===b.n){ host.innerHTML='<div style="font-size:11px;color:#718096">Pick two different players.</div>'; return; }
+
+  const glA=glOf(a), glB=glOf(b);
+  const ctA=CONTRACTS.find(c=>c.n===a.n), ctB=CONTRACTS.find(c=>c.n===b.n);
+  const ctTxt=(p,ct)=>ct?String(ct.end)+(fifthYearNote(p,ct)?' <span style="color:#7dd3fc" title="'+fifthYearNote(p,ct)+'">+opt</span>':''):null;
+  const rk=p=>isNFLRookie(p);   // engine's rookie check (handles zero-seeded rookies too)
+
+  // rows: [label, displayA, displayB, numA, numB, higherWins]
+  const rows=[
+    ['DELTA Score', a.dsScore, b.dsScore, a.dsScore, b.dsScore, true],
+    ['Start Profile',
+      glA?glA.hit+'% hit · '+glA.elite+'% elite <span style="color:#4a5568">('+glA.g+' gm)</span>':null,
+      glB?glB.hit+'% hit · '+glB.elite+'% elite <span style="color:#4a5568">('+glB.g+' gm)</span>':null,
+      glA?glA.hit:null, glB?glB.hit:null, true],
+    ['Age', a.a.toFixed(1), b.a.toFixed(1), a.a, b.a, false],
+    ['Contract', ctTxt(a,ctA), ctTxt(b,ctB), ctA?ctA.end:null, ctB?ctB.end:null, true],
+    ['Projected PPG', getAdjProj(a).toFixed(1), getAdjProj(b).toFixed(1), getAdjProj(a), getAdjProj(b), true],
+    ['2025 PPG', rk(a)?null:(a.ppg25||0).toFixed(1), rk(b)?null:(b.ppg25||0).toFixed(1), rk(a)?null:a.ppg25, rk(b)?null:b.ppg25, true],
+    [(a.pos==='RB'||b.pos==='RB')?'Alpha / Workhorse':'Alpha Score',
+      a.oppSc!=null?a.oppSc:null, b.oppSc!=null?b.oppSc:null, a.oppSc, b.oppSc, true],
+  ];
+  const pip='<span style="color:#6ee7b7;margin-right:4px">\u25cf</span>';
+  const cell=(disp,me,other,hi)=>{
+    if(disp==null) return '<span style="color:#4a5568">\u2014</span>';
+    const win=me!=null&&other!=null&&me!==other&&((hi&&me>other)||(!hi&&me<other));
+    return (win?pip:'')+disp;
+  };
+  const body=rows.filter(r=>r[1]!=null||r[2]!=null).map(r=>
+    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding:5px 0;border-bottom:0.5px solid #151d2b;font-size:11.5px;align-items:baseline">'
+    +'<span style="color:#718096;font-size:10px">'+r[0]+'</span>'
+    +'<span>'+cell(r[1],r[3],r[4],r[5])+'</span>'
+    +'<span>'+cell(r[2],r[4],r[3],r[5])+'</span></div>'
+  ).join('');
+
+  const mvA=mvAsset(a), mvB=mvAsset(b);
+  const lead=mvA===mvB?null:(mvA>mvB?a:b);
+  const edge=lead?Math.round(Math.abs(mvA-mvB)/Math.min(mvA,mvB)*100):0;
+  const name=(p,id)=>'<span onclick="openDeckNewTab(event,\''+p.n.replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px;font-weight:700;font-size:12px">'+p.n+' \u2197</span>'
+    +'<div style="font-size:9px;color:#718096">'+p.pos+' \u00b7 '+p.t+'</div>';
+  host.innerHTML=
+    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding-bottom:6px">'
+    +'<span></span><div>'+name(a)+'</div><div>'+name(b)+'</div></div>'
+    +body
+    +'<div style="margin-top:9px;font-size:11.5px;color:#a0aec0">Model value: '
+    +mvA.toLocaleString()+' vs '+mvB.toLocaleString()
+    +(lead?' \u2014 <b style="color:#6ee7b7">'+lead.n+' +'+edge+'%</b>':' \u2014 dead even')
+    +'<span style="color:#4a5568;font-size:9.5px"> \u00b7 model\u2019s asset pricing at your league settings \u2014 the trade calc renders the verdict</span></div>';
 }
 
 // ── Gap-filler (on-demand) ───────────────────────────────────
