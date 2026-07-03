@@ -29,6 +29,15 @@ tr:hover td{background:#1a202c}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
+  /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
+  .tc-row{flex-wrap:wrap}
+  .tc-row>span{width:100%}
+  .tc-wrap{flex:1;min-width:0}
+  .tc-btn{flex:1;padding:5px 8px;font-size:10px;white-space:nowrap}
+  /* compare: label on its own line, then [A] vs [B] across one row */
+  .cmp-label{width:100%}
+  .cmp-in{max-width:none;min-width:0}
+
   .trade-grid{grid-template-columns:1fr}
   body{padding:.5rem}
   .tabs{gap:3px}
@@ -311,14 +320,14 @@ tr:hover td{background:#1a202c}
   </div>
 
   <!-- Team count toggle -->
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+  <div class="tc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
     <span style="font-size:11px;color:#718096;font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
     <div class="tc-wrap">
       <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2 Teams</button>
       <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3 Teams</button>
       <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4 Teams</button>
     </div>
-    <button onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer">Clear all</button>
+    <button class="tc-clear" onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer;white-space:nowrap">Clear all</button>
   </div>
 
   <div id="trade-mode-note" style="font-size:11px;color:#4a6080;margin-bottom:.75rem;display:none;padding:8px 12px;background:#0d1927;border-radius:6px;border:1px solid #1e3a5f">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
@@ -360,12 +369,12 @@ tr:hover td{background:#1a202c}
   <div id="gap-filler" style="margin-top:.5rem"></div>
 
   <div style="margin-top:1.25rem;border-top:1px solid #1a202c;padding-top:1rem">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:11px;font-weight:700;color:#a0aec0;letter-spacing:.06em">⚖ PLAYER COMPARE</span>
-      <input id="cmp-a" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
+    <div class="cmp-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span class="cmp-label" style="font-size:11px;font-weight:700;color:#a0aec0;letter-spacing:.06em">⚖ PLAYER COMPARE</span>
+      <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
         style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
       <span style="color:#4a5568;font-size:11px">vs</span>
-      <input id="cmp-b" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()"
+      <input id="cmp-b" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()"
         style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
     </div>
     <datalist id="cmp-names"></datalist>
@@ -426,14 +435,14 @@ tr:hover td{background:#1a202c}
       <option value="name">Sort: Name</option>
     </select>
   </div>
-  <table>
+  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table>
     <thead><tr>
       <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th>
       <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer">Yrs Left</th>
       <th>Status</th><th data-tip="DELTA's read on dynasty contract outlook. Long-term deals for ascending players score well; expensive contracts near expiry score lower.">Dynasty Signal</th>
     </tr></thead>
     <tbody id="contracts-body"></tbody>
-  </table>
+  </table></div>
   <div style="margin-top:12px;font-size:10px;color:#4a5568">
     All 32 NFL teams loaded — full contract coverage complete.
     🔒 Locked Up = 4+ years remaining · ✓ Stable = 3 years · 🔴 Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
