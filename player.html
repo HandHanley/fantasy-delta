@@ -101,7 +101,7 @@ function buildHeroHTML(p) {
     : vt === 'hold' ? '#cbd5e0' : vt.includes('strong sell') ? '#fca5a5' : '#fc8181';
   const mv = mvAsset(p);
   const adjP = getAdjProj(p);
-  const hs = (typeof HEADSHOTS !== 'undefined') && (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_640');
+  const hs = (typeof HEADSHOTS !== 'undefined') && HEADSHOTS[p.n];
   const hsHtml = hs
     ? `<img class="hero-hs" src="${hs}" alt="${p.n}" onerror="this.outerHTML='<div class=hero-ph>👤</div>'">`
     : `<div class="hero-ph">👤</div>`;
@@ -133,6 +133,22 @@ function buildHeroHTML(p) {
 
 // ── DELTA Score Arc ──────────────────────────────────────────────────────────
 function buildDSTrajectoryHTML(p) {
+  if (isNFLRookie(p)) {
+    // A rookie's score is a draft-capital prior — there is no prior season to
+    // estimate and no basis to roll one forward. Fabricating a year-2 score
+    // from a conservative seed reads as a bust call; the honest display is
+    // the current prior and a note that the trajectory unlocks with real games.
+    return `<div class="card">
+      <div class="card-label" style="margin-bottom:8px">DELTA Score Trajectory</div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font-size:26px;font-weight:800;color:${dsColor(p.dsScore)}">${p.dsScore}</span>
+        <span style="font-size:10px;color:#718096">2025 — draft-capital prior</span>
+      </div>
+      <div style="font-size:9.5px;color:#4a5568;margin-top:8px;line-height:1.5">
+        Rookie — no NFL seasons to chart. The score is a capital-based prior; the trajectory unlocks once real games replace it.
+      </div>
+    </div>`;
+  }
   const ds = p.dsScore;
   if (ds == null) return '';
   const pos = p.pos || p.p || 'WR';

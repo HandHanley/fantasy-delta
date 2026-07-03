@@ -1575,9 +1575,15 @@ function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
   const hsEl = document.getElementById('dd-headshot');
-  const hsUrl = (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_640');
-  if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
-  else { hsEl.style.display='none'; hsEl.src=''; }
+  const hsUrl = HEADSHOTS[p.n];
+  if (hsUrl) {
+    // clear the previous player's photo immediately — the browser otherwise
+    // keeps painting the old bitmap until the new src finishes loading
+    hsEl.src=''; hsEl.style.opacity='0'; hsEl.style.display='block';
+    hsEl.onload=()=>{ hsEl.style.opacity='1'; };
+    hsEl.src=hsUrl;
+  }
+  else { hsEl.style.display='none'; hsEl.src=''; hsEl.onload=null; }
   document.getElementById('dd-card').dataset.player=p.n;
   // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
