@@ -1491,6 +1491,7 @@ function showTab(id,el){
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
   if(id==='contracts')renderContracts();
+  if(id==='prospects')renderProspects();   // default to ALL instead of blank
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
