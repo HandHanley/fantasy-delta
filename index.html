@@ -1496,7 +1496,7 @@ function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
   const hsEl = document.getElementById('dd-headshot');
-  const hsUrl = (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_350');
+  const hsUrl = (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_640');
   if (hsUrl) { hsEl.src=hsUrl; hsEl.style.display='block'; }
   else { hsEl.style.display='none'; hsEl.src=''; }
   document.getElementById('dd-card').dataset.player=p.n;
@@ -1511,7 +1511,8 @@ function renderDeck(p){
   });
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
-  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}</span>`:'<span style="color:#4a5568">No contract data</span>';
+  const fy=ct?fifthYearNote(p,ct):'';
+  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}${fy?` <span style="color:#7dd3fc" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:#4a5568">No contract data</span>';
   const dp=DRAFT_PICKS[p.n];
   const dpClr=dp?(dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096'):'#718096';
   // Row 1: position · team · age · contract.  Row 2: college · draft capital.
@@ -1550,7 +1551,7 @@ function renderDeck(p){
   const qbEpaColor=v=>v>=0.15?'#6ee7b7':v>=0.05?'#7dd3fc':v>=-0.05?'#fcd34d':'#fc8181';
 
   // PPG arc bars
-  const ppgBars=ppgs.map(x=>{
+  const ppgBars=ppgs.filter(x=>x.v>0).map(x=>{
     const h=x.v>0?Math.max(8,Math.round((x.v/maxPpg)*44)):3;
     const c=x.v>=18?'#6ee7b7':x.v>=14?'#7dd3fc':x.v>=10?'#fcd34d':x.v>0?'#fc8181':'#2d3748';
     return`<div style="display:flex;flex-direction:column;align-items:center;flex:1">
@@ -1640,9 +1641,12 @@ function renderDeck(p){
         const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
         const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
+        const qbOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:#fcd34d">· ⚠ new OC</span>' : '';
         return '<div class="dd-section">'
-          +'<div class="dd-section-label">Offense / Scheme</div>'
-          +buildSchemeHTML(p)
+          +'<div style="display:flex;justify-content:space-between;align-items:center">'
+          +'<div class="dd-section-label" style="margin-bottom:0">Offense / Scheme'+qbOc+'</div>'
+          +'<div style="font-size:18px;font-weight:800;color:'+sysColor+'">'+p.sys+'</div></div>'
+          +'<div style="font-size:9px;color:#4a5568;margin-top:2px">Full scheme breakdown on the player page</div>'
           +tsLine+fmtLine+'</div><div class="dd-divider"></div>';
       }
       const isWR  = p.pos==='WR'||p.pos==='TE';
@@ -1686,9 +1690,12 @@ function renderDeck(p){
       const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
       const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
       const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+      const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:#fcd34d">⚠ new OC</span>' : '';
       const schemeBlock =
         '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid #1f2937">'
-        +buildSchemeHTML(p)
+        +'<div style="display:flex;justify-content:space-between;align-items:baseline">'
+        +'<span style="font-size:10px;color:#718096">Offense / scheme'+skOc+'</span>'
+        +'<span style="font-size:13px;font-weight:700;color:'+sysColor+'">System '+p.sys+'</span></div>'
         +tsLine+fmtLine+'</div>';
       return '<div class="dd-section">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
@@ -1709,13 +1716,10 @@ function renderDeck(p){
     </div>
 
     <div class="dd-section">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-        <div class="dd-section-label" style="margin-bottom:0">${epaLabel} Arc</div>
-        ${p.epaTr?`<span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'#6ee7b7':p.epaTr==='down'?'#fc8181':'#718096'}">
-          ${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span>`:''}
-      </div>
+      <div class="dd-section-label">${epaLabel} Arc</div>
       ${epas.length?`<div class="dd-arc" style="height:52px">${epaBars}</div>`
         :'<div style="font-size:11px;color:#4a5568">No multi-year data</div>'}
+      ${p.epaTr&&epas.length?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'#6ee7b7':p.epaTr==='down'?'#fc8181':'#718096'}">${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span></div>`:''}
     </div>
 
     <div class="dd-divider"></div>
@@ -1737,7 +1741,7 @@ function renderDeck(p){
         return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid #1f2937">'
           +'<div style="display:flex;align-items:center;gap:8px">'
           +'<span style="font-size:10px;color:#4a5568;width:18px">'+p2.pos+'</span>'
-          +'<span onclick="openDeck(\''+p2.n.replace(/'/g,"\\'")+'\')" style="font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px">'+p2.n+'</span>'
+          +'<span onclick="openDeckNewTab(event,\''+p2.n.replace(/'/g,"\\'")+'\')" title="Open full profile in new tab" style="font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px">'+p2.n+' ↗</span>'
           +'</div>'
           +'<div style="display:flex;align-items:center;gap:10px">'
           +tag

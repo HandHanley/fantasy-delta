@@ -101,7 +101,7 @@ function buildHeroHTML(p) {
     : vt === 'hold' ? '#cbd5e0' : vt.includes('strong sell') ? '#fca5a5' : '#fc8181';
   const mv = mvAsset(p);
   const adjP = getAdjProj(p);
-  const hs = (typeof HEADSHOTS !== 'undefined') && HEADSHOTS[p.n];
+  const hs = (typeof HEADSHOTS !== 'undefined') && (HEADSHOTS[p.n]||'').replace('f_auto,q_auto','f_auto,q_auto,w_640');
   const hsHtml = hs
     ? `<img class="hero-hs" src="${hs}" alt="${p.n}" onerror="this.outerHTML='<div class=hero-ph>👤</div>'">`
     : `<div class="hero-ph">👤</div>`;
@@ -120,7 +120,7 @@ function buildHeroHTML(p) {
         <span class="badge bn">${p.pos}</span>
         <span>${team}</span>
         <span>Age ${p.a.toFixed(1)}</span>
-        ${ct ? `<span style="color:#718096">Thru ${ct.end}${ct.end<=2026?' ⚠':''}</span>` : ''}
+        ${ct ? `<span style="color:#718096">Thru ${ct.end}${ct.end<=2026?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
       </div>
       ${bgLine}
       <div class="hero-verdict">
@@ -415,6 +415,7 @@ function buildContractHTML(p) {
     </div>
     <div class="bdr-row"><span style="color:#718096">Status</span><span class="badge ${st.cls}">${st.label}</span></div>
     <div class="bdr-row"><span style="color:#718096">Expires</span><span>${ct.end}${ct.end<=2026?' ⚠':''}</span></div>
+    ${fifthYearNote(p,ct) ? `<div class="bdr-row"><span style="color:#718096">Option</span><span style="color:#7dd3fc;font-size:11px">${fifthYearNote(p,ct)}</span></div>` : ''}
     <div style="margin-top:8px">${dynastySignal(ct)}</div>
     ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
   </div>`;

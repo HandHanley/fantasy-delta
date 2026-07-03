@@ -1043,10 +1043,13 @@ function calcEPA(n,pos){
   let fl=false,fr=null;
   if(fld&&sc<fld.f){sc=fld.f;fl=true;fr=fld.r;}
   let tr='flat';
-  if(d.e25!==0&&(d.e24!==0||d.e23!==0)){
-    const prev=d.e24!==0?d.e24:d.e23;const diff=d.e25-prev;
-    if(pos==='QB'){if(diff>.05)tr='up';else if(diff<-.05)tr='down';}
-    else{if(diff>.20)tr='up';else if(diff<-.20)tr='down';}
+  // A trend badge requires THREE consecutive seasons moving the same direction
+  // with a meaningful total move — one down year off a career-best is not a
+  // trend (e.g. 1.46→2.10→1.90 must read flat, not down).
+  if(d.e25!==0&&d.e24!==0&&d.e23!==0){
+    const th=pos==='QB'?.05:.20;
+    if(d.e25>d.e24&&d.e24>d.e23&&(d.e25-d.e23)>th)tr='up';
+    else if(d.e25<d.e24&&d.e24<d.e23&&(d.e23-d.e25)>th)tr='down';
   }
   return{sc,raw:rawSc,fl,fr,tr,ef25:d.ef25||0,ef24:d.ef24||0,e25:d.e25||0,e24:d.e24||0,e23:d.e23||0,e22:d.e22||0};
 }
@@ -2419,7 +2422,7 @@ const CONTRACTS=[
   {n:'Woody Marks',pos:'RB',team:'HOU',aav:1300942,total:5203768,end:2028,note:'Cheap RB on 4yr rookie deal'},
   // ARIZONA CARDINALS
   {n:'Trey McBride',pos:'TE',team:'ARI',aav:19000000,total:76000000,end:2029,note:'Elite TE1 locked through 2029 — long-term buy'},
-  {n:'Marvin Harrison Jr.',pos:'WR',team:'ARI',aav:8843686,total:35374742,end:2028,note:'Locked as WR1 through 2028'},
+  {n:'Marvin Harrison Jr.',pos:'WR',team:'ARI',aav:8843686,total:35374742,end:2027,note:'Rookie deal through 2027'},
   {n:'Trey Benson',pos:'RB',team:'ARI',aav:1514902,total:6059606,end:2027,note:'Cheap rookie deal through 2027'},
   {n:'James Conner',pos:'RB',team:'ARI',aav:3000000,total:3000000,end:2026,note:'Walk year — final contract at ARI'},
   // CAROLINA PANTHERS
@@ -3537,6 +3540,12 @@ async function loadPlayerStats() {
         const st = (typeof PLAYER_STATS !== 'undefined') ? PLAYER_STATS[name] : null;
         const priorG = st ? (((st['2023']||{}).games||0) + ((st['2024']||{}).games||0)) : 0;
         if (v.y >= CUR_DRAFT_YR - 1 && priorG > 0) { rejected++; continue; }
+        // Parent/namesake guard (the other direction): the feed can also match a
+        // MUCH older player with the same name (Marvin Harrison Jr. ← the 1996
+        // Marvin Harrison). If a curated baked entry exists and the feed's year
+        // is 3+ off, the baked entry wins.
+        const baked = DRAFT_PICKS[name];
+        if (baked && Math.abs((v.y||0) - (baked.y||0)) > 3) { rejected++; continue; }
         DRAFT_PICKS[name] = { y: v.y, r: v.r, p: v.p }; n++;
       }
       if (n) console.log('[DELTA] ' + n + ' draft-capital entries from pipeline');
@@ -3762,6 +3771,7 @@ async function loadPlayerContracts() {
     // Everything else comes from the pipeline automatically.
     const CONTRACT_OVERRIDES = {
       'Jahmyr Gibbs': 2027,          // 5th-year option exercised — through 2027 (pipeline says 2026)
+      'Jameson Williams': 2029,      // extension signed — locked through 2029 (pipeline stale)
       'Josh Allen':    2030,  // year_signed=2025 new deal — OTC correct, no +1 needed (handled by rule below too)
       'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
     };
@@ -3782,7 +3792,13 @@ async function loadPlayerContracts() {
       // New 2025-2026 deals (Walker, Hall year_signed=2026) → no +1
       // Old extensions (Waddle year_signed=2024) → +1 applied
       const isVet = (c.aav || 0) >= 5;
-      const isOldExtension = isVet && (c.years || 0) > 1 && (c.year_signed || 0) < 2025;
+      // Rookie-deal exclusion: a contract signed in the player's own draft year
+      // is the rookie contract — OTC computes those correctly, and first-round
+      // rookie AAVs clear the $5M vet bar (MHJ 8.84), so without this check the
+      // vet+1 correction wrongly extends top rookie deals by a year.
+      const dpk = (typeof DRAFT_PICKS !== 'undefined') && DRAFT_PICKS[player.n];
+      const isRookieDeal = dpk && c.year_signed === dpk.y;
+      const isOldExtension = isVet && !isRookieDeal && (c.years || 0) > 1 && (c.year_signed || 0) < 2025;
       const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isOldExtension ? c.end_year + 1 : c.end_year);
 
       const existing = CONTRACTS.find(x => x.n === player.n);
@@ -3960,9 +3976,32 @@ const pick=(seed,arr)=>arr[seed%arr.length];
 // exact projection impact (mirrors calcProj's d_sys/d_oc tables, incl. the
 // proven-producer softening), and OC-change context. Single source for the
 // popup and the full player card so the two can never disagree.
+function isNFLRookie(p){
+  // no NFL production yet (seeded rookie projection) or drafted this cycle
+  const d=(typeof DRAFT_PICKS!=='undefined')&&DRAFT_PICKS[p.n];
+  return ((p.g25||0)===0&&(p.ppg25||0)>0)||(d&&d.y===2026);
+}
+// First-round rookie deals carry a team-option 5th year. We display guaranteed
+// years as-is (the option isn't exercised until it is), but surface that it
+// exists so a Bowers doesn't read as "2 years and done".
+function fifthYearNote(p,ct){
+  const d=(typeof DRAFT_PICKS!=='undefined')&&DRAFT_PICKS[p.n];
+  if(!d||d.r!==1||!ct||!ct.end) return '';
+  if(ct.end===d.y+3) return `5th-year option (${d.y+4}) available — team decision`;
+  return '';
+}
 function explainSystem(p){
   if(p.sys==null) return null;
   const pos=p.pos||p.p||'WR', isQB=pos==='QB';
+  if(isNFLRookie(p)){
+    // A rookie has no prior scheme — there is nothing for a coordinator change
+    // to disrupt, so no continuity penalty exists or is shown.
+    const tier=p.sys>=70?'a strong offensive environment':p.sys>=55?'a league-average environment'
+              :p.sys>=40?'a below-average environment':'a poor offensive environment';
+    const dS=isQB?(p.sys>=70?.01:p.sys>=55?0:p.sys>=40?-.03:-.07)
+                 :(p.sys>=70?.04:p.sys>=55?.01:p.sys>=40?-.04:-.10);
+    return {sys:p.sys,tier,proven:false,softened:false,dSys:dS,dOc:0,net:dS,och:false,oc:'',rookie:true};
+  }
   const e={s:p.sys, c:(gs(p.t)||{}).c ?? 0.95};
   const provenThreshold = pos==='WR'?13.0:pos==='TE'?12.0:pos==='RB'?15.0:22.0;
   const provenPPG25 = pos==='WR'?15.0:pos==='TE'?13.0:pos==='RB'?16.0:24.0;
@@ -3988,7 +4027,9 @@ function buildSchemeHTML(p){
   const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
     +(x.softened?` <span style="color:#718096">(softened — proven producers carry their role through scheme change)</span>`:'');
   const ocCtx=x.och
-    ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
+    ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px;line-height:1.5">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
+    : x.rookie
+    ? `<div style="font-size:10px;color:#718096;margin-top:6px">Rookie — no prior scheme, so no coordinator-continuity penalty applies.</div>`
     : '';
   return '<div>'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
@@ -4119,10 +4160,15 @@ function buildReadHTML(p){
         `Model ${pos}${rankMv} runs ahead of the proven ${pos}${rankDs} — a ${absPct}% edge that's a bet on opportunity. ${verdict==='strong buy'?'Strong buy':'Buy'} if you believe the role.`,
       ]);
     } else if(ranksAgree){
+      const sameRank=rankMv===rankMk;
       math=pick(seed,[
-        `Market already pays ${pos}${rankMk} and the model agrees on the rank — it just wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
+        sameRank
+          ? `Market already pays ${pos}${rankMk} and the model agrees on the rank — it just wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`
+          : `Priced ${pos}${rankMk}, modeled ${pos}${rankMv} — no real rank dispute, but the model wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
         `No rank dispute — priced ${pos}${rankMk}, modeled ${pos}${rankMv} — but the model has him ${absPct}% under-priced${gapQual}. ${verdict==='strong buy'?'Strong buy':'A quiet buy'}.`,
-        `Priced ${pos}${rankMk}; the model sees ${absPct}% more value at the same rank${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
+        sameRank
+          ? `Priced ${pos}${rankMk}; the model sees ${absPct}% more value at the same rank${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`
+          : `Priced ${pos}${rankMk} against a modeled ${pos}${rankMv} — essentially the same rank, ${absPct}% apart on price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
       ]);
     } else {
       math=pick(seed,[
@@ -4133,9 +4179,10 @@ function buildReadHTML(p){
   } else if(verdict==='sell'||verdict==='strong sell'){
     clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
     if(Math.abs(rankMv-rankMk)<=1){
+      const rkTxt=rankMv===rankMk?`${pos}${rankMv}`:`${pos}${rankMk} and ${pos}${rankMv} — essentially the same rank`;
       math=absPct>=15
-        ? `Model and market agree on ${pos}${rankMv}, but the market pays ${absPct}% more for that rank than the model would. Sell only into an overpay.`
-        : `Model and market both land ${pos}${rankMv}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
+        ? `Market and model land on ${rkTxt}, but the market pays ${absPct}% more for it than the model would. Sell only into an overpay.`
+        : `Market and model land on ${rkTxt}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
       clr='#cbd5e0';
     } else {
       math=pick(seed,[
