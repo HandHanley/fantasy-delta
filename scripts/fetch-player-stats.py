@@ -608,12 +608,24 @@ def build_output(agg, matched, rz_data=None, headshots=None):
     def _rz_lookup(lookup_dict, nfl_name):
         if nfl_name in lookup_dict:
             return int(lookup_dict[nfl_name])
-        # PBP uses abbreviated names (J.Chase) — try first initial + last name
+        # PBP uses abbreviated names (J.Chase). Suffixes broke the old fallback:
+        # "Marvin Harrison Jr." -> parts[-1] = "Jr." -> "M.Jr." (never matches).
+        # Build candidates with the suffix stripped AND retained, since PBP
+        # sources are inconsistent about including it.
         parts = nfl_name.split()
         if len(parts) >= 2:
-            abbr = parts[0][0] + "." + parts[-1]
-            if abbr in lookup_dict:
-                return int(lookup_dict[abbr])
+            SUFFIXES = {"Jr.", "Jr", "Sr.", "Sr", "II", "III", "IV", "V"}
+            core = [p for p in parts if p not in SUFFIXES]
+            cands = []
+            if len(core) >= 2:
+                cands.append(core[0][0] + "." + core[-1])                       # M.Harrison
+                trail = parts[parts.index(core[-1]) + 1:] if core[-1] in parts else []
+                if trail:
+                    cands.append(core[0][0] + "." + core[-1] + " " + " ".join(trail))  # M.Harrison Jr.
+            cands.append(parts[0][0] + "." + parts[-1])                          # legacy form, last
+            for abbr in cands:
+                if abbr in lookup_dict:
+                    return int(lookup_dict[abbr])
         return None  # None = not found, 0 = genuinely zero
 
     for delta_name, nfl_name in matched.items():
