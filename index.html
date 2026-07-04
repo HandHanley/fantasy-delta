@@ -3359,7 +3359,7 @@ window.addEventListener('load', async function() {
 if (document.readyState === 'complete') {
   syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); }).then(() => initEngineAudit());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); if(typeof renderProspects==='function') renderProspects(); }).then(() => initEngineAudit());
 }
 
 </script>
