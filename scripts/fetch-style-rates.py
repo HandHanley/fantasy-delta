@@ -66,6 +66,9 @@ def main():
     # FTN keys are nflverse standard: nflverse_game_id + nflverse_play_id
     gk = "nflverse_game_id" if "nflverse_game_id" in ftn.columns else "game_id"
     pk = "nflverse_play_id" if "nflverse_play_id" in ftn.columns else "play_id"
+    # FTN carries its own season/week — drop pre-merge so PBP's 'season' survives
+    # un-suffixed (the _x/_y rename was breaking the groupby)
+    ftn = ftn.drop(columns=[c for c in ("season", "week") if c in ftn.columns])
     m = pbp.merge(ftn, left_on=["game_id", "play_id"], right_on=[gk, pk], how="inner")
     print(f"[DELTA] joined rows: {len(m)}")
 
