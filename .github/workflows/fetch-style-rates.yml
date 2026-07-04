@@ -1,0 +1,37 @@
+name: Fetch Style Rates (research)
+
+# System Score v2 research fetch — MANUAL trigger only. Produces
+# data/style-rates.json (team-season motion/PA/personnel-proxy rates).
+# Research artifact: nothing in the app reads it. Commits directly to main
+# (no PR gate needed — it cannot affect live values).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' polars pyarrow pandas --quiet
+
+      - name: Fetch style rates
+        run: python scripts/fetch-style-rates.py
+
+      - name: Commit result
+        run: |
+          git config user.name "delta-bot"
+          git config user.email "actions@github.com"
+          git add data/style-rates.json
+          git diff --cached --quiet && echo "No changes" || git commit -m "research: style rates (FTN charting + TE2 proxy)"
+          git push
