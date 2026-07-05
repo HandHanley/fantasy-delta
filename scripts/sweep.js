@@ -56,6 +56,9 @@ async function loadEngine() {
   src += `
 ;globalThis.__E__ = {
   get RAW(){return RAW;}, get COMP(){return COMP;}, get ASSETS(){return ASSETS;},
+  styleFactors: (typeof styleFactors!=='undefined'?styleFactors:null),
+  explainSystem: (typeof explainSystem!=='undefined'?explainSystem:null),
+  get STYLE_2025(){return (typeof STYLE_2025!=='undefined'?STYLE_2025:null);},
   get RP(){return RP;}, get RIPPLE(){return RIPPLE;}, get MARKET_SETTINGS(){return MARKET_SETTINGS;},
   calcProj, applyMarketForSetting, scarcity, scarCurveVal, fmtRecPts, gamefp, getAdjProj, getScoringDelta, glOf,
   loadLiveMarketValues, loadPlayerStats, loadPlayerContracts, loadRipples,
@@ -211,6 +214,37 @@ function recompute(S) { S.applyMarketForSetting(); }
   ok(badDrift === 0, `fmt drift confined to Rule-4 (logged-start, small) players (${badDrift} out of bounds)`);
   ok(adjMoved > 50, `getAdjProj std→full moves reception-driven players (${adjMoved} moved)`);
   S.set(12,'sf','half_tep'); recompute(S);
+
+  // ── offense style factors (System Score v2, wired July 2026) ──
+  ok(!!S.styleFactors && !!S.STYLE_2025, 'styleFactors + STYLE_2025 present');
+  ok(Object.keys(S.STYLE_2025).length === 32, `STYLE_2025 covers 32 teams (${Object.keys(S.STYLE_2025).length})`);
+  let styMax = 0, styQB = 0, styNonRole = 0;
+  for (const c of S.COMP) {
+    const f = S.styleFactors(c.n, c.pos, c.t);
+    styMax = Math.max(styMax, Math.abs(f.total));
+    if (c.pos === 'QB' && f.total !== 0) styQB++;
+    if ((c.pos === 'TE') && f.total !== 0) styNonRole++;
+  }
+  ok(styMax <= 0.06 + 1e-9, `style delta bounded ±6% (max ${(styMax*100).toFixed(1)}%)`);
+  ok(styQB === 0, `style never touches QBs (${styQB} violations)`);
+  ok(styNonRole === 0, `style never touches TEs (${styNonRole} violations)`);
+  // known case: an RB1-role on a top-tercile motion team with a stable OC gets +3%
+  const knownRB = S.COMP.find(c => c.pos==='RB' && S.STYLE_2025[c.t] && S.STYLE_2025[c.t].m===1
+    && S.styleFactors(c.n,'RB',c.t).total > 0 && !S.styleFactors(c.n,'RB',c.t).scaled);
+  ok(!!knownRB && Math.abs(S.styleFactors(knownRB.n,'RB',knownRB.t).total - 0.03) < 1e-9,
+     `RB1-role on stable high-motion team gets exactly +3% (${knownRB ? knownRB.n : 'none found'})`);
+  // och neutralization: any scaled entry must be exactly 0.4x of a base part
+  const scaledEx = S.COMP.map(c => S.styleFactors(c.n,c.pos,c.t)).find(f => f.scaled && f.parts.length===1);
+  ok(!scaledEx || Math.abs(Math.abs(scaledEx.parts[0].pct) - Math.abs(scaledEx.total)) < 1e-9,
+     'och-scaled style totals match their scaled parts');
+  // explainSystem net must equal dSys + dOc + style.total (single-source coherence)
+  let netBad = 0;
+  for (const c of S.COMP) {
+    if (c.sys == null) continue;
+    const x = S.explainSystem ? S.explainSystem(c) : null;
+    if (x && Math.abs(x.net - (x.dSys + x.dOc + (x.style ? x.style.total : 0))) > 1e-9) netBad++;
+  }
+  ok(netBad === 0, `explainSystem net coheres with parts (${netBad} bad)`);
 
   // ── summary ──
   console.log('\n════════════════════════════════════');
