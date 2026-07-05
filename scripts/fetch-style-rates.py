@@ -58,7 +58,8 @@ def main():
     print("[DELTA] loading PBP ...")
     pbp = to_pd(nfl.load_pbp(seasons=SEASONS))
     keep = [c for c in ["game_id", "play_id", "season", "posteam", "pass", "rush",
-                        "epa", "qb_dropback", "season_type"] if c in pbp.columns]
+                        "epa", "qb_dropback", "season_type",
+                        "pass_oe", "air_yards", "yardline_100", "shotgun"] if c in pbp.columns]
     pbp = pbp[keep]
     if "season_type" in pbp.columns:
         pbp = pbp[pbp["season_type"] == "REG"]
@@ -82,6 +83,8 @@ def main():
     is_pa     = flag("is_play_action")
     is_screen = flag("is_screen_pass")
     is_rpo    = flag("is_rpo")
+    is_nh     = flag("is_no_huddle")
+    two_back  = (m["n_offense_backfield"].fillna(1) >= 2) if "n_offense_backfield" in m.columns else None
 
     plays = m[(m.get("pass", 0) == 1) | (m.get("rush", 0) == 1)].copy()
     dropbacks = plays[plays.get("qb_dropback", plays.get("pass", 0)) == 1]
@@ -106,6 +109,14 @@ def main():
             "pass_rate":  round(float((g["pass"] == 1).mean()) * 100, 2),
             "pass_epa":   round(float(g.loc[g["pass"] == 1, "epa"].mean()), 4) if "epa" in g else None,
             "rush_epa":   round(float(g.loc[g["rush"] == 1, "epa"].mean()), 4) if "epa" in g else None,
+            # round-3 research candidates
+            "no_huddle_pct": rate(is_nh, g),
+            "two_back_pct":  rate(two_back, g),
+            "proe":       round(float(g["pass_oe"].mean()), 3) if "pass_oe" in g and g["pass_oe"].notna().any() else None,
+            "adot":       round(float(db["air_yards"].mean()), 2) if "air_yards" in db and len(db) else None,
+            "rz_pass_pct": (lambda rz: round(float((rz["pass"] == 1).mean()) * 100, 2) if len(rz) >= 20 else None)(
+                            g[g["yardline_100"] <= 20]) if "yardline_100" in g else None,
+            "plays_pg":   round(len(g) / max(1, g["game_id"].nunique()), 1),
         }
 
     # ── TE2 snap proxy for 12-personnel ─────────────────────────
