@@ -1908,6 +1908,63 @@ function glTag(n){
 // Total delta capped at ±0.20 for projections, ±0.25 for model value
 // Model value hard-capped at 9,999 to match market value ceiling
 // ============================================================
+// ── OFFENSE STYLE FACTORS (System Score v2 — validated 2022-25) ─────────────
+// Three INDEPENDENT coordinator-identity signals that survived the three-tier
+// trial in scripts/validate-style.py (contemporaneous + persistence + next-
+// season predictive, incl. partial-correlation independence proofs):
+//   motion%  → RB1-role production   r=+0.271** (beats RB1's own persistence)
+//   TE2-snap → WR3+-role suppression r=−0.256*  (12-personnel squeezes 3-WR sets)
+//   PROE     → WR-room environment   r=+0.274** (pass-lean lifts the whole room)
+// Rejected with reasons: play-action, screens, RPO, pace, no-huddle, aDOT,
+// two-back, RZ-pass (PROE's shadow). Tiers are 2025 terciles (−1/0/+1) from
+// data/style-rates.json — REGENERATE each offseason (rerun the fetch workflow,
+// recompute terciles). Style is the COORDINATOR'S property: teams with an OC
+// change get the adjustment scaled ×0.4 toward neutral.
+const STYLE_2025={'ARI':{m:-1,t2:0,pr:1},'ATL':{m:1,t2:1,pr:-1},'BAL':{m:0,t2:1,pr:-1},'BUF':{m:1,t2:0,pr:-1},'CAR':{m:-1,t2:0,pr:-1},'CHI':{m:0,t2:1,pr:0},'CIN':{m:0,t2:0,pr:1},'CLE':{m:-1,t2:1,pr:0},'DAL':{m:0,t2:-1,pr:1},'DEN':{m:-1,t2:0,pr:1},'DET':{m:1,t2:0,pr:-1},'GB':{m:0,t2:-1,pr:-1},'HOU':{m:0,t2:-1,pr:0},'IND':{m:0,t2:-1,pr:0},'JAC':{m:1,t2:-1,pr:1},'KC':{m:-1,t2:1,pr:1},'LAC':{m:0,t2:-1,pr:1},'LAR':{m:1,t2:1,pr:1},'LV':{m:-1,t2:0,pr:0},'MIA':{m:1,t2:0,pr:-1},'MIN':{m:-1,t2:0,pr:0},'NE':{m:0,t2:1,pr:1},'NO':{m:1,t2:-1,pr:0},'NYG':{m:-1,t2:0,pr:-1},'NYJ':{m:1,t2:0,pr:-1},'PHI':{m:-1,t2:-1,pr:0},'PIT':{m:0,t2:1,pr:1},'SEA':{m:0,t2:0,pr:-1},'SF':{m:1,t2:-1,pr:0},'TB':{m:1,t2:-1,pr:0},'TEN':{m:-1,t2:1,pr:0},'WAS':{m:0,t2:1,pr:0}};
+let __styleRoleMemo=null;
+function styleRole(name,team,pos){
+  // format-invariant role rank: position order on team by baked anchor value k
+  if(!__styleRoleMemo)__styleRoleMemo={};
+  const key=team+'|'+pos;
+  if(!__styleRoleMemo[key]){
+    const list=(typeof RAW!=='undefined'?RAW:[]).filter(p=>p&&p.t===team&&(p.p||p.pos)===pos)
+      .sort((a,b)=>(b.k||0)-(a.k||0)).map(p=>p.n);
+    __styleRoleMemo[key]=list;
+  }
+  return __styleRoleMemo[key].indexOf(name);
+}
+function styleFactors(name,pos,team){
+  // returns {parts:[{label,pct}], total, scaled} — single source for the
+  // projection delta AND the scheme-card explanation, so they cannot disagree
+  const out={parts:[],total:0,scaled:false};
+  if(pos==='QB'||typeof STYLE_2025==='undefined')return out;
+  const st=team&&STYLE_2025[team]; if(!st)return out;
+  if(pos==='RB'&&styleRole(name,team,'RB')===0&&st.m!==0){
+    const pct=st.m*0.03;
+    out.parts.push({label:(st.m>0?'High':'Low')+'-motion offense ('+(st.m>0?'top':'bottom')+' third) — motion schemes RB production',pct});
+    out.total+=pct;
+  }
+  if(pos==='WR'){
+    if(st.pr!==0){
+      const pct=st.pr*0.02;
+      out.parts.push({label:(st.pr>0?'Pass-lean':'Run-lean')+' identity (PROE '+(st.pr>0?'top':'bottom')+' third) — '+(st.pr>0?'lifts':'thins')+' the WR room',pct});
+      out.total+=pct;
+    }
+    const r=styleRole(name,team,'WR');
+    if(r>=2&&st.t2!==0){
+      const pct=st.t2===1?-0.03:0.02;
+      out.parts.push({label:st.t2===1?'Heavy 12-personnel (top third) — fewer 3-WR sets squeeze the WR3 role':'Light 12-personnel (bottom third) — extra 3-WR sets feed the WR3 role',pct});
+      out.total+=pct;
+    }
+  }
+  if(out.total!==0){
+    const tc=(typeof gs==='function'&&gs(team)&&gs(team).c!=null)?gs(team).c:0.95;
+    if(tc<0.70){out.total*=0.4;out.parts.forEach(p=>p.pct*=0.4);out.scaled=true;}
+    out.total=Math.max(-0.06,Math.min(0.06,out.total));
+  }
+  return out;
+}
+
 function getDeltas(name,pos,sys,cont,yprr,snap,col,epa_sc,ripple,qbq){
   const isQB=pos==='QB';
   // System delta — QBs: near-zero (their PPG already fully reflects their system)
@@ -1945,7 +2002,13 @@ function getDeltas(name,pos,sys,cont,yprr,snap,col,epa_sc,ripple,qbq){
   const d_qbq=!isQB?(qbq-0.90)*0.20:0;
   // Target share trend delta
   const d_ts=!isQB?(TS_DELTA[name]||0):0;
-  return d_sys+d_oc+d_role+d_col+d_epa+d_rip+d_qbq+d_ts;
+  // Offense style (validated signals — see block above); RAW lookup for team
+  let d_style=0;
+  if(typeof RAW!=='undefined'){
+    const rp=RAW.find(p=>p&&p.n===name);
+    if(rp&&rp.t) d_style=styleFactors(name,pos,rp.t).total;
+  }
+  return d_sys+d_oc+d_role+d_col+d_epa+d_rip+d_qbq+d_ts+d_style;
 }
 
 function calcProj(pl){
@@ -4000,7 +4063,8 @@ function explainSystem(p){
               :p.sys>=40?'a below-average environment':'a poor offensive environment';
     const dS=isQB?(p.sys>=70?.01:p.sys>=55?0:p.sys>=40?-.03:-.07)
                  :(p.sys>=70?.04:p.sys>=55?.01:p.sys>=40?-.04:-.10);
-    return {sys:p.sys,tier,proven:false,softened:false,dSys:dS,dOc:0,net:dS,och:false,oc:'',rookie:true};
+    const styR=styleFactors(p.n,pos,p.t);
+    return {sys:p.sys,tier,proven:false,softened:false,dSys:dS,dOc:0,net:dS+styR.total,och:false,oc:'',rookie:true,style:styR};
   }
   const e={s:p.sys, c:(gs(p.t)||{}).c ?? 0.95};
   const provenThreshold = pos==='WR'?13.0:pos==='TE'?12.0:pos==='RB'?15.0:22.0;
@@ -4017,15 +4081,24 @@ function explainSystem(p){
                   :(adjCont>=.95?.03:adjCont>=.70?.01:adjCont>=.50?-.04:adjCont>=.30?-.08:-.12);
   const tier=p.sys>=70?'a strong offensive environment':p.sys>=55?'a league-average environment'
             :p.sys>=40?'a below-average environment':'a poor offensive environment';
-  return {sys:p.sys,tier,proven,softened:proven&&(e.s<55||e.c<0.70),dSys,dOc,net:dSys+dOc,och:!!p.och,oc:p.oc||''};
+  const sty=styleFactors(p.n,pos,p.t);
+  return {sys:p.sys,tier,proven,softened:proven&&(e.s<55||e.c<0.70),dSys,dOc,net:dSys+dOc+sty.total,och:!!p.och,oc:p.oc||'',style:sty};
 }
 function buildSchemeHTML(p){
   const x=explainSystem(p); if(!x) return '';
   const sysClr=p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
   const fp=v=>`${v>0?'+':''}${(v*100).toFixed(0)}%`;
   const netClr=x.net>0?'#6ee7b7':x.net<0?'#fc8181':'#718096';
-  const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
+  const styTot=x.style?x.style.total:0;
+  const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''}${styTot?` and ${fp(styTot)} offense style`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
     +(x.softened?` <span style="color:#718096">(softened — proven producers carry their role through scheme change)</span>`:'');
+  const styBlock=(x.style&&x.style.parts.length)
+    ? '<div style="margin-top:7px;padding-top:7px;border-top:0.5px solid #1f2937">'
+      +'<div style="font-size:9px;color:#4a5568;letter-spacing:.04em;margin-bottom:3px">OFFENSE STYLE · validated 2022–25 play-by-play</div>'
+      +x.style.parts.map(pt=>`<div style="font-size:10px;color:#a0aec0;line-height:1.5">${pt.pct>0?'▲':'▼'} ${pt.label}: <b style="color:${pt.pct>0?'#6ee7b7':'#fc8181'}">${(pt.pct>0?'+':'')+(pt.pct*100).toFixed(1)}%</b></div>`).join('')
+      +(x.style.scaled?'<div style="font-size:9px;color:#fcd34d;margin-top:2px">Scaled toward neutral — style is the coordinator\u2019s property and this team has a new one.</div>':'')
+      +'</div>'
+    : '';
   const ocCtx=x.och
     ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px;line-height:1.5">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
     : x.rookie
@@ -4038,6 +4111,7 @@ function buildSchemeHTML(p){
     +`<div style="font-size:10px;color:#a0aec0">${p.sys}/100 — ${x.tier} (coordinator quality, scheme fit, role clarity).</div>`
     +`<div style="font-size:10px;color:#a0aec0;margin-top:3px">${applied}</div>`
     +ocCtx
+    +styBlock
     +'</div>';
 }
 // receptions/game with a game-log fallback so RBs outside the pipeline's
