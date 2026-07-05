@@ -1,0 +1,53 @@
+name: Deploy Pages
+
+# Replaces GitHub's classic "pages build and deployment" (which has been
+# timing out on nearly every push, requiring manual re-runs). This is the
+# modern Actions-based Pages deploy with an AUTOMATIC RETRY on the flaky
+# deploy step — the manual "Re-run failed jobs" dance happens by itself.
+#
+# ONE-TIME SETUP after committing this file:
+#   Settings → Pages → Build and deployment → Source: "GitHub Actions"
+# (That disables the classic auto-workflow; this one takes over.)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# never run two deploys at once; a new push supersedes a queued one
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url || steps.retry.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Retry deploy (automatic — replaces the manual re-run)
+        id: retry
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
