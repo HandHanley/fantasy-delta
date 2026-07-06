@@ -29,6 +29,8 @@ tr:hover td{background:#1a202c}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
+  /* tooltips: fixed bottom sheet — the hover bubble crops at screen edges */
+  [data-tip]::after{position:fixed;left:12px;right:12px;top:auto;bottom:12px;width:auto;max-width:none;transform:none}
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -264,7 +266,7 @@ tr:hover td{background:#1a202c}
       <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
       <th onclick="setSortR('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades.">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
-      <th data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.">PPG'25</th><th data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
+      <th onclick="setSortR('ppg25')" data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded." style="cursor:pointer">PPG'25</th><th onclick="setSortR('ppg24')" data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile" style="cursor:pointer">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
       <th onclick="setSortR('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.">Proj PPG</th>
       <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Applied as a modifier to projected PPG. OC mark = coordinator change; model discounts until new system shows in production data." class="col-hide-mobile">Sys</th>
       <th data-tip="Offensive coordinator. ⚠ flags a coordinator change this cycle — the scheme is unproven, so DELTA applies an OC-continuity discount to the projection and won't credit the new system until it shows up in production data. No flag = stable staff." class="col-hide-mobile">OC</th><th>Tag</th>
@@ -383,6 +385,18 @@ tr:hover td{background:#1a202c}
 </div>
 
 <div id="panel-epa" class="panel">
+  <button onclick="const e=document.getElementById('epa-explain');e.style.display=e.style.display==='none'?'block':'none'"
+    style="font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer;margin-bottom:.6rem">ⓘ What is EPA?</button>
+  <div id="epa-explain" style="display:none;font-size:11.5px;color:#a0aec0;line-height:1.6;padding:10px 12px;margin-bottom:.75rem;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px">
+    <b style="color:#e2e8f0">EPA — Expected Points Added</b> — measures how much each play changed a team's expected score.
+    Every down-and-distance has an expected point value (1st &amp; 10 at midfield is worth more than 3rd &amp; 15 at your own 5);
+    EPA is the change in that value caused by a play. A 4-yard run on 3rd &amp; 3 is a <i>good</i> play (converts, keeps the drive)
+    while a 4-yard pass on 3rd &amp; 12 is a <i>bad</i> one — yardage alone can't tell them apart, EPA can.
+    <b style="color:#e2e8f0">Per-play EPA</b> here grades a player's efficiency on their touches: positive = adding value above an
+    average play, negative = below. DELTA uses it alongside raw production to spot players whose counting stats
+    flatter or undersell them — high volume with negative EPA is a warning sign; positive EPA on small volume hints
+    at more if the role grows.
+  </div>
   <div class="controls">
     <select id="pos-epa" onchange="renderEPA()">
       <option value="ALL">All</option><option value="QB">QB</option>
@@ -523,8 +537,10 @@ function syncSettingsUI(){
 }
 
 let sortK='ktc',sortDir=-1;
-function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
-function setSortRDropdown(k){sortK=k;sortDir=-1;renderRankings();}
+let explainerHidden=false;
+function dismissExplainer(){explainerHidden=true;const e=document.getElementById('sort-explainer');if(e)e.style.display='none';}
+function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;explainerHidden=false;}renderRankings();}
+function setSortRDropdown(k){if(k!==sortK)explainerHidden=false;sortK=k;sortDir=-1;renderRankings();}
 let sortKContracts='aav',sortDirContracts=1;
 function setSortContracts(k){if(sortKContracts===k)sortDirContracts*=-1;else{sortKContracts=k;sortDirContracts=1;}renderContracts();}
 let sortKEPA='epaSc',sortDirEPA=1;
@@ -574,7 +590,7 @@ function renderRankings(){
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
   let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
-  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore'};
+  const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore',ppg25:'ppg25',ppg24:'ppg24'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Contextual explainer — only for the three confusable value metrics
   const explainEl=document.getElementById('sort-explainer');
@@ -584,7 +600,10 @@ function renderRankings(){
       ktc:'<strong style="color:#7dd3fc">Market Value</strong>: consensus player value from FantasyCalc — what the market currently pays in trades. Compare to Model Value to find gaps.',
       mv:'<strong style="color:#7dd3fc">Model Value</strong>: DELTA&rsquo;s projected player value from our PPG model. When it runs higher than Market Value, the model sees a buy; lower, a sell.'
     };
-    if(explainers[sortK]){explainEl.innerHTML=explainers[sortK];explainEl.style.display='block';}
+    if(explainers[sortK]&&!explainerHidden){
+      explainEl.innerHTML='<span onclick="dismissExplainer()" title="Dismiss" style="float:right;cursor:pointer;color:#4a5568;padding:0 2px 4px 10px;font-size:13px;line-height:1">✕</span>'+explainers[sortK];
+      explainEl.style.display='block';
+    }
     else{explainEl.style.display='none';}
   }
   // Build position rank counters
@@ -608,7 +627,7 @@ function renderRankings(){
     <td class="col-hide-mobile">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${(p.g25===0&&p.ppg25>0)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
+    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${isNFLRookie(p)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px" title="Rookie — projected, no NFL games yet">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
@@ -879,12 +898,23 @@ function verdictFromGap(gap, maxVal) {
 }
 
 
+const ACTIVE_SIDES=()=>['a','b','c','d'].slice(0,tradeTeams);
+function defaultDest(fromSide){
+  // route to the next active team cyclically — visible and editable
+  const act=ACTIVE_SIDES();
+  return act[(act.indexOf(fromSide)+1)%act.length];
+}
 function addAsset(side,name){
   const asset=ASSETS.find(p=>p.n===name);if(!asset)return;
   const arr=side==='a'?sA:side==='b'?sB:side==='c'?sC:sD;
-  if(!arr.find(x=>x.n===name))arr.push({...asset});
+  if(!arr.find(x=>x.n===name))arr.push({...asset,to:tradeTeams>2?defaultDest(side):null});
   document.getElementById('srch-'+side).value='';
   document.getElementById('drop-'+side).style.display='none';
+  recalcTrade();
+}
+function setDest(side,name,to){
+  const arr=side==='a'?sA:side==='b'?sB:side==='c'?sC:sD;
+  const a=arr.find(x=>x.n===name); if(a)a.to=to;
   recalcTrade();
 }
 function removeAsset(side,name){
@@ -928,6 +958,10 @@ function recalcTrade(){
           <div class="added-name">${p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`}</div>
           <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}<span style="color:#a0aec0">${getAdjProj(p).toFixed(1)} PPG</span>`}</div>
         </div>
+        ${tradeTeams>2?`<select onchange="setDest('${s.id}','${p.n.replace(/'/g,"\\'")}',this.value)" title="Which team receives this asset"
+            style="font-size:9px;background:#0d1524;border:1px solid #2d3748;border-radius:4px;color:#a0aec0;padding:2px 3px;margin-right:4px">
+            ${SIDES.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}" ${(p.to||defaultDest(s.id))===x.id?'selected':''}>→ ${x.label.replace('Team ','')}</option>`).join('')}
+          </select>`:''}
         <div class="added-vals">
           <div style="color:#718096">Mkt ${p.k.toLocaleString()}</div>
           <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
@@ -956,10 +990,14 @@ function recalcTrade(){
     const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
     const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
     let verdict,vc;
+    // Winner = the team that GIVES less and RECEIVES more; say so with numbers
+    const winT=mA<mB?'Team A':'Team B';
+    const wGive=(mA<mB?mA:mB).toLocaleString(), wRecv=(mA<mB?mB:mA).toLocaleString();
+    const winClause=` — gives up ${wGive}, receives ${wRecv}`;
     if(pct<=3){verdict='Essentially even — personal preference decides';vc='bi';}
-    else if(pct<=8){verdict=mA<mB?'Slight edge — Team A':'Slight edge — Team B';vc='bi';}
-    else if(pct<=15){verdict=mA<mB?'Clear winner — Team A':'Clear winner — Team B';vc=mA<mB?'bs':'bd';}
-    else{verdict=mA<mB?'Decisive advantage — Team A':'Decisive advantage — Team B';vc=mA<mB?'bs':'bd';}
+    else if(pct<=8){verdict=`Slight edge — ${winT}${winClause}`;vc='bi';}
+    else if(pct<=15){verdict=`Clear winner — ${winT}${winClause}`;vc=mA<mB?'bs':'bd';}
+    else{verdict=`Decisive advantage — ${winT}${winClause}`;vc=mA<mB?'bs':'bd';}
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
     // Build adjustment breakdown
@@ -1043,19 +1081,27 @@ function recalcTrade(){
 
       ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
   } else {
-    // Multi-team verdict — compute adjusted values for each team via calcSingleSideAdjusted
+    // Multi-team verdict — per-asset routing makes RECEIVES computable:
+    // each team's net = value routed TO them − value they give away.
     const adjResults = totals.map(t => ({ ...t, adjResult: calcSingleSideAdjusted(t.arr) }));
-    // Update displayed model values with adjusted figures (mirrors 2-team V4 behaviour)
     adjResults.forEach(t => {
       document.getElementById('mod-'+t.id).textContent = t.adjResult.total > 0 ? t.adjResult.total.toLocaleString() : '—';
     });
-    const maxAdj = Math.max(...adjResults.map(t => t.adjResult.total));
-    const sorted = [...adjResults].sort((a,b) => a.adjResult.total - b.adjResult.total); // gives-up model: least given wins
+    // bundle of assets each team RECEIVES (same adjustment engine, so the two
+    // sides of every ledger use identical math)
+    const allAssets = totals.flatMap(t => t.arr.map(a => ({...a, from:t.id, to:a.to||defaultDest(t.id)})));
+    adjResults.forEach(t => {
+      const incoming = allAssets.filter(a => a.to === t.id);
+      t.recv = calcSingleSideAdjusted(incoming);
+      t.recvNames = incoming.map(a => a.n).join(', ') || 'nothing';
+      t.net = t.recv.total - t.adjResult.total;
+    });
+    const sorted = [...adjResults].sort((a,b) => b.net - a.net);   // highest net wins
     const winner = sorted[0];
-    const grandTotal = adjResults.reduce((s,t) => s + t.adjResult.total, 0);
-    const allEqual = adjResults.every(t => Math.abs(t.adjResult.total - adjResults[0].adjResult.total) / Math.max(grandTotal/tradeTeams, 1) < 0.08);
-    const playerLists = adjResults.map(t => t.arr.map(x=>x.n).join(', ')||'nothing');
-    const promptText = adjResults.map((t,i) => `${t.label} receives ${playerLists[i]} (value: ${t.adjResult.total.toLocaleString()})`).join('; ');
+    const spread = winner.net - sorted[sorted.length-1].net;
+    const scale = Math.max(...adjResults.map(t => Math.max(t.recv.total, t.adjResult.total)), 1);
+    const allEqual = spread / Math.max(scale, 1) < 0.05;
+    const promptText = adjResults.map(t => `${t.label} receives ${t.recvNames} (value ${t.recv.total.toLocaleString()}) and gives up value ${t.adjResult.total.toLocaleString()}`).join('; ');
     const buildBadge = r => {
       const b = [];
       if (r.detail.some(d => d.eliteM > 1.0)) b.push('<span style="color:#6ee7b7">★ Elite</span>');
@@ -1067,21 +1113,20 @@ function recalcTrade(){
     document.getElementById('verdict-area').innerHTML=`
       <div style="margin-bottom:1rem">
         <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#718096;margin-bottom:.5rem">
-          ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS THIS TRADE'}
+          ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS — receives '+winner.recv.total.toLocaleString()+', gives up '+winner.adjResult.total.toLocaleString()}
         </div>
-        ${sorted.map((t,i)=>{
-          const pct=Math.round(t.adjResult.total/Math.max(maxAdj,1)*100);
-          const isWinner=i===0&&!allEqual;
-          return`<div style="margin-bottom:.5rem">
-            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-              <span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
-              <span style="color:${t.color};font-weight:600">${t.adjResult.total.toLocaleString()}</span>
-            </div>
-            <div style="background:#1a202c;border-radius:3px;height:6px;overflow:hidden">
-              <div style="background:${t.color};width:${pct}%;height:100%;border-radius:3px;opacity:${isWinner?1:0.5}"></div>
-            </div>
-          </div>`;
-        }).join('')}
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:4px 12px;font-size:11px;margin-bottom:.35rem">
+          <span></span><span style="color:#4a5568;font-size:9px">GIVES UP</span><span style="color:#4a5568;font-size:9px">RECEIVES</span><span style="color:#4a5568;font-size:9px">NET</span>
+          ${sorted.map((t,i)=>{
+            const isWinner=i===0&&!allEqual;
+            const netClr=t.net>0?'#6ee7b7':t.net<0?'#fca5a5':'#718096';
+            return`<span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
+              <span style="color:#a0aec0">${t.adjResult.total.toLocaleString()}</span>
+              <span style="color:#a0aec0">${t.recv.total.toLocaleString()}</span>
+              <span style="color:${netClr};font-weight:600">${t.net>0?'+':''}${t.net.toLocaleString()}</span>`;
+          }).join('')}
+        </div>
+        <div style="font-size:9px;color:#4a5568;margin-bottom:.5rem">Route each asset with the → selector on its row · net = receives − gives</div>
       </div>
       ${windowFraming()}
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
@@ -1292,6 +1337,11 @@ function renderGapFiller(){
 
 function setTradeTeams(n){
   tradeTeams=n;
+  // re-route any asset whose destination is no longer an active team
+  const act=['a','b','c','d'].slice(0,n);
+  [['a',sA],['b',sB],['c',sC],['d',sD]].forEach(([id,arr])=>{
+    arr.forEach(x=>{ if(n>2){ if(!x.to||!act.includes(x.to)||x.to===id) x.to=act[(act.indexOf(id)+1)%act.length]; } });
+  });
   ['2','3','4'].forEach(x=>{
     document.getElementById('tc-'+x).classList.toggle('tc-active',parseInt(x)===n);
   });
@@ -2453,6 +2503,27 @@ document.addEventListener('click', function(e) {
       <div class="about-section">
         <div class="about-heading">Why ignore the market?</div>
         <p>Most dynasty tools are self-referential — they reflect what other managers think, which reflects what other managers think. DELTA starts from first principles. Market value appears in the app as a comparison point and yardstick, never as an input to the score or verdict. The gap between model value and market value is the signal.</p>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">Glossary</div>
+        <p style="margin-bottom:6px;font-size:11px;color:#718096">Quick reference for DELTA's terms:</p>
+        <ul class="about-list">
+          <li><b style="color:#6ee7b7">DELTA Score (0–99)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
+          <li><b style="color:#7dd3fc">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
+          <li><b style="color:#7dd3fc">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
+          <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to the rest of the league. Centered on the population, so "buy" means <i>cheaper than the typical player relative to the model</i>.</li>
+          <li><b>Proj PPG</b> — DELTA's projected points per game for the upcoming season, at your league's scoring.</li>
+          <li><b>Start Profile</b> — per-start outcomes across recent seasons: <b>hit</b> (startable week), <b>elite</b> (slate-breaking week), <b>miss</b> (hurt your lineup). Weekly dependability, not season totals.</li>
+          <li><b>Alpha / Workhorse Score</b> — role size grade (targets/touches share): how much of the offense actually flows through the player.</li>
+          <li><b>System Score (0–100)</b> — offensive environment quality: coordinator, scheme fit, role clarity. League median ≈ 60. Enters the projection as a small multiplier.</li>
+          <li><b>⚠ OC change</b> — a new coordinator: everything demonstrated came under the old scheme, so the model discounts until the new one shows in real games. Rookies are exempt (no prior scheme to lose).</li>
+          <li><b>Offense style factors</b> — validated play-by-play tendencies (2022–25): pre-snap motion helps RB production, heavy 12-personnel squeezes WR3s, pass-lean identity (PROE) lifts WR rooms. Small (±2–4%), explained on each affected card.</li>
+          <li><b>EPA / YPRR</b> — per-play efficiency (Expected Points Added) and yards per route run: quality of play independent of volume.</li>
+          <li><b>Ripple Effects</b> — measured value shifts on <i>incumbent</i> players when teammates arrive or depart, calibrated on eight seasons of history.</li>
+          <li><b>Format sensitivity</b> — how much a player's value shifts between standard / half / full PPR, from their reception volume vs. position average.</li>
+          <li><b>5th-year option</b> — first-round rookie deals carry a team option for a fifth season; shown as "+opt" until exercised.</li>
+          <li><b>† stale</b> — a market value not refreshed in the latest fetch; excluded from graded records until it updates.</li>
+        </ul>
       </div>
       <div class="about-section">
         <div class="about-heading">What the model can't see</div>
