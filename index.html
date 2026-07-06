@@ -627,7 +627,7 @@ function renderRankings(){
     <td class="col-hide-mobile">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}${isNFLRookie(p)?'<span style="font-size:8px;font-weight:700;color:#4a90d9;margin-left:2px" title="Rookie — projected, no NFL games yet">PROJ</span>':''}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
+    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
@@ -1631,6 +1631,12 @@ document.addEventListener('touchstart',function(e){
   if(el){el.classList.toggle('tip-show');if(el.classList.contains('tip-show'))setTimeout(()=>el.classList.remove('tip-show'),3000);}
 },{passive:true});
 
+function projChipColor(v,pos){
+  // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
+  const hi=pos==='QB'?21:pos==='RB'?16:pos==='TE'?11:15;
+  const mid=pos==='QB'?17:pos==='RB'?12:pos==='TE'?8:11;
+  return v>=hi?'#6ee7b7':v>=mid?'#7dd3fc':v>=mid*0.7?'#fcd34d':'#fc8181';
+}
 function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
@@ -1662,7 +1668,10 @@ function renderDeck(p){
   const dpClr=dp?(dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096'):'#718096';
   // Row 1: position · team · age · contract.  Row 2: college · draft capital.
   const dispTeam=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
-  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`;
+  const adjProj=getAdjProj(p);
+  const projClr=projChipColor(adjProj,p.pos);
+  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`
+    +`<span style="display:inline-flex;align-items:center;gap:4px;background:${projClr}22;border:1px solid ${projClr}66;border-radius:5px;padding:1px 7px;margin-left:2px"><b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b><span style="font-size:9px;color:#718096">proj PPG</span></span>`;
   const bgParts=[];
   if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
   if(dp) bgParts.push(`<span>${dp.y} Rd${dp.r} Pick ${dp.p}</span>`);
@@ -1675,7 +1684,6 @@ function renderDeck(p){
 
   // ── Body ──
   const gl=glOf(p);
-  const adjProj=getAdjProj(p);
   const mv=mvAsset(p);
   const epaLabel=p.pos==='QB'?'EPA/Play':'YPRR';
 
@@ -1856,8 +1864,11 @@ function renderDeck(p){
     <div class="dd-divider"></div>
 
     <div class="dd-section">
-      <div class="dd-section-label">PPG Trend</div>
-      <div class="dd-arc" style="height:52px">${ppgBars}</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="dd-section-label" style="margin-bottom:0">PPG Trend</div>
+        <div style="font-size:10px;color:#718096">2026 proj <b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b></div>
+      </div>
+      <div class="dd-arc" style="height:52px;margin-top:6px">${ppgBars}</div>
     </div>
 
     <div class="dd-section">
