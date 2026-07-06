@@ -964,13 +964,13 @@ function recalcTrade(){
           </select>`:''}
         <div class="added-vals">
           <div style="color:#718096">Mkt ${p.k.toLocaleString()}</div>
-          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}">${mv.toLocaleString()}</div>
+          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}"><span style="color:#718096;font-weight:400">Model</span> ${mv.toLocaleString()}</div>
         </div>
         <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\'")}')">✕</button>
       </div>`;
     }).join('');
     const kt=s.arr.reduce((x,p)=>x+p.k,0);
-    const mt=s.arr.reduce((x,p)=>x+mvAsset(p),0);
+    const mt=calcSingleSideAdjusted(s.arr).total;   // same engine as the verdict → row + total reconcile
     document.getElementById('ktc-'+s.id).textContent=kt>0?kt.toLocaleString():'—';
     document.getElementById('mod-'+s.id).textContent=mt>0?mt.toLocaleString():'—';
     return{id:s.id,label:s.label,color:s.color,arr:s.arr,ktc:kt,mod:mt};
