@@ -1,0 +1,40 @@
+name: Freeze Snapshot (accuracy ledger)
+
+# THE FREEZE BUTTON. Manual trigger only — run this ONCE on freeze day, after:
+#   1. the final data nightly is green
+#   2. the stale badge is in its normal band (~26-28)
+#   3. the two leaguemate reviewers have signed off
+# It generates data/freeze-2026.json (DELTA's graded opinions at the
+# 12-team/SF/half-TEP anchor, mktStale excluded) and commits it to main.
+# That file is the immutable public record the 2026 season grades.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Run regression sweep first (freeze refuses to run on a broken engine)
+        run: node scripts/sweep.js
+
+      - name: Generate freeze snapshot
+        run: node scripts/freeze-snapshot.js
+
+      - name: Commit the ledger
+        run: |
+          git config user.name "delta-bot"
+          git config user.email "actions@github.com"
+          git add data/freeze-2026.json
+          git diff --cached --quiet && echo "No changes" || git commit -m "FREEZE: 2026 accuracy-ledger snapshot"
+          git push
