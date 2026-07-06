@@ -964,7 +964,7 @@ function recalcTrade(){
           </select>`:''}
         <div class="added-vals">
           <div style="color:#718096">Mkt ${p.k.toLocaleString()}</div>
-          <div style="font-weight:600;color:${mv>p.k?'#6ee7b7':mv<p.k?'#fca5a5':'#e2e8f0'}"><span style="color:#718096;font-weight:400">Model</span> ${mv.toLocaleString()}</div>
+          ${p.ip?'':`<div style="font-weight:600" title="DELTA Score — demonstrated dynasty value (0–99)"><span style="color:#718096;font-weight:400">DS</span> <span style="color:${p.dsScore>=85?'#6ee7b7':p.dsScore>=70?'#7dd3fc':p.dsScore>=55?'#fcd34d':'#fca5a5'}">${p.dsScore??'—'}</span></div>`}
         </div>
         <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\'")}')">✕</button>
       </div>`;
