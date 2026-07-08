@@ -118,9 +118,9 @@ function startProfileHTML(p){
     +'<div style="font-size:9px;color:#5C7080">'+cnt+' g</div></div>';
   return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
     +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:#111A28;margin-bottom:9px">'
-    + seg(sp.missPct,'#E8927C')+seg(sp.hitOnlyPct,'#6BB6E0')+seg(sp.elitePct,'#10B981')+'</div>'
+    + seg(sp.missPct,'#E05745')+seg(sp.hitOnlyPct,'#6BB6E0')+seg(sp.elitePct,'#10B981')+'</div>'
     +'<div style="display:flex;gap:4px">'
-    + cell('MISS',sp.missPct,sp.miss,'#E8927C')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'#6BB6E0')+cell('ELITE',sp.elitePct,sp.elite,'#10B981')
+    + cell('MISS',sp.missPct,sp.miss,'#E05745')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'#6BB6E0')+cell('ELITE',sp.elitePct,sp.elite,'#10B981')
     +'</div>'
     +'<div style="font-size:9px;color:#5C7080;text-align:center;margin-top:8px">'
     + sp.n+' starts · '+sp.lo+'\u2013'+String(sp.hi).slice(2)+' · hit \u2265'+sp.hitLine+' · elite \u2265'+sp.eliteLine+' pts</div></div>';
@@ -1891,7 +1891,7 @@ let RIPPLE=[];
 // (legacy hardcoded GAME_LOG removed — game logs live in data/game-logs.json via glOf())
 function glTag(n){
   const p=COMP.find(x=>x.n===n); const d=glOf(p);if(!d)return'';
-  const mc=d.miss<=35?'#10B981':d.miss<=50?'#E0B34D':'#E8927C';
+  const mc=d.miss<=35?'#10B981':d.miss<=50?'#E0B34D':'#E05745';
   const hc=d.hit>=65?'#10B981':d.hit>=50?'#6BB6E0':'#8CA0B3';
   const ec=d.elite>=25?'#10B981':d.elite>=15?'#6BB6E0':'#8CA0B3';
   return`<span style="font-size:9px;display:inline-flex;gap:3px;margin-left:4px">` +
@@ -2982,7 +2982,7 @@ function oppScoreColor(score) {
   if (score >= 88) return '#10B981';
   if (score >= 75) return '#6BB6E0';
   if (score >= 60) return '#E0B34D';
-  return '#E8927C';
+  return '#E05745';
 }
 
 function oppScoreLabel(pos) {
@@ -3310,13 +3310,13 @@ function dsColor(score) {
   if (score >= 85) return '#10B981'; // teal — elite
   if (score >= 72) return '#6BB6E0'; // blue — strong
   if (score >= 55) return '#E0B34D'; // yellow — average
-  return '#E8927C';                  // red — weak
+  return '#E05745';                  // red — weak
 }
 
 RAW.forEach(r=>COMP.push(calcProj(r)));
 const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
-function bc(s){return s>=70?'#10B981':s>=55?'#6BB6E0':s>=40?'#E0B34D':'#E8927C';}
-function tH(t){return t==='up'?'<span style="color:#10B981">▲</span>':t==='down'?'<span style="color:#E8927C">▼</span>':'<span style="color:#5C7080">—</span>';}
+function bc(s){return s>=70?'#10B981':s>=55?'#6BB6E0':s>=40?'#E0B34D':'#E05745';}
+function tH(t){return t==='up'?'<span style="color:#10B981">▲</span>':t==='down'?'<span style="color:#E05745">▼</span>':'<span style="color:#5C7080">—</span>';}
 function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
 function eTag(sc,fl,fr){
   if(sc===1.0&&!fl)return'<span class="badge bn">—</span>';
@@ -3945,7 +3945,7 @@ function contractStatus(c){
 }
 
 function dynastySignal(c){
-  if(c.end===2026)return'<span style="color:#E8927C;font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  if(c.end===2026)return'<span style="color:#E05745;font-size:10px">Sell before walk year · Contract leverage gone</span>';
   const yrsLeft=c.end-2025; // inclusive of current 2026 season
   if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#10B981;font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:#6BB6E0;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
@@ -3976,7 +3976,7 @@ function buildDSBreakdownHTML(p){
      +'<br><span style="color:#5C7080">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
     :'';
   // Each axis gets its own color based on that axis's individual score ratio
-  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#10B981':r>=0.6?'#6BB6E0':r>=0.4?'#E0B34D':'#E8927C';};
+  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#10B981':r>=0.6?'#6BB6E0':r>=0.4?'#E0B34D':'#E05745';};
   const bar=(label,val,max,tip)=>{
     const pct=Math.round((val/max)*100);
     const c=axisClr(val,max);
@@ -4086,16 +4086,16 @@ function explainSystem(p){
 }
 function buildSchemeHTML(p){
   const x=explainSystem(p); if(!x) return '';
-  const sysClr=p.sys>=70?'#10B981':p.sys>=55?'#6BB6E0':p.sys>=40?'#E0B34D':'#E8927C';
+  const sysClr=p.sys>=70?'#10B981':p.sys>=55?'#6BB6E0':p.sys>=40?'#E0B34D':'#E05745';
   const fp=v=>`${v>0?'+':''}${(v*100).toFixed(0)}%`;
-  const netClr=x.net>0?'#10B981':x.net<0?'#E8927C':'#8CA0B3';
+  const netClr=x.net>0?'#10B981':x.net<0?'#E05745':'#8CA0B3';
   const styTot=x.style?x.style.total:0;
   const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''}${styTot?` and ${fp(styTot)} offense style`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
     +(x.softened?` <span style="color:#8CA0B3">(softened — proven producers carry their role through scheme change)</span>`:'');
   const styBlock=(x.style&&x.style.parts.length)
     ? '<div style="margin-top:7px;padding-top:7px;border-top:0.5px solid #1E2A3A">'
       +'<div style="font-size:9px;color:#5C7080;letter-spacing:.04em;margin-bottom:3px">OFFENSE STYLE · validated 2022–25 play-by-play</div>'
-      +x.style.parts.map(pt=>`<div style="font-size:10px;color:#8CA0B3;line-height:1.5">${pt.pct>0?'▲':'▼'} ${pt.label}: <b style="color:${pt.pct>0?'#10B981':'#E8927C'}">${(pt.pct>0?'+':'')+(pt.pct*100).toFixed(1)}%</b></div>`).join('')
+      +x.style.parts.map(pt=>`<div style="font-size:10px;color:#8CA0B3;line-height:1.5">${pt.pct>0?'▲':'▼'} ${pt.label}: <b style="color:${pt.pct>0?'#10B981':'#E05745'}">${(pt.pct>0?'+':'')+(pt.pct*100).toFixed(1)}%</b></div>`).join('')
       +(x.style.scaled?'<div style="font-size:9px;color:#E0B34D;margin-top:2px">Scaled toward neutral — style is the coordinator\u2019s property and this team has a new one.</div>':'')
       +'</div>'
     : '';
@@ -4138,7 +4138,7 @@ function buildReadHTML(p){
   const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
   const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
   const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
-  const proofClr=ds>=72?'#10B981':ds>=62?'#10B981':ds>=52?'#6BB6E0':ds>=42?'#E0B34D':'#E8927C';
+  const proofClr=ds>=72?'#10B981':ds>=62?'#10B981':ds>=52?'#6BB6E0':ds>=42?'#E0B34D':'#E05745';
   const worthOutrunsProof=(rankDs-rankMv)>=6;
   const ranksAgree=Math.abs(rankMv-rankMk)<=1;
   const absPct=Math.abs(pct);
@@ -4251,7 +4251,7 @@ function buildReadHTML(p){
       ]);
     }
   } else if(verdict==='sell'||verdict==='strong sell'){
-    clr=verdict==='strong sell'?'#E8927C':'#E8927C';
+    clr=verdict==='strong sell'?'#E05745':'#E05745';
     if(Math.abs(rankMv-rankMk)<=1){
       const rkTxt=rankMv===rankMk?`${pos}${rankMv}`:`${pos}${rankMk} and ${pos}${rankMv} — essentially the same rank`;
       math=absPct>=15

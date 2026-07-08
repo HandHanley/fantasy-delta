@@ -3,66 +3,123 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>DELTA</title>
+<title>DELTA · Player Profile</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@400;500;700&family=Josefin+Sans:wght@600;700&display=swap">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0e17;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
-a{color:#6ee7b7;text-decoration:none}
+body{background:#0A0F1A;color:#EAF0F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:#10B981;text-decoration:none}
 a:hover{text-decoration:underline}
 .page{max-width:680px;margin:0 auto;padding:16px 14px 48px}
-.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #1f2937}
-.nav-back{font-size:12px;color:#718096;display:flex;align-items:center;gap:5px;transition:color .15s}
-.nav-back:hover{color:#e2e8f0;text-decoration:none}
-.nav-brand{font-size:11px;font-weight:700;color:#6ee7b7;letter-spacing:.05em}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #1E2A3A}
+.nav-back{font-size:12px;color:#8CA0B3;display:flex;align-items:center;gap:5px;transition:color .15s}
+.nav-back:hover{color:#EAF0F4;text-decoration:none}
+.nav-brand{font-size:11px;font-weight:700;color:#10B981;letter-spacing:.05em}
 .hero{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
-.hero-hs{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #2d4a3e;background:#1a202c;flex-shrink:0}
-.hero-ph{width:72px;height:72px;border-radius:50%;background:#1a202c;border:1px solid #2d3748;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;color:#4a5568}
+.hero-hs{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #1E2A3A;background:#111A28;flex-shrink:0}
+.hero-ph{width:72px;height:72px;border-radius:50%;background:#111A28;border:1px solid #1E2A3A;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;color:#5C7080}
 .hero-info{flex:1;min-width:0}
-.hero-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:#e2e8f0;line-height:1.1;margin-bottom:5px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:#a0aec0;margin-bottom:3px}
-.hero-bg{font-size:11px;color:#718096;margin-bottom:7px}
+.hero-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:#EAF0F4;line-height:1.1;margin-bottom:5px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:#8CA0B3;margin-bottom:3px}
+.hero-bg{font-size:11px;color:#8CA0B3;margin-bottom:7px}
 .hero-verdict{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .verdict-badge{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.hero-vals{font-size:11px;color:#a0aec0}
+.hero-vals{font-size:11px;color:#8CA0B3}
 .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em}
-.bs{background:#064e3b;color:#6ee7b7}
-.bi{background:#0c4a6e;color:#7dd3fc}
-.bn{background:#1f2937;color:#9ca3af}
-.bw{background:#451a03;color:#fcd34d}
-.bd{background:#3b0d0d;color:#fca5a5}
-.card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:12px}
-.card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:10px}
-.card-sub{font-size:9px;color:#374151;font-weight:400;margin-top:2px}
-.dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;margin-bottom:8px}
+.bs{background:#0D1420;color:#10B981}
+.bi{background:#0D1420;color:#6BB6E0}
+.bn{background:#1E2A3A;color:#8CA0B3}
+.bw{background:#0D1420;color:#E0B34D}
+.bd{background:#0D1420;color:#EA7A66}
+.card{background:#111A28;border:1px solid #1E2A3A;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:10px}
+.card-sub{font-size:9px;color:#5C7080;font-weight:400;margin-top:2px}
+.dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.dd-prog-label{font-size:10px;color:#718096;width:36px;flex-shrink:0}
-.dd-prog-bar{flex:1;height:5px;background:#1a202c;border-radius:3px;overflow:hidden}
+.dd-prog-label{font-size:10px;color:#8CA0B3;width:36px;flex-shrink:0}
+.dd-prog-bar{flex:1;height:5px;background:#111A28;border-radius:3px;overflow:hidden}
 .dd-prog-fill{height:100%;border-radius:3px}
 .dd-prog-val{font-size:10px;font-weight:600;width:32px;text-align:right;flex-shrink:0}
 .prod-table{width:100%;border-collapse:collapse;font-size:11px}
-.prod-table th{font-size:9px;font-weight:600;color:#4a5568;letter-spacing:.04em;text-align:right;padding:0 8px 6px}
+.prod-table th{font-size:9px;font-weight:600;color:#5C7080;letter-spacing:.04em;text-align:right;padding:0 8px 6px}
 .prod-table th:first-child{text-align:left}
-.prod-table td{text-align:right;padding:5px 8px;border-top:1px solid #1a202c}
-.prod-table td:first-child{text-align:left;color:#718096;font-weight:600}
+.prod-table td{text-align:right;padding:5px 8px;border-top:1px solid #111A28}
+.prod-table td:first-child{text-align:left;color:#8CA0B3;font-weight:600}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat-box{background:#0d1117;border-radius:6px;padding:8px 10px;text-align:center}
+.stat-box{background:#0D1420;border-radius:6px;padding:8px 10px;text-align:center}
 .stat-val{font-size:18px;font-weight:700;line-height:1.1;margin-bottom:2px}
-.stat-lbl{font-size:9px;color:#4a5568;letter-spacing:.03em}
-.bdr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1a202c;font-size:11px}
+.stat-lbl{font-size:9px;color:#5C7080;letter-spacing:.03em}
+.bdr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #111A28;font-size:11px}
 .bdr-row:last-child{border-bottom:none}
-.ripple-card{background:#0d1117;border-radius:6px;padding:10px;margin-bottom:6px}
+.ripple-card{background:#0D1420;border-radius:6px;padding:10px;margin-bottom:6px}
 .ripple-card:last-child{margin-bottom:0}
-.scout-text{font-size:12px;color:#a0aec0;line-height:1.65}
-.state-msg{text-align:center;padding:60px 20px;color:#4a5568;font-size:13px}
-.freshness{font-size:10px;color:#374151;margin-top:6px;text-align:right}
+.scout-text{font-size:12px;color:#8CA0B3;line-height:1.65}
+.state-msg{text-align:center;padding:60px 20px;color:#5C7080;font-size:13px}
+.freshness{font-size:10px;color:#5C7080;margin-top:6px;text-align:right}
 @media(max-width:480px){.hero-name{font-size:20px}.hero-hs,.hero-ph{width:58px;height:58px}}
+/* ===================== DELTA BRAND LAYER ===================== */
+:root{
+  --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+  --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
+}
+body{font-family:var(--sans)}
+a{color:#2DD4BF}
+.nav{border-bottom:1px solid #1E2A3A}
+.nav-back{color:#8CA0B3}
+.nav-back:hover{color:#EAF0F4}
+.hero-name{font-family:var(--sans)}
+.hero-meta,.hero-bg,.hero-vals{font-family:var(--sans)}
+.verdict-badge{font-family:var(--sans)}
+/* badges → brand semantics: buy=emerald, hold=slate, sell=coral */
+.badge{font-family:var(--sans)}
+.bs{background:rgba(16,185,129,.14);color:#34D399}
+.bi{background:rgba(16,185,129,.09);color:#10B981}
+.bn{background:#1E2A3A;color:#8CA0B3}
+.bw{background:rgba(224,87,69,.13);color:#E05745}
+.bd{background:rgba(224,87,69,.20);color:#EA7A66}
+.card{background:#111A28;border:1px solid #1E2A3A}
+.card-label,.dd-section-label{font-family:var(--sans);color:#5C7080}
+.card-sub,.freshness{color:#5C7080}
+/* figures in mono, labels in sans */
+.prod-table{font-family:var(--mono)}
+.prod-table th{font-family:var(--sans);color:#5C7080}
+.prod-table td{border-top:1px solid #1E2A3A}
+.prod-table td:first-child{font-family:var(--sans);color:#8CA0B3}
+.stat-box{background:#0D1420}
+.stat-val{font-family:var(--mono)}
+.stat-lbl{font-family:var(--sans);color:#5C7080}
+.dd-prog-bar{background:#1E2A3A}
+.dd-prog-label{font-family:var(--sans)}
+.dd-prog-val{font-family:var(--mono)}
+.bdr-row{border-bottom:1px solid #1E2A3A;font-family:var(--sans)}
+.ripple-card{background:#0D1420}
+.scout-text{font-family:var(--sans)}
+.state-msg{color:#5C7080}
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="nav">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <svg width="26" height="26" viewBox="0 0 128 128" aria-label="DELTA" style="display:block;flex-shrink:0">
+        <defs>
+          <linearGradient id="nL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+          <linearGradient id="nR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+        </defs>
+        <path d="M64 22 L24 106 L64 106 Z" fill="url(#nL)"/>
+        <path d="M64 22 L64 106 L104 106 Z" fill="url(#nR)"/>
+        <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
+        <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
+          <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+        </g>
+      </svg>
+      <span style="font-family:var(--geo);font-weight:700;font-size:16px;letter-spacing:3.5px;text-transform:uppercase;color:#EAF0F4">DELTA</span>
+      <span style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;color:#2DD4BF;border:1px solid rgba(45,212,191,.25);border-radius:4px;padding:1px 4px">v1.0</span>
+    </a>
     <a class="nav-back" href="index.html">← Rankings</a>
-    <span class="nav-brand">DELTA v1.0</span>
   </nav>
   <div id="state-loading" class="state-msg">Loading player data…</div>
   <div id="state-error" class="state-msg" style="display:none"></div>
@@ -88,7 +145,7 @@ function showContent(html) {
 }
 
 function ppgClr(v) {
-  return v >= 18 ? '#6ee7b7' : v >= 14 ? '#7dd3fc' : v >= 10 ? '#fcd34d' : v > 0 ? '#fc8181' : '#2d3748';
+  return v >= 18 ? '#10B981' : v >= 14 ? '#6BB6E0' : v >= 10 ? '#E0B34D' : v > 0 ? '#E05745' : '#1E2A3A';
 }
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
@@ -97,8 +154,8 @@ function buildHeroHTML(p) {
   const dp = DRAFT_PICKS[p.n];
   const team = (typeof AL !== 'undefined' && AL[p.t]) ? AL[p.t] : p.t;
   const vt = (vTag(p).match(/>([a-z ]+)</) || [,''])[1];
-  const vc = vt.includes('strong buy') ? '#6ee7b7' : vt === 'buy' ? '#9ae6b4'
-    : vt === 'hold' ? '#cbd5e0' : vt.includes('strong sell') ? '#fca5a5' : '#fc8181';
+  const vc = vt.includes('strong buy') ? '#10B981' : vt === 'buy' ? '#10B981'
+    : vt === 'hold' ? '#EAF0F4' : vt.includes('strong sell') ? '#EA7A66' : '#E05745';
   const mv = mvAsset(p);
   const adjP = getAdjProj(p);
   const hs = (typeof HEADSHOTS !== 'undefined') && HEADSHOTS[p.n];
@@ -120,7 +177,7 @@ function buildHeroHTML(p) {
         <span class="badge bn">${p.pos}</span>
         <span>${team}</span>
         <span>Age ${p.a.toFixed(1)}</span>
-        ${ct ? `<span style="color:#718096">Thru ${ct.end}${ct.end<=2026?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
+        ${ct ? `<span style="color:#8CA0B3">Thru ${ct.end}${ct.end<=2026?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
       </div>
       ${bgLine}
       <div class="hero-verdict">
@@ -142,9 +199,9 @@ function buildDSTrajectoryHTML(p) {
       <div class="card-label" style="margin-bottom:8px">DELTA Score Trajectory</div>
       <div style="display:flex;align-items:baseline;gap:10px">
         <span style="font-size:26px;font-weight:800;color:${dsColor(p.dsScore)}">${p.dsScore}</span>
-        <span style="font-size:10px;color:#718096">2025 — draft-capital prior</span>
+        <span style="font-size:10px;color:#8CA0B3">2025 — draft-capital prior</span>
       </div>
-      <div style="font-size:9.5px;color:#4a5568;margin-top:8px;line-height:1.5">
+      <div style="font-size:9.5px;color:#5C7080;margin-top:8px;line-height:1.5">
         Rookie — no NFL seasons to chart. The score is a capital-based prior; the trajectory unlocks once real games replace it.
       </div>
     </div>`;
@@ -174,20 +231,20 @@ function buildDSTrajectoryHTML(p) {
   const d6C = dsColor(ds2026);
 
   const bar = (score, color) => `
-    <div style="height:4px;background:#1a202c;border-radius:3px;overflow:hidden;margin-bottom:4px">
+    <div style="height:4px;background:#111A28;border-radius:3px;overflow:hidden;margin-bottom:4px">
       <div style="width:${Math.round((score/99)*100)}%;height:100%;background:${color};border-radius:3px"></div>
     </div>`;
 
   const pt = (yr, score, color, note) => `
     <div style="flex:1;text-align:center">
-      <div style="font-size:9px;color:#4a5568;margin-bottom:5px">${yr}</div>
+      <div style="font-size:9px;color:#5C7080;margin-bottom:5px">${yr}</div>
       ${bar(score, color)}
       <div style="font-size:24px;font-weight:800;line-height:1;color:${color}">${score}</div>
-      <div style="font-size:9px;color:#374151;margin-top:3px">${note}</div>
+      <div style="font-size:9px;color:#5C7080;margin-top:3px">${note}</div>
     </div>`;
 
   const arr = (from, to) => {
-    const c = to > from ? '#6ee7b7' : to < from ? '#fca5a5' : '#718096';
+    const c = to > from ? '#10B981' : to < from ? '#EA7A66' : '#8CA0B3';
     const sym = to > from ? '↑' : to < from ? '↓' : '→';
     return `<div style="font-size:18px;color:${c};padding-top:18px;flex-shrink:0">${sym}</div>`;
   };
@@ -202,7 +259,7 @@ function buildDSTrajectoryHTML(p) {
       ${arr(ds, ds2026)}
       ${pt('2026 proj', ds2026, d6C, 'if proj holds')}
     </div>
-    <div style="font-size:9px;color:#374151;margin-top:10px;text-align:center">
+    <div style="font-size:9px;color:#5C7080;margin-top:10px;text-align:center">
       2024 uses age−1 and prior production · opportunity &amp; contract approximated from current values
     </div>
   </div>`;
@@ -235,16 +292,16 @@ function buildProductionHTML(p) {
   }).join('');
 
   const lbls = years.map(y =>
-    `<div style="flex:1;text-align:center;font-size:9px;color:#4a5568">${y.yr.slice(2)}</div>`
+    `<div style="flex:1;text-align:center;font-size:9px;color:#5C7080">${y.yr.slice(2)}</div>`
   ).join('');
 
   const tableRows = years.map(y => {
     const diff = (y.ppg - posAvg).toFixed(1);
-    const dc = diff > 0 ? '#6ee7b7' : diff < 0 ? '#fca5a5' : '#718096';
+    const dc = diff > 0 ? '#10B981' : diff < 0 ? '#EA7A66' : '#8CA0B3';
     return `<tr>
       <td>${y.yr}</td>
       <td style="color:${ppgClr(y.ppg)};font-weight:600">${y.ppg.toFixed(1)}</td>
-      <td style="color:#718096">${y.g != null && y.g > 0 ? y.g : '—'}</td>
+      <td style="color:#8CA0B3">${y.g != null && y.g > 0 ? y.g : '—'}</td>
       <td style="color:${dc}">${diff > 0 ? '+' : ''}${diff}</td>
     </tr>`;
   }).join('');
@@ -262,7 +319,7 @@ function buildProductionHTML(p) {
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
-    <div style="font-size:9px;color:#374151;margin-top:6px">* Pos avg = ${posAvg} PPG (current-season average, applied flat across all years) · Games load from nightly pipeline</div>
+    <div style="font-size:9px;color:#5C7080;margin-top:6px">* Pos avg = ${posAvg} PPG (current-season average, applied flat across all years) · Games load from nightly pipeline</div>
   </div>`;
 }
 
@@ -285,8 +342,8 @@ function buildEPAHTML(p) {
 
   const getClr = v => {
     const a = Math.abs(v);
-    if (v >= 0) return a >= 0.12 ? '#6ee7b7' : a >= 0.04 ? '#a7f3d0' : '#fcd34d';
-    else        return a >= 0.12 ? '#fc8181' : a >= 0.04 ? '#fca5a5' : '#fcd34d';
+    if (v >= 0) return a >= 0.12 ? '#10B981' : a >= 0.04 ? '#34D399' : '#E0B34D';
+    else        return a >= 0.12 ? '#E05745' : a >= 0.04 ? '#EA7A66' : '#E0B34D';
   };
 
   const rows = epas.map(x => {
@@ -294,12 +351,12 @@ function buildEPAHTML(p) {
     const clr = getClr(x.v);
     const isPos = x.v >= 0;
     const sign = x.v > 0 ? '+' : '';
-    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a202c">
-      <div style="font-size:10px;color:#718096;width:26px;flex-shrink:0">${x.yr.slice(2)}</div>
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #111A28">
+      <div style="font-size:10px;color:#8CA0B3;width:26px;flex-shrink:0">${x.yr.slice(2)}</div>
       <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;height:8px">
         ${!isPos ? `<div style="width:${pct}%;height:100%;background:${clr};border-radius:3px 0 0 3px"></div>` : ''}
       </div>
-      <div style="width:2px;height:14px;background:#374151;flex-shrink:0;border-radius:1px"></div>
+      <div style="width:2px;height:14px;background:#5C7080;flex-shrink:0;border-radius:1px"></div>
       <div style="flex:1;display:flex;justify-content:flex-start;align-items:center;height:8px">
         ${isPos ? `<div style="width:${pct}%;height:100%;background:${clr};border-radius:0 3px 3px 0"></div>` : ''}
       </div>
@@ -307,7 +364,7 @@ function buildEPAHTML(p) {
     </div>`;
   }).join('');
 
-  const trendClr = p.epaTr === 'up' ? '#6ee7b7' : p.epaTr === 'down' ? '#fc8181' : '#718096';
+  const trendClr = p.epaTr === 'up' ? '#10B981' : p.epaTr === 'down' ? '#E05745' : '#8CA0B3';
   const trendTxt = p.epaTr === 'up' ? '↑ Improving' : p.epaTr === 'down' ? '↓ Declining' : '→ Flat';
 
   return `<div class="card">
@@ -319,7 +376,7 @@ function buildEPAHTML(p) {
       ${p.epaTr ? `<span style="font-size:10px;font-weight:600;color:${trendClr};flex-shrink:0;margin-left:10px">${trendTxt}</span>` : ''}
     </div>
     ${rows}
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:#374151;margin-top:6px;padding:0 34px 0 0">
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:#5C7080;margin-top:6px;padding:0 34px 0 0">
       <span>← below avg</span>
       <span>above avg →</span>
     </div>
@@ -335,20 +392,20 @@ function buildStartProfileCard(p) {
     <div class="card-sub" style="margin-bottom:10px">${gl.g} games sampled · scored against position-specific PPG thresholds</div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Elite</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#6ee7b7"></div></div>
-      <div class="dd-prog-val" style="color:#6ee7b7">${gl.elite}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#10B981"></div></div>
+      <div class="dd-prog-val" style="color:#10B981">${gl.elite}%</div>
     </div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Hit</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100-gl.miss}%;background:#7dd3fc"></div></div>
-      <div class="dd-prog-val" style="color:#7dd3fc">${100-gl.miss}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100-gl.miss}%;background:#6BB6E0"></div></div>
+      <div class="dd-prog-val" style="color:#6BB6E0">${100-gl.miss}%</div>
     </div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Miss</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#fc8181"></div></div>
-      <div class="dd-prog-val" style="color:#fc8181">${gl.miss}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#E05745"></div></div>
+      <div class="dd-prog-val" style="color:#E05745">${gl.miss}%</div>
     </div>
-    <div style="font-size:9px;color:#374151;margin-top:6px">Elite = exceeded the top-starter PPG threshold · Hit = startable · Miss = below startable threshold</div>
+    <div style="font-size:9px;color:#5C7080;margin-top:6px">Elite = exceeded the top-starter PPG threshold · Hit = startable · Miss = below startable threshold</div>
   </div>`;
 }
 
@@ -366,9 +423,9 @@ function buildOpportunityHTML(p) {
   }
   const st25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
   const isWR = p.pos === 'WR' || p.pos === 'TE';
-  const scC = oppScoreColor ? oppScoreColor(oppSc) : (oppSc>=88?'#6ee7b7':oppSc>=70?'#7dd3fc':oppSc>=55?'#fcd34d':'#fc8181');
+  const scC = oppScoreColor ? oppScoreColor(oppSc) : (oppSc>=88?'#10B981':oppSc>=70?'#6BB6E0':oppSc>=55?'#E0B34D':'#E05745');
   const tier = oppSc>=88?(isWR?'Elite alpha':'Elite workhorse'):oppSc>=75?'Clear starter':oppSc>=60?'Role player':'Committee/specialist';
-  const sysClr = p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
+  const sysClr = p.sys>=70?'#10B981':p.sys>=55?'#6BB6E0':p.sys>=40?'#E0B34D':'#E05745';
 
   let usageRows = '';
   if (st25) {
@@ -378,10 +435,10 @@ function buildOpportunityHTML(p) {
     const rzC = st25.rz_carries;
     if (isWR) {
       usageRows = [
-        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
-        ['Air yards share', (airS*100).toFixed(1)+'%', airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
-        ['RZ targets', rzT!=null?rzT:'—', rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
-      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:#718096">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
+        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.28?'#10B981':tgtS>=.20?'#6BB6E0':tgtS>=.14?'#E0B34D':'#E05745'],
+        ['Air yards share', (airS*100).toFixed(1)+'%', airS>=.38?'#10B981':airS>=.28?'#6BB6E0':airS>=.18?'#E0B34D':'#E05745'],
+        ['RZ targets', rzT!=null?rzT:'—', rzT>=18?'#10B981':rzT>=12?'#6BB6E0':rzT>=7?'#E0B34D':'#E05745'],
+      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:#8CA0B3">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
     } else {
       const g = st25.games || 17;
       const rsRaw = st25.rush_share || 0;
@@ -391,11 +448,11 @@ function buildOpportunityHTML(p) {
       const rsAdj = Math.min(1, rsRaw * (17 / g));
       const rsLabel = g < 17 ? `Rush share/game · ${g}g` : 'Rush share';
       usageRows = [
-        [rsLabel, (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'#6ee7b7':rsAdj>=.40?'#7dd3fc':rsAdj>=.25?'#fcd34d':'#fc8181'],
-        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
-        ['RZ carries', rzC!=null?rzC:'—', rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
-        ['RZ targets', rzT!=null?rzT:'—', rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
-      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:#718096">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
+        [rsLabel, (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'#10B981':rsAdj>=.40?'#6BB6E0':rsAdj>=.25?'#E0B34D':'#E05745'],
+        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.18?'#10B981':tgtS>=.12?'#6BB6E0':tgtS>=.08?'#E0B34D':'#E05745'],
+        ['RZ carries', rzC!=null?rzC:'—', rzC>=55?'#10B981':rzC>=35?'#6BB6E0':rzC>=20?'#E0B34D':'#E05745'],
+        ['RZ targets', rzT!=null?rzT:'—', rzT>=12?'#10B981':rzT>=7?'#6BB6E0':rzT>=3?'#E0B34D':'#E05745'],
+      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:#8CA0B3">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
     }
   }
 
@@ -408,7 +465,7 @@ function buildOpportunityHTML(p) {
       <div style="font-size:32px;font-weight:800;line-height:1;color:${scC}">${oppSc}</div>
     </div>
     ${usageRows}
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a202c">
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #111A28">
       ${buildSchemeHTML(p)}
     </div>
   </div>`;
@@ -421,7 +478,7 @@ function buildContractHTML(p) {
   const fmt = n => n >= 1000000 ? '$' + (n/1000000).toFixed(1) + 'M' : '$' + n.toLocaleString();
   const st = contractStatus(ct);
   const yrsLeft = ct.end - 2025; // inclusive of current 2026 season
-  const yrsClr = yrsLeft<=2?'#fca5a5':yrsLeft<=3?'#fcd34d':yrsLeft>=5?'#6ee7b7':'#7dd3fc';
+  const yrsClr = yrsLeft<=2?'#EA7A66':yrsLeft<=3?'#E0B34D':yrsLeft>=5?'#10B981':'#6BB6E0';
   return `<div class="card">
     <div class="card-label">Contract</div>
     <div class="stat-grid" style="margin-bottom:12px">
@@ -429,11 +486,11 @@ function buildContractHTML(p) {
       <div class="stat-box"><div class="stat-val">${fmt(ct.total)}</div><div class="stat-lbl">Total</div></div>
       <div class="stat-box"><div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div><div class="stat-lbl">Yrs Left</div></div>
     </div>
-    <div class="bdr-row"><span style="color:#718096">Status</span><span class="badge ${st.cls}">${st.label}</span></div>
-    <div class="bdr-row"><span style="color:#718096">Expires</span><span>${ct.end}${ct.end<=2026?' ⚠':''}</span></div>
-    ${fifthYearNote(p,ct) ? `<div class="bdr-row"><span style="color:#718096">Option</span><span style="color:#7dd3fc;font-size:11px">${fifthYearNote(p,ct)}</span></div>` : ''}
+    <div class="bdr-row"><span style="color:#8CA0B3">Status</span><span class="badge ${st.cls}">${st.label}</span></div>
+    <div class="bdr-row"><span style="color:#8CA0B3">Expires</span><span>${ct.end}${ct.end<=2026?' ⚠':''}</span></div>
+    ${fifthYearNote(p,ct) ? `<div class="bdr-row"><span style="color:#8CA0B3">Option</span><span style="color:#6BB6E0;font-size:11px">${fifthYearNote(p,ct)}</span></div>` : ''}
     <div style="margin-top:8px">${dynastySignal(ct)}</div>
-    ${ct.note ? `<div style="font-size:10px;color:#4a5568;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
+    ${ct.note ? `<div style="font-size:10px;color:#5C7080;margin-top:6px;font-style:italic">${ct.note}</div>` : ''}
   </div>`;
 }
 
@@ -445,7 +502,7 @@ function buildRippleHTML(p) {
     <div class="card-label">Ripple Effect</div>
     ${entries.map(r=>`<div class="ripple-card">
       <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
-      <div style="font-size:11px;color:#a0aec0;line-height:1.5;margin-top:5px">${r.reason}</div>
+      <div style="font-size:11px;color:#8CA0B3;line-height:1.5;margin-top:5px">${r.reason}</div>
     </div>`).join('')}
   </div>`;
 }
@@ -455,7 +512,7 @@ function buildScoutHTML() {
   return `<div class="card">
     <div class="card-label" style="margin-bottom:2px">Scouting Report</div>
     <div class="card-sub" style="margin-bottom:10px">AI-generated narrative — player context, history &amp; dynasty outlook. Complements The Read above with qualitative analysis.</div>
-    <div id="scout-text" class="scout-text" style="color:#4a5568">Loading…</div>
+    <div id="scout-text" class="scout-text" style="color:#5C7080">Loading…</div>
   </div>`;
 }
 
@@ -492,12 +549,12 @@ function buildAgeCurveHTML(p) {
 
   // Y-axis ticks at 0, 12, 25
   const yTicks = [0, 12, 25].map(s =>
-    '<line x1="' + (padL-3) + '" y1="' + toY(s).toFixed(1) + '" x2="' + padL + '" y2="' + toY(s).toFixed(1) + '" stroke="#2d3748" stroke-width="1"/>'
-    + '<text x="' + (padL-5) + '" y="' + (toY(s)+3).toFixed(1) + '" fill="#374151" font-size="6" text-anchor="end">' + s + '</text>'
+    '<line x1="' + (padL-3) + '" y1="' + toY(s).toFixed(1) + '" x2="' + padL + '" y2="' + toY(s).toFixed(1) + '" stroke="#1E2A3A" stroke-width="1"/>'
+    + '<text x="' + (padL-5) + '" y="' + (toY(s)+3).toFixed(1) + '" fill="#5C7080" font-size="6" text-anchor="end">' + s + '</text>'
   ).join('');
 
   const ageLabels = [20, 24, 28, 32, 36, 38].map(a =>
-    '<text x="' + toX(a).toFixed(1) + '" y="' + (padT+plotH+13) + '" fill="#4a5568" font-size="6" text-anchor="middle">' + a + '</text>'
+    '<text x="' + toX(a).toFixed(1) + '" y="' + (padT+plotH+13) + '" fill="#5C7080" font-size="6" text-anchor="middle">' + a + '</text>'
   ).join('');
 
   return '<div class="card">'
@@ -506,17 +563,17 @@ function buildAgeCurveHTML(p) {
     + '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block;overflow:visible">'
 
     // Peak zone shading
-    + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="#6ee7b7" opacity="0.07" rx="2"/>'
+    + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="#10B981" opacity="0.07" rx="2"/>'
 
     // Fill under curve
-    + '<path d="' + fillPath + '" fill="#374151" opacity="0.2"/>'
+    + '<path d="' + fillPath + '" fill="#5C7080" opacity="0.2"/>'
 
     // Curve line
-    + '<polyline points="' + points + '" fill="none" stroke="#4a5568" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'
+    + '<polyline points="' + points + '" fill="none" stroke="#5C7080" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'
 
     // Axes
-    + '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT+plotH) + '" stroke="#1f2937" stroke-width="1"/>'
-    + '<line x1="' + padL + '" y1="' + (padT+plotH) + '" x2="' + (W-padR) + '" y2="' + (padT+plotH) + '" stroke="#1f2937" stroke-width="1"/>'
+    + '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT+plotH) + '" stroke="#1E2A3A" stroke-width="1"/>'
+    + '<line x1="' + padL + '" y1="' + (padT+plotH) + '" x2="' + (W-padR) + '" y2="' + (padT+plotH) + '" stroke="#1E2A3A" stroke-width="1"/>'
 
     // Y ticks + labels
     + yTicks
@@ -528,7 +585,7 @@ function buildAgeCurveHTML(p) {
 
     // Player dot + vertical guide
     + '<line x1="' + mx.toFixed(1) + '" y1="' + (padT+plotH) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>'
-    + '<circle cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="4.5" fill="' + col + '" stroke="#0a0e17" stroke-width="1.5"/>'
+    + '<circle cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="4.5" fill="' + col + '" stroke="#0A0F1A" stroke-width="1.5"/>'
 
     // Player age label — above dot normally, below when near top to avoid colliding with "prime" label
     + (playerScore >= 22
@@ -537,7 +594,7 @@ function buildAgeCurveHTML(p) {
     )
 
     + '</svg>'
-    + '<div style="font-size:9px;color:#374151;text-align:center;margin-top:2px">'
+    + '<div style="font-size:9px;color:#5C7080;text-align:center;margin-top:2px">'
     + pos + ' prime: ages ' + peakStart + '–' + peakEnd + ' · Age score ' + playerScore + '/25'
     + '</div>'
     + '</div>';
@@ -572,8 +629,8 @@ function buildComparableHTML(p) {
 
   const cards = comps.map(({peer, dsDiff, ageDiff}) => {
     const vt = (vTag(peer).match(/>([a-z ]+)</) || [,''])[1];
-    const vc = vt.includes('strong buy') ? '#6ee7b7' : vt === 'buy' ? '#9ae6b4'
-      : vt === 'hold' ? '#cbd5e0' : vt.includes('strong sell') ? '#fca5a5' : '#fc8181';
+    const vc = vt.includes('strong buy') ? '#10B981' : vt === 'buy' ? '#10B981'
+      : vt === 'hold' ? '#EAF0F4' : vt.includes('strong sell') ? '#EA7A66' : '#E05745';
     const dsc = dsColor(peer.dsScore);
     const team = (typeof AL !== 'undefined' && AL[peer.t]) ? AL[peer.t] : peer.t;
     const note = dsDiff <= 2 ? 'near-identical score'
@@ -581,13 +638,13 @@ function buildComparableHTML(p) {
       : ageDiff <= 1.5 ? (peer.a > p.a ? 'slightly older' : 'slightly younger')
       : 'similar profile';
 
-    return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0d1117;border-radius:6px">'
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0D1420;border-radius:6px">'
       + '<div style="flex:1;min-width:0">'
       + '<div style="font-size:12px;font-weight:600;margin-bottom:2px">'
-      + '<a href="player.html?name=' + encodeURIComponent(peer.n) + '" style="color:#e2e8f0;text-decoration:none" '
-      + 'onmouseover="this.style.color=\'#6ee7b7\'" onmouseout="this.style.color=\'#e2e8f0\'">' + peer.n + '</a>'
+      + '<a href="player.html?name=' + encodeURIComponent(peer.n) + '" style="color:#EAF0F4;text-decoration:none" '
+      + 'onmouseover="this.style.color=\'#10B981\'" onmouseout="this.style.color=\'#EAF0F4\'">' + peer.n + '</a>'
       + '</div>'
-      + '<div style="font-size:10px;color:#718096">' + team + ' · Age ' + peer.a.toFixed(1) + ' · ' + note + '</div>'
+      + '<div style="font-size:10px;color:#8CA0B3">' + team + ' · Age ' + peer.a.toFixed(1) + ' · ' + note + '</div>'
       + '</div>'
       + '<div style="text-align:right;flex-shrink:0">'
       + '<div style="font-size:20px;font-weight:800;color:' + dsc + ';line-height:1">' + peer.dsScore + '</div>'
@@ -608,7 +665,7 @@ function renderPlayerPage(p) {
   ensureScoutData().then(() => {
     const el = document.getElementById('scout-text');
     if (el) {
-      el.style.color = '#a0aec0';
+      el.style.color = '#8CA0B3';
       el.textContent = SCOUT[p.n] || 'No scouting report available yet.';
     }
   });

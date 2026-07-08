@@ -197,10 +197,10 @@ tr:hover td{background:var(--panel)}
   --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
   --teal-br:#2DD4BF; --teal:#14B8A6; --emerald:#10B981; --emerald-dp:#047857;
   --mint:#CCFBF1; --fog:#8CA0B3; --fog-2:#5C7080; --paper:#EAF0F4;
-  --coral:#E8927C; --topaz:#E0B34D;
+  --coral:#E05745; --topaz:#E0B34D;
   /* low-alpha signal tints so chips sit correctly on --ink */
   --emerald-tint:rgba(16,185,129,.14); --emerald-bri:#34D399;
-  --coral-tint:rgba(232,146,124,.13);  --coral-bri:#EFA48C;
+  --coral-tint:rgba(224,87,69,.13);  --coral-bri:#EA7A66;
   --topaz-tint:rgba(224,179,77,.14);
   --teal-tint:rgba(45,212,191,.12);     --teal-soft:rgba(45,212,191,.07);
   --row-hi:rgba(45,212,191,.055);
@@ -277,7 +277,7 @@ tr:hover td{background:var(--ink-2)}
 .bs{background:var(--emerald-tint);color:var(--emerald-bri)}
 .bi{background:rgba(16,185,129,.09);color:var(--emerald)}
 .bw{background:var(--coral-tint);color:var(--coral)}
-.bd{background:rgba(232,146,124,.20);color:var(--coral-bri)}
+.bd{background:rgba(224,87,69,.20);color:var(--coral-bri)}
 .bn{background:var(--line);color:var(--fog)}
 .bt{background:var(--topaz-tint);color:var(--topaz)}
 .bar-wrap{background:var(--line)}
@@ -777,13 +777,13 @@ function renderRankings(){
     <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
     <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✏</span>':''); })()}${p.n}</td>
     <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
-    <td class="col-hide-mobile">${p.t}</td>
+    <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${barColor(p.sys)}"></span></span></td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
-    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
+    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
@@ -824,7 +824,7 @@ function renderProj(){
     return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
       <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
-      <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+      <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
       <td style="color:var(--coral)">${p.floor.toFixed(1)}</td>
       <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
       <td style="color:var(--emerald)">${p.ceil.toFixed(1)}</td>
@@ -861,7 +861,7 @@ function renderEPA(){
   const fc=(v,pos)=>{if(!v||v===0)return'var(--fog-2)';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'var(--emerald)':v<-t?'var(--coral)':'var(--paper)';};
   document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
-    <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+    <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
     <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
     <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
     <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
@@ -1788,7 +1788,7 @@ function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
   const hi=pos==='QB'?21:pos==='RB'?16:pos==='TE'?11:15;
   const mid=pos==='QB'?17:pos==='RB'?12:pos==='TE'?8:11;
-  return v>=hi?'#10B981':v>=mid?'#6BB6E0':v>=mid*0.7?'#E0B34D':'#E8927C';
+  return v>=hi?'#10B981':v>=mid?'#6BB6E0':v>=mid*0.7?'#E0B34D':'#E05745';
 }
 function renderDeck(p){
   // ── Header ──
@@ -2250,7 +2250,7 @@ function getScoreColor(s) {
   if (s >= 85) return '#10B981';
   if (s >= 70) return '#10B981';
   if (s >= 55) return '#E0B34D';
-  if (s >= 40) return '#E8927C';
+  if (s >= 40) return '#E05745';
   return '#8CA0B3';
 }
 
@@ -2716,8 +2716,18 @@ document.addEventListener('click', function(e) {
 
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
   <div class="dd-card" id="dd-card" data-player="">
-    <div class="dd-header">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+    <div class="dd-header" style="flex-direction:column;align-items:stretch;gap:11px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <svg width="21" height="21" viewBox="0 0 128 128" fill="none" style="display:block" aria-label="DELTA">
+          <path d="M64 22 L24 106 L104 106 Z" stroke="#2DD4BF" stroke-width="7" stroke-linejoin="round" stroke-opacity="0.9"/>
+          <line x1="64" y1="30" x2="64" y2="106" stroke="#2DD4BF" stroke-width="3" stroke-opacity="0.38"/>
+          <g stroke="#2DD4BF" stroke-width="5" stroke-linecap="round" stroke-opacity="0.62">
+            <line x1="58" y1="60" x2="70" y2="60"/><line x1="54" y1="80" x2="76" y2="80"/>
+          </g>
+        </svg>
+        <button class="dd-close" onclick="closeDeckNow()">✕</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <img id="dd-headshot" src="" alt="" width="56" height="56"
           style="border-radius:50%;object-fit:cover;border:2px solid var(--line);
                  background:var(--panel);flex-shrink:0;display:none;cursor:pointer;
@@ -2729,9 +2739,6 @@ document.addEventListener('click', function(e) {
             onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
           <div class="dd-meta" id="dd-meta"></div>
         </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button class="dd-close" onclick="closeDeckNow()">✕</button>
       </div>
     </div>
     <div class="dd-body" id="dd-body"></div>
