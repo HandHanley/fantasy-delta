@@ -4,28 +4,32 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELTA v1.0 — Dynasty Efficiency & Long-Term Analysis</title>
+<title>DELTA v1.0 — Dynasty Efficiency + Long-Term Analysis</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@400;500;700&family=Josefin+Sans:wght@600;700&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;font-size:14px;background:#0f1117;color:#e2e8f0;padding:1rem}
-.tabs{display:flex;gap:0;margin-bottom:1.25rem;flex-wrap:wrap;border-bottom:1px solid #2d3748}
-.tab{padding:7px 14px;border-radius:0;border:none;border-bottom:2px solid transparent;font-size:12px;cursor:pointer;background:transparent;color:#718096;margin-bottom:-1px}
-.tab.active{background:transparent;color:#e2e8f0;font-weight:600;border-bottom:2px solid #6ee7b7}
+body{font-family:system-ui,sans-serif;font-size:14px;background:var(--ink);color:var(--paper);padding:1rem}
+.tabs{display:flex;gap:0;margin-bottom:1.25rem;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{padding:7px 14px;border-radius:0;border:none;border-bottom:2px solid transparent;font-size:12px;cursor:pointer;background:transparent;color:var(--fog);margin-bottom:-1px}
+.tab.active{background:transparent;color:var(--paper);font-weight:600;border-bottom:2px solid var(--emerald)}
 .panel{display:none}.panel.active{display:block}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
-.controls select,.controls input{font-size:12px;padding:5px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0}
+.controls select,.controls input{font-size:12px;padding:5px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)}
 .controls input{width:160px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px}
-th{font-size:10px;font-weight:500;color:#718096;text-align:left;padding:6px 8px;border-bottom:1px solid #2d3748;cursor:pointer;white-space:nowrap;user-select:none}
-th:hover{color:#e2e8f0}
-td{padding:5px 8px;border-bottom:1px solid #1a202c;color:#e2e8f0;vertical-align:middle}
-tr:hover td{background:#1a202c}
+th{font-size:10px;font-weight:500;color:var(--fog);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;user-select:none}
+th:hover{color:var(--paper)}
+td{padding:5px 8px;border-bottom:1px solid var(--panel);color:var(--paper);vertical-align:middle}
+tr:hover td{background:var(--panel)}
 .badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
-.bs{background:#064e3b;color:#6ee7b7}.bw{background:#78350f;color:#fcd34d}
-.bd{background:#450a0a;color:#fca5a5}.bi{background:#0c2a4a;color:#7dd3fc}
-.bn{background:#1e2a3a;color:#718096}
-.bar-wrap{display:inline-block;width:48px;height:4px;background:#2d3748;border-radius:3px;vertical-align:middle;margin-left:4px}
+.bs{background:var(--emerald-tint);color:var(--emerald)}.bw{background:var(--topaz-tint);color:var(--topaz)}
+.bd{background:var(--coral-tint);color:var(--coral)}.bi{background:var(--ink-2);color:var(--sky)}
+.bn{background:#1e2a3a;color:var(--fog)}
+.bar-wrap{display:inline-block;width:48px;height:4px;background:var(--line);border-radius:3px;vertical-align:middle;margin-left:4px}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
@@ -66,152 +70,298 @@ tr:hover td{background:#1a202c}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }}
-.tc-wrap{display:flex;border:1px solid #2d3748;border-radius:6px;overflow:hidden}
-.tc-btn{font-size:11px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer;transition:all .15s}
+.tc-wrap{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tc-btn{font-size:11px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer;transition:all .15s}
 .tc-btn:last-child{border-right:none}
-.tc-btn:hover{background:#2d3748;color:#a0aec0}
-.tc-active{background:#0d2a1f;color:#6ee7b7;font-weight:600}
+.tc-btn:hover{background:var(--line);color:var(--fog)}
+.tc-active{background:var(--ink-2);color:var(--emerald);font-weight:600}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
 .trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
-.trade-side{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1rem}
+.trade-side{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem}
 .search-wrap{position:relative;margin-bottom:8px}
-.search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
-.dropdown{position:absolute;top:100%;left:0;right:0;background:#1a202c;border:1px solid #2d3748;border-radius:6px;z-index:30;max-height:220px;overflow-y:auto;margin-top:2px}
-.drop-item{padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid #0f1117;display:flex;justify-content:space-between}
-.drop-item:hover{background:#2d3748}
-.added{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 10px;background:#0f1117;border-radius:6px;margin-bottom:5px;gap:8px}
+.search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper)}
+.dropdown{position:absolute;top:100%;left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:6px;z-index:30;max-height:220px;overflow-y:auto;margin-top:2px}
+.drop-item{padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between}
+.drop-item:hover{background:var(--line)}
+.added{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 10px;background:var(--ink);border-radius:6px;margin-bottom:5px;gap:8px}
 .added-name{font-size:12px;font-weight:500}
-.added-meta{font-size:10px;color:#718096;margin-top:2px;display:flex;gap:6px;flex-wrap:wrap}
+.added-meta{font-size:10px;color:var(--fog);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap}
 .added-vals{text-align:right;font-size:11px;flex-shrink:0}
-.rm{background:none;border:none;cursor:pointer;color:#fc8181;font-size:14px;padding:0;margin-left:4px}
-.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-top:1px solid #2d3748;margin-top:4px}
-.vbar-outer{height:12px;background:#2d3748;border-radius:6px;overflow:hidden;position:relative;margin:8px 0}
-.vbar-a{position:absolute;left:0;top:0;height:100%;background:#6ee7b7;border-radius:6px 0 0 6px;transition:width .3s}
-.vbar-b{position:absolute;right:0;top:0;height:100%;background:#7dd3fc;border-radius:0 6px 6px 0;transition:width .3s}
-.vmid{position:absolute;left:50%;top:0;width:2px;height:100%;background:#0f1117;transform:translateX(-50%)}
+.rm{background:none;border:none;cursor:pointer;color:var(--coral);font-size:14px;padding:0;margin-left:4px}
+.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-top:1px solid var(--line);margin-top:4px}
+.vbar-outer{height:12px;background:var(--line);border-radius:6px;overflow:hidden;position:relative;margin:8px 0}
+.vbar-a{position:absolute;left:0;top:0;height:100%;background:var(--emerald);border-radius:6px 0 0 6px;transition:width .3s}
+.vbar-b{position:absolute;right:0;top:0;height:100%;background:var(--sky);border-radius:0 6px 6px 0;transition:width .3s}
+.vmid{position:absolute;left:50%;top:0;width:2px;height:100%;background:var(--ink);transform:translateX(-50%)}
 .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
-.breakdown-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a202c;font-size:11px}
-.send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid #2d3748;background:transparent;color:#e2e8f0;cursor:pointer;margin-top:.75rem}
+.breakdown-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--panel);font-size:11px}
+.send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--paper);cursor:pointer;margin-top:.75rem}
 .send-btn:hover{background:#1e2a3a}
-.section-label{font-size:10px;font-weight:600;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
-.info-box{font-size:11px;color:#718096;margin-bottom:1rem;padding:8px 12px;background:#1a202c;border-radius:6px;line-height:1.6}
-.edit-card{background:#1a202c;border:1px solid #2d3748;border-radius:10px;padding:1.25rem;max-width:480px}
+.section-label{font-size:10px;font-weight:600;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
+.info-box{font-size:11px;color:var(--fog);margin-bottom:1rem;padding:8px 12px;background:var(--panel);border-radius:6px;line-height:1.6}
+.edit-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem;max-width:480px}
 .edit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.edit-row label{min-width:130px;color:#718096;font-size:12px}
-.edit-row select,.edit-row input{font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0;flex:1;max-width:200px}
-.apply-btn{padding:8px 20px;font-size:13px;font-weight:500;border-radius:6px;border:1px solid #4a5568;background:#1e2a3a;color:#e2e8f0;cursor:pointer}
-.reset-btn{padding:8px 14px;font-size:12px;border-radius:6px;border:1px solid #2d3748;background:transparent;color:#fc8181;cursor:pointer;margin-left:8px}
-.override-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a202c;border-radius:6px;margin-bottom:5px;font-size:12px;flex-wrap:wrap;gap:6px}
-.flash{font-size:12px;color:#6ee7b7;margin-left:10px;opacity:0;transition:opacity .3s}
-.ripple-card{background:#1a202c;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12px}
+.edit-row label{min-width:130px;color:var(--fog);font-size:12px}
+.edit-row select,.edit-row input{font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper);flex:1;max-width:200px}
+.apply-btn{padding:8px 20px;font-size:13px;font-weight:500;border-radius:6px;border:1px solid var(--fog-2);background:#1e2a3a;color:var(--paper);cursor:pointer}
+.reset-btn{padding:8px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--coral);cursor:pointer;margin-left:8px}
+.override-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--panel);border-radius:6px;margin-bottom:5px;font-size:12px;flex-wrap:wrap;gap:6px}
+.flash{font-size:12px;color:var(--emerald);margin-left:10px;opacity:0;transition:opacity .3s}
+.ripple-card{background:var(--panel);border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12px}
 .edit-search-wrap{position:relative;margin-bottom:1rem}
-.edit-search-wrap input{width:100%;max-width:300px;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #2d3748;background:#0f1117;color:#e2e8f0}
-.edit-results{position:absolute;top:100%;left:0;width:300px;background:#1a202c;border:1px solid #2d3748;border-radius:6px;z-index:20;max-height:220px;overflow-y:auto;margin-top:2px}
-.edit-result-item{padding:7px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #0f1117}
-.edit-result-item:hover{background:#2d3748}
+.edit-search-wrap input{width:100%;max-width:300px;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper)}
+.edit-results{position:absolute;top:100%;left:0;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:6px;z-index:20;max-height:220px;overflow-y:auto;margin-top:2px}
+.edit-result-item{padding:7px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--ink)}
+.edit-result-item:hover{background:var(--line)}
 
 /* ── DELTA Deck — Player Card Modal ─────────────────────────── */
 .dd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
   display:flex;align-items:center;justify-content:center;padding:1rem;
   opacity:0;transition:opacity .2s;pointer-events:none;-webkit-overflow-scrolling:touch}
 .dd-overlay.open{opacity:1;pointer-events:auto}
-.dd-card{background:#111827;border:1px solid #2d3748;border-radius:14px;
+.dd-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
   width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
   transform:translateY(16px);transition:transform .2s;position:relative}
 .dd-overlay.open .dd-card{transform:translateY(0)}
-.dd-header{padding:1.25rem 1.25rem .75rem;border-bottom:1px solid #1f2937;
+.dd-header{padding:1.25rem 1.25rem .75rem;border-bottom:1px solid var(--line);
   display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .dd-name{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
-.dd-name:hover{color:#6ee7b7;text-decoration:underline dotted;text-underline-offset:2px}
-.dd-meta{font-size:11px;color:#718096;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
-.dd-close{background:none;border:none;color:#718096;font-size:20px;cursor:pointer;
+.dd-name:hover{color:var(--emerald);text-decoration:underline dotted;text-underline-offset:2px}
+.dd-meta{font-size:11px;color:var(--fog);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.dd-close{background:none;border:none;color:var(--fog);font-size:20px;cursor:pointer;
   padding:0 4px;line-height:1;flex-shrink:0}
-.dd-close:hover{color:#e2e8f0}
-.dd-copy{background:none;border:1px solid #2d3748;border-radius:6px;color:#718096;
+.dd-close:hover{color:var(--paper)}
+.dd-copy{background:none;border:1px solid var(--line);border-radius:6px;color:var(--fog);
   font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;
   padding:3px 8px;line-height:1.4;flex-shrink:0;transition:all .15s}
-.dd-copy:hover{background:#2d3748;color:#e2e8f0}
-.dd-copy.copied{border-color:#6ee7b7;color:#6ee7b7}
+.dd-copy:hover{background:var(--line);color:var(--paper)}
+.dd-copy.copied{border-color:var(--emerald);color:var(--emerald)}
 .dd-body{padding:1rem 1.25rem}
 .dd-section{margin-bottom:1.1rem}
 .dd-section-label{font-size:9px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;color:#4a5568;margin-bottom:.5rem}
+  text-transform:uppercase;color:var(--fog-2);margin-bottom:.5rem}
 .dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .dd-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.dd-stat{background:#1a202c;border-radius:7px;padding:8px 10px}
+.dd-stat{background:var(--panel);border-radius:7px;padding:8px 10px}
 @keyframes scoreReveal{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 .score-reveal{animation:scoreReveal .35s cubic-bezier(.34,1.56,.64,1) forwards}
 .dd-stat-val{font-size:16px;font-weight:700;line-height:1}
-.dd-stat-lbl{font-size:9px;color:#718096;margin-top:2px}
+.dd-stat-lbl{font-size:9px;color:var(--fog);margin-top:2px}
 .dd-arc{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:4px}
 .dd-arc-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;position:relative;transition:height .3s}
-.dd-arc-yr{font-size:8px;color:#4a5568;text-align:center;margin-top:2px}
+.dd-arc-yr{font-size:8px;color:var(--fog-2);text-align:center;margin-top:2px}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.dd-prog-label{font-size:10px;color:#718096;width:36px;flex-shrink:0}
-.dd-prog-bar{flex:1;height:5px;background:#1a202c;border-radius:3px;overflow:hidden}
+.dd-prog-label{font-size:10px;color:var(--fog);width:36px;flex-shrink:0}
+.dd-prog-bar{flex:1;height:5px;background:var(--panel);border-radius:3px;overflow:hidden}
 .dd-prog-fill{height:100%;border-radius:3px;transition:width .4s}
 .dd-prog-val{font-size:10px;font-weight:600;width:28px;text-align:right;flex-shrink:0}
-.dd-writeup{font-size:11px;line-height:1.65;color:#a0aec0;font-style:italic;
-  background:#1a202c;border-radius:8px;padding:.75rem 1rem;border-left:2px solid #2d3748}
-.dd-writeup.loading{color:#4a5568}
+.dd-writeup{font-size:11px;line-height:1.65;color:var(--fog);font-style:italic;
+  background:var(--panel);border-radius:8px;padding:.75rem 1rem;border-left:2px solid var(--line)}
+.dd-writeup.loading{color:var(--fog-2)}
 .dd-actions{display:flex;gap:8px;margin-top:1rem}
-.dd-btn{flex:1;font-size:11px;padding:8px;border-radius:7px;border:1px solid #2d3748;
-  background:#1a202c;color:#e2e8f0;cursor:pointer;text-align:center}
-.dd-btn:hover{background:#2d3748}
-.dd-btn.primary{background:#064e3b;border-color:#065f46;color:#6ee7b7}
-.dd-btn.primary:hover{background:#065f46}
-.dd-divider{height:1px;background:#1f2937;margin:.75rem 0}
+.dd-btn{flex:1;font-size:11px;padding:8px;border-radius:7px;border:1px solid var(--line);
+  background:var(--panel);color:var(--paper);cursor:pointer;text-align:center}
+.dd-btn:hover{background:var(--line)}
+.dd-btn.primary{background:var(--emerald-tint);border-color:var(--emerald-tint);color:var(--emerald)}
+.dd-btn.primary:hover{background:var(--emerald-tint)}
+.dd-divider{height:1px;background:var(--line);margin:.75rem 0}
 /* ── Column header tooltips ─────────────────────────────────────────────── */
 [data-tip]{position:relative}
-[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#0d1117;color:#e2e8f0;font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid #2d3748;width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
+[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--ink-2);color:var(--paper);font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid var(--line);width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
 [data-tip]:hover::after,[data-tip].tip-show::after{opacity:1}
 /* ── About DELTA modal ──────────────────────────────────────────────────── */
 .about-tab{margin-left:auto;padding:7px 12px;border:none;background:transparent;
-  color:#4a5568;font-size:11px;cursor:pointer;align-self:center;
+  color:var(--fog-2);font-size:11px;cursor:pointer;align-self:center;
   transition:color .15s;white-space:nowrap}
-.about-tab:hover{color:#a0aec0}
+.about-tab:hover{color:var(--fog)}
 .about-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1001;
   display:flex;align-items:center;justify-content:center;padding:1.25rem;
   opacity:0;transition:opacity .2s;pointer-events:none;overflow-y:auto}
 .about-overlay.open{opacity:1;pointer-events:auto}
-.about-card{background:#111827;border:1px solid #2d3748;border-radius:14px;
+.about-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
   width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
   transform:translateY(16px);transition:transform .2s;position:relative}
 .about-overlay.open .about-card{transform:translateY(0)}
 .about-section{margin-bottom:1.1rem}
-.about-heading{font-size:11px;font-weight:700;color:#e2e8f0;letter-spacing:.05em;
+.about-heading{font-size:11px;font-weight:700;color:var(--paper);letter-spacing:.05em;
   text-transform:uppercase;margin-bottom:.45rem}
 .about-list{padding-left:1.1rem;margin:0;list-style:disc}
 .about-list li{margin-bottom:.5rem}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DELTA BRAND LAYER  (visual reskin — value-neutral, appended so originals diff cleanly)
+   Palette from delta-brand.html · semantic map: teal=brand, emerald=BUY, coral=SELL, topaz=WATCH
+   ═════════════════════════════════════════════════════════════════════════ */
+:root{
+  --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
+  --teal-br:#2DD4BF; --teal:#14B8A6; --emerald:#10B981; --emerald-dp:#047857;
+  --mint:#CCFBF1; --fog:#8CA0B3; --fog-2:#5C7080; --paper:#EAF0F4;
+  --coral:#E8927C; --topaz:#E0B34D;
+  /* low-alpha signal tints so chips sit correctly on --ink */
+  --emerald-tint:rgba(16,185,129,.14); --emerald-bri:#34D399;
+  --coral-tint:rgba(232,146,124,.13);  --coral-bri:#EFA48C;
+  --topaz-tint:rgba(224,179,77,.14);
+  --teal-tint:rgba(45,212,191,.12);     --teal-soft:rgba(45,212,191,.07);
+  --row-hi:rgba(45,212,191,.055);
+  /* support hues for categorical/info needs (not signals): info & comparison-B → sky, chart series → violet */
+  --sky:#6BB6E0;    --sky-tint:rgba(107,182,224,.14);
+  --violet:#9B8AF0; --violet-tint:rgba(155,138,240,.14);
+  --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+  --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
+}
+body{font-family:var(--sans);background:var(--ink);color:var(--paper)}
+
+/* ── Header lockup ─────────────────────────────────────────────────────── */
+.dl-head{display:flex;align-items:center;gap:14px}
+.dl-mark{width:46px;height:46px;flex-shrink:0;display:block}
+.dl-word{font-family:var(--geo);font-weight:700;font-size:25px;letter-spacing:5.5px;
+  text-transform:uppercase;color:var(--paper);line-height:1;padding-left:1px}
+.dl-ver{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;
+  color:var(--teal-br);border:1px solid var(--teal-tint);border-radius:4px;padding:1px 5px}
+.dl-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fog-2);margin-top:5px}
+.dl-hint{font-size:10px;color:var(--fog-2)}
+@media(max-width:600px){
+  .dl-head{gap:10px}
+  .dl-mark{width:38px;height:38px}
+  .dl-word{font-size:21px;letter-spacing:4px}
+  .dl-sub{font-size:9px;letter-spacing:.1em}
+}
+
+/* Global search box */
+.dl-search{width:100%;font-size:12px;padding:6px 10px 6px 28px;border-radius:8px;
+  border:1px solid var(--line);background:var(--panel);color:var(--paper);outline:none;
+  font-family:var(--sans);transition:border-color .15s}
+.dl-search:focus{border-color:var(--teal-br)}
+.dl-search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);
+  font-size:13px;color:var(--fog-2);pointer-events:none}
+
+/* ── Tabs → teal pills ─────────────────────────────────────────────────── */
+.tabs{border-bottom:none;gap:4px}
+.tab{border:none;border-bottom:none;border-radius:8px;background:transparent;color:var(--fog);
+  margin-bottom:0;font-weight:600;transition:background .15s,color .15s}
+.tab:hover{color:var(--paper);background:var(--teal-soft)}
+.tab.active{background:var(--teal-tint);color:var(--teal-br);font-weight:700;border-bottom:none}
+.about-tab{color:var(--fog-2);border-radius:8px}
+.about-tab:hover{color:var(--fog);background:var(--teal-soft)}
+.tc-active{background:var(--teal-tint);color:var(--teal-br)}
+.trade-side{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+
+/* ── Controls / inputs ─────────────────────────────────────────────────── */
+.controls select,.controls input{border:1px solid var(--line);background:var(--panel);
+  color:var(--paper);border-radius:6px;font-family:var(--sans)}
+.controls select:focus,.controls input:focus{outline:none;border-color:var(--teal-br)}
+.info-box{background:var(--panel);color:var(--fog);border:1px solid var(--line);border-radius:8px}
+.section-label{color:var(--fog-2)}
+
+/* ── Tables (shared chrome) ────────────────────────────────────────────── */
+th{color:var(--fog-2);border-bottom:1px solid var(--line)}
+th:hover{color:var(--paper)}
+td{border-bottom:1px solid var(--line);color:var(--paper)}
+tr:hover td{background:var(--ink-2)}
+.tbl-wrap{border-radius:10px}
+
+/* Fully-reskinned tables: sans labels · mono figures (the signature move) */
+.dtable th{font-family:var(--sans);font-weight:700;font-size:10px;letter-spacing:.045em;
+  text-transform:uppercase;color:var(--fog-2)}
+.dtable th:hover{color:var(--paper)}
+.dtable td{font-family:var(--mono);font-variant-numeric:tabular-nums lining-nums}
+.dtable td.pname{font-family:var(--sans);font-weight:700;color:var(--paper)}
+.dtable td.txt{font-family:var(--sans)}
+.dtable tr:hover td{background:var(--row-hi)}
+
+/* ── Signal badges (bs=strong buy · bi=buy · bw=sell · bd=strong sell · bn=neutral · bt=watch) ── */
+.badge{border-radius:5px;font-weight:700;letter-spacing:.015em}
+.bs{background:var(--emerald-tint);color:var(--emerald-bri)}
+.bi{background:rgba(16,185,129,.09);color:var(--emerald)}
+.bw{background:var(--coral-tint);color:var(--coral)}
+.bd{background:rgba(232,146,124,.20);color:var(--coral-bri)}
+.bn{background:var(--line);color:var(--fog)}
+.bt{background:var(--topaz-tint);color:var(--topaz)}
+.bar-wrap{background:var(--line)}
+
+/* ── Deck (player card) modal ──────────────────────────────────────────── */
+.dd-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.dd-header{border-bottom:1px solid var(--line)}
+.dd-name:hover{color:var(--teal-br)}
+.dd-meta{color:var(--fog)}
+.dd-close{color:var(--fog)} .dd-close:hover{color:var(--paper)}
+.dd-copy{border:1px solid var(--line);color:var(--fog)}
+.dd-copy:hover{background:var(--ink-2);color:var(--paper)}
+.dd-copy.copied{border-color:var(--teal-br);color:var(--teal-br)}
+.dd-section-label{color:var(--fog-2)}
+.dd-stat{background:var(--ink-2)}
+.dd-stat-val{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.dd-stat-lbl{color:var(--fog)}
+.dd-writeup{background:var(--ink-2);color:var(--fog);border-left:2px solid var(--line)}
+.dd-btn{background:var(--ink-2);border:1px solid var(--line);color:var(--paper)}
+.dd-btn:hover{background:var(--line)}
+.dd-btn.primary{background:var(--emerald-tint);border-color:var(--emerald);color:var(--emerald-bri)}
+.dd-btn.primary:hover{background:rgba(16,185,129,.22)}
+.dd-divider,.dd-prog-bar{background:var(--line)}
+.dd-prog-bar{overflow:hidden}
+
+/* Search dropdowns */
+#deck-drop,.dropdown{background:var(--panel)!important;border-color:var(--line)!important}
+.drop-item:hover{background:var(--ink-2)}
+
+/* ── Tooltips ──────────────────────────────────────────────────────────── */
+[data-tip]::after{background:var(--ink-2);color:var(--paper);border:1px solid var(--line)}
+
+/* ── About modal ───────────────────────────────────────────────────────── */
+.about-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.about-heading{color:var(--paper)}
+
+/* ── Quality floor: focus rings + reduced motion ───────────────────────── */
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
+[tabindex]:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+/* ═══════════════════════ end DELTA brand layer ═══════════════════════════ */
 </style>
 </head>
 <body>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
-  <div style="border-left:3px solid #6ee7b7;padding-left:10px">
-    <div style="display:flex;align-items:baseline;gap:8px">
-      <span style="font-size:20px;font-weight:800;color:#e2e8f0;letter-spacing:-.5px">DELTA</span>
-      <span style="font-size:11px;font-weight:600;color:#6ee7b7;letter-spacing:.04em">v1.0</span>
-      <span style="font-size:11px;color:#4a5568;margin-left:2px">Dynasty Efficiency & Long-Term Analysis</span>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
+  <div class="dl-head">
+    <svg class="dl-mark" viewBox="0 0 128 128" aria-label="DELTA">
+      <defs>
+        <linearGradient id="hgL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+        <linearGradient id="hgR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+      </defs>
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#hgL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#hgR)"/>
+      <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
+      <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </svg>
+    <div>
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="dl-word">DELTA</span>
+        <span class="dl-ver">v1.0</span>
+      </div>
+      <div class="dl-sub">Dynasty Efficiency + Long-Term Analysis</div>
     </div>
   </div>
 </div>
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;position:relative">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
   <div style="position:relative;flex:1;max-width:280px">
     <input id="deck-search" type="text" placeholder="Search players…"
       oninput="deckSearchInput()"
       onkeydown="deckSearchKey(event)"
-      style="width:100%;font-size:12px;padding:6px 10px 6px 28px;border-radius:7px;
-        border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;outline:none"
+      class="dl-search"
       autocomplete="off">
-    <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);
-      font-size:13px;color:#4a5568;pointer-events:none">⌕</span>
+    <span class="dl-search-ico">⌕</span>
     <div id="deck-drop" style="display:none;position:absolute;top:100%;left:0;right:0;
-      background:#1a202c;border:1px solid #2d3748;border-radius:7px;z-index:50;
-      max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 8px 24px rgba(0,0,0,.5)">
+      border-radius:8px;z-index:50;
+      max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 10px 28px rgba(0,0,0,.55)">
     </div>
   </div>
-  <span style="font-size:10px;color:#4a5568">Click any row to open player card</span>
+  <span class="dl-hint">Click any row to open player card</span>
 </div>
 
 <div class="tabs">
@@ -259,10 +409,10 @@ tr:hover td{background:#1a202c}
       <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
     </select>
   </div>
-  <div id="sort-explainer" style="display:none;font-size:11px;color:#718096;padding:7px 11px;margin-bottom:8px;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px;line-height:1.5"></div>
-  <div style="overflow-x:auto"><table>
+  <div id="sort-explainer" style="display:none;font-size:11px;color:var(--fog);padding:7px 11px;margin-bottom:8px;background:var(--ink-2);border-left:2px solid var(--teal-br);border-radius:6px;line-height:1.5"></div>
+  <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
-      <th onclick="setSortR('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7">Δ</th>
+      <th onclick="setSortR('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
       <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
       <th onclick="setSortR('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades.">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
@@ -287,15 +437,15 @@ tr:hover td{background:#1a202c}
       <option value="floor">Floor</option><option value="gap">Model gap</option>
     </select>
   </div>
-  <div style="overflow-x:auto"><table>
+  <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
-      <th onclick="setSortP('ds')" style="cursor:pointer;font-family:Georgia,serif;font-size:15px;color:#6ee7b7" title="DELTA Score">Δ</th>
+      <th onclick="setSortP('ds')" style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)" title="DELTA Score">Δ</th>
       <th onclick="setSortP('name')" style="cursor:pointer">Player</th><th onclick="setSortP('pos')" style="cursor:pointer">Pos</th><th onclick="setSortP('age')" style="cursor:pointer">Age</th><th onclick="setSortP('team')" style="cursor:pointer">Team</th>
-      <th onclick="setSortP('floor')" style="cursor:pointer;color:#fca5a5">Floor</th><th onclick="setSortP('proj')" style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" style="cursor:pointer;color:#6ee7b7">Ceiling</th>
+      <th onclick="setSortP('floor')" style="cursor:pointer;color:var(--coral)">Floor</th><th onclick="setSortP('proj')" style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" style="cursor:pointer;color:var(--emerald)">Ceiling</th>
       <th onclick="setSortP('epa')" style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" style="cursor:pointer">Gap</th><th>CI</th>
-      <th onclick="setSortP('miss')" style="cursor:pointer;color:#fca5a5">Miss%</th>
-      <th onclick="setSortP('hit')" style="cursor:pointer;color:#7dd3fc">Hit%</th>
-      <th onclick="setSortP('elite')" style="cursor:pointer;color:#6ee7b7">Elite%</th>
+      <th onclick="setSortP('miss')" style="cursor:pointer;color:var(--coral)">Miss%</th>
+      <th onclick="setSortP('hit')" style="cursor:pointer;color:var(--sky)">Hit%</th>
+      <th onclick="setSortP('elite')" style="cursor:pointer;color:var(--emerald)">Elite%</th>
     </tr></thead>
     <tbody id="proj-body"></tbody>
   </table></div>
@@ -305,79 +455,79 @@ tr:hover td{background:#1a202c}
 <div id="slp-trade-assist"></div>
   <div class="info-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
     <span>Model = Mkt Val × age × system × OC continuity × utilization × college × EPA × QB quality. Picks use raw market value.</span>
-    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
       <option value="half_tep">0.5PPR + TE Prem</option>
       <option value="half">0.5 PPR</option>
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
       <option value="std">Standard</option>
     </select>
-      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" title="League size" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" title="League size" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
       <option value="8">8-team</option><option value="10">10-team</option>
       <option value="12" selected>12-team</option><option value="14">14-team</option>
     </select>
-      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" title="QB format" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0">
+      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" title="QB format" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
       <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
     </select>
   </div>
 
   <!-- Team count toggle -->
   <div class="tc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
-    <span style="font-size:11px;color:#718096;font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
+    <span style="font-size:11px;color:var(--fog);font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
     <div class="tc-wrap">
       <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2 Teams</button>
       <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3 Teams</button>
       <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4 Teams</button>
     </div>
-    <button class="tc-clear" onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer;white-space:nowrap">Clear all</button>
+    <button class="tc-clear" onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid var(--fog-2);background:transparent;color:var(--fog);cursor:pointer;white-space:nowrap">Clear all</button>
   </div>
 
-  <div id="trade-mode-note" style="font-size:11px;color:#4a6080;margin-bottom:.75rem;display:none;padding:8px 12px;background:#0d1927;border-radius:6px;border:1px solid #1e3a5f">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
+  <div id="trade-mode-note" style="font-size:11px;color:var(--fog-2);margin-bottom:.75rem;display:none;padding:8px 12px;background:var(--ink-2);border-radius:6px;border:1px solid var(--ink-2)">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#6ee7b7;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team A<select onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--teal-br);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team A<select onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
-      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#6ee7b7;font-weight:600">Model value</span><span id="mod-a" style="color:#6ee7b7;font-weight:600">—</span></div>
+      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--teal-br);font-weight:600">Model value</span><span id="mod-a" style="color:var(--teal-br);font-weight:600">—</span></div>
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#7dd3fc;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team B<select onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--sky);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team B<select onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
-      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#7dd3fc;font-weight:600">Model value</span><span id="mod-b" style="color:#7dd3fc;font-weight:600">—</span></div>
+      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--sky);font-weight:600">Model value</span><span id="mod-b" style="color:var(--sky);font-weight:600">—</span></div>
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#d8b4fe;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team C<select onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--violet);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team C<select onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
-      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#d8b4fe;font-weight:600">Model value</span><span id="mod-c" style="color:#d8b4fe;font-weight:600">—</span></div>
+      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--violet);font-weight:600">Model value</span><span id="mod-c" style="color:var(--violet);font-weight:600">—</span></div>
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:#fdba74;padding-bottom:.5rem;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between">Team D<select onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:#0d1524;color:#a0aec0;border:1px solid #2d3748;border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--topaz);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team D<select onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
-      <div class="total-row"><span style="color:#718096;font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:#fdba74;font-weight:600">Model value</span><span id="mod-d" style="color:#fdba74;font-weight:600">—</span></div>
+      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
+      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--topaz);font-weight:600">Model value</span><span id="mod-d" style="color:var(--topaz);font-weight:600">—</span></div>
     </div>
   </div>
   <div id="verdict-area"></div>
   <div id="gap-filler" style="margin-top:.5rem"></div>
 
-  <div style="margin-top:1.25rem;border-top:1px solid #1a202c;padding-top:1rem">
+  <div style="margin-top:1.25rem;border-top:1px solid var(--panel);padding-top:1rem">
     <div class="cmp-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span class="cmp-label" style="font-size:11px;font-weight:700;color:#a0aec0;letter-spacing:.06em">⚖ PLAYER COMPARE</span>
+      <span class="cmp-label" style="font-size:11px;font-weight:700;color:var(--fog);letter-spacing:.06em">⚖ PLAYER COMPARE</span>
       <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
-        style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
-      <span style="color:#4a5568;font-size:11px">vs</span>
+        style="flex:1;min-width:150px;max-width:230px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-size:12px;padding:6px 10px">
+      <span style="color:var(--fog-2);font-size:11px">vs</span>
       <input id="cmp-b" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()"
-        style="flex:1;min-width:150px;max-width:230px;background:#0d1524;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;font-size:12px;padding:6px 10px">
+        style="flex:1;min-width:150px;max-width:230px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-size:12px;padding:6px 10px">
     </div>
     <datalist id="cmp-names"></datalist>
     <div id="cmp-out" style="margin-top:.85rem"></div>
@@ -386,13 +536,13 @@ tr:hover td{background:#1a202c}
 
 <div id="panel-epa" class="panel">
   <button onclick="const e=document.getElementById('epa-explain');e.style.display=e.style.display==='none'?'block':'none'"
-    style="font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer;margin-bottom:.6rem">ⓘ What is EPA?</button>
-  <div id="epa-explain" style="display:none;font-size:11.5px;color:#a0aec0;line-height:1.6;padding:10px 12px;margin-bottom:.75rem;background:#11161f;border-left:2px solid #2d4a3e;border-radius:4px">
-    <b style="color:#e2e8f0">EPA — Expected Points Added</b> — measures how much each play changed a team's expected score.
+    style="font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--sky);cursor:pointer;margin-bottom:.6rem">ⓘ What is EPA?</button>
+  <div id="epa-explain" style="display:none;font-size:11.5px;color:var(--fog);line-height:1.6;padding:10px 12px;margin-bottom:.75rem;background:var(--ink-2);border-left:2px solid var(--line);border-radius:4px">
+    <b style="color:var(--paper)">EPA — Expected Points Added</b> — measures how much each play changed a team's expected score.
     Every down-and-distance has an expected point value (1st &amp; 10 at midfield is worth more than 3rd &amp; 15 at your own 5);
     EPA is the change in that value caused by a play. A 4-yard run on 3rd &amp; 3 is a <i>good</i> play (converts, keeps the drive)
     while a 4-yard pass on 3rd &amp; 12 is a <i>bad</i> one — yardage alone can't tell them apart, EPA can.
-    <b style="color:#e2e8f0">Per-play EPA</b> here grades a player's efficiency on their touches: positive = adding value above an
+    <b style="color:var(--paper)">Per-play EPA</b> here grades a player's efficiency on their touches: positive = adding value above an
     average play, negative = below. DELTA uses it alongside raw production to spot players whose counting stats
     flatter or undersell them — high volume with negative EPA is a warning sign; positive EPA on small volume hints
     at more if the role grows.
@@ -409,7 +559,7 @@ tr:hover td{background:#1a202c}
     <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
   </div>
   <div class="info-box">RB floor: ≥140 rushes + YAC/carry ≥3.0 → EPA treated as neutral. WR/TE: ≥80 targets → floor 0.92. QB: ≥300 plays → floor 0.88.</div>
-  <div style="overflow-x:auto"><table>
+  <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
       <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th><th>Team</th>
       <th onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there." style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'22</th>
@@ -449,7 +599,7 @@ tr:hover td{background:#1a202c}
       <option value="name">Sort: Name</option>
     </select>
   </div>
-  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table>
+  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dtable">
     <thead><tr>
       <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th>
       <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer">Yrs Left</th>
@@ -457,7 +607,7 @@ tr:hover td{background:#1a202c}
     </tr></thead>
     <tbody id="contracts-body"></tbody>
   </table></div>
-  <div style="margin-top:12px;font-size:10px;color:#4a5568">
+  <div style="margin-top:12px;font-size:10px;color:var(--fog-2)">
     All 32 NFL teams loaded — full contract coverage complete.
     🔒 Locked Up = 4+ years remaining · ✓ Stable = 3 years · 🔴 Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
   </div>
@@ -471,7 +621,7 @@ tr:hover td{background:#1a202c}
   </div>
   <div id="edit-card-wrap" style="display:none">
     <div class="edit-card">
-      <div id="edit-card-title" style="font-size:14px;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid #2d3748">Player</div>
+      <div id="edit-card-title" style="font-size:14px;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--line)">Player</div>
       <div class="edit-row"><label>New team</label>
         <select id="edit-team"><option value="">— no change —</option>
           <option>ARI</option><option>ATL</option><option>BAL</option><option>BUF</option><option>CAR</option>
@@ -515,7 +665,7 @@ tr:hover td{background:#1a202c}
   </div>
   <div style="margin-top:1.5rem">
     <div class="section-label">Active overrides</div>
-    <div id="ov-list" style="color:#718096;font-size:12px">None.</div>
+    <div id="ov-list" style="color:var(--fog);font-size:12px">None.</div>
   </div>
 </div>
 
@@ -527,7 +677,7 @@ function renderStartProfile(p){
   if(START_DATA_STATE==='loaded'){ host.innerHTML=startProfileHTML(p); return; }
   if(START_DATA_STATE==='error'){ host.innerHTML=''; return; }
   host.innerHTML='<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
-    +'<div style="font-size:11px;color:#718096">Loading game logs\u2026</div></div>';
+    +'<div style="font-size:11px;color:var(--fog)">Loading game logs\u2026</div></div>';
   ensureStartData().then(()=>{ const h=document.getElementById('dd-startprofile'); if(h) h.innerHTML=startProfileHTML(p); });
 }
 function syncSettingsUI(){
@@ -585,6 +735,9 @@ function applyLeagueSettings(src){
 // deliberately match Sleeper pick-inventory labels so the trade assist maps
 // a league's '2027 1st (via Team)' directly onto these assets.
 
+// Proj-bar fill in brand hues (magnitude=width, tier=color). Local so the engine stays frozen.
+// elite→bright emerald · good→emerald · avg→topaz · weak→coral
+function barColor(s){return s>=70?'var(--emerald-bri)':s>=55?'var(--emerald)':s>=40?'var(--topaz)':'var(--coral)';}
 function renderRankings(){
   const q=(document.getElementById('s-rank').value||'').toLowerCase();
   const pos=document.getElementById('pos-rank').value;
@@ -596,12 +749,12 @@ function renderRankings(){
   const explainEl=document.getElementById('sort-explainer');
   if(explainEl){
     const explainers={
-      ds:'<strong style="color:#6ee7b7">Δ DELTA Score</strong> (0–99): our proprietary grade of a player&rsquo;s <strong>demonstrated</strong> dynasty value — built on what they have actually produced, their usage, age, and contract, not projections. Compare it to Market Value to spot players the market is over- or under-pricing.',
-      ktc:'<strong style="color:#7dd3fc">Market Value</strong>: consensus player value from FantasyCalc — what the market currently pays in trades. Compare to Model Value to find gaps.',
-      mv:'<strong style="color:#7dd3fc">Model Value</strong>: DELTA&rsquo;s projected player value from our PPG model. When it runs higher than Market Value, the model sees a buy; lower, a sell.'
+      ds:'<strong style="color:var(--teal-br)">Δ DELTA Score</strong> (0–99): our proprietary grade of a player&rsquo;s <strong>demonstrated</strong> dynasty value — built on what they have actually produced, their usage, age, and contract, not projections. Compare it to Market Value to spot players the market is over- or under-pricing.',
+      ktc:'<strong style="color:var(--paper)">Market Value</strong>: consensus player value from FantasyCalc — what the market currently pays in trades. Compare to Model Value to find gaps.',
+      mv:'<strong style="color:var(--teal-br)">Model Value</strong>: DELTA&rsquo;s projected player value from our PPG model. When it runs higher than Market Value, the model sees a buy; lower, a sell.'
     };
     if(explainers[sortK]&&!explainerHidden){
-      explainEl.innerHTML='<span onclick="dismissExplainer()" title="Dismiss" style="float:right;cursor:pointer;color:#4a5568;padding:0 2px 4px 10px;font-size:13px;line-height:1">✕</span>'+explainers[sortK];
+      explainEl.innerHTML='<span onclick="dismissExplainer()" title="Dismiss" style="float:right;cursor:pointer;color:var(--fog-2);padding:0 2px 4px 10px;font-size:13px;line-height:1">✕</span>'+explainers[sortK];
       explainEl.style.display='block';
     }
     else{explainEl.style.display='none';}
@@ -620,17 +773,17 @@ function renderRankings(){
   });
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
-    <td style="font-size:11px;font-weight:600;color:#4a5568;padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
-    <td style="font-weight:600${p.mktStale?';color:#718096':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:#fcd34d;cursor:help">†</span>':''}</td>
-    <td style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bi" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bw" style="margin-right:3px">✏</span>':''); })()}${p.n}${glTag(p.n)}${trendTag(p.n)}</td>
-    <td>${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
+    <td style="font-size:11px;font-weight:600;color:var(--fog-2);padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
+    <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✏</span>':''); })()}${p.n}</td>
+    <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${bc(p.sys)}"></span></span></td>
-    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'#6ee7b7':mvAsset(p)<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
+    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${barColor(p.sys)}"></span></span></td>
+    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
-    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'#fcd34d':'#4a5568'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
+    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
@@ -660,27 +813,27 @@ function renderProj(){
   else if(activeSort==='hit') data.sort((a,b)=>d*((glOf(b)?.hit??0)-(glOf(a)?.hit??0)));
   else if(activeSort==='elite') data.sort((a,b)=>d*((glOf(b)?.elite??0)-(glOf(a)?.elite??0)));
   document.getElementById('proj-body').innerHTML=data.slice(0,170).map(p=>{
-    const gc=p.gap>500?'#6ee7b7':p.gap<-500?'#fca5a5':'#718096';
+    const gc=p.gap>500?'var(--emerald)':p.gap<-500?'var(--coral)':'var(--fog)';
     const fr=p.epaFr==='vol+YAC neutral'
-      ?'<span style="color:#6ee7b7;font-size:10px">⌊ neutral (vol+YAC)</span>'
-      :p.epaFl?`<span style="color:#fcd34d;font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
+      ?'<span style="color:var(--emerald);font-size:10px">⌊ neutral (vol+YAC)</span>'
+      :p.epaFl?`<span style="color:var(--topaz);font-size:10px">⌊ ${p.epaFr||'floored'}</span>`:'—';
     const gl=glOf(p);
-    const mc=gl?(gl.miss<=35?'#6ee7b7':gl.miss<=50?'#fcd34d':'#fca5a5'):'#2d3748';
-    const hc=gl?(gl.hit>=65?'#6ee7b7':gl.hit>=50?'#7dd3fc':'#718096'):'#2d3748';
-    const ec=gl?(gl.elite>=25?'#6ee7b7':gl.elite>=15?'#7dd3fc':'#718096'):'#2d3748';
+    const mc=gl?(gl.miss<=35?'var(--emerald)':gl.miss<=50?'var(--topaz)':'var(--coral)'):'var(--line)';
+    const hc=gl?(gl.hit>=65?'var(--emerald)':gl.hit>=50?'var(--sky)':'var(--fog)'):'var(--line)';
+    const ec=gl?(gl.elite>=25?'var(--emerald)':gl.elite>=15?'var(--sky)':'var(--fog)'):'var(--line)';
     return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
-      <td style="font-weight:600;white-space:nowrap">${p.n}</td>
-      <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
-      <td style="color:#fca5a5">${p.floor.toFixed(1)}</td>
+      <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
+      <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+      <td style="color:var(--coral)">${p.floor.toFixed(1)}</td>
       <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
-      <td style="color:#6ee7b7">${p.ceil.toFixed(1)}</td>
+      <td style="color:var(--emerald)">${p.ceil.toFixed(1)}</td>
       <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
       <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
       <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-      <td style="color:${p.mv>p.ktcEff?'#6ee7b7':p.mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0'}">${p.mv.toLocaleString()}</td>
+      <td style="color:${p.mv>p.ktcEff?'var(--emerald)':p.mv<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${p.mv.toLocaleString()}</td>
       <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
-      <td style="font-size:10px;color:#718096">±${Math.round(p.ci*100)}%</td>
+      <td style="font-size:10px;color:var(--fog)">±${Math.round(p.ci*100)}%</td>
       <td style="font-weight:600;color:${mc}">${gl?gl.miss+'%':'—'}</td>
       <td style="font-weight:600;color:${hc}">${gl?gl.hit+'%':'—'}</td>
       <td style="font-weight:600;color:${ec}">${gl?gl.elite+'%':'—'}</td>
@@ -705,17 +858,17 @@ function renderEPA(){
   else if(sortKEPA==='ktc') data.sort((a,b)=>d*(b.ktcEff-a.ktcEff));
   else data.sort((a,b)=>d*(b.epaSc-a.epaSc)); // default: epaSc descending
   const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
-  const fc=(v,pos)=>{if(!v||v===0)return'#4a5568';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'#6ee7b7':v<-t?'#fca5a5':'#e2e8f0';};
+  const fc=(v,pos)=>{if(!v||v===0)return'var(--fog-2)';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'var(--emerald)':v<-t?'var(--coral)':'var(--paper)';};
   document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-    <td style="font-weight:600;white-space:nowrap">${p.n}</td>
-    <td>${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
+    <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td>${p.t}</td>
     <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
     <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
     <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
     <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
-    <td style="font-size:10px;color:#4a5568">${p.epaRaw.toFixed(3)}</td>
+    <td style="font-size:10px;color:var(--fog-2)">${p.epaRaw.toFixed(3)}</td>
     <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
-    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'#6ee7b7':'#fcd34d'}">${p.epaFr}</span>`:'—'}</td>
+    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'var(--emerald)':'var(--topaz)'}">${p.epaFr}</span>`:'—'}</td>
     <td>${tH(p.epaTr)}</td>
     <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
     <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
@@ -733,9 +886,9 @@ function doSearch(side){
   drop.style.display='block';
   drop.innerHTML=matches.map(p=>{
     const mv=mvAsset(p);const diff=mv-p.k;
-    const dc=diff>200?'#6ee7b7':diff<-200?'#fca5a5':'#718096';
+    const dc=diff>200?'var(--emerald)':diff<-200?'var(--coral)':'var(--fog)';
     return`<div class="drop-item" onclick="addAsset('${side}','${p.n.replace(/'/g,"\\'")}')">
-      <span>${p.n} <span style="font-size:10px;color:#718096">${p.ip?'PICK':((p.p||p.pos)+' · '+(p.t||''))}</span></span>
+      <span>${p.n} <span style="font-size:10px;color:var(--fog)">${p.ip?'PICK':((p.p||p.pos)+' · '+(p.t||''))}</span></span>
       <span style="font-size:10px">Mkt ${p.k.toLocaleString()} <span style="color:${dc}">(${diff>=0?'+':''}${diff.toLocaleString()})</span></span>
     </div>`;
   }).join('');
@@ -944,10 +1097,10 @@ function applyTradeScoring(){
 
 function recalcTrade(){
   const SIDES=[
-    {id:'a',arr:sA,color:'#6ee7b7',label:'Team A'},
-    {id:'b',arr:sB,color:'#7dd3fc',label:'Team B'},
-    {id:'c',arr:sC,color:'#d8b4fe',label:'Team C'},
-    {id:'d',arr:sD,color:'#fdba74',label:'Team D'},
+    {id:'a',arr:sA,color:'var(--emerald)',label:'Team A'},
+    {id:'b',arr:sB,color:'var(--sky)',label:'Team B'},
+    {id:'c',arr:sC,color:'var(--violet)',label:'Team C'},
+    {id:'d',arr:sD,color:'var(--topaz)',label:'Team D'},
   ].slice(0,tradeTeams);
 
   const totals=SIDES.map(s=>{
@@ -956,15 +1109,15 @@ function recalcTrade(){
       return`<div class="added">
         <div style="flex:1;min-width:0">
           <div class="added-name">${p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`}</div>
-          <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:#fcd34d">⚠ OC</span>':''}<span style="color:#a0aec0">${getAdjProj(p).toFixed(1)} PPG</span>`}</div>
+          <div class="added-meta">${p.ip?'<span>Pick</span>':`<span>${p.p||p.pos}</span><span>${e?e.team:p.t}</span><span>sys ${e?e.s:'-'}</span>${e&&e.ch?'<span style="color:var(--topaz)">⚠ OC</span>':''}<span style="color:var(--fog)">${getAdjProj(p).toFixed(1)} PPG</span>`}</div>
         </div>
         ${tradeTeams>2?`<select onchange="setDest('${s.id}','${p.n.replace(/'/g,"\\'")}',this.value)" title="Which team receives this asset"
-            style="font-size:9px;background:#0d1524;border:1px solid #2d3748;border-radius:4px;color:#a0aec0;padding:2px 3px;margin-right:4px">
+            style="font-size:9px;background:var(--ink-2);border:1px solid var(--line);border-radius:4px;color:var(--fog);padding:2px 3px;margin-right:4px">
             ${SIDES.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}" ${(p.to||defaultDest(s.id))===x.id?'selected':''}>→ ${x.label.replace('Team ','')}</option>`).join('')}
           </select>`:''}
         <div class="added-vals">
-          <div style="color:#718096">Mkt ${p.k.toLocaleString()}</div>
-          ${p.ip?'':`<div style="font-weight:600" title="DELTA Score — demonstrated dynasty value (0–99)"><span style="color:#718096;font-weight:400">DS</span> <span style="color:${p.dsScore>=85?'#6ee7b7':p.dsScore>=70?'#7dd3fc':p.dsScore>=55?'#fcd34d':'#fca5a5'}">${p.dsScore??'—'}</span></div>`}
+          <div style="color:var(--fog)">Mkt ${p.k.toLocaleString()}</div>
+          ${p.ip?'':`<div style="font-weight:600" title="DELTA Score — demonstrated dynasty value (0–99)"><span style="color:var(--fog);font-weight:400">DS</span> <span style="color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></div>`}
         </div>
         <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\'")}')">✕</button>
       </div>`;
@@ -1007,15 +1160,15 @@ function recalcTrade(){
       const hasTeamPenalty = detail.some(d => d.teamM < 1.0);
       const hasConc = concM > 1.001;
       const adjustments = [];
-      if (hasElite) adjustments.push(`<span style="color:#6ee7b7">★ Elite premium</span>`);
-      if (hasPosPenalty) adjustments.push(`<span style="color:#fbbf24">⚠ Position clustering discount</span>`);
-      if (hasTeamPenalty) adjustments.push(`<span style="color:#fbbf24">⚠ Same-team discount</span>`);
-      if (hasConc) adjustments.push(`<span style="color:#6ee7b7">◆ Concentration bonus ×${concM.toFixed(2)} applied to side total</span>`);
-      return adjustments.length ? adjustments.join(' · ') : '<span style="color:#4a5568">No adjustments</span>';
+      if (hasElite) adjustments.push(`<span style="color:var(--emerald)">★ Elite premium</span>`);
+      if (hasPosPenalty) adjustments.push(`<span style="color:var(--topaz)">⚠ Position clustering discount</span>`);
+      if (hasTeamPenalty) adjustments.push(`<span style="color:var(--topaz)">⚠ Same-team discount</span>`);
+      if (hasConc) adjustments.push(`<span style="color:var(--emerald)">◆ Concentration bonus ×${concM.toFixed(2)} applied to side total</span>`);
+      return adjustments.length ? adjustments.join(' · ') : '<span style="color:var(--fog-2)">No adjustments</span>';
     };
 
-    const breakdownA = buildBreakdown(v4.sideA.detail, v4.sideA.concM, 'A', '#6ee7b7');
-    const breakdownB = buildBreakdown(v4.sideB.detail, v4.sideB.concM, 'B', '#7dd3fc');
+    const breakdownA = buildBreakdown(v4.sideA.detail, v4.sideA.concM, 'A', 'var(--emerald)');
+    const breakdownB = buildBreakdown(v4.sideB.detail, v4.sideB.concM, 'B', 'var(--sky)');
 
     // Per-player adjusted values
     const playerRowA = (d) => {
@@ -1024,7 +1177,7 @@ function recalcTrade(){
       if (d.posM < 1.0) mods.push(`pos ×${d.posM.toFixed(2)}`);
       if (d.teamM < 1.0) mods.push(`team ×${d.teamM.toFixed(2)}`);
       // Concentration is a SIDE-level bonus, not per-player — don't show on each row
-      const modStr = mods.length ? `<span style="font-size:9px;color:#4a5568;margin-left:4px">(${mods.join(', ')})</span>` : '';
+      const modStr = mods.length ? `<span style="font-size:9px;color:var(--fog-2);margin-left:4px">(${mods.join(', ')})</span>` : '';
       return `<div class="breakdown-row">
         <span>${d.name}${modStr}</span>
         <span style="font-weight:600">${Math.round(d.adj).toLocaleString()}</span>
@@ -1033,13 +1186,13 @@ function recalcTrade(){
 
     document.getElementById('verdict-area').innerHTML=`
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-        <span style="color:#6ee7b7;font-weight:600">A gives: ${mA.toLocaleString()}</span>
-        <span style="color:#7dd3fc;font-weight:600">B gives: ${mB.toLocaleString()}</span>
+        <span style="color:var(--emerald);font-weight:600">A gives: ${mA.toLocaleString()}</span>
+        <span style="color:var(--sky);font-weight:600">B gives: ${mB.toLocaleString()}</span>
       </div>
       <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
       <div style="text-align:center;margin-bottom:.75rem">
         <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
-        ${pct>8?`<div style="font-size:11px;color:#718096;margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+        ${pct>8?`<div style="font-size:11px;color:var(--fog);margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
       </div>
       ${windowFraming()}
 
@@ -1048,12 +1201,12 @@ function recalcTrade(){
           <div class="section-label">Team A gives up</div>
           <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownA}</div>
           ${v4.sideA.detail.map(playerRowA).join('')}
-          <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
+          <div class="breakdown-row" style="border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)">
             <span>Pre-concentration subtotal</span>
             <span>${v4.sideA.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
           </div>
           <div class="breakdown-row" style="font-weight:600">
-            <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:#6ee7b7">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mA.toLocaleString()}</span>
           </div>
         </div>
@@ -1061,25 +1214,25 @@ function recalcTrade(){
           <div class="section-label">Team B gives up</div>
           <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownB}</div>
           ${v4.sideB.detail.map(playerRowA).join('')}
-          <div class="breakdown-row" style="border-top:1px solid #2d3f55;margin-top:4px;padding-top:4px;font-size:10px;color:#4a5568">
+          <div class="breakdown-row" style="border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)">
             <span>Pre-concentration subtotal</span>
             <span>${v4.sideB.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
           </div>
           <div class="breakdown-row" style="font-weight:600">
-            <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:#6ee7b7">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mB.toLocaleString()}</span>
           </div>
         </div>
       </div>
 
-      <div style="margin-top:8px;padding:8px 10px;background:#0d1b2a;border-radius:6px;font-size:10px;color:#4a5568;line-height:1.6">
-        <span style="color:#718096;font-weight:600">HOW THE CALC WORKS · </span>
+      <div style="margin-top:8px;padding:8px 10px;background:var(--ink-2);border-radius:6px;font-size:10px;color:var(--fog-2);line-height:1.6">
+        <span style="color:var(--fog);font-weight:600">HOW THE CALC WORKS · </span>
         ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
         ⚠ Clustering discounts same-position or same-team stacking · 
         ◆ Concentration bonus rewards fewer, higher-value assets
       </div>
 
-      ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#7dd3fc;cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
+      ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--sky);cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
   } else {
     // Multi-team verdict — per-asset routing makes RECEIVES computable:
     // each team's net = value routed TO them − value they give away.
@@ -1104,53 +1257,53 @@ function recalcTrade(){
     const promptText = adjResults.map(t => `${t.label} receives ${t.recvNames} (value ${t.recv.total.toLocaleString()}) and gives up value ${t.adjResult.total.toLocaleString()}`).join('; ');
     const buildBadge = r => {
       const b = [];
-      if (r.detail.some(d => d.eliteM > 1.0)) b.push('<span style="color:#6ee7b7">★ Elite</span>');
-      if (r.detail.some(d => d.posM < 1.0)) b.push('<span style="color:#fbbf24">⚠ Pos stack</span>');
-      if (r.detail.some(d => d.teamM < 1.0)) b.push('<span style="color:#fbbf24">⚠ Team stack</span>');
-      if (r.concM > 1.001) b.push('<span style="color:#6ee7b7">◆ Conc ×'+r.concM.toFixed(2)+'</span>');
-      return b.length ? b.join(' · ') : '<span style="color:#4a5568">No adj</span>';
+      if (r.detail.some(d => d.eliteM > 1.0)) b.push('<span style="color:var(--emerald)">★ Elite</span>');
+      if (r.detail.some(d => d.posM < 1.0)) b.push('<span style="color:var(--topaz)">⚠ Pos stack</span>');
+      if (r.detail.some(d => d.teamM < 1.0)) b.push('<span style="color:var(--topaz)">⚠ Team stack</span>');
+      if (r.concM > 1.001) b.push('<span style="color:var(--emerald)">◆ Conc ×'+r.concM.toFixed(2)+'</span>');
+      return b.length ? b.join(' · ') : '<span style="color:var(--fog-2)">No adj</span>';
     };
     document.getElementById('verdict-area').innerHTML=`
       <div style="margin-bottom:1rem">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#718096;margin-bottom:.5rem">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--fog);margin-bottom:.5rem">
           ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS — receives '+winner.recv.total.toLocaleString()+', gives up '+winner.adjResult.total.toLocaleString()}
         </div>
         <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:4px 12px;font-size:11px;margin-bottom:.35rem">
-          <span></span><span style="color:#4a5568;font-size:9px">GIVES UP</span><span style="color:#4a5568;font-size:9px">RECEIVES</span><span style="color:#4a5568;font-size:9px">NET</span>
+          <span></span><span style="color:var(--fog-2);font-size:9px">GIVES UP</span><span style="color:var(--fog-2);font-size:9px">RECEIVES</span><span style="color:var(--fog-2);font-size:9px">NET</span>
           ${sorted.map((t,i)=>{
             const isWinner=i===0&&!allEqual;
-            const netClr=t.net>0?'#6ee7b7':t.net<0?'#fca5a5':'#718096';
+            const netClr=t.net>0?'var(--emerald)':t.net<0?'var(--coral)':'var(--fog)';
             return`<span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
-              <span style="color:#a0aec0">${t.adjResult.total.toLocaleString()}</span>
-              <span style="color:#a0aec0">${t.recv.total.toLocaleString()}</span>
+              <span style="color:var(--fog)">${t.adjResult.total.toLocaleString()}</span>
+              <span style="color:var(--fog)">${t.recv.total.toLocaleString()}</span>
               <span style="color:${netClr};font-weight:600">${t.net>0?'+':''}${t.net.toLocaleString()}</span>`;
           }).join('')}
         </div>
-        <div style="font-size:9px;color:#4a5568;margin-bottom:.5rem">Route each asset with the → selector on its row · net = receives − gives</div>
+        <div style="font-size:9px;color:var(--fog-2);margin-bottom:.5rem">Route each asset with the → selector on its row · net = receives − gives</div>
       </div>
       ${windowFraming()}
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
         ${adjResults.map(t=>`
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid #2d3748;padding-bottom:.3rem">${t.label} GIVES UP</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem">${t.label} GIVES UP</div>
             ${t.adjResult.detail.map(d=>{
               const mods=[];
               if(d.eliteM>1.0)mods.push('elite \xd7'+d.eliteM.toFixed(2));
               if(d.posM<1.0)mods.push('pos \xd7'+d.posM.toFixed(2));
               if(d.teamM<1.0)mods.push('team \xd7'+d.teamM.toFixed(2));
-              const modStr=mods.length?'<span style="font-size:9px;color:#4a5568;margin-left:4px">('+mods.join(', ')+')</span>':'';
+              const modStr=mods.length?'<span style="font-size:9px;color:var(--fog-2);margin-left:4px">('+mods.join(', ')+')</span>':'';
               return'<div class="breakdown-row"><span style="font-size:11px">'+d.name+modStr+'</span><span style="font-weight:600;font-size:11px">'+Math.round(d.adj).toLocaleString()+'</span></div>';
             }).join('')}
-            ${t.arr.length===0?'<div style="font-size:11px;color:#4a5568">Nothing</div>':''}
+            ${t.arr.length===0?'<div style="font-size:11px;color:var(--fog-2)">Nothing</div>':''}
             <div style="font-size:9px;margin-top:4px;line-height:1.5">${buildBadge(t.adjResult)}</div>
-            <div class="breakdown-row" style="font-weight:700;border-top:1px solid #2d3748;margin-top:4px;padding-top:4px">
-              <span style="font-size:11px">Adj Total${t.adjResult.concM>1.001?' <span style="font-size:9px;color:#6ee7b7">(\xd7'+t.adjResult.concM.toFixed(2)+' conc)</span>':''}</span>
+            <div class="breakdown-row" style="font-weight:700;border-top:1px solid var(--line);margin-top:4px;padding-top:4px">
+              <span style="font-size:11px">Adj Total${t.adjResult.concM>1.001?' <span style="font-size:9px;color:var(--emerald)">(\xd7'+t.adjResult.concM.toFixed(2)+' conc)</span>':''}</span>
               <span style="color:${t.color};font-size:11px">${t.adjResult.total.toLocaleString()}</span>
             </div>
           </div>`).join('')}
       </div>
-      <div style="margin-top:8px;padding:8px 10px;background:#0d1b2a;border-radius:6px;font-size:10px;color:#4a5568;line-height:1.6">
-        <span style="color:#718096;font-weight:600">HOW THE CALC WORKS · </span>
+      <div style="margin-top:8px;padding:8px 10px;background:var(--ink-2);border-radius:6px;font-size:10px;color:var(--fog-2);line-height:1.6">
+        <span style="color:var(--fog);font-weight:600">HOW THE CALC WORKS · </span>
         ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
         ⚠ Clustering discounts same-position or same-team stacking · 
         ◆ Concentration bonus rewards fewer, higher-value assets
@@ -1176,19 +1329,19 @@ function renderCompare(){
   const host=document.getElementById('cmp-out'); if(!host) return;
   const a=cmpFind('cmp-a'), b=cmpFind('cmp-b');
   if(!a||!b){ host.innerHTML=''; return; }
-  if(a.n===b.n){ host.innerHTML='<div style="font-size:11px;color:#718096">Pick two different players.</div>'; return; }
+  if(a.n===b.n){ host.innerHTML='<div style="font-size:11px;color:var(--fog)">Pick two different players.</div>'; return; }
 
   const glA=glOf(a), glB=glOf(b);
   const ctA=CONTRACTS.find(c=>c.n===a.n), ctB=CONTRACTS.find(c=>c.n===b.n);
-  const ctTxt=(p,ct)=>ct?String(ct.end)+(fifthYearNote(p,ct)?' <span style="color:#7dd3fc" title="'+fifthYearNote(p,ct)+'">+opt</span>':''):null;
+  const ctTxt=(p,ct)=>ct?String(ct.end)+(fifthYearNote(p,ct)?' <span style="color:var(--sky)" title="'+fifthYearNote(p,ct)+'">+opt</span>':''):null;
   const rk=p=>isNFLRookie(p);   // engine's rookie check (handles zero-seeded rookies too)
 
   // rows: [label, displayA, displayB, numA, numB, higherWins]
   const rows=[
     ['DELTA Score', a.dsScore, b.dsScore, a.dsScore, b.dsScore, true],
     ['Start Profile',
-      glA?glA.hit+'% hit · '+glA.elite+'% elite <span style="color:#4a5568">('+glA.g+' gm)</span>':null,
-      glB?glB.hit+'% hit · '+glB.elite+'% elite <span style="color:#4a5568">('+glB.g+' gm)</span>':null,
+      glA?glA.hit+'% hit · '+glA.elite+'% elite <span style="color:var(--fog-2)">('+glA.g+' gm)</span>':null,
+      glB?glB.hit+'% hit · '+glB.elite+'% elite <span style="color:var(--fog-2)">('+glB.g+' gm)</span>':null,
       glA?glA.hit:null, glB?glB.hit:null, true],
     ['Age', a.a.toFixed(1), b.a.toFixed(1), a.a, b.a, false],
     ['Contract', ctTxt(a,ctA), ctTxt(b,ctB), ctA?ctA.end:null, ctB?ctB.end:null, true],
@@ -1197,15 +1350,15 @@ function renderCompare(){
     [(a.pos==='RB'||b.pos==='RB')?'Alpha / Workhorse':'Alpha Score',
       a.oppSc!=null?a.oppSc:null, b.oppSc!=null?b.oppSc:null, a.oppSc, b.oppSc, true],
   ];
-  const pip='<span style="color:#6ee7b7;margin-right:4px">\u25cf</span>';
+  const pip='<span style="color:var(--emerald);margin-right:4px">\u25cf</span>';
   const cell=(disp,me,other,hi)=>{
-    if(disp==null) return '<span style="color:#4a5568">\u2014</span>';
+    if(disp==null) return '<span style="color:var(--fog-2)">\u2014</span>';
     const win=me!=null&&other!=null&&me!==other&&((hi&&me>other)||(!hi&&me<other));
     return (win?pip:'')+disp;
   };
   const body=rows.filter(r=>r[1]!=null||r[2]!=null).map(r=>
-    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding:5px 0;border-bottom:0.5px solid #151d2b;font-size:11.5px;align-items:baseline">'
-    +'<span style="color:#718096;font-size:10px">'+r[0]+'</span>'
+    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--ink-2);font-size:11.5px;align-items:baseline">'
+    +'<span style="color:var(--fog);font-size:10px">'+r[0]+'</span>'
     +'<span>'+cell(r[1],r[3],r[4],r[5])+'</span>'
     +'<span>'+cell(r[2],r[4],r[3],r[5])+'</span></div>'
   ).join('');
@@ -1213,16 +1366,16 @@ function renderCompare(){
   const mvA=mvAsset(a), mvB=mvAsset(b);
   const lead=mvA===mvB?null:(mvA>mvB?a:b);
   const edge=lead?Math.round(Math.abs(mvA-mvB)/Math.min(mvA,mvB)*100):0;
-  const name=(p,id)=>'<span onclick="openDeckNewTab(event,\''+p.n.replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px;font-weight:700;font-size:12px">'+p.n+' \u2197</span>'
-    +'<div style="font-size:9px;color:#718096">'+p.pos+' \u00b7 '+p.t+'</div>';
+  const name=(p,id)=>'<span onclick="openDeckNewTab(event,\''+p.n.replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;font-weight:700;font-size:12px">'+p.n+' \u2197</span>'
+    +'<div style="font-size:9px;color:var(--fog)">'+p.pos+' \u00b7 '+p.t+'</div>';
   host.innerHTML=
     '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding-bottom:6px">'
     +'<span></span><div>'+name(a)+'</div><div>'+name(b)+'</div></div>'
     +body
-    +'<div style="margin-top:9px;font-size:11.5px;color:#a0aec0">Model value: '
+    +'<div style="margin-top:9px;font-size:11.5px;color:var(--fog)">Model value: '
     +mvA.toLocaleString()+' vs '+mvB.toLocaleString()
-    +(lead?' \u2014 <b style="color:#6ee7b7">'+lead.n+' +'+edge+'%</b>':' \u2014 dead even')
-    +'<span style="color:#4a5568;font-size:9.5px"> \u00b7 model\u2019s asset pricing at your league settings \u2014 the trade calc renders the verdict</span></div>';
+    +(lead?' \u2014 <b style="color:var(--emerald)">'+lead.n+' +'+edge+'%</b>':' \u2014 dead even')
+    +'<span style="color:var(--fog-2);font-size:9.5px"> \u00b7 model\u2019s asset pricing at your league settings \u2014 the trade calc renders the verdict</span></div>';
 }
 
 // ── Gap-filler (on-demand) ───────────────────────────────────
@@ -1268,14 +1421,14 @@ function windowFraming(){
       else if(tilt==='future'){ok=true; msg=`youth/picks (${topN}) — fits your rebuild timeline.`;}
       else{ok=null; msg=`young/prime core (${topN}) — reasonable for a rebuild.`;}
     }
-    const mark = ok===true?'<span style="color:#6ee7b7">✓</span>':ok===false?'<span style="color:#fcd34d">⚠</span>':'<span style="color:#718096">•</span>';
+    const mark = ok===true?'<span style="color:var(--emerald)">✓</span>':ok===false?'<span style="color:var(--topaz)">⚠</span>':'<span style="color:var(--fog)">•</span>';
     const wlab = w.charAt(0).toUpperCase()+w.slice(1);
     lines.push(`<div style="margin:2px 0">${mark} <b>${s.label}</b> (${wlab}) receiving ${msg}</div>`);
   }
   if(!lines.length) return '';
-  return `<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:9px 12px;font-size:10.5px;color:#a0aec0;line-height:1.7;margin-bottom:.75rem"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#718096;margin-bottom:3px">Window fit · context only</div>${lines.join('')}</div>`;
+  return `<div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:10.5px;color:var(--fog);line-height:1.7;margin-bottom:.75rem"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--fog);margin-bottom:3px">Window fit · context only</div>${lines.join('')}</div>`;
 }
-function gapNote(msg){ return `<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:10px 12px;font-size:11px;color:#718096">${msg}</div>`; }
+function gapNote(msg){ return `<div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--fog)">${msg}</div>`; }
 function gapFillerPool(light){
   const inTrade=new Set([...sA,...sB,...sC,...sD].map(x=>x.n));
   const sleeper=!!(typeof SLP!=='undefined'&&SLP.trade&&SLP.trade.withRid&&SLP.conn);
@@ -1321,17 +1474,17 @@ function renderGapFiller(){
   const whose=sleeper?(light==='a'?'your roster':'their roster'):'the market';
   const best=scored[0];
   const header=best.np<=3
-    ? `<b style="color:#6ee7b7">${lightName}</b> is ~${gap.toLocaleString()} light — any of these evens it${sleeper?` from ${whose}`:''}:`
+    ? `<b style="color:var(--emerald)">${lightName}</b> is ~${gap.toLocaleString()} light — any of these evens it${sleeper?` from ${whose}`:''}:`
     : `No single asset fully evens it — closest gets <b>${lightName}</b> to within ~${best.np}%${sleeper?` (${whose})`:''}:`;
   const chips=scored.map(s=>{
     const even=s.np<=3;
-    const label=`${s.a.n} <span style="color:#718096">+${Math.round(s.added).toLocaleString()} → ${even?'even ✓':'within '+s.np+'%'}</span>`;
-    return `<button onclick="addAsset('${light}','${s.a.n.replace(/'/g,"\\'")}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;border:1px solid ${even?'#2f6f57':'#2d3748'};background:#1a202c;color:#e2e8f0;cursor:pointer;margin:0 5px 5px 0">${label}</button>`;
+    const label=`${s.a.n} <span style="color:var(--fog)">+${Math.round(s.added).toLocaleString()} → ${even?'even ✓':'within '+s.np+'%'}</span>`;
+    return `<button onclick="addAsset('${light}','${s.a.n.replace(/'/g,"\\'")}')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;border:1px solid ${even?'var(--emerald)':'var(--line)'};background:var(--panel);color:var(--paper);cursor:pointer;margin:0 5px 5px 0">${label}</button>`;
   }).join('');
-  host.innerHTML=`<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:11px 13px">
-    <div style="font-size:11px;color:#a0aec0;margin-bottom:7px">${header}</div>
+  host.innerHTML=`<div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:11px 13px">
+    <div style="font-size:11px;color:var(--fog);margin-bottom:7px">${header}</div>
     <div>${chips}</div>
-    ${sleeper?'':'<div style="font-size:9.5px;color:#4a5568;margin-top:6px">Tip: load a Sleeper trade to limit suggestions to a real roster.</div>'}
+    ${sleeper?'':'<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px">Tip: load a Sleeper trade to limit suggestions to a real roster.</div>'}
   </div>`;
 }
 
@@ -1378,10 +1531,10 @@ function renderRipple(){
         <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
         <div style="display:flex;gap:6px;align-items:center">
           <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
-          ${p?`<span style="font-size:10px;color:#718096">Mkt ${p.ktcEff.toLocaleString()} · Proj ${getAdjProj(p).toFixed(1)}</span>`:''}
+          ${p?`<span style="font-size:10px;color:var(--fog)">Mkt ${p.ktcEff.toLocaleString()} · Proj ${getAdjProj(p).toFixed(1)}</span>`:''}
         </div>
       </div>
-      <div style="font-size:11px;color:#718096;margin-top:4px">${r.reason}</div>
+      <div style="font-size:11px;color:var(--fog);margin-top:4px">${r.reason}</div>
     </div>`;
   }).join('');
 }
@@ -1421,20 +1574,20 @@ function renderContracts(){
   else data.sort((a,b)=>d*(b.aav-a.aav)); // default: aav descending
 
   const fmt=n=>n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+n.toLocaleString();
-  const yrsColor=yrs=>yrs<=2?'#fca5a5':yrs<=3?'#fcd34d':yrs>=5?'#6ee7b7':'#7dd3fc';
+  const yrsColor=yrs=>yrs<=2?'var(--coral)':yrs<=3?'var(--topaz)':yrs>=5?'var(--emerald)':'var(--sky)';
 
   document.getElementById('contracts-body').innerHTML=data.map(c=>{
     const st=contractStatus(c);
     const yrsLeft=c.end-2025; // inclusive of current 2026 season
     const pl=COMP.find(x=>x.n===c.n);
-    const ktcStr=pl?`<span style="font-size:10px;color:#718096">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
+    const ktcStr=pl?`<span style="font-size:10px;color:var(--fog)">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
     return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-      <td style="font-weight:600;white-space:nowrap">${c.n}${pl?glTag(c.n)+trendTag(c.n):''}</td>
+      <td class="pname" style="font-weight:600;white-space:nowrap">${c.n}</td>
       <td><span class="badge bn">${c.pos}</span></td>
-      <td style="color:#718096">${c.team}</td>
+      <td style="color:var(--fog)">${c.team}</td>
       <td>${pl&&pl.a<90?pl.a.toFixed(1):'-'}</td>
       <td style="font-weight:600">${fmt(c.aav)}</td>
-      <td style="color:#718096">${fmt(c.total)}</td>
+      <td style="color:var(--fog)">${fmt(c.total)}</td>
       <td>${c.end}</td>
       <td style="font-weight:600;color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
       <td><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
@@ -1453,7 +1606,7 @@ function doEditSearch(){
   if(!matches.length){res.style.display='none';return;}
   res.style.display='block';
   res.innerHTML=matches.map(p=>`<div class="edit-result-item" onclick="selEdit('${p.n.replace(/'/g,"\\'")}')">
-    ${p.n} <span style="color:#718096;font-size:11px">${p.p} · ${p.t}</span>
+    ${p.n} <span style="color:var(--fog);font-size:11px">${p.p} · ${p.t}</span>
     ${OV[p.n]?'<span class="badge bw" style="margin-left:6px">edited</span>':''}
   </div>`).join('');
 }
@@ -1497,15 +1650,15 @@ function resetOV(){
 function renderOVList(){
   const keys=Object.keys(OV);
   const el=document.getElementById('ov-list');
-  if(!keys.length){el.innerHTML='<div style="color:#718096;font-size:12px">None.</div>';return;}
+  if(!keys.length){el.innerHTML='<div style="color:var(--fog);font-size:12px">None.</div>';return;}
   el.innerHTML=keys.map(name=>{
     const o=OV[name];const parts=[];
     if(o.team)parts.push(`→${o.team}`);if(o.s!==undefined)parts.push(`sys ${o.s}`);
     if(o.ktc!==undefined)parts.push(`Mkt ${o.ktc.toLocaleString()}`);if(o.notes)parts.push(`"${o.notes}"`);
     return`<div class="override-item">
       <span style="font-weight:600">${name}</span>
-      <span style="font-size:11px;color:#718096;flex:1;margin:0 8px">${parts.join(' · ')}</span>
-      <button onclick="clearOV('${name.replace(/'/g,"\\'")}'')" style="font-size:11px;color:#fca5a5;background:none;border:none;cursor:pointer">clear</button>
+      <span style="font-size:11px;color:var(--fog);flex:1;margin:0 8px">${parts.join(' · ')}</span>
+      <button onclick="clearOV('${name.replace(/'/g,"\\'")}'')" style="font-size:11px;color:var(--coral);background:none;border:none;cursor:pointer">clear</button>
     </div>`;
   }).join('');
 }
@@ -1635,7 +1788,7 @@ function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
   const hi=pos==='QB'?21:pos==='RB'?16:pos==='TE'?11:15;
   const mid=pos==='QB'?17:pos==='RB'?12:pos==='TE'?8:11;
-  return v>=hi?'#6ee7b7':v>=mid?'#7dd3fc':v>=mid*0.7?'#fcd34d':'#fc8181';
+  return v>=hi?'#10B981':v>=mid?'#6BB6E0':v>=mid*0.7?'#E0B34D':'#E8927C';
 }
 function renderDeck(p){
   // ── Header ──
@@ -1663,24 +1816,29 @@ function renderDeck(p){
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const fy=ct?fifthYearNote(p,ct):'';
-  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:#fcd34d">⚠ walk year</span>':''}${fy?` <span style="color:#7dd3fc" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:#4a5568">No contract data</span>';
+  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:var(--topaz)">⚠ walk year</span>':''}${fy?` <span style="color:var(--sky)" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:var(--fog-2)">No contract data</span>';
   const dp=DRAFT_PICKS[p.n];
-  const dpClr=dp?(dp.r===1?'#6ee7b7':dp.r===2?'#93c5fd':dp.r===3?'#fcd34d':'#718096'):'#718096';
+  const dpClr=dp?(dp.r===1?'var(--emerald)':dp.r===2?'var(--sky)':dp.r===3?'var(--topaz)':'var(--fog)'):'var(--fog)';
   // Row 1: position · team · age · contract.  Row 2: college · draft capital.
   const dispTeam=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
   const adjProj=getAdjProj(p);
   const projClr=projChipColor(adjProj,p.pos);
-  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`
-    +`<span style="display:inline-flex;align-items:center;gap:4px;background:${projClr}22;border:1px solid ${projClr}66;border-radius:5px;padding:1px 7px;margin-left:2px"><b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b><span style="font-size:9px;color:#718096">proj PPG</span></span>`;
+  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`;
+  const projChip=`<span style="display:inline-flex;align-items:center;gap:4px;background:${projClr}22;border:1px solid ${projClr}66;border-radius:5px;padding:1px 7px"><b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b><span style="font-size:9px;color:var(--fog)">proj PPG</span></span>`;
   const bgParts=[];
   if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
   if(dp) bgParts.push(`<span>${dp.y} Rd${dp.r} Pick ${dp.p}</span>`);
-  const row2=bgParts.length?`<div class="dd-meta" style="margin-top:2px">${bgParts.join('')}</div>`:'';
   document.getElementById('dd-meta').innerHTML=row1;
-  // second row injected right after the meta line
+  // extra meta rows after the header line: college/draft, then Projected PPG on its own line beneath it
   const metaEl=document.getElementById('dd-meta');
-  if(metaEl){ const ex=document.getElementById('dd-meta-2'); if(ex) ex.remove();
-    if(row2){ const d=document.createElement('div'); d.id='dd-meta-2'; d.className='dd-meta'; d.style.marginTop='2px'; d.innerHTML=bgParts.join(''); metaEl.parentNode.insertBefore(d, metaEl.nextSibling); } }
+  if(metaEl){
+    ['dd-meta-2','dd-meta-3'].forEach(id=>{const ex=document.getElementById(id);if(ex)ex.remove();});
+    const rows=[];
+    if(bgParts.length) rows.push(bgParts.join(''));
+    rows.push(projChip);
+    let anchor=metaEl;
+    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop='2px'; d.innerHTML=html; anchor.parentNode.insertBefore(d, anchor.nextSibling); anchor=d; });
+  }
 
   // ── Body ──
   const gl=glOf(p);
@@ -1700,15 +1858,15 @@ function renderDeck(p){
   const maxEpa=epas.length?Math.max(...epas.map(x=>Math.abs(x.v)),0.01):1;
 
   // EPA arc color
-  const epaColor=v=>v>=1.8?'#6ee7b7':v>=1.4?'#7dd3fc':v>=1.0?'#fcd34d':'#fc8181';
-  const qbEpaColor=v=>v>=0.15?'#6ee7b7':v>=0.05?'#7dd3fc':v>=-0.05?'#fcd34d':'#fc8181';
+  const epaColor=v=>v>=1.8?'var(--emerald)':v>=1.4?'var(--sky)':v>=1.0?'var(--topaz)':'var(--coral)';
+  const qbEpaColor=v=>v>=0.15?'var(--emerald)':v>=0.05?'var(--sky)':v>=-0.05?'var(--topaz)':'var(--coral)';
 
   // PPG arc bars
   const ppgBars=ppgs.filter(x=>x.v>0).map(x=>{
     const h=x.v>0?Math.max(8,Math.round((x.v/maxPpg)*44)):3;
-    const c=x.v>=18?'#6ee7b7':x.v>=14?'#7dd3fc':x.v>=10?'#fcd34d':x.v>0?'#fc8181':'#2d3748';
+    const c=x.v>=18?'var(--emerald)':x.v>=14?'var(--sky)':x.v>=10?'var(--topaz)':x.v>0?'var(--coral)':'var(--line)';
     return`<div style="display:flex;flex-direction:column;align-items:center;flex:1">
-      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v>0?x.v.toFixed(1):'-'}</div>
+      <div style="font-size:9px;color:var(--fog);margin-bottom:2px">${x.v>0?x.v.toFixed(1):'-'}</div>
       <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
       <div class="dd-arc-yr">${x.yr}</div></div>`;
   }).join('');
@@ -1717,9 +1875,9 @@ function renderDeck(p){
   const epaBars=epas.map(x=>{
     const h=Math.max(5,Math.round((Math.abs(x.v)/maxEpa)*44));
     const c=p.pos==='QB'?qbEpaColor(x.v):(p.pos==='RB'?
-      (x.v>=0.05?'#6ee7b7':x.v>=-0.05?'#fcd34d':'#fc8181'):epaColor(x.v));
+      (x.v>=0.05?'var(--emerald)':x.v>=-0.05?'var(--topaz)':'var(--coral)'):epaColor(x.v));
     return`<div style="display:flex;flex-direction:column;align-items:center;flex:1">
-      <div style="font-size:9px;color:#718096;margin-bottom:2px">${x.v.toFixed(2)}</div>
+      <div style="font-size:9px;color:var(--fog);margin-bottom:2px">${x.v.toFixed(2)}</div>
       <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
       <div class="dd-arc-yr">${x.yr}</div></div>`;
   }).join('');
@@ -1728,21 +1886,21 @@ function renderDeck(p){
   const glHtml=gl?`
     <div class="dd-prog-row">
       <div class="dd-prog-label">Elite</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:#6ee7b7"></div></div>
-      <div class="dd-prog-val" style="color:#6ee7b7">${gl.elite}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.elite}%;background:var(--emerald)"></div></div>
+      <div class="dd-prog-val" style="color:var(--emerald)">${gl.elite}%</div>
     </div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Hit</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100-gl.miss}%;background:#7dd3fc"></div></div>
-      <div class="dd-prog-val" style="color:#7dd3fc">${100-gl.miss}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${100-gl.miss}%;background:var(--sky)"></div></div>
+      <div class="dd-prog-val" style="color:var(--sky)">${100-gl.miss}%</div>
     </div>
     <div class="dd-prog-row">
       <div class="dd-prog-label">Miss</div>
-      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:#fc8181"></div></div>
-      <div class="dd-prog-val" style="color:#fc8181">${gl.miss}%</div>
+      <div class="dd-prog-bar"><div class="dd-prog-fill" style="width:${gl.miss}%;background:var(--coral)"></div></div>
+      <div class="dd-prog-val" style="color:var(--coral)">${gl.miss}%</div>
     </div>
-    <div style="font-size:9px;color:#4a5568;margin-top:4px">${gl.g} games sampled</div>`
-  :'<div style="font-size:11px;color:#4a5568">Insufficient game data</div>';
+    <div style="font-size:9px;color:var(--fog-2);margin-top:4px">${gl.g} games sampled</div>`
+  :'<div style="font-size:11px;color:var(--fog-2)">Insufficient game data</div>';
 
   // Role label
   // Utilization: snap share for RBs; target share for WR/TE (NOT YPRR — that's
@@ -1770,10 +1928,10 @@ function renderDeck(p){
   ):null;
 
   // System
-  const sysColor=p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
+  const sysColor=p.sys>=70?'var(--emerald)':p.sys>=55?'var(--sky)':p.sys>=40?'var(--topaz)':'var(--coral)';
 
   // Contract note
-  const ctNote=ct&&ct.note?`<div style="font-size:10px;color:#718096;margin-top:6px;font-style:italic">${ct.note}</div>`:'';
+  const ctNote=ct&&ct.note?`<div style="font-size:10px;color:var(--fog);margin-top:6px;font-style:italic">${ct.note}</div>`:'';
 
   // Rec / game for format note
 
@@ -1791,15 +1949,15 @@ function renderDeck(p){
       // Workhorse grade, but scheme context still matters — render a compact
       // Offense / scheme block so System Score etc. aren't lost.
       if (!oppSc || !st25) {
-        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
-        const qbOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:#fcd34d">· ⚠ new OC</span>' : '';
+        const qbOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">· ⚠ new OC</span>' : '';
         return '<div class="dd-section">'
           +'<div style="display:flex;justify-content:space-between;align-items:center">'
           +'<div class="dd-section-label" style="margin-bottom:0">Offense / Scheme'+qbOc+'</div>'
           +'<div style="font-size:18px;font-weight:800;color:'+sysColor+'">'+p.sys+'</div></div>'
-          +'<div style="font-size:9px;color:#4a5568;margin-top:2px">Full scheme breakdown on the player page</div>'
+          +'<div style="font-size:9px;color:var(--fog-2);margin-top:2px">Full scheme breakdown on the player page</div>'
           +tsLine+fmtLine+'</div><div class="dd-divider"></div>';
       }
       const isWR  = p.pos==='WR'||p.pos==='TE';
@@ -1819,35 +1977,35 @@ function renderDeck(p){
       const rsLabel = g25 < 17 ? 'Rush Share/game · '+g25+'g' : 'Rush Share';
 
       const compRows = isWR ? [
-        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'#6ee7b7':tgtS>=.20?'#7dd3fc':tgtS>=.14?'#fcd34d':'#fc8181'],
-        ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'#6ee7b7':airS>=.28?'#7dd3fc':airS>=.18?'#fcd34d':'#fc8181'],
-        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'#6ee7b7':rzT>=12?'#7dd3fc':rzT>=7?'#fcd34d':'#fc8181'],
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.28?'var(--emerald)':tgtS>=.20?'var(--sky)':tgtS>=.14?'var(--topaz)':'var(--coral)'],
+        ['Air Yards Share', (airS*100).toFixed(1)+'%',  airS>=.38?'var(--emerald)':airS>=.28?'var(--sky)':airS>=.18?'var(--topaz)':'var(--coral)'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=18?'var(--emerald)':rzT>=12?'var(--sky)':rzT>=7?'var(--topaz)':'var(--coral)'],
       ] : [
-        [rsLabel,           (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'#6ee7b7':rsAdj>=.40?'#7dd3fc':rsAdj>=.25?'#fcd34d':'#fc8181'],
-        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'#6ee7b7':tgtS>=.12?'#7dd3fc':tgtS>=.08?'#fcd34d':'#fc8181'],
-        ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'#6ee7b7':rzC>=35?'#7dd3fc':rzC>=20?'#fcd34d':'#fc8181'],
-        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'#6ee7b7':rzT>=7?'#7dd3fc':rzT>=3?'#fcd34d':'#fc8181'],
+        [rsLabel,           (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'var(--emerald)':rsAdj>=.40?'var(--sky)':rsAdj>=.25?'var(--topaz)':'var(--coral)'],
+        ['Target Share',    (tgtS*100).toFixed(1)+'%',  tgtS>=.18?'var(--emerald)':tgtS>=.12?'var(--sky)':tgtS>=.08?'var(--topaz)':'var(--coral)'],
+        ['RZ Carries',      rzC!=null?rzC:'—',           rzC>=55?'var(--emerald)':rzC>=35?'var(--sky)':rzC>=20?'var(--topaz)':'var(--coral)'],
+        ['RZ Targets',      rzT!=null?rzT:'—',           rzT>=12?'var(--emerald)':rzT>=7?'var(--sky)':rzT>=3?'var(--topaz)':'var(--coral)'],
       ];
       const rowsHtml = compRows.map(([lbl,val,clr])=>
-        '<div class="breakdown-row"><span style="color:#718096">'+lbl+'</span>'
+        '<div class="breakdown-row"><span style="color:var(--fog)">'+lbl+'</span>'
         +'<span style="font-weight:600;color:'+clr+'">'+val+'</span></div>'
       ).join('');
       const iconStyle = isWR
-        ? 'font-size:26px;font-weight:700;font-family:Georgia,serif;color:'+scC+';line-height:1;margin-right:8px'
+        ? 'font-size:26px;font-weight:700;font-family:var(--geo);color:'+scC+';line-height:1;margin-right:8px'
         : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
       const gms = st25.games;
-      const sampleNote = gms ? '<div style="font-size:9px;color:#4a5568;margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
+      const sampleNote = gms ? '<div style="font-size:9px;color:var(--fog-2);margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
       // Folded-in scheme/context (the non-redundant survivors of System & Role):
       // system score, OC-change risk, target-share TREND (direction, not the
       // static share shown above), and format sensitivity.
-      const ocLine = p.och ? '<span style="color:#fcd34d">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
-      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'#6ee7b7':tsDelta<0?'#fc8181':'#718096')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:#718096">Format sensitivity: '+fmtSensitivity+'</div>' : '';
-      const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:#fcd34d">⚠ new OC</span>' : '';
+      const ocLine = p.och ? '<span style="color:var(--topaz)">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
+      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+      const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">⚠ new OC</span>' : '';
       const schemeBlock =
-        '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid #1f2937">'
+        '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid var(--line)">'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline">'
-        +'<span style="font-size:10px;color:#718096">Offense / scheme'+skOc+'</span>'
+        +'<span style="font-size:10px;color:var(--fog)">Offense / scheme'+skOc+'</span>'
         +'<span style="font-size:13px;font-weight:700;color:'+sysColor+'">System '+p.sys+'</span></div>'
         +tsLine+fmtLine+'</div>';
       return '<div class="dd-section">'
@@ -1866,7 +2024,7 @@ function renderDeck(p){
     <div class="dd-section">
       <div style="display:flex;justify-content:space-between;align-items:baseline">
         <div class="dd-section-label" style="margin-bottom:0">PPG Trend</div>
-        <div style="font-size:10px;color:#718096">2026 proj <b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b></div>
+        <div style="font-size:10px;color:var(--fog)">2026 proj <b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b></div>
       </div>
       <div class="dd-arc" style="height:52px;margin-top:6px">${ppgBars}</div>
     </div>
@@ -1874,8 +2032,8 @@ function renderDeck(p){
     <div class="dd-section">
       <div class="dd-section-label">${epaLabel} Arc</div>
       ${epas.length?`<div class="dd-arc" style="height:52px">${epaBars}</div>`
-        :'<div style="font-size:11px;color:#4a5568">No multi-year data</div>'}
-      ${p.epaTr&&epas.length?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'#6ee7b7':p.epaTr==='down'?'#fc8181':'#718096'}">${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span></div>`:''}
+        :'<div style="font-size:11px;color:var(--fog-2)">No multi-year data</div>'}
+      ${p.epaTr&&epas.length?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'var(--emerald)':p.epaTr==='down'?'var(--coral)':'var(--fog)'}">${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span></div>`:''}
     </div>
 
     <div class="dd-divider"></div>
@@ -1894,14 +2052,14 @@ function renderDeck(p){
       const rows=stack.map(p2=>{
         const scC=oppScoreColor(p2.oppSc);
         const tag=vTag(p2).replace(/class="badge /g,'class="badge ').replace(/style="[^"]*"/g,'');
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid #1f2937">'
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid var(--line)">'
           +'<div style="display:flex;align-items:center;gap:8px">'
-          +'<span style="font-size:10px;color:#4a5568;width:18px">'+p2.pos+'</span>'
-          +'<span onclick="openDeckNewTab(event,\''+p2.n.replace(/'/g,"\\'")+'\')" title="Open full profile in new tab" style="font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:#2d3748;text-underline-offset:3px">'+p2.n+' ↗</span>'
+          +'<span style="font-size:10px;color:var(--fog-2);width:18px">'+p2.pos+'</span>'
+          +'<span onclick="openDeckNewTab(event,\''+p2.n.replace(/'/g,"\\'")+'\')" title="Open full profile in new tab" style="font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px">'+p2.n+' ↗</span>'
           +'</div>'
           +'<div style="display:flex;align-items:center;gap:10px">'
           +tag
-          +'<span style="font-family:Georgia,serif;font-size:12px;color:'+scC+'">α</span>'
+          +'<span style="font-family:var(--geo);font-size:12px;color:'+scC+'">α</span>'
           +'<span style="font-size:13px;font-weight:700;color:'+scC+'">'+p2.oppSc+'</span>'
           +'</div>'
           +'</div>';
@@ -1957,7 +2115,7 @@ function deckSearchInput(){
   drop.innerHTML=matches.map((p,i)=>{
     const mv=mvAsset(p);
     const ratio=mv/Math.max(p.ktcEff,1);
-    const dotColor=ratio>=1.06?'#6ee7b7':ratio>=0.94?'#fcd34d':'#fca5a5';
+    const dotColor=ratio>=1.06?'var(--emerald)':ratio>=0.94?'var(--topaz)':'var(--coral)';
     const dotLabel=ratio>=1.06?'Buy':ratio>=0.94?'Hold':'Sell';
     const dot=`<span style="font-size:9px;font-weight:700;color:${dotColor}">${dotLabel}</span>`;
     return`<div class="drop-item" data-name="${p.n}" data-idx="${i}"
@@ -1965,10 +2123,10 @@ function deckSearchInput(){
       style="display:flex;justify-content:space-between;align-items:center">
       <div>
         <span style="font-weight:600;font-size:12px">${p.n}</span>
-        <span style="font-size:10px;color:#718096;margin-left:6px">${p.pos} · ${p.t}</span>
+        <span style="font-size:10px;color:var(--fog);margin-left:6px">${p.pos} · ${p.t}</span>
       </div>
       <div style="display:flex;align-items:center;gap:6px;font-size:10px">
-        <span style="color:#718096">Mkt ${p.ktcEff.toLocaleString()}</span>
+        <span style="color:var(--fog)">Mkt ${p.ktcEff.toLocaleString()}</span>
         <span>${dot}</span>
       </div>
     </div>`;
@@ -2089,11 +2247,11 @@ const PROSPECTS_2026=[
 ];
 
 function getScoreColor(s) {
-  if (s >= 85) return '#4caf50';
-  if (s >= 70) return '#8bc34a';
-  if (s >= 55) return '#ffb300';
-  if (s >= 40) return '#ff7043';
-  return '#78909c';
+  if (s >= 85) return '#10B981';
+  if (s >= 70) return '#10B981';
+  if (s >= 55) return '#E0B34D';
+  if (s >= 40) return '#E8927C';
+  return '#8CA0B3';
 }
 
 function getScoreLabel(s) {
@@ -2105,18 +2263,18 @@ function getScoreLabel(s) {
 }
 
 function getPosColor(pos) {
-  return pos==='QB'?'#e91e63':pos==='WR'?'#2196f3':pos==='RB'?'#4caf50':'#ff9800';
+  return pos==='QB'?'#9B8AF0':pos==='WR'?'#6BB6E0':pos==='RB'?'#10B981':'#E0B34D';
 }
 
 function filterRookies(pos, btn) {
   document.querySelectorAll('.pos-filter-btn').forEach(b=>{
     b.style.background = 'transparent';
-    b.style.color = '#8899aa';
-    b.style.borderColor = '#334';
+    b.style.color = 'var(--fog)';
+    b.style.borderColor = 'var(--line)';
   });
-  btn.style.background = '#4a90d9';
+  btn.style.background = 'var(--sky)';
   btn.style.color = '#fff';
-  btn.style.borderColor = '#4a90d9';
+  btn.style.borderColor = 'var(--sky)';
   renderRookieBoard(pos);
 }
 
@@ -2136,13 +2294,13 @@ function renderRookieBoard(posFilter) {
     
     if (posFilter === 'ALL' && p.pos !== lastPos) {
       lastPos = p.pos;
-      html += `<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#4a90d9;text-transform:uppercase;margin:${i===0?'0':'16px'} 0 8px;padding-left:4px">${p.pos}</div>`;
+      html += `<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--sky);text-transform:uppercase;margin:${i===0?'0':'16px'} 0 8px;padding-left:4px">${p.pos}</div>`;
     }
     
-    const rdColor = p.pr===1?'#4caf50':p.pr===2?'#2196f3':p.pr===3?'#ffb300':'#78909c';
+    const rdColor = p.pr===1?'#10B981':p.pr===2?'#6BB6E0':p.pr===3?'#E0B34D':'#8CA0B3';
     
     html += `
-    <div onclick="showRookieCard(${i},${JSON.stringify(posFilter).replace(/"/g,"'")})" style="background:#1a2332;border:1px solid #2d3f55;border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='#4a90d9'" onmouseout="this.style.borderColor='#2d3f55'">
+    <div onclick="showRookieCard(${i},${JSON.stringify(posFilter).replace(/"/g,"'")})" style="background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--sky)'" onmouseout="this.style.borderColor='var(--line)'">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="min-width:44px;height:44px;border-radius:8px;background:${sc}22;border:1px solid ${sc}55;display:flex;flex-direction:column;align-items:center;justify-content:center">
           <div style="font-size:16px;font-weight:800;color:${sc};line-height:1">${p.ds}</div>
@@ -2150,38 +2308,38 @@ function renderRookieBoard(posFilter) {
         </div>
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-            <span style="font-size:14px;font-weight:700;color:#e8edf2">${p.n}</span>
-            <span class="watch-star" data-name="${p.n}" style="cursor:pointer;font-size:16px;padding:0 4px;color:${isWatched(p.n)?'#fbbf24':'#4a5568'}">${isWatched(p.n)?'★':'☆'}</span>
-            <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>${p.drafted?`<span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:#1e3a5f;color:#4a90d9">${p.team}</span>`:''}
+            <span style="font-size:14px;font-weight:700;color:var(--paper)">${p.n}</span>
+            <span class="watch-star" data-name="${p.n}" style="cursor:pointer;font-size:16px;padding:0 4px;color:${isWatched(p.n)?'var(--topaz)':'var(--fog-2)'}">${isWatched(p.n)?'★':'☆'}</span>
+            <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>${p.drafted?`<span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--ink-2);color:var(--sky)">${p.team}</span>`:''}
             <span style="font-size:10px;color:${rdColor};background:${rdColor}22;padding:1px 6px;border-radius:4px;font-weight:600">Rd${p.pr} #${p.pp}</span>
           </div>
-          <div style="font-size:11px;color:#8899aa">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
+          <div style="font-size:11px;color:var(--fog)">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${sc}">${sl}</div>
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
-            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:#64b5f6">${p.cap}</div>
-              <div style="font-size:7px;color:#4a6f8a">CAP</div>
+            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--sky)">${p.cap}</div>
+              <div style="font-size:7px;color:var(--fog-2)">CAP</div>
             </div>
-            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:#ba68c8">${p.bb}</div>
-              <div style="font-size:7px;color:#4a6f8a">BOARD</div>
+            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--violet)">${p.bb}</div>
+              <div style="font-size:7px;color:var(--fog-2)">BOARD</div>
             </div>
-            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:#4db6ac">${p.ag}</div>
-              <div style="font-size:7px;color:#4a6f8a">AGE</div>
+            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--teal)">${p.ag}</div>
+              <div style="font-size:7px;color:var(--fog-2)">AGE</div>
             </div>
-            <div style="text-align:center;padding:3px 6px;background:#0d1927;border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:#ffb74d">${p.ath}</div>
-              <div style="font-size:7px;color:#4a6f8a">ATH</div>
+            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--topaz)">${p.ath}</div>
+              <div style="font-size:7px;color:var(--fog-2)">ATH</div>
             </div>
           </div>
         </div>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:#6a7f94;border-top:1px solid #2d3f55;padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="margin-top:8px;font-size:11px;color:var(--fog-2);border-top:1px solid var(--line);padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <span>${p.note}</span>
-        ${p.comp<1.0?`<span style="white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:#ff704322;color:#ff7043;flex-shrink:0">COMP ×${p.comp.toFixed(2)}</span>`:''}
+        ${p.comp<1.0?`<span style="white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--coral-tint);color:var(--coral);flex-shrink:0">COMP ×${p.comp.toFixed(2)}</span>`:''}
       </div>
     </div>`;
   });
@@ -2201,22 +2359,22 @@ function showRookieCard(idx, posFilter) {
   if (!p) return;
   const sc = getScoreColor(p.ds);
   const pc = getPosColor(p.pos);
-  const rdColor = p.pr===1?'#4caf50':p.pr===2?'#2196f3':p.pr===3?'#ffb300':'#78909c';
+  const rdColor = p.pr===1?'#10B981':p.pr===2?'#6BB6E0':p.pr===3?'#E0B34D':'#8CA0B3';
   
   const bars = [
-    {label:'Draft Capital', val:p.cap, max:40, color:'#64b5f6'},
-    {label:'Big Board (comp-adj)', val:p.bb, max:30, color:'#ba68c8'},
-    {label:'Age/Runway', val:p.ag, max:20, color:'#4db6ac'},
-    {label:'Athleticism (composite)', val:p.ath, max:10, color:'#ffb74d'},
+    {label:'Draft Capital', val:p.cap, max:40, color:'var(--sky)'},
+    {label:'Big Board (comp-adj)', val:p.bb, max:30, color:'var(--violet)'},
+    {label:'Age/Runway', val:p.ag, max:20, color:'var(--teal)'},
+    {label:'Athleticism (composite)', val:p.ath, max:10, color:'var(--topaz)'},
   ];
   
   const barHTML = bars.map(b=>`
     <div style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-        <span style="font-size:11px;color:#8899aa">${b.label}</span>
+        <span style="font-size:11px;color:var(--fog)">${b.label}</span>
         <span style="font-size:11px;font-weight:700;color:${b.color}">${b.val} / ${b.max}</span>
       </div>
-      <div style="background:#0d1927;border-radius:4px;height:6px">
+      <div style="background:var(--ink-2);border-radius:4px;height:6px">
         <div style="background:${b.color};height:6px;border-radius:4px;width:${(b.val/b.max*100)}%;transition:width 0.4s"></div>
       </div>
     </div>
@@ -2226,17 +2384,17 @@ function showRookieCard(idx, posFilter) {
   modal.id='rookie-modal';
   modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#000a;z-index:9999;display:flex;align-items:flex-end;justify-content:center';
   modal.innerHTML=`
-  <div style="background:#121f2e;border:1px solid #2d3f55;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
+  <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <div style="font-size:20px;font-weight:800;color:#e8edf2">${p.n}</div>
-          <button class="watch-star" data-name="${p.n}" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;color:${isWatched(p.n)?'#fbbf24':'#718096'}">${isWatched(p.n)?'★':'☆'}</button>
+          <div style="font-size:20px;font-weight:800;color:var(--paper)">${p.n}</div>
+          <button class="watch-star" data-name="${p.n}" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;color:${isWatched(p.n)?'var(--topaz)':'var(--fog)'}">${isWatched(p.n)?'★':'☆'}</button>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <span style="font-size:11px;font-weight:700;color:${pc};background:${pc}22;padding:2px 8px;border-radius:4px">${p.pos}</span>
-          <span style="font-size:11px;color:#8899aa">${p.school}</span>
-          <span style="font-size:11px;color:#8899aa">· Age ${p.age}</span>
+          <span style="font-size:11px;color:var(--fog)">${p.school}</span>
+          <span style="font-size:11px;color:var(--fog)">· Age ${p.age}</span>
         </div>
       </div>
       <div style="text-align:center;padding:8px 12px;background:${sc}22;border:1px solid ${sc}44;border-radius:10px">
@@ -2244,42 +2402,42 @@ function showRookieCard(idx, posFilter) {
         <div style="font-size:8px;letter-spacing:1px;color:${sc}99;font-weight:700">DELTA SCORE</div>
       </div>
     </div>
-    <div style="background:#0d1927;border-radius:8px;padding:12px;margin-bottom:14px">
+    <div style="background:var(--ink-2);border-radius:8px;padding:12px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
         <div style="text-align:center">
-          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">PROJ ROUND</div>
+          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">PROJ ROUND</div>
           <div style="font-size:16px;font-weight:800;color:${rdColor}">Rd${p.pr}</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">PROJ PICK</div>
+          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">PROJ PICK</div>
           <div style="font-size:16px;font-weight:800;color:${rdColor}">#${p.pp}</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">POS RANK</div>
-          <div style="font-size:16px;font-weight:800;color:#8899aa">${p.pos}#${p.por}</div>
+          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">POS RANK</div>
+          <div style="font-size:16px;font-weight:800;color:var(--fog)">${p.pos}#${p.por}</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:9px;color:#4a6f8a;letter-spacing:1px;margin-bottom:2px">OVERALL</div>
-          <div style="font-size:16px;font-weight:800;color:#8899aa">#${p.ovr}</div>
+          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">OVERALL</div>
+          <div style="font-size:16px;font-weight:800;color:var(--fog)">#${p.ovr}</div>
         </div>
       </div>
     </div>
     <div style="margin-bottom:14px">${barHTML}</div>
-    <div style="background:#0d1927;border-radius:8px;padding:12px;margin-bottom:14px">
+    <div style="background:var(--ink-2);border-radius:8px;padding:12px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#4a90d9">SCOUT NOTE</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--sky)">SCOUT NOTE</div>
         <div style="display:flex;gap:4px">
-        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#ff704322;color:#ff7043">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#4caf5022;color:#4caf50">P4</div>'}
-        ${p.prod&&p.prod>1.02?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#06b6d422;color:#06b6d4">PROD+</div>':p.prod&&p.prod<0.95?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#f59e0b22;color:#f59e0b">PROD−</div>':''}
-          ${p.scar&&p.scar>1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#a78bfa22;color:#a78bfa">'+(p.pos==='QB'?'SF+':'TEP+')+'</div>'):p.scar&&p.scar<1.0?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#71809622;color:#718096">RB−</div>':''}
+        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--coral-tint);color:var(--coral)">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--emerald-tint);color:var(--emerald)">P4</div>'}
+        ${p.prod&&p.prod>1.02?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--teal-tint);color:var(--teal)">PROD+</div>':p.prod&&p.prod<0.95?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--topaz-tint);color:var(--topaz)">PROD−</div>':''}
+          ${p.scar&&p.scar>1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--violet-tint);color:var(--violet)">'+(p.pos==='QB'?'SF+':'TEP+')+'</div>'):p.scar&&p.scar<1.0?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--teal-soft);color:var(--fog)">RB−</div>':''}
         </div>
       </div>
-      <div style="font-size:12px;color:#a0b0c0;line-height:1.5">${p.note}</div>
+      <div style="font-size:12px;color:var(--fog);line-height:1.5">${p.note}</div>
     </div>
-    <div style="background:#1a2332;border:1px solid #ff980044;border-radius:8px;padding:10px;margin-bottom:14px">
-      <div style="font-size:10px;color:#ff9800;font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
+    <div style="background:var(--ink-2);border:1px solid var(--topaz-tint);border-radius:8px;padding:10px;margin-bottom:14px">
+      <div style="font-size:10px;color:var(--topaz);font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
     </div>
-    <button onclick="closeRookieModal()" style="width:100%;padding:12px;background:#2d3f55;border:none;border-radius:8px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer">Close</button>
+    <button onclick="closeRookieModal()" style="width:100%;padding:12px;background:var(--line);border:none;border-radius:8px;color:var(--paper);font-size:14px;font-weight:600;cursor:pointer">Close</button>
   </div>`;
   modal.onclick = e => { if(e.target===modal) closeRookieModal(); };
   document.body.appendChild(modal);
@@ -2307,23 +2465,23 @@ function buildDraftEntries() {
   });
   container.innerHTML = sorted.map(p => {
     const stored = window._draftOverrides?.[p.n] || {};
-    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#111d2e;border-radius:5px">
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--ink-2);border-radius:5px">
       <div style="flex:1;min-width:0">
-        <div style="font-size:11px;font-weight:600;color:#e2e8f0">${p.n}</div>
-        <div style="font-size:10px;color:#4a5568">Projected: Rd${p.pr} Pick ${p.pp}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--paper)">${p.n}</div>
+        <div style="font-size:10px;color:var(--fog-2)">Projected: Rd${p.pr} Pick ${p.pp}</div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:10px;color:#718096">Actual Rd</span>
+        <span style="font-size:10px;color:var(--fog)">Actual Rd</span>
         <input type="number" min="1" max="7" placeholder="${p.pr}"
           value="${stored.rd || ''}"
           id="rd_${p.n.replace(/[^a-z0-9]/gi,'_')}"
-          style="width:40px;padding:3px 6px;border-radius:4px;border:1px solid #2d3748;background:#0d1117;color:#e2e8f0;font-size:11px;text-align:center">
-        <span style="font-size:10px;color:#718096">Pick</span>
+          style="width:40px;padding:3px 6px;border-radius:4px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:11px;text-align:center">
+        <span style="font-size:10px;color:var(--fog)">Pick</span>
         <input type="number" min="1" max="262" placeholder="${p.pp}"
           value="${stored.pk || ''}"
           id="pk_${p.n.replace(/[^a-z0-9]/gi,'_')}"
-          style="width:50px;padding:3px 6px;border-radius:4px;border:1px solid #2d3748;background:#0d1117;color:#e2e8f0;font-size:11px;text-align:center">
-        <span id="delta_${p.n.replace(/[^a-z0-9]/gi,'_')}" style="font-size:10px;width:30px;text-align:right;color:#718096"></span>
+          style="width:50px;padding:3px 6px;border-radius:4px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:11px;text-align:center">
+        <span id="delta_${p.n.replace(/[^a-z0-9]/gi,'_')}" style="font-size:10px;width:30px;text-align:right;color:var(--fog)"></span>
       </div>
     </div>`;
   }).join('');
@@ -2364,7 +2522,7 @@ function applyDraftPicks() {
         const deltaEl = document.getElementById('delta_' + safeId);
         if (deltaEl) {
           deltaEl.textContent = delta > 0 ? '+'+delta : delta < 0 ? delta : '';
-          deltaEl.style.color = delta > 0 ? '#6ee7b7' : delta < 0 ? '#fca5a5' : '#718096';
+          deltaEl.style.color = delta > 0 ? 'var(--emerald)' : delta < 0 ? 'var(--coral)' : 'var(--fog)';
         }
         changed++;
       }
@@ -2397,7 +2555,7 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'delta-toast';
-    t.style.cssText = 'position:fixed;bottom:48px;right:12px;background:#1e2a3a;border:1px solid #2d6bc4;border-radius:6px;padding:8px 14px;font-size:11px;color:#7dd3fc;font-weight:600;z-index:1000;transition:opacity .3s';
+    t.style.cssText = 'position:fixed;bottom:48px;right:12px;background:#1e2a3a;border:1px solid var(--sky);border-radius:6px;padding:8px 14px;font-size:11px;color:var(--sky);font-weight:600;z-index:1000;transition:opacity .3s';
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -2437,8 +2595,8 @@ function toggleWatchFilter() {
   const btn = document.getElementById('watch-filter-btn');
   if (btn) {
     btn.textContent = _watchFilterOn ? '★ Watchlist' : '☆ Watchlist';
-    btn.style.color = _watchFilterOn ? '#fbbf24' : '#718096';
-    btn.style.borderColor = _watchFilterOn ? '#fbbf24' : '#2d3748';
+    btn.style.color = _watchFilterOn ? 'var(--topaz)' : 'var(--fog)';
+    btn.style.borderColor = _watchFilterOn ? 'var(--topaz)' : 'var(--line)';
   }
   renderProspects();
 }
@@ -2460,7 +2618,7 @@ document.addEventListener('click', function(e) {
   document.querySelectorAll('.watch-star[data-name="' + name + '"]').forEach(s => {
     const watched = list.includes(name);
     s.textContent = watched ? '★' : '☆';
-    s.style.color = watched ? '#fbbf24' : '#4a5568';
+    s.style.color = watched ? 'var(--topaz)' : 'var(--fog-2)';
   });
 });
 
@@ -2470,28 +2628,28 @@ document.addEventListener('click', function(e) {
 <div id="panel-rookies" class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
     <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
-    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid #2d6bc4;background:#0f2744;color:#4a90d9;cursor:pointer">⚡ Update with Real Draft Picks</button>
+    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid var(--sky);background:var(--ink-2);color:var(--sky);cursor:pointer">⚡ Update with Real Draft Picks</button>
   </div>
 
   <!-- Post-draft pick entry panel -->
-  <div id="draft-refresh-panel" style="display:none;background:#0d1927;border:1px solid #1e3a5f;border-radius:8px;padding:14px;margin-bottom:1rem">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#4a90d9;margin-bottom:10px">POST-DRAFT SCORE REFRESH</div>
-    <div style="font-size:11px;color:#718096;margin-bottom:12px">Enter actual draft picks after the 2026 NFL Draft (Apr 24-26). Scores will recalculate using real capital instead of projections.</div>
+  <div id="draft-refresh-panel" style="display:none;background:var(--ink-2);border:1px solid var(--ink-2);border-radius:8px;padding:14px;margin-bottom:1rem">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--sky);margin-bottom:10px">POST-DRAFT SCORE REFRESH</div>
+    <div style="font-size:11px;color:var(--fog);margin-bottom:12px">Enter actual draft picks after the 2026 NFL Draft (Apr 24-26). Scores will recalculate using real capital instead of projections.</div>
     <div id="draft-entries" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button onclick="applyDraftPicks()" style="font-size:11px;font-weight:700;padding:6px 16px;border-radius:5px;border:none;background:#2d6bc4;color:#fff;cursor:pointer">Recalculate Scores</button>
-      <button onclick="resetDraftPicks()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid #4a5568;background:transparent;color:#718096;cursor:pointer">Reset to Projections</button>
+      <button onclick="applyDraftPicks()" style="font-size:11px;font-weight:700;padding:6px 16px;border-radius:5px;border:none;background:var(--sky);color:#fff;cursor:pointer">Recalculate Scores</button>
+      <button onclick="resetDraftPicks()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid var(--fog-2);background:transparent;color:var(--fog);cursor:pointer">Reset to Projections</button>
     </div>
   </div>
-  <div style="background:#1a2332;border:1px solid #2d3f55;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#8899aa;line-height:1.6">
-    <strong style="color:#64b5f6">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
+  <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
+    <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
   </div>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;font-size:12px;cursor:pointer;font-weight:600">All</button>
-    <button class="pos-filter-btn" onclick="filterRookies('QB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">QB</button>
-    <button class="pos-filter-btn" onclick="filterRookies('WR',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">WR</button>
-    <button class="pos-filter-btn" onclick="filterRookies('RB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">RB</button>
-    <button class="pos-filter-btn" onclick="filterRookies('TE',this)" style="padding:6px 14px;border-radius:20px;border:1px solid #334;background:transparent;color:#8899aa;font-size:12px;cursor:pointer">TE</button>
+    <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--sky);background:var(--sky);color:#fff;font-size:12px;cursor:pointer;font-weight:600">All</button>
+    <button class="pos-filter-btn" onclick="filterRookies('QB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">QB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('WR',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">WR</button>
+    <button class="pos-filter-btn" onclick="filterRookies('RB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">RB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('TE',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">TE</button>
   </div>
   <div id="rookie-board"></div>
 </div>
@@ -2506,7 +2664,7 @@ document.addEventListener('click', function(e) {
       </div>
       <button class="dd-close" onclick="closeAbout()">×</button>
     </div>
-    <div style="padding:1.25rem;font-size:12px;line-height:1.65;color:#a0aec0">
+    <div style="padding:1.25rem;font-size:12px;line-height:1.65;color:var(--fog)">
       <div class="about-section">
         <div class="about-heading">What is DELTA?</div>
         <p>DELTA evaluates dynasty players over a 2–3 year window using what they've actually done — production history, age relative to their position's prime, opportunity depth, and contract situation. It deliberately ignores market prices as an input, so the model can find gaps between what a player is worth and what the market pays.</p>
@@ -2517,11 +2675,11 @@ document.addEventListener('click', function(e) {
       </div>
       <div class="about-section">
         <div class="about-heading">Glossary</div>
-        <p style="margin-bottom:6px;font-size:11px;color:#718096">Quick reference for DELTA's terms:</p>
+        <p style="margin-bottom:6px;font-size:11px;color:var(--fog)">Quick reference for DELTA's terms:</p>
         <ul class="about-list">
-          <li><b style="color:#6ee7b7">DELTA Score (0–99)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
-          <li><b style="color:#7dd3fc">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
-          <li><b style="color:#7dd3fc">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
+          <li><b style="color:var(--emerald)">DELTA Score (0–99)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
+          <li><b style="color:var(--sky)">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
+          <li><b style="color:var(--sky)">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
           <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to the rest of the league. Centered on the population, so "buy" means <i>cheaper than the typical player relative to the model</i>.</li>
           <li><b>Proj PPG</b> — DELTA's projected points per game for the upcoming season, at your league's scoring.</li>
           <li><b>Start Profile</b> — per-start outcomes across recent seasons: <b>hit</b> (startable week), <b>elite</b> (slate-breaking week), <b>miss</b> (hurt your lineup). Weekly dependability, not season totals.</li>
@@ -2549,7 +2707,7 @@ document.addEventListener('click', function(e) {
         <div class="about-heading">Reading the verdicts</div>
         <p>Strong Buy / Buy / Hold / Sell / Strong Sell reflect market pricing relative to DELTA's model — not absolute player quality. A Sell on an RB35 means the market is paying more than the model thinks the player is worth at that tier, not that the player is useless. The Read section in each player card explains the specific gap driving the verdict.</p>
       </div>
-      <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1f2937;font-size:10px;color:#4a5568">
+      <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:10px;color:var(--fog-2)">
         Data refreshes nightly via the nflverse pipeline. Model calibrated against the 2023–2024 NFL seasons.
       </div>
     </div>
@@ -2561,8 +2719,8 @@ document.addEventListener('click', function(e) {
     <div class="dd-header">
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
         <img id="dd-headshot" src="" alt="" width="56" height="56"
-          style="border-radius:50%;object-fit:cover;border:2px solid #2d4a3e;
-                 background:#1a202c;flex-shrink:0;display:none;cursor:pointer;
+          style="border-radius:50%;object-fit:cover;border:2px solid var(--line);
+                 background:var(--panel);flex-shrink:0;display:none;cursor:pointer;
                  box-shadow:0 2px 10px rgba(0,0,0,.5)"
           onerror="this.style.display='none'"
           onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)">
@@ -2573,7 +2731,6 @@ document.addEventListener('click', function(e) {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button class="dd-copy" id="dd-copy" onclick="copyPlayerCard()">COPY</button>
         <button class="dd-close" onclick="closeDeckNow()">✕</button>
       </div>
     </div>
@@ -2584,14 +2741,14 @@ document.addEventListener('click', function(e) {
 <div id="panel-myteam" class="panel">
   <div class="section-label">My Team — Sleeper</div>
   <div id="myteam-connect">
-    <div style="max-width:540px;background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:18px 20px">
-      <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px">Connect your Sleeper league</div>
-      <div style="font-size:11.5px;color:#718096;line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
+    <div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">
+      <div style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
+      <div style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0" onkeydown="if(event.key==='Enter')sleeperConnect()">
-        <button onclick="sleeperConnect()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid #2d4a3e;background:#16241e;color:#6ee7b7;cursor:pointer">Connect</button>
+        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')sleeperConnect()">
+        <button onclick="sleeperConnect()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
       </div>
-      <div id="slp-status" style="font-size:11px;color:#718096;margin-top:9px;min-height:14px"></div>
+      <div id="slp-status" style="font-size:11px;color:var(--fog);margin-top:9px;min-height:14px"></div>
       <div id="slp-pickers"></div>
     </div>
   </div>
@@ -2600,7 +2757,7 @@ document.addEventListener('click', function(e) {
 
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
-  <div id="audit-body"><div style="color:#718096;padding:1rem">Loading…</div></div>
+  <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
 </div>
 
 <script>
@@ -2619,16 +2776,16 @@ function showDataFreshness(fetchedAt, playerCount, staleCount) {
     badge.id = 'delta-freshness';
     badge.style.cssText = [
       'position:fixed', 'bottom:12px', 'right:12px',
-      'background:#1a2332', 'border:1px solid #2d3f55',
+      'background:var(--ink-2)', 'border:1px solid var(--line)',
       'border-radius:6px', 'padding:5px 10px',
-      'font-size:10px', 'color:#4a90d9',
+      'font-size:10px', 'color:var(--sky)',
       'font-weight:600', 'z-index:999',
       'letter-spacing:0.5px'
     ].join(';');
     document.body.appendChild(badge);
   }
   badge.innerHTML = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}` +
-    (staleCount > 0 ? ` · <span style="color:#fcd34d" title="Players not in the latest FantasyCalc fetch — their baked market value may be stale">${staleCount} stale</span>` : '');
+    (staleCount > 0 ? ` · <span style="color:var(--topaz)" title="Players not in the latest FantasyCalc fetch — their baked market value may be stale">${staleCount} stale</span>` : '');
 }
 
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
@@ -2662,9 +2819,9 @@ function renderScarcityAudit(){
   const host = document.getElementById('audit-body');
   if(!host) return;
   if(!SCARV || !Array.isArray(SCARV.settings)){
-    host.innerHTML = '<div style="color:#718096;padding:1rem;line-height:1.7">No validation data yet. Run '
-      + '<code style="color:#7dd3fc">node scripts/fetch-scarcity-validation.js</code> to generate '
-      + '<code style="color:#7dd3fc">data/scarcity-validation.json</code>, then redeploy.</div>';
+    host.innerHTML = '<div style="color:var(--fog);padding:1rem;line-height:1.7">No validation data yet. Run '
+      + '<code style="color:var(--sky)">node scripts/fetch-scarcity-validation.js</code> to generate '
+      + '<code style="color:var(--sky)">data/scarcity-validation.json</code>, then redeploy.</div>';
     return;
   }
   const POS=['QB','RB','WR','TE'], qbLabel={sf:'SF','1qb':'1QB'};
@@ -2674,9 +2831,9 @@ function renderScarcityAudit(){
 
   let agree=0, total=0, bad=0, tables='';
   for(const pos of POS){
-    tables += '<div style="font-weight:700;color:#7dd3fc;font-size:13px;margin:18px 0 6px">'+pos+'</div>'
-      + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
-      + '<tr style="color:#718096;text-align:left">'
+    tables += '<div style="font-weight:700;color:var(--sky);font-size:13px;margin:18px 0 6px">'+pos+'</div>'
+      + '<table class="dtable" style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<tr style="color:var(--fog);text-align:left">'
       + '<th style="padding:4px 8px;font-weight:600">Setting</th>'
       + '<th style="padding:4px 8px;font-weight:600">Repl rank</th>'
       + '<th style="padding:4px 8px;font-weight:600">DELTA</th>'
@@ -2697,17 +2854,17 @@ function renderScarcityAudit(){
         if(dd===dm){ agree++; f = Math.abs(diffPct)<8 ? 'ok':'mag'; }
         else if(dd===0||dm===0){ agree++; f='mag'; }
         else { bad++; f='bad'; }
-        dir = f==='ok' ? '<span style="color:#6ee7b7">\u2713</span>'
-            : f==='mag'? '<span style="color:#fbbf24">\u2248</span>'
-            : '<span style="color:#fca5a5">\u2717</span>';
+        dir = f==='ok' ? '<span style="color:var(--emerald)">\u2713</span>'
+            : f==='mag'? '<span style="color:var(--topaz)">\u2248</span>'
+            : '<span style="color:var(--coral)">\u2717</span>';
       }
-      const lc = cell.lowConf ? ' <span title="replacement rank beyond FC\u2019s valued pool" style="color:#fbbf24">*</span>':'';
-      tables += '<tr style="border-top:1px solid #1f2937;'+(isAnchor?'background:#13202e':'')+'" title="vTop '+cell.vTop+' \u00b7 vRepl '+cell.vRepl+'">'
-        + '<td style="padding:4px 8px;color:#e2e8f0">'+s.teams+'-team '+qbLabel[s.qb]+(isAnchor?' <span style="color:#718096">(anchor)</span>':'')+'</td>'
-        + '<td style="padding:4px 8px;color:#a0aec0">'+cell.replRank.toFixed(1)+lc+'</td>'
-        + '<td style="padding:4px 8px;color:#cbd5e0">'+dF.toFixed(3)+'</td>'
-        + '<td style="padding:4px 8px;color:#cbd5e0">'+(mF==null?'\u2014':mF.toFixed(3))+'</td>'
-        + '<td style="padding:4px 8px;color:#718096">'+diffTxt+'</td>'
+      const lc = cell.lowConf ? ' <span title="replacement rank beyond FC\u2019s valued pool" style="color:var(--topaz)">*</span>':'';
+      tables += '<tr style="border-top:1px solid var(--line);'+(isAnchor?'background:var(--ink-2)':'')+'" title="vTop '+cell.vTop+' \u00b7 vRepl '+cell.vRepl+'">'
+        + '<td style="padding:4px 8px;color:var(--paper)">'+s.teams+'-team '+qbLabel[s.qb]+(isAnchor?' <span style="color:var(--fog)">(anchor)</span>':'')+'</td>'
+        + '<td style="padding:4px 8px;color:var(--fog)">'+cell.replRank.toFixed(1)+lc+'</td>'
+        + '<td style="padding:4px 8px;color:var(--paper)">'+dF.toFixed(3)+'</td>'
+        + '<td style="padding:4px 8px;color:var(--paper)">'+(mF==null?'\u2014':mF.toFixed(3))+'</td>'
+        + '<td style="padding:4px 8px;color:var(--fog)">'+diffTxt+'</td>'
         + '<td style="padding:4px 8px;text-align:center">'+dir+'</td></tr>';
     }
     tables += '</table>';
@@ -2715,18 +2872,18 @@ function renderScarcityAudit(){
 
   const pct = total? Math.round(100*agree/total):0;
   const badge = SCARV.sample
-    ? '<div style="background:#3a2a12;border:1px solid #b4791f;color:#fbbf24;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:14px">\u26a0 SAMPLE / SYNTHETIC DATA \u2014 layout preview only. Run the fetch script to populate real FantasyCalc values.</div>'
+    ? '<div style="background:var(--ink-2);border:1px solid var(--topaz);color:var(--topaz);padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:14px">\u26a0 SAMPLE / SYNTHETIC DATA \u2014 layout preview only. Run the fetch script to populate real FantasyCalc values.</div>'
     : '';
-  const summary = '<div style="background:#13202e;border:1px solid #2d3748;border-radius:8px;padding:12px 14px;margin-bottom:14px">'
-    + '<div style="font-size:14px;font-weight:700;color:'+(bad===0?'#6ee7b7':'#fbbf24')+'">'+agree+' / '+total+' settings agree directionally ('+pct+'%)</div>'
-    + '<div style="font-size:11.5px;color:#a0aec0;margin-top:5px;line-height:1.65">'
+  const summary = '<div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px">'
+    + '<div style="font-size:14px;font-weight:700;color:'+(bad===0?'var(--emerald)':'var(--topaz)')+'">'+agree+' / '+total+' settings agree directionally ('+pct+'%)</div>'
+    + '<div style="font-size:11.5px;color:var(--fog);margin-top:5px;line-height:1.65">'
     + 'Expected divergences (not defects): RB/WR/TE carry one DELTA factor across QB format by design '
     + '(documented second-order simplification), while the market nudges them slightly in 1QB. '
-    + '<span style="color:#6ee7b7">\u2713</span> aligned \u00b7 <span style="color:#fbbf24">\u2248</span> same direction, magnitude differs \u00b7 '
-    + '<span style="color:#fca5a5">\u2717</span> opposite direction (investigate).'
+    + '<span style="color:var(--emerald)">\u2713</span> aligned \u00b7 <span style="color:var(--topaz)">\u2248</span> same direction, magnitude differs \u00b7 '
+    + '<span style="color:var(--coral)">\u2717</span> opposite direction (investigate).'
     + (SCARV.generated ? ' \u00b7 Data: '+(SCARV.sample?'SAMPLE':new Date(SCARV.generated).toLocaleDateString()) : '')
     + '</div></div>';
-  const intro = '<p style="color:#a0aec0;font-size:12.5px;line-height:1.65;margin:0 0 4px">'
+  const intro = '<p style="color:var(--fog);font-size:12.5px;line-height:1.65;margin:0 0 4px">'
     + 'DELTA\u2019s scarcity factor (live from the engine) vs the market\u2019s observed value-by-rank (FantasyCalc), '
     + 'same replacement-level formula and 12-team-SF anchor (= 1.00). FantasyCalc is a yardstick here \u2014 '
     + 'it never feeds a score or ranking. Pass = both factors on the same side of 1.00.</p>';
@@ -2764,7 +2921,7 @@ async function slpFetch(path){
 
 function slpStatus(msg,isErr){
   const el=document.getElementById('slp-status');
-  if(el){ el.textContent=msg||''; el.style.color=isErr?'#fc8181':'#718096'; }
+  if(el){ el.textContent=msg||''; el.style.color=isErr?'var(--coral)':'var(--fog)'; }
   if(msg) slpLog(isErr?'STATUS(err):':'STATUS:',msg);
 }
 
@@ -3058,28 +3215,28 @@ async function openMyTeamTab(){
 // ── Rendering ────────────────────────────────────────────────
 function renderSlpLeaguePicker(){
   const host=document.getElementById('slp-pickers'); if(!host) return;
-  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Your leagues</div>'
+  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Your leagues</div>'
     +(SLP.leagues||[]).map(function(l){
-      return '<button onclick="slpPickLeague(\''+l.league_id+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">'
+      return '<button onclick="slpPickLeague(\''+l.league_id+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
         +'<span style="font-weight:700">'+l.name+'</span>'
-        +'<span style="color:#718096;font-size:10.5px"> \u00b7 '+(l.total_rosters||'?')+'-team \u00b7 '+l.season+'</span></button>';
+        +'<span style="color:var(--fog);font-size:10.5px"> \u00b7 '+(l.total_rosters||'?')+'-team \u00b7 '+l.season+'</span></button>';
     }).join('')+'</div>';
 }
 
 function renderSlpTeamPicker(){
   const host=document.getElementById('slp-pickers'); if(!host) return;
-  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Which team is yours? \u00b7 '+(SLP.league?SLP.league.name:'')+'</div>'
+  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Which team is yours? \u00b7 '+(SLP.league?SLP.league.name:'')+'</div>'
     +(SLP.rosters||[]).map(function(r){
-      return '<button onclick="slpSelectTeam('+r.roster_id+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">'
+      return '<button onclick="slpSelectTeam('+r.roster_id+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
         +slpTeamLabel(r)+'</button>';
     }).join('');
 }
 
 function slpFmtChips(){
   const labels={half_tep:'0.5PPR+TEP',half:'0.5PPR',full_tep:'FullPPR+TEP',full:'FullPPR',std:'Standard'};
-  const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:#7dd3fc;background:#16202e;border:1px solid #2d3748;border-radius:4px;padding:2px 7px">'+t+'</span>'; };
+  const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:var(--sky);background:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:2px 7px">'+t+'</span>'; };
   return chip(leagueTeams+'-team')+' '+chip(qbFmt==='sf'?'Superflex':'1-QB')+' '+chip(labels[scoringFmt]||scoringFmt)
-    +(SLP.detected?'<span style="font-size:9.5px;color:#4a5568;margin-left:6px">auto-detected from league settings</span>':'');
+    +(SLP.detected?'<span style="font-size:9.5px;color:var(--fog-2);margin-left:6px">auto-detected from league settings</span>':'');
 }
 
 // Normalized name → FC market entry for the CURRENT format slice. Lets
@@ -3141,14 +3298,14 @@ function renderSlpSubNav(){
     return slpTeamLabel(a).localeCompare(slpTeamLabel(b));
   }).map(function(r){
     const active=SLP.view==='rosters'&&String(r.roster_id)===String(SLP.viewRosterId);
-    return '<button onclick="slpViewRoster('+r.roster_id+')" style="font-size:10.5px;font-weight:'+(active?'800':'600')+';padding:4px 10px;border-radius:12px;border:1px solid '+(active?'#2d4a3e':'#2d3748')+';background:'+(active?'#16241e':'#1a202c')+';color:'+(active?'#6ee7b7':'#a0aec0')+';cursor:pointer;white-space:nowrap">'
+    return '<button onclick="slpViewRoster('+r.roster_id+')" style="font-size:10.5px;font-weight:'+(active?'800':'600')+';padding:4px 10px;border-radius:12px;border:1px solid '+(active?'var(--line)':'var(--line)')+';background:'+(active?'var(--ink-2)':'var(--panel)')+';color:'+(active?'var(--emerald)':'var(--fog)')+';cursor:pointer;white-space:nowrap">'
       +slpTeamLabel(r)+(r.roster_id===mine?' \u2605':'')+'</button>';
   }).join('');
   const boardActive=SLP.view==='board';
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
     +pills
     +'<span style="flex-basis:100%;height:0"></span>'
-    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'#2d4a3e':'#2d3748')+';background:'+(boardActive?'#16241e':'#11161f')+';color:'+(boardActive?'#6ee7b7':'#7dd3fc')+';cursor:pointer">\u26a1 League Board \u2014 buy/sell targets</button>'
+    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'var(--line)':'var(--line)')+';background:'+(boardActive?'var(--ink-2)':'var(--ink-2)')+';color:'+(boardActive?'var(--emerald)':'var(--sky)')+';cursor:pointer">\u26a1 League Board \u2014 buy/sell targets</button>'
     +'</div>';
 }
 
@@ -3159,7 +3316,7 @@ function renderMyTeam(){
 
   if(SLP.busy&&SLP.conn){
     connectDiv.style.display='none'; rosterDiv.style.display='block';
-    rosterDiv.innerHTML='<div style="color:#718096;font-size:12px;padding:1rem">Loading '+(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
+    rosterDiv.innerHTML='<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
     return;
   }
   if(!SLP.conn||!SLP.loaded){
@@ -3170,11 +3327,11 @@ function renderMyTeam(){
   connectDiv.style.display='none'; rosterDiv.style.display='block';
 
   const header='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
-    +'<div><div style="font-size:15px;font-weight:800;color:#e2e8f0">'+SLP.conn.leagueName+'</div>'
-    +'<div style="font-size:11px;color:#718096">Sleeper \u00b7 '+SLP.conn.season+' season \u00b7 you are <span style="color:#a0aec0;font-weight:700">'+SLP.conn.teamName+'</span></div></div>'
+    +'<div><div style="font-size:15px;font-weight:800;color:var(--paper)">'+SLP.conn.leagueName+'</div>'
+    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+SLP.conn.season+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+SLP.conn.teamName+'</span></div></div>'
     +'<div style="flex:1"></div>'
-    +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#e2e8f0;cursor:pointer">\u21bb Refresh</button>'
-    +'<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer">Disconnect</button>'
+    +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
+    +'<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Disconnect</button>'
     +'</div>'
     +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+slpFmtChips()+'</div>'
     +renderSlpSubNav();
@@ -3184,7 +3341,7 @@ function renderMyTeam(){
 
 function renderSlpRoster(rid){
   const roster=slpRosterById(rid);
-  if(!roster) return '<div style="color:#fc8181;font-size:12px;padding:1rem">Roster not found \u2014 try Refresh.</div>';
+  if(!roster) return '<div style="color:var(--coral);font-size:12px;padding:1rem">Roster not found \u2014 try Refresh.</div>';
 
   const isMine=SLP.conn&&String(rid)===String(SLP.conn.rosterId);
   const starters=new Set(roster.starters||[]);
@@ -3218,27 +3375,27 @@ function renderSlpRoster(rid){
   const totalRostered=modeled.length+unmodeled.length;
 
   const summary='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">'
-    +'<span style="font-size:13px;font-weight:800;color:#e2e8f0">'+slpTeamLabel(roster)+(isMine?' <span style="color:#fcd34d;font-size:11px">(you)</span>':'')+'</span>'
-    +(isMine?'':'<button onclick="slpTradeWith('+roster.roster_id+')" style="font-size:10.5px;font-weight:700;padding:4px 12px;border-radius:12px;border:1px solid #2d4a3e;background:#16241e;color:#6ee7b7;cursor:pointer">\u21c4 Trade with this team</button>')
+    +'<span style="font-size:13px;font-weight:800;color:var(--paper)">'+slpTeamLabel(roster)+(isMine?' <span style="color:var(--topaz);font-size:11px">(you)</span>':'')+'</span>'
+    +(isMine?'':'<button onclick="slpTradeWith('+roster.roster_id+')" style="font-size:10.5px;font-weight:700;padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">\u21c4 Trade with this team</button>')
     +'<span style="flex:1"></span>'
-    +'<span style="font-size:11px;color:#718096">'+totalRostered+' rostered \u00b7 '+modeled.length+' modeled \u00b7 market value <span style="color:#7dd3fc;font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
+    +'<span style="font-size:11px;color:var(--fog)">'+totalRostered+' rostered \u00b7 '+modeled.length+' modeled \u00b7 market value <span style="color:var(--sky);font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
     +'</div>';
 
   const rows=function(pos){
     const g=groups[pos];
     if(!g.m.length&&!g.u.length) return '';
-    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</span></td></tr>';
+    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</span></td></tr>';
     const mRows=g.m.map(function(x){
       const p=x.p;
       const gl=(typeof glOf==='function')?glOf(p):null;
       const spCell=gl
-        ?'<span style="color:#fc8181">'+gl.miss+'</span><span style="color:#4a5568">/</span><span style="color:#93c5fd">'+gl.hit+'</span><span style="color:#4a5568">/</span><span style="color:#6ee7b7">'+gl.elite+'</span>'
-        :'<span style="color:#4a5568">\u2014</span>';
+        ?'<span style="color:var(--coral)">'+gl.miss+'</span><span style="color:var(--fog-2)">/</span><span style="color:var(--sky)">'+gl.hit+'</span><span style="color:var(--fog-2)">/</span><span style="color:var(--emerald)">'+gl.elite+'</span>'
+        :'<span style="color:var(--fog-2)">\u2014</span>';
       const mv=(typeof mvAsset==='function')?mvAsset(p):0;
-      const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
+      const mvCol=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
       return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
-        +'<td style="font-weight:600;white-space:nowrap">'+(x.starter?'<span title="In the starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+p.n+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap">'+(x.starter?'<span title="In the starting lineup" style="color:var(--topaz);margin-right:3px">\u2605</span>':'')+p.n+'</td>'
         +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
         +'<td class="col-hide-mobile">'+p.t+'</td>'
         +'<td class="col-hide-mobile">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
@@ -3249,22 +3406,22 @@ function renderSlpRoster(rid){
     }).join('');
     const uRows=g.u.map(function(x){
       return '<tr style="opacity:.72">'
-        +'<td style="font-weight:800;font-size:14px;color:#4a5568">\u2014</td>'
-        +'<td style="font-weight:600;white-space:nowrap;color:#a0aec0">'+(x.starter?'<span title="In the starting lineup" style="color:#fcd34d;margin-right:3px">\u2605</span>':'')+x.u.n+'</td>'
+        +'<td style="font-weight:800;font-size:14px;color:var(--fog-2)">\u2014</td>'
+        +'<td style="font-weight:600;white-space:nowrap;color:var(--fog)">'+(x.starter?'<span title="In the starting lineup" style="color:var(--topaz);margin-right:3px">\u2605</span>':'')+x.u.n+'</td>'
         +'<td class="col-hide-mobile">'+(x.u.a!=null?x.u.a:'-')+'</td>'
         +'<td class="col-hide-mobile">'+(x.u.t||'FA')+'</td>'
         +'<td class="col-hide-mobile">-</td>'
-        +'<td style="font-size:11px;color:#4a5568">\u2014</td>'
-        +'<td style="font-weight:600;color:#a0aec0">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'
-        +'<td class="col-hide-mobile" style="color:#4a5568">-</td>'
+        +'<td style="font-size:11px;color:var(--fog-2)">\u2014</td>'
+        +'<td style="font-weight:600;color:var(--fog)">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'
+        +'<td class="col-hide-mobile" style="color:var(--fog-2)">-</td>'
         +'<td><span class="badge bn" title="Outside DELTA modeled universe \u2014 market value shown when FantasyCalc tracks the player">not modeled</span></td></tr>';
     }).join('');
     return head+mRows+uRows;
   };
 
-  const table='<div style="overflow-x:auto"><table>'
+  const table='<div style="overflow-x:auto"><table class="dtable">'
     +'<thead><tr>'
-    +'<th title="DELTA Score \u2014 proprietary 0-99 dynasty rating" style="font-family:Georgia,serif;font-size:15px;color:#6ee7b7">\u0394</th>'
+    +'<th title="DELTA Score \u2014 proprietary 0-99 dynasty rating" style="font-family:var(--geo);font-size:15px;color:var(--teal-br)">\u0394</th>'
     +'<th>Player</th><th class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>'
     +'<th class="col-hide-mobile">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %">M/H/E</th>'
     +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th>'
@@ -3279,13 +3436,13 @@ function renderSlpRoster(rid){
     const items=bySeason[s].sort(function(a,b){ return a.round-b.round; }).map(function(pk){
       const via=String(pk.from)!==String(roster.roster_id);
       const fr=via?slpRosterById(pk.from):null;
-      return '<span style="color:#e2e8f0;font-weight:600">'+slpOrd(pk.round)+'</span>'+(via?'<span style="color:#718096;font-size:10px"> (via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
-    }).join('<span style="color:#4a5568"> \u00b7 </span>');
-    return '<div style="margin-bottom:3px"><span style="color:#7dd3fc;font-weight:700;margin-right:8px">'+s+'</span>'+items+'</div>';
+      return '<span style="color:var(--paper);font-weight:600">'+slpOrd(pk.round)+'</span>'+(via?'<span style="color:var(--fog);font-size:10px"> (via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
+    }).join('<span style="color:var(--fog-2)"> \u00b7 </span>');
+    return '<div style="margin-bottom:3px"><span style="color:var(--sky);font-weight:700;margin-right:8px">'+s+'</span>'+items+'</div>';
   }).join('');
-  const picksBox='<div style="margin-top:14px;font-size:11.5px;background:#11161f;border:1px solid #2d3748;border-radius:6px;padding:10px 12px;line-height:1.7">'
-    +'<div style="font-size:10px;font-weight:700;color:#718096;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">Draft picks (next 3 seasons)</div>'
-    +(pickLines||'<span style="color:#4a5568">none</span>')
+  const picksBox='<div style="margin-top:14px;font-size:11.5px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;line-height:1.7">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">Draft picks (next 3 seasons)</div>'
+    +(pickLines||'<span style="color:var(--fog-2)">none</span>')
     +'</div>';
 
   return summary+table+picksBox;
@@ -3318,36 +3475,36 @@ function renderSlpBoard(){
   const rowsOf=function(list,showOwner){
     return list.map(function(x){
       const p=x.p, mv=mvAsset(p);
-      const mvCol=mv>p.ktcEff?'#6ee7b7':(mv<p.ktcEff*.9?'#fca5a5':'#e2e8f0');
+      const mvCol=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
       return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +'<td style="font-weight:800;font-size:13px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
         +'<td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
         +'<td>'+p.pos+'</td>'
         +'<td class="col-hide-mobile">'+p.t+'</td>'
-        +(showOwner?'<td style="color:#a0aec0;font-size:11px">'+(labelByRid[x.rid]||'?')+'</td>':'')
+        +(showOwner?'<td style="color:var(--fog);font-size:11px">'+(labelByRid[x.rid]||'?')+'</td>':'')
         +'<td style="font-weight:600">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
         +'<td style="font-weight:600;color:'+mvCol+'" class="col-hide-mobile">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
         +'<td>'+vTag(p)+'</td></tr>';
     }).join('');
   };
   const thead=function(showOwner){
-    return '<thead><tr><th style="font-family:Georgia,serif;color:#6ee7b7">\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th>'
+    return '<thead><tr><th style="font-family:var(--geo);color:var(--teal-br)">\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th>'
       +(showOwner?'<th>Owned by</th>':'')
       +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th></tr></thead>';
   };
 
   const targetsTbl=targets.length
-    ?'<div style="overflow-x:auto"><table>'+thead(true)+'<tbody>'+rowsOf(targets,true)+'</tbody></table></div>'
-    :'<div style="color:#4a5568;font-size:11.5px;padding:6px 0">No buy-tagged players on other rosters right now.</div>';
+    ?'<div style="overflow-x:auto"><table class="dtable">'+thead(true)+'<tbody>'+rowsOf(targets,true)+'</tbody></table></div>'
+    :'<div style="color:var(--fog-2);font-size:11.5px;padding:6px 0">No buy-tagged players on other rosters right now.</div>';
   const shipTbl=ship.length
-    ?'<div style="overflow-x:auto"><table>'+thead(false)+'<tbody>'+rowsOf(ship,false)+'</tbody></table></div>'
-    :'<div style="color:#4a5568;font-size:11.5px;padding:6px 0">Nothing on your roster is sell-tagged. Clean sheet.</div>';
+    ?'<div style="overflow-x:auto"><table class="dtable">'+thead(false)+'<tbody>'+rowsOf(ship,false)+'</tbody></table></div>'
+    :'<div style="color:var(--fog-2);font-size:11.5px;padding:6px 0">Nothing on your roster is sell-tagged. Clean sheet.</div>';
 
-  return '<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:#e2e8f0">\u26a1 League Board</span>'
-    +'<span style="font-size:10.5px;color:#718096;margin-left:8px">every rostered player in the league, crossed with DELTA\u2019s verdicts \u00b7 tags are league-invariant per-player signals</span></div>'
-    +'<div style="font-size:10px;font-weight:700;color:#6ee7b7;letter-spacing:.06em;text-transform:uppercase;margin:12px 0 4px">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
+  return '<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:var(--paper)">\u26a1 League Board</span>'
+    +'<span style="font-size:10.5px;color:var(--fog);margin-left:8px">every rostered player in the league, crossed with DELTA\u2019s verdicts \u00b7 tags are league-invariant per-player signals</span></div>'
+    +'<div style="font-size:10px;font-weight:700;color:var(--emerald);letter-spacing:.06em;text-transform:uppercase;margin:12px 0 4px">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
     +targetsTbl
-    +'<div style="font-size:10px;font-weight:700;color:#fca5a5;letter-spacing:.06em;text-transform:uppercase;margin:16px 0 4px">Your ship list \u2014 sell-tagged on your roster \u00b7 '+ship.length+'</div>'
+    +'<div style="font-size:10px;font-weight:700;color:var(--coral);letter-spacing:.06em;text-transform:uppercase;margin:16px 0 4px">Your ship list \u2014 sell-tagged on your roster \u00b7 '+ship.length+'</div>'
     +shipTbl;
 }
 
@@ -3383,11 +3540,11 @@ function slpAssistCol(rid,side,title,color){
   players.sort(function(a,b){ return (b.ktcEff||0)-(a.ktcEff||0); });
   const chip=function(label,onclick,enabled,title2){
     return '<button '+(enabled?'onclick="'+onclick+'"':'disabled')
-      +' style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;border:1px solid #2d3748;background:#1a202c;color:'+(enabled?'#e2e8f0':'#4a5568')+';cursor:'+(enabled?'pointer':'default')+';margin:0 4px 4px 0"'
+      +' style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:'+(enabled?'var(--paper)':'var(--fog-2)')+';cursor:'+(enabled?'pointer':'default')+';margin:0 4px 4px 0"'
       +(title2?' title="'+title2+'"':'')+'>'+label+'</button>';
   };
   const pChips=players.slice(0,14).map(function(p){
-    return chip(p.n+' <span style="color:#718096">'+(p.ktcEff||0).toLocaleString()+'</span>',
+    return chip(p.n+' <span style="color:var(--fog)">'+(p.ktcEff||0).toLocaleString()+'</span>',
                 "addAsset('"+side+"','"+p.n.replace(/'/g,"\\'")+"')",true);
   }).join('');
   const picks=slpPickInventory(roster.roster_id);
@@ -3396,7 +3553,7 @@ function slpAssistCol(rid,side,title,color){
     const via=String(pk.from)!==String(roster.roster_id);
     const fr=via?slpRosterById(pk.from):null;
     const asset=(typeof ASSETS!=='undefined')&&ASSETS.find(function(a){ return a.n===name; });
-    const label=name+(via?' <span style="color:#718096;font-size:9px">(via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
+    const label=name+(via?' <span style="color:var(--fog);font-size:9px">(via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
     return asset
       ? chip(label,"addAsset('"+side+"','"+name+"')",true)
       : chip(label,'',false,'No generic market value for this season yet — use the slotted 2026 pick assets in the search box');
@@ -3404,7 +3561,7 @@ function slpAssistCol(rid,side,title,color){
   return '<div style="flex:1;min-width:260px">'
     +'<div style="font-size:10px;font-weight:700;color:'+color+';letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">'+title+' \u2192 side '+side.toUpperCase()+'</div>'
     +'<div>'+pChips+'</div>'
-    +(pkChips?'<div style="margin-top:5px;padding-top:5px;border-top:1px dashed #2d3748">'+pkChips+'</div>':'')
+    +(pkChips?'<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--line)">'+pkChips+'</div>':'')
     +'</div>';
 }
 function renderSlpTradeAssist(){
@@ -3413,16 +3570,16 @@ function renderSlpTradeAssist(){
   if(!SLP.loaded||!SLP.trade||!SLP.trade.withRid){ host.innerHTML=''; return; }
   const them=slpRosterById(SLP.trade.withRid);
   if(!them){ host.innerHTML=''; return; }
-  host.innerHTML='<div style="background:#11161f;border:1px solid #2d3748;border-radius:8px;padding:12px 14px;margin-bottom:14px">'
+  host.innerHTML='<div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px">'
     +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">'
-    +'<span style="font-size:12px;font-weight:800;color:#e2e8f0">\u21c4 Sleeper trade \u00b7 '+SLP.conn.teamName+' \u21c4 '+slpTeamLabel(them)+'</span>'
-    +'<span style="font-size:10px;color:#718096">tap an asset to add it to the calc \u00b7 duplicate picks of the same round count once (v1)</span>'
+    +'<span style="font-size:12px;font-weight:800;color:var(--paper)">\u21c4 Sleeper trade \u00b7 '+SLP.conn.teamName+' \u21c4 '+slpTeamLabel(them)+'</span>'
+    +'<span style="font-size:10px;color:var(--fog)">tap an asset to add it to the calc \u00b7 duplicate picks of the same round count once (v1)</span>'
     +'<span style="flex:1"></span>'
-    +'<button onclick="slpTradeClear()" style="font-size:10.5px;padding:4px 10px;border-radius:5px;border:1px solid #2d3748;background:#1a202c;color:#718096;cursor:pointer">\u2715 Clear</button>'
+    +'<button onclick="slpTradeClear()" style="font-size:10.5px;padding:4px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">\u2715 Clear</button>'
     +'</div>'
     +'<div style="display:flex;gap:18px;flex-wrap:wrap">'
-    +slpAssistCol(SLP.conn.rosterId,'a','Your assets \u00b7 '+SLP.conn.teamName,'#6ee7b7')
-    +slpAssistCol(SLP.trade.withRid,'b','Their assets \u00b7 '+slpTeamLabel(them),'#7dd3fc')
+    +slpAssistCol(SLP.conn.rosterId,'a','Your assets \u00b7 '+SLP.conn.teamName,'var(--emerald)')
+    +slpAssistCol(SLP.trade.withRid,'b','Their assets \u00b7 '+slpTeamLabel(them),'var(--sky)')
     +'</div></div>';
 }
 

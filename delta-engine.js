@@ -110,19 +110,19 @@ function startProfileHTML(p){
   const pos=p.pos||p.p||'WR';
   const sp=computeStartProfile(p.n,pos);
   if(!sp) return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
-    +'<div style="font-size:11px;color:#718096">No recent game data for this player/format.</div></div>';
+    +'<div style="font-size:11px;color:#8CA0B3">No recent game data for this player/format.</div></div>';
   const seg=(pct,col)=> pct>0?'<div style="width:'+pct+'%;background:'+col+'"></div>':'';
   const cell=(lbl,pct,cnt,col)=>'<div style="text-align:center;flex:1">'
     +'<div style="font-size:18px;font-weight:800;color:'+col+';line-height:1">'+pct+'%</div>'
-    +'<div style="font-size:9px;color:#718096;letter-spacing:.05em;margin-top:2px">'+lbl+'</div>'
-    +'<div style="font-size:9px;color:#4a5568">'+cnt+' g</div></div>';
+    +'<div style="font-size:9px;color:#8CA0B3;letter-spacing:.05em;margin-top:2px">'+lbl+'</div>'
+    +'<div style="font-size:9px;color:#5C7080">'+cnt+' g</div></div>';
   return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
-    +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:#1a202c;margin-bottom:9px">'
-    + seg(sp.missPct,'#fc8181')+seg(sp.hitOnlyPct,'#93c5fd')+seg(sp.elitePct,'#6ee7b7')+'</div>'
+    +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:#111A28;margin-bottom:9px">'
+    + seg(sp.missPct,'#E8927C')+seg(sp.hitOnlyPct,'#6BB6E0')+seg(sp.elitePct,'#10B981')+'</div>'
     +'<div style="display:flex;gap:4px">'
-    + cell('MISS',sp.missPct,sp.miss,'#fc8181')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'#93c5fd')+cell('ELITE',sp.elitePct,sp.elite,'#6ee7b7')
+    + cell('MISS',sp.missPct,sp.miss,'#E8927C')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'#6BB6E0')+cell('ELITE',sp.elitePct,sp.elite,'#10B981')
     +'</div>'
-    +'<div style="font-size:9px;color:#4a5568;text-align:center;margin-top:8px">'
+    +'<div style="font-size:9px;color:#5C7080;text-align:center;margin-top:8px">'
     + sp.n+' starts · '+sp.lo+'\u2013'+String(sp.hi).slice(2)+' · hit \u2265'+sp.hitLine+' · elite \u2265'+sp.eliteLine+' pts</div></div>';
 }
 
@@ -1891,13 +1891,13 @@ let RIPPLE=[];
 // (legacy hardcoded GAME_LOG removed — game logs live in data/game-logs.json via glOf())
 function glTag(n){
   const p=COMP.find(x=>x.n===n); const d=glOf(p);if(!d)return'';
-  const mc=d.miss<=35?'#6ee7b7':d.miss<=50?'#fcd34d':'#fca5a5';
-  const hc=d.hit>=65?'#6ee7b7':d.hit>=50?'#7dd3fc':'#718096';
-  const ec=d.elite>=25?'#6ee7b7':d.elite>=15?'#7dd3fc':'#718096';
+  const mc=d.miss<=35?'#10B981':d.miss<=50?'#E0B34D':'#E8927C';
+  const hc=d.hit>=65?'#10B981':d.hit>=50?'#6BB6E0':'#8CA0B3';
+  const ec=d.elite>=25?'#10B981':d.elite>=15?'#6BB6E0':'#8CA0B3';
   return`<span style="font-size:9px;display:inline-flex;gap:3px;margin-left:4px">` +
-    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${mc}">M${d.miss}%</span>` +
-    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${hc}">H${d.hit}%</span>` +
-    `<span style="background:#1a202c;border:1px solid #2d3748;border-radius:3px;padding:1px 4px;color:${ec}">E${d.elite}%</span>` +
+    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${mc}">M${d.miss}%</span>` +
+    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${hc}">H${d.hit}%</span>` +
+    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${ec}">E${d.elite}%</span>` +
     `</span>`;
 }
 
@@ -2978,11 +2978,11 @@ function getOppScore(name, pos) {
 }
 
 function oppScoreColor(score) {
-  if (!score) return '#4a5568';
-  if (score >= 88) return '#6ee7b7';
-  if (score >= 75) return '#7dd3fc';
-  if (score >= 60) return '#fcd34d';
-  return '#fc8181';
+  if (!score) return '#5C7080';
+  if (score >= 88) return '#10B981';
+  if (score >= 75) return '#6BB6E0';
+  if (score >= 60) return '#E0B34D';
+  return '#E8927C';
 }
 
 function oppScoreLabel(pos) {
@@ -3306,17 +3306,17 @@ function calcDynastyScore(p) {
 
 function dsColor(score) {
   // Matches platform color language (oppScoreColor thresholds)
-  if (!score) return '#4a5568';
-  if (score >= 85) return '#6ee7b7'; // teal — elite
-  if (score >= 72) return '#7dd3fc'; // blue — strong
-  if (score >= 55) return '#fcd34d'; // yellow — average
-  return '#fc8181';                  // red — weak
+  if (!score) return '#5C7080';
+  if (score >= 85) return '#10B981'; // teal — elite
+  if (score >= 72) return '#6BB6E0'; // blue — strong
+  if (score >= 55) return '#E0B34D'; // yellow — average
+  return '#E8927C';                  // red — weak
 }
 
 RAW.forEach(r=>COMP.push(calcProj(r)));
 const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
-function bc(s){return s>=70?'#6ee7b7':s>=55?'#7dd3fc':s>=40?'#fcd34d':'#fca5a5';}
-function tH(t){return t==='up'?'<span style="color:#6ee7b7">▲</span>':t==='down'?'<span style="color:#fca5a5">▼</span>':'<span style="color:#4a5568">—</span>';}
+function bc(s){return s>=70?'#10B981':s>=55?'#6BB6E0':s>=40?'#E0B34D':'#E8927C';}
+function tH(t){return t==='up'?'<span style="color:#10B981">▲</span>':t==='down'?'<span style="color:#E8927C">▼</span>':'<span style="color:#5C7080">—</span>';}
 function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
 function eTag(sc,fl,fr){
   if(sc===1.0&&!fl)return'<span class="badge bn">—</span>';
@@ -3945,12 +3945,12 @@ function contractStatus(c){
 }
 
 function dynastySignal(c){
-  if(c.end===2026)return'<span style="color:#fca5a5;font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  if(c.end===2026)return'<span style="color:#E8927C;font-size:10px">Sell before walk year · Contract leverage gone</span>';
   const yrsLeft=c.end-2025; // inclusive of current 2026 season
-  if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#6ee7b7;font-size:10px">Elite commitment — long-term hold</span>';
-  if(yrsLeft>=3)return'<span style="color:#7dd3fc;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
-  if(yrsLeft<=2)return'<span style="color:#fcd34d;font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
-  return'<span style="color:#718096;font-size:10px">'+c.note+'</span>';
+  if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#10B981;font-size:10px">Elite commitment — long-term hold</span>';
+  if(yrsLeft>=3)return'<span style="color:#6BB6E0;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
+  if(yrsLeft<=2)return'<span style="color:#E0B34D;font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
+  return'<span style="color:#8CA0B3;font-size:10px">'+c.note+'</span>';
 }
 
 function buildDSBreakdownHTML(p){
@@ -3973,36 +3973,36 @@ function buildDSBreakdownHTML(p){
   const multLbl=(mult>1.00 && hasNFLProd)?' ×'+mult.toFixed(2):'';
   const multTipContent=(mult>1.00 && hasNFLProd)
     ?'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than at 30+.'
-     +'<br><span style="color:#4a5568">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
+     +'<br><span style="color:#5C7080">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
     :'';
   // Each axis gets its own color based on that axis's individual score ratio
-  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#6ee7b7':r>=0.6?'#7dd3fc':r>=0.4?'#fcd34d':'#fc8181';};
+  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#10B981':r>=0.6?'#6BB6E0':r>=0.4?'#E0B34D':'#E8927C';};
   const bar=(label,val,max,tip)=>{
     const pct=Math.round((val/max)*100);
     const c=axisClr(val,max);
     // ⓘ button navigates: span → label span → header div → bar container → last child (tooltip)
     const iBtn=tip
       ?' <span onclick="var t=this.parentNode.parentNode.parentNode.lastElementChild;t.style.display=t.style.display===\'block\'?\'none\':\'block\'" '
-       +'style="cursor:pointer;color:#4a5568;font-size:8px;border:1px solid #2d3748;border-radius:50%;padding:0 2.5px;vertical-align:middle;line-height:1.4">ⓘ</span>'
+       +'style="cursor:pointer;color:#5C7080;font-size:8px;border:1px solid #1E2A3A;border-radius:50%;padding:0 2.5px;vertical-align:middle;line-height:1.4">ⓘ</span>'
       :'';
     return'<div style="margin-bottom:6px">'
-      +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#718096;margin-bottom:2px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#8CA0B3;margin-bottom:2px">'
       +'<span>'+label+iBtn+'</span><span style="color:'+c+';font-weight:600">'+val+'/'+max+'</span></div>'
-      +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+      +'<div style="height:5px;background:#111A28;border-radius:3px;overflow:hidden">'
       +'<div style="height:100%;width:'+pct+'%;background:'+c+';border-radius:3px"></div></div>'
-      +(tip?'<div style="display:none;font-size:9px;color:#718096;margin-top:4px;padding:5px 7px;background:#0a0f1a;border-radius:4px;border:1px solid #1f2937;line-height:1.5">'+tip+'</div>':'')
+      +(tip?'<div style="display:none;font-size:9px;color:#8CA0B3;margin-top:4px;padding:5px 7px;background:#0a0f1a;border-radius:4px;border:1px solid #1E2A3A;line-height:1.5">'+tip+'</div>':'')
       +'</div>';
   };
-  return'<div class="dd-section" style="background:linear-gradient(135deg,#0d1117,#141b26);border:1px solid #1f2937;border-radius:10px;padding:14px;margin-bottom:10px">'
+  return'<div class="dd-section" style="background:linear-gradient(135deg,#0D1420,#0D1420);border:1px solid #1E2A3A;border-radius:10px;padding:14px;margin-bottom:10px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
     +'<div style="display:flex;align-items:baseline;gap:7px">'
     +'<span style="font-family:Georgia,serif;font-size:20px;color:'+col+'">Δ</span>'
-    +'<span style="font-size:13px;font-weight:600;color:#e2e8f0;letter-spacing:.02em">DELTA Score</span>'
-    +(noNFL?'<span style="font-size:9px;color:#718096;margin-left:2px">rookie · capped</span>':'')
+    +'<span style="font-size:13px;font-weight:600;color:#EAF0F4;letter-spacing:.02em">DELTA Score</span>'
+    +(noNFL?'<span style="font-size:9px;color:#8CA0B3;margin-left:2px">rookie · capped</span>':'')
     +'</div>'
     +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
     +'</div>'
-    +'<div style="font-size:9px;color:#4a5568;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
+    +'<div style="font-size:9px;color:#5C7080;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
     +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
@@ -4086,30 +4086,30 @@ function explainSystem(p){
 }
 function buildSchemeHTML(p){
   const x=explainSystem(p); if(!x) return '';
-  const sysClr=p.sys>=70?'#6ee7b7':p.sys>=55?'#7dd3fc':p.sys>=40?'#fcd34d':'#fc8181';
+  const sysClr=p.sys>=70?'#10B981':p.sys>=55?'#6BB6E0':p.sys>=40?'#E0B34D':'#E8927C';
   const fp=v=>`${v>0?'+':''}${(v*100).toFixed(0)}%`;
-  const netClr=x.net>0?'#6ee7b7':x.net<0?'#fc8181':'#718096';
+  const netClr=x.net>0?'#10B981':x.net<0?'#E8927C':'#8CA0B3';
   const styTot=x.style?x.style.total:0;
   const applied=`Applied to projection: ${fp(x.dSys)} system${x.och?` and ${fp(x.dOc)} coordinator change`:''}${styTot?` and ${fp(styTot)} offense style`:''} → <b style="color:${netClr}">net ${fp(x.net)}</b>`
-    +(x.softened?` <span style="color:#718096">(softened — proven producers carry their role through scheme change)</span>`:'');
+    +(x.softened?` <span style="color:#8CA0B3">(softened — proven producers carry their role through scheme change)</span>`:'');
   const styBlock=(x.style&&x.style.parts.length)
-    ? '<div style="margin-top:7px;padding-top:7px;border-top:0.5px solid #1f2937">'
-      +'<div style="font-size:9px;color:#4a5568;letter-spacing:.04em;margin-bottom:3px">OFFENSE STYLE · validated 2022–25 play-by-play</div>'
-      +x.style.parts.map(pt=>`<div style="font-size:10px;color:#a0aec0;line-height:1.5">${pt.pct>0?'▲':'▼'} ${pt.label}: <b style="color:${pt.pct>0?'#6ee7b7':'#fc8181'}">${(pt.pct>0?'+':'')+(pt.pct*100).toFixed(1)}%</b></div>`).join('')
-      +(x.style.scaled?'<div style="font-size:9px;color:#fcd34d;margin-top:2px">Scaled toward neutral — style is the coordinator\u2019s property and this team has a new one.</div>':'')
+    ? '<div style="margin-top:7px;padding-top:7px;border-top:0.5px solid #1E2A3A">'
+      +'<div style="font-size:9px;color:#5C7080;letter-spacing:.04em;margin-bottom:3px">OFFENSE STYLE · validated 2022–25 play-by-play</div>'
+      +x.style.parts.map(pt=>`<div style="font-size:10px;color:#8CA0B3;line-height:1.5">${pt.pct>0?'▲':'▼'} ${pt.label}: <b style="color:${pt.pct>0?'#10B981':'#E8927C'}">${(pt.pct>0?'+':'')+(pt.pct*100).toFixed(1)}%</b></div>`).join('')
+      +(x.style.scaled?'<div style="font-size:9px;color:#E0B34D;margin-top:2px">Scaled toward neutral — style is the coordinator\u2019s property and this team has a new one.</div>':'')
       +'</div>'
     : '';
   const ocCtx=x.och
-    ? `<div style="font-size:10px;color:#fcd34d;margin-top:6px;line-height:1.5">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
+    ? `<div style="font-size:10px;color:#E0B34D;margin-top:6px;line-height:1.5">⚠ New coordinator${x.oc?` (${x.oc})`:''}. Everything this player has demonstrated came under the previous scheme — the new one is unproven with him in it, so DELTA discounts until it shows up in real games.</div>`
     : x.rookie
-    ? `<div style="font-size:10px;color:#718096;margin-top:6px">Rookie — no prior scheme, so no coordinator-continuity penalty applies.</div>`
+    ? `<div style="font-size:10px;color:#8CA0B3;margin-top:6px">Rookie — no prior scheme, so no coordinator-continuity penalty applies.</div>`
     : '';
   return '<div>'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
-    +'<span style="font-size:10px;color:#718096">Offensive System Score <span style="color:#4a5568">· league median ≈ 60</span></span>'
+    +'<span style="font-size:10px;color:#8CA0B3">Offensive System Score <span style="color:#5C7080">· league median ≈ 60</span></span>'
     +`<span style="font-size:15px;font-weight:800;color:${sysClr}">${p.sys}</span></div>`
-    +`<div style="font-size:10px;color:#a0aec0">${p.sys}/100 — ${x.tier} (coordinator quality, scheme fit, role clarity).</div>`
-    +`<div style="font-size:10px;color:#a0aec0;margin-top:3px">${applied}</div>`
+    +`<div style="font-size:10px;color:#8CA0B3">${p.sys}/100 — ${x.tier} (coordinator quality, scheme fit, role clarity).</div>`
+    +`<div style="font-size:10px;color:#8CA0B3;margin-top:3px">${applied}</div>`
     +ocCtx
     +styBlock
     +'</div>';
@@ -4138,7 +4138,7 @@ function buildReadHTML(p){
   const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
   const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
   const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
-  const proofClr=ds>=72?'#6ee7b7':ds>=62?'#9ae6b4':ds>=52?'#7dd3fc':ds>=42?'#fcd34d':'#fca5a5';
+  const proofClr=ds>=72?'#10B981':ds>=62?'#10B981':ds>=52?'#6BB6E0':ds>=42?'#E0B34D':'#E8927C';
   const worthOutrunsProof=(rankDs-rankMv)>=6;
   const ranksAgree=Math.abs(rankMv-rankMk)<=1;
   const absPct=Math.abs(pct);
@@ -4225,9 +4225,9 @@ function buildReadHTML(p){
     math=cap
       ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but the price is a bet on that capital converting — there's no résumé behind it yet.`
       : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
-    clr='#718096';
+    clr='#8CA0B3';
   } else if(verdict==='strong buy'||verdict==='buy'){
-    clr=verdict==='strong buy'?'#6ee7b7':'#9ae6b4';
+    clr=verdict==='strong buy'?'#10B981':'#10B981';
     if(worthOutrunsProof){
       math=pick(seed,[
         `The model prices the role, not the résumé: ${pos}${rankMv} against a ${pos}${rankDs} track record — ${absPct}% over the market if the situation holds. ${verdict==='strong buy'?'Strong buy':'Buy'}, eyes open.`,
@@ -4251,13 +4251,13 @@ function buildReadHTML(p){
       ]);
     }
   } else if(verdict==='sell'||verdict==='strong sell'){
-    clr=verdict==='strong sell'?'#fca5a5':'#fc8181';
+    clr=verdict==='strong sell'?'#E8927C':'#E8927C';
     if(Math.abs(rankMv-rankMk)<=1){
       const rkTxt=rankMv===rankMk?`${pos}${rankMv}`:`${pos}${rankMk} and ${pos}${rankMv} — essentially the same rank`;
       math=absPct>=15
         ? `Market and model land on ${rkTxt}, but the market pays ${absPct}% more for it than the model would. Sell only into an overpay.`
         : `Market and model land on ${rkTxt}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
-      clr='#cbd5e0';
+      clr='#EAF0F4';
     } else {
       math=pick(seed,[
         `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value':'Lean sell — the price is ahead of the production'}.`,
@@ -4272,7 +4272,7 @@ function buildReadHTML(p){
       `Model ${pos}${rankMv} and price ${pos}${rankMk} align — ${dir} market, not enough to act on.${dsNote} Hold.`,
       `Fair value: modeled ${pos}${rankMv}, priced ${pos}${rankMk} — ${dir} market.${dsNote} Hold unless a clear overpay comes.`,
     ]);
-    clr='#cbd5e0';
+    clr='#EAF0F4';
   }
   const read=(verdict==='no data')?core+' '+math:core+' '+math;
   const N=peers.length||1;
@@ -4280,18 +4280,18 @@ function buildReadHTML(p){
     const w=Math.max(4,Math.round((1-(rank-1)/N)*100));
     return'<div style="margin-bottom:5px">'
       +'<div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px">'
-      +'<span style="color:#718096">'+lbl+'</span>'
-      +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:#4a5568;font-weight:400"> · '+sub+'</span></span></div>'
-      +'<div style="height:5px;background:#1a202c;border-radius:3px;overflow:hidden">'
+      +'<span style="color:#8CA0B3">'+lbl+'</span>'
+      +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:#5C7080;font-weight:400"> · '+sub+'</span></span></div>'
+      +'<div style="height:5px;background:#111A28;border-radius:3px;overflow:hidden">'
       +'<div style="height:100%;width:'+w+'%;background:'+c+';border-radius:3px"></div></div></div>';
   };
-  return'<div class="dd-section" style="border:1px solid #1f2937;border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,#0d1117,#11161f)">'
+  return'<div class="dd-section" style="border:1px solid #1E2A3A;border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,#0D1420,#0D1420)">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
-    +'<div style="font-size:12px;color:#e2e8f0;line-height:1.55;margin-bottom:11px">'+read+'</div>'
+    +'<div style="font-size:12px;color:#EAF0F4;line-height:1.55;margin-bottom:11px">'+read+'</div>'
     +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
-    +barFor(rankMv,'#a78bfa','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
-    +barFor(rankMk,'#7dd3fc','MARKET PRICE',mk.toLocaleString())
+    +barFor(rankMv,'#9B8AF0','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
+    +barFor(rankMk,'#6BB6E0','MARKET PRICE',mk.toLocaleString())
     +'</div>';
 }
