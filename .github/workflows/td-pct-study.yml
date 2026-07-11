@@ -1,4 +1,4 @@
-# Research-only. Runs the QB TD% study, uploads results as an artifact.
+# Research-only. Runs the QB TD% studies, uploads results as artifacts.
 # NEVER commits to the repo — nothing reaches /data or the interface.
 # Path: .github/workflows/td-pct-study.yml
 name: TD% research study
@@ -6,20 +6,21 @@ name: TD% research study
 on:
   workflow_dispatch:
     inputs:
+      round:
+        description: "Which study to run"
+        type: choice
+        options: ["round2 (TD% -> fantasy value)", "round1 (TD% -> TD%)", "both"]
+        default: "round2 (TD% -> fantasy value)"
       inspect:
-        description: "Diagnostic mode: print available columns and exit"
+        description: "Diagnostic: print available columns and exit"
         type: boolean
         default: false
       min_att:
         description: "Qualifying-season attempt floor"
         default: "200"
       train_end:
-        description: "Fit reversion on seasons <= this year"
+        description: "Fit on seasons <= this year"
         default: "2022"
-      redzone:
-        description: "Also pull red-zone context (heavy)"
-        type: boolean
-        default: false
 
 jobs:
   study:
@@ -30,7 +31,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install deps (nflreadpy is the current lib; nfl_data_py is deprecated fallback)
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install nflreadpy pandas numpy pyarrow polars
@@ -38,13 +39,19 @@ jobs:
       - name: Run study
         run: |
           mkdir -p study/out
-          ARGS="--min-att ${{ inputs.min_att }} --train-end ${{ inputs.train_end }}"
-          if [ "${{ inputs.inspect }}" = "true" ]; then ARGS="--inspect"; fi
-          if [ "${{ inputs.redzone }}" = "true" ]; then ARGS="$ARGS --rz"; fi
-          echo "Running: python td_pct_study.py $ARGS"
-          # 2>&1 so tracebacks (stderr) land in the report too — this is why v1's report was empty
           set -o pipefail
-          python td_pct_study.py $ARGS 2>&1 | tee study/out/report.txt
+          COMMON="--min-att ${{ inputs.min_att }} --train-end ${{ inputs.train_end }}"
+          if [ "${{ inputs.inspect }}" = "true" ]; then COMMON="--inspect"; fi
+          R="${{ inputs.round }}"
+          # 2>&1 so tracebacks land in the report too
+          if [ "$R" = "round1 (TD% -> TD%)" ] || [ "$R" = "both" ]; then
+            echo "### ROUND 1 ###"
+            python td_pct_study.py $COMMON 2>&1 | tee study/out/report_round1.txt
+          fi
+          if [ "$R" = "round2 (TD% -> fantasy value)" ] || [ "$R" = "both" ]; then
+            echo "### ROUND 2 ###"
+            python td_pct_round2.py $COMMON 2>&1 | tee study/out/report_round2.txt
+          fi
 
       - name: Upload results (artifact only — never committed)
         if: always()
