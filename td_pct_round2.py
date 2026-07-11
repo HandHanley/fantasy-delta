@@ -243,7 +243,7 @@ print("    If not -> it is a proxy for what DELTA already models. DO NOT SHIP.")
 
 
 def ols(y, X, names):
-    X = np.column_stack([np.ones(len(X))] + [np.asarray(c, float) for c in X])
+    X = np.column_stack([np.ones(len(X[0]))] + [np.asarray(c, float) for c in X])
     y = np.asarray(y, float)
     beta, *_ = np.linalg.lstsq(X, y, rcond=None)
     resid = y - X @ beta
