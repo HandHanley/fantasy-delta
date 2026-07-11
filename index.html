@@ -168,7 +168,9 @@ tr:hover td{background:var(--panel)}
 .dd-divider{height:1px;background:var(--line);margin:.75rem 0}
 /* ── Column header tooltips ─────────────────────────────────────────────── */
 [data-tip]{position:relative}
-[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--ink-2);color:var(--paper);font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid var(--line);width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
+[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--ink-2);color:var(--paper);font-size:11px;font-weight:400;line-height:1.45;padding:7px 10px;border-radius:6px;border:1px solid var(--line);width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;text-transform:none;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200}
+.dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
+.dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
 [data-tip]:hover::after,[data-tip].tip-show::after{opacity:1}
 /* ── About DELTA modal ──────────────────────────────────────────────────── */
 .about-tab{margin-left:auto;padding:7px 12px;border:none;background:transparent;
@@ -439,13 +441,13 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   </div>
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
-      <th onclick="setSortP('ds')" style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)" title="DELTA Score">Δ</th>
+      <th onclick="setSortP('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
       <th onclick="setSortP('name')" style="cursor:pointer">Player</th><th onclick="setSortP('pos')" style="cursor:pointer">Pos</th><th onclick="setSortP('age')" style="cursor:pointer">Age</th><th onclick="setSortP('team')" style="cursor:pointer">Team</th>
-      <th onclick="setSortP('floor')" style="cursor:pointer;color:var(--coral)">Floor</th><th onclick="setSortP('proj')" style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" style="cursor:pointer;color:var(--emerald)">Ceiling</th>
-      <th onclick="setSortP('epa')" style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" style="cursor:pointer">Gap</th><th>CI</th>
-      <th onclick="setSortP('miss')" style="cursor:pointer;color:var(--coral)">Miss%</th>
-      <th onclick="setSortP('hit')" style="cursor:pointer;color:var(--sky)">Hit%</th>
-      <th onclick="setSortP('elite')" style="cursor:pointer;color:var(--emerald)">Elite%</th>
+      <th onclick="setSortP('floor')" data-tip="Conservative-case projection — roughly the low end of the player's likely PPG range for the season." style="cursor:pointer;color:var(--coral)">Floor</th><th onclick="setSortP('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and opportunity." style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" data-tip="Upside-case projection — roughly the high end of the player's likely PPG range if things break their way." style="cursor:pointer;color:var(--emerald)">Ceiling</th>
+      <th onclick="setSortP('epa')" data-tip="Per-play efficiency grade. Positive = above average on each touch or route; negative = below." style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades." style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" data-tip="DELTA's internal valuation. Higher than Mkt Val = underpriced; lower = overpriced." style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" data-tip="Mod val minus Mkt Val. Positive (green) = DELTA sees the player as underpriced vs the market; negative (coral) = overpriced." style="cursor:pointer">Gap</th><th data-tip="Confidence interval — the ± range around the projection. Tight (±10%) = a stable, predictable profile; wide (±32%) = volatile, boom-or-bust. Lower isn't 'better,' just more certain.">CI</th>
+      <th onclick="setSortP('miss')" data-tip="Share of started games where the player finished as a bust for the position. Lower is better." style="cursor:pointer;color:var(--coral)">Miss%</th>
+      <th onclick="setSortP('hit')" data-tip="Share of started games where the player returned a startable weekly finish. Higher is better." style="cursor:pointer;color:var(--sky)">Hit%</th>
+      <th onclick="setSortP('elite')" data-tip="Share of started games with a top-tier weekly finish at the position. Higher is better." style="cursor:pointer;color:var(--emerald)">Elite%</th>
     </tr></thead>
     <tbody id="proj-body"></tbody>
   </table></div>
@@ -546,6 +548,9 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     average play, negative = below. DELTA uses it alongside raw production to spot players whose counting stats
     flatter or undersell them — high volume with negative EPA is a warning sign; positive EPA on small volume hints
     at more if the role grows.
+    <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:11px;color:var(--fog-2)">
+      <b style="color:var(--fog)">Volume floor (technical):</b> heavy-workload players are shielded from a harsh per-play penalty — RB ≥140 rushes with YAC/carry ≥3.0 is treated as neutral; WR/TE ≥80 targets floors at 0.92; QB ≥300 plays floors at 0.88.
+    </div>
   </div>
   <div class="controls">
     <select id="pos-epa" onchange="renderEPA()">
@@ -553,17 +558,16 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
     <select id="sort-epa" onchange="setSortEPA(this.value)">
-      <option value="epaSc">EPA score</option><option value="epaTr">Trend</option>
+      <option value="epaSc">EPA score</option>
       <option value="ef">Efficiency</option><option value="ktc">Mkt Val</option>
     </select>
     <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
   </div>
-  <div class="info-box">RB floor: ≥140 rushes + YAC/carry ≥3.0 → EPA treated as neutral. WR/TE: ≥80 targets → floor 0.92. QB: ≥300 plays → floor 0.88.</div>
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
       <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th><th>Team</th>
       <th onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there." style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'22</th>
-      <th data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — only differs when a Floor rule kicks in (see Floor)." style="cursor:pointer">Applied</th><th data-tip="A protection for heavy-workload players. If a player sees enough touches, the model won't penalize them too hard for being slightly below average per play — consistent volume has real dynasty value even when efficiency dips.">Floor</th><th onclick="setSortEPA('epaTr')" data-tip="Is this player producing more or less value per play compared to prior years? Up = improving; Down = declining; Flat = holding steady." style="cursor:pointer">Trend</th><th onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers." style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
+      <th data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — for very heavy-workload players who dip slightly below average, a floor rule keeps the model from over-penalizing them." style="cursor:pointer">Applied</th><th onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers." style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
     </tr></thead>
     <tbody id="epa-body"></tbody>
   </table></div>
@@ -602,7 +606,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dtable">
     <thead><tr>
       <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th>
-      <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer">Yrs Left</th>
+      <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer;text-align:center">Yrs Left</th>
       <th>Status</th><th data-tip="DELTA's read on dynasty contract outlook. Long-term deals for ascending players score well; expensive contracts near expiry score lower.">Dynasty Signal</th>
     </tr></thead>
     <tbody id="contracts-body"></tbody>
@@ -868,8 +872,6 @@ function renderEPA(){
     <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
     <td style="font-size:10px;color:var(--fog-2)">${p.epaRaw.toFixed(3)}</td>
     <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
-    <td style="font-size:10px">${p.epaFr?`<span style="color:${p.epaFr==='vol+YAC neutral'?'var(--emerald)':'var(--topaz)'}">${p.epaFr}</span>`:'—'}</td>
-    <td>${tH(p.epaTr)}</td>
     <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
     <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
     <td>${vTag(p)}</td>
@@ -1589,7 +1591,7 @@ function renderContracts(){
       <td style="font-weight:600">${fmt(c.aav)}</td>
       <td style="color:var(--fog)">${fmt(c.total)}</td>
       <td>${c.end}</td>
-      <td style="font-weight:600;color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
+      <td style="font-weight:600;text-align:center;color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
       <td><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
       <td>${dynastySignal(c)} ${ktcStr}</td>
     </tr>`;
@@ -1694,7 +1696,7 @@ function showTab(id,el){
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
   if(id==='contracts')renderContracts();
-  if(id==='prospects')renderProspects();   // default to ALL instead of blank
+  if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
@@ -2716,18 +2718,8 @@ document.addEventListener('click', function(e) {
 
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
   <div class="dd-card" id="dd-card" data-player="">
-    <div class="dd-header" style="flex-direction:column;align-items:stretch;gap:11px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <svg width="21" height="21" viewBox="0 0 128 128" fill="none" style="display:block" aria-label="DELTA">
-          <path d="M64 22 L24 106 L104 106 Z" stroke="#2DD4BF" stroke-width="7" stroke-linejoin="round" stroke-opacity="0.9"/>
-          <line x1="64" y1="30" x2="64" y2="106" stroke="#2DD4BF" stroke-width="3" stroke-opacity="0.38"/>
-          <g stroke="#2DD4BF" stroke-width="5" stroke-linecap="round" stroke-opacity="0.62">
-            <line x1="58" y1="60" x2="70" y2="60"/><line x1="54" y1="80" x2="76" y2="80"/>
-          </g>
-        </svg>
-        <button class="dd-close" onclick="closeDeckNow()">✕</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+    <div class="dd-header">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
         <img id="dd-headshot" src="" alt="" width="56" height="56"
           style="border-radius:50%;object-fit:cover;border:2px solid var(--line);
                  background:var(--panel);flex-shrink:0;display:none;cursor:pointer;
@@ -2739,6 +2731,9 @@ document.addEventListener('click', function(e) {
             onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
           <div class="dd-meta" id="dd-meta"></div>
         </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button class="dd-close" onclick="closeDeckNow()">✕</button>
       </div>
     </div>
     <div class="dd-body" id="dd-body"></div>
