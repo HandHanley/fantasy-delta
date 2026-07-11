@@ -1,0 +1,40 @@
+# Research-only. Runs the QB TD% study and uploads results as an artifact.
+# NEVER commits anything to the repo — nothing reaches /data or the interface.
+# Place at .github/workflows/td-pct-study.yml, then: Actions tab -> "TD% research study" -> Run workflow.
+name: TD% research study
+
+on:
+  workflow_dispatch:
+    inputs:
+      min_att:
+        description: "Qualifying-season attempt floor"
+        default: "200"
+      train_end:
+        description: "Fit reversion on seasons <= this year"
+        default: "2022"
+      redzone:
+        description: "Also pull red-zone context (heavy)"
+        type: boolean
+        default: false
+
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install nfl_data_py pandas numpy
+      - name: Run study
+        run: |
+          ARGS="--min-att ${{ inputs.min_att }} --train-end ${{ inputs.train_end }}"
+          if [ "${{ inputs.redzone }}" = "true" ]; then ARGS="$ARGS --rz"; fi
+          echo "Running: python td_pct_study.py $ARGS"
+          python td_pct_study.py $ARGS | tee study/out/report.txt
+      - name: Upload results (artifact only — not committed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: td-pct-study-results
+          path: study/out/
