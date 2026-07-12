@@ -10,13 +10,20 @@ on:
         description: "Which study to run"
         type: choice
         options:
+          - "scarcity curves (derive QB/WR/TE from own data)"
           - "goal-line opportunity (does GL usage add lift?)"
           - "TD% round 1 (TD% -> TD%)"
           - "TD% round 2 (TD% -> fantasy value)"
-        default: "goal-line opportunity (does GL usage add lift?)"
+        default: "scarcity curves (derive QB/WR/TE from own data)"
       train_end:
-        description: "Fit on seasons <= this year (test after)"
+        description: "Fit on seasons <= this year (test after) — TD%/goal-line studies"
         default: "2022"
+      curve_seasons:
+        description: "Derivation window for the scarcity-curve study"
+        default: "2021-2025"
+      min_games:
+        description: "Min games to qualify for a positional rank (scarcity study)"
+        default: "6"
       pos:
         description: "Position filter for the goal-line study"
         type: choice
@@ -48,6 +55,8 @@ jobs:
           FLAGS=""
           if [ "${{ inputs.inspect }}" = "true" ]; then FLAGS="--inspect"; fi
           case "${{ inputs.study }}" in
+            "scarcity"*)
+              python derive_scarcity_curves.py --seasons ${{ inputs.curve_seasons }} --min-games ${{ inputs.min_games }} $FLAGS 2>&1 | tee study/out/report_scarcity.txt ;;
             "goal-line"*)
               # 2>&1 so tracebacks land in the report, not just the console
               python gl_opportunity_study.py --train-end ${{ inputs.train_end }} --pos ${{ inputs.pos }} $FLAGS 2>&1 | tee study/out/report_goalline.txt ;;
