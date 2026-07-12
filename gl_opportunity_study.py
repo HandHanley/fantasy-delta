@@ -277,28 +277,99 @@ print(f"  year-to-year r, GOAL-LINE share : {r_gl:+.3f}")
 print(f"  year-to-year r, RED-ZONE share  : {r_rz:+.3f}")
 print(f"  year-to-year r, TD/game         : {r_tdpg:+.3f}   <- the noisy thing we are trying to beat")
 print(f"  (TD RATE stickiness from the QB study was +0.38)")
-g1 = r_gl >= 0.45
-print(f"  G1 (GL share r >= 0.45): {'PASS' if g1 else 'FAIL'}")
+# POOLED r IS MISLEADING: RBs structurally hold high GL share and WRs low, so pooling
+# positions manufactures correlation (a Simpson-style artifact). The honest test is
+# WITHIN position — that is where a role signal has to prove itself.
+within = {}
 for pos in sorted(PR["pos"].unique()):
     sub = PR[PR["pos"] == pos]
     if len(sub) > 20:
-        print(f"     {pos}: r={corr(sub['gl_share'], sub['gl_share_next']):+.3f}  (n={len(sub)})")
+        within[pos] = corr(sub["gl_share"], sub["gl_share_next"])
+        print(f"     {pos}: GL-share r={within[pos]:+.3f}   TD/gm r={corr(sub['td_pg'], sub['td_pg_next']):+.3f}   (n={len(sub)})")
+print(f"  pooled r = {r_gl:+.3f} (INFLATED by position mix — do not use as the headline)")
+g1 = bool(within) and min(within.values()) >= 0.45
+print(f"  G1 (WITHIN-position GL-share r >= 0.45 for every position): {'PASS' if g1 else 'FAIL'}")
+if within and min(within.values()) < 0.45:
+    weak = [p for p, v in within.items() if v < 0.45]
+    print(f"     -> fails for {', '.join(weak)}: goal-line share there is no stickier than TD rate itself.")
 
 # ============================================================== G2 expected TDs
 hr("G2  EXPECTED TDs — do TDs regress toward OPPORTUNITY?")
-# league TD rate per goal-line touch and per red-zone touch, fit on TRAIN years only
-tr_mask = q["season"] <= args.train_end
-lg_gl = float(q.loc[tr_mask, "td"].sum() / max(q.loc[tr_mask, "gl_touch"].sum(), 1))
-lg_rz = float(q.loc[tr_mask, "td"].sum() / max(q.loc[tr_mask, "rz_touch"].sum(), 1))
-print(f"league TDs per goal-line touch: {lg_gl:.3f}   per red-zone touch: {lg_rz:.3f}")
+# ---------------------------------------------------------------------------
+# v2 FIX. The first version divided a player's TOTAL TDs (including 70-yard
+# bombs from midfield) by only his GOAL-LINE touches, producing "1.021 TDs per
+# goal-line touch" — a physical impossibility, since a touch can score at most
+# one TD. That inflated xTD so badly it "expected" Derrick Henry to score 24.
+#
+# Correct model: compute the TD conversion rate WITHIN each field zone directly
+# from pbp, then xTD = sum over zones of (that player's touches in the zone x
+# the zone's conversion rate). Zones are DISJOINT so nothing is double-counted
+# (the old version also double-counted, since inside-5 is a subset of inside-20).
+# ---------------------------------------------------------------------------
+rush_td_col = find(pbp, "rush_touchdown", required=False)
+pass_td_col = find(pbp, "pass_touchdown", required=False)
+if not (rush_td_col and pass_td_col):
+    sys.exit("need rush_touchdown / pass_touchdown in pbp to build expected TDs")
 
-# expected TDs = blend of GL and RZ opportunity (GL weighted, it is the sharper signal)
-PR["xtd"] = 0.65 * (PR["gl_touch"] * lg_gl) + 0.35 * (PR["rz_touch"] * lg_rz)
-PR["td_oe"] = PR["td"] - PR["xtd"]          # TDs over expected: + = out-scored his opportunity
+ZONES = [("gl", 0, 5), ("mid", 6, 20), ("open", 21, 100)]   # disjoint by construction
+rates = {}
+print("TD conversion rate BY ZONE (computed from pbp; a rate > 1.0 is impossible):")
+for tag, z0, z1 in ZONES:
+    zf = pbp[(pbp[B["yl"]] >= z0) & (pbp[B["yl"]] <= z1)]
+    rp = zf[zf[B["rush_a"]] == 1] if B["rush_a"] else zf[zf[B["rush_id"]].notna()]
+    rp = rp[rp[B["rush_id"]].notna()]
+    tp = zf[zf[B["pass_a"]] == 1] if B["pass_a"] else zf[zf[B["rec_id"]].notna()]
+    tp = tp[tp[B["rec_id"]].notna()]
+    r_rate = float(rp[rush_td_col].mean()) if len(rp) else 0.0
+    t_rate = float(tp[pass_td_col].mean()) if len(tp) else 0.0
+    rates[tag] = (r_rate, t_rate)
+    print(f"  {tag:<5} ({z0:>2}-{z1:>3} yd): rush {r_rate:.3f} TD/carry (n={len(rp):,})   "
+          f"target {t_rate:.3f} TD/target (n={len(tp):,})")
+
+for tag, (rr, tr_) in rates.items():
+    if not (0.0 <= rr < 1.0 and 0.0 <= tr_ < 1.0):
+        sys.exit(f"FATAL: implausible TD rate in zone {tag}: rush={rr}, target={tr_}. "
+                 "A touch cannot score more than one TD — the model is wrong.")
+print("  sanity: all zone rates in [0,1) ✓")
+
+# per-player touches by DISJOINT zone
+def zone_counts(z0, z1, tag):
+    zf = pbp[(pbp[B["yl"]] >= z0) & (pbp[B["yl"]] <= z1)]
+    rp = zf[zf[B["rush_id"]].notna()]
+    if B["rush_a"]:
+        rp = rp[rp[B["rush_a"]] == 1]
+    tp = zf[zf[B["rec_id"]].notna()]
+    if B["pass_a"]:
+        tp = tp[tp[B["pass_a"]] == 1]
+    c = rp.groupby([B["rush_id"], B["season"]]).size().rename(f"{tag}_car_n").reset_index()
+    c = c.rename(columns={B["rush_id"]: "pid", B["season"]: "season"})
+    t = tp.groupby([B["rec_id"], B["season"]]).size().rename(f"{tag}_tgt_n").reset_index()
+    t = t.rename(columns={B["rec_id"]: "pid", B["season"]: "season"})
+    return c, t
+
+for tag, z0, z1 in ZONES:
+    c, t = zone_counts(z0, z1, tag)
+    q = q.merge(c, on=["pid", "season"], how="left").merge(t, on=["pid", "season"], how="left")
+    q[f"{tag}_car_n"] = q[f"{tag}_car_n"].fillna(0)
+    q[f"{tag}_tgt_n"] = q[f"{tag}_tgt_n"].fillna(0)
+
+q["xtd"] = sum(q[f"{tag}_car_n"] * rates[tag][0] + q[f"{tag}_tgt_n"] * rates[tag][1]
+               for tag, _, _ in ZONES)
+q["td_oe"] = q["td"] - q["xtd"]
+
+# sanity: xTD should be in the same universe as actual TDs
+print(f"\n  xTD sanity: league actual TDs {q['td'].sum():.0f} vs expected {q['xtd'].sum():.0f} "
+      f"(ratio {q['td'].sum()/max(q['xtd'].sum(),1):.2f} — should be ~1.0)")
+print(f"  max xTD for any player-season: {q['xtd'].max():.1f} (max actual: {q['td'].max():.0f})")
+
+# rebuild pairs with the corrected xtd/td_oe
+xm = q[["pid", "season", "xtd", "td_oe"]]
+PR = PR.drop(columns=[c for c in ["xtd", "td_oe"] if c in PR.columns], errors="ignore")
+PR = PR.merge(xm.rename(columns={"season": "t"}), on=["pid", "t"], how="left")
 PR["d_td"] = PR["td_next"] - PR["td"]
 
 r_oe = corr(PR["td_oe"], PR["d_td"])
-print(f"  corr(TDs over expected, next-year change in TDs) = {r_oe:+.3f}")
+print(f"\n  corr(TDs over expected, next-year change in TDs) = {r_oe:+.3f}")
 print(f"  corr(this-yr TDs,        next-year change in TDs) = {corr(PR['td'], PR['d_td']):+.3f}")
 print(f"  corr(expected TDs,       NEXT-year TDs)           = {corr(PR['xtd'], PR['td_next']):+.3f}")
 print(f"  corr(actual TDs,         NEXT-year TDs)           = {corr(PR['td'], PR['td_next']):+.3f}")
