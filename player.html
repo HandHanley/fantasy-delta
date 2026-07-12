@@ -324,6 +324,64 @@ function buildProductionHTML(p) {
 }
 
 // ── EPA / Efficiency ──────────────────────────────────────────────────────────
+// QB TD% trend — DISPLAY ONLY. Context for the manager; never feeds the DELTA Score.
+// Research (2017-25, 203 QB pairs): ~69% of the gap between a season's TD% and the QB's
+// own baseline is given back the next year. It did NOT add lift to fantasy projection
+// beyond production DELTA already models — so we show it, we don't score it.
+function buildTDPctHTML(p) {
+  if (p.pos !== 'QB' || typeof PLAYER_STATS === 'undefined' || !PLAYER_STATS[p.n]) return '';
+  const LG = 4.6, GIVEBACK = 0.69;
+  const st = PLAYER_STATS[p.n];
+  const yrs = ['2022', '2023', '2024', '2025'];
+  const rows = yrs.map(y => {
+    const s = st[y];
+    const att = (s && +s.pass_att) || 0, td = (s && +s.pass_td) || 0;
+    return { yr: y, v: att >= 100 ? (100 * td / att) : 0, att };   // 100-att floor: a cameo has no meaningful rate
+  }).filter(x => x.v > 0);
+  if (!rows.length) return '';
+
+  let cTd = 0, cAtt = 0;
+  yrs.forEach(y => {
+    const s = st[y];
+    if (s && +s.pass_att >= 100) { cTd += (+s.pass_td || 0); cAtt += (+s.pass_att || 0); }
+  });
+  const baseline = cAtt > 0 ? (100 * cTd / cAtt) : LG;   // attempt-weighted, not a mean of rates
+  const latest = rows[rows.length - 1];
+  const gap = latest.v - baseline;
+  const proj = latest.v - gap * GIVEBACK;
+  const maxV = Math.max(...rows.map(x => x.v), baseline, 6);
+  const barH = 46;
+  // colored vs HIS OWN baseline — a high TD% is not "good", it's "hot"
+  const clr = v => (v - baseline) >= 1.5 ? '#E0B34D' : (v - baseline) <= -1.5 ? '#6BB6E0' : '#8CA0B3';
+
+  const vals = rows.map(x => `<div style="flex:1;text-align:center;font-size:10px;color:#8CA0B3">${x.v.toFixed(1)}%</div>`).join('');
+  const bars = rows.map(x => `<div style="flex:1;display:flex;align-items:flex-end;justify-content:center">
+      <div style="width:100%;border-radius:3px 3px 0 0;background:${clr(x.v)};height:${Math.max(8, Math.round(x.v / maxV * barH))}px"></div>
+    </div>`).join('');
+  const lbls = rows.map(x => `<div style="flex:1;text-align:center;font-size:9px;color:#5C7080">'${x.yr.slice(2)}</div>`).join('');
+
+  let note = '';
+  if (Math.abs(gap) >= 1.0 && rows.length >= 2) {
+    const hot = gap > 0;
+    note = `<div style="font-size:11px;line-height:1.6;color:#8CA0B3;margin-top:10px;padding:8px 10px;background:#0D1420;border-left:2px solid ${hot ? '#E0B34D' : '#6BB6E0'};border-radius:0 6px 6px 0">
+      TD rate <b style="color:${hot ? '#E0B34D' : '#6BB6E0'}">${latest.v.toFixed(1)}%</b> is
+      <b style="color:${hot ? '#E0B34D' : '#6BB6E0'}">${Math.abs(gap).toFixed(1)} pts ${hot ? 'above' : 'below'}</b>
+      his own baseline of ${baseline.toFixed(1)}%.
+      ${hot ? 'Historically ~69% of that gap is given back' : 'Rates this far below a QB\'s norm tend to bounce back'} —
+      a repeat would look closer to <b style="color:#EAF0F4">${proj.toFixed(1)}%</b>.
+    </div>`;
+  }
+
+  return `<div class="card">
+    <div class="card-label" style="margin-bottom:2px">TD% Trend</div>
+    <div class="card-sub" style="margin-bottom:10px">Passing TDs per attempt · his baseline <b style="color:#EAF0F4">${baseline.toFixed(1)}%</b> · league ${LG}% · context only, not scored</div>
+    <div style="display:flex;gap:4px;margin-bottom:2px">${vals}</div>
+    <div style="display:flex;gap:4px;height:${barH}px">${bars}</div>
+    <div style="display:flex;gap:4px;margin-top:3px">${lbls}</div>
+    ${note}
+  </div>`;
+}
+
 function buildEPAHTML(p) {
   const posLabel = p.pos === 'QB' ? 'Passing' : p.pos === 'RB' ? 'Rushing' : 'Receiving';
   const sublabel = `${posLabel} EPA per play by season — how much scoring value this player added above average on each touch or route`;
@@ -678,6 +736,7 @@ function renderPlayerPage(p) {
     ${buildDSTrajectoryHTML(p)}
     ${buildAgeCurveHTML(p)}
     ${buildProductionHTML(p)}
+    ${buildTDPctHTML(p)}
     ${buildEPAHTML(p)}
     ${buildOpportunityHTML(p)}
     ${buildContractHTML(p)}

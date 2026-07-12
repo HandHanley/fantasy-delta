@@ -1873,6 +1873,74 @@ function renderDeck(p){
       <div class="dd-arc-yr">${x.yr}</div></div>`;
   }).join('');
 
+  // ── QB TD% trend (DISPLAY ONLY — context for the manager, never feeds the projection).
+  // Research (2017-25, 203 QB pairs): TD% mean-reverts hard — ~69% of the gap between a
+  // season's TD% and the QB's own baseline is given back the next year. League avg ~4.6%.
+  // Validated as a *rate*, but it did NOT add predictive lift to fantasy value beyond the
+  // production DELTA already models — so it is shown, not scored.
+  const TDP_LG = 4.6;        // league-average passing TD%
+  const TDP_GIVEBACK = 0.69; // fraction of the gap historically given back next year
+  let tdPctBlock = '';
+  if (p.pos === 'QB' && typeof PLAYER_STATS !== 'undefined' && PLAYER_STATS[p.n]) {
+    const st = PLAYER_STATS[p.n];
+    const tdRows = ['2022','2023','2024','2025'].map(y => {
+      const s = st[y];
+      const att = s && +s.pass_att || 0, td = s && +s.pass_td || 0;
+      // need a real sample: a 20-attempt cameo produces a meaningless rate
+      return { yr: "'" + y.slice(2), v: att >= 100 ? (100 * td / att) : 0, att };
+    }).filter(x => x.v > 0);
+
+    if (tdRows.length) {
+      // career baseline from the seasons we have (attempt-weighted, not a mean of rates)
+      let cTd = 0, cAtt = 0;
+      ['2022','2023','2024','2025'].forEach(y => {
+        const s = st[y];
+        if (s && +s.pass_att >= 100) { cTd += (+s.pass_td || 0); cAtt += (+s.pass_att || 0); }
+      });
+      const baseline = cAtt > 0 ? (100 * cTd / cAtt) : TDP_LG;
+      const latest = tdRows[tdRows.length - 1];
+      const gap = latest.v - baseline;
+      const maxTd = Math.max(...tdRows.map(x => x.v), baseline, 6);
+      // color by distance from HIS OWN baseline (not league) — high isn't "good", it's "hot"
+      const tdColor = v => {
+        const g = v - baseline;
+        return g >= 1.5 ? 'var(--topaz)' : g <= -1.5 ? 'var(--sky)' : 'var(--fog)';
+      };
+      const tdBars = tdRows.map(x => {
+        const h = Math.max(8, Math.round((x.v / maxTd) * 44));
+        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="font-size:9px;color:var(--fog);margin-bottom:2px">${x.v.toFixed(1)}%</div>
+          <div class="dd-arc-bar" style="height:${h}px;background:${tdColor(x.v)};width:100%"></div>
+          <div class="dd-arc-yr">${x.yr}</div></div>`;
+      }).join('');
+
+      // plain-English read, only when the gap is big enough to be worth saying
+      let note = '';
+      if (Math.abs(gap) >= 1.0 && tdRows.length >= 2) {
+        const proj = latest.v - gap * TDP_GIVEBACK;
+        note = gap > 0
+          ? `<div style="font-size:10.5px;line-height:1.55;color:var(--fog);margin-top:7px;padding:7px 9px;background:var(--ink-2);border-left:2px solid var(--topaz);border-radius:0 5px 5px 0">
+               TD rate <b style="color:var(--topaz)">${latest.v.toFixed(1)}%</b> is <b style="color:var(--topaz)">${gap.toFixed(1)} pts above</b> his own baseline of ${baseline.toFixed(1)}%.
+               Historically ~69% of that gap is given back — a repeat would look closer to <b style="color:var(--paper)">${proj.toFixed(1)}%</b>.
+             </div>`
+          : `<div style="font-size:10.5px;line-height:1.55;color:var(--fog);margin-top:7px;padding:7px 9px;background:var(--ink-2);border-left:2px solid var(--sky);border-radius:0 5px 5px 0">
+               TD rate <b style="color:var(--sky)">${latest.v.toFixed(1)}%</b> is <b style="color:var(--sky)">${Math.abs(gap).toFixed(1)} pts below</b> his own baseline of ${baseline.toFixed(1)}%.
+               Rates like this tend to bounce back — a repeat would look closer to <b style="color:var(--paper)">${proj.toFixed(1)}%</b>.
+             </div>`;
+      }
+
+      tdPctBlock = `
+    <div class="dd-section">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="dd-section-label" style="margin-bottom:0" data-tip="Passing TDs per attempt. Shown for context only — it does not feed the DELTA Score. TD% swings wildly year to year: ~69% of the gap between a season and a QB's own baseline is given back the next year.">TD% Trend</div>
+        <div style="font-size:10px;color:var(--fog)">baseline <b style="color:var(--paper);font-size:12px">${baseline.toFixed(1)}%</b> · lg ${TDP_LG}%</div>
+      </div>
+      <div class="dd-arc" style="height:52px;margin-top:6px">${tdBars}</div>
+      ${note}
+    </div>`;
+    }
+  }
+
   // EPA arc bars
   const epaBars=epas.map(x=>{
     const h=Math.max(5,Math.round((Math.abs(x.v)/maxEpa)*44));
@@ -2030,6 +2098,7 @@ function renderDeck(p){
       </div>
       <div class="dd-arc" style="height:52px;margin-top:6px">${ppgBars}</div>
     </div>
+    ${tdPctBlock}
 
     <div class="dd-section">
       <div class="dd-section-label">${epaLabel} Arc</div>
