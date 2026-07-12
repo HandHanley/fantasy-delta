@@ -149,7 +149,7 @@ tr:hover td{background:var(--panel)}
 .dd-stat-val{font-size:16px;font-weight:700;line-height:1}
 .dd-stat-lbl{font-size:9px;color:var(--fog);margin-top:2px}
 .dd-arc{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:4px}
-.dd-arc-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;position:relative;transition:height .3s}
+.dd-arc-bar{flex:0 0 auto;border-radius:3px 3px 0 0;min-height:3px;position:relative;transition:height .3s}
 .dd-arc-yr{font-size:8px;color:var(--fog-2);text-align:center;margin-top:2px}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:var(--fog);width:36px;flex-shrink:0}
@@ -1883,63 +1883,77 @@ function renderDeck(p){
   let tdPctBlock = '';
   if (p.pos === 'QB' && typeof PLAYER_STATS !== 'undefined' && PLAYER_STATS[p.n]) {
     const st = PLAYER_STATS[p.n];
-    const tdRows = ['2022','2023','2024','2025'].map(y => {
+    const YRS = ['2022','2023','2024','2025'];
+    const seas = YRS.map(y => {
       const s = st[y];
-      const att = s && +s.pass_att || 0, td = s && +s.pass_td || 0;
-      // need a real sample: a 20-attempt cameo produces a meaningless rate
-      return { yr: "'" + y.slice(2), v: att >= 100 ? (100 * td / att) : 0, att };
-    }).filter(x => x.v > 0);
+      const att = (s && +s.pass_att) || 0, td = (s && +s.pass_td) || 0;
+      return { y, yr: "'" + y.slice(2), att, td, v: att >= 100 ? (100 * td / att) : 0 };
+    }).filter(x => x.v > 0);   // 100-att floor: a cameo has no meaningful rate
 
-    if (tdRows.length) {
-      // career baseline from the seasons we have (attempt-weighted, not a mean of rates)
-      let cTd = 0, cAtt = 0;
-      ['2022','2023','2024','2025'].forEach(y => {
-        const s = st[y];
-        if (s && +s.pass_att >= 100) { cTd += (+s.pass_td || 0); cAtt += (+s.pass_att || 0); }
-      });
-      const baseline = cAtt > 0 ? (100 * cTd / cAtt) : TDP_LG;
-      const latest = tdRows[tdRows.length - 1];
-      const gap = latest.v - baseline;
-      const maxTd = Math.max(...tdRows.map(x => x.v), baseline, 6);
-      // color by distance from HIS OWN baseline (not league) — high isn't "good", it's "hot"
-      const tdColor = v => {
-        const g = v - baseline;
-        return g >= 1.5 ? 'var(--topaz)' : g <= -1.5 ? 'var(--sky)' : 'var(--fog)';
+    if (seas.length) {
+      const wRate = arr => {
+        const a = arr.reduce((s, x) => s + x.att, 0), t = arr.reduce((s, x) => s + x.td, 0);
+        return a > 0 ? (100 * t / a) : TDP_LG;
       };
-      const tdBars = tdRows.map(x => {
-        const h = Math.max(8, Math.round((x.v / maxTd) * 44));
-        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1">
+      // Overall baseline (attempt-weighted, all seasons) — the reference we show.
+      const baseline = wRate(seas);
+      // ONE fixed baseline for both the reference line and every bar's color.
+      // (Tried leave-one-out per bar — statistically cleaner, but it gave two identical
+      // 6.6% seasons different colors, which is worse on a chart. A visible line the eye
+      // can check every bar against beats statistical purity here.)
+      const HOT = 1.0;   // pts from his norm worth flagging (season-to-season SD ~1.3)
+      // Grade on the DISPLAYED (1-decimal) numbers. Using raw floats let two seasons that
+      // both read "7.0%" land on opposite sides of the threshold (6.98 vs 7.02) and get
+      // different colors — what the user sees must be what gets colored.
+      const r1 = v => Math.round(v * 10) / 10;
+
+      const latest = seas[seas.length - 1];
+      const gap = r1(latest.v) - r1(baseline);
+
+      const maxTd = Math.max(...seas.map(x => x.v), baseline, 6) * 1.08;
+      const H = 44;
+      const tdBars = seas.map(x => {
+        const g = r1(x.v) - r1(baseline);
+        const c = g >= HOT ? 'var(--topaz)' : g <= -HOT ? 'var(--sky)' : 'var(--fog-2)';
+        const h = Math.max(6, Math.round((x.v / maxTd) * H));
+        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;justify-content:flex-end">
           <div style="font-size:9px;color:var(--fog);margin-bottom:2px">${x.v.toFixed(1)}%</div>
-          <div class="dd-arc-bar" style="height:${h}px;background:${tdColor(x.v)};width:100%"></div>
+          <div class="dd-arc-bar" style="height:${h}px;background:${c};width:100%"></div>
           <div class="dd-arc-yr">${x.yr}</div></div>`;
       }).join('');
+      // baseline reference line — makes a neutral (grey) bar instantly legible as "at his norm"
+      const blY = Math.round((baseline / maxTd) * H) + 11;   // +11 = value label row above bars
+      const blLine = `<div style="position:absolute;left:0;right:0;bottom:${blY}px;border-top:1px dashed var(--fog-2);opacity:.55;pointer-events:none"></div>`;
 
-      // plain-English read, only when the gap is big enough to be worth saying
       let note = '';
-      if (Math.abs(gap) >= 1.0 && tdRows.length >= 2) {
-        const proj = latest.v - gap * TDP_GIVEBACK;
-        note = gap > 0
-          ? `<div style="font-size:10.5px;line-height:1.55;color:var(--fog);margin-top:7px;padding:7px 9px;background:var(--ink-2);border-left:2px solid var(--topaz);border-radius:0 5px 5px 0">
-               TD rate <b style="color:var(--topaz)">${latest.v.toFixed(1)}%</b> is <b style="color:var(--topaz)">${gap.toFixed(1)} pts above</b> his own baseline of ${baseline.toFixed(1)}%.
-               Historically ~69% of that gap is given back — a repeat would look closer to <b style="color:var(--paper)">${proj.toFixed(1)}%</b>.
-             </div>`
-          : `<div style="font-size:10.5px;line-height:1.55;color:var(--fog);margin-top:7px;padding:7px 9px;background:var(--ink-2);border-left:2px solid var(--sky);border-radius:0 5px 5px 0">
-               TD rate <b style="color:var(--sky)">${latest.v.toFixed(1)}%</b> is <b style="color:var(--sky)">${Math.abs(gap).toFixed(1)} pts below</b> his own baseline of ${baseline.toFixed(1)}%.
-               Rates like this tend to bounce back — a repeat would look closer to <b style="color:var(--paper)">${proj.toFixed(1)}%</b>.
-             </div>`;
+      if (Math.abs(gap) >= HOT && seas.length >= 2) {
+        const hot = gap > 0, proj = latest.v - gap * TDP_GIVEBACK, cc = hot ? 'var(--topaz)' : 'var(--sky)';
+        note = `<div style="font-size:10.5px;line-height:1.55;color:var(--fog);margin-top:8px;padding:7px 9px;background:var(--ink-2);border-left:2px solid ${cc};border-radius:0 5px 5px 0">
+            TD rate <b style="color:${cc}">${latest.v.toFixed(1)}%</b> is <b style="color:${cc}">${Math.abs(gap).toFixed(1)} pts ${hot ? 'above' : 'below'}</b> his usual rate.
+            ${hot ? 'Historically ~69% of a gap like that is given back' : 'Rates this far below a QB\'s norm tend to bounce back'} —
+            a repeat year would look closer to <b style="color:var(--paper)">${proj.toFixed(1)}%</b>.
+          </div>`;
       }
 
       tdPctBlock = `
     <div class="dd-section">
-      <div style="display:flex;justify-content:space-between;align-items:baseline">
-        <div class="dd-section-label" style="margin-bottom:0" data-tip="Passing TDs per attempt. Shown for context only — it does not feed the DELTA Score. TD% swings wildly year to year: ~69% of the gap between a season and a QB's own baseline is given back the next year.">TD% Trend</div>
-        <div style="font-size:10px;color:var(--fog)">baseline <b style="color:var(--paper);font-size:12px">${baseline.toFixed(1)}%</b> · lg ${TDP_LG}%</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="dd-section-label" style="margin-bottom:0" data-tip="Passing TDs per attempt. Context only — it does not feed the DELTA Score. TD% swings hard year to year: about 69% of the gap between a season and a QB's usual rate is given back the next year.">TD% Trend</div>
+        <div style="text-align:right;line-height:1.35">
+          <div style="font-size:10px;color:var(--fog)">Baseline <b style="color:var(--paper);font-family:var(--mono)">${baseline.toFixed(1)}%</b></div>
+          <div style="font-size:10px;color:var(--fog-2)">Lg Avg. <b style="font-family:var(--mono)">${TDP_LG}%</b></div>
+        </div>
       </div>
-      <div class="dd-arc" style="height:52px;margin-top:6px">${tdBars}</div>
+      <div class="dd-arc" style="height:56px;margin-top:6px;position:relative">${blLine}${tdBars}</div>
+      <div style="display:flex;gap:10px;margin-top:5px;font-size:9px;color:var(--fog-2)">
+        <span><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--topaz);margin-right:3px"></span>above his norm — due to regress</span>
+        <span><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--sky);margin-right:3px"></span>below — due to bounce back</span>
+      </div>
       ${note}
     </div>`;
     }
   }
+
 
   // EPA arc bars
   const epaBars=epas.map(x=>{
