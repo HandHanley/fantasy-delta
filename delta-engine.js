@@ -3041,11 +3041,26 @@ function saveLeaguePrefs(){
   try{ localStorage.setItem('delta_settings', JSON.stringify({teams:leagueTeams,qb:qbFmt,fmt:scoringFmt})); }catch(e){}
 }
 const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
+// Positional value-by-rank curves.  v(r) = (PPG of the rank-r player) / (PPG of the rank-1 player).
+// Used ONLY by scarcity() to rescale value between league formats. Never fed by market data.
+//
+// ALL FOUR derived 2026-07-12 by scripts/derive_scarcity_final.py — ONE documented method:
+//   source    nflverse player stats, 2017-2025 (9 seasons)
+//   scoring   half_tep, replicated exactly from gamefp() (4pt pass TD, 0.5 PPR, TE 1.0/rec)
+//   rank by   PPG, among "real contributors" (QB >=100 att, RB >=50 touches, WR/TE >=25 tgt)
+//   NO SMOOTHING — rank-smoothing averages each rank with its neighbours. At shallow breakpoints
+//     the windows overlap so heavily that adjacent points share most of the same players and the
+//     curve is flattened BY CONSTRUCTION (TE rank1 and rank3 windows overlap 67%: true TE3/TE1
+//     is 0.807, smoothing reports 0.945). Noise is cut with MORE SEASONS instead.
+//     NOTE: the prior RB curve matches a smoothed derivation almost exactly (smoothed RB6 = 0.842
+//     vs committed 0.843), i.e. it carried that distortion. This replaces it.
+//   stability Leave-one-season-out spread on every point <= ~0.03.
+// Prior values kept inline for rollback.
 const SCAR_CURVE = {
-  QB: [[1,1.0],[6,0.865],[9,0.796],[12,0.769],[15,0.731],[18,0.721],[22,0.647],[26,0.608],[32,0.471]],
-  RB: [[1,1.0],[6,0.843],[12,0.686],[19,0.614],[26,0.579],[34,0.508]],  // multi-year production-derived (2026-06-28); was [6,0.798][12,0.666][19,0.573][26,0.511][34,0.387]
-  WR: [[1,1.0],[8,0.705],[16,0.588],[24,0.537],[36,0.473],[48,0.362]],
-  TE: [[1,1.0],[3,0.788],[5,0.667],[8,0.605],[11,0.582],[14,0.563],[18,0.507]],
+  QB: [[1,1.0],[6,0.815],[9,0.759],[12,0.717],[15,0.671],[18,0.642],[22,0.6],[26,0.562],[32,0.488]],  // was [6,0.865][9,0.796][12,0.769][15,0.731][18,0.721][22,0.647][26,0.608][32,0.471] (hand-tuned)
+  RB: [[1,1.0],[6,0.721],[12,0.605],[19,0.536],[26,0.475],[34,0.405]],  // was [6,0.843][12,0.686][19,0.614][26,0.579][34,0.508] (2026-06-28, smoothed derivation)
+  WR: [[1,1.0],[8,0.726],[16,0.649],[24,0.582],[36,0.506],[48,0.437]],  // was [8,0.705][16,0.588][24,0.537][36,0.473][48,0.362] (hand-tuned)
+  TE: [[1,1.0],[3,0.835],[5,0.711],[8,0.628],[11,0.585],[14,0.54],[18,0.482]],  // was [3,0.788][5,0.667][8,0.605][11,0.582][14,0.563][18,0.507] (hand-tuned)
 };
 function scarCurveVal(pos,rank){
   const c=SCAR_CURVE[pos]; if(!c) return 0.6;
