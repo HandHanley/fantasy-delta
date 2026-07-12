@@ -88,6 +88,7 @@ def fetch_season_stats():
     pos_col     = col('position', 'pos')
     pass_yd_col = col('passing_yards', 'pass_yards')
     pass_td_col = col('passing_tds', 'passing_touchdowns')
+    pass_att_col= col('attempts', 'passing_attempts', 'pass_attempts')
     pass_int_col= col('passing_interceptions', 'interceptions', 'pass_int')
     rush_yd_col      = col('rushing_yards', 'rush_yards')
     rush_td_col      = col('rushing_tds', 'rushing_touchdowns')
@@ -110,7 +111,7 @@ def fetch_season_stats():
           f"air_yds_share:{air_yds_share_col}, carries:{rush_att_col}")
 
     # Fill nulls
-    for c in [pass_yd_col, pass_td_col, pass_int_col, rush_yd_col, rush_td_col,
+    for c in [pass_yd_col, pass_td_col, pass_att_col, pass_int_col, rush_yd_col, rush_td_col,
               rush_att_col, rec_col, rec_yd_col, rec_td_col,
               tgt_col, tgt_share_col, air_yds_col, air_yds_share_col]:
         if c and c in pdf.columns:
@@ -134,6 +135,7 @@ def fetch_season_stats():
                 '_last_week': (week_col or 'week', 'max')}
     for stat_name, col_name in [
         ('pass_yds',       pass_yd_col),   ('pass_td',        pass_td_col),
+        ('pass_att',       pass_att_col),
         ('pass_int',       pass_int_col),  ('rush_yds',       rush_yd_col),
         ('rush_td',        rush_td_col),   ('rush_att',       rush_att_col),
         ('rec',            rec_col),       ('rec_yds',        rec_yd_col),
@@ -186,7 +188,7 @@ def fetch_season_stats():
     dup_mask = result.duplicated(subset=key_cols, keep=False)
     if dup_mask.any():
         n_traded = result.loc[dup_mask, 'player_name'].nunique()
-        sum_cols = [c for c in ['games','pass_yds','pass_td','pass_int','rush_yds','rush_td',
+        sum_cols = [c for c in ['games','pass_yds','pass_td','pass_att','pass_int','rush_yds','rush_td',
                                 'rush_att','rec','rec_yds','rec_td','targets','air_yds']
                     if c in result.columns]
         share_cols = [c for c in ['target_share','air_yds_share','rush_share'] if c in result.columns]
@@ -649,6 +651,7 @@ def build_output(agg, matched, rz_data=None, headshots=None):
                 "rush_share":    round(float(r.get("rush_share", 0)), 4),
                 "pass_yds":      int(r.get("pass_yds", 0)),
                 "pass_td":       int(r.get("pass_td",  0)),
+                "pass_att":      int(r.get("pass_att", 0)),
                 "pass_int":      int(r.get("pass_int", 0)),
                 "targets":       int(r.get("targets",  0)),
                 "target_share":  round(float(r.get("target_share",  0)), 4),
