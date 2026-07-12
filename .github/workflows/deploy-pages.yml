@@ -7,11 +7,28 @@ name: Deploy Pages
 #
 # ONE-TIME SETUP after committing this file:
 #   Settings → Pages → Build and deployment → Source: "GitHub Actions"
-# (That disables the classic auto-workflow; this one takes over.)
+#
+# ── WHY THE workflow_run TRIGGER BELOW MATTERS ──────────────────────────────
+# GitHub deliberately does NOT trigger workflows from commits pushed by another
+# workflow using the default GITHUB_TOKEN (loop prevention). So when the nightly
+# data job commits data/*.json, a plain `on: push` deploy NEVER FIRES — the repo
+# has fresh data but the live site keeps serving the previous build. That is the
+# bug that made TD% (pass_att) never appear on the site even though the data was
+# committed.
+#
+# `workflow_run` fires *after the data workflow completes*, regardless of who
+# pushed, which closes that gap.
+#
+#   >>> ACTION REQUIRED: set the name below to the EXACT `name:` value at the top
+#   >>> of your data workflow (the "update values" one). It must match exactly —
+#   >>> it is the workflow's `name:` field, NOT the filename.
 
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["Update Market Values"]     # <<< CHANGE ME to your data workflow's name:
+    types: [completed]
   workflow_dispatch:
 
 # never run two deploys at once; a new push supersedes a queued one
@@ -27,12 +44,20 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # For workflow_run: only deploy if the data job actually succeeded.
+    # (Always deploy for direct pushes / manual dispatch.)
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url || steps.retry.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: main          # workflow_run checks out the default SHA; be explicit
+                             # so we always publish the newest committed data
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
