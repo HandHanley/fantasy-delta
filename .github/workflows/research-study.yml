@@ -1,6 +1,9 @@
 # Research-only. Runs a DELTA research study and uploads results as an artifact.
 # NEVER commits to the repo — nothing reaches /data, the engine, or the site.
+#
 # Path: .github/workflows/research-study.yml
+# In the Actions tab this appears as:  "DELTA research study"   <-- click THIS
+# (GitHub lists workflows by their `name:` below, not by filename.)
 name: DELTA research study
 
 on:
@@ -10,25 +13,21 @@ on:
         description: "Which study to run"
         type: choice
         options:
-          - "scarcity curves (derive QB/WR/TE from own data)"
-          - "goal-line opportunity (does GL usage add lift?)"
+          - "scarcity METHOD SWEEP (find the derivation method)"
+          - "scarcity curves (derive with a fixed method)"
+          - "goal-line opportunity"
           - "TD% round 1 (TD% -> TD%)"
           - "TD% round 2 (TD% -> fantasy value)"
-        default: "scarcity curves (derive QB/WR/TE from own data)"
-      train_end:
-        description: "Fit on seasons <= this year (test after) — TD%/goal-line studies"
-        default: "2022"
+        default: "scarcity METHOD SWEEP (find the derivation method)"
       curve_seasons:
-        description: "Derivation window for the scarcity-curve study"
+        description: "Window for the fixed-method curve study (ignored by the sweep)"
         default: "2021-2025"
       min_games:
-        description: "Min games to qualify for a positional rank (scarcity study)"
+        description: "Min games to qualify (ignored by the sweep)"
         default: "6"
-      pos:
-        description: "Position filter for the goal-line study"
-        type: choice
-        options: ["ALL", "RB", "WR", "TE"]
-        default: "ALL"
+      train_end:
+        description: "Fit on seasons <= this year (TD% / goal-line studies only)"
+        default: "2022"
       inspect:
         description: "Diagnostic: print available columns and exit"
         type: boolean
@@ -54,12 +53,14 @@ jobs:
           set -o pipefail
           FLAGS=""
           if [ "${{ inputs.inspect }}" = "true" ]; then FLAGS="--inspect"; fi
+          # 2>&1 so tracebacks land in the report, not just the console log
           case "${{ inputs.study }}" in
-            "scarcity"*)
+            "scarcity METHOD SWEEP"*)
+              python sweep_scarcity_method.py 2>&1 | tee study/out/report_method_sweep.txt ;;
+            "scarcity curves"*)
               python derive_scarcity_curves.py --seasons ${{ inputs.curve_seasons }} --min-games ${{ inputs.min_games }} $FLAGS 2>&1 | tee study/out/report_scarcity.txt ;;
             "goal-line"*)
-              # 2>&1 so tracebacks land in the report, not just the console
-              python gl_opportunity_study.py --train-end ${{ inputs.train_end }} --pos ${{ inputs.pos }} $FLAGS 2>&1 | tee study/out/report_goalline.txt ;;
+              python gl_opportunity_study.py --train-end ${{ inputs.train_end }} $FLAGS 2>&1 | tee study/out/report_goalline.txt ;;
             "TD% round 1"*)
               python td_pct_study.py --train-end ${{ inputs.train_end }} $FLAGS 2>&1 | tee study/out/report_td_round1.txt ;;
             "TD% round 2"*)
