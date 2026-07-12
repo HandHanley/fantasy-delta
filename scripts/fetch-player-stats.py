@@ -515,38 +515,56 @@ def fetch_pbp(seasons):
 
 
 def _redzone_from_pbp(pdf, season, rz):
-    # Red zone (inside 20) carry and target counts for one season frame.
+    # Red zone (inside 20) AND goal line (inside 5) carry/target counts for one season.
+    #
+    # WHY GOAL LINE SEPARATELY: inside-20 lumps a 19-yard-line target together with a
+    # 1-yard-line carry — wildly different TD equity. Goal-line touches are the actual
+    # driver of TD upside, and unlike TDs themselves (which are noisy and mean-revert)
+    # goal-line usage is STICKY: it is a role a coach assigns. Stored as opportunity
+    # data; whether it earns a place in the projection is decided by validation.
     if "yardline_100" not in pdf.columns:
         print(f"[DELTA] No yardline_100 col in {season} PBP — skipping RZ")
         return
-    rzdf = pdf[pdf["yardline_100"] <= 20].copy()
-    rec_name_col = next((c for c in ["receiver_player_name","receiver_player_display_name"] if c in rzdf.columns), None)
-    if rec_name_col:
-        pass_col = next((c for c in ["pass_attempt","pass"] if c in rzdf.columns), None)
-        tgt_plays = rzdf[rzdf[rec_name_col].notna()]
-        if pass_col:
-            tgt_plays = tgt_plays[tgt_plays[pass_col] == 1]
-        team_rz_tgt   = tgt_plays.groupby("posteam").size().to_dict()
-        player_rz_tgt = tgt_plays.groupby(rec_name_col).size().to_dict()
-    else:
-        team_rz_tgt, player_rz_tgt = {}, {}
-    rush_name_col = next((c for c in ["rusher_player_name","rusher_player_display_name"] if c in rzdf.columns), None)
-    if rush_name_col:
-        rush_col = next((c for c in ["rush_attempt","rush"] if c in rzdf.columns), None)
-        rush_plays = rzdf[rzdf[rush_name_col].notna()]
-        if rush_col:
-            rush_plays = rush_plays[rush_plays[rush_col] == 1]
-        team_rz_car   = rush_plays.groupby("posteam").size().to_dict()
-        player_rz_car = rush_plays.groupby(rush_name_col).size().to_dict()
-    else:
-        team_rz_car, player_rz_car = {}, {}
+
+    def _counts(frame):
+        """(player_tgt, team_tgt, player_car, team_car) for a yardline-filtered frame."""
+        rec_name_col = next((c for c in ["receiver_player_name", "receiver_player_display_name"] if c in frame.columns), None)
+        if rec_name_col:
+            pass_col = next((c for c in ["pass_attempt", "pass"] if c in frame.columns), None)
+            tgt_plays = frame[frame[rec_name_col].notna()]
+            if pass_col:
+                tgt_plays = tgt_plays[tgt_plays[pass_col] == 1]
+            p_tgt = tgt_plays.groupby(rec_name_col).size().to_dict()
+            t_tgt = tgt_plays.groupby("posteam").size().to_dict()
+        else:
+            p_tgt, t_tgt = {}, {}
+        rush_name_col = next((c for c in ["rusher_player_name", "rusher_player_display_name"] if c in frame.columns), None)
+        if rush_name_col:
+            rush_col = next((c for c in ["rush_attempt", "rush"] if c in frame.columns), None)
+            rush_plays = frame[frame[rush_name_col].notna()]
+            if rush_col:
+                rush_plays = rush_plays[rush_plays[rush_col] == 1]
+            p_car = rush_plays.groupby(rush_name_col).size().to_dict()
+            t_car = rush_plays.groupby("posteam").size().to_dict()
+        else:
+            p_car, t_car = {}, {}
+        return p_tgt, t_tgt, p_car, t_car
+
+    player_rz_tgt, team_rz_tgt, player_rz_car, team_rz_car = _counts(pdf[pdf["yardline_100"] <= 20].copy())
+    player_gl_tgt, team_gl_tgt, player_gl_car, team_gl_car = _counts(pdf[pdf["yardline_100"] <= 5].copy())
+
     rz[season] = {
         "player_rz_tgt": player_rz_tgt,
         "player_rz_car": player_rz_car,
         "team_rz_tgt":   team_rz_tgt,
         "team_rz_car":   team_rz_car,
+        "player_gl_tgt": player_gl_tgt,
+        "player_gl_car": player_gl_car,
+        "team_gl_tgt":   team_gl_tgt,
+        "team_gl_car":   team_gl_car,
     }
-    print(f"[DELTA] RZ {season}: {len(player_rz_tgt)} receivers, {len(player_rz_car)} rushers")
+    print(f"[DELTA] RZ {season}: {len(player_rz_tgt)} receivers, {len(player_rz_car)} rushers | "
+          f"GL: {len(player_gl_tgt)} receivers, {len(player_gl_car)} rushers")
 
 
 def fetch_redzone(seasons):
@@ -561,44 +579,9 @@ def fetch_redzone(seasons):
 
             if "season_type" in pdf.columns:
                 pdf = pdf[pdf["season_type"] == "REG"].copy()
-            if "yardline_100" not in pdf.columns:
-                print(f"[DELTA] No yardline_100 col in {season} PBP — skipping RZ")
-                continue
-            pdf = pdf[pdf["yardline_100"] <= 20].copy()
-
-            # RZ targets
-            rec_name_col = next((c for c in ["receiver_player_name","receiver_player_display_name"] if c in pdf.columns), None)
-            if rec_name_col:
-                pass_col = next((c for c in ["pass_attempt","pass"] if c in pdf.columns), None)
-                tgt_plays = pdf[pdf[rec_name_col].notna()]
-                if pass_col:
-                    tgt_plays = tgt_plays[tgt_plays[pass_col] == 1]
-                team_rz_tgt   = tgt_plays.groupby("posteam").size().to_dict()
-                player_rz_tgt = tgt_plays.groupby(rec_name_col).size().to_dict()
-            else:
-                team_rz_tgt, player_rz_tgt = {}, {}
-                print(f"[DELTA] No receiver name col in {season} PBP")
-
-            # RZ carries
-            rush_name_col = next((c for c in ["rusher_player_name","rusher_player_display_name"] if c in pdf.columns), None)
-            if rush_name_col:
-                rush_col = next((c for c in ["rush_attempt","rush"] if c in pdf.columns), None)
-                rush_plays = pdf[pdf[rush_name_col].notna()]
-                if rush_col:
-                    rush_plays = rush_plays[rush_plays[rush_col] == 1]
-                team_rz_car   = rush_plays.groupby("posteam").size().to_dict()
-                player_rz_car = rush_plays.groupby(rush_name_col).size().to_dict()
-            else:
-                team_rz_car, player_rz_car = {}, {}
-                print(f"[DELTA] No rusher name col in {season} PBP")
-
-            rz[season] = {
-                "player_rz_tgt": player_rz_tgt,
-                "player_rz_car": player_rz_car,
-                "team_rz_tgt":   team_rz_tgt,
-                "team_rz_car":   team_rz_car,
-            }
-            print(f"[DELTA] RZ {season}: {len(player_rz_tgt)} receivers, {len(player_rz_car)} rushers")
+            # Use the SHARED extractor (RZ inside-20 + GL inside-5) so this fallback path
+            # can never drift from the primary one.
+            _redzone_from_pbp(pdf, season, rz)
     except Exception as e:
         print(f"[DELTA] Red zone fetch failed: {e}")
     return rz
@@ -630,6 +613,22 @@ def build_output(agg, matched, rz_data=None, headshots=None):
                     return int(lookup_dict[abbr])
         return None  # None = not found, 0 = genuinely zero
 
+    def _share(player_dict, team_dict, nfl_name, row):
+        """Player's share of his TEAM's red-zone/goal-line opportunities that season.
+        Reuses _rz_lookup so the suffix-aware name matching (the 'M.Jr.' fix) applies here
+        too — otherwise suffixed players would silently get a 0 share instead of a real one.
+        """
+        cnt = _rz_lookup(player_dict, nfl_name)
+        if cnt is None:
+            return None
+        team = row.get("team") or row.get("recent_team") or row.get("posteam")
+        if not team:
+            return None
+        tot = team_dict.get(team)
+        if not tot:
+            return None
+        return round(float(cnt) / float(tot), 4)
+
     for delta_name, nfl_name in matched.items():
         rows = agg[agg["player_name"] == nfl_name]
         player_data = {}
@@ -658,6 +657,17 @@ def build_output(agg, matched, rz_data=None, headshots=None):
                 "air_yds_share": round(float(r.get("air_yds_share", 0)), 4),
                 "rz_targets":    _rz_lookup(rz.get("player_rz_tgt", {}), nfl_name),
                 "rz_carries":    _rz_lookup(rz.get("player_rz_car", {}), nfl_name),
+                # Goal line (inside 5) — the sharp TD-equity signal. Sticky (a coach-assigned
+                # role) where TDs themselves are noisy. Opportunity data only; not scored
+                # unless/until validation shows it adds lift beyond production.
+                "gl_targets":    _rz_lookup(rz.get("player_gl_tgt", {}), nfl_name),
+                "gl_carries":    _rz_lookup(rz.get("player_gl_car", {}), nfl_name),
+                # SHARES: 10 RZ targets on a 60-target team is a different player than 10 on
+                # a 120-target team. The team totals were already being computed and discarded.
+                "rz_tgt_share":  _share(rz.get("player_rz_tgt", {}), rz.get("team_rz_tgt", {}), nfl_name, r),
+                "rz_car_share":  _share(rz.get("player_rz_car", {}), rz.get("team_rz_car", {}), nfl_name, r),
+                "gl_tgt_share":  _share(rz.get("player_gl_tgt", {}), rz.get("team_gl_tgt", {}), nfl_name, r),
+                "gl_car_share":  _share(rz.get("player_gl_car", {}), rz.get("team_gl_car", {}), nfl_name, r),
             }
         players[delta_name] = player_data
 
