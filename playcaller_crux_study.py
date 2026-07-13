@@ -145,6 +145,13 @@ RIDGE = 0.05        # eigenvalue floor for the whitener, as a fraction of the me
 # Style profiling.  EVERY metric is computed on the neutral script.
 # --------------------------------------------------------------------------------------
 
+def active_metrics(use_ftn):
+    """Deterministic -- depends only on the flag, never on the data. Must be known BEFORE
+    profiling so profile() can reject a stint that cannot fill it."""
+    FTN = {"motion_rate", "play_action_rate"}
+    return [m for m in METRICS_EXPECTED if use_ftn or m not in FTN]
+
+
 def neutral_mask(df):
     """Early downs, one score, pre-Q4. Where a coach is choosing freely."""
     return (
@@ -170,7 +177,7 @@ def pace_table(pbp):
     return p[["game_id", "play_id", "sec_before_snap"]]
 
 
-def profile(plays, use_ftn=True):
+def profile(plays, metrics, use_ftn=True):
     """
     Style vector for one coach-stint. `plays` is that stint's plays, already filtered to
     regular-season run/pass with a posteam. `motion` is an optional per-play motion flag
@@ -235,6 +242,17 @@ def profile(plays, use_ftn=True):
         if k in ("adot", "sec_per_play") or pd.isna(v):
             continue
         assert -0.001 <= v <= 1.001, f"IMPOSSIBLE RATE {k}={v}. A rate above 1.0 does not exist."
+
+    # ---- A STINT THAT CANNOT BE PROFILED IS NOT EVIDENCE.
+    # v2.0 shipped with this hole and it cost the study its primary test. A short stint on a
+    # team that is getting blown out (TEN 2025: Callahan, weeks 1-3, 0-3) clears MIN_PLAYS and
+    # MIN_NEUTRAL, then starves a SUB-threshold (>=30 targets / >=30 air-yards / >=60 motion),
+    # and that metric returns np.nan. The old code returned the dict anyway. The NaN rode into
+    # the distance; `NaN < NaN` is False, so `pct` scored 0.000 -- the most anti-thesis value
+    # the statistic can take -- and `cohens_d` went NaN, which made the PASS gate False for
+    # ANY data. A crash was wearing a verdict's clothes.
+    if any(pd.isna(d[m]) for m in metrics):
+        return None
     return d
 
 
@@ -261,9 +279,11 @@ def build_style_table(pbp, PC, use_ftn=True):
                team "looked like last year" for C2's baseline model.
       STINT -- one style vector per (season, team, playcaller, week range).
     """
+    metrics = active_metrics(use_ftn)
+
     full_rows = []
     for (s, t), g in pbp.groupby(["season", "posteam"]):
-        pr = profile(g, use_ftn)
+        pr = profile(g, metrics, use_ftn)
         if pr:
             full_rows.append({"season": s, "team": t, **pr})
     FULL = pd.DataFrame(full_rows)
@@ -275,7 +295,7 @@ def build_style_table(pbp, PC, use_ftn=True):
             & (pbp["posteam"] == r["team"])
             & (pbp["week"].between(r["week_start"], r["week_end"]))
         ]
-        pr = profile(g, use_ftn)
+        pr = profile(g, metrics, use_ftn)
         if pr:
             stint_rows.append({
                 "season": r["season"], "team": r["team"], "playcaller": r["playcaller"],
@@ -283,9 +303,6 @@ def build_style_table(pbp, PC, use_ftn=True):
                 "is_primary": r["is_primary"], "split": r["split"], **pr,
             })
     STINT = pd.DataFrame(stint_rows)
-
-    FTN_METRICS = {"motion_rate", "play_action_rate"}
-    metrics = [m for m in METRICS_EXPECTED if use_ftn or m not in FTN_METRICS]
 
     # ---- THE ASSERTION v1 DID NOT HAVE.
     # v1 derived its metric list from whatever columns happened to survive an >80% coverage
@@ -385,6 +402,25 @@ def perm_p_meanpct(pcts, n=5000, rng=None):
     return ((null >= obs).sum() + 1) / (n + 1)
 
 
+
+
+def assert_finite(stat, name):
+    """A FAIL and a CRASH must never be indistinguishable.
+
+    v2.0's C1a returned FAIL because Cohen's d was NaN -- `NaN >= 0.50` is False, so the
+    PASS gate was False for any data whatsoever. The report said "C1a: FAIL. The founding
+    thesis is wrong." It had not tested anything. Never again: if a gate statistic is not
+    finite, the run DIES. Loudly.
+    """
+    for k in ("cohens_d", "p_perm", "mean_pct", "alpha", "oos_lift"):
+        if k in stat and not np.isfinite(stat[k]):
+            raise RuntimeError(
+                f"{name}: gate statistic '{k}' is {stat[k]}. A gate statistic cannot be NaN. "
+                f"Something upstream produced an unprofilable stint that was not excluded. "
+                f"FIX IT -- do not read the verdict, there isn't one."
+            )
+
+
 # --------------------------------------------------------------------------------------
 # C1a -- WITHIN-SEASON DISCONTINUITY  [PRIMARY]
 # --------------------------------------------------------------------------------------
@@ -403,7 +439,7 @@ def c1a_within_season(pbp, PC, FULL, metrics, scale, wh, use_ftn=True, rng=None)
     changes = PC[PC["split"] == "midseason"].groupby(["season", "team"])
     clean = PC[PC["split"] == "none"][["season", "team"]].drop_duplicates()
 
-    rows = []
+    rows, dropped = [], []
     for (s, t), g in changes:
         g = g.sort_values("week_start")
         if len(g) != 2:
@@ -413,10 +449,12 @@ def c1a_within_season(pbp, PC, FULL, metrics, scale, wh, use_ftn=True, rng=None)
 
         def half(team, w0, w1):
             sub = pbp[(pbp.season == s) & (pbp.posteam == team) & (pbp.week.between(w0, w1))]
-            return profile(sub, use_ftn)
+            return profile(sub, metrics, use_ftn)
 
         pa, pb = half(t, 1, cut), half(t, cut + 1, 18)
         if not pa or not pb:
+            dropped.append(f"{s} {t} (cut wk {cut}): a stint is too thin to profile on the "
+                           f"neutral script -- EXCLUDED, not scored")
             continue
         try:
             va = zvec({**pa, "season": s}, metrics, scale)
@@ -436,6 +474,7 @@ def c1a_within_season(pbp, PC, FULL, metrics, scale, wh, use_ftn=True, rng=None)
             plac.append(dist(zvec({**qa, "season": s}, metrics, scale),
                              zvec({**qb, "season": s}, metrics, scale), wh))
         if len(plac) < 8:
+            dropped.append(f"{s} {t} (cut wk {cut}): only {len(plac)} usable placebos -- EXCLUDED")
             continue
 
         rows.append({
@@ -448,6 +487,8 @@ def c1a_within_season(pbp, PC, FULL, metrics, scale, wh, use_ftn=True, rng=None)
             "_plac": plac,
         })
 
+    for msg in dropped:
+        print(f"  DROPPED  {msg}")
     R = pd.DataFrame(rows)
     if R.empty:
         return R, {}
@@ -462,6 +503,7 @@ def c1a_within_season(pbp, PC, FULL, metrics, scale, wh, use_ftn=True, rng=None)
         "p_perm": float(perm_p_meanpct(R["pct"].values, rng=rng)),
         "n_above_median": int((R["pct"] > 0.5).sum()),
     }
+    assert_finite(stat, "C1a")
     stat["PASS"] = bool(
         stat["mean_pct"] > 0.50 and stat["p_perm"] < 0.05 and stat["cohens_d"] >= 0.50
     )
@@ -500,6 +542,7 @@ def c1b_year_over_year(STINT, metrics, scale, wh, drop_blended=False, rng=None):
         "cohens_d": float(cohens_d(ch, sm)),
         "p_perm": float(perm_p_meandiff(ch, sm, rng=rng)),
     }
+    assert_finite(stat, "C1b")
     stat["PASS"] = bool(stat["cohens_d"] >= 0.50 and stat["p_perm"] < 0.05)
     return pd.DataFrame(rows), stat
 
@@ -613,6 +656,7 @@ def c2_portability(STINT, FULL, metrics, scale, wh, n_perm=5000, rng=None):
         "v1_carry_rate": carried,
         "per_dim_alpha": per_dim,
     }
+    assert_finite(stat, "C2")
     stat["PASS"] = bool(p_perm < 0.05 and a_hat >= 0.20)
     return M.drop(columns=["x_own", "x_tm", "y"]), stat
 
@@ -773,7 +817,8 @@ def main():
     if True:
         print(R1a[["season", "team", "cut_week", "from", "to",
                    "d_changed", "placebo_mean", "pct"]].to_string(index=False))
-        print(f"\n  changed-playcaller distance : {s1a['mean_d_changed']:.3f}")
+        print(f"\n  usable within-season changes: {s1a['n_changes']} of 13")
+        print(f"  changed-playcaller distance : {s1a['mean_d_changed']:.3f}")
         print(f"  same-coach placebo (matched): {s1a['mean_d_placebo']:.3f}")
         print(f"  mean percentile             : {s1a['mean_pct']:.3f}   (null = 0.500)")
         print(f"  above own placebo median    : {s1a['n_above_median']}/{s1a['n_changes']}")

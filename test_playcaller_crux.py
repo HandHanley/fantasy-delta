@@ -33,7 +33,7 @@ import pandas as pd
 
 # import the code that SHIPS
 from playcaller_crux_study import (
-    prepare, build_style_table, zscale, zvec, make_whitener,
+    prepare, build_style_table, zscale, zvec, make_whitener, profile, active_metrics,
     c1a_within_season, c1b_year_over_year, c2_portability,
     METRICS_EXPECTED, MIN_GAMES_FP,
 )
@@ -118,6 +118,63 @@ def run(rho, PC, seed=7):
     return s1a, s1b, s2
 
 
+
+def test_starved_stint():
+    """REGRESSION — the bug that cost v2.0 its primary test.
+
+    TEN 2025: Callahan called weeks 1-3, the Titans went 0-3 and got blown out. The neutral
+    script (early down, one score, pre-Q4) barely exists on a team that is always trailing.
+    The stint cleared MIN_PLAYS and MIN_NEUTRAL, then starved a sub-threshold, and profile()
+    handed back a dict with np.nan in it. The NaN rode into the distance. `NaN < NaN` is
+    False, so the percentile scored 0.000 -- the most anti-thesis value available -- and
+    Cohen's d went NaN, which made C1a's PASS gate False for ANY data.
+
+    The study printed "C1a: FAIL. The founding thesis is wrong." It had tested nothing.
+
+    A stint that cannot be profiled must be EXCLUDED, never scored.
+    """
+    from playcaller_crux_study import assert_finite
+    rng = np.random.default_rng(11)
+    metrics = active_metrics(True)
+
+    # a 3-week stint on a team that trails by 20 all day: plenty of plays, almost no neutral
+    rows, motion = [], []
+    pid = 0
+    for wk in (1, 2, 3):
+        gsr = 3600.0
+        for i in range(70):
+            pid += 1
+            gsr -= 25
+            trailing = i > 12           # buried by the 2nd quarter, every week
+            rows.append((
+                f"2025_{wk:02d}_TEN", pid, 2025, wk, "TEN", "REG", "pass",
+                int(rng.choice([1, 2, 3])), 4 if trailing else 1,
+                -24 if trailing else 0, gsr, i // 6, 1, 0, 1, 0, 9.0, "WR",
+            ))
+            motion.append(1.0)
+    cols = ["game_id", "play_id", "season", "week", "posteam", "season_type", "play_type",
+            "down", "qtr", "score_differential", "game_seconds_remaining", "drive",
+            "shotgun", "no_huddle", "qb_dropback", "play_action", "air_yards", "receiver_position"]
+    starved = prepare(pd.DataFrame(rows, columns=cols), pd.Series(motion))
+
+    got = profile(starved, metrics, use_ftn=True)
+    assert got is None, (
+        f"profile() returned a dict for a stint it cannot fill: "
+        f"{[m for m in metrics if pd.isna(got.get(m))] if got else ''}. "
+        f"It must return None. A NaN here becomes percentile 0.000 downstream."
+    )
+
+    # and a NaN can never reach a gate
+    try:
+        assert_finite({"cohens_d": np.nan, "p_perm": 0.01, "mean_pct": 0.7}, "C1a")
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("assert_finite let a NaN gate statistic through. "
+                             "A crash must never be reported as a FAIL.")
+    print("  regression: an unprofilable stint is EXCLUDED, and a NaN gate stat kills the run.  OK")
+
+
 def main():
     PC = pd.read_csv("playcallers.csv")
     PC = PC[PC.season.between(2022, 2025)]
@@ -131,6 +188,9 @@ def main():
           f"{PC.playcaller.nunique()} playcallers")
     print(f"generative model: style = base + T[team] + C[coach];  "
           f"expected alpha = rho^2/(1+rho^2)\n")
+
+    test_starved_stint()
+    print()
 
     fails = []
     print(f"{'rho':>5} {'exp a':>6} | {'C1a d':>7} {'C1a p':>7} {'C1a':>5} | "
