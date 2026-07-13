@@ -13,6 +13,7 @@ on:
         description: "Which study to run"
         type: choice
         options:
+          - "SCHEME SHIP GATE (does the scheme adjustment earn its place?)"
           - "playcaller CRUX (is scheme a coach property or a team property?)"
           - "scarcity FINAL (principled derivation + uncertainty bands)"
           - "scarcity METHOD SWEEP (diagnostic only — see notes)"
@@ -20,7 +21,7 @@ on:
           - "goal-line opportunity"
           - "TD% round 1 (TD% -> TD%)"
           - "TD% round 2 (TD% -> fantasy value)"
-        default: "playcaller CRUX (is scheme a coach property or a team property?)"
+        default: "SCHEME SHIP GATE (does the scheme adjustment earn its place?)"
 
       crux_seasons:
         description: "CRUX: season window. FTN charting starts in 2022 — going earlier requires --no-ftn."
@@ -77,6 +78,13 @@ jobs:
 
           # 2>&1 so tracebacks land in the report, not just the console log
           case "${{ inputs.study }}" in
+
+            "SCHEME SHIP GATE"*)
+              echo "=== SELF-TEST (synthetic data, known answer) ==="
+              python test_scheme_ship_gate.py 2>&1 | tee study/out/report_shipgate_selftest.txt
+              echo ""
+              echo "=== STUDY (real data) ==="
+              python scheme_ship_gate_study.py --seasons ${{ inputs.crux_seasons }} 2>&1 | tee study/out/report_scheme_ship_gate.txt ;;
 
             "playcaller CRUX"*)
               # SELF-TEST FIRST. It plants a known coach effect in synthetic play-by-play,
