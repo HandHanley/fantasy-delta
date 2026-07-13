@@ -13,13 +13,30 @@ on:
         description: "Which study to run"
         type: choice
         options:
+          - "playcaller CRUX (is scheme a coach property or a team property?)"
           - "scarcity FINAL (principled derivation + uncertainty bands)"
           - "scarcity METHOD SWEEP (diagnostic only — see notes)"
           - "scarcity curves (old fixed-method run)"
           - "goal-line opportunity"
           - "TD% round 1 (TD% -> TD%)"
           - "TD% round 2 (TD% -> fantasy value)"
-        default: "scarcity FINAL (principled derivation + uncertainty bands)"
+        default: "playcaller CRUX (is scheme a coach property or a team property?)"
+
+      crux_seasons:
+        description: "CRUX: season window. FTN charting starts in 2022 — going earlier requires --no-ftn."
+        default: "2022-2025"
+      crux_distance:
+        description: "CRUX: style distance. mahalanobis is the pre-registered run; euclidean is the v1 robustness check."
+        type: choice
+        options:
+          - "mahalanobis"
+          - "euclidean"
+        default: "mahalanobis"
+      crux_no_ftn:
+        description: "CRUX: drop play_action + motion (10 metrics, not 12). Frees the 2022 window floor."
+        type: boolean
+        default: false
+
       curve_seasons:
         description: "Window for the fixed-method curve study (ignored by the sweep)"
         default: "2021-2025"
@@ -30,7 +47,7 @@ on:
         description: "Fit on seasons <= this year (TD% / goal-line studies only)"
         default: "2022"
       inspect:
-        description: "Diagnostic: print available columns and exit"
+        description: "Diagnostic: print available columns and exit (TD% / goal-line / scarcity only)"
         type: boolean
         default: false
 
@@ -54,8 +71,26 @@ jobs:
           set -o pipefail
           FLAGS=""
           if [ "${{ inputs.inspect }}" = "true" ]; then FLAGS="--inspect"; fi
+
+          CRUX_FLAGS="--seasons ${{ inputs.crux_seasons }} --distance ${{ inputs.crux_distance }}"
+          if [ "${{ inputs.crux_no_ftn }}" = "true" ]; then CRUX_FLAGS="$CRUX_FLAGS --no-ftn"; fi
+
           # 2>&1 so tracebacks land in the report, not just the console log
           case "${{ inputs.study }}" in
+
+            "playcaller CRUX"*)
+              # SELF-TEST FIRST. It plants a known coach effect in synthetic play-by-play,
+              # runs it through the REAL playcallers.csv design, and asserts the study
+              # recovers what was planted. `set -e` + pipefail mean a failure here aborts
+              # the step and THE STUDY NEVER RUNS — which is the entire point. Better to
+              # die on synthetic data in 30 seconds than to publish a confident wrong
+              # verdict on real data.
+              echo "=== SELF-TEST (synthetic data, known answer) ==="
+              python test_playcaller_crux.py 2>&1 | tee study/out/report_crux_selftest.txt
+              echo ""
+              echo "=== STUDY (real data) ==="
+              python playcaller_crux_study.py $CRUX_FLAGS 2>&1 | tee study/out/report_playcaller_crux.txt ;;
+
             "scarcity FINAL"*)
               python derive_scarcity_final.py 2>&1 | tee study/out/report_scarcity_final.txt ;;
             "scarcity METHOD SWEEP"*)
