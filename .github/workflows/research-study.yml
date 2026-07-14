@@ -25,7 +25,7 @@ on:
 
       crux_seasons:
         description: "CRUX: season window. FTN charting starts in 2022 — going earlier requires --no-ftn."
-        default: "2022-2025"
+        default: "2017-2025"
       crux_distance:
         description: "CRUX: style distance. mahalanobis is the pre-registered run; euclidean is the v1 robustness check."
         type: choice
@@ -34,9 +34,9 @@ on:
           - "euclidean"
         default: "mahalanobis"
       crux_no_ftn:
-        description: "CRUX: drop play_action + motion (10 metrics, not 12). Frees the 2022 window floor."
+        description: "Drop play_action + motion (10 metrics, not 12). REQUIRED for any window starting before 2022 — FTN charting does not exist before 2022."
         type: boolean
-        default: false
+        default: true
 
       curve_seasons:
         description: "Window for the fixed-method curve study (ignored by the sweep)"
@@ -73,8 +73,9 @@ jobs:
           FLAGS=""
           if [ "${{ inputs.inspect }}" = "true" ]; then FLAGS="--inspect"; fi
 
-          CRUX_FLAGS="--seasons ${{ inputs.crux_seasons }} --distance ${{ inputs.crux_distance }}"
-          if [ "${{ inputs.crux_no_ftn }}" = "true" ]; then CRUX_FLAGS="$CRUX_FLAGS --no-ftn"; fi
+          CRUX_FTN=""
+          if [ "${{ inputs.crux_no_ftn }}" = "true" ]; then CRUX_FTN="--no-ftn"; fi
+          CRUX_FLAGS="--seasons ${{ inputs.crux_seasons }} --distance ${{ inputs.crux_distance }} $CRUX_FTN"
 
           # 2>&1 so tracebacks land in the report, not just the console log
           case "${{ inputs.study }}" in
@@ -84,7 +85,7 @@ jobs:
               python test_scheme_ship_gate.py 2>&1 | tee study/out/report_shipgate_selftest.txt
               echo ""
               echo "=== STUDY (real data) ==="
-              python scheme_ship_gate_study.py --seasons ${{ inputs.crux_seasons }} 2>&1 | tee study/out/report_scheme_ship_gate.txt ;;
+              python scheme_ship_gate_study.py --seasons ${{ inputs.crux_seasons }} $CRUX_FTN 2>&1 | tee study/out/report_scheme_ship_gate.txt ;;
 
             "playcaller CRUX"*)
               # SELF-TEST FIRST. It plants a known coach effect in synthetic play-by-play,
