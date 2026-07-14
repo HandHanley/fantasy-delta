@@ -146,12 +146,38 @@ MIN_GAMES = 8
 # DELTA's scoring, transcribed from gamefp() in delta-engine.js
 # --------------------------------------------------------------------------------------
 
+SCORING_COLS = [
+    "passing_yards", "passing_tds", "passing_interceptions",
+    "rushing_yards", "rushing_tds", "receptions", "receiving_yards", "receiving_tds",
+    "rushing_fumbles_lost", "receiving_fumbles_lost", "sack_fumbles_lost",
+    "passing_2pt_conversions", "rushing_2pt_conversions", "receiving_2pt_conversions",
+    "special_teams_tds",
+]
+
+
 def gamefp(df, pos):
-    """half_tep: 0.5/reception, +0.5 more for TE. QBs get nothing for receptions."""
+    """half_tep: 0.5/reception, +0.5 more for TE. QBs get nothing for receptions.
+
+    A MISSING COLUMN IS A CRASH, NOT A ZERO.
+    The first draft used df.get(c, 0), which quietly hands back the number 0 when a column
+    is absent. The nflverse column is `passing_interceptions`, not `interceptions` -- so
+    that draft would have scored EVERY QB with ZERO interceptions. Every QB's fantasy points
+    inflated by ~4 a season, silently, and the study would have run to a confident verdict.
+
+    It only crashed by luck (an int has no .fillna). Same disease as the FTN play_action
+    hole: a wrong column name that degrades into a plausible-looking number instead of an
+    error. Never default a missing input to zero.
+    """
+    missing = [c for c in SCORING_COLS if c not in df.columns]
+    assert not missing, (
+        f"scoring columns absent from nflverse player_stats: {missing}. "
+        f"A missing column must NEVER default to 0 -- that silently rescores every player. "
+        f"Fix the names against the schema before proceeding."
+    )
     rec_pts = 1.0 if pos == "TE" else (0.0 if pos == "QB" else 0.5)
-    g = lambda c: pd.to_numeric(df.get(c, 0), errors="coerce").fillna(0)
+    g = lambda c: pd.to_numeric(df[c], errors="coerce").fillna(0)
     return (
-        g("passing_yards") * 0.04 + g("passing_tds") * 4 + g("interceptions") * -2
+        g("passing_yards") * 0.04 + g("passing_tds") * 4 + g("passing_interceptions") * -2
         + g("rushing_yards") * 0.1 + g("rushing_tds") * 6
         + g("receptions") * rec_pts + g("receiving_yards") * 0.1 + g("receiving_tds") * 6
         + (g("rushing_fumbles_lost") + g("receiving_fumbles_lost") + g("sack_fumbles_lost")) * -2
@@ -175,7 +201,9 @@ def build_panel(seasons):
         m = ws["position"].eq(pos)
         ws.loc[m, "fp"] = gamefp(ws[m], pos)
 
-    num = lambda c: pd.to_numeric(ws.get(c, 0), errors="coerce").fillna(0)
+    for c in ("attempts", "carries", "targets"):
+        assert c in ws.columns, f"volume column '{c}' missing from player_stats"
+    num = lambda c: pd.to_numeric(ws[c], errors="coerce").fillna(0)
     ws["volume"] = num("attempts") + num("carries") + num("targets")
 
     # DELTA's DNP rule (locked): a game counts if he took >= 1 offensive snap. nflverse only
@@ -364,6 +392,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seasons", default="2022-2025")
     ap.add_argument("--permutations", type=int, default=2000)
+    ap.add_argument("--no-ftn", action="store_true",
+                    help="REQUIRED for any window starting before 2022 -- FTN charting only "
+                         "exists 2022+ and nflreadpy raises otherwise. Drops play_action + motion.")
     a = ap.parse_args()
 
     print(PREREG)
@@ -371,10 +402,13 @@ def main():
     seasons = list(range(lo, hi + 1))
     rng = np.random.default_rng(20260713)
 
-    print(f"seasons {lo}-{hi}")
-    pbp, PC, motion = load_crux(seasons, use_ftn=True)
+    print(f"seasons {lo}-{hi} | FTN={'ON' if not a.no_ftn else 'OFF'}")
+    use_ftn = not a.no_ftn
+    if lo < 2022 and use_ftn:
+        sys.exit("ABORT: FTN charting starts in 2022. Re-run with --no-ftn for a pre-2022 window.")
+    pbp, PC, motion = load_crux(seasons, use_ftn=use_ftn)
     pbp = prepare(pbp, motion)
-    FULL, STINT, metrics = build_style_table(pbp, PC, use_ftn=True)
+    FULL, STINT, metrics = build_style_table(pbp, PC, use_ftn=use_ftn)
     scale = zscale(FULL, metrics)
 
     P = build_panel(seasons)

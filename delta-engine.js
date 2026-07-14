@@ -612,18 +612,18 @@ const COMP_EXEMPT=new Set([
 const SYS={
   ARI:{s:55,c:.35,oc:'LaFleur',ch:true},ATL:{s:48,c:.35,oc:'Rees',ch:true},
   BAL:{s:44,c:.20,oc:'Doyle',ch:true},BUF:{s:68,c:.75,oc:'Brady',ch:false},
-  CAR:{s:62,c:.75,oc:'Canales',ch:false},CHI:{s:71,c:.75,oc:'B.Johnson',ch:false},
+  CAR:{s:62,c:.75,oc:'Idzik',ch:true},CHI:{s:71,c:.75,oc:'B.Johnson',ch:false},
   CIN:{s:78,c:1.0,oc:'Taylor',ch:false},CLE:{s:46,c:.20,oc:'Monken',ch:true},
-  DAL:{s:65,c:.75,oc:'Schotty',ch:false},DEN:{s:72,c:1.0,oc:'Payton',ch:false},
-  DET:{s:66,c:.75,oc:'Petzing',ch:false},GB:{s:67,c:1.0,oc:'LaFleur',ch:false},
+  DAL:{s:65,c:.75,oc:'Schotty',ch:false},DEN:{s:72,c:1.0,oc:'Webb',ch:true},
+  DET:{s:66,c:.75,oc:'Petzing',ch:true},GB:{s:67,c:1.0,oc:'LaFleur',ch:false},
   HOU:{s:64,c:.75,oc:'Caley',ch:false},IND:{s:63,c:1.0,oc:'Steichen',ch:false},
   JAC:{s:60,c:.75,oc:'Coen',ch:false},KC:{s:72,c:1.0,oc:'Reid',ch:false},
-  LV:{s:51,c:.20,oc:'Janocko',ch:true},LAC:{s:62,c:.20,oc:'McDaniel',ch:true},
+  LV:{s:51,c:.20,oc:'Kubiak',ch:true},LAC:{s:62,c:.20,oc:'McDaniel',ch:true},
   LAR:{s:74,c:1.0,oc:'McVay',ch:false},MIA:{s:40,c:.20,oc:'Slowik',ch:true},
   MIN:{s:72,c:1.0,oc:"O'Connell",ch:false},NE:{s:55,c:.75,oc:'McDaniels',ch:false},
   NO:{s:61,c:.75,oc:'Moore',ch:false},NYG:{s:50,c:.20,oc:'Nagy',ch:true},
   NYJ:{s:44,c:.20,oc:'Reich',ch:true},PHI:{s:49,c:.20,oc:'Mannion',ch:true},
-  PIT:{s:55,c:.20,oc:'Angelichio',ch:true},SF:{s:73,c:1.0,oc:'Shanahan',ch:false},
+  PIT:{s:55,c:.20,oc:'McCarthy',ch:true},SF:{s:73,c:1.0,oc:'Shanahan',ch:false},
   SEA:{s:55,c:.20,oc:'Fleury',ch:true},TB:{s:55,c:.20,oc:'Robinson',ch:true},
   TEN:{s:58,c:.35,oc:'Daboll',ch:true},WAS:{s:55,c:.35,oc:'Blough',ch:true},
   FA:{s:50,c:.20,oc:'Unknown',ch:true}
@@ -1958,8 +1958,11 @@ function styleFactors(name,pos,team){
     }
   }
   if(out.total!==0){
-    const tc=(typeof gs==='function'&&gs(team)&&gs(team).c!=null)?gs(team).c:0.95;
-    if(tc<0.70){out.total*=0.4;out.parts.forEach(p=>p.pct*=0.4);out.scaled=true;}
+    // Trigger on the FACT (ch = did the playcaller change?), not on the continuity SCORE.
+    // `c` also sets dOc, so `c<0.70` conflated the trigger with the penalty size -- you could
+    // not correct one without firing the other. `ch` is the boolean built for exactly this.
+    const tch=(typeof gs==='function'&&gs(team))?!!gs(team).ch:false;
+    if(tch){out.total*=0.4;out.parts.forEach(p=>p.pct*=0.4);out.scaled=true;}
     out.total=Math.max(-0.06,Math.min(0.06,out.total));
   }
   return out;
