@@ -1921,6 +1921,7 @@ function glTag(n){
 // recompute terciles). Style is the COORDINATOR'S property: teams with an OC
 // change get the adjustment scaled ×0.4 toward neutral.
 const PC_FINGERPRINT={"ARI":{"pc":"Mike LaFleur","yrs":1,"d":{"moti":{"v":47.3,"p":19},"pa_p":{"v":17.6,"p":9},"proe":{"v":-2.7,"p":47},"pass":{"v":64.5,"p":88},"two_":{"v":16.9,"p":50},"te2":{"v":51.2,"p":91},"play":{"v":64.9,"p":62},"adot":{"v":8.2,"p":75}}},"ATL":{"pc":"Tommy Rees","yrs":1,"d":{"moti":{"v":49.4,"p":22},"pa_p":{"v":22.0,"p":31},"proe":{"v":-3.2,"p":38},"pass":{"v":63.2,"p":72},"two_":{"v":12.2,"p":16},"te2":{"v":56.5,"p":97},"play":{"v":63.4,"p":44},"adot":{"v":6.8,"p":12}}},"BUF":{"pc":"Joe Brady","yrs":2,"d":{"moti":{"v":55.7,"p":59},"pa_p":{"v":21.9,"p":28},"proe":{"v":-2.5,"p":47},"pass":{"v":57.3,"p":16},"two_":{"v":18.9,"p":53},"te2":{"v":46.8,"p":62},"play":{"v":63.8,"p":50},"adot":{"v":7.8,"p":44}}},"CHI":{"pc":"Ben Johnson","yrs":4,"d":{"moti":{"v":53.9,"p":53},"pa_p":{"v":29.2,"p":94},"proe":{"v":-2.9,"p":44},"pass":{"v":57.8,"p":19},"two_":{"v":18.4,"p":53},"te2":{"v":45.0,"p":56},"play":{"v":66.8,"p":88},"adot":{"v":7.2,"p":28}}},"CIN":{"pc":"Zac Taylor","yrs":4,"d":{"moti":{"v":39.8,"p":3},"pa_p":{"v":15.8,"p":3},"proe":{"v":6.4,"p":100},"pass":{"v":67.5,"p":97},"two_":{"v":10.1,"p":0},"te2":{"v":39.8,"p":31},"play":{"v":65.1,"p":69},"adot":{"v":6.9,"p":16}}},"CLE":{"pc":"Todd Monken","yrs":3,"d":{"moti":{"v":49.0,"p":19},"pa_p":{"v":22.2,"p":34},"proe":{"v":-5.0,"p":19},"pass":{"v":54.9,"p":6},"two_":{"v":22.4,"p":78},"te2":{"v":44.8,"p":56},"play":{"v":62.7,"p":44},"adot":{"v":8.4,"p":75}}},"DAL":{"pc":"Brian Schottenheimer","yrs":1,"d":{"moti":{"v":58.8,"p":66},"pa_p":{"v":26.8,"p":84},"proe":{"v":-0.2,"p":72},"pass":{"v":63.1,"p":69},"two_":{"v":22.0,"p":75},"te2":{"v":33.1,"p":3},"play":{"v":68.6,"p":97},"adot":{"v":8.2,"p":62}}},"DET":{"pc":"Drew Petzing","yrs":3,"d":{"moti":{"v":37.8,"p":0},"pa_p":{"v":24.1,"p":53},"proe":{"v":-1.1,"p":56},"pass":{"v":63.5,"p":81},"two_":{"v":11.9,"p":12},"te2":{"v":43.2,"p":50},"play":{"v":65.5,"p":72},"adot":{"v":7.2,"p":25}}},"GB":{"pc":"Matt LaFleur","yrs":4,"d":{"moti":{"v":52.8,"p":38},"pa_p":{"v":24.0,"p":53},"proe":{"v":-3.4,"p":28},"pass":{"v":57.5,"p":19},"two_":{"v":19.2,"p":59},"te2":{"v":36.5,"p":19},"play":{"v":62.6,"p":44},"adot":{"v":8.5,"p":75}}},"HOU":{"pc":"Nick Caley","yrs":1,"d":{"moti":{"v":53.5,"p":47},"pa_p":{"v":22.8,"p":47},"proe":{"v":-0.4,"p":66},"pass":{"v":60.8,"p":47},"two_":{"v":21.0,"p":66},"te2":{"v":35.5,"p":16},"play":{"v":67.3,"p":94},"adot":{"v":8.2,"p":72}}},"IND":{"pc":"Shane Steichen","yrs":4,"d":{"moti":{"v":39.1,"p":3},"pa_p":{"v":24.0,"p":53},"proe":{"v":-3.0,"p":44},"pass":{"v":58.6,"p":22},"two_":{"v":9.6,"p":0},"te2":{"v":39.8,"p":31},"play":{"v":65.0,"p":66},"adot":{"v":8.6,"p":78}}},"JAC":{"pc":"Liam Coen","yrs":2,"d":{"moti":{"v":54.6,"p":56},"pa_p":{"v":20.1,"p":25},"proe":{"v":1.1,"p":78},"pass":{"v":61.0,"p":53},"two_":{"v":19.8,"p":59},"te2":{"v":32.0,"p":3},"play":{"v":66.3,"p":84},"adot":{"v":7.8,"p":50}}},"KC":{"pc":"Andy Reid","yrs":4,"d":{"moti":{"v":53.9,"p":53},"pa_p":{"v":17.3,"p":9},"proe":{"v":7.1,"p":100},"pass":{"v":66.8,"p":94},"two_":{"v":11.3,"p":9},"te2":{"v":51.9,"p":91},"play":{"v":65.5,"p":72},"adot":{"v":7.0,"p":19}}},"LAC":{"pc":"Mike McDaniel","yrs":4,"d":{"moti":{"v":73.3,"p":100},"pa_p":{"v":27.3,"p":88},"proe":{"v":-1.6,"p":56},"pass":{"v":60.7,"p":47},"two_":{"v":32.3,"p":97},"te2":{"v":38.3,"p":22},"play":{"v":62.1,"p":38},"adot":{"v":7.5,"p":41}}},"LAR":{"pc":"Sean McVay","yrs":4,"d":{"moti":{"v":62.1,"p":84},"pa_p":{"v":27.5,"p":91},"proe":{"v":-1.2,"p":56},"pass":{"v":60.1,"p":44},"two_":{"v":22.5,"p":78},"te2":{"v":29.2,"p":0},"play":{"v":63.7,"p":50},"adot":{"v":7.8,"p":50}}},"LV":{"pc":"Klint Kubiak","yrs":2,"d":{"moti":{"v":53.6,"p":53},"pa_p":{"v":22.8,"p":44},"proe":{"v":-5.4,"p":12},"pass":{"v":56.9,"p":12},"two_":{"v":27.1,"p":94},"te2":{"v":50.5,"p":84},"play":{"v":62.4,"p":38},"adot":{"v":8.0,"p":53}}},"MIA":{"pc":"Bobby Slowik","yrs":2,"d":{"moti":{"v":53.5,"p":50},"pa_p":{"v":22.6,"p":44},"proe":{"v":-0.5,"p":62},"pass":{"v":63.0,"p":69},"two_":{"v":22.5,"p":78},"te2":{"v":37.9,"p":22},"play":{"v":65.2,"p":69},"adot":{"v":8.5,"p":75}}},"MIN":{"pc":"Kevin O'Connell","yrs":4,"d":{"moti":{"v":46.9,"p":16},"pa_p":{"v":27.4,"p":91},"proe":{"v":2.5,"p":88},"pass":{"v":64.4,"p":88},"two_":{"v":19.3,"p":59},"te2":{"v":42.4,"p":47},"play":{"v":63.9,"p":50},"adot":{"v":7.9,"p":53}}},"NE":{"pc":"Josh McDaniels","yrs":2,"d":{"moti":{"v":44.1,"p":9},"pa_p":{"v":22.4,"p":44},"proe":{"v":-0.2,"p":72},"pass":{"v":61.7,"p":66},"two_":{"v":27.4,"p":94},"te2":{"v":36.0,"p":19},"play":{"v":63.5,"p":47},"adot":{"v":9.2,"p":97}}},"NO":{"pc":"Kellen Moore","yrs":4,"d":{"moti":{"v":50.4,"p":25},"pa_p":{"v":21.5,"p":25},"proe":{"v":-3.6,"p":25},"pass":{"v":58.8,"p":22},"two_":{"v":13.6,"p":25},"te2":{"v":40.1,"p":31},"play":{"v":66.6,"p":88},"adot":{"v":7.9,"p":50}}},"NYJ":{"pc":"Frank Reich","yrs":2,"d":{"moti":{"v":28.7,"p":0},"pa_p":{"v":14.8,"p":0},"proe":{"v":-4.2,"p":22},"pass":{"v":63.2,"p":72},"two_":{"v":7.8,"p":0},"te2":{"v":38.0,"p":22},"play":{"v":67.1,"p":88},"adot":{"v":7.0,"p":19}}},"PIT":{"pc":"Mike McCarthy","yrs":2,"d":{"moti":{"v":44.2,"p":9},"pa_p":{"v":21.2,"p":25},"proe":{"v":1.0,"p":78},"pass":{"v":63.4,"p":81},"two_":{"v":15.3,"p":41},"te2":{"v":34.3,"p":12},"play":{"v":68.2,"p":97},"adot":{"v":7.6,"p":41}}},"SF":{"pc":"Kyle Shanahan","yrs":4,"d":{"moti":{"v":64.1,"p":88},"pa_p":{"v":20.3,"p":25},"proe":{"v":-2.2,"p":50},"pass":{"v":57.4,"p":16},"two_":{"v":26.5,"p":91},"te2":{"v":28.3,"p":0},"play":{"v":63.0,"p":44},"adot":{"v":7.8,"p":47}}},"TB":{"pc":"Zac Robinson","yrs":2,"d":{"moti":{"v":64.9,"p":91},"pa_p":{"v":17.1,"p":9},"proe":{"v":-6.5,"p":6},"pass":{"v":56.9,"p":12},"two_":{"v":15.6,"p":47},"te2":{"v":44.6,"p":56},"play":{"v":64.9,"p":62},"adot":{"v":7.9,"p":50}}},"TEN":{"pc":"Brian Daboll","yrs":1,"d":{"moti":{"v":41.6,"p":3},"pa_p":{"v":22.9,"p":50},"proe":{"v":-2.5,"p":47},"pass":{"v":64.8,"p":88},"two_":{"v":13.1,"p":22},"te2":{"v":31.4,"p":3},"play":{"v":64.9,"p":62},"adot":{"v":6.9,"p":16}}}};
+const VET_NO_FTN={"NYG":"Matt Nagy"};
 const STYLE_2025={'ARI':{m:-1,t2:0,pr:1},'ATL':{m:1,t2:1,pr:-1},'BAL':{m:0,t2:1,pr:-1},'BUF':{m:1,t2:0,pr:-1},'CAR':{m:-1,t2:0,pr:-1},'CHI':{m:0,t2:1,pr:0},'CIN':{m:0,t2:0,pr:1},'CLE':{m:-1,t2:1,pr:0},'DAL':{m:0,t2:-1,pr:1},'DEN':{m:-1,t2:0,pr:1},'DET':{m:1,t2:0,pr:-1},'GB':{m:0,t2:-1,pr:-1},'HOU':{m:0,t2:-1,pr:0},'IND':{m:0,t2:-1,pr:0},'JAC':{m:1,t2:-1,pr:1},'KC':{m:-1,t2:1,pr:1},'LAC':{m:0,t2:-1,pr:1},'LAR':{m:1,t2:1,pr:1},'LV':{m:-1,t2:0,pr:0},'MIA':{m:1,t2:0,pr:-1},'MIN':{m:-1,t2:0,pr:0},'NE':{m:0,t2:1,pr:1},'NO':{m:1,t2:-1,pr:0},'NYG':{m:-1,t2:0,pr:-1},'NYJ':{m:1,t2:0,pr:-1},'PHI':{m:-1,t2:-1,pr:0},'PIT':{m:0,t2:1,pr:1},'SEA':{m:0,t2:0,pr:-1},'SF':{m:1,t2:-1,pr:0},'TB':{m:1,t2:-1,pr:0},'TEN':{m:-1,t2:1,pr:0},'WAS':{m:0,t2:1,pr:0}};
 let __styleRoleMemo=null;
 function styleRole(name,team,pos){
@@ -4124,11 +4125,19 @@ function buildSchemeHTML(p){
   var fp = (typeof PC_FINGERPRINT!=='undefined') ? PC_FINGERPRINT[team] : null;
   if(!fp){
     var oc0 = (typeof SYS!=='undefined' && SYS[team]) ? SYS[team].oc : '';
+    var vet = (typeof VET_NO_FTN!=='undefined') ? VET_NO_FTN[team] : null;
+    var msg;
+    if(vet){
+      msg = '<b>'+vet+'</b> last called plays before our charting data begins (2022), so there\'s no '
+          + 'recent book to profile. Tendencies will populate once the offense has games on tape under him.';
+    } else {
+      msg = (oc0?'<b>'+oc0+'</b> is':'The playcaller is')
+          + ' calling plays for the first time — no established book yet. '
+          + 'Tendencies will populate once the offense has games on tape.';
+    }
     return '<div>'
       +'<div style="font-size:11px;color:#CDD9E5;font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>'
-      +'<div style="font-size:10px;color:#8CA0B3;line-height:1.5">'
-      +(oc0?'<b>'+oc0+'</b> is calling plays for the first time'+'':'A first-time playcaller is in charge')
-      +' — no charted book yet. Tendencies will populate once the offense has games on tape.</div></div>';
+      +'<div style="font-size:10px;color:#8CA0B3;line-height:1.5">'+msg+'</div></div>';
   }
   var d = fp.d, coach = fp.pc, color = '#2DD4BF';
 
@@ -4156,11 +4165,16 @@ function buildSchemeHTML(p){
     +rings+spokes+poly+dots+labels+'</svg>';
 
   // ---- bars: all 8 ----
-  var BARS = [['Pre-snap motion','moti','A McVay/Shanahan signature'],['Play-action','pa_p',''],
-              ['Pass rate over expected (PROE)','proe','Positive = throws more than the situation demands'],
-              ['12-personnel (2-TE)','te2','High = more two-TE looks, squeezes the WR3'],
-              ['Two-back sets','two_',''],['Pace (plays/game)','play',''],
-              ['11-personnel pass lean','pass',''],['Air yards (aDOT)','adot','']];
+  var BARS = [
+    ['Pre-snap motion','moti','How often a man is moving at the snap — used to read coverage and create leverage'],
+    ['Play-action','pa_p','Share of dropbacks with a fake handoff to freeze the defense'],
+    ['Pass rate over expected (PROE)','proe','Positive = passes more than a typical team would in the same spots'],
+    ['12-personnel (2-TE)','te2','How often two tight ends are on the field — heavier looks that squeeze the WR3'],
+    ['Two-back sets','two_','How often two running backs share the field — a run-game / play-action tell'],
+    ['Pace (plays/game)','play','Total offensive snaps per game — higher = faster, more volume for everyone'],
+    ['11-personnel pass lean','pass','Overall pass rate — how pass-heavy the offense is'],
+    ['Air yards (aDOT)','adot','Average depth of target — how far downfield the ball travels on throws']
+  ];
   function bar(label, cell, hint){
     if(!cell) return '';
     var pc = cell.p, v = cell.v, clr = pc>=67?'#2DD4BF':pc>=34?'#6BB6E0':'#5C7080';
