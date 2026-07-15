@@ -34,7 +34,7 @@ tr:hover td{background:var(--panel)}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
   /* tooltips: fixed bottom sheet — the hover bubble crops at screen edges */
-  [data-tip]::after{position:fixed;left:12px;right:12px;top:auto;bottom:12px;width:auto;max-width:none;transform:none}
+  [data-tip]::after{position:fixed;left:12px;right:12px;top:auto;bottom:12px;width:auto;max-width:none;transform:none;z-index:99999;box-shadow:0 0 0 100vmax rgba(0,0,0,.55),0 10px 40px rgba(0,0,0,.9);font-size:13px;padding:14px 16px}
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -785,7 +785,7 @@ function renderRankings(){
     <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}<span class="bar-wrap"><span class="bar-fill" style="width:${Math.min(100,p.proj/25*100).toFixed(0)}%;background:${barColor(p.sys)}"></span></span></td>
+    <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
@@ -3691,5 +3691,29 @@ if (document.readyState === 'complete') {
 
 
 
+
+<script>
+/* Mobile column-header tooltips: tap toggles a readable sheet; tap-away closes.
+   The CSS ::after only fires on :hover, which phones do not have. */
+(function(){
+  function isTouch(){ return window.matchMedia && window.matchMedia('(hover: none)').matches; }
+  document.addEventListener('click', function(e){
+    var th = e.target.closest('[data-tip]');
+    // close any open tip when tapping elsewhere
+    document.querySelectorAll('[data-tip].tip-show').forEach(function(el){ if(el!==th) el.classList.remove('tip-show'); });
+    if(!th || !isTouch()) return;
+    if(!th.classList.contains('tip-show')){
+      // first tap: show the tip, do NOT sort
+      e.stopPropagation(); e.preventDefault();
+      th.classList.add('tip-show');
+      // auto-dismiss after 4s
+      setTimeout(function(){ th.classList.remove('tip-show'); }, 4000);
+    } else {
+      // second tap on the same header: hide, and let the sort through
+      th.classList.remove('tip-show');
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

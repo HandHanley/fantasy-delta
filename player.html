@@ -182,7 +182,7 @@ function buildHeroHTML(p) {
       ${bgLine}
       <div class="hero-verdict">
         <span class="verdict-badge" style="color:${vc}">${vt}</span>
-        <span class="hero-vals">Mkt ${p.ktcEff.toLocaleString()} · Model ${mv >= 19999 ? '19,999+' : mv.toLocaleString()} · Proj ${adjP.toFixed(1)} PPG</span>
+        <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>
       </div>
     </div>
   </div>`;
@@ -736,6 +736,14 @@ function buildComparableHTML(p) {
 
 // ── Main render ───────────────────────────────────────────────────────────────
 function renderPlayerPage(p) {
+  try { _renderPlayerPage(p); }
+  catch(e){
+    // A single bad field must never blank the whole page. Show what we can + the error.
+    console.error('render error:', e);
+    showError('Some sections could not render for this player. ' + (e.message||''));
+  }
+}
+function _renderPlayerPage(p) {
   ensureScoutData().then(() => {
     const el = document.getElementById('scout-text');
     if (el) {
