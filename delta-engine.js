@@ -1920,7 +1920,7 @@ function glTag(n){
 // data/style-rates.json — REGENERATE each offseason (rerun the fetch workflow,
 // recompute terciles). Style is the COORDINATOR'S property: teams with an OC
 // change get the adjustment scaled ×0.4 toward neutral.
-const STYLE_RAW={"ARI":{"moti":{"v":43.6,"p":6},"pa_p":{"v":24.6,"p":59},"proe":{"v":4.2,"p":94},"pass":{"v":69.9,"p":97},"no_h":{"v":12.0,"p":81},"two_":{"v":11.0,"p":6},"te2":{"v":46.4,"p":56},"adot":{"v":7.2,"p":25},"play":{"v":66.6,"p":84}},"ATL":{"moti":{"v":67.0,"p":91},"pa_p":{"v":20.0,"p":22},"proe":{"v":-5.6,"p":9},"pass":{"v":57.2,"p":12},"no_h":{"v":11.2,"p":75},"two_":{"v":15.4,"p":41},"te2":{"v":50.6,"p":84},"adot":{"v":7.7,"p":41},"play":{"v":63.5,"p":47}},"BAL":{"moti":{"v":53.6,"p":50},"pa_p":{"v":22.3,"p":41},"proe":{"v":-8.2,"p":3},"pass":{"v":53.6,"p":3},"no_h":{"v":2.9,"p":9},"two_":{"v":28.1,"p":94},"te2":{"v":54.4,"p":91},"adot":{"v":8.2,"p":62},"play":{"v":58.5,"p":9}},"BUF":{"moti":{"v":60.4,"p":75},"pa_p":{"v":25.6,"p":78},"proe":{"v":-3.3,"p":28},"pass":{"v":56.1,"p":6},"no_h":{"v":6.2,"p":38},"two_":{"v":26.5,"p":91},"te2":{"v":46.4,"p":59},"adot":{"v":7.3,"p":28},"play":{"v":65.1,"p":66}},"CAR":{"moti":{"v":42.2,"p":3},"pa_p":{"v":21.9,"p":28},"proe":{"v":-5.3,"p":12},"pass":{"v":59.7,"p":28},"no_h":{"v":5.9,"p":31},"two_":{"v":12.3,"p":19},"te2":{"v":47.7,"p":62},"adot":{"v":6.7,"p":9},"play":{"v":61.2,"p":25}},"CHI":{"moti":{"v":57.6,"p":62},"pa_p":{"v":31.5,"p":94},"proe":{"v":-3.3,"p":31},"pass":{"v":59.7,"p":38},"no_h":{"v":4.9,"p":25},"two_":{"v":18.0,"p":50},"te2":{"v":56.0,"p":94},"adot":{"v":8.7,"p":81},"play":{"v":67.1,"p":88}},"CIN":{"moti":{"v":53.1,"p":41},"pa_p":{"v":15.9,"p":3},"proe":{"v":2.1,"p":81},"pass":{"v":66.2,"p":91},"no_h":{"v":2.6,"p":6},"two_":{"v":14.8,"p":25},"te2":{"v":42.9,"p":47},"adot":{"v":7.4,"p":34},"play":{"v":64.5,"p":53}},"CLE":{"moti":{"v":49.4,"p":22},"pa_p":{"v":22.0,"p":31},"proe":{"v":-3.2,"p":38},"pass":{"v":63.2,"p":72},"no_h":{"v":8.9,"p":56},"two_":{"v":12.2,"p":16},"te2":{"v":56.5,"p":97},"adot":{"v":6.8,"p":12},"play":{"v":63.4,"p":44}},"DAL":{"moti":{"v":58.8,"p":66},"pa_p":{"v":26.8,"p":84},"proe":{"v":-0.2,"p":72},"pass":{"v":63.1,"p":69},"no_h":{"v":9.3,"p":66},"two_":{"v":22.0,"p":75},"te2":{"v":33.1,"p":3},"adot":{"v":8.2,"p":62},"play":{"v":68.6,"p":97}},"DEN":{"moti":{"v":46.4,"p":12},"pa_p":{"v":24.1,"p":53},"proe":{"v":2.1,"p":84},"pass":{"v":63.3,"p":75},"no_h":{"v":13.0,"p":84},"two_":{"v":21.0,"p":69},"te2":{"v":40.5,"p":34},"adot":{"v":7.3,"p":31},"play":{"v":66.0,"p":72}},"DET":{"moti":{"v":59.3,"p":69},"pa_p":{"v":25.5,"p":72},"proe":{"v":-4.3,"p":19},"pass":{"v":59.7,"p":38},"no_h":{"v":6.1,"p":34},"two_":{"v":16.4,"p":47},"te2":{"v":40.4,"p":31},"adot":{"v":6.4,"p":6},"play":{"v":64.0,"p":50}},"GB":{"moti":{"v":55.3,"p":56},"pa_p":{"v":25.4,"p":69},"proe":{"v":-3.5,"p":25},"pass":{"v":56.8,"p":9},"no_h":{"v":9.2,"p":62},"two_":{"v":15.2,"p":34},"te2":{"v":39.5,"p":28},"adot":{"v":8.8,"p":88},"play":{"v":60.6,"p":16}},"HOU":{"moti":{"v":53.5,"p":47},"pa_p":{"v":22.8,"p":47},"proe":{"v":-0.4,"p":66},"pass":{"v":60.8,"p":47},"no_h":{"v":4.2,"p":22},"two_":{"v":21.0,"p":66},"te2":{"v":35.5,"p":16},"adot":{"v":8.2,"p":72},"play":{"v":67.3,"p":94}},"IND":{"moti":{"v":52.8,"p":38},"pa_p":{"v":27.8,"p":91},"proe":{"v":-0.7,"p":56},"pass":{"v":60.4,"p":44},"no_h":{"v":5.3,"p":28},"two_":{"v":13.6,"p":22},"te2":{"v":39.1,"p":25},"adot":{"v":8.0,"p":53},"play":{"v":62.4,"p":38}},"JAX":{"moti":{"v":59.6,"p":72},"pa_p":{"v":21.8,"p":25},"proe":{"v":2.0,"p":78},"pass":{"v":60.9,"p":50},"no_h":{"v":7.1,"p":47},"two_":{"v":19.1,"p":53},"te2":{"v":37.0,"p":19},"adot":{"v":8.7,"p":84},"play":{"v":66.2,"p":78}},"KC":{"moti":{"v":49.0,"p":19},"pa_p":{"v":15.2,"p":0},"proe":{"v":4.6,"p":97},"pass":{"v":66.9,"p":94},"no_h":{"v":2.5,"p":3},"two_":{"v":11.0,"p":3},"te2":{"v":49.6,"p":72},"adot":{"v":7.8,"p":47},"play":{"v":64.5,"p":53}},"LA":{"moti":{"v":64.4,"p":88},"pa_p":{"v":34.6,"p":97},"proe":{"v":3.5,"p":91},"pass":{"v":59.7,"p":31},"no_h":{"v":7.1,"p":44},"two_":{"v":21.3,"p":72},"te2":{"v":50.7,"p":88},"adot":{"v":9.1,"p":94},"play":{"v":65.0,"p":62}},"LAC":{"moti":{"v":52.4,"p":31},"pa_p":{"v":23.1,"p":50},"proe":{"v":0.7,"p":75},"pass":{"v":63.3,"p":78},"no_h":{"v":3.6,"p":16},"two_":{"v":24.0,"p":78},"te2":{"v":33.1,"p":3},"adot":{"v":8.1,"p":56},"play":{"v":66.2,"p":78}},"LV":{"moti":{"v":52.0,"p":25},"pa_p":{"v":24.8,"p":62},"proe":{"v":-1.7,"p":53},"pass":{"v":64.4,"p":84},"no_h":{"v":8.9,"p":59},"two_":{"v":11.0,"p":0},"te2":{"v":48.4,"p":66},"adot":{"v":6.3,"p":3},"play":{"v":57.9,"p":3}},"MIA":{"moti":{"v":70.7,"p":97},"pa_p":{"v":27.4,"p":88},"proe":{"v":-5.2,"p":16},"pass":{"v":57.4,"p":16},"no_h":{"v":3.6,"p":12},"two_":{"v":32.3,"p":97},"te2":{"v":43.5,"p":50},"adot":{"v":7.0,"p":19},"play":{"v":57.2,"p":0}},"MIN":{"moti":{"v":52.3,"p":28},"pa_p":{"v":25.6,"p":75},"proe":{"v":-0.6,"p":59},"pass":{"v":61.7,"p":62},"no_h":{"v":7.3,"p":53},"two_":{"v":20.2,"p":62},"te2":{"v":40.6,"p":41},"adot":{"v":7.8,"p":44},"play":{"v":58.0,"p":6}},"NE":{"moti":{"v":52.5,"p":34},"pa_p":{"v":24.1,"p":56},"proe":{"v":2.9,"p":88},"pass":{"v":61.2,"p":56},"no_h":{"v":2.3,"p":0},"two_":{"v":25.6,"p":81},"te2":{"v":50.0,"p":75},"adot":{"v":9.2,"p":97},"play":{"v":62.5,"p":41}},"NO":{"moti":{"v":61.7,"p":78},"pa_p":{"v":18.5,"p":12},"proe":{"v":-2.3,"p":47},"pass":{"v":63.9,"p":81},"no_h":{"v":22.3,"p":94},"two_":{"v":14.8,"p":28},"te2":{"v":34.5,"p":12},"adot":{"v":8.2,"p":69},"play":{"v":65.4,"p":69}},"NYG":{"moti":{"v":38.1,"p":0},"pa_p":{"v":22.8,"p":44},"proe":{"v":-4.1,"p":22},"pass":{"v":59.2,"p":22},"no_h":{"v":21.0,"p":91},"two_":{"v":19.2,"p":56},"te2":{"v":40.6,"p":38},"adot":{"v":8.5,"p":75},"play":{"v":67.1,"p":88}},"NYJ":{"moti":{"v":63.0,"p":84},"pa_p":{"v":17.8,"p":9},"proe":{"v":-8.2,"p":0},"pass":{"v":61.1,"p":53},"no_h":{"v":9.5,"p":69},"two_":{"v":15.0,"p":31},"te2":{"v":41.2,"p":44},"adot":{"v":6.9,"p":16},"play":{"v":61.2,"p":25}},"PHI":{"moti":{"v":47.3,"p":16},"pa_p":{"v":22.3,"p":34},"proe":{"v":-2.0,"p":50},"pass":{"v":58.5,"p":19},"no_h":{"v":19.2,"p":88},"two_":{"v":11.8,"p":9},"te2":{"v":38.5,"p":22},"adot":{"v":9.1,"p":91},"play":{"v":60.9,"p":19}},"PIT":{"moti":{"v":54.6,"p":53},"pa_p":{"v":19.4,"p":19},"proe":{"v":-0.2,"p":69},"pass":{"v":61.8,"p":66},"no_h":{"v":11.5,"p":78},"two_":{"v":15.3,"p":38},"te2":{"v":50.3,"p":81},"adot":{"v":6.0,"p":0},"play":{"v":59.8,"p":12}},"SEA":{"moti":{"v":56.9,"p":59},"pa_p":{"v":25.2,"p":66},"proe":{"v":-6.1,"p":6},"pass":{"v":52.9,"p":0},"no_h":{"v":7.3,"p":50},"two_":{"v":26.1,"p":88},"te2":{"v":43.5,"p":50},"adot":{"v":7.9,"p":50},"play":{"v":61.3,"p":31}},"SF":{"moti":{"v":68.8,"p":94},"pa_p":{"v":22.3,"p":34},"proe":{"v":-0.5,"p":62},"pass":{"v":59.7,"p":31},"no_h":{"v":3.7,"p":19},"two_":{"v":25.9,"p":84},"te2":{"v":33.8,"p":9},"adot":{"v":7.5,"p":38},"play":{"v":64.7,"p":59}},"TB":{"moti":{"v":62.0,"p":81},"pa_p":{"v":16.8,"p":6},"proe":{"v":-2.8,"p":44},"pass":{"v":61.4,"p":59},"no_h":{"v":6.6,"p":41},"two_":{"v":19.9,"p":59},"te2":{"v":29.6,"p":0},"adot":{"v":8.1,"p":59},"play":{"v":66.1,"p":75}},"TEN":{"moti":{"v":44.9,"p":9},"pa_p":{"v":18.7,"p":16},"proe":{"v":-3.2,"p":34},"pass":{"v":65.6,"p":88},"no_h":{"v":9.9,"p":72},"two_":{"v":12.1,"p":12},"te2":{"v":48.6,"p":69},"adot":{"v":7.1,"p":22},"play":{"v":61.5,"p":34}},"WAS":{"moti":{"v":53.5,"p":44},"pa_p":{"v":25.8,"p":81},"proe":{"v":-3.1,"p":41},"pass":{"v":59.6,"p":25},"no_h":{"v":60.8,"p":97},"two_":{"v":15.5,"p":44},"te2":{"v":50.2,"p":78},"adot":{"v":8.6,"p":78},"play":{"v":60.9,"p":19}}};
+const PC_FINGERPRINT={"ARI":{"pc":"Mike LaFleur","yrs":1,"d":{"moti":{"v":47.3,"p":19},"pa_p":{"v":17.6,"p":9},"proe":{"v":-2.7,"p":47},"pass":{"v":64.5,"p":88},"two_":{"v":16.9,"p":50},"te2":{"v":51.2,"p":91},"play":{"v":64.9,"p":62},"adot":{"v":8.2,"p":75}}},"ATL":{"pc":"Tommy Rees","yrs":1,"d":{"moti":{"v":49.4,"p":22},"pa_p":{"v":22.0,"p":31},"proe":{"v":-3.2,"p":38},"pass":{"v":63.2,"p":72},"two_":{"v":12.2,"p":16},"te2":{"v":56.5,"p":97},"play":{"v":63.4,"p":44},"adot":{"v":6.8,"p":12}}},"BUF":{"pc":"Joe Brady","yrs":2,"d":{"moti":{"v":55.7,"p":59},"pa_p":{"v":21.9,"p":28},"proe":{"v":-2.5,"p":47},"pass":{"v":57.3,"p":16},"two_":{"v":18.9,"p":53},"te2":{"v":46.8,"p":62},"play":{"v":63.8,"p":50},"adot":{"v":7.8,"p":44}}},"CHI":{"pc":"Ben Johnson","yrs":4,"d":{"moti":{"v":53.9,"p":53},"pa_p":{"v":29.2,"p":94},"proe":{"v":-2.9,"p":44},"pass":{"v":57.8,"p":19},"two_":{"v":18.4,"p":53},"te2":{"v":45.0,"p":56},"play":{"v":66.8,"p":88},"adot":{"v":7.2,"p":28}}},"CIN":{"pc":"Zac Taylor","yrs":4,"d":{"moti":{"v":39.8,"p":3},"pa_p":{"v":15.8,"p":3},"proe":{"v":6.4,"p":100},"pass":{"v":67.5,"p":97},"two_":{"v":10.1,"p":0},"te2":{"v":39.8,"p":31},"play":{"v":65.1,"p":69},"adot":{"v":6.9,"p":16}}},"CLE":{"pc":"Todd Monken","yrs":3,"d":{"moti":{"v":49.0,"p":19},"pa_p":{"v":22.2,"p":34},"proe":{"v":-5.0,"p":19},"pass":{"v":54.9,"p":6},"two_":{"v":22.4,"p":78},"te2":{"v":44.8,"p":56},"play":{"v":62.7,"p":44},"adot":{"v":8.4,"p":75}}},"DAL":{"pc":"Brian Schottenheimer","yrs":1,"d":{"moti":{"v":58.8,"p":66},"pa_p":{"v":26.8,"p":84},"proe":{"v":-0.2,"p":72},"pass":{"v":63.1,"p":69},"two_":{"v":22.0,"p":75},"te2":{"v":33.1,"p":3},"play":{"v":68.6,"p":97},"adot":{"v":8.2,"p":62}}},"DET":{"pc":"Drew Petzing","yrs":3,"d":{"moti":{"v":37.8,"p":0},"pa_p":{"v":24.1,"p":53},"proe":{"v":-1.1,"p":56},"pass":{"v":63.5,"p":81},"two_":{"v":11.9,"p":12},"te2":{"v":43.2,"p":50},"play":{"v":65.5,"p":72},"adot":{"v":7.2,"p":25}}},"GB":{"pc":"Matt LaFleur","yrs":4,"d":{"moti":{"v":52.8,"p":38},"pa_p":{"v":24.0,"p":53},"proe":{"v":-3.4,"p":28},"pass":{"v":57.5,"p":19},"two_":{"v":19.2,"p":59},"te2":{"v":36.5,"p":19},"play":{"v":62.6,"p":44},"adot":{"v":8.5,"p":75}}},"HOU":{"pc":"Nick Caley","yrs":1,"d":{"moti":{"v":53.5,"p":47},"pa_p":{"v":22.8,"p":47},"proe":{"v":-0.4,"p":66},"pass":{"v":60.8,"p":47},"two_":{"v":21.0,"p":66},"te2":{"v":35.5,"p":16},"play":{"v":67.3,"p":94},"adot":{"v":8.2,"p":72}}},"IND":{"pc":"Shane Steichen","yrs":4,"d":{"moti":{"v":39.1,"p":3},"pa_p":{"v":24.0,"p":53},"proe":{"v":-3.0,"p":44},"pass":{"v":58.6,"p":22},"two_":{"v":9.6,"p":0},"te2":{"v":39.8,"p":31},"play":{"v":65.0,"p":66},"adot":{"v":8.6,"p":78}}},"JAC":{"pc":"Liam Coen","yrs":2,"d":{"moti":{"v":54.6,"p":56},"pa_p":{"v":20.1,"p":25},"proe":{"v":1.1,"p":78},"pass":{"v":61.0,"p":53},"two_":{"v":19.8,"p":59},"te2":{"v":32.0,"p":3},"play":{"v":66.3,"p":84},"adot":{"v":7.8,"p":50}}},"KC":{"pc":"Andy Reid","yrs":4,"d":{"moti":{"v":53.9,"p":53},"pa_p":{"v":17.3,"p":9},"proe":{"v":7.1,"p":100},"pass":{"v":66.8,"p":94},"two_":{"v":11.3,"p":9},"te2":{"v":51.9,"p":91},"play":{"v":65.5,"p":72},"adot":{"v":7.0,"p":19}}},"LAC":{"pc":"Mike McDaniel","yrs":4,"d":{"moti":{"v":73.3,"p":100},"pa_p":{"v":27.3,"p":88},"proe":{"v":-1.6,"p":56},"pass":{"v":60.7,"p":47},"two_":{"v":32.3,"p":97},"te2":{"v":38.3,"p":22},"play":{"v":62.1,"p":38},"adot":{"v":7.5,"p":41}}},"LAR":{"pc":"Sean McVay","yrs":4,"d":{"moti":{"v":62.1,"p":84},"pa_p":{"v":27.5,"p":91},"proe":{"v":-1.2,"p":56},"pass":{"v":60.1,"p":44},"two_":{"v":22.5,"p":78},"te2":{"v":29.2,"p":0},"play":{"v":63.7,"p":50},"adot":{"v":7.8,"p":50}}},"LV":{"pc":"Klint Kubiak","yrs":2,"d":{"moti":{"v":53.6,"p":53},"pa_p":{"v":22.8,"p":44},"proe":{"v":-5.4,"p":12},"pass":{"v":56.9,"p":12},"two_":{"v":27.1,"p":94},"te2":{"v":50.5,"p":84},"play":{"v":62.4,"p":38},"adot":{"v":8.0,"p":53}}},"MIA":{"pc":"Bobby Slowik","yrs":2,"d":{"moti":{"v":53.5,"p":50},"pa_p":{"v":22.6,"p":44},"proe":{"v":-0.5,"p":62},"pass":{"v":63.0,"p":69},"two_":{"v":22.5,"p":78},"te2":{"v":37.9,"p":22},"play":{"v":65.2,"p":69},"adot":{"v":8.5,"p":75}}},"MIN":{"pc":"Kevin O'Connell","yrs":4,"d":{"moti":{"v":46.9,"p":16},"pa_p":{"v":27.4,"p":91},"proe":{"v":2.5,"p":88},"pass":{"v":64.4,"p":88},"two_":{"v":19.3,"p":59},"te2":{"v":42.4,"p":47},"play":{"v":63.9,"p":50},"adot":{"v":7.9,"p":53}}},"NE":{"pc":"Josh McDaniels","yrs":2,"d":{"moti":{"v":44.1,"p":9},"pa_p":{"v":22.4,"p":44},"proe":{"v":-0.2,"p":72},"pass":{"v":61.7,"p":66},"two_":{"v":27.4,"p":94},"te2":{"v":36.0,"p":19},"play":{"v":63.5,"p":47},"adot":{"v":9.2,"p":97}}},"NO":{"pc":"Kellen Moore","yrs":4,"d":{"moti":{"v":50.4,"p":25},"pa_p":{"v":21.5,"p":25},"proe":{"v":-3.6,"p":25},"pass":{"v":58.8,"p":22},"two_":{"v":13.6,"p":25},"te2":{"v":40.1,"p":31},"play":{"v":66.6,"p":88},"adot":{"v":7.9,"p":50}}},"NYJ":{"pc":"Frank Reich","yrs":2,"d":{"moti":{"v":28.7,"p":0},"pa_p":{"v":14.8,"p":0},"proe":{"v":-4.2,"p":22},"pass":{"v":63.2,"p":72},"two_":{"v":7.8,"p":0},"te2":{"v":38.0,"p":22},"play":{"v":67.1,"p":88},"adot":{"v":7.0,"p":19}}},"PIT":{"pc":"Mike McCarthy","yrs":2,"d":{"moti":{"v":44.2,"p":9},"pa_p":{"v":21.2,"p":25},"proe":{"v":1.0,"p":78},"pass":{"v":63.4,"p":81},"two_":{"v":15.3,"p":41},"te2":{"v":34.3,"p":12},"play":{"v":68.2,"p":97},"adot":{"v":7.6,"p":41}}},"SF":{"pc":"Kyle Shanahan","yrs":4,"d":{"moti":{"v":64.1,"p":88},"pa_p":{"v":20.3,"p":25},"proe":{"v":-2.2,"p":50},"pass":{"v":57.4,"p":16},"two_":{"v":26.5,"p":91},"te2":{"v":28.3,"p":0},"play":{"v":63.0,"p":44},"adot":{"v":7.8,"p":47}}},"TB":{"pc":"Zac Robinson","yrs":2,"d":{"moti":{"v":64.9,"p":91},"pa_p":{"v":17.1,"p":9},"proe":{"v":-6.5,"p":6},"pass":{"v":56.9,"p":12},"two_":{"v":15.6,"p":47},"te2":{"v":44.6,"p":56},"play":{"v":64.9,"p":62},"adot":{"v":7.9,"p":50}}},"TEN":{"pc":"Brian Daboll","yrs":1,"d":{"moti":{"v":41.6,"p":3},"pa_p":{"v":22.9,"p":50},"proe":{"v":-2.5,"p":47},"pass":{"v":64.8,"p":88},"two_":{"v":13.1,"p":22},"te2":{"v":31.4,"p":3},"play":{"v":64.9,"p":62},"adot":{"v":6.9,"p":16}}}};
 const STYLE_2025={'ARI':{m:-1,t2:0,pr:1},'ATL':{m:1,t2:1,pr:-1},'BAL':{m:0,t2:1,pr:-1},'BUF':{m:1,t2:0,pr:-1},'CAR':{m:-1,t2:0,pr:-1},'CHI':{m:0,t2:1,pr:0},'CIN':{m:0,t2:0,pr:1},'CLE':{m:-1,t2:1,pr:0},'DAL':{m:0,t2:-1,pr:1},'DEN':{m:-1,t2:0,pr:1},'DET':{m:1,t2:0,pr:-1},'GB':{m:0,t2:-1,pr:-1},'HOU':{m:0,t2:-1,pr:0},'IND':{m:0,t2:-1,pr:0},'JAC':{m:1,t2:-1,pr:1},'KC':{m:-1,t2:1,pr:1},'LAC':{m:0,t2:-1,pr:1},'LAR':{m:1,t2:1,pr:1},'LV':{m:-1,t2:0,pr:0},'MIA':{m:1,t2:0,pr:-1},'MIN':{m:-1,t2:0,pr:0},'NE':{m:0,t2:1,pr:1},'NO':{m:1,t2:-1,pr:0},'NYG':{m:-1,t2:0,pr:-1},'NYJ':{m:1,t2:0,pr:-1},'PHI':{m:-1,t2:-1,pr:0},'PIT':{m:0,t2:1,pr:1},'SEA':{m:0,t2:0,pr:-1},'SF':{m:1,t2:-1,pr:0},'TB':{m:1,t2:-1,pr:0},'TEN':{m:-1,t2:1,pr:0},'WAS':{m:0,t2:1,pr:0}};
 let __styleRoleMemo=null;
 function styleRole(name,team,pos){
@@ -4116,67 +4116,69 @@ function explainSystem(p){
   return {sys:p.sys,tier,proven,softened:proven&&(e.s<55||e.c<0.70),dSys,dOc,net:dSys+dOc+sty.total,och:!!p.och,oc:p.oc||'',style:sty};
 }
 function buildSchemeHTML(p){
-  // PLAYCALLER TENDENCIES — descriptive only. NO projection values live here.
-  // The scheme adjustment (dSys/dOc) was removed from the projection in the 2026 scheme
-  // review; styleFactors' small validated edges still apply inside the projection, but this
-  // panel is a CHARACTER SKETCH of the offense, not a lever. It exists to (a) give narrative
-  // context no other platform surfaces and (b) collect season-end patterns worth a real study.
+  // PLAYCALLER TENDENCIES — descriptive only, NO projection values.
+  // Reads the CURRENT (2026) playcaller's own 4-year charted fingerprint, following him
+  // across teams. First-time playcallers have no charted history -> honest blank, because
+  // an unproven coordinator has no established tendencies to show.
   var team = p.t || p.team;
-  if(!team || typeof STYLE_RAW==='undefined' || !STYLE_RAW[team]) {
-    if(p.sys==null) return '';
+  var fp = (typeof PC_FINGERPRINT!=='undefined') ? PC_FINGERPRINT[team] : null;
+  if(!fp){
+    var oc0 = (typeof SYS!=='undefined' && SYS[team]) ? SYS[team].oc : '';
+    return '<div>'
+      +'<div style="font-size:11px;color:#CDD9E5;font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>'
+      +'<div style="font-size:10px;color:#8CA0B3;line-height:1.5">'
+      +(oc0?'<b>'+oc0+'</b> is calling plays for the first time'+'':'A first-time playcaller is in charge')
+      +' — no charted book yet. Tendencies will populate once the offense has games on tape.</div></div>';
   }
-  var oc = (typeof SYS!=='undefined' && SYS[team]) ? SYS[team].oc : '';
-  var changed = (typeof SYS!=='undefined' && SYS[team]) ? SYS[team].ch : false;
-  var r = (typeof STYLE_RAW!=='undefined') ? STYLE_RAW[team] : null;
+  var d = fp.d, coach = fp.pc, color = '#2DD4BF';
 
-  // percentile bar: fills from left, colored by where it sits in the league
+  // ---- radar: 6 axes ----
+  var AX = [['Motion','moti'],['Play-action','pa_p'],['PROE','proe'],
+            ['12-pers','te2'],['Two-back','two_'],['Pace','play']];
+  var n = AX.length, cx = 150, cy = 158, R = 92;
+  function xy(i, r){ var a = -Math.PI/2 + 2*Math.PI*i/n; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
+  var rings = '', spokes = '', poly = '', dots = '', labels = '';
+  [33,66,100].forEach(function(g){ rings += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R*g/100)+'" fill="none" stroke="#1E2A3A"/>'; });
+  var pts = [];
+  for(var i=0;i<n;i++){
+    var lab = AX[i][0], cell = d[AX[i][1]], pc = cell?cell.p:0;
+    var e = xy(i, R); spokes += '<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(0)+'" y2="'+e[1].toFixed(0)+'" stroke="#1E2A3A"/>';
+    var v = xy(i, R*pc/100); pts.push(v[0].toFixed(1)+','+v[1].toFixed(1));
+    dots += '<circle cx="'+v[0].toFixed(1)+'" cy="'+v[1].toFixed(1)+'" r="2.5" fill="'+color+'"/>';
+    var gap = (i===0)?24:15, lp = xy(i, R+gap);
+    var anc = Math.abs(lp[0]-cx)<15?'middle':(lp[0]>cx?'start':'end');
+    labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" fill="#8CA0B3" font-size="9" text-anchor="'+anc+'" font-family="var(--sans,sans-serif)">'+lab+'</text>';
+  }
+  poly = '<polygon points="'+pts.join(' ')+'" fill="'+color+'" fill-opacity="0.18" stroke="'+color+'" stroke-width="2"/>';
+  var radar = '<svg viewBox="0 0 300 300" style="width:100%;max-width:300px;display:block;margin:0 auto">'
+    +'<text x="150" y="18" fill="#CDD9E5" font-size="12.5" font-weight="700" text-anchor="middle" font-family="var(--sans,sans-serif)">Playcaller Tendencies</text>'
+    +'<text x="150" y="33" fill="'+color+'" font-size="10.5" font-weight="600" text-anchor="middle" font-family="var(--sans,sans-serif)">'+coach+'</text>'
+    +rings+spokes+poly+dots+labels+'</svg>';
+
+  // ---- bars: all 8 ----
+  var BARS = [['Pre-snap motion','moti','A McVay/Shanahan signature'],['Play-action','pa_p',''],
+              ['Pass rate over expected (PROE)','proe','Positive = throws more than the situation demands'],
+              ['12-personnel (2-TE)','te2','High = more two-TE looks, squeezes the WR3'],
+              ['Two-back sets','two_',''],['Pace (plays/game)','play',''],
+              ['11-personnel pass lean','pass',''],['Air yards (aDOT)','adot','']];
   function bar(label, cell, hint){
     if(!cell) return '';
-    var pc = cell.p, v = cell.v;
-    var clr = pc>=67?'#2DD4BF':pc>=34?'#6BB6E0':'#5C7080';
+    var pc = cell.p, v = cell.v, clr = pc>=67?'#2DD4BF':pc>=34?'#6BB6E0':'#5C7080';
     var tier = pc>=80?'elite':pc>=60?'high':pc>=40?'average':pc>=20?'low':'rare';
-    return '<div style="margin:9px 0">'
-      + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
-      +   '<span style="font-size:10px;color:#8CA0B3">'+label+'</span>'
-      +   '<span style="font-size:10px;color:'+clr+';font-family:var(--mono,monospace);font-weight:600">'+v+'<span style="color:#5C7080;font-weight:400"> · '+tier+'</span></span>'
-      + '</div>'
-      + '<div style="height:4px;border-radius:3px;background:#1E2A3A;overflow:hidden">'
-      +   '<div style="height:100%;width:'+pc+'%;background:'+clr+';border-radius:3px"></div>'
-      + '</div>'
-      + (hint?'<div style="font-size:8.5px;color:#5C7080;margin-top:2px">'+hint+'</div>':'')
-      + '</div>';
+    return '<div style="margin:8px 0">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
+      +'<span style="font-size:10px;color:#8CA0B3">'+label+'</span>'
+      +'<span style="font-size:10px;color:'+clr+';font-family:var(--mono,monospace);font-weight:600">'+v+'<span style="color:#5C7080;font-weight:400"> · '+tier+'</span></span></div>'
+      +'<div style="height:4px;border-radius:3px;background:#1E2A3A"><div style="height:100%;width:'+pc+'%;background:'+clr+';border-radius:3px"></div></div>'
+      +(hint?'<div style="font-size:8.5px;color:#5C7080;margin-top:2px">'+hint+'</div>':'')+'</div>';
   }
+  var bars = BARS.map(function(b){ return bar(b[0], d[b[1]], b[2]); }).join('');
 
-  var bars = r ? (
-      bar('Pre-snap motion', r.moti, 'How often a man is moving at the snap — a McVay/Shanahan signature')
-    + bar('Play-action',     r.pa_p)
-    + bar('Pass rate over expected (PROE)', r.proe, 'Positive = throws more than the situation demands')
-    + bar('11-personnel pass lean', r.pass)
-    + bar('Two-back sets',   r.two_)
-    + bar('12-personnel (2-TE)', r.te2, 'High = more two-TE looks, which squeezes the WR3')
-    + bar('Pace (plays/game)', r.play)
-    + bar('Air yards (aDOT)', r.adot)
-  ) : '<div style="font-size:10px;color:#5C7080">No charted tendency data for this offense yet.</div>';
-
-  var ocLine = '';
-  if(changed){
-    ocLine = '<div style="font-size:10px;color:#E0B34D;margin-top:10px;line-height:1.5">'
-      + '\u26A0 New playcaller'+(oc?' ('+oc+')':'')+' for 2026. These bars describe last year\u2019s offense — '
-      + 'the incoming coach has no established book here yet, so treat them as the baseline he\u2019s changing, not a forecast.'
-      + '</div>';
-  } else if(oc){
-    ocLine = '<div style="font-size:10px;color:#5C7080;margin-top:10px;line-height:1.5">Playcaller: '+oc+' \u00B7 continuity from 2025.</div>';
-  }
-
-  return '<div>'
-    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'
-    +   '<span style="font-size:11px;color:#CDD9E5;font-weight:700;letter-spacing:.02em">Playcaller Tendencies</span>'
-    +   '<span style="font-size:8.5px;color:#5C7080">2025 tape · descriptive</span>'
-    + '</div>'
-    + '<div style="font-size:9px;color:#5C7080;margin-bottom:8px;line-height:1.4">What this offense actually did last year, ranked against the league. Context, not a projection input.</div>'
-    + bars
-    + ocLine
-    + '</div>';
+  return '<div>'+radar
+    +'<div style="margin-top:6px">'+bars+'</div>'
+    +'<div style="font-size:8.5px;color:#5C7080;text-align:center;margin-top:8px">'
+    + fp.yrs + '-year fingerprint · ' + coach + ' · ranked vs league · descriptive, not a projection input</div>'
+    +'</div>';
 }
 // receptions/game with a game-log fallback so RBs outside the pipeline's
 // coverage still get a format-sensitivity readout
