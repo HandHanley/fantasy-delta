@@ -24,7 +24,7 @@ import json, os, re, unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
-SEASONS    = [2023, 2024, 2025]   # matches player-stats.json; extend for deeper history (costs file size)
+SEASONS    = [2023, 2024, 2025, 2026]   # 2026 = current season: played weeks fill in, future weeks come from the schedule
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "game-logs.json"
 INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
@@ -85,8 +85,27 @@ def _num(row, c):
     except Exception: return 0.0
 
 # ── PURE transform (no network) — unit-tested against synthetic frames ──
-def build_game_logs(weekly_pdf, snaps_pdf, matched):
-    """weekly_pdf/snaps_pdf: pandas DataFrames. matched: {delta_name: nfl_display_name}."""
+def build_schedule_map(sched_pdf):
+    """(_season,_week,_team) -> (opponent, is_home). One source of truth for opponent + venue,
+    used for BOTH played games (all seasons) and upcoming 2026 fixtures."""
+    smap = {}
+    if sched_pdf is None or not len(sched_pdf):
+        return smap
+    for _, r in sched_pdf.iterrows():
+        try:
+            season = int(_num(r, 'season')); week = int(_num(r, 'week'))
+        except Exception:
+            continue
+        home, away = r.get('home_team'), r.get('away_team')
+        if home: smap[(season, week, home)] = (away, 1)   # home team: opp=away, home=1
+        if away: smap[(season, week, away)] = (home, 0)   # away team: opp=home, home=0
+    return smap
+
+
+def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_season=2026):
+    """weekly_pdf/snaps_pdf/sched_pdf: pandas DataFrames. matched: {delta_name: nfl_display_name}.
+    Played games come from weekly stats; upcoming CURRENT-season weeks come from the schedule."""
+    smap = build_schedule_map(sched_pdf)
     w = weekly_pdf
     nc   = pick(w, 'player_display_name')
     sc   = pick(w, 'season', 'year')
@@ -104,10 +123,13 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched):
     tp_cols = [c for c in ['passing_2pt_conversions','rushing_2pt_conversions','receiving_2pt_conversions'] if c in w.columns]
     sttd    = pick(w, 'special_teams_tds')
 
+    tmc = pick(w, 'team', 'recent_team')   # player's team that week -> opponent/venue lookup
     # weekly stat lookup keyed (norm_name, season, week)
     wk_lookup = {}
+    wk_team   = {}
     for _, r in w.iterrows():
         key = (norm(r.get(nc)), int(_num(r, sc)), int(_num(r, wk)))
+        wk_team[key] = r.get(tmc)
         wk_lookup[key] = {
             'py': _num(r, py), 'pt': _num(r, pt), 'pi': _num(r, pin),
             'ry': _num(r, ry), 'rt': _num(r, rt),
@@ -148,13 +170,36 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched):
             if not active:
                 continue   # 0 snaps + no production = DNP → excluded
             st = st or {k: 0.0 for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd')}
-            logs.append({
+            team = wk_team.get((nkey, season, week))
+            opp, home = smap.get((season, week, team), (None, None))
+            rec_out = {
                 's': season, 'w': week, 'snp': round(pct, 2),
                 'py': round(st['py']), 'pt': round(st['pt']), 'pi': round(st['pi']),
                 'ry': round(st['ry']), 'rt': round(st['rt']),
                 'rec': round(st['rec']), 'rey': round(st['rey']), 'ret': round(st['ret']),
                 'fl': round(st['fl']), 'tp': round(st['tp']), 'rtd': round(st['rtd']),
-            })
+            }
+            if opp is not None: rec_out['opp'] = opp; rec_out['h'] = home
+            logs.append(rec_out)
+        # ── upcoming CURRENT-season fixtures: weeks the player has not played yet ──
+        # Resolve the player's current team from his most recent stat row (independent of the
+        # schedule map, so a week missing from smap can't wipe out his fixtures).
+        cur_played_weeks = {g['w'] for g in logs if g['s'] == current_season}
+        cur_team = None
+        if keys:
+            last = max(keys, key=lambda k: (k[1], k[2]))   # most recent (season, week)
+            cur_team = wk_team.get(last)
+            # guard against a None/blank team value
+            if cur_team is None or (isinstance(cur_team, float)):
+                for k in sorted(keys, key=lambda k:(k[1],k[2]), reverse=True):
+                    t = wk_team.get(k)
+                    if t is not None and not isinstance(t, float):
+                        cur_team = t; break
+        if cur_team:
+            for (season, week, team), (opp, home) in smap.items():
+                if season == current_season and team == cur_team and week not in cur_played_weeks:
+                    logs.append({'s': season, 'w': week, 'opp': opp, 'h': home, 'up': 1})  # up=upcoming, no stats
+            logs.sort(key=lambda g: (g['s'], g['w']))
         if logs:
             games[delta_name] = logs
     return games
@@ -176,14 +221,26 @@ def main():
     delta_names, no_data = get_delta_players()
     print(f"[DELTA] {len(delta_names)} DELTA players ({len(no_data)} no-2025-data)")
 
-    wdf = nfl.load_player_stats(seasons=SEASONS)
+    # A not-yet-started season has no player-stats file (404). Load only stat seasons that
+    # exist; the schedule (loaded below) covers the upcoming season for opponents/fixtures.
+    stat_seasons = []
+    for yr in SEASONS:
+        try:
+            probe = nfl.load_player_stats(seasons=[yr])
+            _ = probe.to_pandas() if hasattr(probe, 'to_pandas') else probe
+            stat_seasons.append(yr)
+        except Exception as e:
+            print(f"[DELTA] no player-stats for {yr} yet (season not started) — schedule-only for that year.")
+    if not stat_seasons:
+        raise SystemExit("[DELTA] no stat seasons available at all — aborting.")
+    wdf = nfl.load_player_stats(seasons=stat_seasons)
     wpdf = wdf.to_pandas() if hasattr(wdf, 'to_pandas') else wdf
     if 'season_type' in wpdf.columns:
         wpdf = wpdf[wpdf['season_type'] == 'REG'].copy()
-    print(f"[DELTA] weekly stat rows: {len(wpdf)}")
+    print(f"[DELTA] weekly stat rows: {len(wpdf)} (seasons {stat_seasons})")
 
     try:
-        sdf = nfl.load_snap_counts(seasons=SEASONS)
+        sdf = nfl.load_snap_counts(seasons=stat_seasons)
         spdf = sdf.to_pandas() if hasattr(sdf, 'to_pandas') else sdf
         if 'game_type' in spdf.columns:
             spdf = spdf[spdf['game_type'] == 'REG'].copy()
@@ -193,8 +250,20 @@ def main():
         import pandas as pd
         spdf = pd.DataFrame(columns=['player','season','week','offense_snaps','offense_pct'])
 
+    try:
+        schdf = nfl.load_schedules(seasons=SEASONS)
+        schpdf = schdf.to_pandas() if hasattr(schdf, 'to_pandas') else schdf
+        if 'game_type' in schpdf.columns:
+            schpdf = schpdf[schpdf['game_type'] == 'REG'].copy()
+        print(f"[DELTA] schedule rows: {len(schpdf)}")
+    except Exception as e:
+        print(f"[DELTA] WARNING: load_schedules failed ({e}); no opponents/upcoming games.")
+        import pandas as pd
+        schpdf = pd.DataFrame(columns=['season','week','home_team','away_team','game_type'])
+
+    CURRENT_SEASON = max(SEASONS)
     matched = match_names(wpdf['player_display_name'].dropna().unique(), delta_names, no_data)
-    games   = build_game_logs(wpdf, spdf, matched)
+    games   = build_game_logs(wpdf, spdf, matched, schpdf, CURRENT_SEASON)
 
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
@@ -204,7 +273,8 @@ def main():
                  '(>=1 snap or recorded production); inactive games omitted so they never '
                  'count as misses. App computes fantasy points per scoring format. '
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
-                 'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td.'),
+                 'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. '
+                 'opp=opponent h=1 home/0 away. up=1 marks an UPCOMING (unplayed) game — schedule only, no stats.'),
         'games': games,
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
