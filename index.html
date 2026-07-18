@@ -1801,23 +1801,7 @@ function closeDeck(e){
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();} });
 
-// ── Tooltip tap-to-show on mobile ────────────────────────────────────────────
-document.addEventListener('touchstart',function(e){
-  const el=e.target.closest('[data-tip]');
-  document.querySelectorAll('.tip-show').forEach(t=>{if(t!==el)t.classList.remove('tip-show');});
-  if(el){
-    const opening=!el.classList.contains('tip-show');
-    el.classList.toggle('tip-show');
-    if(el.classList.contains('tip-show'))setTimeout(()=>el.classList.remove('tip-show'),4000);
-    // first tap OPENS the tip and must NOT also sort; the next tap is allowed through to sort.
-    if(opening) el.dataset.tipJustOpened='1';
-  }
-},{passive:true});
-// swallow the click that follows the opening tap, so opening a tooltip never also sorts
-document.addEventListener('click',function(e){
-  const el=e.target.closest('[data-tip]');
-  if(el&&el.dataset.tipJustOpened==='1'){ el.dataset.tipJustOpened=''; e.stopPropagation(); e.preventDefault(); }
-},true);
+
 
 function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
@@ -3723,5 +3707,56 @@ if (document.readyState === 'complete') {
 
 
 
+
+<script>
+/* Column-tooltip touch UX — isolated in its own block so an app error can never prevent it. */
+// ── Column tooltips on touch: an ⓘ icon opens the tip; the header still sorts. ──
+(function(){
+  var isTouch = window.matchMedia && window.matchMedia('(hover:none)').matches;
+  if(!isTouch) return;   // desktop keeps hover; nothing to wire
+
+  // full-screen backdrop that closes the tip and ABSORBS the tap (no fall-through to rows)
+  var backdrop = document.createElement('div');
+  backdrop.id = 'tip-backdrop';
+  backdrop.style.cssText = 'position:fixed;inset:0;z-index:99998;display:none;background:transparent';
+
+  function closeTip(){
+    document.querySelectorAll('[data-tip].tip-show').forEach(function(t){ t.classList.remove('tip-show'); });
+    backdrop.style.display = 'none';
+  }
+  function openTip(th){
+    closeTip();
+    th.classList.add('tip-show');
+    backdrop.style.display = 'block';
+  }
+  // tapping the backdrop closes the tip and eats the event
+  backdrop.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); closeTip(); }, true);
+  backdrop.addEventListener('touchstart', function(e){ e.stopPropagation(); e.preventDefault(); closeTip(); }, {passive:false, capture:true});
+
+  // append an ⓘ button to every tooltip header; it opens the tip and does NOT sort
+  function wireIcons(){
+    document.querySelectorAll('[data-tip]').forEach(function(th){
+      if(th.querySelector('.tip-i')) return;              // already wired
+      var b = document.createElement('span');
+      b.className = 'tip-i';
+      b.textContent = 'ⓘ';
+      b.setAttribute('aria-label','About this column');
+      b.style.cssText = 'display:inline-block;margin-left:4px;font-size:11px;opacity:.6;cursor:pointer;vertical-align:baseline';
+      b.addEventListener('click', function(e){
+        e.stopPropagation(); e.preventDefault();          // never triggers the header sort
+        (th.classList.contains('tip-show') ? closeTip : function(){ openTip(th); })();
+      }, true);
+      th.appendChild(b);
+    });
+  }
+  function start(){
+    if(!document.body){ return setTimeout(start, 30); }
+    if(backdrop.parentNode !== document.body) document.body.appendChild(backdrop);
+    wireIcons();
+    new MutationObserver(function(){ wireIcons(); }).observe(document.body, {childList:true, subtree:true});
+  }
+  start();
+})();
+</script>
 </body>
 </html>
