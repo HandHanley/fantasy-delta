@@ -1784,8 +1784,19 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();clo
 document.addEventListener('touchstart',function(e){
   const el=e.target.closest('[data-tip]');
   document.querySelectorAll('.tip-show').forEach(t=>{if(t!==el)t.classList.remove('tip-show');});
-  if(el){el.classList.toggle('tip-show');if(el.classList.contains('tip-show'))setTimeout(()=>el.classList.remove('tip-show'),3000);}
+  if(el){
+    const opening=!el.classList.contains('tip-show');
+    el.classList.toggle('tip-show');
+    if(el.classList.contains('tip-show'))setTimeout(()=>el.classList.remove('tip-show'),4000);
+    // first tap OPENS the tip and must NOT also sort; the next tap is allowed through to sort.
+    if(opening) el.dataset.tipJustOpened='1';
+  }
 },{passive:true});
+// swallow the click that follows the opening tap, so opening a tooltip never also sorts
+document.addEventListener('click',function(e){
+  const el=e.target.closest('[data-tip]');
+  if(el&&el.dataset.tipJustOpened==='1'){ el.dataset.tipJustOpened=''; e.stopPropagation(); e.preventDefault(); }
+},true);
 
 function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
@@ -3691,29 +3702,5 @@ if (document.readyState === 'complete') {
 
 
 
-
-<script>
-/* Mobile column-header tooltips: tap toggles a readable sheet; tap-away closes.
-   The CSS ::after only fires on :hover, which phones do not have. */
-(function(){
-  function isTouch(){ return window.matchMedia && window.matchMedia('(hover: none)').matches; }
-  document.addEventListener('click', function(e){
-    var th = e.target.closest('[data-tip]');
-    // close any open tip when tapping elsewhere
-    document.querySelectorAll('[data-tip].tip-show').forEach(function(el){ if(el!==th) el.classList.remove('tip-show'); });
-    if(!th || !isTouch()) return;
-    if(!th.classList.contains('tip-show')){
-      // first tap: show the tip, do NOT sort
-      e.stopPropagation(); e.preventDefault();
-      th.classList.add('tip-show');
-      // auto-dismiss after 4s
-      setTimeout(function(){ th.classList.remove('tip-show'); }, 4000);
-    } else {
-      // second tap on the same header: hide, and let the sort through
-      th.classList.remove('tip-show');
-    }
-  }, true);
-})();
-</script>
 </body>
 </html>

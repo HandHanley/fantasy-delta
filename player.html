@@ -347,6 +347,7 @@ function buildTDPctHTML(p) {
   });
   const baseline = cAtt > 0 ? (100 * cTd / cAtt) : LG;   // attempt-weighted, not a mean of rates
   const latest = rows[rows.length - 1];
+  const r1 = v => Math.round(v * 10) / 10;   // moved up: was declared after first use (TDZ crash on QB pages)
   const gap = r1(latest.v) - r1(baseline);
   const proj = latest.v - gap * GIVEBACK;
   const maxV = Math.max(...rows.map(x => x.v), baseline, 6);
@@ -354,7 +355,6 @@ function buildTDPctHTML(p) {
   // colored vs HIS OWN baseline — a high TD% is not "good", it's "hot"
   // Grade on DISPLAYED (1-dp) numbers so two seasons that both read e.g. "7.0%" can never
   // get different colors from a float straddling the threshold.
-  const r1 = v => Math.round(v * 10) / 10;
   const HOT = 1.0;
   const clr = v => (r1(v) - r1(baseline)) >= HOT ? '#E0B34D' : (r1(v) - r1(baseline)) <= -HOT ? '#6BB6E0' : '#5C7080';
 
