@@ -33,25 +33,7 @@ tr:hover td{background:var(--panel)}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
-  /* tooltips on mobile: a fixed bottom sheet, FULLY self-contained so no earlier rule leaks through.
-     Hidden by default (opacity/visibility), shown only when .tip-show is toggled by tap. */
-  [data-tip]::after{
-    content:attr(data-tip);
-    position:fixed; left:12px; right:12px; bottom:16px; top:auto;
-    width:auto; max-width:none; transform:none;
-    background:#0D1420 !important;              /* SOLID panel — nothing shows through */
-    color:#EAF0F4 !important;
-    border:1px solid #14B8A6 !important;
-    border-radius:12px;
-    font-size:13px; font-weight:400; line-height:1.5;
-    padding:16px 18px;
-    text-align:left; white-space:normal; text-transform:none;
-    z-index:99999;
-    box-shadow:0 0 0 100vmax rgba(0,0,0,.72), 0 12px 48px rgba(0,0,0,.95);  /* full-screen dim behind */
-    opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .15s;
-  }
-  [data-tip].tip-show::after{ opacity:1 !important; visibility:visible !important; }
+  /* (mobile tooltip handled by the @media(hover:none) rule above) */
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -185,11 +167,34 @@ tr:hover td{background:var(--panel)}
 .dd-divider{height:1px;background:var(--line);margin:.75rem 0}
 /* ── Column header tooltips ─────────────────────────────────────────────── */
 [data-tip]{position:relative}
-[data-tip].tip-show,[data-tip]:hover{z-index:9999}
-[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#0D1420;color:var(--paper);font-size:11px;font-weight:400;line-height:1.45;padding:9px 12px;border-radius:8px;border:1px solid var(--teal);width:230px;max-width:min(230px,85vw);text-align:left;white-space:normal;text-transform:none;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;box-shadow:0 8px 28px rgba(0,0,0,.85),0 0 0 4px #0D1420}
+/* ── Tooltips — ONE consolidated rule set. Desktop = hover bubble. Touch = bottom sheet. ── */
+[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute; top:calc(100% + 4px); left:50%; transform:translateX(-50%);
+  background:#0D1420; color:#EAF0F4; border:1px solid var(--teal); border-radius:8px;
+  width:230px; max-width:min(230px,85vw);
+  font-size:11px; line-height:1.45; padding:9px 12px;
+  text-align:left; white-space:normal; text-transform:none;
+  box-shadow:0 8px 28px rgba(0,0,0,.85), 0 0 0 4px #0D1420;
+  opacity:0; visibility:hidden; pointer-events:none; transition:opacity .15s; z-index:9999;
+}
+[data-tip]:hover::after, [data-tip].tip-show::after{ opacity:1; visibility:visible; }
 .dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
 .dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
-[data-tip]:hover::after,[data-tip].tip-show::after{opacity:1}
+
+/* TOUCH devices (any viewport width): the 230px absolute bubble overflows and text spills
+   onto the rows. Pin a SOLID, auto-height bottom sheet with a full-screen dim behind it. */
+@media (hover:none){
+  [data-tip]::after{
+    position:fixed; left:12px; right:12px; bottom:16px; top:auto;
+    width:auto; max-width:none; transform:none;
+    background:#0D1420; color:#EAF0F4; border:1px solid var(--teal); border-radius:12px;
+    font-size:13px; line-height:1.5; padding:16px 18px;
+    box-shadow:0 0 0 100vmax rgba(0,0,0,.75), 0 12px 48px rgba(0,0,0,.95);
+    z-index:99999;
+  }
+  .dtable th:first-child[data-tip]::after,.dtable th:last-child[data-tip]::after{left:12px;right:12px;transform:none}
+}
 /* ── About DELTA modal ──────────────────────────────────────────────────── */
 .about-tab{margin-left:auto;padding:7px 12px;border:none;background:transparent;
   color:var(--fog-2);font-size:11px;cursor:pointer;align-self:center;
@@ -328,7 +333,6 @@ tr:hover td{background:var(--ink-2)}
 .drop-item:hover{background:var(--ink-2)}
 
 /* ── Tooltips ──────────────────────────────────────────────────────────── */
-[data-tip]::after{background:#0D1420;color:var(--paper);border:1px solid var(--teal)}
 
 /* ── About modal ───────────────────────────────────────────────────────── */
 .about-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
