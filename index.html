@@ -33,8 +33,25 @@ tr:hover td{background:var(--panel)}
 .bar-fill{height:100%;border-radius:3px}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
-  /* tooltips: fixed bottom sheet — the hover bubble crops at screen edges */
-  [data-tip]::after{position:fixed;left:12px;right:12px;top:auto;bottom:12px;width:auto;max-width:none;transform:none;z-index:99999;box-shadow:0 0 0 100vmax rgba(0,0,0,.55),0 10px 40px rgba(0,0,0,.9);font-size:13px;padding:14px 16px}
+  /* tooltips on mobile: a fixed bottom sheet, FULLY self-contained so no earlier rule leaks through.
+     Hidden by default (opacity/visibility), shown only when .tip-show is toggled by tap. */
+  [data-tip]::after{
+    content:attr(data-tip);
+    position:fixed; left:12px; right:12px; bottom:16px; top:auto;
+    width:auto; max-width:none; transform:none;
+    background:#0D1420 !important;              /* SOLID panel — nothing shows through */
+    color:#EAF0F4 !important;
+    border:1px solid #14B8A6 !important;
+    border-radius:12px;
+    font-size:13px; font-weight:400; line-height:1.5;
+    padding:16px 18px;
+    text-align:left; white-space:normal; text-transform:none;
+    z-index:99999;
+    box-shadow:0 0 0 100vmax rgba(0,0,0,.72), 0 12px 48px rgba(0,0,0,.95);  /* full-screen dim behind */
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .15s;
+  }
+  [data-tip].tip-show::after{ opacity:1 !important; visibility:visible !important; }
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -311,7 +328,7 @@ tr:hover td{background:var(--ink-2)}
 .drop-item:hover{background:var(--ink-2)}
 
 /* ── Tooltips ──────────────────────────────────────────────────────────── */
-[data-tip]::after{background:var(--ink-2);color:var(--paper);border:1px solid var(--line)}
+[data-tip]::after{background:#0D1420;color:var(--paper);border:1px solid var(--teal)}
 
 /* ── About modal ───────────────────────────────────────────────────────── */
 .about-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
