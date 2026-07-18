@@ -178,7 +178,8 @@ tr:hover td{background:var(--panel)}
   box-shadow:0 8px 28px rgba(0,0,0,.85), 0 0 0 4px #0D1420;
   opacity:0; visibility:hidden; pointer-events:none; transition:opacity .15s; z-index:9999;
 }
-[data-tip]:hover::after, [data-tip].tip-show::after{ opacity:1; visibility:visible; }
+[data-tip]:hover::after{ opacity:1; visibility:visible; }
+@media (hover:none){ [data-tip].tip-show::after{ opacity:0 !important; visibility:hidden !important; } }
 .dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
 .dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
 
@@ -190,7 +191,7 @@ tr:hover td{background:var(--panel)}
     width:auto; max-width:none; transform:none;
     background:#0D1420; color:#EAF0F4; border:1px solid var(--teal); border-radius:12px;
     font-size:13px; line-height:1.5; padding:16px 18px;
-    box-shadow:0 0 0 100vmax rgba(0,0,0,.75), 0 12px 48px rgba(0,0,0,.95);
+    box-shadow:0 12px 48px rgba(0,0,0,.95);
     z-index:99999;
   }
   .dtable th:first-child[data-tip]::after,.dtable th:last-child[data-tip]::after{left:12px;right:12px;transform:none}
@@ -3718,16 +3719,36 @@ if (document.readyState === 'complete') {
   // full-screen backdrop that closes the tip and ABSORBS the tap (no fall-through to rows)
   var backdrop = document.createElement('div');
   backdrop.id = 'tip-backdrop';
-  backdrop.style.cssText = 'position:fixed;inset:0;z-index:99998;display:none;background:transparent';
+  backdrop.style.cssText = 'position:fixed;inset:0;z-index:99990;display:none;background:rgba(0,0,0,.55)';
 
+  var sheet = null;
   function closeTip(){
     document.querySelectorAll('[data-tip].tip-show').forEach(function(t){ t.classList.remove('tip-show'); });
+    if(sheet){ sheet.remove(); sheet = null; }
     backdrop.style.display = 'none';
   }
   function openTip(th){
     closeTip();
-    th.classList.add('tip-show');
+    th.classList.add('tip-show');   // keeps the CSS ::after too, harmless
     backdrop.style.display = 'block';
+    // build a REAL bottom sheet so it can carry a ✕ close button
+    sheet = document.createElement('div');
+    sheet.id = 'tip-sheet';
+    sheet.style.cssText = 'position:fixed;left:12px;right:12px;bottom:16px;z-index:99999;'
+      + 'background:#0D1420;color:#EAF0F4;border:1px solid #14B8A6;border-radius:12px;'
+      + 'padding:16px 44px 16px 18px;font-size:13px;line-height:1.5;'
+      + 'box-shadow:0 12px 48px rgba(0,0,0,.95)';
+    sheet.textContent = th.getAttribute('data-tip') || '';
+    var x = document.createElement('button');
+    x.textContent = '\u2715';
+    x.setAttribute('aria-label','Close');
+    x.style.cssText = 'position:absolute;top:8px;right:10px;background:none;border:none;'
+      + 'color:#8CA0B3;font-size:18px;line-height:1;padding:4px 6px;cursor:pointer';
+    x.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); closeTip(); }, false);
+    sheet.appendChild(x);
+    // tapping the sheet body should NOT close; but let the ✕ button's own handler run.
+    sheet.addEventListener('click', function(e){ if(e.target!==x){ e.stopPropagation(); } }, false);
+    document.body.appendChild(sheet);
   }
   // tapping the backdrop closes the tip and eats the event
   backdrop.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); closeTip(); }, true);
