@@ -971,7 +971,7 @@ function renderRankings(){
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
-    <td${p.och?' data-tip="New OC this cycle — the player's production came under the old scheme. Shown for context; it does not adjust the projection."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
+    <td${p.och?' data-tip="New OC this cycle — prior production came under the old scheme. Shown for context; it does not adjust the projection."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
