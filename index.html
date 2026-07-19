@@ -34,6 +34,9 @@ tr:hover td{background:var(--panel)}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
 @media(max-width:600px){
   /* (mobile tooltip handled by the @media(hover:none) rule above) */
+  /* game-log: shrink dense box-score so 11-12 cols fit the card with no scroll */
+  .gl-tbl{font-size:9px !important}
+  .gl-tbl th,.gl-tbl td{padding:2px 3px !important}
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -443,8 +446,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
       <th onclick="setSortR('ppg25')" data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded." style="cursor:pointer">PPG'25</th><th onclick="setSortR('ppg24')" data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile" style="cursor:pointer">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
       <th onclick="setSortR('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.">Proj PPG</th>
-      <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Applied as a modifier to projected PPG. OC mark = coordinator change; model discounts until new system shows in production data." class="col-hide-mobile">Sys</th>
-      <th data-tip="Offensive coordinator. ⚠ flags a coordinator change this cycle — the scheme is unproven, so DELTA applies an OC-continuity discount to the projection and won't credit the new system until it shows up in production data. No flag = stable staff." class="col-hide-mobile">OC</th><th>Tag</th>
+      <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle." class="col-hide-mobile">Sys</th>
+      <th data-tip="Offensive coordinator. ⚠ flags a coordinator change this cycle — everything the player demonstrated came under the old scheme. Shown for context; it does not adjust the projection. No flag = stable staff." class="col-hide-mobile">OC</th><th>Tag</th>
     </tr></thead>
     <tbody id="rank-body"></tbody>
   </table></div>
@@ -479,7 +482,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
   <div class="info-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <span>Model = Mkt Val × age × system × OC continuity × utilization × college × EPA × QB quality. Picks use raw market value.</span>
+    <span>Model = Mkt Val × age × utilization × college × EPA × QB quality × offense style. Picks use raw market value.</span>
     <select id="trade-scoring-fmt" onchange="applyTradeScoring()" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
       <option value="half_tep">0.5PPR + TE Prem</option>
       <option value="half">0.5 PPR</option>
@@ -707,6 +710,164 @@ function renderStartProfile(p){
     +'<div style="font-size:11px;color:var(--fog)">Loading game logs\u2026</div></div>';
   ensureStartData().then(()=>{ const h=document.getElementById('dd-startprofile'); if(h) h.innerHTML=startProfileHTML(p); });
 }
+// ── Game Log (per-week results flowing into upcoming fixtures) ──────────────
+// Reuses gamefp() so the FP column is scored at the current scoring format, and
+// rides on the Start Profile data load (ensureStartData) — no extra fetch. Scores
+// at render/expand time, exactly like Start Profile; an open card is NOT live-
+// refreshed on a format change (matches existing card behavior). Position-aware
+// columns; upcoming (up:1) rows show the fixture only, never scored (gamefp would
+// be NaN on stat-less rows). Missing opponent (Week-18 numbering gap) renders '—'.
+let _glPlayer=null, _glSeason=null, _glView='table';
+function renderGameLog(p){
+  const host=document.getElementById('dd-gamelog');
+  if(!host) return;
+  _glPlayer=p; _glSeason=null; _glView='table';
+  if(START_DATA_STATE==='error'){ host.innerHTML=''; return; }
+  if(START_DATA_STATE==='loaded'){ host.innerHTML=gameLogShell(p); return; }
+  host.innerHTML='<div class="dd-section"><div class="dd-section-label">Game Log</div>'
+    +'<div style="font-size:11px;color:var(--fog)">Loading game logs\u2026</div></div>';
+  ensureStartData().then(()=>{ const h=document.getElementById('dd-gamelog'); if(h&&_glPlayer===p) h.innerHTML=gameLogShell(p); });
+}
+function glSeasons(p){
+  const rows=(typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[];
+  const set=new Set(); for(const g of rows){ if(g.s!=null) set.add(g.s); }
+  return [...set].sort((a,b)=>b-a);
+}
+function glFmtLabel(f){return ({half_tep:'0.5 PPR + TE Prem',half:'0.5 PPR',full_tep:'Full PPR + TE Prem',full:'Full PPR',std:'Standard'})[f]||f;}
+function gameLogShell(p){
+  const seasons=glSeasons(p);
+  if(!seasons.length) return '';   // no logs → no section (keep the card clean)
+  if(_glSeason==null || !seasons.includes(_glSeason))
+    _glSeason=(typeof GAMELOGS_MAX!=='undefined'&&seasons.includes(GAMELOGS_MAX))?GAMELOGS_MAX:seasons[0];
+  return '<div class="dd-section">'
+    +'<div class="dd-section-label" style="cursor:pointer;display:flex;align-items:center;gap:6px" onclick="glToggle()">'
+      +'<span id="gl-chev" style="display:inline-block;transition:transform .15s">\u25b8</span> Game Log'
+    +'</div>'
+    +'<div id="dd-gamelog-body" style="display:none">'+gameLogInner(p)+'</div>'
+  +'</div>';
+}
+function gameLogInner(p){
+  const seasons=glSeasons(p);
+  const views=[['table','Table'],['start','Startability']];
+  const vsw=views.map(v=>
+    '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
+    +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
+  ).join('');
+  const chips=seasons.map(s=>
+    '<span onclick="glSetSeason('+s+')" style="cursor:pointer;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-right:5px;'
+    +(s===_glSeason?'background:var(--emerald);color:#04110c':'background:var(--line);color:var(--fog)')+'">'+s+'</span>'
+  ).join('');
+  const content = _glView==='table'
+    ? '<div style="overflow-x:auto">'+gameLogTable(p,_glSeason)+'</div>'
+    : gameLogChart(p,_glSeason,_glView);
+  return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
+    +content;
+}
+function glToggle(){
+  const b=document.getElementById('dd-gamelog-body'), c=document.getElementById('gl-chev');
+  if(!b) return;
+  const open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  if(c) c.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function glSetSeason(s){
+  _glSeason=s;
+  const b=document.getElementById('dd-gamelog-body');
+  if(b&&_glPlayer) b.innerHTML=gameLogInner(_glPlayer);
+}
+function glSetView(v){
+  _glView=v;
+  const b=document.getElementById('dd-gamelog-body');
+  if(b&&_glPlayer) b.innerHTML=gameLogInner(_glPlayer);
+}
+function gameLogTable(p,season){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(!rows.length) return '<div style="font-size:11px;color:var(--fog)">No games.</div>';
+  const line=(typeof STARTLINES!=='undefined'&&STARTLINES)?STARTLINES[pos+'|'+scoringFmt]:null;
+  const cols = pos==='QB'
+    ? [['Wk','w'],['Opp','opp'],['C/A','ca'],['PaYd','py'],['TD','pt'],['Int','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt'],['FL','fl'],['FP','fp']]
+    : pos==='RB'
+    ? [['Wk','w'],['Opp','opp'],['Snp','snp'],['Car','car'],['RuYd','ry'],['YPC','ypc'],['RuTD','rt'],['Rec/Tgt','rectgt'],['ReYd','rey'],['ReTD','ret'],['FL','fl'],['FP','fp']]
+    : [['Wk','w'],['Opp','opp'],['Snp','snp'],['Rec/Tgt','rectgt'],['ReYd','rey'],['ReTD','ret'],['FP','fp']];
+  const th=cols.map(c=>'<th style="text-align:'+(c[1]==='opp'?'left':'right')+';padding:3px 6px;font-size:9px;color:var(--fog-2);font-weight:700;white-space:nowrap">'+c[0]+'</th>').join('');
+  const oppCell=g=>{ if(g.opp==null) return '<span style="color:var(--fog-2)">\u2014</span>'; return (g.h===1?'vs ':'@ ')+g.opp; };
+  const body=rows.map(g=>{
+    if(g.up||g.dnp){
+      const span=cols.length-2;
+      const lbl=g.dnp?'DNP \u2014 did not play':'upcoming';
+      return '<tr style="opacity:'+(g.dnp?'.45':'.5')+';border-top:1px solid var(--line)">'
+        +'<td style="padding:3px 6px;text-align:right">'+g.w+'</td>'
+        +'<td style="padding:3px 6px;text-align:left;white-space:nowrap">'+oppCell(g)+'</td>'
+        +'<td colspan="'+span+'" style="padding:3px 6px;text-align:right;font-style:italic;color:var(--fog-2)">'+lbl+'</td>'
+        +'</tr>';
+    }
+    const fp=gamefp(g,pos,scoringFmt);
+    const fpClr = line ? (fp>=line[1]?'var(--emerald)':fp>=line[0]?'var(--sky)':'var(--coral)') : 'var(--fog)';
+    const R=v=>'<td style="padding:3px 6px;text-align:right">'+v+'</td>';
+    const cell=c=>{
+      const k=c[1];
+      if(k==='w')   return R(g.w);
+      if(k==='opp') return '<td style="padding:3px 6px;text-align:left;white-space:nowrap">'+oppCell(g)+'</td>';
+      if(k==='snp') return R(g.snp!=null?Math.round(g.snp*100)+'%':'\u2014');
+      if(k==='ca')  return R((g.cmp||0)+'/'+(g.pa||0));
+      if(k==='ypc') return R(g.car?(g.ry/g.car).toFixed(1):'\u2014');
+      if(k==='rectgt') return R((g.rec||0)+'/'+(g.tgt||0));
+      if(k==='fp')  return '<td style="padding:3px 6px;text-align:right;font-weight:700;color:'+fpClr+'">'+fp.toFixed(1)+'</td>';
+      const v=g[k]; return R(v!=null?v:0);
+    };
+    return '<tr style="border-top:1px solid var(--line)">'+cols.map(cell).join('')+'</tr>';
+  }).join('');
+  const legend = line
+    ? '<div style="font-size:9px;color:var(--fog-2);margin-top:5px">FP at '+glFmtLabel(scoringFmt)
+      +' \u00b7 <span style="color:var(--emerald)">elite \u2265'+line[1]+'</span>'
+      +' \u00b7 <span style="color:var(--sky)">hit \u2265'+line[0]+'</span>'
+      +' \u00b7 <span style="color:var(--coral)">miss</span></div>'
+    : '';
+  return '<table class="gl-tbl" style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+legend;
+}
+function gameLogChart(p,season,view){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season&&!g.up&&!g.dnp).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(rows.length<3) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough played games this season to chart.</div>';
+  const line=(typeof STARTLINES!=='undefined'&&STARTLINES)?STARTLINES[pos+'|'+scoringFmt]:null;
+  const fps=rows.map(g=>gamefp(g,pos,scoringFmt));
+  const n=fps.length, avg=fps.reduce((a,b)=>a+b,0)/n;
+  const sd=Math.sqrt(fps.reduce((a,b)=>a+(b-avg)*(b-avg),0)/n);
+  const srt=[...fps].sort((a,b)=>a-b);
+  const median=n%2?srt[(n-1)/2]:(srt[n/2-1]+srt[n/2])/2;
+  const maxv=(Math.max.apply(null,fps.concat(line?[line[1]]:[]))*1.12)||10;
+  const W=560, x0=20, x1=W-8, base=150, top=14, sc=(base-top)/maxv;
+  const slot=(x1-x0)/n, bw=Math.min(20,slot*0.66);
+  const bx=i=>x0+slot*i+(slot-bw)/2, y=v=>base-v*sc;
+  let s='';
+  if(line){
+    [[line[0],'hit \u2265'+line[0],'var(--sky)'],[line[1],'elite \u2265'+line[1],'var(--emerald)']].forEach(a=>{
+      s+='<line x1="'+x0+'" y1="'+y(a[0]).toFixed(1)+'" x2="'+x1+'" y2="'+y(a[0]).toFixed(1)+'" stroke="'+a[2]+'" stroke-width="1" stroke-dasharray="4 3"/>';
+      s+='<text x="'+x1+'" y="'+(y(a[0])-3).toFixed(1)+'" font-size="9" text-anchor="end" fill="var(--fog-2)">'+a[1]+'</text>';
+    });
+  }
+  s+='<line x1="'+x0+'" y1="'+base+'" x2="'+x1+'" y2="'+base+'" stroke="var(--line)"/>';
+  rows.forEach((g,i)=>{
+    const f=fps[i];
+    const c = line ? (f>=line[1]?'var(--emerald)':f>=line[0]?'var(--sky)':'var(--coral)') : 'var(--fog)';
+    const h=Math.max(2,f*sc), yy=base-h;
+    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+yy.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+c+'"/>';
+    s+='<text x="'+(bx(i)+bw/2).toFixed(1)+'" y="'+(base+11)+'" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+  });
+  let sum='';
+  if(line){
+    const nS=fps.filter(f=>f>=line[0]).length, nE=fps.filter(f=>f>=line[1]).length, nM=fps.filter(f=>f<line[0]).length;
+    const cv=avg>0?sd/avg:0, vlabel=cv<0.35?'steady':cv<0.55?'moderate':'volatile';
+    sum='<div>Startable <b>'+nS+'/'+n+' ('+Math.round(100*nS/n)+'%)</b> \u00b7 elite <b>'+nE+'</b> \u00b7 miss <b>'+nM+'</b> \u2014 vs your '+glFmtLabel(scoringFmt)+' bar</div>'
+      +'<div style="margin-top:2px">floor <b>'+Math.min.apply(null,fps).toFixed(1)+'</b> \u00b7 median <b>'+median.toFixed(1)+'</b> \u00b7 ceiling <b>'+Math.max.apply(null,fps).toFixed(1)+'</b> \u00b7 <b style="color:var(--paper)">'+vlabel+'</b></div>';
+  }
+  return '<svg viewBox="0 0 '+W+' 168" width="100%" role="img"><title>Startability</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
+}
 function syncSettingsUI(){
   ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
   ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
@@ -810,7 +971,7 @@ function renderRankings(){
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
     <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
-    <td${p.och?' data-tip="New OC — scheme unproven. DELTA applies an OC-continuity discount to the projection until the new system shows up in production data."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
+    <td${p.och?' data-tip="New OC this cycle — the player's production came under the old scheme. Shown for context; it does not adjust the projection."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
@@ -1827,6 +1988,7 @@ function renderDeck(p){
   // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
     renderStartProfile(p);
+    renderGameLog(p);
     const scoreEl = document.getElementById('opp-score-val');
     const score = getOppScore(p.n, p.pos);
     if (scoreEl && score != null) countUp(scoreEl, score);
@@ -2043,6 +2205,7 @@ function renderDeck(p){
 
     ${buildReadHTML(p)}
     <div id="dd-startprofile"></div>
+    <div id="dd-gamelog"></div>
 
     ${(()=>{
       const oppSc = getOppScore(p.n, p.pos);
@@ -2100,7 +2263,7 @@ function renderDeck(p){
       // Folded-in scheme/context (the non-redundant survivors of System & Role):
       // system score, OC-change risk, target-share TREND (direction, not the
       // static share shown above), and format sensitivity.
-      const ocLine = p.och ? '<span style="color:var(--topaz)">\u26a0 OC change — scheme risk</span> '+(p.oc||'') : (p.oc||'');
+      const ocLine = p.och ? '<span style="color:var(--topaz)">\u26a0 OC change</span> '+(p.oc||'') : (p.oc||'');
       const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
       const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
       const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">⚠ new OC</span>' : '';
@@ -2787,8 +2950,8 @@ document.addEventListener('click', function(e) {
           <li><b>Proj PPG</b> — DELTA's projected points per game for the upcoming season, at your league's scoring.</li>
           <li><b>Start Profile</b> — per-start outcomes across recent seasons: <b>hit</b> (startable week), <b>elite</b> (slate-breaking week), <b>miss</b> (hurt your lineup). Weekly dependability, not season totals.</li>
           <li><b>Alpha / Workhorse Score</b> — role size grade (targets/touches share): how much of the offense actually flows through the player.</li>
-          <li><b>System Score (0–100)</b> — offensive environment quality: coordinator, scheme fit, role clarity. League median ≈ 60. Enters the projection as a small multiplier.</li>
-          <li><b>⚠ OC change</b> — a new coordinator: everything demonstrated came under the old scheme, so the model discounts until the new one shows in real games. Rookies are exempt (no prior scheme to lose).</li>
+          <li><b>System Score (0–100)</b> — offensive environment quality: coordinator, scheme fit, role clarity. League median ≈ 60. Descriptive context only — it does not enter the projection.</li>
+          <li><b>⚠ OC change</b> — a new coordinator: everything demonstrated came under the old scheme. Flagged for context only — the model no longer discounts for it. Rookies never had a prior scheme, so the flag never appears.</li>
           <li><b>Offense style factors</b> — validated play-by-play tendencies (2022–25): pre-snap motion helps RB production, heavy 12-personnel squeezes WR3s, pass-lean identity (PROE) lifts WR rooms. Small (±2–4%), explained on each affected card.</li>
           <li><b>EPA / YPRR</b> — per-play efficiency (Expected Points Added) and yards per route run: quality of play independent of volume.</li>
           <li><b>Ripple Effects</b> — measured value shifts on <i>incumbent</i> players when teammates arrive or depart, calibrated on eight seasons of history.</li>
@@ -2801,7 +2964,7 @@ document.addEventListener('click', function(e) {
         <div class="about-heading">What the model can't see</div>
         <ul class="about-list">
           <li>Recent injuries or transactions not yet reflected in production data — check the data freshness badge.</li>
-          <li>How a new offensive coordinator will actually deploy a player. The ⚠ OC flag applies a discount, but the model can't predict scheme fit.</li>
+          <li>How a new offensive coordinator will actually deploy a player. The ⚠ OC flag marks the change for context, but the model can't predict scheme fit.</li>
           <li>Any future performance. DELTA scores what a player has demonstrated, not what they might become.</li>
           <li>Situational upside from teammate changes — if a player signed with a new team this offseason, the model scores their historical production and new system score, but hasn't seen them in that role yet.</li>
         </ul>

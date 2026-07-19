@@ -72,7 +72,7 @@ async function ensureStartData(){
         const logs=GAMELOGS[p.n];
         if(!logs||!logs.length) continue;
         const wk=new Set();
-        for(const g of logs){ if(g.s===2025) wk.add(g.w); }
+        for(const g of logs){ if(g.s===2025 && !g.up && !g.dnp) wk.add(g.w); }
         if(wk.size>0&&p.g25!==wk.size){ p.g25=wk.size; synced++; }
       }
       if(synced) console.log('[DELTA] g25 synced from game logs for '+synced+' players');
@@ -91,7 +91,7 @@ function computeStartProfile(name,pos){
   const line=STARTLINES[pos+'|'+scoringFmt];   // league-invariant: game quality depends on position + scoring only
   if(!line) return null;
   const [hit,elite]=line, minS=GAMELOGS_MAX-1;
-  const games=GAMELOGS[name].filter(g=>g.s>=minS);
+  const games=GAMELOGS[name].filter(g=>g.s>=minS && !g.up && !g.dnp);   // played games only — never score upcoming/DNP
   if(!games.length) return null;
   let m=0,ho=0,e=0;
   for(const g of games){ const fp=gamefp(g,pos,scoringFmt); if(fp>=elite)e++; else if(fp>=hit)ho++; else m++; }
