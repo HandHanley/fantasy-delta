@@ -126,6 +126,167 @@ function startProfileHTML(p){
     + sp.n+' starts · '+sp.lo+'\u2013'+String(sp.hi).slice(2)+' · hit \u2265'+sp.hitLine+' · elite \u2265'+sp.eliteLine+' pts</div></div>';
 }
 
+
+// ══ Game Log (shared by index.html card + player.html page) ══════════════════
+// ── Game Log (per-week results flowing into upcoming fixtures) ──────────────
+// Reuses gamefp() so the FP column is scored at the current scoring format, and
+// rides on the Start Profile data load (ensureStartData) — no extra fetch. Scores
+// at render/expand time, exactly like Start Profile; an open card is NOT live-
+// refreshed on a format change (matches existing card behavior). Position-aware
+// columns; upcoming (up:1) rows show the fixture only, never scored (gamefp would
+// be NaN on stat-less rows). Missing opponent (Week-18 numbering gap) renders '—'.
+let _glPlayer=null, _glSeason=null, _glView='table';
+function renderGameLog(p){
+  const host=document.getElementById('dd-gamelog');
+  if(!host) return;
+  _glPlayer=p; _glSeason=null; _glView='table';
+  if(START_DATA_STATE==='error'){ host.innerHTML=''; return; }
+  if(START_DATA_STATE==='loaded'){ host.innerHTML=gameLogShell(p); return; }
+  host.innerHTML='<div class="dd-section"><div class="dd-section-label">Game Log</div>'
+    +'<div style="font-size:11px;color:var(--fog)">Loading game logs\u2026</div></div>';
+  ensureStartData().then(()=>{ const h=document.getElementById('dd-gamelog'); if(h&&_glPlayer===p) h.innerHTML=gameLogShell(p); });
+}
+function glSeasons(p){
+  const rows=(typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[];
+  const set=new Set(); for(const g of rows){ if(g.s!=null) set.add(g.s); }
+  return [...set].sort((a,b)=>b-a);
+}
+function glFmtLabel(f){return ({half_tep:'0.5 PPR + TE Prem',half:'0.5 PPR',full_tep:'Full PPR + TE Prem',full:'Full PPR',std:'Standard'})[f]||f;}
+function gameLogShell(p){
+  const seasons=glSeasons(p);
+  if(!seasons.length) return '';   // no logs → no section (keep the card clean)
+  if(_glSeason==null || !seasons.includes(_glSeason))
+    _glSeason=(typeof GAMELOGS_MAX!=='undefined'&&seasons.includes(GAMELOGS_MAX))?GAMELOGS_MAX:seasons[0];
+  return '<div class="dd-section">'
+    +'<div class="dd-section-label" style="cursor:pointer;display:flex;align-items:center;gap:6px" onclick="glToggle()">'
+      +'<span id="gl-chev" style="display:inline-block;transition:transform .15s">\u25b8</span> Game Log'
+    +'</div>'
+    +'<div id="dd-gamelog-body" style="display:none">'+gameLogInner(p)+'</div>'
+  +'</div>';
+}
+function gameLogInner(p){
+  const seasons=glSeasons(p);
+  const views=[['table','Table'],['start','Startability']];
+  const vsw=views.map(v=>
+    '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
+    +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
+  ).join('');
+  const chips=seasons.map(s=>
+    '<span onclick="glSetSeason('+s+')" style="cursor:pointer;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-right:5px;'
+    +(s===_glSeason?'background:var(--emerald);color:#04110c':'background:var(--line);color:var(--fog)')+'">'+s+'</span>'
+  ).join('');
+  const content = _glView==='table'
+    ? '<div style="overflow-x:auto">'+gameLogTable(p,_glSeason)+'</div>'
+    : gameLogChart(p,_glSeason,_glView);
+  return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
+    +content;
+}
+function glToggle(){
+  const b=document.getElementById('dd-gamelog-body'), c=document.getElementById('gl-chev');
+  if(!b) return;
+  const open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  if(c) c.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function glSetSeason(s){
+  _glSeason=s;
+  const b=document.getElementById('dd-gamelog-body');
+  if(b&&_glPlayer) b.innerHTML=gameLogInner(_glPlayer);
+}
+function glSetView(v){
+  _glView=v;
+  const b=document.getElementById('dd-gamelog-body');
+  if(b&&_glPlayer) b.innerHTML=gameLogInner(_glPlayer);
+}
+function gameLogTable(p,season){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(!rows.length) return '<div style="font-size:11px;color:var(--fog)">No games.</div>';
+  const line=(typeof STARTLINES!=='undefined'&&STARTLINES)?STARTLINES[pos+'|'+scoringFmt]:null;
+  const cols = pos==='QB'
+    ? [['Wk','w'],['Opp','opp'],['C/A','ca'],['PaYd','py'],['TD','pt'],['Int','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt'],['FL','fl'],['FP','fp']]
+    : pos==='RB'
+    ? [['Wk','w'],['Opp','opp'],['Snp','snp'],['Car','car'],['RuYd','ry'],['YPC','ypc'],['RuTD','rt'],['Rec/Tgt','rectgt'],['ReYd','rey'],['ReTD','ret'],['FL','fl'],['FP','fp']]
+    : [['Wk','w'],['Opp','opp'],['Snp','snp'],['Rec/Tgt','rectgt'],['ReYd','rey'],['ReTD','ret'],['FP','fp']];
+  const th=cols.map(c=>'<th style="text-align:'+(c[1]==='opp'?'left':'right')+';padding:3px 6px;font-size:9px;color:var(--fog-2);font-weight:700;white-space:nowrap">'+c[0]+'</th>').join('');
+  const oppCell=g=>{ if(g.opp==null) return '<span style="color:var(--fog-2)">\u2014</span>'; return (g.h===1?'vs ':'@ ')+g.opp; };
+  const body=rows.map(g=>{
+    if(g.up||g.dnp){
+      const span=cols.length-2;
+      const lbl=g.dnp?'DNP \u2014 did not play':'upcoming';
+      return '<tr style="opacity:'+(g.dnp?'.45':'.5')+';border-top:1px solid var(--line)">'
+        +'<td style="padding:3px 6px;text-align:right">'+g.w+'</td>'
+        +'<td style="padding:3px 6px;text-align:left;white-space:nowrap">'+oppCell(g)+'</td>'
+        +'<td colspan="'+span+'" style="padding:3px 6px;text-align:right;font-style:italic;color:var(--fog-2)">'+lbl+'</td>'
+        +'</tr>';
+    }
+    const fp=gamefp(g,pos,scoringFmt);
+    const fpClr = line ? (fp>=line[1]?'var(--emerald)':fp>=line[0]?'var(--sky)':'var(--coral)') : 'var(--fog)';
+    const R=v=>'<td style="padding:3px 6px;text-align:right">'+v+'</td>';
+    const cell=c=>{
+      const k=c[1];
+      if(k==='w')   return R(g.w);
+      if(k==='opp') return '<td style="padding:3px 6px;text-align:left;white-space:nowrap">'+oppCell(g)+'</td>';
+      if(k==='snp') return R(g.snp!=null?Math.round(g.snp*100)+'%':'\u2014');
+      if(k==='ca')  return R((g.cmp||0)+'/'+(g.pa||0));
+      if(k==='ypc') return R(g.car?(g.ry/g.car).toFixed(1):'\u2014');
+      if(k==='rectgt') return R((g.rec||0)+'/'+(g.tgt||0));
+      if(k==='fp')  return '<td style="padding:3px 6px;text-align:right;font-weight:700;color:'+fpClr+'">'+fp.toFixed(1)+'</td>';
+      const v=g[k]; return R(v!=null?v:0);
+    };
+    return '<tr style="border-top:1px solid var(--line)">'+cols.map(cell).join('')+'</tr>';
+  }).join('');
+  const legend = line
+    ? '<div style="font-size:9px;color:var(--fog-2);margin-top:5px">FP at '+glFmtLabel(scoringFmt)
+      +' \u00b7 <span style="color:var(--emerald)">elite \u2265'+line[1]+'</span>'
+      +' \u00b7 <span style="color:var(--sky)">hit \u2265'+line[0]+'</span>'
+      +' \u00b7 <span style="color:var(--coral)">miss</span></div>'
+    : '';
+  return '<table class="gl-tbl" style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+legend;
+}
+function gameLogChart(p,season,view){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season&&!g.up&&!g.dnp).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(rows.length<3) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough played games this season to chart.</div>';
+  const line=(typeof STARTLINES!=='undefined'&&STARTLINES)?STARTLINES[pos+'|'+scoringFmt]:null;
+  const fps=rows.map(g=>gamefp(g,pos,scoringFmt));
+  const n=fps.length, avg=fps.reduce((a,b)=>a+b,0)/n;
+  const sd=Math.sqrt(fps.reduce((a,b)=>a+(b-avg)*(b-avg),0)/n);
+  const srt=[...fps].sort((a,b)=>a-b);
+  const median=n%2?srt[(n-1)/2]:(srt[n/2-1]+srt[n/2])/2;
+  const maxv=(Math.max.apply(null,fps.concat(line?[line[1]]:[]))*1.12)||10;
+  const W=560, x0=20, x1=W-8, base=150, top=14, sc=(base-top)/maxv;
+  const slot=(x1-x0)/n, bw=Math.min(20,slot*0.66);
+  const bx=i=>x0+slot*i+(slot-bw)/2, y=v=>base-v*sc;
+  let s='';
+  if(line){
+    [[line[0],'hit \u2265'+line[0],'var(--sky)'],[line[1],'elite \u2265'+line[1],'var(--emerald)']].forEach(a=>{
+      s+='<line x1="'+x0+'" y1="'+y(a[0]).toFixed(1)+'" x2="'+x1+'" y2="'+y(a[0]).toFixed(1)+'" stroke="'+a[2]+'" stroke-width="1" stroke-dasharray="4 3"/>';
+      s+='<text x="'+x1+'" y="'+(y(a[0])-3).toFixed(1)+'" font-size="9" text-anchor="end" fill="var(--fog-2)">'+a[1]+'</text>';
+    });
+  }
+  s+='<line x1="'+x0+'" y1="'+base+'" x2="'+x1+'" y2="'+base+'" stroke="var(--line)"/>';
+  rows.forEach((g,i)=>{
+    const f=fps[i];
+    const c = line ? (f>=line[1]?'var(--emerald)':f>=line[0]?'var(--sky)':'var(--coral)') : 'var(--fog)';
+    const h=Math.max(2,f*sc), yy=base-h;
+    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+yy.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+c+'"/>';
+    s+='<text x="'+(bx(i)+bw/2).toFixed(1)+'" y="'+(base+11)+'" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+  });
+  let sum='';
+  if(line){
+    const nS=fps.filter(f=>f>=line[0]).length, nE=fps.filter(f=>f>=line[1]).length, nM=fps.filter(f=>f<line[0]).length;
+    const cv=avg>0?sd/avg:0, vlabel=cv<0.35?'steady':cv<0.55?'moderate':'volatile';
+    sum='<div>Startable <b>'+nS+'/'+n+' ('+Math.round(100*nS/n)+'%)</b> \u00b7 elite <b>'+nE+'</b> \u00b7 miss <b>'+nM+'</b> \u2014 vs your '+glFmtLabel(scoringFmt)+' bar</div>'
+      +'<div style="margin-top:2px">floor <b>'+Math.min.apply(null,fps).toFixed(1)+'</b> \u00b7 median <b>'+median.toFixed(1)+'</b> \u00b7 ceiling <b>'+Math.max.apply(null,fps).toFixed(1)+'</b> \u00b7 <b style="color:var(--paper)">'+vlabel+'</b></div>';
+  }
+  return '<svg viewBox="0 0 '+W+' 168" width="100%" role="img"><title>Startability</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
+}
+
 const REC_PG={
   'A.J. Brown':4.59,
   'AJ Barner':3.06,

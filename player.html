@@ -37,6 +37,7 @@ a:hover{text-decoration:underline}
 .card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:10px}
 .card-sub{font-size:9px;color:#5C7080;font-weight:400;margin-top:2px}
 .dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px}
+@media(max-width:600px){.gl-tbl{font-size:9px!important}.gl-tbl th,.gl-tbl td{padding:2px 3px!important}}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:#8CA0B3;width:36px;flex-shrink:0}
 .dd-prog-bar{flex:1;height:5px;background:#111A28;border-radius:3px;overflow:hidden}
@@ -61,6 +62,7 @@ a:hover{text-decoration:underline}
 @media(max-width:480px){.hero-name{font-size:20px}.hero-hs,.hero-ph{width:58px;height:58px}}
 /* ===================== DELTA BRAND LAYER ===================== */
 :root{
+  --ink:#0A0F1A;--panel:#111A28;--line:#1E2A3A;--emerald:#10B981;--teal-br:#2DD4BF;--fog:#8CA0B3;--fog-2:#5C7080;--paper:#EAF0F4;--coral:#E05745;--topaz:#E0B34D;--sky:#6BB6E0;
   --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
   --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
   --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
@@ -735,6 +737,15 @@ function buildComparableHTML(p) {
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
+// ── Game Log (uses shared gameLogShell from delta-engine.js) ──────────────────
+function buildGameLogCard(p) {
+  if (typeof gameLogShell !== 'function') return '';
+  _glPlayer = p; _glSeason = null; _glView = 'table';
+  const shell = gameLogShell(p);
+  if (!shell) return '';
+  return `<div class="card">${shell}</div>`;
+}
+
 function renderPlayerPage(p) {
   try { _renderPlayerPage(p); }
   catch(e){
@@ -757,6 +768,7 @@ function _renderPlayerPage(p) {
     ${buildDSBreakdownHTML(p)}
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
+    ${buildGameLogCard(p)}
     ${buildDSTrajectoryHTML(p)}
     ${buildAgeCurveHTML(p)}
     ${buildProductionHTML(p)}
@@ -769,6 +781,8 @@ function _renderPlayerPage(p) {
     ${buildScoutHTML()}
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
+  const _glb=document.getElementById('dd-gamelog-body'),_glc=document.getElementById('gl-chev');
+  if(_glb){_glb.style.display='block';if(_glc)_glc.style.transform='rotate(90deg)';}
   document.title = p.n + ' — DELTA';
 }
 
