@@ -90,8 +90,10 @@ function computeStartProfile(name,pos){
   if(!GAMELOGS||!STARTLINES||!GAMELOGS[name]) return null;
   const line=STARTLINES[pos+'|'+scoringFmt];   // league-invariant: game quality depends on position + scoring only
   if(!line) return null;
-  const [hit,elite]=line, minS=GAMELOGS_MAX-1;
-  const games=GAMELOGS[name].filter(g=>g.s>=minS && !g.up && !g.dnp);   // played games only — never score upcoming/DNP
+  const [hit,elite]=line;
+  const played=GAMELOGS[name].filter(g=>!g.up && !g.dnp)          // played games only — never score upcoming/DNP
+    .sort((a,b)=>(a.s-b.s)||((a.w||0)-(b.w||0)));
+  const games=played.slice(-34);   // rolling window: most recent 34 games played (~two full seasons; rolls as the season unfolds)
   if(!games.length) return null;
   let m=0,ho=0,e=0;
   for(const g of games){ const fp=gamefp(g,pos,scoringFmt); if(fp>=elite)e++; else if(fp>=hit)ho++; else m++; }
@@ -99,7 +101,7 @@ function computeStartProfile(name,pos){
   return {n, miss:m, hitOnly:ho, elite:e,
           missPct:Math.round(100*m/n), hitOnlyPct:Math.round(100*ho/n), elitePct:Math.round(100*e/n),
           hitPct:Math.round(100*(ho+e)/n),   // cumulative: a Hit includes Elite (Serviceable and up)
-          lo:minS, hi:GAMELOGS_MAX, hitLine:hit, eliteLine:elite};
+          lo:games[0].s, hi:games[n-1].s, hitLine:hit, eliteLine:elite};
 }
 function glOf(p){
   if(!p) return null;
@@ -259,16 +261,17 @@ function gameLogChart(p,season,view){
   const median=n%2?srt[(n-1)/2]:(srt[n/2-1]+srt[n/2])/2;
   const maxv=(Math.max.apply(null,fps.concat(line?[line[1]]:[]))*1.12)||10;
   const W=560, x0=20, x1=W-8, base=150, top=14, sc=(base-top)/maxv;
-  const slot=(x1-x0)/n, bw=Math.min(20,slot*0.66);
+  const bxR=x1-52;   // reserve right margin so the hit/elite labels never sit behind the last bars
+  const slot=(bxR-x0)/n, bw=Math.min(20,slot*0.66);
   const bx=i=>x0+slot*i+(slot-bw)/2, y=v=>base-v*sc;
   let s='';
   if(line){
     [[line[0],'hit \u2265'+line[0],'var(--sky)'],[line[1],'elite \u2265'+line[1],'var(--emerald)']].forEach(a=>{
-      s+='<line x1="'+x0+'" y1="'+y(a[0]).toFixed(1)+'" x2="'+x1+'" y2="'+y(a[0]).toFixed(1)+'" stroke="'+a[2]+'" stroke-width="1" stroke-dasharray="4 3"/>';
-      s+='<text x="'+x1+'" y="'+(y(a[0])-3).toFixed(1)+'" font-size="9" text-anchor="end" fill="var(--fog-2)">'+a[1]+'</text>';
+      s+='<line x1="'+x0+'" y1="'+y(a[0]).toFixed(1)+'" x2="'+bxR+'" y2="'+y(a[0]).toFixed(1)+'" stroke="'+a[2]+'" stroke-width="1" stroke-dasharray="4 3"/>';
+      s+='<text x="'+(bxR+5)+'" y="'+(y(a[0])+3).toFixed(1)+'" font-size="9" text-anchor="start" fill="var(--fog-2)">'+a[1]+'</text>';
     });
   }
-  s+='<line x1="'+x0+'" y1="'+base+'" x2="'+x1+'" y2="'+base+'" stroke="var(--line)"/>';
+  s+='<line x1="'+x0+'" y1="'+base+'" x2="'+bxR+'" y2="'+base+'" stroke="var(--line)"/>';
   rows.forEach((g,i)=>{
     const f=fps[i];
     const c = line ? (f>=line[1]?'var(--emerald)':f>=line[0]?'var(--sky)':'var(--coral)') : 'var(--fog)';
