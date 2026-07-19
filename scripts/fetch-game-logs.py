@@ -118,6 +118,11 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     rec  = pick(w, 'receptions', 'rec')
     rey  = pick(w, 'receiving_yards')
     ret  = pick(w, 'receiving_tds')
+    # NEW: volume fields (attempts/completions/carries/targets) for a fuller box score
+    pa   = pick(w, 'attempts', 'passing_attempts', 'pass_attempts')
+    cmp  = pick(w, 'completions', 'passing_completions')
+    car  = pick(w, 'carries', 'rushing_attempts', 'rush_attempts')
+    tgt  = pick(w, 'targets')
     # fumbles lost / 2pt / special TDs (sum components if present)
     fl_cols = [c for c in ['sack_fumbles_lost','rushing_fumbles_lost','receiving_fumbles_lost'] if c in w.columns]
     tp_cols = [c for c in ['passing_2pt_conversions','rushing_2pt_conversions','receiving_2pt_conversions'] if c in w.columns]
@@ -134,6 +139,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
             'py': _num(r, py), 'pt': _num(r, pt), 'pi': _num(r, pin),
             'ry': _num(r, ry), 'rt': _num(r, rt),
             'rec': _num(r, rec), 'rey': _num(r, rey), 'ret': _num(r, ret),
+            'pa': _num(r, pa), 'cmp': _num(r, cmp), 'car': _num(r, car), 'tgt': _num(r, tgt),
             'fl': sum(_num(r, c) for c in fl_cols),
             'tp': sum(_num(r, c) for c in tp_cols),
             'rtd': _num(r, sttd),
@@ -153,7 +159,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
             snap_lookup[key] = {'snaps': _num(r, osn), 'pct': _num(r, opc)}
 
     def has_production(st):
-        return any(st[k] for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd'))
+        return any(st[k] for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd','pa','cmp','car','tgt'))
 
     games = {}
     for delta_name, nfl_name in matched.items():
@@ -169,7 +175,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
             active = (snaps >= 1) or (st is not None and has_production(st))
             if not active:
                 continue   # 0 snaps + no production = DNP → excluded
-            st = st or {k: 0.0 for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd')}
+            st = st or {k: 0.0 for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd','pa','cmp','car','tgt')}
             team = wk_team.get((nkey, season, week))
             opp, home = smap.get((season, week, team), (None, None))
             rec_out = {
@@ -177,6 +183,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
                 'py': round(st['py']), 'pt': round(st['pt']), 'pi': round(st['pi']),
                 'ry': round(st['ry']), 'rt': round(st['rt']),
                 'rec': round(st['rec']), 'rey': round(st['rey']), 'ret': round(st['ret']),
+                'pa': round(st['pa']), 'cmp': round(st['cmp']), 'car': round(st['car']), 'tgt': round(st['tgt']),
                 'fl': round(st['fl']), 'tp': round(st['tp']), 'rtd': round(st['rtd']),
             }
             if opp is not None: rec_out['opp'] = opp; rec_out['h'] = home
@@ -274,6 +281,7 @@ def main():
                  'count as misses. App computes fantasy points per scoring format. '
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
                  'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. '
+                 'pa/cmp=pass att/comp car=carries tgt=targets. '
                  'opp=opponent h=1 home/0 away. up=1 marks an UPCOMING (unplayed) game — schedule only, no stats.'),
         'games': games,
     }
