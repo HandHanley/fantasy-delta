@@ -21,6 +21,7 @@ spot check matches the threshold derivation:
 """
 
 import json, os, re, unicodedata
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -97,8 +98,10 @@ def build_schedule_map(sched_pdf):
         except Exception:
             continue
         home, away = r.get('home_team'), r.get('away_team')
-        if home: smap[(season, week, home)] = (away, 1)   # home team: opp=away, home=1
-        if away: smap[(season, week, away)] = (home, 0)   # away team: opp=home, home=0
+        res = r.get('result'); hs = r.get('home_score')
+        done = 1 if (res is not None and res == res) or (hs is not None and hs == hs) else 0  # NaN-safe: game has a result/score
+        if home: smap[(season, week, home)] = (away, 1, done)   # home team: opp=away, home=1
+        if away: smap[(season, week, away)] = (home, 0, done)   # away team: opp=home, home=0
     return smap
 
 
@@ -177,7 +180,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
                 continue   # 0 snaps + no production = DNP → excluded
             st = st or {k: 0.0 for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd','pa','cmp','car','tgt')}
             team = wk_team.get((nkey, season, week))
-            opp, home = smap.get((season, week, team), (None, None))
+            opp, home, _done = smap.get((season, week, team), (None, None, 0))
             rec_out = {
                 's': season, 'w': week, 'snp': round(pct, 2),
                 'py': round(st['py']), 'pt': round(st['pt']), 'pi': round(st['pi']),
@@ -203,10 +206,24 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
                     if t is not None and not isinstance(t, float):
                         cur_team = t; break
         if cur_team:
-            for (season, week, team), (opp, home) in smap.items():
-                if season == current_season and team == cur_team and week not in cur_played_weeks:
+            for (season, week, team), (opp, home, done) in smap.items():
+                if season == current_season and team == cur_team and week not in cur_played_weeks and not done:
                     logs.append({'s': season, 'w': week, 'opp': opp, 'h': home, 'up': 1})  # up=upcoming, no stats
-            logs.sort(key=lambda g: (g['s'], g['w']))
+        # ── DNP fill: completed team-weeks the player MISSED (inactive). Shown greyed in the log,
+        # never scored and never counted in Start Profile. Team is inferred per season from his own
+        # played rows, so a mid-season trade could misattribute a missed week (acceptable for v1).
+        played_by_season = defaultdict(set)
+        for g in logs:
+            if not g.get('up') and not g.get('dnp'): played_by_season[g['s']].add(g['w'])
+        votes = defaultdict(Counter)
+        for (nk, s, w) in keys:
+            t = wk_team.get((nk, s, w))
+            if t is not None and not isinstance(t, float): votes[s][t] += 1
+        team_by_season = {s: c.most_common(1)[0][0] for s, c in votes.items()}
+        for (season, week, team), (opp, home, done) in smap.items():
+            if done and season in team_by_season and team == team_by_season[season] and week not in played_by_season.get(season, set()):
+                logs.append({'s': season, 'w': week, 'opp': opp, 'h': home, 'dnp': 1})  # dnp=missed/inactive, no stats
+        logs.sort(key=lambda g: (g['s'], g['w']))
         if logs:
             games[delta_name] = logs
     return games
@@ -282,7 +299,8 @@ def main():
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
                  'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. '
                  'pa/cmp=pass att/comp car=carries tgt=targets. '
-                 'opp=opponent h=1 home/0 away. up=1 marks an UPCOMING (unplayed) game — schedule only, no stats.'),
+                 'opp=opponent h=1 home/0 away. up=1 marks an UPCOMING (unplayed) game; '
+                 'dnp=1 marks a MISSED/inactive game (player did not play) — both schedule-only, no stats, never scored.'),
         'games': games,
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -294,7 +312,7 @@ def main():
     print("\n[DELTA] Spot check (0.5PPR, 4pt passTD) — recent games for a few players:")
     for name in ['Josh Allen', "Ja'Marr Chase", 'Bijan Robinson', 'Trey McBride']:
         gl = games.get(name, [])
-        recent = [g for g in gl if g['s'] == 2025][-3:]
+        recent = [g for g in gl if g['s'] == 2025 and not g.get('up') and not g.get('dnp')][-3:]
         if recent:
             tep = 1.0 if name == 'Trey McBride' else 0.0  # TE premium for spot-check only
             pts = [round(game_points(g, 0.5, tep), 1) for g in recent]
