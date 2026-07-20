@@ -406,7 +406,16 @@ function gameLogUsage(p,season){
   const pMax=Math.max(1,Math.max.apply(null,pts)*1.15);
   const slot=(bxR-x0)/n, bw=Math.min(22,slot*0.6), bx=i=>x0+slot*i+(slot-bw)/2, cx=i=>bx(i)+bw/2;
   const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH;
+  // recent/prior comparison windows (match the footer) — faint bands so the readout is locatable on the chart
+  const k = n>=8?4:Math.max(1,Math.floor(n/2));
+  const bandX=(a,b)=>[x0+slot*a, x0+slot*(b+1)];
   let s='';
+  if(n-k-1>=Math.max(0,n-2*k)){ const w=bandX(Math.max(0,n-2*k),n-k-1);
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'
+     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--fog-2)">prior '+k+'</text>'; }
+  { const w=bandX(n-k,n-1);
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.08"/>'
+     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--paper)" opacity="0.75">last '+k+'</text>'; }
   rows.forEach((g,i)=>{
     const h1=(part1[i]/uMax)*plotH, h2=(part2[i]/uMax)*plotH;
     s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85"/>';
@@ -430,20 +439,22 @@ function gameLogUsage(p,season){
   lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/><text x="'+(lx+18)+'" y="20">fantasy pts</text></g>';
   s=lg+s;
   // footer facts — recent window vs prior window
-  const k = n>=8?4:Math.max(1,Math.floor(n/2));
   const recIdx=[],priIdx=[];
   for(let i=n-k;i<n;i++) recIdx.push(i);
   for(let i=Math.max(0,n-2*k);i<n-k;i++) priIdx.push(i);
-  const A=idxs=>({p1:_avg(idxs.map(i=>part1[i])),p2:_avg(idxs.map(i=>part2[i])),sn:_avg(idxs.map(i=>snp[i])),pt:_avg(idxs.map(i=>pts[i]))});
+  const A=idxs=>({opp:_avg(idxs.map(i=>part1[i]+part2[i])),sn:_avg(idxs.map(i=>snp[i])),pt:_avg(idxs.map(i=>pts[i]))});
   const R=A(recIdx),P=A(priIdx.length?priIdx:recIdx);
-  const fx=(a,b)=>a.toFixed(1)+'\u2192'+b.toFixed(1)+'/g';
-  const pctT=(a,b)=>Math.round(a*100)+'%\u2192'+Math.round(b*100)+'%';
-  let facts='<b>Last '+k+' vs prior '+k+':</b> ';
-  if(isQB) facts+='att '+fx(P.p1,R.p1)+' \u00b7 car '+fx(P.p2,R.p2)+' \u00b7 pts '+fx(P.pt,R.pt);
-  else if(isRB) facts+='opp '+fx(P.p1+P.p2,R.p1+R.p2)+' (car '+fx(P.p1,R.p1)+', tgt '+fx(P.p2,R.p2)+') \u00b7 snaps '+pctT(P.sn,R.sn)+' \u00b7 pts '+fx(P.pt,R.pt);
-  else facts+='tgt '+fx(P.p1,R.p1)+' \u00b7 snaps '+pctT(P.sn,R.sn)+' \u00b7 pts '+fx(P.pt,R.pt);
+  const trend=(rec,pri)=>{
+    const d = pri>0 ? Math.round((rec-pri)/pri*100) : (rec>0?100:0);
+    const up=d>=3, dn=d<=-3;
+    const col = up?'var(--emerald)':dn?'var(--coral)':'var(--fog)';
+    const arr = up?'\u2191':dn?'\u2193':'\u2192';
+    return '<span style="color:'+col+';font-weight:700">'+arr+' '+Math.abs(d)+'%</span>';
+  };
+  let facts='<b>Last '+k+' vs prior '+k+':</b> opportunity '+trend(R.opp,P.opp)+' \u00b7 fantasy points '+trend(R.pt,P.pt);
+  if(!isQB) facts+=' \u00b7 snaps '+Math.round(P.sn*100)+'\u2192'+Math.round(R.sn*100)+'%';
   const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Read the gap: bars (opportunity) and the violet points line moving together = production matches the role. Splitting apart — bars up while points sag, or points holding while bars shrink — flags one outrunning the other.</div>';
-  return '<svg viewBox="0 0 '+W+' 172" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
+  return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
 }
 const REC_PG={
