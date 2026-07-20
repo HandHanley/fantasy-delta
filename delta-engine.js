@@ -328,7 +328,9 @@ function posAvgRaw(pos,season,fmt,N){
   if(players.length){
     players.sort((a,b)=>b.avg-a.avg);
     const all=[]; for(const t of players.slice(0,N)) for(const f of t.fps) all.push(f);
-    v=all.reduce((a,b)=>a+b,0)/all.length;
+    all.sort((a,b)=>a-b);
+    const mid=Math.floor(all.length/2);
+    v = all.length%2 ? all[mid] : (all[mid-1]+all[mid])/2;   // MEDIAN of the top-N pool's games — the typical starter, immune to the elite-tail skew a mean carries
   }
   _posAvgCache[key]=v; return v;
 }
@@ -369,7 +371,7 @@ function gameLogVsAvg(p,season){
     s+='<text x="'+(bx(i)+bw/2).toFixed(1)+'" y="156" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
   const nAbove=margins.filter(m=>m>=0).length, avgM=margins.reduce((a,b)=>a+b,0)/n;
-  const sum='Above the '+pa.N+' '+pos+' average (<b>'+base0.toFixed(1)+'</b>) in <b>'+nAbove+'/'+n+' ('+Math.round(100*nAbove/n)+'%)</b> weeks \u00b7 avg margin <b style="color:'+(avgM>=0?'var(--emerald)':'var(--coral)')+'">'+(avgM>=0?'+':'')+avgM.toFixed(1)+'</b>'
+  const sum='Above the top-'+pa.N+' '+pos+' median (<b>'+base0.toFixed(1)+'</b>) in <b>'+nAbove+'/'+n+' ('+Math.round(100*nAbove/n)+'%)</b> weeks \u00b7 avg margin <b style="color:'+(avgM>=0?'var(--emerald)':'var(--coral)')+'">'+(avgM>=0?'+':'')+avgM.toFixed(1)+'</b>'
     + (pa.seeded?' \u00b7 <span style="color:var(--fog-2)">early-season baseline seeded from prior year</span>':'');
   return '<svg viewBox="0 0 '+W+' 168" width="100%" role="img"><title>vs positional average</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
