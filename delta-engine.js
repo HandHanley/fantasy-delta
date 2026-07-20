@@ -168,7 +168,7 @@ function gameLogShell(p){
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Table'],['start','Startability'],['avg','vs Avg']];
+  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage']];
   const vsw=views.map(v=>
     '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -181,6 +181,8 @@ function gameLogInner(p){
     ? '<div style="overflow-x:auto">'+gameLogTable(p,_glSeason)+'</div>'
     : _glView==='avg'
     ? gameLogVsAvg(p,_glSeason)
+    : _glView==='usage'
+    ? gameLogUsage(p,_glSeason)
     : gameLogChart(p,_glSeason,_glView);
   return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
@@ -377,6 +379,73 @@ function gameLogVsAvg(p,season){
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
 }
 
+
+// ── Usage view: week-to-week opportunity (leading indicator the market lags) ──
+// A DIVERGENCE screen. Position-aware bars = weekly opportunity (WR/TE targets;
+// RB carries+targets; QB attempts+carries). White line = snap share (role).
+// Violet = raw fantasy points that week. When bars and points track together the
+// production matches the role; when they split, one is outrunning the other.
+// Footer states the recent-vs-prior trend as pure facts.
+function _avg(a){ return a.length? a.reduce((x,y)=>x+y,0)/a.length : 0; }
+function gameLogUsage(p,season){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season&&!g.up&&!g.dnp).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(rows.length<2) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough games this season to chart usage.</div>';
+  const n=rows.length;
+  const pts=rows.map(g=>gamefp(g,pos,scoringFmt));
+  const isQB=pos==='QB', isRB=pos==='RB';
+  const part1=rows.map(g=> isQB?(g.pa||0) : isRB?(g.car||0) : (g.tgt||0));   // att / carries / targets
+  const part2=rows.map(g=> isQB?(g.car||0) : isRB?(g.tgt||0) : 0);          // carries / targets / —
+  const l1= isQB?'att' : isRB?'car' : 'tgt';
+  const l2= isQB?'car' : isRB?'tgt' : '';
+  const totU=rows.map((g,i)=>part1[i]+part2[i]);
+  const useSnap=!isQB, snp=rows.map(g=>g.snp||0);
+  const W=560,x0=20,x1=W-8,bxR=x1-8,top=30,base=150,plotH=base-top;
+  const uMax=Math.max(1,Math.max.apply(null,totU)*1.15);
+  const pMax=Math.max(1,Math.max.apply(null,pts)*1.15);
+  const slot=(bxR-x0)/n, bw=Math.min(22,slot*0.6), bx=i=>x0+slot*i+(slot-bw)/2, cx=i=>bx(i)+bw/2;
+  const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH;
+  let s='';
+  rows.forEach((g,i)=>{
+    const h1=(part1[i]/uMax)*plotH, h2=(part2[i]/uMax)*plotH;
+    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85"/>';
+    if(h2>0) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1-h2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h2.toFixed(1)+'" fill="var(--topaz)" opacity="0.85"/>';
+    s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+  });
+  const poly=(vals,yf)=>vals.map((v,i)=>cx(i).toFixed(1)+','+yf(v).toFixed(1)).join(' ');
+  const dots=(vals,yf,col,r)=>vals.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+yf(v).toFixed(1)+'" r="'+(r||2.1)+'" fill="'+col+'" stroke="var(--ink)" stroke-width="0.6"/>').join('');
+  // raw weekly fantasy points — brand violet, dashed + dots (production the usage is meant to produce)
+  s+='<polyline points="'+poly(pts,yP)+'" fill="none" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/>'+dots(pts,yP,'var(--violet)',2.1);
+  // snap share (non-QB) — white line over a dark halo so it reads on top of the bright bars
+  if(useSnap){ const sp=poly(snp,yS);
+    s+='<polyline points="'+sp+'" fill="none" stroke="var(--ink)" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round"/>'
+     +'<polyline points="'+sp+'" fill="none" stroke="var(--paper)" stroke-width="2"/>'+dots(snp,yS,'var(--paper)',2.3); }
+  // legend
+  let lg='<g font-size="8.5" fill="var(--fog)">';
+  lg+='<rect x="20" y="12" width="9" height="9" fill="var(--teal-br)" opacity="0.85"/><text x="32" y="20">'+l1+'</text>';
+  let lx=32+l1.length*5+10;
+  if(l2){ lg+='<rect x="'+lx+'" y="12" width="9" height="9" fill="var(--topaz)" opacity="0.85"/><text x="'+(lx+12)+'" y="20">'+l2+'</text>'; lx+=12+l2.length*5+12; }
+  if(useSnap){ lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--paper)" stroke-width="2"/><text x="'+(lx+18)+'" y="20">snap%</text>'; lx+=18+34; }
+  lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/><text x="'+(lx+18)+'" y="20">fantasy pts</text></g>';
+  s=lg+s;
+  // footer facts — recent window vs prior window
+  const k = n>=8?4:Math.max(1,Math.floor(n/2));
+  const recIdx=[],priIdx=[];
+  for(let i=n-k;i<n;i++) recIdx.push(i);
+  for(let i=Math.max(0,n-2*k);i<n-k;i++) priIdx.push(i);
+  const A=idxs=>({p1:_avg(idxs.map(i=>part1[i])),p2:_avg(idxs.map(i=>part2[i])),sn:_avg(idxs.map(i=>snp[i])),pt:_avg(idxs.map(i=>pts[i]))});
+  const R=A(recIdx),P=A(priIdx.length?priIdx:recIdx);
+  const fx=(a,b)=>a.toFixed(1)+'\u2192'+b.toFixed(1)+'/g';
+  const pctT=(a,b)=>Math.round(a*100)+'%\u2192'+Math.round(b*100)+'%';
+  let facts='<b>Last '+k+' vs prior '+k+':</b> ';
+  if(isQB) facts+='att '+fx(P.p1,R.p1)+' \u00b7 car '+fx(P.p2,R.p2)+' \u00b7 pts '+fx(P.pt,R.pt);
+  else if(isRB) facts+='opp '+fx(P.p1+P.p2,R.p1+R.p2)+' (car '+fx(P.p1,R.p1)+', tgt '+fx(P.p2,R.p2)+') \u00b7 snaps '+pctT(P.sn,R.sn)+' \u00b7 pts '+fx(P.pt,R.pt);
+  else facts+='tgt '+fx(P.p1,R.p1)+' \u00b7 snaps '+pctT(P.sn,R.sn)+' \u00b7 pts '+fx(P.pt,R.pt);
+  const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Read the gap: bars (opportunity) and the violet points line moving together = production matches the role. Splitting apart — bars up while points sag, or points holding while bars shrink — flags one outrunning the other.</div>';
+  return '<svg viewBox="0 0 '+W+' 172" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
+}
 const REC_PG={
   'A.J. Brown':4.59,
   'AJ Barner':3.06,
