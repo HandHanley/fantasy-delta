@@ -168,7 +168,7 @@ function gameLogShell(p){
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Table'],['start','Startability']];
+  const views=[['table','Table'],['start','Startability'],['avg','vs Avg']];
   const vsw=views.map(v=>
     '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -179,6 +179,8 @@ function gameLogInner(p){
   ).join('');
   const content = _glView==='table'
     ? '<div style="overflow-x:auto">'+gameLogTable(p,_glSeason)+'</div>'
+    : _glView==='avg'
+    ? gameLogVsAvg(p,_glSeason)
     : gameLogChart(p,_glSeason,_glView);
   return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
@@ -287,6 +289,89 @@ function gameLogChart(p,season,view){
       +'<div style="margin-top:2px">floor <b>'+Math.min.apply(null,fps).toFixed(1)+'</b> \u00b7 median <b>'+median.toFixed(1)+'</b> \u00b7 ceiling <b>'+Math.max.apply(null,fps).toFixed(1)+'</b> \u00b7 <b style="color:var(--paper)">'+vlabel+'</b></div>';
   }
   return '<svg viewBox="0 0 '+W+' 168" width="100%" role="img"><title>Startability</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
+}
+
+
+// ── Positional-average baseline + "vs Avg" view ──────────────────────────────
+// Compares a player's weekly score to the AVERAGE STARTER at his position (a
+// higher, peer-relative bar than the startable floor). Baseline = mean per-game
+// score of the top-N players at the position, N = starters × teams. Blended
+// (flex-aware) starter counts come from the scarcity engine for RB/WR/TE; QB
+// uses format (SF assumes 2 QB/roster). SCAR_STARTERS is READ, never mutated —
+// the 32/32 scarcity validation is unaffected.
+let _POS_BY_NAME=null;
+function posByName(){
+  if(_POS_BY_NAME) return _POS_BY_NAME;
+  const m={};
+  if(typeof RAW!=='undefined'&&RAW) for(const p of RAW){ if(p&&p.n) m[p.n]=p.p||p.pos||null; }
+  _POS_BY_NAME=m; return m;
+}
+function vsAvgStarterN(pos,teams,fmt){
+  const per = pos==='QB' ? (fmt==='sf'?2.0:1.0)
+            : (typeof SCAR_STARTERS!=='undefined' ? (SCAR_STARTERS[pos]||3.0) : ({RB:2.4,WR:3.0,TE:1.1}[pos]||3.0));
+  return Math.max(1, Math.round(per*teams));
+}
+const _posAvgCache={};
+function posAvgRaw(pos,season,fmt,N){
+  const key=pos+'|'+season+'|'+fmt+'|'+N;
+  if(key in _posAvgCache) return _posAvgCache[key];
+  const pm=posByName(); const players=[];
+  for(const name in GAMELOGS){
+    if(pm[name]!==pos) continue;
+    const gs=GAMELOGS[name].filter(g=>g.s===season&&!g.up&&!g.dnp);
+    if(!gs.length) continue;
+    const fps=gs.map(g=>gamefp(g,pos,fmt));
+    players.push({fps, avg:fps.reduce((a,b)=>a+b,0)/fps.length});
+  }
+  let v=null;
+  if(players.length){
+    players.sort((a,b)=>b.avg-a.avg);
+    const all=[]; for(const t of players.slice(0,N)) for(const f of t.fps) all.push(f);
+    v=all.reduce((a,b)=>a+b,0)/all.length;
+  }
+  _posAvgCache[key]=v; return v;
+}
+// Public baseline. Early in the CURRENT season a 2-3 game sample is noisy, so
+// blend toward the prior season's average until ~6 weeks of data exist.
+function posAverage(pos,season,fmt,teams,qbf){
+  const N=vsAvgStarterN(pos,teams,qbf);
+  const cur=posAvgRaw(pos,season,fmt,N);
+  const pm=posByName(); let maxWk=0;
+  for(const name in GAMELOGS){ if(pm[name]!==pos) continue;
+    for(const g of GAMELOGS[name]) if(g.s===season&&!g.up&&!g.dnp&&(g.w||0)>maxWk) maxWk=g.w; }
+  const isCurrent = (typeof GAMELOGS_MAX!=='undefined') && season===GAMELOGS_MAX;
+  if(isCurrent && maxWk>0 && maxWk<6){
+    const prior=posAvgRaw(pos,season-1,fmt,N);
+    if(prior!=null && cur!=null){ const w=maxWk/6; return {line:w*cur+(1-w)*prior, N, seeded:true}; }
+    if(prior!=null){ return {line:prior, N, seeded:true}; }
+  }
+  return {line:cur, N, seeded:false};
+}
+// Diverging bar chart: center line = positional average; green up = above,
+// red down = below; bar length = margin.
+function gameLogVsAvg(p,season){
+  const pos=p.pos||p.p||'WR';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season&&!g.up&&!g.dnp).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(rows.length<1) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">No played games this season to chart.</div>';
+  const teams=(typeof leagueTeams!=='undefined'?leagueTeams:12), qf=(typeof qbFmt!=='undefined'?qbFmt:'sf');
+  const pa=posAverage(pos,season,scoringFmt,teams,qf);
+  if(pa.line==null) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough positional data to compute an average for this season yet.</div>';
+  const base0=pa.line, fps=rows.map(g=>gamefp(g,pos,scoringFmt)), margins=fps.map(f=>f-base0);
+  const n=rows.length, maxMag=Math.max(1, Math.max.apply(null,margins.map(Math.abs))*1.12);
+  const W=560, x0=20, x1=W-8, bxR=x1-8, mid=82, half=60, sc=half/maxMag;
+  const slot=(bxR-x0)/n, bw=Math.min(20,slot*0.66), bx=i=>x0+slot*i+(slot-bw)/2;
+  let s='<line x1="'+x0+'" y1="'+mid+'" x2="'+bxR+'" y2="'+mid+'" stroke="var(--fog-2)" stroke-width="1.5"/>';
+  rows.forEach((g,i)=>{
+    const m=margins[i], up=m>=0, h=Math.max(2,Math.abs(m)*sc);
+    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(up?mid-h:mid).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+(up?'var(--emerald)':'var(--coral)')+'"/>';
+    s+='<text x="'+(bx(i)+bw/2).toFixed(1)+'" y="156" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+  });
+  const nAbove=margins.filter(m=>m>=0).length, avgM=margins.reduce((a,b)=>a+b,0)/n;
+  const sum='Above the '+pa.N+' '+pos+' average (<b>'+base0.toFixed(1)+'</b>) in <b>'+nAbove+'/'+n+' ('+Math.round(100*nAbove/n)+'%)</b> weeks \u00b7 avg margin <b style="color:'+(avgM>=0?'var(--emerald)':'var(--coral)')+'">'+(avgM>=0?'+':'')+avgM.toFixed(1)+'</b>'
+    + (pa.seeded?' \u00b7 <span style="color:var(--fog-2)">early-season baseline seeded from prior year</span>':'');
+  return '<svg viewBox="0 0 '+W+' 168" width="100%" role="img"><title>vs positional average</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+sum+'</div>';
 }
 
