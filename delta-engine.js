@@ -168,7 +168,7 @@ function gameLogShell(p){
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage']];
+  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix']];
   const vsw=views.map(v=>
     '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -183,6 +183,8 @@ function gameLogInner(p){
     ? gameLogVsAvg(p,_glSeason)
     : _glView==='usage'
     ? gameLogUsage(p,_glSeason)
+    : _glView==='mix'
+    ? gameLogMix(p,_glSeason)
     : gameLogChart(p,_glSeason,_glView);
   return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
@@ -457,6 +459,64 @@ function gameLogUsage(p,season){
   return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
 }
+
+// ── Mix view: volume vs efficiency (regression radar) ────────────────────────
+// Splits each week's fantasy points into a repeatable FLOOR (yards + receptions,
+// which follow volume) and the VOLATILE part (touchdowns, which regress hardest).
+// A wall of floor-colored bars = sustainable production; a tall gold (TD) share
+// means the scoring is leaning on finishes. Footer states TD-share + yards/touch
+// as neutral facts (no verdict).
+function gameLogMix(p,season){
+  const pos=p.pos||p.p||'WR', isQB=pos==='QB', isRB=pos==='RB';
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(g=>g.s===season&&!g.up&&!g.dnp).sort((a,b)=>(a.w||0)-(b.w||0));
+  if(rows.length<2) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough games this season to chart.</div>';
+  const n=rows.length;
+  const total=rows.map(g=>gamefp(g,pos,scoringFmt));
+  const td=rows.map(g=>(g.pt||0)*4+(g.rt||0)*6+(g.ret||0)*6+(g.rtd||0)*6);
+  const floor=rows.map((g,i)=>total[i]-td[i]);
+  const yards=rows.map(g=> isQB?((g.py||0)+(g.ry||0)) : isRB?((g.ry||0)+(g.rey||0)) : (g.rey||0));
+  const touches=rows.map(g=> isQB?((g.pa||0)+(g.car||0)) : isRB?((g.car||0)+(g.rec||0)) : (g.rec||0));
+  const W=560,x0=20,x1=W-8,bxR=x1-8,top=30,base=150,plotH=base-top;
+  const vMax=Math.max(1,Math.max.apply(null,total)*1.15);
+  const slot=(bxR-x0)/n, bw=Math.min(22,slot*0.6), bx=i=>x0+slot*i+(slot-bw)/2, cx=i=>bx(i)+bw/2;
+  const k = n>=8?4:Math.max(1,Math.floor(n/2));
+  const bandX=(a,b)=>[x0+slot*a, x0+slot*(b+1)];
+  let s='';
+  if(n-k-1>=Math.max(0,n-2*k)){ const w=bandX(Math.max(0,n-2*k),n-k-1);
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'
+     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--fog-2)">prior '+k+'</text>'; }
+  { const w=bandX(n-k,n-1);
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.08"/>'
+     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--paper)" opacity="0.75">last '+k+'</text>'; }
+  rows.forEach((g,i)=>{
+    const fl=Math.max(0,floor[i]), t=Math.max(0,td[i]);
+    const hf=(fl/vMax)*plotH, ht=(t/vMax)*plotH;
+    if(hf>0.4) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-hf).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hf.toFixed(1)+'" rx="1.5" fill="var(--sky)" opacity="0.85"/>';
+    if(ht>0.4) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-hf-ht).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="1.5" fill="var(--topaz)" opacity="0.92"/>';
+    s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+  });
+  // legend
+  let lg='<g font-size="8.5" fill="var(--fog)">';
+  lg+='<rect x="20" y="12" width="9" height="9" fill="var(--sky)" opacity="0.85"/><text x="32" y="20">floor (yds+rec)</text>';
+  const lx=32+15*5.1+12;
+  lg+='<rect x="'+lx.toFixed(0)+'" y="12" width="9" height="9" fill="var(--topaz)" opacity="0.92"/><text x="'+(lx+12).toFixed(0)+'" y="20">touchdowns</text></g>';
+  s=lg+s;
+  // footer — neutral facts: TD share of points + yards/touch, recent vs prior
+  const recIdx=[],priIdx=[];
+  for(let i=n-k;i<n;i++) recIdx.push(i);
+  for(let i=Math.max(0,n-2*k);i<n-k;i++) priIdx.push(i);
+  const sm=(idxs,arr)=>idxs.reduce((a,i)=>a+arr[i],0);
+  const tdShare=idxs=>{const tt=sm(idxs,total); return tt>0?Math.round(100*sm(idxs,td)/tt):0;};
+  const ypt=idxs=>{const tc=sm(idxs,touches); return tc>0?(sm(idxs,yards)/tc):0;};
+  const pri=priIdx.length?priIdx:recIdx;
+  const tLabel = isQB?'yds/play' : isRB?'yds/touch' : 'yds/catch';
+  const facts='<b>Last '+k+' vs prior '+k+':</b> TDs '+tdShare(pri)+'%\u2192'+tdShare(recIdx)+'% of points \u00b7 '+tLabel+' '+ypt(pri).toFixed(1)+'\u2192'+ypt(recIdx).toFixed(1);
+  const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Blue = points from yards and catches (repeatable, follows volume). Gold = points from touchdowns (regresses hardest). A tall gold share means the scoring is leaning on finishes rather than a floor.</div>';
+  return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>scoring mix</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
+}
+
 const REC_PG={
   'A.J. Brown':4.59,
   'AJ Barner':3.06,
