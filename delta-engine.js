@@ -168,7 +168,7 @@ function gameLogShell(p){
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix']];
+  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
   const vsw=views.map(v=>
     '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -185,9 +185,21 @@ function gameLogInner(p){
     ? gameLogUsage(p,_glSeason)
     : _glView==='mix'
     ? gameLogMix(p,_glSeason)
+    : _glView==='trend'
+    ? gameLogTrend(p,_glSeason)
     : gameLogChart(p,_glSeason,_glView);
+  const subs={
+    table:'Raw weekly box scores.',
+    start:'Each week vs your league\u2019s startable and elite bars.',
+    avg:'Weekly margin vs the typical top-starter at the position.',
+    usage:'The opportunity (touches, targets, snaps) underneath the points.',
+    mix:'How much of the scoring came from repeatable yardage vs touchdowns.',
+    trend:'Direction of form across seasons \u2014 gold marks a new play-caller.'
+  };
+  const sub='<div style="font-size:9.5px;color:var(--fog-2);margin:0 0 .45rem">'+(subs[_glView]||'')+'</div>';
   return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
-    +'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>'
+    +sub
+    +(_glView==='trend'?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
     +content;
 }
 function glToggle(){
@@ -515,6 +527,109 @@ function gameLogMix(p,season){
   const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Blue = points from yards and catches (repeatable, follows volume). Gold = points from touchdowns (regresses hardest). A tall gold share means the scoring is leaning on finishes rather than a floor.</div>';
   return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>scoring mix</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
+}
+
+
+// ── Trend view: form trajectory + play-caller inflection markers ─────────────
+// Continuous trailing-34-game timeline (same window as the Start Profile): faint
+// per-game dots + a bold 4-game form line, with markers at season boundaries and
+// wherever the player's PLAY-CALLER changed — sourced from the hand-verified
+// 2017–2026 playcallers.csv (week-level, incl. mid-season firings). Game rows
+// carry tm (own team that week), so trades map to the right caller.
+let PC_DB=null, _pcFetching=false;
+const PC_ALIAS={JAX:'JAC', LA:'LAR', OAK:'LV', SD:'LAC', STL:'LAR'};   // nflverse code -> CSV code
+function ensurePlaycallers(){
+  if(PC_DB||_pcFetching) return;
+  _pcFetching=true;
+  fetch('playcallers.csv').then(r=>r.ok?r.text():null).then(txt=>{
+    _pcFetching=false;
+    if(!txt){PC_DB={};return;}
+    const db={};
+    const lines=txt.split(/\r?\n/); // header: season,team,playcaller,week_start,week_end,...
+    for(let i=1;i<lines.length;i++){
+      if(!lines[i]) continue;
+      const c=lines[i].split(',');           // notes (last col) may hold commas; we only read 0-4
+      const key=c[1]+'|'+c[0];
+      (db[key]=db[key]||[]).push({pc:c[2], w0:+c[3], w1:+c[4]});
+    }
+    PC_DB=db;
+    if(_glView==='trend'&&_glPlayer&&typeof glSetView==='function') glSetView('trend');  // re-render once loaded
+  }).catch(()=>{_pcFetching=false;PC_DB={};});
+}
+function pcAt(team,season,week){
+  if(!PC_DB||!team) return null;
+  const t=PC_ALIAS[team]||team;
+  const spans=PC_DB[t+'|'+season];
+  if(!spans) return null;
+  for(const s of spans) if(week>=s.w0&&week<=s.w1) return s.pc;
+  return spans[0]?spans[0].pc:null;
+}
+function _lastName(pc){ const p=(pc||'').split(' '); return p.length>1?p.slice(1).join(' '):pc; }
+function gameLogTrend(p,season){
+  const pos=p.pos||p.p||'WR';
+  ensurePlaycallers();
+  const src=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[]).filter(g=>!g.up&&!g.dnp);
+  const all=src.sort((a,b)=>(a.s-b.s)||((a.w||0)-(b.w||0)));   // full history — Trend always runs to the latest game (season pills don't apply)
+  const rows=all.slice(-34);
+  if(rows.length<5) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough games for a trend line.</div>';
+  const n=rows.length;
+  const pts=rows.map(g=>gamefp(g,pos,scoringFmt));
+  const roll=pts.map((_,i)=>{let s=0,c=0;for(let j=Math.max(0,i-3);j<=i;j++){s+=pts[j];c++;}return s/c;});
+  // markers: season boundaries + play-caller changes (needs tm on rows)
+  const callers=rows.map(g=>pcAt(g.tm,g.s,g.w));
+  const marks=[];   // {i, kind:'season'|'oc', label}
+  for(let i=1;i<n;i++){
+    if(rows[i].s!==rows[i-1].s) marks.push({i, kind:'season', label:"'"+String(rows[i].s).slice(2)});
+    if(callers[i]&&callers[i-1]&&callers[i]!==callers[i-1])
+      marks.push({i, kind:'oc', label:_lastName(callers[i])});
+  }
+  const W=560,x0=20,x1=W-8,bxR=x1-8,top=26,base=150,plotH=base-top;
+  const vMax=Math.max(1,Math.max.apply(null,pts)*1.1);
+  const step=(bxR-x0)/Math.max(1,n-1), cx=i=>x0+step*i, y=v=>base-(v/vMax)*plotH;
+  let s='';
+  // markers behind data
+  for(const m of marks){
+    const mx=(cx(m.i)-step/2).toFixed(1);
+    if(m.kind==='season'){
+      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--fog-2)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>'
+       +'<text x="'+mx+'" y="'+(top-6)+'" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+m.label+'</text>';
+    }else{
+      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--topaz)" stroke-width="1.4"/>'
+       +'<text x="'+mx+'" y="'+(top-6)+'" font-size="8" text-anchor="middle" fill="var(--topaz)" font-weight="700">'+m.label+'</text>';
+    }
+  }
+  // per-game dots (faint) + form line (bold teal)
+  s+=pts.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2" fill="var(--paper)" opacity="0.35"/>').join('');
+  s+='<polyline points="'+roll.map((v,i)=>cx(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')+'" fill="none" stroke="var(--teal-br)" stroke-width="2.2" stroke-linejoin="round"/>';
+  s+='<line x1="'+x0+'" y1="'+base+'" x2="'+bxR+'" y2="'+base+'" stroke="var(--line)"/>';
+  // x labels: season starts (fallback: first/last game)
+  const seasonStarts=marks.filter(m=>m.kind==='season');
+  s+='<text x="'+x0+'" y="163" font-size="8" fill="var(--fog-2)">'+"'"+String(rows[0].s).slice(2)+' wk'+rows[0].w+'</text>';
+  s+='<text x="'+bxR+'" y="163" font-size="8" text-anchor="end" fill="var(--fog-2)">'+"'"+String(rows[n-1].s).slice(2)+' wk'+rows[n-1].w+'</text>';
+  // legend
+  let lg='<g font-size="8.5" fill="var(--fog)">'
+    +'<line x1="20" y1="12" x2="34" y2="12" stroke="var(--teal-br)" stroke-width="2.2"/><text x="38" y="15">4-game form</text>'
+    +'<circle cx="105" cy="12" r="2" fill="var(--paper)" opacity="0.35"/><text x="111" y="15">single game</text>'
+    +'<line x1="172" y1="6" x2="172" y2="16" stroke="var(--topaz)" stroke-width="1.4"/><text x="177" y="15">play-caller change</text></g>';
+  s=lg+s;
+  // footer: before/after at most recent marker (OC preferred), neutral facts
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+  let facts;
+  const ocs=marks.filter(m=>m.kind==='oc');
+  const mk=ocs.length?ocs[ocs.length-1]:(marks.length?marks[marks.length-1]:null);
+  if(mk){
+    const b4=pts.slice(0,mk.i), af=pts.slice(mk.i);
+    const who=mk.kind==='oc'?('play-caller change (<b>'+mk.label+'</b>)'):('season start (<b>'+mk.label+'</b>)');
+    facts='Since the last '+who+': <b>'+avg(af).toFixed(1)+'</b> ppg over '+af.length+' games \u00b7 before it (in window): <b>'+avg(b4).toFixed(1)+'</b> ppg over '+b4.length;
+  }else{
+    facts='<b>'+avg(pts.slice(-8)).toFixed(1)+'</b> ppg last 8 \u00b7 <b>'+avg(pts.slice(0,Math.max(1,n-8))).toFixed(1)+'</b> ppg before';
+  }
+  let note='';
+  if(PC_DB===null) note=' \u00b7 <span style="color:var(--fog-2)">loading play-caller history\u2026</span>';
+  else if(!rows.some(g=>g.tm)) note=' \u00b7 <span style="color:var(--fog-2)">play-caller markers appear after the next data refresh (game rows need team tags)</span>';
+  const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Dots are single games; the bold line averages the <b>last 4</b>, so it deliberately trails the dots \u2014 one spike pulls it up only a quarter of the way. Dots show what happened; the line shows what\u2019s sustained. Gold lines mark a new play-caller (hand-verified 2017\u201326, mid-season changes included): if form shifted right at a gold line, circumstances changed \u2014 if it shifted with no line, the player did.</div>';
+  return '<svg viewBox="0 0 '+W+' 170" width="100%" role="img"><title>form trend</title>'+s+'</svg>'
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+note+'</div>'+help;
 }
 
 const REC_PG={
