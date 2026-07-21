@@ -55,7 +55,12 @@ def get_delta_players():
 def match_names(nfl_names, delta_names, no_data=None):
     nfl_norm = {norm(n): n for n in nfl_names}
     no_data  = no_data or set()
-    ALIASES  = {'Chigoziem Okonkwo': 'Chig Okonkwo'}
+    # Universe uses the formal first name; nflverse rosters sometimes carry the
+    # short form. Gainwell: NFL.com and the Buccaneers list him "Kenny" — he's
+    # been unmatched (so nflverse is NOT using "Kenneth"), which makes "Kenny"
+    # the likely key. The unmatched report below CONFIRMS it on the next run.
+    ALIASES  = {'Chigoziem Okonkwo': 'Chig Okonkwo',
+                'Kenneth Gainwell': 'Kenny Gainwell'}
     matched, not_found = {}, []
     for name in delta_names:
         key = norm(ALIASES.get(name, name))
@@ -72,7 +77,21 @@ def match_names(nfl_names, delta_names, no_data=None):
             if len(cands) == 1: found = cands[0]; break
         if found: matched[name] = found
         else: not_found.append(name)
-    print(f"[DELTA] Matched {len(matched)}/{len(delta_names)} players; unmatched: {not_found[:10]}")
+    # Report EVERY real gap. not_found holds only players with prior production
+    # (g25>0) — seeded-zero rookies were skipped above, so anyone here is a
+    # veteran who SHOULD have logs but didn't match nflverse. For each, surface
+    # nflverse names sharing the surname as alias candidates, so a name-variant
+    # miss (Kenneth/Kenny) is a one-glance fix instead of an invisible hole.
+    print(f"[DELTA] Matched {len(matched)}/{len(delta_names)} players.")
+    if not_found:
+        print(f"[DELTA] {len(not_found)} unmatched WITH prior production (review — should have logs):")
+        for nm in not_found:
+            parts = norm(nm).split()
+            last  = parts[-1] if parts else ''
+            cands = sorted({v for k, v in nfl_norm.items()
+                            if k.split() and k.split()[-1] == last})
+            hint  = f" -> nflverse candidates: {cands}" if cands else " -> no same-surname match in nflverse"
+            print(f"          {nm}{hint}")
     return matched
 
 # ── column detection (nflverse names drift across versions) ──
