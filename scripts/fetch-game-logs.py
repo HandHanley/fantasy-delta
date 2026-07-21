@@ -190,6 +190,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
                 'fl': round(st['fl']), 'tp': round(st['tp']), 'rtd': round(st['rtd']),
             }
             if opp is not None: rec_out['opp'] = opp; rec_out['h'] = home
+            if team: rec_out['tm'] = str(team)   # player's OWN team that week (drives play-caller mapping; row-level, so trades track correctly)
             logs.append(rec_out)
         # ── upcoming CURRENT-season fixtures: weeks the player has not played yet ──
         # Resolve the player's current team from his most recent stat row (independent of the
@@ -299,7 +300,7 @@ def main():
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
                  'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. '
                  'pa/cmp=pass att/comp car=carries tgt=targets. '
-                 'opp=opponent h=1 home/0 away. up=1 marks an UPCOMING (unplayed) game; '
+                 'opp=opponent h=1 home/0 away. tm=player own team that week. up=1 marks an UPCOMING (unplayed) game; '
                  'dnp=1 marks a MISSED/inactive game (player did not play) — both schedule-only, no stats, never scored.'),
         'games': games,
     }
