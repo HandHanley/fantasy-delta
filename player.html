@@ -740,7 +740,7 @@ function buildComparableHTML(p) {
 // ── Game Log (uses shared gameLogShell from delta-engine.js) ──────────────────
 function buildGameLogCard(p) {
   if (typeof gameLogShell !== 'function') return '';
-  _glPlayer = p; _glSeason = null; _glView = 'table';
+  _glPlayer = p; _glSeason = null; _glView = 'trend';
   const shell = gameLogShell(p);
   if (!shell) return '';
   return `<div class="card">${shell}</div>`;

@@ -137,11 +137,11 @@ function startProfileHTML(p){
 // refreshed on a format change (matches existing card behavior). Position-aware
 // columns; upcoming (up:1) rows show the fixture only, never scored (gamefp would
 // be NaN on stat-less rows). Missing opponent (Week-18 numbering gap) renders '—'.
-let _glPlayer=null, _glSeason=null, _glView='table';
+let _glPlayer=null, _glSeason=null, _glView='trend';
 function renderGameLog(p){
   const host=document.getElementById('dd-gamelog');
   if(!host) return;
-  _glPlayer=p; _glSeason=null; _glView='table';
+  _glPlayer=p; _glSeason=null; _glView='trend';
   if(START_DATA_STATE==='error'){ host.innerHTML=''; return; }
   if(START_DATA_STATE==='loaded'){ host.innerHTML=gameLogShell(p); return; }
   host.innerHTML='<div class="dd-section"><div class="dd-section-label">Game Log</div>'
@@ -161,14 +161,14 @@ function gameLogShell(p){
     _glSeason=(typeof GAMELOGS_MAX!=='undefined'&&seasons.includes(GAMELOGS_MAX))?GAMELOGS_MAX:seasons[0];
   return '<div class="dd-section">'
     +'<div class="dd-section-label" style="cursor:pointer;display:flex;align-items:center;gap:6px" onclick="glToggle()">'
-      +'<span id="gl-chev" style="display:inline-block;transition:transform .15s">\u25b8</span> Game Log'
+      +'<span id="gl-chev" style="display:inline-block;transition:transform .15s;transform:rotate(90deg)">\u25b8</span> Game Log'
     +'</div>'
-    +'<div id="dd-gamelog-body" style="display:none">'+gameLogInner(p)+'</div>'
+    +'<div id="dd-gamelog-body" style="display:block">'+gameLogInner(p)+'</div>'
   +'</div>';
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Table'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
+  const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
   const vsw=views.map(v=>
     '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -189,7 +189,7 @@ function gameLogInner(p){
     ? gameLogTrend(p,_glSeason)
     : gameLogChart(p,_glSeason,_glView);
   const subs={
-    table:'Raw weekly box scores.',
+    table:'Week-by-week opponents, box scores, and upcoming games.',
     start:'Each week vs your league\u2019s startable and elite bars.',
     avg:'Weekly margin vs the typical top-starter at the position.',
     usage:'The opportunity (touches, targets, snaps) underneath the points.',
