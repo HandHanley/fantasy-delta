@@ -154,11 +154,25 @@ function glSeasons(p){
   return [...set].sort((a,b)=>b-a);
 }
 function glFmtLabel(f){return ({half_tep:'0.5 PPR + TE Prem',half:'0.5 PPR',full_tep:'Full PPR + TE Prem',full:'Full PPR',std:'Standard'})[f]||f;}
+// Default the season pill to the newest season with at least one PLAYED game.
+// GAMELOGS_MAX counts upcoming (up:1) rows, so in the offseason it points at a season
+// that has no games yet — which left Startability / vs Avg / Usage / Mix empty on every
+// card until Week 2 of the live season. GAMELOGS_MAX itself is deliberately NOT changed:
+// vs Avg's `isCurrent` early-season blending keys off it and must keep meaning "the live
+// season". Once the new season kicks off this returns it automatically, so the pill
+// self-corrects with no seasonal maintenance.
+function glDefaultSeason(p,seasons){
+  const rows=(typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[];
+  const played=new Set();
+  for(const g of rows) if(!g.up&&!g.dnp&&g.s!=null) played.add(g.s);
+  for(const s of seasons) if(played.has(s)) return s;   // seasons is sorted newest-first
+  return (typeof GAMELOGS_MAX!=='undefined'&&seasons.includes(GAMELOGS_MAX))?GAMELOGS_MAX:seasons[0];
+}
 function gameLogShell(p){
   const seasons=glSeasons(p);
   if(!seasons.length) return '';   // no logs → no section (keep the card clean)
   if(_glSeason==null || !seasons.includes(_glSeason))
-    _glSeason=(typeof GAMELOGS_MAX!=='undefined'&&seasons.includes(GAMELOGS_MAX))?GAMELOGS_MAX:seasons[0];
+    _glSeason=glDefaultSeason(p,seasons);
   return '<div class="dd-section">'
     +'<div class="dd-section-label" style="cursor:pointer;display:flex;align-items:center;gap:6px" onclick="glToggle()">'
       +'<span id="gl-chev" style="display:inline-block;transition:transform .15s;transform:rotate(90deg)">\u25b8</span> Game Log'
@@ -447,8 +461,14 @@ function gameLogUsage(p,season){
      +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--paper)" opacity="0.75">last '+k+'</text>'; }
   rows.forEach((g,i)=>{
     const h1=(part1[i]/uMax)*plotH, h2=(part2[i]/uMax)*plotH;
-    // share bars carry a hover readout of the counts underneath the percentage (facts, not just a ratio)
-    const t1 = shareOK ? '<title>Wk '+g.w+' \u2014 '+(g.tgt||0)+' of '+g.tt+' team targets ('+Math.round(part1[i]*100)+'%)</title>' : '';
+    // Share bars carry a hover readout of the counts under the percentage (facts, not just a
+    // ratio). Zero-target weeks qualify for share without a `tt` (see shareOK), so they have
+    // no denominator to show — report the bare count instead of "0 of undefined".
+    const t1 = shareOK
+      ? '<title>Wk '+g.w+' \u2014 '+((g.tt||0)>0
+          ? (g.tgt||0)+' of '+g.tt+' team targets ('+Math.round(part1[i]*100)+'%)'
+          : '0 targets')+'</title>'
+      : '';
     s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85">'+t1+'</rect>';
     if(h2>0) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1-h2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h2.toFixed(1)+'" fill="var(--topaz)" opacity="0.85"/>';
     s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
