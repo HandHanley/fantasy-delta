@@ -37,7 +37,12 @@ a:hover{text-decoration:underline}
 .card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:10px}
 .card-sub{font-size:9px;color:#5C7080;font-weight:400;margin-top:2px}
 .dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px}
-@media(max-width:600px){.gl-tbl{font-size:9px!important}.gl-tbl th,.gl-tbl td{padding:2px 3px!important}}
+@media(max-width:600px){.gl-tbl{font-size:9px!important}.gl-tbl th,.gl-tbl td{padding:2px 3px!important}
+/* game-log view tabs: 6 pills must hold ONE line. At default sizing the strip needs
+   ~346px but a 402pt phone only gives 340px of card content, so "Trend" wrapped.
+   Tightening type + padding + gap frees ~70px, which keeps all six inline down to
+   ~350pt. Container keeps flex-wrap as a safety net below that. */
+.gl-tab{font-size:9.5px!important;padding:3px 5px!important;margin-right:3px!important}}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:#8CA0B3;width:36px;flex-shrink:0}
 .dd-prog-bar{flex:1;height:5px;background:#111A28;border-radius:3px;overflow:hidden}

@@ -170,7 +170,7 @@ function gameLogInner(p){
   const seasons=glSeasons(p);
   const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
   const vsw=views.map(v=>
-    '<span onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;'
+    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;white-space:nowrap;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
   ).join('');
   const chips=seasons.map(s=>
@@ -408,10 +408,25 @@ function gameLogUsage(p,season){
   if(rows.length<2) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">Not enough games this season to chart usage.</div>';
   const n=rows.length;
   const pts=rows.map(g=>gamefp(g,pos,scoringFmt));
-  const isQB=pos==='QB', isRB=pos==='RB';
-  const part1=rows.map(g=> isQB?(g.pa||0) : isRB?(g.car||0) : (g.tgt||0));   // att / carries / targets
+  const isQB=pos==='QB', isRB=pos==='RB', isRecv=!isQB&&!isRB;
+  // WR/TE bars show TARGET SHARE (tgt / team targets that week) — the volume-blind read
+  // on whether the offense is actually funneling through him, rather than just throwing
+  // a lot. RB deliberately stays on RAW targets: backs rarely command a big share, but
+  // the handful of targets they do get are highly fantasy-relevant, and a share view
+  // would flatten that signal to near-zero. QB is unaffected.
+  //
+  // shareOK is ALL-OR-NOTHING per season: every week needs a usable denominator, because
+  // mixing share weeks with raw-count weeks on one axis is a unit error. Two ways a week
+  // qualifies — it carries `tt`, OR it had zero targets (zero targets is zero share no
+  // matter the denominator). That second clause is load-bearing: snap-only rows (snaps
+  // recorded, no stat line) have no team attribution at all, so without it a single such
+  // week would deny a receiver the share view permanently, even on refreshed data.
+  // If any week still fails, the whole view falls back to raw targets (pre-refresh state).
+  const shareOK = isRecv && rows.every(g=>(g.tt||0)>0 || (g.tgt||0)===0);
+  const shr = g=> (g.tt||0)>0 ? Math.min(1,(g.tgt||0)/g.tt) : 0;   // capped: a team-total mismatch can't exceed 100%
+  const part1=rows.map(g=> isQB?(g.pa||0) : isRB?(g.car||0) : (shareOK?shr(g):(g.tgt||0)));  // att / carries / tgt share|tgt
   const part2=rows.map(g=> isQB?(g.car||0) : isRB?(g.tgt||0) : 0);          // carries / targets / —
-  const l1= isQB?'att' : isRB?'car' : 'tgt';
+  const l1= isQB?'att' : isRB?'car' : (shareOK?'tgt share':'tgt');
   const l2= isQB?'car' : isRB?'tgt' : '';
   const totU=rows.map((g,i)=>part1[i]+part2[i]);
   const useSnap=!isQB, snp=rows.map(g=>g.snp||0);
@@ -432,7 +447,9 @@ function gameLogUsage(p,season){
      +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--paper)" opacity="0.75">last '+k+'</text>'; }
   rows.forEach((g,i)=>{
     const h1=(part1[i]/uMax)*plotH, h2=(part2[i]/uMax)*plotH;
-    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85"/>';
+    // share bars carry a hover readout of the counts underneath the percentage (facts, not just a ratio)
+    const t1 = shareOK ? '<title>Wk '+g.w+' \u2014 '+(g.tgt||0)+' of '+g.tt+' team targets ('+Math.round(part1[i]*100)+'%)</title>' : '';
+    s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85">'+t1+'</rect>';
     if(h2>0) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1-h2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h2.toFixed(1)+'" fill="var(--topaz)" opacity="0.85"/>';
     s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
@@ -465,9 +482,16 @@ function gameLogUsage(p,season){
     const arr = up?'\u2191':dn?'\u2193':'\u2192';
     return '<span style="color:'+col+';font-weight:700">'+arr+' '+Math.abs(d)+'%</span>';
   };
-  let facts='<b>Last '+k+' vs prior '+k+':</b> opportunity '+trend(R.opp,P.opp)+' \u00b7 fantasy points '+trend(R.pt,P.pt);
+  // Share is already a percentage — report it as percentage POINTS (21→26%), matching the
+  // snaps idiom. A relative "% change of a %" would be doubly confusing to read.
+  let facts='<b>Last '+k+' vs prior '+k+':</b> '
+    + (shareOK ? 'target share '+Math.round(P.opp*100)+'\u2192'+Math.round(R.opp*100)+'%'
+               : 'opportunity '+trend(R.opp,P.opp))
+    + ' \u00b7 fantasy points '+trend(R.pt,P.pt);
   if(!isQB) facts+=' \u00b7 snaps '+Math.round(P.sn*100)+'\u2192'+Math.round(R.sn*100)+'%';
-  const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Read the gap: bars (opportunity) and the violet points line moving together = production matches the role. Splitting apart — bars up while points sag, or points holding while bars shrink — flags one outrunning the other.</div>';
+  const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Read the gap: bars ('
+    +(shareOK?'target share':'opportunity')+') and the violet points line moving together = production matches the role. Splitting apart — bars up while points sag, or points holding while bars shrink — flags one outrunning the other.'
+    +(shareOK?' Share is team-relative, so it holds when the offense simply throws less and falls when he is being designed out.':'')+'</div>';
   return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
 }

@@ -37,6 +37,11 @@ tr:hover td{background:var(--panel)}
   /* game-log: shrink dense box-score so 11-12 cols fit the card with no scroll */
   .gl-tbl{font-size:9px !important}
   .gl-tbl th,.gl-tbl td{padding:2px 3px !important}
+  /* game-log view tabs: 6 pills must hold ONE line. Default sizing needs ~346px but a
+     402pt phone gives 340px of card content, so "Trend" wrapped to a second row.
+     Tightening type + padding + gap frees ~70px, holding one line down to ~350pt.
+     Container keeps flex-wrap as a safety net below that. */
+  .gl-tab{font-size:9.5px !important;padding:3px 5px !important;margin-right:3px !important}
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}
@@ -71,7 +76,7 @@ tr:hover td{background:var(--panel)}
   .tab{padding:4px 8px;font-size:10px}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
-}}
+}
 .tc-wrap{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .tc-btn{font-size:11px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer;transition:all .15s}
 .tc-btn:last-child{border-right:none}
