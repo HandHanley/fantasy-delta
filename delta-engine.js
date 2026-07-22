@@ -445,14 +445,41 @@ function gameLogUsage(p,season){
   const totU=rows.map((g,i)=>part1[i]+part2[i]);
   const useSnap=!isQB, snp=rows.map(g=>g.snp||0);
   const W=560,x0=20,x1=W-8,bxR=x1-8,top=30,base=150,plotH=base-top;
-  const uMax=Math.max(1,Math.max.apply(null,totU)*1.15);
+  // Share is a 0-1 fraction, so the Math.max(1,...) floor used for counts silently pinned it
+  // to a 0-100% axis. No receiver cleared 59% in 2,252 charted weeks, so the top 40% of the
+  // plot was dead space and a typical 15% week rendered as a stub. Cap share at 60% — never
+  // clips, keeps every receiver on ONE comparable scale, and raises the typical week from
+  // 15% to 25% of plot height. Auto-extends in 20pt steps if a week ever clears the cap.
+  const uRaw=Math.max.apply(null,totU);
+  const uMax = shareOK ? Math.min(1,Math.max(0.6,Math.ceil(uRaw/0.2)*0.2)) : Math.max(1,uRaw*1.15);
   const pMax=Math.max(1,Math.max.apply(null,pts)*1.15);
   const slot=(bxR-x0)/n, bw=Math.min(22,slot*0.6), bx=i=>x0+slot*i+(slot-bw)/2, cx=i=>bx(i)+bw/2;
-  const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH;
+  const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH, yU=v=>base-(v/uMax)*plotH;
+  // ── Season median share (share views only). MEDIAN, not mean: target-share distributions
+  // are right-skewed — 108 of 160 qualifying receivers have mean > median — so a mean gets
+  // dragged up by blow-up weeks and would mark a player below his own "average" in most
+  // games (53% of weeks vs 47% under a median). Chase 2025 is the clean case: mean 32.1%
+  // vs median 28.6%, with 10 of 16 weeks under the mean. Also matches the platform idiom
+  // already used by Startability (floor/median/ceiling) and vs Avg (top-N positional median).
+  let medShare=null;
+  if(shareOK && n){
+    const sv=part1.slice().sort((a,b)=>a-b);
+    medShare = n%2 ? sv[(n-1)/2] : (sv[n/2-1]+sv[n/2])/2;
+  }
+  // ── y-axis gridlines: bars are scaled to the player's own peak week, so without labels a
+  // tall bar could be 58% share or 30% — height read as shape, never as a value.
+  const niceStep=m=>{ const raw=m/3, p=Math.pow(10,Math.floor(Math.log10(raw))), c=raw/p;
+                      return (c<1.5?1:c<3.5?2:c<7.5?5:10)*p; };
+  const axFmt=v=>shareOK?Math.round(v*100)+'%':String(Math.round(v));
+  const _grid=()=>{ let o=''; const st=niceStep(uMax);
+    for(let i=1;i*st<=uMax+1e-9;i++){ const v=i*st, y=yU(v);
+      o+='<line x1="'+x0+'" y1="'+y.toFixed(1)+'" x2="'+bxR+'" y2="'+y.toFixed(1)+'" stroke="var(--line)" stroke-width="0.8" opacity="0.6"/>'
+       +'<text x="'+(x0-3)+'" y="'+(y+2.5).toFixed(1)+'" font-size="7" text-anchor="end" fill="var(--fog-2)">'+axFmt(v)+'</text>'; }
+    return o; };
   // recent/prior comparison windows (match the footer) — faint bands so the readout is locatable on the chart
   const k = n>=8?4:Math.max(1,Math.floor(n/2));
   const bandX=(a,b)=>[x0+slot*a, x0+slot*(b+1)];
-  let s='';
+  let s=_grid();
   if(n-k-1>=Math.max(0,n-2*k)){ const w=bandX(Math.max(0,n-2*k),n-k-1);
     s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'
      +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--fog-2)">prior '+k+'</text>'; }
@@ -473,6 +500,12 @@ function gameLogUsage(p,season){
     if(h2>0) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1-h2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h2.toFixed(1)+'" fill="var(--topaz)" opacity="0.85"/>';
     s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
+  // ── median reference line: "is this week typical for HIM?" — drawn over the bars so the
+  // deviation reads at a glance, in brand sky (info) to stay distinct from the white snap
+  // line and the violet points line.
+  if(medShare!=null){ const ym=yU(medShare);
+    s+='<line x1="'+x0+'" y1="'+ym.toFixed(1)+'" x2="'+bxR+'" y2="'+ym.toFixed(1)+'" stroke="var(--sky)" stroke-width="1.4" stroke-dasharray="5 3" opacity="0.95"/>'
+     +'<text x="'+bxR+'" y="'+(ym-3.5).toFixed(1)+'" font-size="7.5" text-anchor="end" fill="var(--sky)">median '+Math.round(medShare*100)+'%</text>'; }
   const poly=(vals,yf)=>vals.map((v,i)=>cx(i).toFixed(1)+','+yf(v).toFixed(1)).join(' ');
   const dots=(vals,yf,col,r)=>vals.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+yf(v).toFixed(1)+'" r="'+(r||2.1)+'" fill="'+col+'" stroke="var(--ink)" stroke-width="0.6"/>').join('');
   // raw weekly fantasy points — brand violet, dashed + dots (production the usage is meant to produce)
@@ -487,6 +520,7 @@ function gameLogUsage(p,season){
   let lx=32+l1.length*5+10;
   if(l2){ lg+='<rect x="'+lx+'" y="12" width="9" height="9" fill="var(--topaz)" opacity="0.85"/><text x="'+(lx+12)+'" y="20">'+l2+'</text>'; lx+=12+l2.length*5+12; }
   if(useSnap){ lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--paper)" stroke-width="2"/><text x="'+(lx+18)+'" y="20">snap%</text>'; lx+=18+34; }
+  if(medShare!=null){ lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--sky)" stroke-width="1.4" stroke-dasharray="5 3"/><text x="'+(lx+18)+'" y="20">median</text>'; lx+=18+36; }
   lg+='<line x1="'+lx+'" y1="16.5" x2="'+(lx+14)+'" y2="16.5" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/><text x="'+(lx+18)+'" y="20">fantasy pts</text></g>';
   s=lg+s;
   // footer facts — recent window vs prior window
@@ -512,8 +546,12 @@ function gameLogUsage(p,season){
   const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Read the gap: bars ('
     +(shareOK?'target share':'opportunity')+') and the violet points line moving together = production matches the role. Splitting apart — bars up while points sag, or points holding while bars shrink — flags one outrunning the other.'
     +(shareOK?' Share is team-relative, so it holds when the offense simply throws less and falls when he is being designed out.':'')+'</div>';
+  const medLine = medShare!=null
+    ? '<div style="font-size:10px;color:var(--fog-2);margin-top:2px">Season median target share <b style="color:var(--sky)">'
+      +Math.round(medShare*100)+'%</b> \u2014 the dashed line. Median rather than mean, so one blow-up week does not raise the bar he is measured against.</div>'
+    : '';
   return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
-    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+help;
+    +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+medLine+help;
 }
 
 // ── Mix view: volume vs efficiency (regression radar) ────────────────────────
