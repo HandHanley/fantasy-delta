@@ -444,7 +444,7 @@ function gameLogUsage(p,season){
   const l2= isQB?'car' : isRB?'tgt' : '';
   const totU=rows.map((g,i)=>part1[i]+part2[i]);
   const useSnap=!isQB, snp=rows.map(g=>g.snp||0);
-  const W=560,x0=34,x1=W-8,bxR=x1-8,top=30,base=150,plotH=base-top;
+  const W=560,x0=20,x1=W-8,bxR=x1-8,top=30,base=150,plotH=base-top;
   // Share is a 0-1 fraction, so the Math.max(1,...) floor used for counts silently pinned it
   // to a 0-100% axis. No receiver cleared 59% in 2,252 charted weeks, so the top 40% of the
   // plot was dead space and a typical 15% week rendered as a stub. Cap share at 60% — never
@@ -454,21 +454,11 @@ function gameLogUsage(p,season){
   const uMax = shareOK ? Math.min(1,Math.max(0.6,Math.ceil(uRaw/0.2)*0.2)) : Math.max(1,uRaw*1.15);
   const pMax=Math.max(1,Math.max.apply(null,pts)*1.15);
   const slot=(bxR-x0)/n, bw=Math.min(22,slot*0.6), bx=i=>x0+slot*i+(slot-bw)/2, cx=i=>bx(i)+bw/2;
-  const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH, yU=v=>base-(v/uMax)*plotH;
-  // ── y-axis gridlines: bars are scaled to the player's own peak week, so without labels a
-  // tall bar could be 58% share or 30% — height read as shape, never as a value.
-  const niceStep=m=>{ const raw=m/3, p=Math.pow(10,Math.floor(Math.log10(raw))), c=raw/p;
-                      return (c<1.5?1:c<3.5?2:c<7.5?5:10)*p; };
-  const axFmt=v=>shareOK?Math.round(v*100)+'%':String(Math.round(v));
-  const _grid=()=>{ let o=''; const st=niceStep(uMax);
-    for(let i=1;i*st<=uMax+1e-9;i++){ const v=i*st, y=yU(v);
-      o+='<line x1="'+x0+'" y1="'+y.toFixed(1)+'" x2="'+bxR+'" y2="'+y.toFixed(1)+'" stroke="var(--line)" stroke-width="0.8" opacity="0.6"/>'
-       +'<text x="'+(x0-3)+'" y="'+(y+2.5).toFixed(1)+'" class="gl-ax" font-size="11" text-anchor="end" fill="var(--fog-2)">'+axFmt(v)+'</text>'; }
-    return o; };
+  const yS=v=>base-v*plotH, yP=v=>base-(v/pMax)*plotH;
   // recent/prior comparison windows (match the footer) — faint bands so the readout is locatable on the chart
   const k = n>=8?4:Math.max(1,Math.floor(n/2));
   const bandX=(a,b)=>[x0+slot*a, x0+slot*(b+1)];
-  let s=_grid();
+  let s='';
   if(n-k-1>=Math.max(0,n-2*k)){ const w=bandX(Math.max(0,n-2*k),n-k-1);
     s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'; }
   { const w=bandX(n-k,n-1);
@@ -485,9 +475,18 @@ function gameLogUsage(p,season){
       : '';
     s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h1.toFixed(1)+'" fill="var(--teal-br)" opacity="0.85">'+t1+'</rect>';
     if(h2>0) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-h1-h2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h2.toFixed(1)+'" fill="var(--topaz)" opacity="0.85"/>';
-    s+='<text x="'+cx(i).toFixed(1)+'" class="gl-ax" y="164" font-size="10" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+    s+='<text x="'+cx(i).toFixed(1)+'" y="164" font-size="10" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
   const poly=(vals,yf)=>vals.map((v,i)=>cx(i).toFixed(1)+','+yf(v).toFixed(1)).join(' ');
+  // ── peak-bar annotation: ONE number above the tallest bar calibrates every other bar by
+  // eye — no axis needed. An axis was tried and failed: this plot carries three y-scales
+  // (bars, snap%, fantasy pts), so any single labeled axis is actively wrong for two of the
+  // three layers (a ~90% snap line "read" as 60% share). Share views label the peak share;
+  // count views label peak total opportunities.
+  { let im=0; for(let i=1;i<n;i++) if(totU[i]>totU[im]) im=i;
+    const pv = shareOK ? Math.round(part1[im]*100)+'%' : String(Math.round(totU[im]));
+    const py_ = Math.max(top+9, base-(totU[im]/uMax)*plotH-5);
+    s+='<text x="'+cx(im).toFixed(1)+'" y="'+py_.toFixed(1)+'" font-size="12" font-weight="700" text-anchor="middle" fill="var(--paper)">'+pv+'</text>'; }
   const dots=(vals,yf,col,r)=>vals.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+yf(v).toFixed(1)+'" r="'+(r||2.1)+'" fill="'+col+'" stroke="var(--ink)" stroke-width="0.6"/>').join('');
   // raw weekly fantasy points — brand violet, dashed + dots (production the usage is meant to produce)
   s+='<polyline points="'+poly(pts,yP)+'" fill="none" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/>'+dots(pts,yP,'var(--violet)',2.1);
@@ -532,12 +531,24 @@ function gameLogUsage(p,season){
   // deliberately not drawn as a line, because a central-tendency line puts ~half the bars
   // underneath by construction and always reads as underperformance.
   let range='';
-  if(shareOK && n){
-    const sv=part1.slice().sort((a,b)=>a-b);
-    const md = n%2 ? sv[(n-1)/2] : (sv[n/2-1]+sv[n/2])/2;
-    const pc=v=>Math.round(v*100)+'%';
-    range='<div style="font-size:10px;color:var(--fog-2);margin-top:2px">Target share \u2014 low <b>'+pc(sv[0])
-      +'</b> \u00b7 typical <b style="color:var(--paper)">'+pc(md)+'</b> \u00b7 high <b>'+pc(sv[n-1])+'</b></div>';
+  if(n){
+    // Token-snap games (a handful of snaps, zero opportunities — e.g. a rested starter's
+    // Week 18 cameo) legitimately count as played under the LOCKED ≥1-snap DNP rule, but
+    // "low 0" as a season headline misreads a healthy player. Quote low over weeks with
+    // any opportunity and count the cameos in words. The rule itself is untouched.
+    // Cameo = zero opportunities AND <10% snaps (the rested-starter pattern). A zero-target
+    // game on real snaps is NOT a cameo — a fringe WR playing 50% of snaps without a look is
+    // exactly the goose egg the low should show. Snap threshold is footer wording only; the
+    // LOCKED ≥1-snap game-counting rule is untouched.
+    const act=[],cam=[];
+    for(let i=0;i<n;i++) ((totU[i]===0&&(snp[i]||0)<0.10)?cam:act).push(totU[i]);
+    const tv=(act.length?act:cam).slice().sort((a,b)=>a-b), m2=tv.length;
+    const md = m2%2 ? tv[(m2-1)/2] : (tv[m2/2-1]+tv[m2/2])/2;
+    const fmtV = shareOK ? (v=>Math.round(v*100)+'%') : (v=>String(Math.round(v)));
+    const noun = shareOK ? 'Target share' : (isQB ? 'Att + carries' : isRB ? 'Touches (car + tgt)' : 'Targets');
+    range='<div style="font-size:10px;color:var(--fog-2);margin-top:2px">'+noun+' \u2014 low <b>'+fmtV(tv[0])
+      +'</b> \u00b7 typical <b style="color:var(--paper)">'+fmtV(md)+'</b> \u00b7 high <b>'+fmtV(tv[m2-1])+'</b>'
+      +(act.length&&cam.length?' \u00b7 excl. '+cam.length+' token-snap game'+(cam.length>1?'s':''):'')+'</div>';
   }
   return '<svg viewBox="0 0 '+W+' 180" width="100%" role="img"><title>usage trend</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+'</div>'+range+help;
