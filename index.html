@@ -1366,6 +1366,12 @@ function recalcTrade(){
       </div>`;
   }
   if(gapFillerOpen) renderGapFiller();
+  // share row: regenerated from LIVE state on every click, so it always reflects the
+  // trade as displayed even after edits (the address bar may hold a stale inbound link)
+  document.getElementById('verdict-area').insertAdjacentHTML('beforeend',
+    '<div style="text-align:center;margin-top:.85rem"><button onclick="shareTradeLink(this)" '
+    +'style="font-size:11px;font-weight:600;padding:5px 16px;border-radius:6px;border:1px solid var(--teal-br);'
+    +'background:transparent;color:var(--teal-br);cursor:pointer">\ud83d\udd17 Share this trade</button></div>');
 }
 
 // ── Player Compare (v1: two players, winner pips, model-value edge) ─────────
@@ -1564,6 +1570,80 @@ function setTradeTeams(n){
   recalcTrade();
 }
 
+// ── Shareable trade links ────────────────────────────────────
+// Encodes the full trade (sides, destinations, team windows, league settings) into
+// ?trade=<base64url JSON> so a pasted link reproduces the EXACT verdict for anyone.
+// League settings from a link are applied SESSION-ONLY — they sync the UI and rebuild
+// the market baseline but never call saveLeaguePrefs, so opening a friend's 14-team
+// 1QB trade doesn't silently overwrite your own saved league defaults.
+function tradeShareLink(){
+  const sides={a:sA,b:sB,c:sC,d:sD};
+  const payload={v:1,t:tradeTeams,
+    s:ACTIVE_SIDES().map(id=>sides[id].map(p=>tradeTeams>2?[p.n,p.to||null]:[p.n])),
+    w:ACTIVE_SIDES().map(id=>teamWindow[id]),
+    L:{f:scoringFmt,n:leagueTeams,q:qbFmt}};
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  return location.origin+location.pathname+'?trade='+b64;
+}
+function shareTradeLink(btn){
+  const url=tradeShareLink();
+  const done=()=>{ if(btn){ const t=btn.textContent; btn.textContent='Copied \u2713';
+    setTimeout(()=>{btn.textContent=t;},1800); } };
+  if(navigator.share){ navigator.share({title:'DELTA Trade',url}).catch(()=>{}); return; }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>{ window.prompt('Copy this link:',url); });
+  } else { window.prompt('Copy this link:',url); }
+}
+function loadTradeFromUrl(){
+  const raw=new URLSearchParams(location.search).get('trade');
+  if(!raw) return;
+  let o;
+  try{
+    const b64=raw.replace(/-/g,'+').replace(/_/g,'/');
+    o=JSON.parse(decodeURIComponent(escape(atob(b64))));
+  }catch(e){ console.warn('trade link decode failed',e); return; }
+  if(!o||o.v!==1||!Array.isArray(o.s)) return;
+  // league settings: session-only (globals + UI sync + market rebuild, no pref save)
+  if(o.L){
+    if(o.L.f) scoringFmt=o.L.f;
+    if(o.L.n) leagueTeams=parseInt(o.L.n)||leagueTeams;
+    if(o.L.q) qbFmt=o.L.q;
+    ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=scoringFmt;});
+    ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
+    ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
+    if(typeof applyMarketForSetting==='function') applyMarketForSetting();
+  }
+  const n=Math.min(4,Math.max(2,o.t||2));
+  setTradeTeams(n);
+  const act=ACTIVE_SIDES(), sides={a:sA,b:sB,c:sC,d:sD};
+  const missing=[];
+  act.forEach((id,i)=>{
+    if(o.w&&o.w[i]&&['neutral','contender','rebuilder'].includes(o.w[i])){
+      teamWindow[id]=o.w[i];
+      const sel=document.querySelector('select[onchange^="setWindow(\''+id+'\'"]');
+      if(sel) sel.value=o.w[i];
+    }
+    (o.s[i]||[]).forEach(entry=>{
+      const nm=Array.isArray(entry)?entry[0]:entry, to=Array.isArray(entry)?entry[1]:null;
+      const a=ASSETS.find(p=>p.n===nm);
+      if(!a){ missing.push(nm); return; }
+      if(!sides[id].find(x=>x.n===nm))
+        sides[id].push({...a, to: n>2 ? (act.includes(to)&&to!==id?to:defaultDest(id)) : null});
+    });
+  });
+  const tabBtn=[...document.querySelectorAll('.tab')].find(b=>(b.getAttribute('onclick')||'').indexOf("'trade'")>=0);
+  if(tabBtn) showTab('trade',tabBtn);
+  recalcTrade();
+  if(missing.length){
+    const va=document.getElementById('verdict-area');
+    if(va) va.insertAdjacentHTML('afterbegin',
+      '<div style="font-size:11px;color:var(--topaz);border:1px solid var(--line);border-radius:6px;padding:6px 10px;margin-bottom:.6rem">\u26a0 '
+      +missing.length+' asset'+(missing.length>1?'s':'')+' from this link couldn\u2019t be matched (renamed or no longer tracked): '
+      +missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>');
+  }
+}
+
 function clearAllTrade(){
   sA.length=0;sB.length=0;sC.length=0;sD.length=0;
   ['a','b','c','d'].forEach(s=>{
@@ -1742,6 +1822,9 @@ function renderAll(){
   // Auto-open player card if ?player= URL param is present (legacy redirect to player.html)
   const urlPlayer=new URLSearchParams(location.search).get('player');
   if(urlPlayer) { location.replace('player.html?name='+encodeURIComponent(urlPlayer)); return; }
+  // Restore a shared trade (?trade=). Must run here — after ASSETS is built and the
+  // market center is calibrated — or names can't match and totals would be wrong.
+  loadTradeFromUrl();
 }
 
 function showTab(id,el){
