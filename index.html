@@ -574,7 +574,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 
   <div style="margin-top:1.25rem;border-top:1px solid var(--panel);padding-top:1rem">
     <div class="cmp-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span class="cmp-label" style="font-size:11px;font-weight:700;color:var(--fog);letter-spacing:.06em">⚖ PLAYER COMPARE</span>
+      <span class="cmp-label" style="font-size:11px;font-weight:700;color:var(--fog);letter-spacing:.06em">⇄ PLAYER COMPARE</span>
       <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
         style="flex:1;min-width:150px;max-width:230px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-size:12px;padding:6px 10px">
       <span style="color:var(--fog-2);font-size:11px">vs</span>
@@ -642,9 +642,9 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     </select>
     <select id="status-contracts" onchange="renderContracts()">
       <option value="ALL">All Status</option>
-      <option value="locked">🔒 Locked Up</option>
+      <option value="locked">■ Locked Up</option>
       <option value="walkyr">⚠ Walk Year</option>
-      <option value="expiring">🔴 Expiring Soon</option>
+      <option value="expiring">◷ Expiring Soon</option>
     </select>
     <select id="sort-contracts" onchange="setSortContracts(this.value)">
       <option value="aav">Sort: AAV ↓</option>
@@ -663,7 +663,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   </table></div>
   <div style="margin-top:12px;font-size:10px;color:var(--fog-2)">
     All 32 NFL teams loaded — full contract coverage complete.
-    🔒 Locked Up = 4+ years remaining · ✓ Stable = 3 years · 🔴 Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
+    ■ Locked Up = 4+ years remaining · ✓ Stable = 3 years · ◷ Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
   </div>
 </div>
 
@@ -829,7 +829,7 @@ function renderRankings(){
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:var(--fog-2);padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
-    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✏</span>':''); })()}${p.n}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
     <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
@@ -1329,7 +1329,7 @@ function recalcTrade(){
           ${sorted.map((t,i)=>{
             const isWinner=i===0&&!allEqual;
             const netClr=t.net>0?'var(--emerald)':t.net<0?'var(--coral)':'var(--fog)';
-            return`<span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' 🏆':''}</span>
+            return`<span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' ▲':''}</span>
               <span style="color:var(--fog)">${t.adjResult.total.toLocaleString()}</span>
               <span style="color:var(--fog)">${t.recv.total.toLocaleString()}</span>
               <span style="color:${netClr};font-weight:600">${t.net>0?'+':''}${t.net.toLocaleString()}</span>`;
@@ -1371,7 +1371,7 @@ function recalcTrade(){
   document.getElementById('verdict-area').insertAdjacentHTML('beforeend',
     '<div style="text-align:center;margin-top:.85rem"><button onclick="shareTradeLink(this)" '
     +'style="font-size:11px;font-weight:600;padding:5px 16px;border-radius:6px;border:1px solid var(--teal-br);'
-    +'background:transparent;color:var(--teal-br);cursor:pointer">\ud83d\udd17 Share this trade</button></div>');
+    +'background:transparent;color:var(--teal-br);cursor:pointer">Share this trade</button></div>');
 }
 
 // ── Player Compare (v1: two players, winner pips, model-value edge) ─────────
@@ -2671,7 +2671,7 @@ function toggleDraftRefresh() {
   const btn = document.getElementById('draft-refresh-btn');
   const open = panel.style.display === 'none';
   panel.style.display = open ? 'block' : 'none';
-  btn.textContent = open ? '✕ Close' : '⚡ Update with Real Draft Picks';
+  btn.textContent = open ? '✕ Close' : '⟳ Update with Real Draft Picks';
   if (open) buildDraftEntries();
 }
 
@@ -2847,7 +2847,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-rookies" class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
     <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
-    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid var(--sky);background:var(--ink-2);color:var(--sky);cursor:pointer">⚡ Update with Real Draft Picks</button>
+    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid var(--sky);background:var(--ink-2);color:var(--sky);cursor:pointer">⟳ Update with Real Draft Picks</button>
   </div>
 
   <!-- Post-draft pick entry panel -->

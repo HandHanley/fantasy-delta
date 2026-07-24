@@ -580,23 +580,28 @@ function gameLogMix(p,season){
   const bandX=(a,b)=>[x0+slot*a, x0+slot*(b+1)];
   let s='';
   if(n-k-1>=Math.max(0,n-2*k)){ const w=bandX(Math.max(0,n-2*k),n-k-1);
-    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'
-     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--fog-2)">prior '+k+'</text>'; }
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.035"/>'; }
   { const w=bandX(n-k,n-1);
-    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.08"/>'
-     +'<text x="'+((w[0]+w[1])/2).toFixed(1)+'" y="174" font-size="7.5" text-anchor="middle" fill="var(--paper)" opacity="0.75">last '+k+'</text>'; }
+    s+='<rect x="'+w[0].toFixed(1)+'" y="'+top+'" width="'+(w[1]-w[0]).toFixed(1)+'" height="'+(base-top)+'" fill="var(--paper)" opacity="0.08"/>'; }
   rows.forEach((g,i)=>{
     const fl=Math.max(0,floor[i]), t=Math.max(0,td[i]);
     const hf=(fl/vMax)*plotH, ht=(t/vMax)*plotH;
     if(hf>0.4) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-hf).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hf.toFixed(1)+'" rx="1.5" fill="var(--sky)" opacity="0.85"/>';
     if(ht>0.4) s+='<rect x="'+bx(i).toFixed(1)+'" y="'+(base-hf-ht).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="1.5" fill="var(--topaz)" opacity="0.92"/>';
-    s+='<text x="'+cx(i).toFixed(1)+'" y="163" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
+    s+='<text x="'+cx(i).toFixed(1)+'" y="164" font-size="10" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
   // legend
-  let lg='<g font-size="8.5" fill="var(--fog)">';
+  let lg='<g font-size="10" fill="var(--fog)">';
   lg+='<rect x="20" y="12" width="9" height="9" fill="var(--sky)" opacity="0.85"/><text x="32" y="20">floor (yds+rec)</text>';
-  const lx=32+15*5.1+12;
+  const lx=32+15*6+14;
   lg+='<rect x="'+lx.toFixed(0)+'" y="12" width="9" height="9" fill="var(--topaz)" opacity="0.92"/><text x="'+(lx+12).toFixed(0)+'" y="20">touchdowns</text></g>';
+  // ── peak-game annotation: one haloed number above the biggest game calibrates every
+  // other bar by eye (same design as Usage; an axis was tried there and failed because
+  // of multi-scale layers). Value = that game's total fantasy points. Drawn after the
+  // bars so nothing paints over it.
+  { let im=0; for(let i=1;i<n;i++) if(total[i]>total[im]) im=i;
+    const py_=Math.max(top+9, base-(Math.max(0,floor[im])+Math.max(0,td[im]))/vMax*plotH-5);
+    s+='<text x="'+cx(im).toFixed(1)+'" y="'+py_.toFixed(1)+'" font-size="12" font-weight="700" text-anchor="middle" fill="var(--paper)" stroke="var(--ink)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">'+total[im].toFixed(1)+'</text>'; }
   s=lg+s;
   // footer — neutral facts: TD share of points + yards/touch, recent vs prior
   const recIdx=[],priIdx=[];
@@ -4561,8 +4566,8 @@ const DELTA_DEV = new URLSearchParams(location.search).has('dev');
 function contractStatus(c){
   if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
   const yrsLeft=c.end-2025; // inclusive of current 2026 season
-  if(yrsLeft>=5)return{label:'Locked Up',cls:'bs',icon:'🔒'};
-  if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'🔴'};
+  if(yrsLeft>=5)return{label:'Locked Up',cls:'bs',icon:'■'};
+  if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'◷'};
   return{label:'Stable',cls:'bi',icon:'✓'};
 }
 
