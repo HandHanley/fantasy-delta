@@ -41,7 +41,12 @@ tr:hover td{background:var(--panel)}
      402pt phone gives 340px of card content, so "Trend" wrapped to a second row.
      Tightening type + padding + gap frees ~70px, holding one line down to ~350pt.
      Container keeps flex-wrap as a safety net below that. */
-  .gl-tab{font-size:9.5px !important;padding:3px 5px !important;margin-right:3px !important}
+  /* Usage-chart SVG text: the 560-unit viewBox is squeezed into ~340 CSS px on mobile
+   (x0.61), so an 11-unit label rendered at 6.7px. Sizes here are viewBox units, so
+   13.5 lands at ~8px actual. Legend is deliberately excluded: its x-positions are
+   computed in JS from an assumed char width, so scaling it here would overlap. */
+.gl-ax{font-size:13.5px!important}
+.gl-tab{font-size:9.5px !important;padding:3px 5px !important;margin-right:3px !important}
   /* trade-calc controls: label on its own line, 2/3/4 in one row, Clear all beside */
   .tc-row{flex-wrap:wrap}
   .tc-row>span{width:100%}

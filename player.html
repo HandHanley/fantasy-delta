@@ -42,6 +42,11 @@ a:hover{text-decoration:underline}
    ~346px but a 402pt phone only gives 340px of card content, so "Trend" wrapped.
    Tightening type + padding + gap frees ~70px, which keeps all six inline down to
    ~350pt. Container keeps flex-wrap as a safety net below that. */
+/* Usage-chart SVG text: the 560-unit viewBox is squeezed into ~340 CSS px on mobile
+   (x0.61), so an 11-unit label rendered at 6.7px. Sizes here are viewBox units, so
+   13.5 lands at ~8px actual. Legend is deliberately excluded: its x-positions are
+   computed in JS from an assumed char width, so scaling it here would overlap. */
+.gl-ax{font-size:13.5px!important}
 .gl-tab{font-size:9.5px!important;padding:3px 5px!important;margin-right:3px!important}}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:#8CA0B3;width:36px;flex-shrink:0}
