@@ -158,6 +158,12 @@ a{color:#2DD4BF}
 const HERO_PH_SVG='<svg viewBox="0 0 24 24" width="58%" height="58%" aria-hidden="true">'
   +'<circle cx="12" cy="8.2" r="4.1" fill="currentColor" opacity="0.55"/>'
   +'<path d="M3.6 21c.5-4.2 4.1-6.4 8.4-6.4s7.9 2.2 8.4 6.4z" fill="currentColor" opacity="0.55"/></svg>';
+
+function heroStar(el){
+  const on=dwToggle(el.dataset.name);
+  el.textContent=on?'\u2605':'\u2606';
+  el.style.color=on?'var(--topaz)':'var(--fog-2)';
+}
 function heroPhFallback(el){ el.outerHTML='<div class="hero-ph">'+HERO_PH_SVG+'</div>'; }
 
 const params = new URLSearchParams(location.search);
@@ -205,7 +211,7 @@ function buildHeroHTML(p) {
   return `<div class="hero">
     ${hsHtml}
     <div class="hero-info">
-      <div class="hero-name">${p.n}</div>
+      <div class="hero-name">${p.n} <span data-name="${p.n}" onclick="heroStar(this)" style="cursor:pointer;font-size:17px;vertical-align:2px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span></div>
       <div class="hero-meta">
         <span class="badge bn">${p.pos}</span>
         <span>${team}</span>

@@ -45,6 +45,15 @@ function formatMvShift(name,pos,fmt){
 // (game-logs.json contains only ACTIVE games), so a 0-pt game here = a real miss.
 // Data is lazy-loaded on first player-card open (~1.1MB), not on startup.
 // ════════════════════════════════════════════════════════════
+// ── Watchlist (localStorage — per-device, per-user; nothing global changes) ──
+function dwGet(){ try{ return JSON.parse(localStorage.getItem('delta_watchlist')||'[]'); }catch(e){ return []; } }
+function dwHas(n){ return dwGet().indexOf(n)>=0; }
+function dwToggle(n){
+  const w=dwGet(), i=w.indexOf(n);
+  if(i>=0) w.splice(i,1); else w.push(n);
+  try{ localStorage.setItem('delta_watchlist',JSON.stringify(w)); }catch(e){}
+  return i<0;   // true = now watched
+}
 let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle';
 async function ensureStartData(){
   if(START_DATA_STATE==='loaded'||START_DATA_STATE==='loading') return START_DATA_STATE;

@@ -417,7 +417,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <span class="dl-hint">Click any row to open player card</span>
 </div>
 
-<div class="tabs">
+<div class="tabs" style="position:relative">
   <button class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button class="tab" onclick="showTab('projections',this)">Projections</button>
   <button class="tab" onclick="showTab('trade',this)">Trade Calc</button>
@@ -427,14 +427,34 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button class="tab" onclick="showTab('myteam',this)">My Team</button>
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
-  <button class="about-tab" onclick="openAbout()">About DELTA</button>
+  <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+</div>
+<div id="settings-pop" style="display:none;position:absolute;right:0;top:100%;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:230px;box-shadow:0 10px 30px rgba(0,0,0,.5)">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--fog);margin-bottom:10px">SETTINGS</div>
+  <div style="font-size:11px;color:var(--fog-2);margin-bottom:4px">Open DELTA to</div>
+  <select id="landing-pref" onchange="setLandingPref(this.value)" style="width:100%;font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 7px;margin-bottom:12px">
+    <option value="rankings">Rankings (default)</option>
+    <option value="projections">Projections</option>
+    <option value="trade">Trade Calc</option>
+    <option value="epa">EPA Insights</option>
+    <option value="ripple">Ripple Effects</option>
+    <option value="contracts">Contracts</option>
+    <option value="rookies">Prospects</option>
+    <option value="myteam">My Team</option>
+    <option value="last">Where I left off</option>
+  </select>
+  <div id="wl-line" style="font-size:11px;color:var(--fog-2);margin-bottom:12px"></div>
+  <div style="border-top:1px solid var(--line);padding-top:10px">
+    <span onclick="closeSettings();openAbout()" style="font-size:12px;color:var(--teal-br);cursor:pointer">About DELTA</span>
+  </div>
+  <div style="font-size:9.5px;color:var(--fog-2);margin-top:10px;line-height:1.5">Saved on this device only — every visitor has their own settings.</div>
 </div>
 
 <div id="panel-rankings" class="panel active">
   <div class="controls">
     <input type="text" id="s-rank" placeholder="Search..." oninput="renderRankings()">
     <select id="pos-rank" onchange="renderRankings()">
-      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
     <select id="sort-rank" onchange="setSortRDropdown(this.value)">
@@ -482,7 +502,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <div class="controls">
     <input type="text" id="s-proj" placeholder="Search..." oninput="renderProj()">
     <select id="pos-proj" onchange="renderProj()">
-      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
     <select id="sort-proj" onchange="projSort=this.value;projSortDir=1;renderProj()">
@@ -605,7 +625,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   </div>
   <div class="controls">
     <select id="pos-epa" onchange="renderEPA()">
-      <option value="ALL">All</option><option value="QB">QB</option>
+      <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
     <select id="sort-epa" onchange="setSortEPA(this.value)">
@@ -797,7 +817,7 @@ function renderRankings(){
   const q=(document.getElementById('s-rank').value||'').toLowerCase();
   const pos=document.getElementById('pos-rank').value;
   const ageMax=parseInt(document.getElementById('age-rank').value)||99;
-  let data=COMP.filter(p=>(pos==='ALL'||p.pos===pos)&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
+  let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
   const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore',ppg25:'ppg25',ppg24:'ppg24'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Contextual explainer — only for the three confusable value metrics
@@ -826,11 +846,12 @@ function renderRankings(){
       posRankMap[p.n]=tmpCounts[p.pos];
     }
   });
+  if(pos==='WL'&&data.length===0){document.getElementById('rank-body').innerHTML='<tr><td colspan="15" style="padding:18px;text-align:center;color:var(--fog-2);font-size:12px">No players on your watchlist yet \u2014 tap \u2606 next to any player to add them.</td></tr>';return;}
   document.getElementById('rank-body').innerHTML=data.slice(0,170).map((p,i)=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:var(--fog-2);padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
-    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap"><span onclick="event.stopPropagation();const on=dwToggle(this.closest('tr').dataset.name);this.textContent=on?'\u2605':'\u2606';this.style.color=on?'var(--topaz)':'var(--fog-2)';if(document.getElementById('pos-rank').value==='WL')renderRankings();" style="cursor:pointer;margin-right:5px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span>${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
     <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
@@ -1826,9 +1847,49 @@ function renderAll(){
   // Restore a shared trade (?trade=). Must run here — after ASSETS is built and the
   // market center is calibrated — or names can't match and totals would be wrong.
   loadTradeFromUrl();
+  applyLanding();
+}
+
+
+// ── Settings (gear) — all localStorage, per-device ──
+function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
+function toggleSettings(e){
+  e.stopPropagation();
+  const pop=document.getElementById('settings-pop');
+  const open=pop.style.display!=='none';
+  pop.style.display=open?'none':'block';
+  if(!open){
+    const sel=document.getElementById('landing-pref');
+    if(sel) sel.value=dlPref('delta_landing')||'rankings';
+    const wl=dwGet(), el=document.getElementById('wl-line');
+    if(el) el.innerHTML='Watchlist: <b style="color:var(--paper)">'+wl.length+'</b> player'+(wl.length===1?'':'s')
+      +(wl.length?' — <span style="color:var(--teal-br);cursor:pointer" onclick="closeSettings();showWatchlist()">view</span>':' — tap \u2606 on any player to add');
+  }
+}
+function closeSettings(){ const p=document.getElementById('settings-pop'); if(p) p.style.display='none'; }
+document.addEventListener('click',e=>{ if(!e.target.closest('#settings-pop')&&!e.target.closest('#gear-btn')) closeSettings(); });
+function setLandingPref(v){ dlPref('delta_landing',v); }
+function tabBtnFor(id){ return [...document.querySelectorAll('.tab')].find(b=>(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>=0); }
+function showWatchlist(){
+  const b=tabBtnFor('rankings'); if(b) showTab('rankings',b);
+  const sel=document.getElementById('pos-rank'); if(sel){ sel.value='WL'; renderRankings(); }
+}
+const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam'];
+function applyLanding(){
+  const params=new URLSearchParams(location.search);
+  if(params.get('trade')) return;                     // shared trade wins outright
+  let target=params.get('tab');                       // manifest shortcuts / deep links
+  if(!target){
+    const pref=dlPref('delta_landing');
+    target = pref==='last' ? dlPref('delta_lasttab') : pref;
+  }
+  if(target&&DL_TABS.indexOf(target)>=0&&target!=='rankings'){
+    const b=tabBtnFor(target); if(b) showTab(target,b);
+  }
 }
 
 function showTab(id,el){
+  try{ if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id); }catch(e){}
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
