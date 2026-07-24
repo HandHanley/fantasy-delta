@@ -478,15 +478,6 @@ function gameLogUsage(p,season){
     s+='<text x="'+cx(i).toFixed(1)+'" y="164" font-size="10" text-anchor="middle" fill="var(--fog-2)">'+g.w+'</text>';
   });
   const poly=(vals,yf)=>vals.map((v,i)=>cx(i).toFixed(1)+','+yf(v).toFixed(1)).join(' ');
-  // ── peak-bar annotation: ONE number above the tallest bar calibrates every other bar by
-  // eye — no axis needed. An axis was tried and failed: this plot carries three y-scales
-  // (bars, snap%, fantasy pts), so any single labeled axis is actively wrong for two of the
-  // three layers (a ~90% snap line "read" as 60% share). Share views label the peak share;
-  // count views label peak total opportunities.
-  { let im=0; for(let i=1;i<n;i++) if(totU[i]>totU[im]) im=i;
-    const pv = shareOK ? Math.round(part1[im]*100)+'%' : String(Math.round(totU[im]));
-    const py_ = Math.max(top+9, base-(totU[im]/uMax)*plotH-5);
-    s+='<text x="'+cx(im).toFixed(1)+'" y="'+py_.toFixed(1)+'" font-size="12" font-weight="700" text-anchor="middle" fill="var(--paper)">'+pv+'</text>'; }
   const dots=(vals,yf,col,r)=>vals.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+yf(v).toFixed(1)+'" r="'+(r||2.1)+'" fill="'+col+'" stroke="var(--ink)" stroke-width="0.6"/>').join('');
   // raw weekly fantasy points — brand violet, dashed + dots (production the usage is meant to produce)
   s+='<polyline points="'+poly(pts,yP)+'" fill="none" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 3"/>'+dots(pts,yP,'var(--violet)',2.1);
@@ -494,6 +485,17 @@ function gameLogUsage(p,season){
   if(useSnap){ const sp=poly(snp,yS);
     s+='<polyline points="'+sp+'" fill="none" stroke="var(--ink)" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round"/>'
      +'<polyline points="'+sp+'" fill="none" stroke="var(--paper)" stroke-width="2"/>'+dots(snp,yS,'var(--paper)',2.3); }
+  // ── peak-bar annotation: ONE number above the tallest bar calibrates every other bar by
+  // eye — no axis needed. An axis was tried and failed: this plot carries three y-scales
+  // (bars, snap%, fantasy pts), so any single labeled axis is actively wrong for two of the
+  // three layers (a ~90% snap line "read" as 60% share). Share views label the peak share;
+  // count views label peak total opportunities. Drawn LAST so the snap/points lines
+  // cannot paint over it, with an ink halo (paint-order) for contrast either way — the
+  // worst case is exactly a near-cap bar, whose label sits in snap-line territory.
+  { let im=0; for(let i=1;i<n;i++) if(totU[i]>totU[im]) im=i;
+    const pv = shareOK ? Math.round(part1[im]*100)+'%' : String(Math.round(totU[im]));
+    const py_ = Math.max(top+9, base-(totU[im]/uMax)*plotH-5);
+    s+='<text x="'+cx(im).toFixed(1)+'" y="'+py_.toFixed(1)+'" font-size="12" font-weight="700" text-anchor="middle" fill="var(--paper)" stroke="var(--ink)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">'+pv+'</text>'; }
   // legend
   let lg='<g font-size="10" fill="var(--fog)">';
   lg+='<rect x="20" y="12" width="9" height="9" fill="var(--teal-br)" opacity="0.85"/><text x="32" y="20">'+l1+'</text>';
