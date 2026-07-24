@@ -1,0 +1,17 @@
+{
+  "name": "DELTA — Dynasty Analytics",
+  "short_name": "DELTA",
+  "description": "Market-blind dynasty fantasy football analytics. The gap between model value and market value is the signal.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0F1A",
+  "theme_color": "#0A0F1A",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
