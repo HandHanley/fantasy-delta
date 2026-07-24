@@ -993,9 +993,13 @@ function calcAdjustedSide(arrA, arrB) {
       const eliteM = isPeak ? eliteMultPeak : isEliteNonPeak ? 1.04 : 1.00;
       let adj = Math.round(ktc * eliteM);
 
-      // 2. Position clustering (exempt if elite)
+      // 2. Position clustering (exempt if elite; PICKS FULLY EXEMPT — two reasons:
+      // (a) more picks is more lottery tickets, not redundant depth, so no diminishing
+      // returns; (b) picks have no position, and the old `pos || 'WR'` default made them
+      // silently join and poison the WR chain — a 2-pick + 2-WR side had its WRs at
+      // ×0.72/×0.61 instead of ×1.0/×0.85. Picks neither take nor advance the discount.)
       let posM = 1.0;
-      if (!isElite) {
+      if (!isElite && !p.ip) {
         posCount[pos] = (posCount[pos] || 0) + 1;
         posM = Math.pow(0.85, posCount[pos] - 1);
         adj = Math.round(adj * posM);
@@ -1062,7 +1066,7 @@ function calcSingleSideAdjusted(arr) {
     const eliteM = isPeak ? 1.12 : isElite ? 1.04 : 1.00;
     let adj = Math.round(ktc * eliteM);
     let posM = 1.0;
-    if (!isElite) {
+    if (!isElite && !p.ip) {   // picks fully exempt from position clustering (see calcAdjustedSide)
       posCount[pos] = (posCount[pos] || 0) + 1;
       posM = Math.pow(0.85, posCount[pos] - 1);
       adj = Math.round(adj * posM);
