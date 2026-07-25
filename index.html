@@ -451,6 +451,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button class="tab" onclick="showTab('myteam',this)">My Team</button>
+  <button class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">College</button>
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
@@ -2010,7 +2011,7 @@ function showWatchlist(){
   const b=tabBtnFor('rankings'); if(b) showTab('rankings',b);
   const sel=document.getElementById('pos-rank'); if(sel){ sel.value='WL'; renderRankings(); }
 }
-const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam'];
+const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   if(params.get('trade')) return;                     // shared trade wins outright
@@ -2034,6 +2035,7 @@ function showTab(id,el){
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
+  if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
 }
 
@@ -3185,6 +3187,44 @@ document.addEventListener('click', function(e) {
   <div id="myteam-watchview" style="display:none"></div>
 </div>
 
+<div id="panel-college" class="panel">
+  <div class="section-label">College — Tracking</div>
+  <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
+    Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
+    college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
+    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.
+  </div>
+  <div class="set-row" style="margin-bottom:.5rem" id="cfb-pos-row">
+    <button class="set-pill on" data-cpos="ALL" onclick="cfbSetPos('ALL')">All</button>
+    <button class="set-pill" data-cpos="QB" onclick="cfbSetPos('QB')">QB</button>
+    <button class="set-pill" data-cpos="RB" onclick="cfbSetPos('RB')">RB</button>
+    <button class="set-pill" data-cpos="WR" onclick="cfbSetPos('WR')">WR</button>
+    <button class="set-pill" data-cpos="TE" onclick="cfbSetPos('TE')">TE</button>
+    <button class="set-pill" data-cpos="WATCH" onclick="cfbSetPos('WATCH')">Watchlist</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
+    <input id="cfb-q" oninput="renderCollege()" placeholder="Search players…"
+      style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
+    <select id="cfb-sort" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
+      <option value="pr">Production (position rank)</option>
+      <option value="scrim">Scrimmage yards</option>
+      <option value="rey">Receiving yards</option>
+      <option value="ry">Rushing yards</option>
+      <option value="py">Passing yards</option>
+      <option value="rsh">Reception share</option>
+      <option value="age">Youngest first</option>
+      <option value="stars">Recruit stars</option>
+    </select>
+    <select id="cfb-cls" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
+      <option value="">Any class</option><option value="1">Freshman</option><option value="2">Sophomore</option>
+      <option value="3">Junior</option><option value="4">Senior</option>
+    </select>
+    <button class="set-pill" id="cfb-blue" onclick="cfbToggleBlue()" title="4-5 star recruits only">Blue-chip only</button>
+  </div>
+  <div id="cfb-body"></div>
+  <div id="cfb-foot" style="font-size:9.5px;color:var(--fog-2);margin-top:10px;line-height:1.55"></div>
+</div>
+
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
@@ -3225,6 +3265,150 @@ function showDataFreshness(fetchedAt, playerCount, staleCount) {
 // ── CONTRACT LOADER ───────────────────────────────────────────────────────
 // Reads data/player-contracts.json (from nflverse/OTC via GitHub Action)
 // Updates DELTA contract data automatically
+
+// ── College tracking tab (?college=1) ───────────────────────────────────────
+// Gated, lazy-loaded and fully isolated: the data file is fetched only when the tab
+// is first opened, and every entry point is wrapped so a college failure degrades to
+// "tab doesn't render" instead of taking the app down.
+let CFB=null, CFB_STATE='idle', CFB_POS='ALL', CFB_BLUE=false;
+
+function initCollege(){
+  if(typeof DELTA_CFB==='undefined' || !DELTA_CFB) return;
+  const b=document.getElementById('tab-college-btn');
+  if(b) b.style.display='';
+}
+async function ensureCollege(){
+  if(CFB_STATE==='loaded'||CFB_STATE==='loading') return CFB_STATE;
+  CFB_STATE='loading';
+  try{
+    const r=await fetch('./data/college-players.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j || !Array.isArray(j.players)) throw new Error('unexpected shape');
+    CFB=j; cfbIndex(); CFB_STATE='loaded';
+  }catch(e){ console.warn('college data unavailable:',e); CFB=null; CFB_STATE='error'; }
+  return CFB_STATE;
+}
+function cfbProd(p){ return p.pos==='QB' ? (p.py||0) : (p.rey||0)+(p.ry||0); }
+function cfbIndex(){
+  // Percentile WITHIN position. A cross-position production sort is dominated by
+  // quarterbacks (pass yards dwarf everything), so the "All" view would otherwise be
+  // 70 QBs followed by everyone else.
+  const byPos={};
+  CFB.players.forEach(p=>{ (byPos[p.pos]=byPos[p.pos]||[]).push(p); });
+  Object.keys(byPos).forEach(pos=>{
+    const a=byPos[pos].sort((x,y)=>cfbProd(y)-cfbProd(x));
+    a.forEach((pl,i)=>{ pl._rk=i+1; pl._pr=1-(i/Math.max(1,a.length-1)); });
+  });
+}
+async function openCollegeTab(){
+  const host=document.getElementById('cfb-body');
+  if(CFB_STATE!=='loaded'){
+    if(host) host.innerHTML='<div style="font-size:12px;color:var(--fog-2);padding:14px">Loading college data\u2026</div>';
+    await ensureCollege();
+  }
+  renderCollege();
+}
+function cfbSetPos(v){
+  CFB_POS=v;
+  document.querySelectorAll('#cfb-pos-row .set-pill').forEach(b=>b.classList.toggle('on',b.dataset.cpos===v));
+  renderCollege();
+}
+function cfbToggleBlue(){
+  CFB_BLUE=!CFB_BLUE;
+  const b=document.getElementById('cfb-blue'); if(b) b.classList.toggle('on',CFB_BLUE);
+  renderCollege();
+}
+function cfbStar(el){
+  const on=dwToggle(el.dataset.name,'cfb');     // 'cfb' namespace — never collides with NFL
+  el.textContent=on?'\u2605':'\u2606';
+  el.style.color=on?'var(--topaz)':'var(--fog-2)';
+  if(CFB_POS==='WATCH') renderCollege();
+}
+function cfbRookieTag(name){
+  // Links a college row to its NFL card, but ONLY for an INCOMING rookie. Of the 53
+  // names shared by both universes, 52 are the same human; Malik Washington is two
+  // different people, and the established one has NFL games, so g25===0 excludes him.
+  if(typeof COMP==='undefined' || !COMP) return '';
+  const m=COMP.find(x=>x.n===name && x.g25===0);
+  if(!m) return '';
+  return ' <span data-name="'+name.replace(/"/g,'&quot;')+'" onclick="event.stopPropagation();openDeck(this.dataset.name)" '
+    +'title="In DELTA as an incoming rookie \u2014 open NFL card" '
+    +'style="font-size:8.5px;font-weight:700;color:var(--teal-br);border:1px solid var(--teal-br);border-radius:3px;padding:0 3px;cursor:pointer">NFL</span>';
+}
+function renderCollege(){
+  const host=document.getElementById('cfb-body'), foot=document.getElementById('cfb-foot');
+  if(!host) return;
+  if(CFB_STATE==='error' || !CFB){
+    host.innerHTML='<div style="font-size:12px;color:var(--topaz);border:1px solid var(--line);border-radius:8px;padding:14px">'
+      +'College data isn\u2019t available yet. The weekly pipeline writes <code>data/college-players.json</code>; '
+      +'once it has run, this tab fills in.</div>';
+    if(foot) foot.textContent=''; return;
+  }
+  const gv=id=>{ const e=document.getElementById(id); return e?e.value:''; };
+  const q=(gv('cfb-q')||'').toLowerCase().trim(), cls=gv('cfb-cls'), sort=gv('cfb-sort')||'pr';
+  const watch=new Set(dwList('cfb'));
+
+  let rows=CFB.players.filter(p=>{
+    if(CFB_POS==='WATCH'){ if(!watch.has(p.n)) return false; }
+    else if(CFB_POS!=='ALL' && p.pos!==CFB_POS) return false;
+    if(CFB_BLUE && !((p.stars||0)>=4)) return false;
+    if(cls && String(p.cls)!==cls) return false;
+    if(q && p.n.toLowerCase().indexOf(q)<0 && String(p.tm||'').toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  const BIG=1e9;
+  const key={
+    pr:    p=>(p._rk||9999),        // rank within position, ascending -> interleaves
+    scrim: p=>-((p.rey||0)+(p.ry||0)),
+    rey:   p=>-(p.rey||0), ry: p=>-(p.ry||0), py: p=>-(p.py||0),
+    rsh:   p=>-(p.rsh||0),
+    age:   p=>(p.ageEst==null?BIG:p.ageEst),      // unknown ages sort last, not first
+    stars: p=>-(p.stars||0),
+  }[sort]||(p=>(p._rk||9999));
+  rows.sort((a,b)=>key(a)-key(b));
+
+  if(!rows.length){
+    host.innerHTML='<div style="font-size:12px;color:var(--fog-2);border:1px solid var(--line);border-radius:8px;padding:16px">'
+      +(CFB_POS==='WATCH'
+        ? 'No college players on your watchlist yet \u2014 tap the \u2606 beside any name to track him through the season.'
+        : 'No players match these filters.')+'</div>';
+    if(foot) foot.textContent=''; return;
+  }
+  const dash=v=>(v?v:'-');
+  const body=rows.map(p=>{
+    const on=watch.has(p.n), td=(p.ret||0)+(p.rt||0)+(p.pt||0);
+    return '<tr data-name="'+p.n.replace(/"/g,'&quot;')+'">'
+      +'<td><span onclick="cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
+        +'style="cursor:pointer;color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
+      +'<td class="pname" style="white-space:nowrap">'+p.n+cfbRookieTag(p.n)+'</td>'
+      +'<td class="txt">'+p.pos+'</td>'
+      +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
+      +'<td class="txt">'+(p.cls?'Y'+p.cls:'-')+'</td>'
+      +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
+      +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
+      +'<td class="col-hide-mobile">'+dash(p.gms)+'</td>'
+      +'<td>'+dash(p.rec)+'</td>'
+      +'<td style="font-weight:600">'+dash(p.rey)+'</td>'
+      +'<td class="col-hide-mobile">'+dash(p.ry)+'</td>'
+      +'<td class="col-hide-mobile">'+dash(p.py)+'</td>'
+      +'<td>'+dash(td)+'</td>'
+      +'<td>'+(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-')+'</td>'
+      +'</tr>';
+  }).join('');
+  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' player'
+    +(rows.length===1?'':'s')+'</div>'
+    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
+    +'<th></th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th><th>Cls</th>'
+    +'<th class="col-hide-mobile">Age</th><th>Rec\u2605</th><th class="col-hide-mobile">G</th>'
+    +'<th>Rec</th><th>RecYd</th><th class="col-hide-mobile">RushYd</th>'
+    +'<th class="col-hide-mobile">PassYd</th><th>TD</th><th>RecSh</th>'
+    +'</tr></thead><tbody>'+body+'</tbody></table></div>';
+  if(foot) foot.innerHTML='Season <b>'+CFB.season+'</b> \u00b7 universe '+CFB.players.length
+    +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
+    +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
+    +'(CFBD publishes no target counts) \u00b7 QB rushing is net of sacks, per college convention.';
+}
 
 function initEngineAudit(){
   if(!DELTA_DEV) return;
@@ -4025,6 +4209,7 @@ window.addEventListener('load', async function() {
   await ensureStartData();
   if(typeof renderAll==='function') renderAll();
   initEngineAudit();
+  try{ initCollege(); }catch(e){ console.warn("college init failed",e); }
 });
 if (document.readyState === 'complete') {
   syncSettingsUI();

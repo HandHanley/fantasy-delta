@@ -4593,6 +4593,9 @@ async function loadRipples() {
 // It is gated behind a ?dev flag: visit ...github.io/fantasy-delta/?dev=1 to use it.
 // Public visitors never see the tab and never fetch its data.
 const DELTA_DEV = new URLSearchParams(location.search).has('dev');
+// Separate flag from ?dev on purpose: a college preview link handed to a league-mate
+// must not also reveal the Engine Audit tab.
+const DELTA_CFB = new URLSearchParams(location.search).has('college');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared player card HTML builders — used by both index.html (popup) and
