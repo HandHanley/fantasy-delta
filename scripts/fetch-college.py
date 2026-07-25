@@ -144,6 +144,7 @@ with cfbd.ApiClient(cfg) as api:
     STAT_KEYS = collections.Counter()
     MATCH = collections.Counter()
     MISS = []
+    TEAM_REC = collections.Counter()   # (team) -> season receptions, all players
     for wk in range(1, WEEKS + 1):
         games = call(f"GET /games/players wk{wk}", games_api.get_game_player_stats,
                      year=YEAR, week=wk, classification="fbs", season_type="regular")
@@ -162,6 +163,12 @@ with cfbd.ApiClient(cfg) as api:
                         if ck is None: continue          # drops AVG / LONG / unmapped
                         STAT_KEYS[f"{cname}.{tkey}"] += 1
                         for ath in (g(typ, "athletes") or []):
+                            # Team reception denominator must include EVERY receiver, not
+                            # just our universe, or shares inflate. Accumulated before the
+                            # roster-match filter for that reason.
+                            if ck == "rec":
+                                try: TEAM_REC[tname] += float(g(ath, "stat") or 0)
+                                except (TypeError, ValueError): pass
                             aid = g(ath, "id")
                             v = by_id.get(str(aid)) if aid is not None else None
                             if v is None:
@@ -188,6 +195,8 @@ with cfbd.ApiClient(cfg) as api:
     for kk, n in STAT_KEYS.most_common(18):
         print(f"    {kk:<26} {n:>6,}")
 
+TEAM_REC_TOTAL = dict(TEAM_REC)
+
 # ---- production scoring (yards only; TD/eff live as display columns) ----
 def num(v):
     try: return float(str(v).split("/")[0])
@@ -200,6 +209,14 @@ for v in ply.values():
         rush_y += num(row.get("ry", 0))
         pass_y += num(row.get("py", 0))
     v["ry"], v["uy"], v["py"] = rec_y, rush_y, pass_y
+    # RECEPTION share — the honest, free stand-in for target share. CFBD's usage.overall
+    # is share of ALL offensive plays (measured ~0.53x true target share), so it must not
+    # be labelled as targets. Box scores carry no target counts at all, so receptions over
+    # team receptions is the closest thing available without pulling play-by-play.
+    pr = sum(num(r.get("rec", 0)) for r in v["g"].values())
+    tr = TEAM_REC_TOTAL.get(v["tm"], 0)
+    v["rshare"] = round(pr / tr, 4) if tr > 0 else None
+    v["recs"] = int(pr)
     v["prod"] = rec_y + rush_y + pass_y * 0.4     # pass yards discounted to compare positions
     v["games"] = len(v["g"])
 
@@ -224,7 +241,8 @@ out = {
     "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     "season": YEAR,
     "note": ("College TRACKING data. Production facts only — no DELTA Score, no projections. "
-             "usg = season share of team offense (context, not a ranking). "
+             "usg = CFBD share of ALL team offensive plays (NOT target share; ~0.53x it). "
+             "rsh = reception share (player receptions / team receptions) - the available proxy. "
              "Included via production quota or 4-5 star underclassman pedigree."),
     "quota": QUOTA, "min_games": MIN_GAMES,
     "counts": {"universe": len(picked), **dict(by_door)},
@@ -234,7 +252,7 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
     out["players"].append({
         "id": v["id"], "n": v["n"], "pos": v["pos"], "tm": v["tm"], "cls": v["cls"],
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
-        "usg": v["usg"], "ry": round(v["ry"]), "uy": round(v["uy"]), "py": round(v["py"]),
+        "usg": v["usg"], "rsh": v["rshare"], "recs": v["recs"], "ry": round(v["ry"]), "uy": round(v["uy"]), "py": round(v["py"]),
         "gms": v["games"],
         "g": [v["g"][w] for w in sorted(v["g"])],
     })
@@ -251,4 +269,4 @@ for pos in ("QB", "RB", "WR", "TE"):
     print(f"\n  top 6 {pos} (by {'pass yds' if pos=='QB' else 'scrimmage yds'}):")
     for p in rows[:6]:
         print(f"    {p['n']:<24} {p['tm']:<20} rec {p['ry']:>5} rush {p['uy']:>5} "
-              f"pass {p['py']:>5}  usg {p['usg']}  {p['stars'] or '-'}star cls{p['cls']}")
+              f"pass {p['py']:>5}  recsh {p['rsh']}  usg {p['usg']}  {p['stars'] or '-'}star cls{p['cls']}")
