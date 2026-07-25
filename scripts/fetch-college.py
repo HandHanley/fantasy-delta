@@ -296,10 +296,16 @@ with open(OUT, "w") as f:
 size = os.path.getsize(OUT)
 print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
 print(f"  API calls used: {CALLS}")
+n = len(out["players"]) or 1
+for fld, label in (("ageEst", "age estimate"), ("stars", "recruit stars"),
+                   ("rsh", "reception share"), ("usg", "usage share")):
+    have = sum(1 for p in out["players"] if p.get(fld) is not None)
+    print(f"  coverage: {label:<16} {have:>4}/{n} ({have/n*100:.0f}%)")
 for pos in ("QB", "RB", "WR", "TE"):
     rows = [p for p in out["players"] if p["pos"] == pos]
     rows.sort(key=lambda x: -(x["py"] if pos == "QB" else x["ry"] + x["uy"]))
     print(f"\n  top 6 {pos} (by {'pass yds' if pos=='QB' else 'scrimmage yds'}):")
     for p in rows[:6]:
         print(f"    {p['n']:<24} {p['tm']:<20} rec {p['ry']:>5} rush {p['uy']:>5} "
-              f"pass {p['py']:>5}  recsh {p['rsh']}  usg {p['usg']}  {p['stars'] or '-'}star cls{p['cls']}")
+              f"pass {p['py']:>5}  rsh {p['rsh']}  {p['stars'] or '-'}★ cls{p['cls']}"
+              f" rc{p['rcls'] or '----'} age~{p['ageEst'] or '--'}")
