@@ -125,6 +125,19 @@ a{color:#2DD4BF}
 .scout-text{font-family:var(--sans)}
 .state-msg{color:#5C7080}
 </style>
+<script>
+/* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
+   on purpose: this runs before delta-engine.js exists. */
+(function(){try{
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+  var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
+  function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
+  s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
+  s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
+  s.setProperty('--row-hi',rgba(t[0],.055));
+}catch(e){}})();
+</script>
+
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>

@@ -203,10 +203,11 @@ tr:hover td{background:var(--panel)}
   font-size:11px; line-height:1.45; padding:9px 12px;
   text-align:left; white-space:normal; text-transform:none;
   box-shadow:0 8px 28px rgba(0,0,0,.85), 0 0 0 4px #0D1420;
-  opacity:0; visibility:hidden; pointer-events:none; transition:opacity .15s; z-index:9999;
+  display:none; pointer-events:none; z-index:9999;   /* display:none (not visibility) — a hidden
+     tooltip must not occupy layout, or it overflows the table wrapper and spawns a scrollbar */
 }
-[data-tip]:hover::after{ opacity:1; visibility:visible; }
-@media (hover:none){ [data-tip].tip-show::after{ opacity:0 !important; visibility:hidden !important; } }
+[data-tip]:hover::after{ display:block; }
+@media (hover:none){ [data-tip].tip-show::after{ display:none !important; } }
 .dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
 .dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
 
@@ -373,8 +374,33 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+
+/* ── Settings popover: pills mirror the main tab styling ─────────────────── */
+.set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
+.set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
+.set-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:8px;
+  border:1px solid var(--line);background:transparent;color:var(--fog);font-family:inherit;
+  font-size:11.5px;font-weight:600;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.set-pill:hover{color:var(--paper);background:var(--teal-soft)}
+.set-pill.on{background:var(--teal-tint);color:var(--teal-br);border-color:var(--teal-br)}
+.set-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
+.set-sel{width:100%;font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
+  border-radius:8px;padding:6px 8px;font-family:inherit;margin-bottom:15px}
 /* ═══════════════════════ end DELTA brand layer ═══════════════════════════ */
 </style>
+<script>
+/* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
+   on purpose: this runs before delta-engine.js exists. */
+(function(){try{
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+  var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
+  function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
+  s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
+  s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
+  s.setProperty('--row-hi',rgba(t[0],.055));
+}catch(e){}})();
+</script>
+
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -428,26 +454,31 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <button class="tab" onclick="showTab('myteam',this)">My Team</button>
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-<div id="settings-pop" style="display:none;position:absolute;right:0;top:100%;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:230px;box-shadow:0 10px 30px rgba(0,0,0,.5)">
-  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--fog);margin-bottom:10px">SETTINGS</div>
-  <div style="font-size:11px;color:var(--fog-2);margin-bottom:4px">Open DELTA to</div>
-  <select id="landing-pref" onchange="setLandingPref(this.value)" style="width:100%;font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 7px;margin-bottom:12px">
-    <option value="rankings">Rankings (default)</option>
-    <option value="projections">Projections</option>
-    <option value="trade">Trade Calc</option>
-    <option value="epa">EPA Insights</option>
-    <option value="ripple">Ripple Effects</option>
-    <option value="contracts">Contracts</option>
-    <option value="rookies">Prospects</option>
-    <option value="myteam">My Team</option>
-    <option value="last">Where I left off</option>
-  </select>
-  <div id="wl-line" style="font-size:11px;color:var(--fog-2);margin-bottom:12px"></div>
-  <div style="border-top:1px solid var(--line);padding-top:10px">
-    <span onclick="closeSettings();openAbout()" style="font-size:12px;color:var(--teal-br);cursor:pointer">About DELTA</span>
+<div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
+    <div class="set-sec">OPEN DELTA TO</div>
+    <select id="landing-pref" class="set-sel" onchange="setLandingPref(this.value)">
+      <option value="rankings">Rankings (default)</option>
+      <option value="projections">Projections</option>
+      <option value="trade">Trade Calc</option>
+      <option value="epa">EPA Insights</option>
+      <option value="ripple">Ripple Effects</option>
+      <option value="contracts">Contracts</option>
+      <option value="rookies">Prospects</option>
+      <option value="myteam">My Team</option>
+      <option value="last">Where I left off</option>
+    </select>
+    <div class="set-sec">THEME</div>
+    <div class="set-row" id="theme-row">
+      <button class="set-pill" data-theme="teal"   onclick="setTheme('teal')"><span class="set-dot" style="background:#2DD4BF"></span>Teal</button>
+      <button class="set-pill" data-theme="violet" onclick="setTheme('violet')"><span class="set-dot" style="background:#9B8AF0"></span>Violet</button>
+      <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
+      <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
+    </div>
+    <div style="border-top:1px solid var(--line);padding-top:11px">
+      <span onclick="closeSettings();openAbout()" style="font-size:12px;font-weight:600;color:var(--teal-br);cursor:pointer">About DELTA</span>
+    </div>
+    <div style="font-size:9px;color:var(--fog-2);margin-top:9px;line-height:1.5">Saved on this device only &mdash; every visitor has their own.</div>
   </div>
-  <div style="font-size:9.5px;color:var(--fog-2);margin-top:10px;line-height:1.5">Saved on this device only — every visitor has their own settings.</div>
-</div>
 </div>
 
 
@@ -1853,6 +1884,23 @@ function renderAll(){
 
 
 // ── Settings (gear) — all localStorage, per-device ──
+
+// ── Accent themes ────────────────────────────────────────────────────────
+// Chrome accent ONLY. Emerald / coral / topaz are deliberately not offered as themes:
+// they carry buy / sell / watch meaning, and reusing them as chrome would invent
+// false signals. Semantic colors never change with the theme.
+const DL_THEMES={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],
+                 sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+function dlThemeApply(name){
+  const th=DL_THEMES[name]||DL_THEMES.teal, s=document.documentElement.style;
+  const rgba=(h,a)=>{const b=parseInt(h.slice(1),16);return 'rgba('+(b>>16&255)+','+(b>>8&255)+','+(b&255)+','+a+')';};
+  s.setProperty('--teal-br',th[0]); s.setProperty('--teal',th[1]);
+  s.setProperty('--teal-tint',rgba(th[0],.12)); s.setProperty('--teal-soft',rgba(th[0],.07));
+  s.setProperty('--row-hi',rgba(th[0],.055));
+  document.querySelectorAll('#theme-row .set-pill').forEach(b=>
+    b.classList.toggle('on', b.dataset.theme===name));
+}
+function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
 function toggleSettings(e){
   e.stopPropagation();
@@ -1862,9 +1910,7 @@ function toggleSettings(e){
   if(!open){
     const sel=document.getElementById('landing-pref');
     if(sel) sel.value=dlPref('delta_landing')||'rankings';
-    const wl=dwGet(), el=document.getElementById('wl-line');
-    if(el) el.innerHTML='Watchlist: <b style="color:var(--paper)">'+wl.length+'</b> player'+(wl.length===1?'':'s')
-      +(wl.length?' — <span style="color:var(--teal-br);cursor:pointer" onclick="closeSettings();showWatchlist()">view</span>':' — tap \u2606 on any player to add');
+    dlThemeApply(dlPref('delta_theme')||'teal');
   }
 }
 function closeSettings(){ const p=document.getElementById('settings-pop'); if(p) p.style.display='none'; }
