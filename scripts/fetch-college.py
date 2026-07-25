@@ -108,6 +108,7 @@ with cfbd.ApiClient(cfg) as api:
         ply[(norm(nm), team)] = {
             "id": g(p, "id"), "n": nm, "pos": pos, "tm": team,
             "cls": g(p, "year"), "stars": 0, "rating": 0.0,
+            "recruit_ids": g(p, "recruit_ids") or [],
             "g": {}, "prod": 0.0, "usg": None,
         }
     print(f"\n  FBS skill players on rosters: {len(ply):,}")
@@ -118,18 +119,46 @@ with cfbd.ApiClient(cfg) as api:
     by_id = {str(v["id"]): v for v in ply.values() if v.get("id") is not None}
     by_nt = ply
 
-    # ---- pedigree join (name-based; report the match rate, never assume it) ----
-    rec_by_name = {}
+    # ---- pedigree join ----------------------------------------------------
+    # Three tiers, strongest first. A name-only join is NOT safe here: recruit
+    # classes cover every position, so "John Smith" the 4-star linebacker would
+    # otherwise hand his pedigree to "John Smith" the wide receiver. Tier 3 is
+    # therefore position-gated, and the tier breakdown is printed so a collapse
+    # in the exact-match tiers is visible rather than silent.
+    RPOS = {"QB": {"QB", "PRO", "DUAL"}, "RB": {"RB", "APB", "ATH"},
+            "WR": {"WR", "ATH"},        "TE": {"TE", "ATH"}}
+    by_athlete, by_recid, by_namepos = {}, {}, {}
     for r in recruits:
         st = g(r, "stars") or 0
         if st < 4: continue
-        rec_by_name.setdefault(norm(g(r, "name")), (st, float(g(r, "rating") or 0)))
-    hits = 0
+        payload = (st, float(g(r, "rating") or 0))
+        aid, rid = g(r, "athlete_id"), g(r, "id")
+        if aid is not None: by_athlete[str(aid)] = payload
+        if rid is not None: by_recid[str(rid)] = payload
+        by_namepos[(norm(g(r, "name")), (g(r, "position") or "").upper())] = payload
+    npool = len(by_namepos)
+
+    tier = collections.Counter()
     for k, v in ply.items():
-        m = rec_by_name.get(k[0])
-        if m: v["stars"], v["rating"] = m[0], m[1]; hits += 1
-    print(f"  4-5 star recruits in pool   : {len(rec_by_name):,}"
-          f"  -> matched to roster: {hits:,} ({hits/max(1,len(ply))*100:.0f}%)")
+        hit = None
+        if v.get("id") is not None and str(v["id"]) in by_athlete:
+            hit, why = by_athlete[str(v["id"])], "athlete_id"
+        if hit is None:
+            for rid in (v.get("recruit_ids") or []):
+                if str(rid) in by_recid:
+                    hit, why = by_recid[str(rid)], "recruit_ids"; break
+        if hit is None:
+            for rp in RPOS.get(v["pos"], set()):
+                m = by_namepos.get((k[0], rp))
+                if m: hit, why = m, "name+pos"; break
+        if hit:
+            v["stars"], v["rating"] = hit[0], hit[1]
+            tier[why] += 1
+    total = sum(tier.values())
+    print(f"  4-5 star recruits in pool   : {npool:,}  -> matched: {total:,}"
+          f" ({total/max(1,len(ply))*100:.0f}% of skill players)")
+    print(f"    by athlete_id {tier['athlete_id']:,} | by recruit_ids {tier['recruit_ids']:,}"
+          f" | by name+position {tier['name+pos']:,}")
 
     # ---- season usage share (context column, never the ranking) ----
     for u in usage:
@@ -166,7 +195,7 @@ with cfbd.ApiClient(cfg) as api:
                             # Team reception denominator must include EVERY receiver, not
                             # just our universe, or shares inflate. Accumulated before the
                             # roster-match filter for that reason.
-                            if ck == "rec":
+                            if ck == "rec" and tname in fbs_names:
                                 try: TEAM_REC[tname] += float(g(ath, "stat") or 0)
                                 except (TypeError, ValueError): pass
                             aid = g(ath, "id")
