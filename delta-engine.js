@@ -46,14 +46,41 @@ function formatMvShift(name,pos,fmt){
 // Data is lazy-loaded on first player-card open (~1.1MB), not on startup.
 // ════════════════════════════════════════════════════════════
 // ── Watchlist (localStorage — per-device, per-user; nothing global changes) ──
-function dwGet(){ try{ return JSON.parse(localStorage.getItem('delta_watchlist')||'[]'); }catch(e){ return []; } }
-function dwHas(n){ return dwGet().indexOf(n)>=0; }
-function dwToggle(n){
-  const w=dwGet(), i=w.indexOf(n);
-  if(i>=0) w.splice(i,1); else w.push(n);
-  try{ localStorage.setItem('delta_watchlist',JSON.stringify(w)); }catch(e){}
-  return i<0;   // true = now watched
+// Entries are NAMESPACED as "nfl:Name" / "cfb:Name". A bare name cannot identify a
+// player once college data exists: cross-checking the two universes found 53 shared
+// names, 52 of which are the same human (2026 rookies who are also 2025 college
+// players — that overlap is a feature) but one, Malik Washington, is genuinely two
+// people: an established NFL WR with 31 games, and a Maryland QB.
+// Legacy bare entries migrate to nfl: on first read. The migration is idempotent,
+// and every helper defaults to nfl:, so existing call sites need no changes.
+const DW_LS = 'delta_watchlist';
+function dwRaw(){
+  let a;
+  try{ a = JSON.parse(localStorage.getItem(DW_LS) || '[]'); }catch(e){ return []; }
+  if(!Array.isArray(a)) return [];
+  const out=[]; let migrated=false;
+  for(const e of a){
+    if(typeof e!=='string' || !e) continue;          // drop junk rather than crash
+    if(e.indexOf(':')<0){ out.push('nfl:'+e); migrated=true; }
+    else out.push(e);
+  }
+  if(migrated){ try{ localStorage.setItem(DW_LS, JSON.stringify(out)); }catch(e){} }
+  return out;
 }
+function dwKey(n, ns){ return (ns||'nfl')+':'+n; }
+function dwList(ns){
+  const pre=(ns||'nfl')+':';
+  return dwRaw().filter(e=>e.slice(0,pre.length)===pre).map(e=>e.slice(pre.length));
+}
+function dwGet(){ return dwList('nfl'); }            // back-compat alias
+function dwHas(n, ns){ return dwRaw().indexOf(dwKey(n,ns))>=0; }
+function dwToggle(n, ns){
+  const k=dwKey(n,ns), a=dwRaw(), i=a.indexOf(k);
+  if(i>=0) a.splice(i,1); else a.push(k);
+  try{ localStorage.setItem(DW_LS, JSON.stringify(a)); }catch(e){}
+  return i<0;                                        // true = now watched
+}
+function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
 let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle';
 async function ensureStartData(){
   if(START_DATA_STATE==='loaded'||START_DATA_STATE==='loading') return START_DATA_STATE;
