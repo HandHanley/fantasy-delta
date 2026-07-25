@@ -1916,6 +1916,58 @@ function dlThemeApply(name){
   document.querySelectorAll('#theme-row .set-pill').forEach(b=>
     b.classList.toggle('on', b.dataset.theme===name));
 }
+
+// ── My Team sub-views: Roster (Sleeper) | Watchlist (local, no connection needed) ──
+// The watchlist deliberately lives here rather than as a 9th top-level tab: the tab row
+// already wraps to two lines on mobile, and this is the personal hub. The ★ Watchlist
+// option in the Rankings filter stays as the power path (full columns + sorting).
+let MT_VIEW='roster';
+function setMyTeamView(v){
+  MT_VIEW = v==='watch' ? 'watch' : 'roster';
+  dlPref('delta_mtview',MT_VIEW);
+  const rv=document.getElementById('myteam-rosterview'), wv=document.getElementById('myteam-watchview');
+  if(rv) rv.style.display = MT_VIEW==='roster' ? '' : 'none';
+  if(wv) wv.style.display = MT_VIEW==='watch'  ? '' : 'none';
+  const pr=document.getElementById('mt-pill-roster'), pw=document.getElementById('mt-pill-watch');
+  if(pr) pr.classList.toggle('on',MT_VIEW==='roster');
+  if(pw) pw.classList.toggle('on',MT_VIEW==='watch');
+  if(MT_VIEW==='watch') renderWatchlist();
+}
+function renderWatchlist(){
+  const host=document.getElementById('myteam-watchview'); if(!host) return;
+  const names=dwGet();
+  const found=[], missing=[];
+  names.forEach(n=>{ const p=(typeof COMP!=='undefined')&&COMP.find(x=>x.n===n); p?found.push(p):missing.push(n); });
+  if(!found.length && !missing.length){
+    host.innerHTML='<div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">'
+      +'<div style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Your watchlist is empty</div>'
+      +'<div style="font-size:11.5px;color:var(--fog);line-height:1.55">Open any player \u2014 from the rankings, a trade, or search \u2014 and tap the '
+      +'<span style="color:var(--topaz)">\u2606</span> beside their name to track them here. Saved on this device.</div></div>';
+    return;
+  }
+  found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
+  const rows=found.map(p=>'<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
+    +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
+    +'<td class="pname" style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
+    +'<td class="txt">'+p.pos+'</td>'
+    +'<td class="col-hide-mobile txt">'+p.t+'</td>'
+    +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
+    +'<td style="font-weight:600">'+getAdjProj(p).toFixed(1)+'</td>'
+    +'<td>'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
+    +'<td class="col-hide-mobile" style="font-weight:600">'+(mvAsset(p)>=19999?'19,999+':mvAsset(p).toLocaleString())+'</td>'
+    +'<td>'+vTag(p)+'</td>'
+    +'<td><button title="Remove from watchlist" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name);renderWatchlist();" '
+    +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>').join('');
+  let html='<div style="font-size:11px;color:var(--fog-2);margin-bottom:8px">'+found.length+' player'+(found.length===1?'':'s')+' tracked</div>'
+    +'<div style="overflow-x:auto"><table class="dtable"><thead><tr>'
+    +'<th>\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th><th class="col-hide-mobile">Age</th>'
+    +'<th>Proj PPG</th><th>Mkt Val</th><th class="col-hide-mobile">Mod Val</th><th>Tag</th><th></th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  if(missing.length) html+='<div style="font-size:10.5px;color:var(--topaz);margin-top:10px">\u26a0 '+missing.length
+    +' saved name'+(missing.length>1?'s':'')+' no longer in the player universe (renamed or dropped): '
+    +missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
+  host.innerHTML=html;
+}
 function applySetScoring(v){
   ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=v;});
   applyScoring();
@@ -1932,6 +1984,7 @@ function deckStar(el){
   const on=dwToggle(n);
   el.textContent=on?'\u2605':'\u2606'; el.style.color=on?'var(--topaz)':'var(--fog-2)';
   if(document.getElementById('pos-rank') && document.getElementById('pos-rank').value==='WL') renderRankings();
+  if(MT_VIEW==='watch') renderWatchlist();
 }
 function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
@@ -3109,7 +3162,12 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div id="panel-myteam" class="panel">
-  <div class="section-label">My Team — Sleeper</div>
+  <div class="section-label">My Team</div>
+  <div class="set-row" style="margin-bottom:14px">
+    <button class="set-pill on" id="mt-pill-roster" onclick="setMyTeamView('roster')">Roster</button>
+    <button class="set-pill" id="mt-pill-watch" onclick="setMyTeamView('watch')">\u2606 Watchlist</button>
+  </div>
+  <div id="myteam-rosterview">
   <div id="myteam-connect">
     <div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">
       <div style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
@@ -3123,6 +3181,8 @@ document.addEventListener('click', function(e) {
     </div>
   </div>
   <div id="myteam-roster" style="display:none"></div>
+  </div>
+  <div id="myteam-watchview" style="display:none"></div>
 </div>
 
 <div id="panel-audit" class="panel">
@@ -3555,6 +3615,7 @@ function sleeperDisconnect(){
 
 // ── Tab entry point (lazy init + saved-connection restore) ───
 async function openMyTeamTab(){
+  setMyTeamView(dlPref('delta_mtview')||'roster');
   if(SLP.loaded||SLP.busy){ renderMyTeam(); return; }
   let saved=null;
   try{ saved=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
