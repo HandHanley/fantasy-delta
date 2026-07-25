@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELTA — Brand Mark</title>
+<style>
+  :root{
+    --ink:#0A0F1A;
+    --ink-2:#0D1420;
+    --panel:#111A28;
+    --line:#1E2A3A;
+    --teal-br:#2DD4BF;
+    --teal:#14B8A6;
+    --emerald:#10B981;
+    --emerald-dp:#047857;
+    --mint:#CCFBF1;
+    --fog:#8CA0B3;
+    --fog-2:#5C7080;
+    --paper:#EAF0F4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  .mono{font-family:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace}
+  .wm{
+    font-family:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',system-ui,sans-serif;
+    font-weight:400;letter-spacing:.34em;
+  }
+
+  /* ambient */
+  .glowfield{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(60% 45% at 50% 0%, rgba(45,212,191,.10), transparent 70%),
+      radial-gradient(50% 40% at 85% 30%, rgba(16,185,129,.06), transparent 70%);
+  }
+  .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 32px}
+
+  /* header */
+  header{padding:44px 0 0}
+  .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px}
+  .eyebrow{font-size:11px;letter-spacing:.32em;color:var(--teal-br);text-transform:uppercase}
+  .eyebrow .dim{color:var(--fog-2)}
+  .rule{height:1px;background:var(--line);margin:20px 0 0}
+
+  /* hero */
+  .hero{padding:74px 0 78px;text-align:center}
+  .lockup{display:inline-flex;align-items:center;gap:30px}
+  .lockup .word{font-size:76px;line-height:1;color:#fff}
+  .lockup svg{filter:drop-shadow(0 8px 30px rgba(20,184,166,.22))}
+  .tagline{margin-top:26px;font-size:12.5px;letter-spacing:.42em;color:var(--teal-br);text-transform:uppercase}
+  .subnote{margin-top:14px;font-size:12px;color:var(--fog-2);letter-spacing:.04em}
+
+  /* section scaffold */
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:34px}
+  .sec-idx{font-size:11px;letter-spacing:.18em;color:var(--fog-2)}
+  .sec-title{font-size:13px;letter-spacing:.26em;text-transform:uppercase;color:var(--paper)}
+  .sec-desc{margin-left:auto;max-width:440px;font-size:13.5px;color:var(--fog);text-align:right;line-height:1.55}
+
+  /* the measured-edge annotated mark */
+  .anatomy{display:grid;grid-template-columns:340px 1fr;gap:56px;align-items:center}
+  .anatomy-stage{background:
+      radial-gradient(70% 70% at 50% 42%, rgba(20,184,166,.08), transparent 72%),
+      var(--ink-2);
+    border:1px solid var(--line);border-radius:18px;padding:44px;display:flex;justify-content:center}
+  .legend{display:flex;flex-direction:column;gap:22px}
+  .leg{display:flex;gap:16px;align-items:flex-start}
+  .leg .tick{flex:0 0 auto;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--teal-br);background:var(--panel)}
+  .leg h4{font-size:13.5px;letter-spacing:.02em;color:var(--paper);margin-bottom:3px;font-weight:600}
+  .leg p{font-size:13px;color:var(--fog);line-height:1.5}
+
+  /* size proof */
+  .proof{display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap}
+  .proof .cell{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .chip{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;
+    display:flex;align-items:center;justify-content:center}
+  .chip svg{display:block}
+  .proof .lab{font-size:11px;letter-spacing:.12em;color:var(--fog-2)}
+  .proof-note{margin-top:30px;font-size:13px;color:var(--fog);max-width:620px;line-height:1.55}
+  .proof-note b{color:var(--mint);font-weight:600}
+
+  /* two tiers */
+  .tiers{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .tier{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:36px;text-align:center}
+  .tier .frame{height:170px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .tier h3{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);margin-bottom:8px}
+  .tier p{font-size:12.5px;color:var(--fog);line-height:1.5}
+  .tier .whenmono{margin-top:12px;font-size:11px;letter-spacing:.08em;color:var(--fog-2)}
+
+  /* app icon */
+  .icons{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+  .icon-card{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .icon-card .lab{font-size:11px;letter-spacing:.12em;color:var(--fog-2)}
+  .swatch-light{background:var(--paper);border-radius:14px;padding:24px;display:flex;gap:24px;align-items:center}
+
+  /* wordmark constructions */
+  .constructs{display:grid;grid-template-columns:1fr;gap:0}
+  .cons-row{display:flex;align-items:center;gap:34px;padding:30px 0;border-bottom:1px solid var(--line)}
+  .cons-row:last-child{border-bottom:none}
+  .cons-tag{flex:0 0 150px;font-size:11px;letter-spacing:.14em;color:var(--fog-2);text-transform:uppercase}
+  .cons-art{display:flex;align-items:center;gap:22px}
+  .cons-art .word{font-size:46px;color:#fff}
+  .cons-art .word.mono-sub{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .cons-art .sub{font-size:10px;letter-spacing:.3em;color:var(--teal-br)}
+
+  /* palette + clearspace */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  .palette{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .sw{border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .sw .cap{height:66px}
+  .sw .meta{padding:10px 12px;background:var(--ink-2)}
+  .sw .nm{font-size:11px;color:var(--paper);letter-spacing:.04em}
+  .sw .hx{font-size:10.5px;color:var(--fog-2);letter-spacing:.06em}
+  .clearbox{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:34px;
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .clear-note{margin-top:16px;font-size:12.5px;color:var(--fog);line-height:1.5}
+
+  footer{padding:46px 0 66px;border-top:1px solid var(--line);text-align:center}
+  footer .tag{font-size:12px;letter-spacing:.4em;color:var(--fog-2);text-transform:uppercase}
+
+  .fade{opacity:0;transform:translateY(10px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.21s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.fade{animation:none;opacity:1;transform:none}}
+
+  @media (max-width:820px){
+    .anatomy{grid-template-columns:1fr;gap:32px}
+    .tiers,.grid2{grid-template-columns:1fr}
+    .lockup .word{font-size:52px}.lockup{gap:20px}
+    .sec-desc{display:none}
+    .cons-art .word{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<div class="glowfield"></div>
+
+<!-- ===== master defs + symbols (hidden) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gL" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#2DD4BF"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gR" x1="0.55" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3.2" flood-color="#2DD4BF" flood-opacity="0.32"/>
+    </filter>
+
+    <!-- DETAIL mark: facets + fold + graduated hashes -->
+    <symbol id="mk-detail" viewBox="0 0 128 128">
+      <g filter="url(#softglow)">
+        <path d="M64 22 L24 106 L64 106 Z" fill="url(#gL)"/>
+        <path d="M64 22 L64 106 L104 106 Z" fill="url(#gR)"/>
+      </g>
+      <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity="0.42"/>
+      <g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.2" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/>
+        <line x1="55" y1="70" x2="73" y2="70"/>
+        <line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </symbol>
+
+    <!-- MINI mark: silhouette + facets + faint fold, no hashes (tiny sizes) -->
+    <symbol id="mk-mini" viewBox="0 0 128 128">
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#gL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#gR)"/>
+      <line x1="64" y1="27" x2="64" y2="104" stroke="#CCFBF1" stroke-width="2" stroke-opacity="0.38"/>
+    </symbol>
+
+    <!-- OUTLINE mark: hollow, color-switch stroke, metallic core, pole + pedestal -->
+    <linearGradient id="oStroke" x1="0.05" y1="0.25" x2="0.95" y2="0.75">
+      <stop offset="0" stop-color="#2DD4BF"/><stop offset="0.5" stop-color="#14B8A6"/><stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="oCore" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EAFFFB"/><stop offset="1" stop-color="#5EEAD4"/>
+    </linearGradient>
+    <filter id="oglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
+    </filter>
+    <symbol id="mk-outline" viewBox="0 0 128 128">
+      <g filter="url(#oglow)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#oStroke)" stroke-width="7.5"/>
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#oCore)" stroke-width="2.3" stroke-opacity="0.5"/>
+      </g>
+      <line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/>
+      <g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/>
+        <line x1="55" y1="70" x2="73" y2="70"/>
+        <line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <header>
+    <div class="top fade">
+      <div class="eyebrow">DELTA <span class="dim">/ brand mark</span></div>
+      <div class="eyebrow mono"><span class="dim">exploration</span> v1.0</div>
+    </div>
+    <div class="rule"></div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero fade d1">
+    <div class="lockup">
+      <svg width="112" height="112" viewBox="0 0 128 128" role="img" aria-label="DELTA logo mark">
+        <use href="#mk-detail"/>
+      </svg>
+      <span class="wm word">DELTA</span>
+    </div>
+    <div class="tagline">Dynasty Football Analytics</div>
+    <div class="subnote mono">Δ — the measured change. Proven value, not market noise.</div>
+  </div>
+
+  <!-- ANATOMY -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">01</span>
+      <span class="sec-title">The Measured Edge</span>
+      <p class="sec-desc">One mark, two readings. The internal axis is a set of yard lines and a precision scale at the same time — the product's thesis, drawn.</p>
+    </div>
+    <div class="anatomy">
+      <div class="anatomy-stage">
+        <svg width="240" height="240" viewBox="0 0 128 128" role="img" aria-label="DELTA mark, enlarged">
+          <use href="#mk-detail"/>
+        </svg>
+      </div>
+      <div class="legend">
+        <div class="leg">
+          <span class="tick">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 L21 20 L3 20 Z"/></svg>
+          </span>
+          <div><h4>Delta triangle</h4><p>Δ means change. Pointing up: growth, advantage, ascent — and the literal shape of your name.</p></div>
+        </div>
+        <div class="leg">
+          <span class="tick">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M7 8h10M6 13h12M5 18h14"/></svg>
+          </span>
+          <div><h4>Graduated axis</h4><p>Hash marks that widen toward the base read as field yard lines and a measurement scale — precision, the range opening up.</p></div>
+        </div>
+        <div class="leg">
+          <span class="tick">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 L21 20 L3 20 Z"/><path d="M12 3v17"/></svg>
+          </span>
+          <div><h4>Two-facet fold</h4><p>Lit plane and shadow plane give quiet depth without a heavy 3D render — dimensional, still flat enough to scale.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILL VS OUTLINE -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">02</span>
+      <span class="sec-title">Fill &amp; Outline</span>
+      <p class="sec-desc">Two finishes on one silhouette. Solid for density and small sizes; outline for a lighter, instrument-like read where the color switch runs along the edge.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <div class="frame"><svg width="150" height="150" viewBox="0 0 128 128"><use href="#mk-detail"/></svg></div>
+        <h3>Solid</h3>
+        <p>Two-facet fill, lit and shadow planes. Reads boldest and survives the smallest sizes.</p>
+        <div class="whenmono mono">favicon · app icon · dense UI</div>
+      </div>
+      <div class="tier">
+        <div class="frame"><svg width="150" height="150" viewBox="0 0 128 128"><use href="#mk-outline"/></svg></div>
+        <h3>Outline</h3>
+        <p>Same silhouette, hollowed. The stroke carries the teal-to-emerald switch with a brushed metallic core.</p>
+        <div class="whenmono mono">hero · watermark · merch · ≥ 40px</div>
+      </div>
+    </div>
+    <div class="icons" style="margin-top:26px">
+      <div class="icon-card">
+        <svg width="112" height="112" viewBox="0 0 128 128" role="img" aria-label="DELTA solid app icon">
+          <g clip-path="url(#sq)">
+            <rect width="128" height="128" fill="url(#iconbg)"/>
+            <rect width="128" height="128" fill="none" stroke="#2DD4BF" stroke-opacity="0.16" stroke-width="2"/>
+            <g transform="translate(20,20) scale(0.68)"><use href="#mk-mini"/></g>
+          </g>
+        </svg>
+        <span class="lab mono">icon · solid</span>
+      </div>
+      <div class="icon-card">
+        <svg width="112" height="112" viewBox="0 0 128 128" role="img" aria-label="DELTA outline app icon">
+          <g clip-path="url(#sq)">
+            <rect width="128" height="128" fill="url(#iconbg)"/>
+            <rect width="128" height="128" fill="none" stroke="#2DD4BF" stroke-opacity="0.16" stroke-width="2"/>
+            <g transform="translate(19,17) scale(0.72)"><use href="#mk-outline"/></g>
+          </g>
+        </svg>
+        <span class="lab mono">icon · outline</span>
+      </div>
+      <div class="icon-card">
+        <div class="swatch-light">
+          <svg width="72" height="72" viewBox="0 0 128 128" fill="none" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M64 22 L24 106 L104 106 Z" stroke="url(#oStroke)" stroke-width="7.5"/>
+            <g stroke="#0A9E86" stroke-linecap="round">
+              <line x1="64" y1="32" x2="64" y2="102" stroke-width="1.9" stroke-opacity="0.7"/>
+              <g stroke-width="2.6">
+                <line x1="58" y1="52" x2="70" y2="52"/>
+                <line x1="55" y1="70" x2="73" y2="70"/>
+                <line x1="52" y1="88" x2="76" y2="88"/>
+              </g>
+            </g>
+          </svg>
+          <svg width="44" height="44" viewBox="0 0 128 128" fill="none" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M64 22 L24 106 L104 106 Z" stroke="url(#oStroke)" stroke-width="7.5"/>
+            <g stroke="#0A9E86" stroke-linecap="round">
+              <line x1="64" y1="32" x2="64" y2="102" stroke-width="1.9"/>
+              <g stroke-width="2.6">
+                <line x1="58" y1="52" x2="70" y2="52"/>
+                <line x1="55" y1="70" x2="73" y2="70"/>
+                <line x1="52" y1="88" x2="76" y2="88"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <span class="lab mono">outline on light</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIZE PROOF -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">03</span>
+      <span class="sec-title">Holds At Any Size</span>
+      <p class="sec-desc">The detail mark carries headers; below ~32px it swaps to the mini mark so the silhouette never turns to mush.</p>
+    </div>
+    <div class="proof">
+      <div class="cell"><span class="chip" style="width:96px;height:96px"><svg width="72" height="72" viewBox="0 0 128 128"><use href="#mk-detail"/></svg></span><span class="lab mono">64 · detail</span></div>
+      <div class="cell"><span class="chip" style="width:72px;height:72px"><svg width="52" height="52" viewBox="0 0 128 128"><use href="#mk-detail"/></svg></span><span class="lab mono">48 · detail</span></div>
+      <div class="cell"><span class="chip" style="width:56px;height:56px"><svg width="34" height="34" viewBox="0 0 128 128"><use href="#mk-mini"/></svg></span><span class="lab mono">32 · mini</span></div>
+      <div class="cell"><span class="chip" style="width:44px;height:44px"><svg width="26" height="26" viewBox="0 0 128 128"><use href="#mk-mini"/></svg></span><span class="lab mono">24 · mini</span></div>
+      <div class="cell"><span class="chip" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 128 128"><use href="#mk-mini"/></svg></span><span class="lab mono">16 · mini</span></div>
+    </div>
+    <p class="proof-note">These are rendered at their true pixel sizes — no zoom. The favicon target you named lives on the right: <b>at 16px the fold + gradient still reads as a delta</b>, because the mini mark drops everything that would blur.</p>
+  </section>
+
+  <!-- TWO TIERS -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">04</span>
+      <span class="sec-title">Two-Tier System</span>
+      <p class="sec-desc">Same outer silhouette in both, so they register as one brand — only the interior detail changes with scale.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <div class="frame"><svg width="132" height="132" viewBox="0 0 128 128"><use href="#mk-detail"/></svg></div>
+        <h3>Detail Mark</h3>
+        <p>Full measured-edge treatment: facets, fold highlight, graduated hash axis.</p>
+        <div class="whenmono mono">headers · loading · marketing · ≥ 32px</div>
+      </div>
+      <div class="tier">
+        <div class="frame"><svg width="132" height="132" viewBox="0 0 128 128"><use href="#mk-mini"/></svg></div>
+        <h3>Mini Mark</h3>
+        <p>Silhouette, two-facet gradient, faint fold. Everything that survives small.</p>
+        <div class="whenmono mono">favicon · app icon · avatars · ≤ 32px</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP ICON -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">05</span>
+      <span class="sec-title">App Icon</span>
+      <p class="sec-desc">Mini mark on ink, in the platform squircle. A hairline keeps it defined on light home screens.</p>
+    </div>
+    <div class="icons">
+      <div class="icon-card">
+        <svg width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="DELTA app icon">
+          <defs>
+            <clipPath id="sq"><rect x="0" y="0" width="128" height="128" rx="30"/></clipPath>
+            <radialGradient id="iconbg" cx="50%" cy="40%" r="70%">
+              <stop offset="0" stop-color="#132234"/>
+              <stop offset="1" stop-color="#0A0F1A"/>
+            </radialGradient>
+          </defs>
+          <g clip-path="url(#sq)">
+            <rect width="128" height="128" fill="url(#iconbg)"/>
+            <rect width="128" height="128" fill="none" stroke="#2DD4BF" stroke-opacity="0.16" stroke-width="2"/>
+            <g transform="translate(20,20) scale(0.68)"><use href="#mk-mini"/></g>
+          </g>
+        </svg>
+        <span class="lab mono">128 · home screen</span>
+      </div>
+      <div class="icon-card">
+        <svg width="76" height="76" viewBox="0 0 128 128" role="img" aria-label="DELTA app icon small">
+          <g clip-path="url(#sq)">
+            <rect width="128" height="128" fill="url(#iconbg)"/>
+            <rect width="128" height="128" fill="none" stroke="#2DD4BF" stroke-opacity="0.16" stroke-width="2"/>
+            <g transform="translate(20,20) scale(0.68)"><use href="#mk-mini"/></g>
+          </g>
+        </svg>
+        <span class="lab mono">76 · spotlight</span>
+      </div>
+      <div class="icon-card">
+        <div class="swatch-light">
+          <svg width="48" height="48" viewBox="0 0 128 128"><use href="#mk-mini"/></svg>
+          <svg width="28" height="28" viewBox="0 0 128 128"><use href="#mk-mini"/></svg>
+          <svg width="16" height="16" viewBox="0 0 128 128"><use href="#mk-mini"/></svg>
+        </div>
+        <span class="lab mono">mini on light</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORDMARK CONSTRUCTIONS -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">06</span>
+      <span class="sec-title">Lockups</span>
+      <p class="sec-desc">Horizontal for headers, stacked for tight columns, and the mark standing in for the A when you want the wordmark to carry the whole idea.</p>
+    </div>
+    <div class="constructs">
+      <div class="cons-row">
+        <div class="cons-tag mono">Horizontal</div>
+        <div class="cons-art">
+          <svg width="58" height="58" viewBox="0 0 128 128"><use href="#mk-detail"/></svg>
+          <span class="wm word">DELTA</span>
+        </div>
+      </div>
+      <div class="cons-row">
+        <div class="cons-tag mono">With tagline</div>
+        <div class="cons-art">
+          <svg width="56" height="56" viewBox="0 0 128 128"><use href="#mk-detail"/></svg>
+          <span class="word mono-sub">
+            <span class="wm" style="font-size:40px;color:#fff">DELTA</span>
+            <span class="sub">DYNASTY FOOTBALL ANALYTICS</span>
+          </span>
+        </div>
+      </div>
+      <div class="cons-row">
+        <div class="cons-tag mono">Mark as “A”</div>
+        <div class="cons-art">
+          <span class="wm word" style="letter-spacing:.30em">DELT</span>
+          <svg width="46" height="46" viewBox="0 0 128 128" style="margin-left:-6px"><use href="#mk-detail"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PALETTE + CLEARSPACE -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-idx mono">07</span>
+      <span class="sec-title">Palette &amp; Clearspace</span>
+      <p class="sec-desc">Your established teal-to-emerald on near-black. The gradient runs light (lit facet) to deep (shadow facet).</p>
+    </div>
+    <div class="grid2">
+      <div class="palette">
+        <div class="sw"><div class="cap" style="background:#2DD4BF"></div><div class="meta"><div class="nm">Teal Bright</div><div class="hx mono">#2DD4BF</div></div></div>
+        <div class="sw"><div class="cap" style="background:#14B8A6"></div><div class="meta"><div class="nm">Teal</div><div class="hx mono">#14B8A6</div></div></div>
+        <div class="sw"><div class="cap" style="background:#10B981"></div><div class="meta"><div class="nm">Emerald</div><div class="hx mono">#10B981</div></div></div>
+        <div class="sw"><div class="cap" style="background:#047857"></div><div class="meta"><div class="nm">Emerald Deep</div><div class="hx mono">#047857</div></div></div>
+        <div class="sw"><div class="cap" style="background:#CCFBF1"></div><div class="meta"><div class="nm">Mint (axis)</div><div class="hx mono">#CCFBF1</div></div></div>
+        <div class="sw"><div class="cap" style="background:#0A0F1A"></div><div class="meta"><div class="nm">Ink</div><div class="hx mono">#0A0F1A</div></div></div>
+      </div>
+      <div>
+        <div class="clearbox">
+          <svg width="200" height="200" viewBox="0 0 220 220" role="img" aria-label="clearspace diagram">
+            <defs>
+              <linearGradient id="cgL" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+              <linearGradient id="cgR" x1="0.55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+            </defs>
+            <rect x="18" y="18" width="184" height="184" fill="none" stroke="#1E2A3A" stroke-dasharray="4 5"/>
+            <g transform="translate(46,46)">
+              <path d="M64 22 L24 106 L64 106 Z" fill="url(#cgL)"/>
+              <path d="M64 22 L64 106 L104 106 Z" fill="url(#cgR)"/>
+            </g>
+            <line x1="18" y1="10" x2="46" y2="10" stroke="#5C7080" stroke-width="1"/>
+            <text x="26" y="7" fill="#5C7080" font-size="8" font-family="monospace">X</text>
+          </svg>
+        </div>
+        <p class="clear-note">Keep clearspace of one triangle-width (X) on every side. Never recolor the gradient, rotate the mark, or add an outline to the detail version.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="fade">
+    <div class="tag">Better decisions. Longer advantage.</div>
+  </footer>
+
+</div>
+</body>
+</html>

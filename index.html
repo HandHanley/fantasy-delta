@@ -3188,7 +3188,37 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div id="panel-college" class="panel">
-  <div class="section-label">College — Tracking</div>
+  <!-- Outline finish of the brand mark, per the style guide: "hero · watermark · merch · >=40px".
+       Rendered at 46px so it clears that floor. Same silhouette as the solid mark so it still
+       registers as DELTA; the hollow read is the visual note that separates college from NFL.
+       Gradient and geometry are verbatim from the guide - never recolored, never rotated. -->
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem">
+    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block">
+      <defs>
+        <linearGradient id="cfbOStroke" x1="0.05" y1="0.25" x2="0.95" y2="0.75">
+          <stop offset="0" stop-color="#2DD4BF"/><stop offset="0.5" stop-color="#14B8A6"/><stop offset="1" stop-color="#059669"/>
+        </linearGradient>
+        <linearGradient id="cfbOCore" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#EAFFFB"/><stop offset="1" stop-color="#5EEAD4"/>
+        </linearGradient>
+        <filter id="cfbOGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
+        </filter>
+      </defs>
+      <g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/>
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/>
+      </g>
+      <line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/>
+      <g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </svg>
+    <div>
+      <div class="section-label" style="margin:0">College — Tracking</div>
+      <div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">FBS SKILL PLAYERS · PRODUCTION ONLY</div>
+    </div>
+  </div>
   <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
     Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
     college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
@@ -3227,7 +3257,8 @@ document.addEventListener('click', function(e) {
       <option value="Conference USA">C-USA</option><option value="FBS Independents">Independents</option>
     </select>
     <select id="cfb-cls" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
-      <option value="">Any class</option><option value="1">Freshman</option><option value="2">Sophomore</option>
+      <option value="">Any class</option>
+      <option value="ELIG">Draft-eligible (Y3+)</option><option value="1">Freshman</option><option value="2">Sophomore</option>
       <option value="3">Junior</option><option value="4">Senior</option>
     </select>
     <button class="set-pill" id="cfb-blue" onclick="cfbToggleBlue()" title="4-5 star recruits only">Blue-chip only</button>
@@ -3405,7 +3436,8 @@ function renderCollege(){
     if(CFB_POS==='WATCH'){ if(!watch.has(p.n)) return false; }
     else if(CFB_POS!=='ALL' && p.pos!==CFB_POS) return false;
     if(CFB_BLUE && !((p.stars||0)>=4)) return false;
-    if(cls && String(p.cls)!==cls) return false;
+    if(cls==='ELIG'){ if((p.cls||0)<3) return false; }
+    else if(cls && String(p.cls)!==cls) return false;
     if(cf==='P4'){ if(!p.p4) return false; }
     else if(cf==='G5'){ if(p.p4) return false; }
     else if(cf && p.conf!==cf) return false;
@@ -3440,9 +3472,10 @@ function renderCollege(){
       +'<td style="font-size:11px;font-weight:700;color:var(--fog-2)">'+(i+1)+'</td>'
       +'<td class="col-hide-mobile" style="font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap">'+p.pos+(p._rk||'')+'</td>'
       +'<td class="pname" style="white-space:nowrap">'+p.n+cfbRookieTag(p.n)+'</td>'
+      +'<td class="txt" style="font-weight:600">'+p.pos+'</td>'
       +'<td class="txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
       +'<td style="white-space:nowrap">'+(cfbComp(p)>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
-      +'<td class="txt">'+(p.cls?'Y'+p.cls:'-')+'</td>'
+      +'<td class="txt">'+(p.cls?'<span style="font-weight:'+((p.cls>=3)?'700':'500')+';color:'+((p.cls>=3)?'var(--sky)':'var(--fog-2)')+'">Y'+p.cls+'</span>':'-')+'</td>'
       +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
       +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.gms)+'</td>'
@@ -3461,9 +3494,9 @@ function renderCollege(){
     +'<th></th>'
     +'<th data-tip="Position in this list, under the sort you have chosen.">#</th>'
     +'<th class="col-hide-mobile" data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#</th>'
-    +'<th>Player</th><th>Team</th>'
+    +'<th>Player</th><th data-tip="Position.">Pos</th><th>Team</th>'
     +'<th data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp</th>'
-    +'<th data-tip="Class standing: Y1 freshman through Y4 senior.">Cls</th>'
+    +'<th data-tip="Class standing. Highlighted in blue once he is DRAFT-ELIGIBLE \u2014 the NFL requires three years removed from high school, so Y3 may declare early and Y4 must. Dimmed years are future classes you are scouting early.">Cls</th>'
     +'<th class="col-hide-mobile" data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age</th>'
     +'<th data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars</th>'
     +'<th class="col-hide-mobile" data-tip="Games with at least one recorded offensive stat.">G</th>'
