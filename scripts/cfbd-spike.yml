@@ -1,0 +1,35 @@
+# Phase 0 spike — run manually from the Actions tab. Read-only: makes a handful of
+# CFBD calls and prints findings to the log. Commits nothing, touches no data files.
+name: CFBD Phase 0 Spike
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Season to probe (use a COMPLETED season for real data)"
+        required: false
+        default: "2025"
+      week:
+        description: "Sample week for the per-week call"
+        required: false
+        default: "6"
+
+jobs:
+  spike:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CFBD client
+        run: pip install --quiet cfbd
+
+      - name: Run spike
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+          CFBD_YEAR: ${{ github.event.inputs.year }}
+          CFBD_WEEK: ${{ github.event.inputs.week }}
+        run: python scripts/cfbd_spike.py
