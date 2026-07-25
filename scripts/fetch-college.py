@@ -127,14 +127,17 @@ with cfbd.ApiClient(cfg) as api:
     # in the exact-match tiers is visible rather than silent.
     RPOS = {"QB": {"QB", "PRO", "DUAL"}, "RB": {"RB", "APB", "ATH"},
             "WR": {"WR", "ATH"},        "TE": {"TE", "ATH"}}
-    by_athlete, by_recid, by_namepos = {}, {}, {}
+    by_athlete, by_recid, by_namepos, ambiguous = {}, {}, {}, set()
     for r in recruits:
         st = g(r, "stars") or 0
         payload = (st, float(g(r, "rating") or 0), g(r, "year"))
         aid, rid = g(r, "athlete_id"), g(r, "id")
         if aid is not None: by_athlete[str(aid)] = payload
         if rid is not None: by_recid[str(rid)] = payload
-        by_namepos[(norm(g(r, "name")), (g(r, "position") or "").upper())] = payload
+        nk = (norm(g(r, "name")), (g(r, "position") or "").upper())
+        if nk in by_namepos and by_namepos[nk] != payload:
+            ambiguous.add(nk)          # same name+position in >1 class: unresolvable
+        by_namepos[nk] = payload
     npool = len(by_namepos)
     blue = sum(1 for v in by_namepos.values() if v[0] >= 4)
 
@@ -149,8 +152,15 @@ with cfbd.ApiClient(cfg) as api:
                     hit, why = by_recid[str(rid)], "recruit_ids"; break
         if hit is None:
             for rp in RPOS.get(v["pos"], set()):
-                m = by_namepos.get((k[0], rp))
+                nk = (k[0], rp)
+                if nk in ambiguous: tier["ambiguous"] += 1; continue
+                m = by_namepos.get(nk)
                 if m: hit, why = m, "name+pos"; break
+        if hit and hit[2] and v.get("cls"):
+            expected = YEAR - int(v["cls"]) + 1
+            if not (expected - 2 <= int(hit[2]) <= expected + 1):
+                tier["implausible"] += 1
+                hit = None            # class year contradicts class standing
         if hit:
             v["stars"], v["rating"], v["rcls"] = hit[0], hit[1], hit[2]
             tier[why] += 1
@@ -159,6 +169,8 @@ with cfbd.ApiClient(cfg) as api:
           f" ({total/max(1,len(ply))*100:.0f}% of skill players)")
     print(f"    by athlete_id {tier['athlete_id']:,} | by recruit_ids {tier['recruit_ids']:,}"
           f" | by name+position {tier['name+pos']:,}")
+    print(f"    rejected: {tier['ambiguous']:,} ambiguous name+pos, "
+          f"{tier['implausible']:,} class-year implausible  ({len(ambiguous):,} ambiguous keys)")
 
     # ---- season usage share (context column, never the ranking) ----
     for u in usage:
