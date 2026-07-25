@@ -130,13 +130,13 @@ with cfbd.ApiClient(cfg) as api:
     by_athlete, by_recid, by_namepos = {}, {}, {}
     for r in recruits:
         st = g(r, "stars") or 0
-        if st < 4: continue
         payload = (st, float(g(r, "rating") or 0), g(r, "year"))
         aid, rid = g(r, "athlete_id"), g(r, "id")
         if aid is not None: by_athlete[str(aid)] = payload
         if rid is not None: by_recid[str(rid)] = payload
         by_namepos[(norm(g(r, "name")), (g(r, "position") or "").upper())] = payload
     npool = len(by_namepos)
+    blue = sum(1 for v in by_namepos.values() if v[0] >= 4)
 
     tier = collections.Counter()
     for k, v in ply.items():
@@ -155,7 +155,7 @@ with cfbd.ApiClient(cfg) as api:
             v["stars"], v["rating"], v["rcls"] = hit[0], hit[1], hit[2]
             tier[why] += 1
     total = sum(tier.values())
-    print(f"  4-5 star recruits in pool   : {npool:,}  -> matched: {total:,}"
+    print(f"  recruits indexed: {npool:,} (4-5 star: {blue:,})  -> matched: {total:,}"
           f" ({total/max(1,len(ply))*100:.0f}% of skill players)")
     print(f"    by athlete_id {tier['athlete_id']:,} | by recruit_ids {tier['recruit_ids']:,}"
           f" | by name+position {tier['name+pos']:,}")
