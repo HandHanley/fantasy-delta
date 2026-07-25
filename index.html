@@ -3236,6 +3236,10 @@ document.addEventListener('click', function(e) {
   <div id="cfb-foot" style="font-size:9.5px;color:var(--fog-2);margin-top:10px;line-height:1.55"></div>
 </div>
 
+<div class="about-overlay" id="cfb-overlay" onclick="if(event.target===this)closeCfbCard()">
+  <div class="about-card" style="max-width:660px" id="cfb-card"></div>
+</div>
+
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
@@ -3428,14 +3432,15 @@ function renderCollege(){
     if(foot) foot.textContent=''; return;
   }
   const dash=v=>(v?v:'-');
-  const body=rows.map(p=>{
+  const body=rows.map((p,i)=>{
     const on=watch.has(p.n), td=(p.ret||0)+(p.rt||0)+(p.pt||0);
-    return '<tr data-name="'+p.n.replace(/"/g,'&quot;')+'">'
-      +'<td><span onclick="cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
+    return '<tr style="cursor:pointer" onclick="openCfbCard(this.dataset.name)" data-name="'+p.n.replace(/"/g,'&quot;')+'">'
+      +'<td><span onclick="event.stopPropagation();cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
         +'style="cursor:pointer;color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
-      +'<td style="font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap">'+p.pos+(p._rk||'')+'</td>'
+      +'<td style="font-size:11px;font-weight:700;color:var(--fog-2)">'+(i+1)+'</td>'
+      +'<td class="col-hide-mobile" style="font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap">'+p.pos+(p._rk||'')+'</td>'
       +'<td class="pname" style="white-space:nowrap">'+p.n+cfbRookieTag(p.n)+'</td>'
-      +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
+      +'<td class="txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
       +'<td style="white-space:nowrap">'+(cfbComp(p)>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
       +'<td class="txt">'+(p.cls?'Y'+p.cls:'-')+'</td>'
       +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
@@ -3446,7 +3451,7 @@ function renderCollege(){
       +'<td class="col-hide-mobile">'+dash(p.rey)+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.ry)+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.py)+'</td>'
-      +'<td>'+dash(td)+'</td>'
+      +'<td class="col-hide-mobile">'+dash(td)+'</td>'
       +'<td>'+(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-')+'</td>'
       +'</tr>';
   }).join('');
@@ -3454,8 +3459,9 @@ function renderCollege(){
     +(rows.length===1?'':'s')+'</div>'
     +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
     +'<th></th>'
-    +'<th data-tip="Rank within his own position. The default sort walks these: every position\u2019s No.1, then every No.2, and so on \u2014 so QBs (ranked on passing yards) don\u2019t bury everyone else.">Pos#</th>'
-    +'<th>Player</th><th class="col-hide-mobile">Team</th>'
+    +'<th data-tip="Position in this list, under the sort you have chosen.">#</th>'
+    +'<th class="col-hide-mobile" data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#</th>'
+    +'<th>Player</th><th>Team</th>'
     +'<th data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp</th>'
     +'<th data-tip="Class standing: Y1 freshman through Y4 senior.">Cls</th>'
     +'<th class="col-hide-mobile" data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age</th>'
@@ -3466,13 +3472,88 @@ function renderCollege(){
     +'<th class="col-hide-mobile" data-tip="Receiving yards.">RecYd</th>'
     +'<th class="col-hide-mobile" data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd</th>'
     +'<th class="col-hide-mobile" data-tip="Passing yards.">PassYd</th>'
-    +'<th data-tip="All touchdowns: receiving + rushing + passing.">TD</th>'
+    +'<th class="col-hide-mobile" data-tip="All touchdowns: receiving + rushing + passing.">TD</th>'
     +'<th data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Season <b>'+CFB.season+'</b> \u00b7 universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
     +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
     +'(CFBD publishes no target counts) \u00b7 QB rushing is net of sacks, per college convention.';
+}
+
+
+// ── College player card: season line + weekly game log ─────────────────────
+// Read-only view over data already loaded for the table. No score, no projection —
+// a game log is what you actually watch during a season.
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCfbCard(); });
+function closeCfbCard(){
+  const o=document.getElementById('cfb-overlay'); if(o) o.classList.remove('open');
+}
+function openCfbCard(name){
+  if(!CFB || !CFB.players) return;
+  const p=CFB.players.find(x=>x.n===name); if(!p) return;
+  const host=document.getElementById('cfb-card'); if(!host) return;
+  const n=v=>(v==null||v===''||v===0)?'-':v;
+  const comp=cfbComp(p);
+  const watched=dwHas(p.n,'cfb');
+
+  // position-appropriate game-log columns — a QB log and a WR log share almost nothing
+  const cols = p.pos==='QB'
+    ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+    : p.pos==='RB'
+    ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry']];
+
+  const games=(p.g||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
+  const log = games.length
+    ? '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
+      +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
+      +games.map(g=>'<tr><td style="font-weight:600">'+(g.w||'-')+'</td>'
+        +'<td class="txt" style="white-space:nowrap">'+(g.opp||'-')+'</td>'
+        +cols.map(c=>'<td>'+n(g[c[1]])+'</td>').join('')+'</tr>').join('')
+      +'</tbody></table></div>'
+    : '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
+
+  const chip=(txt,col)=>'<span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;'
+    +'background:var(--ink-2);color:'+(col||'var(--fog)')+';white-space:nowrap">'+txt+'</span>';
+  const season = p.pos==='QB'
+    ? n(p.py)+' pass yds \u00b7 '+n(p.pt)+' TD \u00b7 '+n(p.pi)+' INT \u00b7 '+n(p.ry)+' rush yds'
+    : n(p.rec)+' rec \u00b7 '+n(p.rey)+' rec yds \u00b7 '+n(p.ret)+' rec TD \u00b7 '+n(p.car)+' car \u00b7 '+n(p.ry)+' rush yds';
+
+  host.innerHTML='<div style="padding:18px 20px 20px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
+      +'<div style="min-width:0">'
+        +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.15">'+p.n
+          +' <span id="cfb-card-star" data-name="'+p.n.replace(/"/g,'&quot;')+'" onclick="cfbCardStar(this)" '
+          +'style="cursor:pointer;font-size:16px;vertical-align:2px;color:'+(watched?'var(--topaz)':'var(--fog-2)')+'">'
+          +(watched?'\u2605':'\u2606')+'</span></div>'
+        +'<div style="font-size:11.5px;color:var(--fog);margin-top:3px">'+p.pos+' \u00b7 '+(p.tm||'-')
+          +(p.conf?' \u00b7 '+p.conf:'')+'</div>'
+      +'</div>'
+      +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
+        +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 12px">'
+      +chip(p.pos+(p._rk||'')+' by production')
+      +chip(p.cls?'Year '+p.cls:'class n/a')
+      +(p.stars?chip(p.stars+'\u2605 recruit','var(--topaz)'):chip('unrecruited'))
+      +(p.ageEst?chip('age ~'+p.ageEst):'')
+      +(comp>=1?chip('P4'):chip('Comp \u00d7'+comp.toFixed(2),'var(--coral)'))
+      +(p.rsh!=null&&p.pos!=='QB'?chip(Math.round(p.rsh*100)+'% of team receptions'):'')
+    +'</div>'
+    +'<div style="font-size:12px;color:var(--paper);font-weight:600;margin-bottom:9px">'+season+'</div>'
+    +log
+    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
+      +'Regular season only \u2014 bowls and playoff games are not pulled. QB rushing is net of sacks, '
+      +'per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
+    +'</div>';
+  document.getElementById('cfb-overlay').classList.add('open');
+}
+function cfbCardStar(el){
+  const on=dwToggle(el.dataset.name,'cfb');
+  el.textContent=on?'\u2605':'\u2606';
+  el.style.color=on?'var(--topaz)':'var(--fog-2)';
+  renderCollege();
 }
 
 function initEngineAudit(){
