@@ -36,6 +36,14 @@ QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
          "TE": int(os.environ.get("Q_TE") or 70)}
 MIN_GAMES = int(os.environ.get("MIN_GAMES") or 4)
 SKILL = set(QUOTA)
+OFF_CATS = {"passing", "rushing", "receiving"}
+# Canonical compact keys, mirroring data/game-logs.json so the front end reads one dialect.
+KEYMAP = {
+    ("receiving", "REC"): "rec", ("receiving", "YDS"): "rey", ("receiving", "TD"): "ret",
+    ("rushing",   "CAR"): "car", ("rushing",   "YDS"): "ry",  ("rushing",   "TD"): "rt",
+    ("passing",   "YDS"): "py",  ("passing",   "TD"): "pt",   ("passing",   "INT"): "pi",
+    ("passing", "C/ATT"): "ca",  ("passing",  "COMPLETIONS"): "cmp", ("passing", "ATT"): "pa",
+}
 OUT = "data/college-players.json"
 
 if not KEY:
@@ -147,8 +155,11 @@ with cfbd.ApiClient(cfg) as api:
                     if g(other, "team") != tname: opp = g(other, "team")
                 for cat in (g(tm, "categories") or []):
                     cname = (g(cat, "name") or "").lower()
+                    if cname not in OFF_CATS: continue   # skip defensive/kicking entirely
                     for typ in (g(cat, "types") or []):
                         tkey = (g(typ, "name") or "").upper()
+                        ck = KEYMAP.get((cname, tkey))
+                        if ck is None: continue          # drops AVG / LONG / unmapped
                         STAT_KEYS[f"{cname}.{tkey}"] += 1
                         for ath in (g(typ, "athletes") or []):
                             aid = g(ath, "id")
@@ -162,11 +173,13 @@ with cfbd.ApiClient(cfg) as api:
                                 MATCH["by_id"] += 1
                             if v is None: continue
                             row = v["g"].setdefault(wk, {"w": wk, "opp": opp})
-                            row[f"{cname[:4]}_{tkey}"] = g(ath, "stat")
+                            row[ck] = g(ath, "stat")
 
     tot = sum(MATCH.values()) or 1
-    print(f"\n  stat-row join: by id {MATCH['by_id']:,} | by name {MATCH['by_name']:,}"
-          f" | UNMATCHED {MATCH['unmatched']:,} ({MATCH['unmatched']/tot*100:.1f}%)")
+    print(f"\n  offensive stat-row join: by id {MATCH['by_id']:,} | by name {MATCH['by_name']:,}"
+          f" | unmatched {MATCH['unmatched']:,} ({MATCH['unmatched']/tot*100:.1f}%)")
+    print("    (unmatched here = FBS offensive players outside the QB/RB/WR/TE roster index,"
+          " e.g. OL on a trick play. Defensive rows are no longer counted at all.)")
     if MISS: print("    unmatched samples:", "; ".join(MISS))
     if MATCH['by_id'] + MATCH['by_name'] == 0:
         print("    !! JOIN FAILED COMPLETELY — production door would be empty. Not writing.")
@@ -183,12 +196,9 @@ def num(v):
 for v in ply.values():
     rec_y = rush_y = pass_y = 0.0
     for row in v["g"].values():
-        for kk, val in row.items():
-            if kk in ("w", "opp"): continue
-            if kk.endswith("_YDS"):
-                if kk.startswith("rece"): rec_y  += num(val)
-                elif kk.startswith("rush"): rush_y += num(val)
-                elif kk.startswith("pass"): pass_y += num(val)
+        rec_y  += num(row.get("rey", 0))
+        rush_y += num(row.get("ry", 0))
+        pass_y += num(row.get("py", 0))
     v["ry"], v["uy"], v["py"] = rec_y, rush_y, pass_y
     v["prod"] = rec_y + rush_y + pass_y * 0.4     # pass yards discounted to compare positions
     v["games"] = len(v["g"])
@@ -235,7 +245,10 @@ with open(OUT, "w") as f:
 size = os.path.getsize(OUT)
 print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
 print(f"  API calls used: {CALLS}")
-print("\n  top 12 by production:")
-for p in out["players"][:12]:
-    print(f"    {p['n']:<24} {p['pos']:<3} {p['tm']:<18} rec {p['ry']:>5} rush {p['uy']:>5} "
-          f"pass {p['py']:>5}  usg {p['usg']}")
+for pos in ("QB", "RB", "WR", "TE"):
+    rows = [p for p in out["players"] if p["pos"] == pos]
+    rows.sort(key=lambda x: -(x["py"] if pos == "QB" else x["ry"] + x["uy"]))
+    print(f"\n  top 6 {pos} (by {'pass yds' if pos=='QB' else 'scrimmage yds'}):")
+    for p in rows[:6]:
+        print(f"    {p['n']:<24} {p['tm']:<20} rec {p['ry']:>5} rush {p['uy']:>5} "
+              f"pass {p['py']:>5}  usg {p['usg']}  {p['stars'] or '-'}star cls{p['cls']}")
