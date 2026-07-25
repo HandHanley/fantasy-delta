@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELTA v1.0 — Dynasty Efficiency + Long-Term Analysis</title>
+<title>DELTA — Dynasty Efficiency + Long-Term Analysis</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
 <meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
 <meta property="og:type" content="website">
@@ -421,7 +421,6 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     <div>
       <div style="display:flex;align-items:center;gap:9px">
         <span class="dl-word">DELTA</span>
-        <span class="dl-ver">v1.0</span>
       </div>
       <div class="dl-sub">Dynasty Efficiency + Long-Term Analysis</div>
     </div>
@@ -455,6 +454,23 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
+    <div class="set-sec">LEAGUE</div>
+    <select id="set-scoring" class="set-sel" onchange="applySetScoring(this.value)" title="Scoring format">
+      <option value="half_tep">0.5 PPR + TE Premium</option>
+      <option value="half">0.5 PPR</option>
+      <option value="full_tep">Full PPR + TE Premium</option>
+      <option value="full">Full PPR</option>
+      <option value="std">Standard</option>
+    </select>
+    <div style="display:flex;gap:6px;margin-bottom:15px">
+      <select id="lg-teams-set" class="set-sel" style="margin-bottom:0" onchange="applySetLeague()" title="League size">
+        <option value="8">8-team</option><option value="10">10-team</option>
+        <option value="12">12-team</option><option value="14">14-team</option>
+      </select>
+      <select id="lg-qb-set" class="set-sel" style="margin-bottom:0" onchange="applySetLeague()" title="QB format">
+        <option value="sf">Superflex</option><option value="1qb">1-QB</option>
+      </select>
+    </div>
     <div class="set-sec">OPEN DELTA TO</div>
     <select id="landing-pref" class="set-sel" onchange="setLandingPref(this.value)">
       <option value="rankings">Rankings (default)</option>
@@ -474,8 +490,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
       <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
     </div>
-    <div style="border-top:1px solid var(--line);padding-top:11px">
-      <span onclick="closeSettings();openAbout()" style="font-size:12px;font-weight:600;color:var(--teal-br);cursor:pointer">About DELTA</span>
+    <div style="border-top:1px solid var(--line);padding-top:12px">
+      <button class="set-pill" onclick="closeSettings();openAbout()" style="width:100%;justify-content:center">About DELTA</button>
     </div>
     <div style="font-size:9px;color:var(--fog-2);margin-top:9px;line-height:1.5">Saved on this device only &mdash; every visitor has their own.</div>
   </div>
@@ -788,8 +804,8 @@ function renderStartProfile(p){
   ensureStartData().then(()=>{ const h=document.getElementById('dd-startprofile'); if(h) h.innerHTML=startProfileHTML(p); });
 }
 function syncSettingsUI(){
-  ['lg-teams','lg-teams-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
-  ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
+  ['lg-teams','lg-teams-trade','lg-teams-set'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=String(leagueTeams);});
+  ['lg-qb','lg-qb-trade','lg-qb-set'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
   ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=scoringFmt;});
 }
 
@@ -883,7 +899,7 @@ function renderRankings(){
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:var(--fog-2);padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
-    <td class="pname" style="font-weight:600;white-space:nowrap"><span onclick="event.stopPropagation();const on=dwToggle(this.closest('tr').dataset.name);this.textContent=on?'\u2605':'\u2606';this.style.color=on?'var(--topaz)':'var(--fog-2)';if(document.getElementById('pos-rank').value==='WL')renderRankings();" style="cursor:pointer;margin-right:5px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span>${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
     <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
@@ -1900,6 +1916,23 @@ function dlThemeApply(name){
   document.querySelectorAll('#theme-row .set-pill').forEach(b=>
     b.classList.toggle('on', b.dataset.theme===name));
 }
+function applySetScoring(v){
+  ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=v;});
+  applyScoring();
+}
+function applySetLeague(){
+  const t=document.getElementById('lg-teams-set'), q=document.getElementById('lg-qb-set');
+  const tm=document.getElementById('lg-teams'), qm=document.getElementById('lg-qb');
+  if(t&&tm) tm.value=t.value;
+  if(q&&qm) qm.value=q.value;
+  applyLeagueSettings('main');
+}
+function deckStar(el){
+  const n=document.getElementById('dd-card').dataset.player; if(!n) return;
+  const on=dwToggle(n);
+  el.textContent=on?'\u2605':'\u2606'; el.style.color=on?'var(--topaz)':'var(--fog-2)';
+  if(document.getElementById('pos-rank') && document.getElementById('pos-rank').value==='WL') renderRankings();
+}
 function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
 function toggleSettings(e){
@@ -1911,6 +1944,9 @@ function toggleSettings(e){
     const sel=document.getElementById('landing-pref');
     if(sel) sel.value=dlPref('delta_landing')||'rankings';
     dlThemeApply(dlPref('delta_theme')||'teal');
+    const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
+    const st=document.getElementById('lg-teams-set'); if(st) st.value=String(leagueTeams);
+    const sq=document.getElementById('lg-qb-set');    if(sq) sq.value=qbFmt;
   }
 }
 function closeSettings(){ const p=document.getElementById('settings-pop'); if(p) p.style.display='none'; }
@@ -2047,6 +2083,8 @@ function renderDeck(p){
   }
   else { hsEl.style.display='none'; hsEl.src=''; hsEl.onload=null; }
   document.getElementById('dd-card').dataset.player=p.n;
+  { const s=document.getElementById('dd-star'), on=dwHas(p.n);
+    if(s){ s.textContent=on?'\u2605':'\u2606'; s.style.color=on?'var(--topaz)':'var(--fog-2)'; } }
   // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
     renderStartProfile(p);
@@ -3053,8 +3091,12 @@ document.addEventListener('click', function(e) {
           onerror="this.style.display='none'"
           onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)">
         <div style="min-width:0">
-          <div class="dd-name" id="dd-name" style="cursor:pointer" title="Open full player page"
-            onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div class="dd-name" id="dd-name" style="cursor:pointer" title="Open full player page"
+              onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
+            <span id="dd-star" onclick="deckStar(this)" title="Watchlist"
+              style="cursor:pointer;font-size:17px;line-height:1;color:var(--fog-2)">\u2606</span>
+          </div>
           <div class="dd-meta" id="dd-meta"></div>
         </div>
       </div>
