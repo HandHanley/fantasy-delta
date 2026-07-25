@@ -107,7 +107,7 @@ with cfbd.ApiClient(cfg) as api:
         if team not in fbs_names: continue
         ply[(norm(nm), team)] = {
             "id": g(p, "id"), "n": nm, "pos": pos, "tm": team,
-            "cls": g(p, "year"), "stars": 0, "rating": 0.0,
+            "cls": g(p, "year"), "stars": 0, "rating": 0.0, "rcls": None,
             "recruit_ids": g(p, "recruit_ids") or [],
             "g": {}, "prod": 0.0, "usg": None,
         }
@@ -131,7 +131,7 @@ with cfbd.ApiClient(cfg) as api:
     for r in recruits:
         st = g(r, "stars") or 0
         if st < 4: continue
-        payload = (st, float(g(r, "rating") or 0))
+        payload = (st, float(g(r, "rating") or 0), g(r, "year"))
         aid, rid = g(r, "athlete_id"), g(r, "id")
         if aid is not None: by_athlete[str(aid)] = payload
         if rid is not None: by_recid[str(rid)] = payload
@@ -152,7 +152,7 @@ with cfbd.ApiClient(cfg) as api:
                 m = by_namepos.get((k[0], rp))
                 if m: hit, why = m, "name+pos"; break
         if hit:
-            v["stars"], v["rating"] = hit[0], hit[1]
+            v["stars"], v["rating"], v["rcls"] = hit[0], hit[1], hit[2]
             tier[why] += 1
     total = sum(tier.values())
     print(f"  4-5 star recruits in pool   : {npool:,}  -> matched: {total:,}"
@@ -272,6 +272,8 @@ out = {
     "note": ("College TRACKING data. Production facts only — no DELTA Score, no projections. "
              "usg = CFBD share of ALL team offensive plays (NOT target share; ~0.53x it). "
              "rsh = reception share (player receptions / team receptions) - the available proxy. "
+             "ageEst = ESTIMATE ONLY: 18 + (season - recruiting class). CFBD exposes no birth dates. "
+             "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
              "Included via production quota or 4-5 star underclassman pedigree."),
     "quota": QUOTA, "min_games": MIN_GAMES,
     "counts": {"universe": len(picked), **dict(by_door)},
@@ -281,6 +283,8 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
     out["players"].append({
         "id": v["id"], "n": v["n"], "pos": v["pos"], "tm": v["tm"], "cls": v["cls"],
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
+        "rcls": v.get("rcls"),
+        "ageEst": (18 + (YEAR - v["rcls"])) if v.get("rcls") else None,
         "usg": v["usg"], "rsh": v["rshare"], "recs": v["recs"], "ry": round(v["ry"]), "uy": round(v["uy"]), "py": round(v["py"]),
         "gms": v["games"],
         "g": [v["g"][w] for w in sorted(v["g"])],
