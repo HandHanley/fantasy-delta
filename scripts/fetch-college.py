@@ -243,13 +243,14 @@ def num(v):
     try: return float(str(v).split("/")[0])
     except Exception: return 0.0
 
+AGG = {"rec": "rec", "rey": "rey", "ret": "ret", "car": "car",
+       "ry": "ry", "rt": "rt", "py": "py", "pt": "pt", "pi": "pi"}
 for v in ply.values():
-    rec_y = rush_y = pass_y = 0.0
+    tot = {k: 0.0 for k in AGG}
     for row in v["g"].values():
-        rec_y  += num(row.get("rey", 0))
-        rush_y += num(row.get("ry", 0))
-        pass_y += num(row.get("py", 0))
-    v["ry"], v["uy"], v["py"] = rec_y, rush_y, pass_y
+        for k in AGG: tot[k] += num(row.get(k, 0))
+    v["tot"] = tot
+    rec_y, rush_y, pass_y = tot["rey"], tot["ry"], tot["py"]
     # RECEPTION share — the honest, free stand-in for target share. CFBD's usage.overall
     # is share of ALL offensive plays (measured ~0.53x true target share), so it must not
     # be labelled as targets. Box scores carry no target counts at all, so receptions over
@@ -284,6 +285,7 @@ out = {
     "note": ("College TRACKING data. Production facts only — no DELTA Score, no projections. "
              "usg = CFBD share of ALL team offensive plays (NOT target share; ~0.53x it). "
              "rsh = reception share (player receptions / team receptions) - the available proxy. "
+             "Season totals use the SAME keys as weekly rows: rey/ret=receiving, ry/rt=rushing, py/pt=passing. "
              "ageEst = ESTIMATE ONLY: 18 + (season - recruiting class). CFBD exposes no birth dates. "
              "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
              "Included via production quota or 4-5 star underclassman pedigree."),
@@ -297,7 +299,10 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
         "rcls": v.get("rcls"),
         "ageEst": (18 + (YEAR - v["rcls"])) if v.get("rcls") else None,
-        "usg": v["usg"], "rsh": v["rshare"], "recs": v["recs"], "ry": round(v["ry"]), "uy": round(v["uy"]), "py": round(v["py"]),
+        "usg": v["usg"], "rsh": v["rshare"],
+        "rec": int(v["tot"]["rec"]), "rey": round(v["tot"]["rey"]), "ret": int(v["tot"]["ret"]),
+        "car": int(v["tot"]["car"]), "ry": round(v["tot"]["ry"]),  "rt":  int(v["tot"]["rt"]),
+        "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
         "gms": v["games"],
         "g": [v["g"][w] for w in sorted(v["g"])],
     })
@@ -315,9 +320,9 @@ for fld, label in (("ageEst", "age estimate"), ("stars", "recruit stars"),
     print(f"  coverage: {label:<16} {have:>4}/{n} ({have/n*100:.0f}%)")
 for pos in ("QB", "RB", "WR", "TE"):
     rows = [p for p in out["players"] if p["pos"] == pos]
-    rows.sort(key=lambda x: -(x["py"] if pos == "QB" else x["ry"] + x["uy"]))
+    rows.sort(key=lambda x: -(x["py"] if pos == "QB" else x["rey"] + x["ry"]))
     print(f"\n  top 6 {pos} (by {'pass yds' if pos=='QB' else 'scrimmage yds'}):")
     for p in rows[:6]:
-        print(f"    {p['n']:<24} {p['tm']:<20} rec {p['ry']:>5} rush {p['uy']:>5} "
+        print(f"    {p['n']:<24} {p['tm']:<20} rec {p['rey']:>5} rush {p['ry']:>5} "
               f"pass {p['py']:>5}  rsh {p['rsh']}  {p['stars'] or '-'}★ cls{p['cls']}"
               f" rc{p['rcls'] or '----'} age~{p['ageEst'] or '--'}")
