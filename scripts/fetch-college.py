@@ -87,6 +87,11 @@ with cfbd.ApiClient(cfg) as api:
     print("\n-- roster & context " + "-" * 51)
     fbs    = call("GET /teams/fbs", teams_api.get_fbs_teams, year=YEAR)
     fbs_names = {g(t, "school") for t in fbs if g(t, "school")}
+    # Conference travels with every player: it is both the filter users need and the
+    # second-strongest measured signal for reaching the NFL (P4 86% of those who made it
+    # vs 46% who did not, 1.9x lift on the 2025 -> 2026 draft-eligible cohort).
+    TEAM_CONF = {g(t, "school"): (g(t, "conference") or "") for t in fbs if g(t, "school")}
+    P4 = {"SEC", "Big Ten", "Big 12", "ACC"}
     roster = call("GET /roster (fbs)", teams_api.get_roster, year=YEAR, classification="fbs")
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
 
@@ -108,6 +113,7 @@ with cfbd.ApiClient(cfg) as api:
         ply[(norm(nm), team)] = {
             "id": g(p, "id"), "n": nm, "pos": pos, "tm": team,
             "cls": g(p, "year"), "stars": 0, "rating": 0.0, "rcls": None,
+            "conf": TEAM_CONF.get(team, ""), "p4": 1 if TEAM_CONF.get(team, "") in P4 else 0,
             "recruit_ids": g(p, "recruit_ids") or [],
             "g": {}, "prod": 0.0, "usg": None,
         }
@@ -295,7 +301,8 @@ out = {
 }
 for v in sorted(picked.values(), key=lambda x: -x["prod"]):
     out["players"].append({
-        "id": v["id"], "n": v["n"], "pos": v["pos"], "tm": v["tm"], "cls": v["cls"],
+        "id": v["id"], "n": v["n"], "pos": v["pos"], "tm": v["tm"],
+        "conf": v.get("conf") or None, "p4": v.get("p4", 0), "cls": v["cls"],
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
         "rcls": v.get("rcls"),
         "ageEst": (18 + (YEAR - v["rcls"])) if v.get("rcls") else None,
