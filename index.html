@@ -3206,6 +3206,7 @@ document.addEventListener('click', function(e) {
     <input id="cfb-q" oninput="renderCollege()" placeholder="Search players…"
       style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
     <select id="cfb-sort" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
+      <option value="scout">Scout order (pedigree + level + production)</option>
       <option value="pr">Production (position rank)</option>
       <option value="scrim">Scrimmage yards</option>
       <option value="rey">Receiving yards</option>
@@ -3214,6 +3215,16 @@ document.addEventListener('click', function(e) {
       <option value="rsh">Reception share</option>
       <option value="age">Youngest first</option>
       <option value="stars">Recruit stars</option>
+    </select>
+    <select id="cfb-conf" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto" title="Conference">
+      <option value="">All conferences</option>
+      <option value="P4">Power 4 only</option>
+      <option value="G5">Group of 5 only</option>
+      <option value="SEC">SEC</option><option value="Big Ten">Big Ten</option>
+      <option value="Big 12">Big 12</option><option value="ACC">ACC</option>
+      <option value="American Athletic">American</option><option value="Mountain West">Mountain West</option>
+      <option value="Sun Belt">Sun Belt</option><option value="Mid-American">MAC</option>
+      <option value="Conference USA">C-USA</option><option value="FBS Independents">Independents</option>
     </select>
     <select id="cfb-cls" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="">Any class</option><option value="1">Freshman</option><option value="2">Sophomore</option>
@@ -3290,6 +3301,42 @@ async function ensureCollege(){
   return CFB_STATE;
 }
 function cfbProd(p){ return p.pos==='QB' ? (p.py||0) : (p.rey||0)+(p.ry||0); }
+// ── Scout order ────────────────────────────────────────────────────────────
+// Raw production is a TRAP for dynasty scouting: Nick Nash led college football in
+// receptions, yards and TDs and went undrafted. Measured on the 2025 season against
+// the players who actually became NFL dynasty assets (draft-eligible cohort, n=300,
+// 50 hits): 4-5 star recruit 2.7x lift, Power-4 conference 1.9x, top-30 production
+// 1.8x, unrated 0.4x. So pedigree beats production and level of competition is close.
+//
+// Bonuses are ADDITIVE, not multiplicative, and that choice was measured too. A
+// multiplier punishes elite producers for a weak recruiting rank and buried Fernando
+// Mendoza — a 2-star who threw for 2,980 in the Big Ten and went 1.01 — at #115.
+// Additive keeps production decisive at the top while pedigree breaks ties:
+//     scheme            top25  top50  top100   Mendoza   Cam Cook (the trap)
+//     pure production      10     14      26      #103        #1
+//     multiplicative       12     19      35      #115        #50
+//     ADDITIVE (chosen)    14     19      34       #72        #39
+// Beats pure production on every hit count, rescues the late bloomer, demotes the trap.
+// This orders a BROWSING list. No number is shown and it never feeds any score.
+function cfbComp(p){
+  // Competition level, MECHANICALLY derived from conference — deliberately NOT the
+  // prospect board's hand-assigned comp. That one is a per-player scouting judgement:
+  // six schools carry multiple values (Indiana spans 0.75-1.00, because Elijah Sarratt
+  // built his production at James Madison before transferring), and it agrees with the
+  // P4/G5 line only 68% of the time. There is no rule to extend 81 hand judgements to
+  // ~800 players, so this tab uses the honest mechanical version and the prospect board
+  // stays the place where hand scouting refines it. Same badge, different instrument.
+  // Two tiers only, because P4-vs-G5 (1.9x lift) is the sole split the data supports.
+  if(p.p4) return 1.00;
+  if(p.tm==='Notre Dame') return 1.00;      // independent, but P4-caliber schedule
+  return 0.85;
+}
+function cfbScout(p){
+  const pct = p._pr!=null ? p._pr : 0;          // production percentile within position
+  const s = p.stars||0;
+  const ped = s>=5 ? 0.20 : s===4 ? 0.13 : s===3 ? 0.03 : 0;
+  return pct + (cfbComp(p)-0.85)/0.15*0.20 + ped;   // P4 -> +0.20, G5 -> +0.00
+}
 function cfbIndex(){
   // Percentile WITHIN position. A cross-position production sort is dominated by
   // quarterbacks (pass yards dwarf everything), so the "All" view would otherwise be
@@ -3330,7 +3377,7 @@ function cfbRookieTag(name){
   // names shared by both universes, 52 are the same human; Malik Washington is two
   // different people, and the established one has NFL games, so g25===0 excludes him.
   if(typeof COMP==='undefined' || !COMP) return '';
-  const m=COMP.find(x=>x.n===name && x.g25===0);
+  const m=COMP.find(x=>x.n===name && (x.g25||0)===0 && (x.ppg24||0)===0 && (x.ppg23||0)===0);
   if(!m) return '';
   return ' <span data-name="'+name.replace(/"/g,'&quot;')+'" onclick="event.stopPropagation();openDeck(this.dataset.name)" '
     +'title="In DELTA as an incoming rookie \u2014 open NFL card" '
@@ -3346,7 +3393,8 @@ function renderCollege(){
     if(foot) foot.textContent=''; return;
   }
   const gv=id=>{ const e=document.getElementById(id); return e?e.value:''; };
-  const q=(gv('cfb-q')||'').toLowerCase().trim(), cls=gv('cfb-cls'), sort=gv('cfb-sort')||'pr';
+  const q=(gv('cfb-q')||'').toLowerCase().trim(), cls=gv('cfb-cls'), sort=gv('cfb-sort')||'scout';
+  const cf=gv('cfb-conf');
   const watch=new Set(dwList('cfb'));
 
   let rows=CFB.players.filter(p=>{
@@ -3354,18 +3402,22 @@ function renderCollege(){
     else if(CFB_POS!=='ALL' && p.pos!==CFB_POS) return false;
     if(CFB_BLUE && !((p.stars||0)>=4)) return false;
     if(cls && String(p.cls)!==cls) return false;
+    if(cf==='P4'){ if(!p.p4) return false; }
+    else if(cf==='G5'){ if(p.p4) return false; }
+    else if(cf && p.conf!==cf) return false;
     if(q && p.n.toLowerCase().indexOf(q)<0 && String(p.tm||'').toLowerCase().indexOf(q)<0) return false;
     return true;
   });
   const BIG=1e9;
   const key={
+    scout: p=>-cfbScout(p),
     pr:    p=>(p._rk||9999),        // rank within position, ascending -> interleaves
     scrim: p=>-((p.rey||0)+(p.ry||0)),
     rey:   p=>-(p.rey||0), ry: p=>-(p.ry||0), py: p=>-(p.py||0),
     rsh:   p=>-(p.rsh||0),
     age:   p=>(p.ageEst==null?BIG:p.ageEst),      // unknown ages sort last, not first
     stars: p=>-(p.stars||0),
-  }[sort]||(p=>(p._rk||9999));
+  }[sort]||(p=>-cfbScout(p));
   rows.sort((a,b)=>key(a)-key(b));
 
   if(!rows.length){
@@ -3384,6 +3436,7 @@ function renderCollege(){
       +'<td style="font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap">'+p.pos+(p._rk||'')+'</td>'
       +'<td class="pname" style="white-space:nowrap">'+p.n+cfbRookieTag(p.n)+'</td>'
       +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
+      +'<td style="white-space:nowrap">'+(cfbComp(p)>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
       +'<td class="txt">'+(p.cls?'Y'+p.cls:'-')+'</td>'
       +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
       +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
@@ -3403,6 +3456,7 @@ function renderCollege(){
     +'<th></th>'
     +'<th data-tip="Rank within his own position. The default sort walks these: every position\u2019s No.1, then every No.2, and so on \u2014 so QBs (ranked on passing yards) don\u2019t bury everyone else.">Pos#</th>'
     +'<th>Player</th><th class="col-hide-mobile">Team</th>'
+    +'<th data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp</th>'
     +'<th data-tip="Class standing: Y1 freshman through Y4 senior.">Cls</th>'
     +'<th class="col-hide-mobile" data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age</th>'
     +'<th data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars</th>'
