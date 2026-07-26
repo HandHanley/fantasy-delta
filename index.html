@@ -375,6 +375,16 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
 
+
+/* ── Section switcher (NFL / College / My Team) ─────────────────────────── */
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:3px;gap:2px;margin-bottom:.55rem}
+.seg-btn{flex:1;padding:7px 4px;border:none;border-radius:7px;background:transparent;
+  color:var(--fog);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.02em;transition:background .18s,color .18s}
+.seg-btn.on{background:var(--teal-tint);color:var(--teal-br)}
+.seg-btn:hover:not(.on){color:var(--paper)}
+.seg-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:-2px}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -442,17 +452,24 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <span class="dl-hint">Click any row to open player card</span>
 </div>
 
+<!-- Section switcher. NFL and College are peers; My Team is where you act on your own
+     roster. Replaces a nine-tab row that wrapped to three lines on a phone. -->
+<div class="seg" role="tablist" aria-label="Section">
+  <button type="button" class="seg-btn on" data-sec="nfl"  onclick="setSection('nfl')"  role="tab" aria-selected="true">NFL</button>
+  <button type="button" class="seg-btn"    data-sec="cfb"  onclick="setSection('cfb')"  role="tab" aria-selected="false">College</button>
+  <button type="button" class="seg-btn"    data-sec="me"   onclick="setSection('me')"   role="tab" aria-selected="false">My Team</button>
+</div>
 <div class="tabs" style="position:relative">
-  <button class="tab active" onclick="showTab('rankings',this)">Rankings</button>
-  <button class="tab" onclick="showTab('projections',this)">Projections</button>
-  <button class="tab" onclick="showTab('trade',this)">Trade Calc</button>
-  <button class="tab" onclick="showTab('epa',this)">EPA Insights</button>
-  <button class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
-  <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
-  <button class="tab" onclick="showTab('rookies',this)">Prospects</button>
-  <button class="tab" onclick="showTab('myteam',this)">My Team</button>
-  <button class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">College</button>
-  <button class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
+  <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
+  <button data-tab="projections" data-sec="nfl" class="tab" onclick="showTab('projections',this)">Projections</button>
+  <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
+  <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
+  <button data-tab="ripple" data-sec="nfl" class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
+  <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
+  <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
+  <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
+  <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
+  <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
     <div class="set-sec">LEAGUE</div>
@@ -474,15 +491,22 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     </div>
     <div class="set-sec">OPEN DELTA TO</div>
     <select id="landing-pref" class="set-sel" onchange="setLandingPref(this.value)">
-      <option value="rankings">Rankings (default)</option>
-      <option value="projections">Projections</option>
-      <option value="trade">Trade Calc</option>
-      <option value="epa">EPA Insights</option>
-      <option value="ripple">Ripple Effects</option>
-      <option value="contracts">Contracts</option>
-      <option value="rookies">Prospects</option>
-      <option value="myteam">My Team</option>
       <option value="last">Where I left off</option>
+      <optgroup label="NFL">
+        <option value="rankings">Rankings (default)</option>
+        <option value="projections">Projections</option>
+        <option value="epa">EPA Insights</option>
+        <option value="ripple">Ripple Effects</option>
+        <option value="contracts">Contracts</option>
+      </optgroup>
+      <optgroup label="College">
+        <option value="college">College Rankings</option>
+        <option value="rookies">Prospects</option>
+      </optgroup>
+      <optgroup label="My Team">
+        <option value="myteam">Roster</option>
+        <option value="trade">Trade Calc</option>
+      </optgroup>
     </select>
     <div class="set-sec">THEME</div>
     <div class="set-row" id="theme-row">
@@ -2006,31 +2030,82 @@ function toggleSettings(e){
 function closeSettings(){ const p=document.getElementById('settings-pop'); if(p) p.style.display='none'; }
 document.addEventListener('click',e=>{ if(!e.target.closest('#settings-pop')&&!e.target.closest('#gear-btn')) closeSettings(); });
 function setLandingPref(v){ dlPref('delta_landing',v); }
+
+// ── Sections ───────────────────────────────────────────────────────────────
+// NFL and College are peers; My Team is where you act on your own roster. Tabs are
+// filtered to the active section rather than all shown at once — nine flat tabs wrapped
+// to three rows on a phone and buried College, the one thing no competitor has.
+// Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
+// section switching can never reveal them.
+const SEC_TABS={ nfl:['rankings','projections','epa','ripple','contracts','audit'],
+                 cfb:['college','rookies'],
+                 me: ['myteam','trade'] };
+const SEC_OF={};
+Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
+const DL_LOCKED=new Set(['college','audit']);
+let DL_SECTION='nfl';
+
+function dlTabBtn(id){ return document.querySelector('.tab[data-tab="'+id+'"]'); }
+function setSection(s, wantTab){
+  if(!SEC_TABS[s]) s='nfl';
+  DL_SECTION=s;
+  dlPref('delta_section',s);
+  document.querySelectorAll('.seg-btn').forEach(b=>{
+    const on=b.dataset.sec===s;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  const vis=[];
+  document.querySelectorAll('.tab[data-tab]').forEach(b=>{
+    const id=b.dataset.tab;
+    const show = b.dataset.sec===s && !DL_LOCKED.has(id);
+    b.style.display = show ? '' : 'none';
+    if(show) vis.push(b);
+  });
+  if(!vis.length) return;
+  const remembered=dlPref('delta_lasttab_'+s);
+  const target = (wantTab && vis.find(b=>b.dataset.tab===wantTab))
+              || vis.find(b=>b.dataset.tab===remembered)
+              || vis[0];
+  showTab(target.dataset.tab, target, true);
+}
+function dlUnlock(id){ DL_LOCKED.delete(id); if(SEC_OF[id]===DL_SECTION) setSection(DL_SECTION); }
 function tabBtnFor(id){ return [...document.querySelectorAll('.tab')].find(b=>(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>=0); }
 function showWatchlist(){
-  const b=tabBtnFor('rankings'); if(b) showTab('rankings',b);
+  const b=dlTabBtn('rankings'); if(b) showTab('rankings',b);
   const sel=document.getElementById('pos-rank'); if(sel){ sel.value='WL'; renderRankings(); }
 }
 const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
-  if(params.get('trade')) return;                     // shared trade wins outright
+  // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
+  // which switched the section itself. Do not override it.
+  if(params.get('trade')) return;
   let target=params.get('tab');                       // manifest shortcuts / deep links
   if(!target){
     const pref=dlPref('delta_landing');
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
   }
-  if(target&&DL_TABS.indexOf(target)>=0&&target!=='rankings'){
-    const b=tabBtnFor(target); if(b) showTab(target,b);
+  if(target&&DL_TABS.indexOf(target)>=0){
+    const b=dlTabBtn(target); if(b){ showTab(target,b); return; }
   }
+  setSection(dlPref('delta_section')||'nfl');          // otherwise resume where you left off
 }
 
-function showTab(id,el){
-  try{ if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id); }catch(e){}
+function showTab(id,el,skipSection){
+  // A tab in another section switches the section first; setSection calls back with
+  // skipSection=true, so this can recurse at most once.
+  if(!skipSection && typeof SEC_OF!=='undefined' && SEC_OF[id] && SEC_OF[id]!==DL_SECTION){
+    setSection(SEC_OF[id], id); return;
+  }
+  try{
+    if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id);
+    if(SEC_OF[id]) dlPref('delta_lasttab_'+SEC_OF[id],id);
+  }catch(e){}
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  el.classList.add('active');
+  const pnl=document.getElementById('panel-'+id); if(pnl) pnl.classList.add('active');
+  if(el) el.classList.add('active');
   if(id==='contracts')renderContracts();
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -3258,7 +3333,8 @@ document.addEventListener('click', function(e) {
     </select>
     <select id="cfb-cls" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="">Any class</option>
-      <option value="ELIG">Draft-eligible (Y3+)</option><option value="1">Freshman</option><option value="2">Sophomore</option>
+      <option value="ELIG">Draft-eligible (Y3+)</option>
+      <option value="BREAK">Breakout (Y1–Y2, top 30 at pos)</option><option value="1">Freshman</option><option value="2">Sophomore</option>
       <option value="3">Junior</option><option value="4">Senior</option>
     </select>
     <button class="set-pill" id="cfb-blue" onclick="cfbToggleBlue()" title="4-5 star recruits only">Blue-chip only</button>
@@ -3320,8 +3396,7 @@ let CFB=null, CFB_STATE='idle', CFB_POS='ALL', CFB_BLUE=false;
 
 function initCollege(){
   if(typeof DELTA_CFB==='undefined' || !DELTA_CFB) return;
-  const b=document.getElementById('tab-college-btn');
-  if(b) b.style.display='';
+  dlUnlock('college');
 }
 async function ensureCollege(){
   if(CFB_STATE==='loaded'||CFB_STATE==='loading') return CFB_STATE;
@@ -3437,6 +3512,7 @@ function renderCollege(){
     else if(CFB_POS!=='ALL' && p.pos!==CFB_POS) return false;
     if(CFB_BLUE && !((p.stars||0)>=4)) return false;
     if(cls==='ELIG'){ if((p.cls||0)<3) return false; }
+    else if(cls==='BREAK'){ if((p.cls||9)>2 || (p._rk||999)>30) return false; }   // producing young = the strongest dynasty tell
     else if(cls && String(p.cls)!==cls) return false;
     if(cf==='P4'){ if(!p.p4) return false; }
     else if(cf==='G5'){ if(p.p4) return false; }
@@ -3576,11 +3652,37 @@ function openCfbCard(name){
     +'</div>'
     +'<div style="font-size:12px;color:var(--paper);font-weight:600;margin-bottom:9px">'+season+'</div>'
     +log
+    +cfbTeammates(p)
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
       +'Regular season only \u2014 bowls and playoff games are not pulled. QB rushing is net of sacks, '
       +'per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
     +'</div>';
   document.getElementById('cfb-overlay').classList.add('open');
+}
+function cfbTeammates(p){
+  if(!CFB || !CFB.players) return '';
+  const mates=CFB.players.filter(x=>x.tm===p.tm && x.pos!=='QB' && (x.rec||0)>0)
+    .sort((a,b)=>(b.rsh||0)-(a.rsh||0)).slice(0,6);
+  if(mates.length<2) return '';
+  const rows=mates.map(m=>{
+    const me=m.n===p.n;
+    return '<tr'+(me?' style="background:var(--teal-soft)"':'')+'>'
+      +'<td class="pname" style="white-space:nowrap;'+(me?'font-weight:800':'')+'">'+m.n+(me?' \u2190':'')+'</td>'
+      +'<td class="txt">'+m.pos+'</td>'
+      +'<td class="txt">'+(m.cls?'Y'+m.cls:'-')+'</td>'
+      +'<td>'+(m.rec||0)+'</td><td>'+(m.rey||0)+'</td>'
+      +'<td style="font-weight:600">'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>';
+  }).join('');
+  return '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:12px">'
+    +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">'
+    +'SAME OFFENSE \u2014 WHO ELSE IS EATING</div>'
+    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
+    +'<th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>'
+    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:7px;line-height:1.5">'
+    +'A reception share only means something next to the players competing for the same targets. '
+    +'Only tracked players appear here \u2014 depth receivers below the universe floor are missing, '
+    +'so these shares will not sum to 100%.</div></div>';
 }
 function cfbCardStar(el){
   const on=dwToggle(el.dataset.name,'cfb');
@@ -3591,8 +3693,7 @@ function cfbCardStar(el){
 
 function initEngineAudit(){
   if(!DELTA_DEV) return;
-  const btn = document.getElementById('tab-audit-btn');
-  if(btn) btn.style.display = '';
+  dlUnlock('audit');
   loadScarcityValidation();
 }
 let SCARV = null;
@@ -4386,9 +4487,11 @@ window.addEventListener('load', async function() {
   await loadPlayerContracts();
   await loadRipples(); await loadReads();
   await ensureStartData();
-  if(typeof renderAll==='function') renderAll();
+  // Unlock gated tabs BEFORE the first render, so section filtering and the landing
+  // restore see the final tab set and nothing has to re-render to correct itself.
   initEngineAudit();
   try{ initCollege(); }catch(e){ console.warn("college init failed",e); }
+  if(typeof renderAll==='function') renderAll();
 });
 if (document.readyState === 'complete') {
   syncSettingsUI();
