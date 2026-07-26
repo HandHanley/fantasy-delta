@@ -94,6 +94,11 @@ with cfbd.ApiClient(cfg) as api:
     P4 = {"SEC", "Big Ten", "Big 12", "ACC"}
     roster = call("GET /roster (fbs)", teams_api.get_roster, year=YEAR, classification="fbs")
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
+    # Transfer portal. A receiver moving from a G5 offence to an SEC one is a genuine
+    # dynasty event: his competition level, his target competition and his old team's
+    # vacated share all change at once. One call; emitted as a separate file so the
+    # main universe payload stays lean.
+    portal = call("GET /player/portal", players_api.get_transfer_portal, year=YEAR)
 
     # Recruiting classes still on a 2025 roster: a true freshman was a 2025 recruit,
     # a 5th-year was ~2021. Pull the window so the pedigree door has data.
@@ -319,6 +324,45 @@ with open(OUT, "w") as f:
     json.dump(out, f, separators=(",", ":"))
 size = os.path.getsize(OUT)
 print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
+
+# ── transfer portal ────────────────────────────────────────────────────────
+# Filtered to skill positions landing at an FBS school — an FCS-bound transfer is not
+# a dynasty event. Origin/destination competition tiers travel with each row so the UI
+# can show the level change without a second lookup.
+port_rows = []
+for r in (portal or []):
+    pos = (g(r, "position") or "").upper()
+    if pos not in SKILL: continue
+    dest = g(r, "destination")
+    if not dest or dest not in fbs_names: continue          # must land in FBS
+    orig = g(r, "origin") or ""
+    nm = f"{g(r,'first_name') or ''} {g(r,'last_name') or ''}".strip()
+    if not nm: continue
+    dc, oc = TEAM_CONF.get(dest, ""), TEAM_CONF.get(orig, "")
+    port_rows.append({
+        "n": nm, "pos": pos, "from": orig, "to": dest,
+        "fc": oc or None, "tc": dc or None,
+        "fp4": 1 if oc in P4 else 0, "tp4": 1 if dc in P4 else 0,
+        "fbs_from": 1 if orig in fbs_names else 0,           # 0 => stepping up from FCS
+        "stars": (g(r, "stars") or 0) or None,
+        "rating": round(float(g(r, "rating") or 0), 4) or None,
+        "elig": g(r, "eligibility") or None,
+        "date": (str(g(r, "transfer_date"))[:10] if g(r, "transfer_date") else None),
+    })
+port_rows.sort(key=lambda x: (-(x["stars"] or 0), x["n"]))
+pout = {"generated": out["generated"], "season": YEAR,
+        "note": ("Skill-position transfers landing at an FBS school. fp4/tp4 mark Power-4 "
+                 "origin/destination; fbs_from=0 means he came up from FCS. Facts only \u2014 "
+                 "no score, no projection."),
+        "count": len(port_rows), "players": port_rows}
+with open("data/college-portal.json", "w") as f:
+    json.dump(pout, f, separators=(",", ":"))
+print(f"  wrote data/college-portal.json: {os.path.getsize('data/college-portal.json')/1e3:.0f} KB "
+      f"({len(port_rows):,} transfers)")
+up = sum(1 for r in port_rows if r["tp4"] and not r["fp4"])
+down = sum(1 for r in port_rows if r["fp4"] and not r["tp4"])
+print(f"  level moves: {up:,} up to Power-4 | {down:,} down from Power-4")
+
 print(f"  API calls used: {CALLS}")
 n = len(out["players"]) or 1
 for fld, label in (("ageEst", "age estimate"), ("stars", "recruit stars"),
