@@ -385,6 +385,15 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 .seg-btn.on{background:var(--teal-tint);color:var(--teal-br)}
 .seg-btn:hover:not(.on){color:var(--paper)}
 .seg-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:-2px}
+
+.eyebrow{display:none;gap:18px;border-bottom:1px solid var(--line);margin-bottom:.6rem}
+.eb-btn{background:none;border:none;padding:0 0 8px;cursor:pointer;font-family:var(--mono);
+  font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--fog-2);
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.eb-btn.on{color:var(--teal-br);border-bottom-color:var(--teal-br)}
+.eb-btn:hover:not(.on){color:var(--fog)}
+.eb-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+@media(min-width:760px){ .seg{display:none} .eyebrow{display:flex} }
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -454,6 +463,13 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 
 <!-- Section switcher. NFL and College are peers; My Team is where you act on your own
      roster. Replaces a nine-tab row that wrapped to three lines on a phone. -->
+<!-- Same three sections, two presentations: the segmented control wins on a phone,
+     the editorial eyebrow reads better on a wide screen. Both drive setSection(). -->
+<div class="eyebrow" role="tablist" aria-label="Section">
+  <button type="button" class="eb-btn on" data-sec="nfl" onclick="setSection('nfl')" role="tab" aria-selected="true">NFL</button>
+  <button type="button" class="eb-btn"    data-sec="cfb" onclick="setSection('cfb')" role="tab" aria-selected="false">College</button>
+  <button type="button" class="eb-btn"    data-sec="me"  onclick="setSection('me')"  role="tab" aria-selected="false">My Team</button>
+</div>
 <div class="seg" role="tablist" aria-label="Section">
   <button type="button" class="seg-btn on" data-sec="nfl"  onclick="setSection('nfl')"  role="tab" aria-selected="true">NFL</button>
   <button type="button" class="seg-btn"    data-sec="cfb"  onclick="setSection('cfb')"  role="tab" aria-selected="false">College</button>
@@ -2050,7 +2066,7 @@ function setSection(s, wantTab){
   if(!SEC_TABS[s]) s='nfl';
   DL_SECTION=s;
   dlPref('delta_section',s);
-  document.querySelectorAll('.seg-btn').forEach(b=>{
+  document.querySelectorAll('.seg-btn, .eb-btn').forEach(b=>{
     const on=b.dataset.sec===s;
     b.classList.toggle('on',on);
     b.setAttribute('aria-selected',on?'true':'false');
@@ -2190,8 +2206,6 @@ function closeDeck(e){
 }
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();} });
-
-
 
 function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
@@ -2534,8 +2548,6 @@ function renderDeck(p){
 
     <div class="dd-divider"></div>
 
-
-
     ${(()=>{
       if(p.pos!=='QB') return '';
       const stack=COMP.filter(p2=>
@@ -2655,8 +2667,6 @@ document.addEventListener('click',e=>{
     if(drop) drop.style.display='none';
   }
 });
-
-
 
 const PROSPECTS_2026=[
   {n:'Jeremiyah Love',pos:'RB',school:'Notre Dame',age:21,pr:1,pp:3,ovr:3,por:1,ds:96,cap:40,bb:30,ag:18,ath:8,comp:1.0,prod:1.12,scar:0.97,team:'ARI',drafted:true,note:'6.9 YPC in BOTH 2024 and 2025 (not a fluke). 21 total TD, 114 total ypg in 2025. 27 rec/280 yds = real receiving back. Generational RB profile.'},
@@ -2943,45 +2953,7 @@ function showRookieCard(idx, posFilter) {
 // ── POST-DRAFT SCORE REFRESH ──────────────────────────────────────────────
 function renderProspects() { renderRookieBoard(document.getElementById("rook-pos")?.value || "ALL"); }
 
-function toggleDraftRefresh() {
-  const panel = document.getElementById('draft-refresh-panel');
-  const btn = document.getElementById('draft-refresh-btn');
-  const open = panel.style.display === 'none';
-  panel.style.display = open ? 'block' : 'none';
-  btn.textContent = open ? '✕ Close' : '⟳ Update with Real Draft Picks';
-  if (open) buildDraftEntries();
-}
 
-function buildDraftEntries() {
-  const container = document.getElementById('draft-entries');
-  // Show all prospects sorted by projected pick with input fields
-  const sorted = [...PROSPECTS_2026].sort((a,b) => {
-    if (a.pr !== b.pr) return a.pr - b.pr;
-    return a.pp - b.pp;
-  });
-  container.innerHTML = sorted.map(p => {
-    const stored = window._draftOverrides?.[p.n] || {};
-    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--ink-2);border-radius:5px">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:11px;font-weight:600;color:var(--paper)">${p.n}</div>
-        <div style="font-size:10px;color:var(--fog-2)">Projected: Rd${p.pr} Pick ${p.pp}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:10px;color:var(--fog)">Actual Rd</span>
-        <input type="number" min="1" max="7" placeholder="${p.pr}"
-          value="${stored.rd || ''}"
-          id="rd_${p.n.replace(/[^a-z0-9]/gi,'_')}"
-          style="width:40px;padding:3px 6px;border-radius:4px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:11px;text-align:center">
-        <span style="font-size:10px;color:var(--fog)">Pick</span>
-        <input type="number" min="1" max="262" placeholder="${p.pp}"
-          value="${stored.pk || ''}"
-          id="pk_${p.n.replace(/[^a-z0-9]/gi,'_')}"
-          style="width:50px;padding:3px 6px;border-radius:4px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:11px;text-align:center">
-        <span id="delta_${p.n.replace(/[^a-z0-9]/gi,'_')}" style="font-size:10px;width:30px;text-align:right;color:var(--fog)"></span>
-      </div>
-    </div>`;
-  }).join('');
-}
 
 function calcCapPts(rd, pk) {
   if (rd === 1) {
@@ -2995,56 +2967,7 @@ function calcCapPts(rd, pk) {
   return 5;
 }
 
-function applyDraftPicks() {
-  if (!window._draftOverrides) window._draftOverrides = {};
-  let changed = 0;
-  PROSPECTS_2026.forEach(p => {
-    const safeId = p.n.replace(/[^a-z0-9]/gi,'_');
-    const rdEl = document.getElementById('rd_' + safeId);
-    const pkEl = document.getElementById('pk_' + safeId);
-    if (!rdEl || !pkEl) return;
-    const rd = parseInt(rdEl.value);
-    const pk = parseInt(pkEl.value);
-    if (!isNaN(rd) && !isNaN(pk) && rd >= 1 && pk >= 1) {
-      const newCap = calcCapPts(rd, pk);
-      const oldCap = p.cap;
-      if (newCap !== oldCap || rd !== p.pr || pk !== p.pp) {
-        window._draftOverrides[p.n] = {rd, pk};
-        // Recalc score
-        const newScore = newCap + p.bb + p.ag + p.ath;
-        const delta = newScore - p.ds;
-        p.cap = newCap; p.pr = rd; p.pp = pk; p.ds = newScore;
-        // Show delta
-        const deltaEl = document.getElementById('delta_' + safeId);
-        if (deltaEl) {
-          deltaEl.textContent = delta > 0 ? '+'+delta : delta < 0 ? delta : '';
-          deltaEl.style.color = delta > 0 ? 'var(--emerald)' : delta < 0 ? 'var(--coral)' : 'var(--fog)';
-        }
-        changed++;
-      }
-    }
-  });
-  if (changed > 0) {
-    renderProspects();
-    showToast(changed + ' prospect score' + (changed>1?'s':'') + ' updated with real draft picks');
-  } else {
-    showToast('No changes detected — enter actual pick numbers above');
-  }
-}
 
-function resetDraftPicks() {
-  window._draftOverrides = {};
-  // Restore from original PROSPECTS_2026 data
-  PROSPECTS_2026.forEach(p => {
-    p.pr = p._origPr || p.pr;
-    p.pp = p._origPp || p.pp;
-    p.cap = p._origCap || p.cap;
-    p.ds = p._origDs || p.ds;
-  });
-  buildDraftEntries();
-  renderProspects();
-  showToast('Reset to projected draft positions');
-}
 
 function showToast(msg) {
   let t = document.getElementById('delta-toast');
@@ -3124,19 +3047,8 @@ document.addEventListener('click', function(e) {
 <div id="panel-rookies" class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
     <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
-    <button onclick="toggleDraftRefresh()" id="draft-refresh-btn" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:5px;border:1px solid var(--sky);background:var(--ink-2);color:var(--sky);cursor:pointer">⟳ Update with Real Draft Picks</button>
   </div>
 
-  <!-- Post-draft pick entry panel -->
-  <div id="draft-refresh-panel" style="display:none;background:var(--ink-2);border:1px solid var(--ink-2);border-radius:8px;padding:14px;margin-bottom:1rem">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--sky);margin-bottom:10px">POST-DRAFT SCORE REFRESH</div>
-    <div style="font-size:11px;color:var(--fog);margin-bottom:12px">Enter actual draft picks after the 2026 NFL Draft (Apr 24-26). Scores will recalculate using real capital instead of projections.</div>
-    <div id="draft-entries" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button onclick="applyDraftPicks()" style="font-size:11px;font-weight:700;padding:6px 16px;border-radius:5px;border:none;background:var(--sky);color:#fff;cursor:pointer">Recalculate Scores</button>
-      <button onclick="resetDraftPicks()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid var(--fog-2);background:transparent;color:var(--fog);cursor:pointer">Reset to Projections</button>
-    </div>
-  </div>
   <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
   </div>
@@ -4403,8 +4315,6 @@ function renderSlpBoard(){
     +shipTbl;
 }
 
-
-
 // ── Sleeper trade assist (Phase 3) ───────────────────────────
 // Preloads the Trade Calc with two rosters: your assets feed side A, theirs
 // feed side B, and each league pick maps onto the generic future-pick assets
@@ -4500,8 +4410,6 @@ if (document.readyState === 'complete') {
 }
 
 </script>
-
-
 
 
 <script>
