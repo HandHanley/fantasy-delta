@@ -478,12 +478,14 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button data-tab="projections" data-sec="nfl" class="tab" onclick="showTab('projections',this)">Projections</button>
-  <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
+  <button data-tab="trade" data-sec="nfl" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
   <button data-tab="ripple" data-sec="nfl" class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
+  <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
+  <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -514,14 +516,16 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
         <option value="epa">EPA Insights</option>
         <option value="ripple">Ripple Effects</option>
         <option value="contracts">Contracts</option>
+        <option value="trade">Trade Calc</option>
       </optgroup>
       <optgroup label="College">
         <option value="college">College Rankings</option>
+        <option value="portal">Transfer Portal</option>
         <option value="rookies">Prospects</option>
       </optgroup>
       <optgroup label="My Team">
         <option value="myteam">Roster</option>
-        <option value="trade">Trade Calc</option>
+        <option value="watchlist">Watchlist</option>
       </optgroup>
     </select>
     <div class="set-sec">THEME</div>
@@ -1962,52 +1966,93 @@ function dlThemeApply(name){
 // The watchlist deliberately lives here rather than as a 9th top-level tab: the tab row
 // already wraps to two lines on mobile, and this is the personal hub. The ★ Watchlist
 // option in the Rankings filter stays as the power path (full columns + sorting).
-let MT_VIEW='roster';
-function setMyTeamView(v){
-  MT_VIEW = v==='watch' ? 'watch' : 'roster';
-  dlPref('delta_mtview',MT_VIEW);
-  const rv=document.getElementById('myteam-rosterview'), wv=document.getElementById('myteam-watchview');
-  if(rv) rv.style.display = MT_VIEW==='roster' ? '' : 'none';
-  if(wv) wv.style.display = MT_VIEW==='watch'  ? '' : 'none';
-  const pr=document.getElementById('mt-pill-roster'), pw=document.getElementById('mt-pill-watch');
-  if(pr) pr.classList.toggle('on',MT_VIEW==='roster');
-  if(pw) pw.classList.toggle('on',MT_VIEW==='watch');
-  if(MT_VIEW==='watch') renderWatchlist();
+// ── Watchlist ──────────────────────────────────────────────────────────────
+// One list, two blocks. NFL and college are the same scouting job, so they live in
+// one place; they render separately only because the useful columns genuinely differ
+// (a DELTA Score and a market value mean nothing for a college junior, and reception
+// share means nothing for a pro). Storage is namespaced nfl:/cfb: because the two
+// universes share 53 names, one of which is two different people.
+async function openWatchlistTab(){
+  if(dwList('cfb').length && typeof ensureCollege==='function' && CFB_STATE!=='loaded'){
+    const h=document.getElementById('wl-cfb');
+    if(h) h.innerHTML='<div style="font-size:12px;color:var(--fog-2);padding:10px 0">Loading college data\u2026</div>';
+    await ensureCollege();
+  }
+  renderWatchlist();
+}
+function wlEmpty(msg){
+  return '<div style="max-width:560px;background:var(--ink-2);border:1px solid var(--line);'
+    +'border-radius:8px;padding:14px 18px;font-size:11.5px;color:var(--fog);line-height:1.55">'+msg+'</div>';
 }
 function renderWatchlist(){
-  const host=document.getElementById('myteam-watchview'); if(!host) return;
-  const names=dwGet();
-  const found=[], missing=[];
-  names.forEach(n=>{ const p=(typeof COMP!=='undefined')&&COMP.find(x=>x.n===n); p?found.push(p):missing.push(n); });
+  const nflHost=document.getElementById('wl-nfl'), cfbHost=document.getElementById('wl-cfb');
+  if(!nflHost||!cfbHost) return;
+
+  // ---- NFL ----
+  const names=dwList('nfl'), found=[], missing=[];
+  names.forEach(n=>{ const pl=(typeof COMP!=='undefined')&&COMP.find(x=>x.n===n); pl?found.push(pl):missing.push(n); });
+  let html='<div class="set-sec" style="margin-bottom:8px">NFL \u2014 '+found.length+'</div>';
   if(!found.length && !missing.length){
-    host.innerHTML='<div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">'
-      +'<div style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Your watchlist is empty</div>'
-      +'<div style="font-size:11.5px;color:var(--fog);line-height:1.55">Open any player \u2014 from the rankings, a trade, or search \u2014 and tap the '
-      +'<span style="color:var(--topaz)">\u2606</span> beside their name to track them here. Saved on this device.</div></div>';
-    return;
+    html+=wlEmpty('No NFL players yet \u2014 open any player card and tap the <span style="color:var(--topaz)">\u2606</span> beside their name.');
+  } else {
+    found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
+    html+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
+      +'<th>\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th>'
+      +'<th class="col-hide-mobile">Age</th><th>Proj PPG</th><th>Mkt Val</th>'
+      +'<th class="col-hide-mobile">Mod Val</th><th>Tag</th><th></th></tr></thead><tbody>'
+      +found.map(pl=>'<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openDeck(this.dataset.name)">'
+        +'<td style="font-weight:800;font-size:14px;color:'+dsColor(pl.dsScore)+'">'+(pl.dsScore!=null?pl.dsScore:'\u2014')+'</td>'
+        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
+        +'<td class="txt">'+pl.pos+'</td>'
+        +'<td class="col-hide-mobile txt">'+pl.t+'</td>'
+        +'<td class="col-hide-mobile">'+(pl.a<90?pl.a.toFixed(1):'-')+'</td>'
+        +'<td style="font-weight:600">'+getAdjProj(pl).toFixed(1)+'</td>'
+        +'<td>'+(pl.ktcEff>0?pl.ktcEff.toLocaleString():'-')+'</td>'
+        +'<td class="col-hide-mobile" style="font-weight:600">'+(mvAsset(pl)>=19999?'19,999+':mvAsset(pl).toLocaleString())+'</td>'
+        +'<td>'+vTag(pl)+'</td>'
+        +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();" '
+        +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>').join('')
+      +'</tbody></table></div>';
+    if(missing.length) html+='<div style="font-size:10.5px;color:var(--topaz);margin-top:9px">\u26a0 '+missing.length
+      +' saved name'+(missing.length>1?'s':'')+' no longer in the player universe: '+missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
   }
-  found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
-  const rows=found.map(p=>'<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)">'
-    +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
-    +'<td class="pname" style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
-    +'<td class="txt">'+p.pos+'</td>'
-    +'<td class="col-hide-mobile txt">'+p.t+'</td>'
-    +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
-    +'<td style="font-weight:600">'+getAdjProj(p).toFixed(1)+'</td>'
-    +'<td>'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
-    +'<td class="col-hide-mobile" style="font-weight:600">'+(mvAsset(p)>=19999?'19,999+':mvAsset(p).toLocaleString())+'</td>'
-    +'<td>'+vTag(p)+'</td>'
-    +'<td><button title="Remove from watchlist" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name);renderWatchlist();" '
-    +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>').join('');
-  let html='<div style="font-size:11px;color:var(--fog-2);margin-bottom:8px">'+found.length+' player'+(found.length===1?'':'s')+' tracked</div>'
-    +'<div style="overflow-x:auto"><table class="dtable"><thead><tr>'
-    +'<th>\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th><th class="col-hide-mobile">Age</th>'
-    +'<th>Proj PPG</th><th>Mkt Val</th><th class="col-hide-mobile">Mod Val</th><th>Tag</th><th></th>'
-    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
-  if(missing.length) html+='<div style="font-size:10.5px;color:var(--topaz);margin-top:10px">\u26a0 '+missing.length
-    +' saved name'+(missing.length>1?'s':'')+' no longer in the player universe (renamed or dropped): '
-    +missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
-  host.innerHTML=html;
+  nflHost.innerHTML=html;
+
+  // ---- College ----
+  const cn=dwList('cfb');
+  let ch='<div class="set-sec" style="margin-bottom:8px">COLLEGE \u2014 '+cn.length+'</div>';
+  if(!cn.length){
+    ch+=wlEmpty('No college players yet \u2014 open the College section and tap the <span style="color:var(--topaz)">\u2606</span> on any row.');
+  } else if(!CFB || !CFB.players){
+    ch+=wlEmpty('College data has not loaded yet. Open the College section once and come back.');
+  } else {
+    const cf=[], cmiss=[];
+    cn.forEach(n=>{ const pl=CFB.players.find(x=>x.n===n); pl?cf.push(pl):cmiss.push(n); });
+    cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
+    ch+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
+      +'<th>Player</th><th>Pos</th><th>Team</th><th>Comp</th><th>Cls</th><th>Stars</th>'
+      +'<th>Yds</th><th class="col-hide-mobile">TD</th><th>RecSh</th><th></th></tr></thead><tbody>'
+      +cf.map(pl=>{
+        const yds=pl.pos==='QB'?(pl.py||0):(pl.rey||0)+(pl.ry||0);
+        const td=(pl.ret||0)+(pl.rt||0)+(pl.pt||0), comp=cfbComp(pl);
+        return '<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
+        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
+        +'<td class="txt" style="font-weight:600">'+pl.pos+'</td>'
+        +'<td class="txt" style="white-space:nowrap">'+(pl.tm||'-')+'</td>'
+        +'<td>'+(comp>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>'
+          :'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+comp.toFixed(2)+'</span>')+'</td>'
+        +'<td class="txt"><span style="font-weight:'+((pl.cls>=3)?'700':'500')+';color:'+((pl.cls>=3)?'var(--sky)':'var(--fog-2)')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
+        +'<td class="txt">'+(pl.stars?pl.stars+'\u2605':'-')+'</td>'
+        +'<td style="font-weight:700">'+(yds||'-')+'</td>'
+        +'<td class="col-hide-mobile">'+(td||'-')+'</td>'
+        +'<td>'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
+        +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();" '
+        +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>';
+      }).join('')+'</tbody></table></div>';
+    if(cmiss.length) ch+='<div style="font-size:10.5px;color:var(--topaz);margin-top:9px">\u26a0 '+cmiss.length
+      +' saved college name'+(cmiss.length>1?'s':'')+' not in the current season file: '+cmiss.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
+  }
+  cfbHost.innerHTML=ch;
 }
 function applySetScoring(v){
   ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=v;});
@@ -2025,7 +2070,6 @@ function deckStar(el){
   const on=dwToggle(n);
   el.textContent=on?'\u2605':'\u2606'; el.style.color=on?'var(--topaz)':'var(--fog-2)';
   if(document.getElementById('pos-rank') && document.getElementById('pos-rank').value==='WL') renderRankings();
-  if(MT_VIEW==='watch') renderWatchlist();
 }
 function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
@@ -2053,12 +2097,12 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','projections','epa','ripple','contracts','audit'],
-                 cfb:['college','rookies'],
-                 me: ['myteam','trade'] };
+const SEC_TABS={ nfl:['rankings','projections','trade','epa','ripple','contracts','audit'],
+                 cfb:['college','portal','rookies'],
+                 me: ['myteam','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
-const DL_LOCKED=new Set(['college','audit']);
+const DL_LOCKED=new Set(['college','portal','audit']);
 let DL_SECTION='nfl';
 
 function dlTabBtn(id){ return document.querySelector('.tab[data-tab="'+id+'"]'); }
@@ -2087,11 +2131,8 @@ function setSection(s, wantTab){
 }
 function dlUnlock(id){ DL_LOCKED.delete(id); if(SEC_OF[id]===DL_SECTION) setSection(DL_SECTION); }
 function tabBtnFor(id){ return [...document.querySelectorAll('.tab')].find(b=>(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>=0); }
-function showWatchlist(){
-  const b=dlTabBtn('rankings'); if(b) showTab('rankings',b);
-  const sel=document.getElementById('pos-rank'); if(sel){ sel.value='WL'; renderRankings(); }
-}
-const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college'];
+function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlist',b); }
+const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -2126,6 +2167,8 @@ function showTab(id,el,skipSection){
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
+  if(id==='portal' && typeof openPortalTab==='function'){ try{ openPortalTab(); }catch(e){ console.warn('portal',e); } }
+  if(id==='watchlist' && typeof openWatchlistTab==='function'){ try{ openWatchlistTab(); }catch(e){ console.warn('watchlist',e); } }
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
 }
@@ -3152,10 +3195,6 @@ document.addEventListener('click', function(e) {
 
 <div id="panel-myteam" class="panel">
   <div class="section-label">My Team</div>
-  <div class="set-row" style="margin-bottom:14px">
-    <button class="set-pill on" id="mt-pill-roster" onclick="setMyTeamView('roster')">Roster</button>
-    <button class="set-pill" id="mt-pill-watch" onclick="setMyTeamView('watch')">Watchlist</button>
-  </div>
   <div id="myteam-rosterview">
   <div id="myteam-connect">
     <div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">
@@ -3171,7 +3210,45 @@ document.addEventListener('click', function(e) {
   </div>
   <div id="myteam-roster" style="display:none"></div>
   </div>
-  <div id="myteam-watchview" style="display:none"></div>
+</div>
+
+<div id="panel-watchlist" class="panel">
+  <div class="section-label">Watchlist</div>
+  <div style="font-size:11.5px;color:var(--fog);max-width:700px;line-height:1.6;margin-bottom:1rem">
+    Everyone you are tracking, NFL and college together — it is one scouting job, so it is one list.
+    The two are shown separately only because the useful columns differ. Saved on this device.
+  </div>
+  <div id="wl-nfl"></div>
+  <div id="wl-cfb" style="margin-top:1.5rem"></div>
+</div>
+
+<div id="panel-portal" class="panel">
+  <div class="section-label">Transfer Portal</div>
+  <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
+    Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
+    level of competition, the target competition he walks into, and the share he vacates behind him.
+    <b style="color:var(--paper)">Facts only</b>: no score, no projection.
+  </div>
+  <div class="set-row" style="margin-bottom:.5rem" id="pt-pos-row">
+    <button class="set-pill on" data-ppos="ALL" onclick="ptSetPos('ALL')">All</button>
+    <button class="set-pill" data-ppos="QB" onclick="ptSetPos('QB')">QB</button>
+    <button class="set-pill" data-ppos="RB" onclick="ptSetPos('RB')">RB</button>
+    <button class="set-pill" data-ppos="WR" onclick="ptSetPos('WR')">WR</button>
+    <button class="set-pill" data-ppos="TE" onclick="ptSetPos('TE')">TE</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
+    <input id="pt-q" oninput="renderPortal()" placeholder="Search name or school…"
+      style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:180px">
+    <select id="pt-move" onchange="renderPortal()" class="set-sel" style="margin-bottom:0;width:auto">
+      <option value="">Any move</option>
+      <option value="up">Stepped up to Power 4</option>
+      <option value="down">Dropped from Power 4</option>
+      <option value="fcs">Came up from FCS</option>
+      <option value="lateral">Same tier</option>
+    </select>
+    <button class="set-pill" id="pt-blue" onclick="ptToggleBlue()" title="4-5 star recruits only">Blue-chip only</button>
+  </div>
+  <div id="pt-body"></div>
 </div>
 
 <div id="panel-college" class="panel">
@@ -3308,7 +3385,7 @@ let CFB=null, CFB_STATE='idle', CFB_POS='ALL', CFB_BLUE=false;
 
 function initCollege(){
   if(typeof DELTA_CFB==='undefined' || !DELTA_CFB) return;
-  dlUnlock('college');
+  dlUnlock('college'); dlUnlock('portal');
 }
 async function ensureCollege(){
   if(CFB_STATE==='loaded'||CFB_STATE==='loading') return CFB_STATE;
@@ -3601,6 +3678,92 @@ function cfbCardStar(el){
   el.textContent=on?'\u2605':'\u2606';
   el.style.color=on?'var(--topaz)':'var(--fog-2)';
   renderCollege();
+}
+
+
+// ── Transfer portal ────────────────────────────────────────────────────────
+// Lazy-loaded like the college universe, and equally inert until opened.
+let PT=null, PT_STATE='idle', PT_POS='ALL', PT_BLUE=false;
+async function ensurePortal(){
+  if(PT_STATE==='loaded'||PT_STATE==='loading') return PT_STATE;
+  PT_STATE='loading';
+  try{
+    const r=await fetch('./data/college-portal.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j||!Array.isArray(j.players)) throw new Error('unexpected shape');
+    PT=j; PT_STATE='loaded';
+  }catch(e){ console.warn('portal data unavailable:',e); PT=null; PT_STATE='error'; }
+  return PT_STATE;
+}
+async function openPortalTab(){
+  const host=document.getElementById('pt-body');
+  if(PT_STATE!=='loaded'){
+    if(host) host.innerHTML='<div style="font-size:12px;color:var(--fog-2);padding:14px">Loading transfer data\u2026</div>';
+    await ensurePortal();
+  }
+  renderPortal();
+}
+function ptSetPos(v){
+  PT_POS=v;
+  document.querySelectorAll('#pt-pos-row .set-pill').forEach(b=>b.classList.toggle('on',b.dataset.ppos===v));
+  renderPortal();
+}
+function ptToggleBlue(){
+  PT_BLUE=!PT_BLUE;
+  const b=document.getElementById('pt-blue'); if(b) b.classList.toggle('on',PT_BLUE);
+  renderPortal();
+}
+function ptMove(p){
+  if(!p.fbs_from) return 'fcs';
+  if(p.tp4 && !p.fp4) return 'up';
+  if(p.fp4 && !p.tp4) return 'down';
+  return 'lateral';
+}
+function renderPortal(){
+  const host=document.getElementById('pt-body'); if(!host) return;
+  if(PT_STATE==='error' || !PT){
+    host.innerHTML='<div style="font-size:12px;color:var(--topaz);border:1px solid var(--line);border-radius:8px;padding:14px">'
+      +'Transfer data isn\u2019t available yet. The weekly pipeline writes <code>data/college-portal.json</code>.</div>';
+    return;
+  }
+  const gv=id=>{const e=document.getElementById(id);return e?e.value:'';};
+  const q=(gv('pt-q')||'').toLowerCase().trim(), mv=gv('pt-move');
+  const rows=PT.players.filter(p=>{
+    if(PT_POS!=='ALL' && p.pos!==PT_POS) return false;
+    if(PT_BLUE && !((p.stars||0)>=4)) return false;
+    if(mv && ptMove(p)!==mv) return false;
+    if(q && p.n.toLowerCase().indexOf(q)<0 && String(p.from||'').toLowerCase().indexOf(q)<0
+         && String(p.to||'').toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  if(!rows.length){
+    host.innerHTML='<div style="font-size:12px;color:var(--fog-2);border:1px solid var(--line);border-radius:8px;padding:16px">No transfers match these filters.</div>';
+    return;
+  }
+  const badge=(txt,col)=>'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;'
+    +'background:'+col+'-tint);color:var('+col+');white-space:nowrap">'+txt+'</span>';
+  const MOVE={ up:['\u2191 to P4','var(--sky)'], down:['\u2193 from P4','var(--coral)'],
+               fcs:['\u2191 from FCS','var(--sky)'], lateral:['\u2192 lateral','var(--fog-2)'] };
+  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
+    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
+    +'<th>Player</th><th>Pos</th><th>From</th><th>To</th>'
+    +'<th data-tip="Level change. Power 4 = SEC, Big Ten, Big 12, ACC. Measured on the 2025 season, P4 players reached the NFL at roughly twice the rate of Group of 5 players.">Move</th>'
+    +'<th>Stars</th><th class="col-hide-mobile">Elig</th><th class="col-hide-mobile">Date</th>'
+    +'</tr></thead><tbody>'
+    +rows.map(p=>{
+      const m=ptMove(p), md=MOVE[m];
+      return '<tr>'
+        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
+        +'<td class="txt" style="font-weight:600">'+p.pos+'</td>'
+        +'<td class="txt" style="white-space:nowrap">'+(p.from||'-')+(p.fbs_from?'':' <span style="font-size:8.5px;color:var(--fog-2)">FCS</span>')+'</td>'
+        +'<td class="txt" style="white-space:nowrap;font-weight:600;color:var(--paper)">'+(p.to||'-')+'</td>'
+        +'<td style="white-space:nowrap"><span style="font-size:9px;font-weight:700;color:'+md[1]+'">'+md[0]+'</span></td>'
+        +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
+        +'<td class="col-hide-mobile txt">'+(p.elig||'-')+'</td>'
+        +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.date||'-')+'</td>'
+        +'</tr>';
+    }).join('')+'</tbody></table></div>';
 }
 
 function initEngineAudit(){
@@ -3991,7 +4154,6 @@ function sleeperDisconnect(){
 
 // ── Tab entry point (lazy init + saved-connection restore) ───
 async function openMyTeamTab(){
-  setMyTeamView(dlPref('delta_mtview')||'roster');
   if(SLP.loaded||SLP.busy){ renderMyTeam(); return; }
   let saved=null;
   try{ saved=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
