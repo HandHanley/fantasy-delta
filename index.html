@@ -419,6 +419,15 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   #panel-college .dtable th, #panel-college .dtable td{padding:4px 4px}
   #panel-portal .dtable, #panel-college .dtable{font-size:11px}
 }
+
+.cfb-about{border:1px solid var(--line);border-radius:8px;background:var(--ink-2);margin-bottom:.85rem}
+.cfb-about summary{list-style:none;cursor:pointer;padding:7px 11px;font-size:10.5px;font-weight:700;
+  letter-spacing:.07em;color:var(--fog-2);text-transform:uppercase}
+.cfb-about summary::-webkit-details-marker{display:none}
+.cfb-about summary::after{content:"+";float:right;font-weight:700;color:var(--fog-2)}
+.cfb-about[open] summary::after{content:"\2013"}
+.cfb-about summary:hover{color:var(--paper)}
+.cfb-about .cfb-about-body{padding:0 11px 11px;font-size:11.5px;color:var(--fog);line-height:1.6;max-width:760px}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -2022,18 +2031,15 @@ function renderWatchlist(){
   } else {
     found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
     html+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-      +'<th>\u0394</th><th>Player</th><th>Pos</th><th class="col-hide-mobile">Team</th>'
-      +'<th class="col-hide-mobile">Age</th><th>Proj PPG</th><th>Mkt Val</th>'
-      +'<th class="col-hide-mobile">Mod Val</th><th>Tag</th><th></th></tr></thead><tbody>'
+      +'<th>\u0394</th><th>Player</th><th>Pos</th><th>Team</th>'
+      +'<th>Proj PPG</th><th>Mkt Val</th><th>Tag</th><th></th></tr></thead><tbody>'
       +found.map(pl=>'<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openDeck(this.dataset.name)">'
         +'<td style="font-weight:800;font-size:14px;color:'+dsColor(pl.dsScore)+'">'+(pl.dsScore!=null?pl.dsScore:'\u2014')+'</td>'
         +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
         +'<td class="txt">'+pl.pos+'</td>'
-        +'<td class="col-hide-mobile txt">'+pl.t+'</td>'
-        +'<td class="col-hide-mobile">'+(pl.a<90?pl.a.toFixed(1):'-')+'</td>'
-        +'<td style="font-weight:600">'+getAdjProj(pl).toFixed(1)+'</td>'
+        +'<td class="txt" style="white-space:nowrap">'+pl.t+'</td>'
+        +'<td style="font-weight:700">'+getAdjProj(pl).toFixed(1)+'</td>'
         +'<td>'+(pl.ktcEff>0?pl.ktcEff.toLocaleString():'-')+'</td>'
-        +'<td class="col-hide-mobile" style="font-weight:600">'+(mvAsset(pl)>=19999?'19,999+':mvAsset(pl).toLocaleString())+'</td>'
         +'<td>'+vTag(pl)+'</td>'
         +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();" '
         +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>').join('')
@@ -2055,22 +2061,21 @@ function renderWatchlist(){
     cn.forEach(n=>{ const pl=CFB.players.find(x=>x.n===n); pl?cf.push(pl):cmiss.push(n); });
     cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
     ch+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-      +'<th>Player</th><th>Pos</th><th>Team</th><th>Comp</th><th>Cls</th><th>Stars</th>'
-      +'<th>Yds</th><th class="col-hide-mobile">TD</th><th>RecSh</th><th></th></tr></thead><tbody>'
+      +'<th>\u2605</th><th>Player</th><th>Pos</th><th>Team</th>'
+      +'<th>Yds</th><th>RecSh</th><th>Cls</th><th></th></tr></thead><tbody>'
       +cf.map(pl=>{
         const yds=pl.pos==='QB'?(pl.py||0):(pl.rey||0)+(pl.ry||0);
         const td=(pl.ret||0)+(pl.rt||0)+(pl.pt||0), comp=cfbComp(pl);
         return '<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
+        +'<td style="font-weight:800;font-size:14px;color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
+          +(pl.stars?pl.stars+'\u2605':'\u2014')+'</td>'
         +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
         +'<td class="txt" style="font-weight:600">'+pl.pos+'</td>'
-        +'<td class="txt" style="white-space:nowrap">'+(pl.tm||'-')+'</td>'
-        +'<td>'+(comp>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>'
-          :'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+comp.toFixed(2)+'</span>')+'</td>'
-        +'<td class="txt"><span style="font-weight:'+((pl.cls>=3)?'700':'500')+';color:'+((pl.cls>=3)?'var(--sky)':'var(--fog-2)')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
-        +'<td class="txt">'+(pl.stars?pl.stars+'\u2605':'-')+'</td>'
+        +'<td class="txt" style="white-space:nowrap">'+(pl.tm||'-')
+          +(comp<1?' <span style="font-size:8.5px;font-weight:700;padding:1px 4px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
         +'<td style="font-weight:700">'+(yds||'-')+'</td>'
-        +'<td class="col-hide-mobile">'+(td||'-')+'</td>'
         +'<td>'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
+        +'<td class="txt"><span style="font-weight:'+((pl.cls>=3)?'700':'500')+';color:'+((pl.cls>=3)?'var(--sky)':'var(--fog-2)')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
         +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();" '
         +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>';
       }).join('')+'</tbody></table></div>';
@@ -3122,9 +3127,7 @@ document.addEventListener('click', function(e) {
 
 <!-- DELTA Deck — Player Card Modal -->
 <div id="panel-rookies" class="panel cfb-mark">
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
-    <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
-  </div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">2026 ROOKIE PROSPECT BOARD</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">PRE-LANDING MODEL · DRAFT CAPITAL WEIGHTED</div></div></div>
 
   <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
@@ -3249,21 +3252,28 @@ document.addEventListener('click', function(e) {
 
 <div id="panel-watchlist" class="panel">
   <div class="section-label">Watchlist</div>
-  <div style="font-size:11.5px;color:var(--fog);max-width:700px;line-height:1.6;margin-bottom:1rem">
-    Everyone you are tracking, NFL and college together — it is one scouting job, so it is one list.
-    The two are shown separately only because the useful columns differ. Saved on this device.
-  </div>
+  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Everyone you are tracking, NFL and college together — it is one scouting job, so it is one list.
+    The two are shown separately only because the useful columns differ. Saved on this device.</div></details>
   <div id="wl-nfl"></div>
   <div id="wl-cfb" style="margin-top:1.5rem"></div>
 </div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="cfbOStroke" x1="0.05" y1="0.25" x2="0.95" y2="0.75">
+    <stop offset="0" stop-color="#2DD4BF"/><stop offset="0.5" stop-color="#14B8A6"/><stop offset="1" stop-color="#059669"/>
+  </linearGradient>
+  <linearGradient id="cfbOCore" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#EAFFFB"/><stop offset="1" stop-color="#5EEAD4"/>
+  </linearGradient>
+  <filter id="cfbOGlow" x="-50%" y="-50%" width="200%" height="200%">
+    <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
+  </filter>
+</defs></svg>
 <div id="panel-portal" class="panel cfb-mark">
-  <div class="section-label">Transfer Portal</div>
-  <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
-    Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">TRANSFER PORTAL</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">SKILL POSITIONS · FBS DESTINATIONS</div></div></div>
+  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
-    <b style="color:var(--paper)">Facts only</b>: no score, no projection.
-  </div>
+    <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="pt-pos-row">
     <button class="set-pill on" data-ppos="ALL" onclick="ptSetPos('ALL')">All</button>
     <button class="set-pill" data-ppos="QB" onclick="ptSetPos('QB')">QB</button>
@@ -3293,17 +3303,6 @@ document.addEventListener('click', function(e) {
        Gradient and geometry are verbatim from the guide - never recolored, never rotated. -->
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem">
     <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block">
-      <defs>
-        <linearGradient id="cfbOStroke" x1="0.05" y1="0.25" x2="0.95" y2="0.75">
-          <stop offset="0" stop-color="#2DD4BF"/><stop offset="0.5" stop-color="#14B8A6"/><stop offset="1" stop-color="#059669"/>
-        </linearGradient>
-        <linearGradient id="cfbOCore" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#EAFFFB"/><stop offset="1" stop-color="#5EEAD4"/>
-        </linearGradient>
-        <filter id="cfbOGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
-        </filter>
-      </defs>
       <g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round">
         <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/>
         <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/>
@@ -3318,11 +3317,9 @@ document.addEventListener('click', function(e) {
       <div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">FBS SKILL PLAYERS · PRODUCTION ONLY</div>
     </div>
   </div>
-  <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
-    Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
+  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
     college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
-    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.
-  </div>
+    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.</div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="cfb-pos-row">
     <button class="set-pill on" data-cpos="ALL" onclick="cfbSetPos('ALL')">All</button>
     <button class="set-pill" data-cpos="QB" onclick="cfbSetPos('QB')">QB</button>
