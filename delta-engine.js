@@ -2659,7 +2659,48 @@ function getDeltas(name,pos,sys,cont,yprr,snap,col,epa_sc,ripple,qbq){
   return d_sys_APPLIED+d_oc_APPLIED+d_role+d_col+d_epa+d_rip+d_qbq+d_ts+d_style;
 }
 
+// ── Rookie baseline projections ────────────────────────────────────────────
+// Median rookie-year PPG (0.5 PPR + TE premium) by position and draft capital,
+// computed from every drafted skill player 2015-2025 who played at least one game
+// (874 picks, 718 with a rookie season). Medians, not means, so one Puka Nacua does
+// not lift an entire tier. Rows are forced non-increasing as capital falls: thin
+// buckets (TE top-10 n=3, QB Rd2 n=5) produced noise like "Rd2 QB > Rd1 QB", and a
+// later pick should never project above an earlier one at the same position.
+//
+// Pre-registered test, fit on 2015-2022 and scored on held-out 2023-2025:
+//   flat 8.0 fallback (incumbent) RMSE 5.390
+//   position median only          RMSE 4.440   (17.6% better)
+//   position x capital            RMSE 3.776   (29.9% better)   <- shipped
+// Ship gate was >=2%. This replaces a literal 8.0 that had no player information in
+// it at all, which is why 63 of 81 prospects were being priced as injured veterans.
+const ROOKIE_PPG = {
+  QB: [15.20, 12.91, 12.91,  8.00, 5.44],
+  RB: [15.22, 12.73, 10.79,  6.00, 3.18],
+  TE: [10.32,  8.59,  4.93,  3.12, 3.12],
+  WR: [ 9.39,  7.09,  6.16,  3.69, 1.74],
+};
+function rookieTier(pick){
+  return pick<=10 ? 0 : pick<=32 ? 1 : pick<=64 ? 2 : pick<=105 ? 3 : 4;
+}
+function rookieBaseline(pl){
+  // Undrafted or unknown capital gets nothing — the caller keeps its old behaviour
+  // rather than inventing a number for a player we have no draft information about.
+  let di=null;
+  try{ di = (typeof dsDraftInfo==='function') ? dsDraftInfo(pl.n) : null; }catch(e){}
+  if(!di || di.pick==null) return null;
+  const row = ROOKIE_PPG[pl.p];
+  return row ? row[rookieTier(di.pick)] : null;
+}
+
 function calcProj(pl){
+  // A true rookie has no NFL history at all. Supply the draft-capital baseline as its
+  // forward projection so the rookie override below fires; otherwise it falls to a
+  // literal 8.0 AND takes the veteran stale-production discount, which is meant for
+  // players whose past production is unconfirmed, not players who have none.
+  if((pl.g25||0)===0 && !(pl.ppg25>0) && !(pl.ppg24>0) && !(pl.ppg23>0)){
+    const rb=rookieBaseline(pl);
+    if(rb) pl={...pl, ppg25: rb};
+  }
   const e=getEff(pl);
   const age=parseFloat(pl.a)||26;
   const agM=am(pl.p,Math.floor(age));
