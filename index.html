@@ -2687,10 +2687,38 @@ function deckSearchInput(){
   const q=(document.getElementById('deck-search').value||'').toLowerCase().trim();
   const drop=document.getElementById('deck-drop');
   if(!q){drop.style.display='none';return;}
+  // College data is lazy-loaded, so a search made before the College section has been
+  // opened would silently miss every college player. Kick off the fetch on first use
+  // and re-render when it lands — a search that sometimes misses is worse than one
+  // that takes a moment.
+  if(typeof ensureCollege==='function' && CFB_STATE==='idle'){
+    ensureCollege().then(()=>{ const el=document.getElementById('deck-search');
+      if(el && (el.value||'').toLowerCase().trim()===q) deckSearchInput(); }).catch(()=>{});
+  }
   const matches=COMP.filter(p=>p.n.toLowerCase().includes(q)||
     p.pos.toLowerCase()===q||p.t.toLowerCase()===q)
-    .sort((a,b)=>b.ktcEff-a.ktcEff).slice(0,8);
-  if(!matches.length){drop.style.display='none';return;}
+    .sort((a,b)=>b.ktcEff-a.ktcEff).slice(0,6);
+  // College results are appended and visually marked, so a college junior can never be
+  // mistaken for an NFL asset. Anyone already in the NFL list is skipped — 52 of the 53
+  // shared names are the same human, and showing him twice helps nobody.
+  const seen=new Set(matches.map(m=>m.n));
+  let cfbMatches=[];
+  if(typeof CFB!=='undefined' && CFB && CFB.players){
+    cfbMatches=CFB.players.filter(c=>!seen.has(c.n) &&
+      (c.n.toLowerCase().includes(q) || String(c.tm||'').toLowerCase().includes(q)))
+      .sort((a,b)=>cfbScout(b)-cfbScout(a)).slice(0,4);
+  }
+  if(!matches.length && !cfbMatches.length){drop.style.display='none';return;}
+  const cfbRows=cfbMatches.map(c=>{
+    const yds=c.pos==='QB'?(c.py||0):(c.rey||0)+(c.ry||0);
+    return `<div class="drop-item" data-cfb="${c.n.replace(/"/g,'&quot;')}"
+      onclick="deckSearchSelectCfb(this.dataset.cfb)"
+      style="display:flex;justify-content:space-between;align-items:center">
+      <div><span style="font-weight:600;font-size:12px">${c.n}</span>
+        <span style="font-size:9px;font-weight:700;color:var(--teal-br);border:1px solid var(--teal-br);border-radius:3px;padding:0 3px;margin-left:5px">CFB</span>
+        <span style="font-size:10px;color:var(--fog-2);margin-left:5px">${c.pos} \u00b7 ${c.tm||''}</span></div>
+      <span style="font-size:10px;color:var(--fog-2)">${yds} yds</span></div>`;
+  }).join('');
   drop.innerHTML=matches.map((p,i)=>{
     const mv=mvAsset(p);
     const ratio=mv/Math.max(p.ktcEff,1);
@@ -2710,6 +2738,7 @@ function deckSearchInput(){
       </div>
     </div>`;
   }).join('');
+  drop.innerHTML+=cfbRows;
   drop.style.display='block';
 }
 
@@ -2725,6 +2754,12 @@ function deckSearchKey(e){
   }
 }
 
+function deckSearchSelectCfb(name){
+  document.getElementById('deck-search').value='';
+  document.getElementById('deck-drop').style.display='none';
+  const b=dlTabBtn('college'); if(b) showTab('college',b);
+  setTimeout(()=>{ try{ openCfbCard(name); }catch(e){} }, 120);
+}
 function deckSearchSelect(name){
   document.getElementById('deck-drop').style.display='none';
   document.getElementById('deck-search').value='';
@@ -2881,7 +2916,7 @@ function renderRookieBoard(posFilter) {
       <div style="display:flex;align-items:center;gap:10px">
         <div style="min-width:44px;height:44px;border-radius:8px;background:${sc}22;border:1px solid ${sc}55;display:flex;flex-direction:column;align-items:center;justify-content:center">
           <div style="font-size:16px;font-weight:800;color:${sc};line-height:1">${p.ds}</div>
-          <div style="font-size:7px;color:${sc}99;font-weight:600">DELTA</div>
+          <div style="font-size:6.5px;color:${sc}99;font-weight:600;letter-spacing:.02em">PROSPECT</div>
         </div>
         <div style="flex:1 1 190px;min-width:0">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap">
