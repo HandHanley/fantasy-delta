@@ -395,21 +395,6 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 .eb-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 @media(min-width:760px){ .seg{display:none} .eyebrow{display:flex} }
 
-/* ── College section watermark ──────────────────────────────────────────────
-   The style guide names "watermark" as a use of the OUTLINE finish, which makes this
-   the in-brand way to mark the whole section rather than repeating the mark on every
-   panel. Rendered at 240px (well clear of the 40px floor for outline), anchored to the
-   panel's top-right, behind content, and non-interactive. Opacity is deliberately at
-   the threshold of noticing: it should register as "you are in College" without ever
-   competing with a number. */
-.panel.cfb-mark{position:relative}
-.panel.cfb-mark::before{
-  content:"";position:absolute;top:-6px;right:-10px;width:240px;height:240px;
-  background:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMyREQ0QkYiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTY0IDIyIEwyNCAxMDYgTDEwNCAxMDYgWiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PC9nPjxsaW5lIHgxPSI2NCIgeTE9IjMyIiB4Mj0iNjQiIHkyPSIxMDIiIHN0cm9rZT0iIzJERDRCRiIgc3Ryb2tlLXdpZHRoPSIxLjYiLz48ZyBzdHJva2U9IiMyREQ0QkYiIHN0cm9rZS13aWR0aD0iMi40IiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxsaW5lIHgxPSI1OCIgeTE9IjUyIiB4Mj0iNzAiIHkyPSI1MiIvPjxsaW5lIHgxPSI1NSIgeTE9IjcwIiB4Mj0iNzMiIHkyPSI3MCIvPjxsaW5lIHgxPSI1MiIgeTE9Ijg4IiB4Mj0iNzYiIHkyPSI4OCIvPjwvZz48L3N2Zz4=") no-repeat center/contain;
-  opacity:.045;pointer-events:none;z-index:0}
-.panel.cfb-mark > *{position:relative;z-index:1}
-@media(max-width:700px){ .panel.cfb-mark::before{width:150px;height:150px;opacity:.05} }
-@media(prefers-reduced-motion:no-preference){ .panel.cfb-mark::before{transition:opacity .3s} }
 
 /* Data tables are width:100% with generous padding, which is right on a desktop and
    forces needless horizontal scrolling on a phone. Tighten the gutters on small
@@ -3130,8 +3115,8 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- DELTA Deck — Player Card Modal -->
-<div id="panel-rookies" class="panel cfb-mark">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">2026 ROOKIE PROSPECT BOARD</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">PRE-LANDING MODEL · DRAFT CAPITAL WEIGHTED</div></div></div>
+<div id="panel-rookies" class="panel">
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">2026 Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
 
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body"><div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
@@ -3273,8 +3258,8 @@ document.addEventListener('click', function(e) {
     <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
   </filter>
 </defs></svg>
-<div id="panel-portal" class="panel cfb-mark">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">TRANSFER PORTAL</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">SKILL POSITIONS · FBS DESTINATIONS</div></div></div>
+<div id="panel-portal" class="panel">
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Who moved, and what changed</div></div></div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
     <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
@@ -3300,7 +3285,7 @@ document.addEventListener('click', function(e) {
   <div id="pt-body"></div>
 </div>
 
-<div id="panel-college" class="panel cfb-mark">
+<div id="panel-college" class="panel">
   <!-- Outline finish of the brand mark, per the style guide: "hero · watermark · merch · >=40px".
        Rendered at 46px so it clears that floor. Same silhouette as the solid mark so it still
        registers as DELTA; the hollow read is the visual note that separates college from NFL.
@@ -3317,8 +3302,8 @@ document.addEventListener('click', function(e) {
       </g>
     </svg>
     <div>
-      <div class="section-label" style="margin:0">College — Tracking</div>
-      <div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">FBS SKILL PLAYERS · PRODUCTION ONLY</div>
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">College Tracking</div>
+      <div style="font-size:11px;color:var(--fog-2);margin-top:2px">Know them before the draft</div>
     </div>
   </div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
