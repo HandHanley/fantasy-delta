@@ -30,6 +30,7 @@ except ImportError:
 KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
 YEAR  = int(os.environ.get("CFBD_YEAR")  or 2025)
 WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)
+PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
 QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
          "RB": int(os.environ.get("Q_RB") or 110),
          "WR": int(os.environ.get("Q_WR") or 160),
@@ -98,7 +99,7 @@ with cfbd.ApiClient(cfg) as api:
     # dynasty event: his competition level, his target competition and his old team's
     # vacated share all change at once. One call; emitted as a separate file so the
     # main universe payload stays lean.
-    portal = call("GET /player/portal", players_api.get_transfer_portal, year=YEAR)
+    portal = call(f"GET /player/portal {PORTAL_YEAR}", players_api.get_transfer_portal, year=PORTAL_YEAR)
 
     # Recruiting classes still on a 2025 roster: a true freshman was a 2025 recruit,
     # a 5th-year was ~2021. Pull the window so the pedigree door has data.
@@ -350,7 +351,7 @@ for r in (portal or []):
         "date": (str(g(r, "transfer_date"))[:10] if g(r, "transfer_date") else None),
     })
 port_rows.sort(key=lambda x: (-(x["stars"] or 0), x["n"]))
-pout = {"generated": out["generated"], "season": YEAR,
+pout = {"generated": out["generated"], "season": PORTAL_YEAR,
         "note": ("Skill-position transfers landing at an FBS school. fp4/tp4 mark Power-4 "
                  "origin/destination; fbs_from=0 means he came up from FCS. Facts only \u2014 "
                  "no score, no projection."),
