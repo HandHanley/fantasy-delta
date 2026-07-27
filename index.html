@@ -410,6 +410,15 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 .panel.cfb-mark > *{position:relative;z-index:1}
 @media(max-width:700px){ .panel.cfb-mark::before{width:150px;height:150px;opacity:.05} }
 @media(prefers-reduced-motion:no-preference){ .panel.cfb-mark::before{transition:opacity .3s} }
+
+/* Data tables are width:100% with generous padding, which is right on a desktop and
+   forces needless horizontal scrolling on a phone. Tighten the gutters on small
+   screens rather than hiding columns that carry the actual signal. */
+@media(max-width:600px){
+  #panel-portal .dtable th, #panel-portal .dtable td,
+  #panel-college .dtable th, #panel-college .dtable td{padding:4px 4px}
+  #panel-portal .dtable, #panel-college .dtable{font-size:11px}
+}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -2141,7 +2150,7 @@ function setSection(s, wantTab){
     if(show) vis.push(b);
   });
   if(!vis.length) return;
-  const remembered=dlPref('delta_lasttab_'+s);
+  const remembered=dlPref('delta_lasttab2_'+s);   // v2: retires values written under the old ordering bug
   // Fall back through SEC_TABS order, not DOM order — the intended first tab of a
   // section should not depend on where its button happens to sit in the markup.
   const byOrder = SEC_TABS[s].map(id=>vis.find(b=>b.dataset.tab===id)).filter(Boolean);
@@ -2178,7 +2187,7 @@ function showTab(id,el,skipSection){
   }
   try{
     if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id);
-    if(SEC_OF[id]) dlPref('delta_lasttab_'+SEC_OF[id],id);
+    if(SEC_OF[id]) dlPref('delta_lasttab2_'+SEC_OF[id],id);
   }catch(e){}
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -2880,17 +2889,17 @@ function renderRookieBoard(posFilter) {
           <div style="font-size:16px;font-weight:800;color:${sc};line-height:1">${p.ds}</div>
           <div style="font-size:7px;color:${sc}99;font-weight:600">DELTA</div>
         </div>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-            <span style="font-size:14px;font-weight:700;color:var(--paper)">${p.n}</span>
+        <div style="flex:1 1 190px;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:700;color:var(--paper);overflow-wrap:anywhere">${p.n}</span>
             <span class="watch-star" data-name="${p.n}" style="cursor:pointer;font-size:16px;padding:0 4px;color:${isWatched(p.n)?'var(--topaz)':'var(--fog-2)'}">${isWatched(p.n)?'★':'☆'}</span>
             <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>${p.drafted?`<span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--ink-2);color:var(--sky)">${p.team}</span>`:''}
             <span style="font-size:10px;color:${rdColor};background:${rdColor}22;padding:1px 6px;border-radius:4px;font-weight:600">Rd${p.pr} #${p.pp}</span>
           </div>
           <div style="font-size:11px;color:var(--fog)">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${sc}">${sl}</div>
+        <div style="text-align:right;flex:0 0 auto;min-width:0">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${sc};white-space:nowrap">${sl}</div>
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
             <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
               <div style="font-size:10px;font-weight:700;color:var(--sky)">${p.cap}</div>
@@ -3791,7 +3800,7 @@ function renderPortal(){
                fcs:['\u2191 from FCS','var(--sky)'], lateral:['\u2192 lateral','var(--fog-2)'] };
   host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
     +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-    +'<th>Player</th><th>Pos</th><th>From</th><th>To</th>'
+    +'<th>Player</th><th>Pos</th><th data-tip="Origin school above, destination below.">Transfer</th>'
     +'<th data-tip="Level change. Power 4 = SEC, Big Ten, Big 12, ACC. Measured on the 2025 season, P4 players reached the NFL at roughly twice the rate of Group of 5 players.">Move</th>'
     +'<th>Stars</th><th class="col-hide-mobile">Elig</th><th class="col-hide-mobile">Date</th>'
     +'</tr></thead><tbody>'
@@ -3800,8 +3809,10 @@ function renderPortal(){
       return '<tr>'
         +'<td class="pname" style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
         +'<td class="txt" style="font-weight:600">'+p.pos+'</td>'
-        +'<td class="txt" style="white-space:nowrap">'+(p.from||'-')+(p.fbs_from?'':' <span style="font-size:8.5px;color:var(--fog-2)">FCS</span>')+'</td>'
-        +'<td class="txt" style="white-space:nowrap;font-weight:600;color:var(--paper)">'+(p.to||'-')+'</td>'
+        +'<td class="txt" style="line-height:1.35;min-width:104px">'
+          +'<div style="font-size:10.5px;color:var(--fog-2);white-space:nowrap">'+(p.from||'-')
+          +(p.fbs_from?'':' <span style="font-size:8px">FCS</span>')+'</div>'
+          +'<div style="font-weight:600;color:var(--paper);white-space:nowrap">\u2192 '+(p.to||'-')+'</div></td>'
         +'<td style="white-space:nowrap"><span style="font-size:9px;font-weight:700;color:'+md[1]+'">'+md[0]+'</span></td>'
         +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
         +'<td class="col-hide-mobile txt">'+(p.elig||'-')+'</td>'
