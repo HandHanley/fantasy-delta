@@ -420,14 +420,15 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   #panel-portal .dtable, #panel-college .dtable{font-size:11px}
 }
 
-.cfb-about{border:1px solid var(--line);border-radius:8px;background:var(--ink-2);margin-bottom:.85rem}
-.cfb-about summary{list-style:none;cursor:pointer;padding:7px 11px;font-size:10.5px;font-weight:700;
-  letter-spacing:.07em;color:var(--fog-2);text-transform:uppercase}
+.cfb-about{border:none;background:none;margin:0 0 .7rem}
+.cfb-about summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;
+  padding:2px 8px;border:1px solid var(--line);border-radius:20px;background:var(--ink-2);
+  font-size:9.5px;font-weight:600;letter-spacing:.05em;color:var(--fog-2);text-transform:uppercase}
 .cfb-about summary::-webkit-details-marker{display:none}
-.cfb-about summary::after{content:"+";float:right;font-weight:700;color:var(--fog-2)}
+.cfb-about summary::after{content:"+";font-weight:700;font-size:11px;line-height:1}
 .cfb-about[open] summary::after{content:"\2013"}
-.cfb-about summary:hover{color:var(--paper)}
-.cfb-about .cfb-about-body{padding:0 11px 11px;font-size:11.5px;color:var(--fog);line-height:1.6;max-width:760px}
+.cfb-about summary:hover{color:var(--paper);border-color:var(--fog-2)}
+.cfb-about .cfb-about-body{padding:9px 2px 0;font-size:11.5px;color:var(--fog);line-height:1.6;max-width:760px}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -569,6 +570,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
       <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
     </div>
+    <div class="set-sec">DATA</div>
+    <div id="set-fresh" style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:14px"></div>
     <div style="border-top:1px solid var(--line);padding-top:12px">
       <button class="set-pill" onclick="closeSettings();openAbout()" style="width:100%;justify-content:center">About DELTA</button>
     </div>
@@ -2112,6 +2115,7 @@ function toggleSettings(e){
     const sel=document.getElementById('landing-pref');
     if(sel) sel.value=dlPref('delta_landing')||'rankings';
     dlThemeApply(dlPref('delta_theme')||'teal');
+    const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
     const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
     const st=document.getElementById('lg-teams-set'); if(st) st.value=String(leagueTeams);
     const sq=document.getElementById('lg-qb-set');    if(sq) sq.value=qbFmt;
@@ -3129,9 +3133,9 @@ document.addEventListener('click', function(e) {
 <div id="panel-rookies" class="panel cfb-mark">
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">2026 ROOKIE PROSPECT BOARD</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">PRE-LANDING MODEL · DRAFT CAPITAL WEIGHTED</div></div></div>
 
-  <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
+  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body"><div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
-  </div>
+  </div></div></details>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--sky);background:var(--sky);color:#fff;font-size:12px;cursor:pointer;font-weight:600">All</button>
     <button class="pos-filter-btn" onclick="filterRookies('QB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">QB</button>
@@ -3252,7 +3256,7 @@ document.addEventListener('click', function(e) {
 
 <div id="panel-watchlist" class="panel">
   <div class="section-label">Watchlist</div>
-  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Everyone you are tracking, NFL and college together — it is one scouting job, so it is one list.
+  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Everyone you are tracking, NFL and college together — it is one scouting job, so it is one list.
     The two are shown separately only because the useful columns differ. Saved on this device.</div></details>
   <div id="wl-nfl"></div>
   <div id="wl-cfb" style="margin-top:1.5rem"></div>
@@ -3271,7 +3275,7 @@ document.addEventListener('click', function(e) {
 </defs></svg>
 <div id="panel-portal" class="panel cfb-mark">
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="section-label" style="margin:0">TRANSFER PORTAL</div><div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">SKILL POSITIONS · FBS DESTINATIONS</div></div></div>
-  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
+  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
     <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="pt-pos-row">
@@ -3317,7 +3321,7 @@ document.addEventListener('click', function(e) {
       <div style="font-size:10.5px;color:var(--fog-2);letter-spacing:.04em;margin-top:2px">FBS SKILL PLAYERS · PRODUCTION ONLY</div>
     </div>
   </div>
-  <details class="cfb-about"><summary>About this tab</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
+  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
     college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
     that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.</div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="cfb-pos-row">
@@ -3377,29 +3381,25 @@ document.addEventListener('click', function(e) {
 <script>
 
 function showDataFreshness(fetchedAt, playerCount, staleCount) {
+  // Renders into the Settings panel rather than a floating badge. The old version was
+  // position:fixed bottom-right at z-index 999 and covered the last row of every list.
   const date = new Date(fetchedAt);
   const hoursAgo = Math.round((Date.now() - date.getTime()) / 3600000);
-  const label = hoursAgo < 2 ? 'Just updated' : 
-                hoursAgo < 24 ? `${hoursAgo}h ago` : 
-                `${Math.round(hoursAgo/24)}d ago`;
-
-  // Find or create a freshness badge
-  let badge = document.getElementById('delta-freshness');
-  if (!badge) {
-    badge = document.createElement('div');
-    badge.id = 'delta-freshness';
-    badge.style.cssText = [
-      'position:fixed', 'bottom:12px', 'right:12px',
-      'background:var(--ink-2)', 'border:1px solid var(--line)',
-      'border-radius:6px', 'padding:5px 10px',
-      'font-size:10px', 'color:var(--sky)',
-      'font-weight:600', 'z-index:999',
-      'letter-spacing:0.5px'
-    ].join(';');
-    document.body.appendChild(badge);
-  }
-  badge.innerHTML = `Mkt values: ${label}${playerCount > 0 ? ' · ' + playerCount + ' players' : ''}` +
-    (staleCount > 0 ? ` · <span style="color:var(--topaz)" title="Players not in the latest FantasyCalc fetch — their baked market value may be stale">${staleCount} stale</span>` : '');
+  const label = hoursAgo < 2 ? 'Just updated'
+              : hoursAgo < 24 ? `${hoursAgo}h ago`
+              : `${Math.round(hoursAgo/24)}d ago`;
+  DL_FRESH = { label, playerCount, staleCount };
+  const el = document.getElementById('set-fresh');
+  if (el) el.innerHTML = dlFreshHtml();
+  const old = document.getElementById('delta-freshness');   // retire any stale badge
+  if (old) old.remove();
+}
+function dlFreshHtml(){
+  if(!DL_FRESH) return '<span style="color:var(--fog-2)">Market values: loading\u2026</span>';
+  const f=DL_FRESH;
+  return 'Market values <b style="color:var(--paper)">'+f.label+'</b>'
+    + (f.playerCount>0 ? ' \u00b7 '+f.playerCount+' players' : '')
+    + (f.staleCount>0 ? ' \u00b7 <span style="color:var(--topaz)">'+f.staleCount+' stale</span>' : '');
 }
 
 // ── KICK IT OFF ───────────────────────────────────────────────────────────
@@ -3414,6 +3414,7 @@ function showDataFreshness(fetchedAt, playerCount, staleCount) {
 // Gated, lazy-loaded and fully isolated: the data file is fetched only when the tab
 // is first opened, and every entry point is wrapped so a college failure degrades to
 // "tab doesn't render" instead of taking the app down.
+let DL_FRESH=null;
 let CFB=null, CFB_STATE='idle', CFB_POS='ALL', CFB_BLUE=false;
 
 function initCollege(){ /* College is no longer gated; kept as a hook. */ }
