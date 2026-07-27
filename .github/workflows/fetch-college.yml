@@ -15,6 +15,10 @@ on:
         description: "Weeks to pull"
         required: false
         default: "16"
+      portal_year:
+        description: "Transfer portal year (defaults to the season above; use the UPCOMING season to see who just moved)"
+        required: false
+        default: ""
   schedule:
     # Tuesdays 09:00 UTC — after the weekend's games are finalised.
     - cron: "0 9 * * 2"
@@ -40,6 +44,7 @@ jobs:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
           CFBD_YEAR: ${{ github.event.inputs.year || '2026' }}
           CFBD_WEEKS: ${{ github.event.inputs.weeks || '16' }}
+          CFBD_PORTAL_YEAR: ${{ github.event.inputs.portal_year }}
         run: python scripts/fetch-college.py
 
       - name: Commit if changed
