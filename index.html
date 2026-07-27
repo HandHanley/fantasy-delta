@@ -394,6 +394,22 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 .eb-btn:hover:not(.on){color:var(--fog)}
 .eb-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 @media(min-width:760px){ .seg{display:none} .eyebrow{display:flex} }
+
+/* ── College section watermark ──────────────────────────────────────────────
+   The style guide names "watermark" as a use of the OUTLINE finish, which makes this
+   the in-brand way to mark the whole section rather than repeating the mark on every
+   panel. Rendered at 240px (well clear of the 40px floor for outline), anchored to the
+   panel's top-right, behind content, and non-interactive. Opacity is deliberately at
+   the threshold of noticing: it should register as "you are in College" without ever
+   competing with a number. */
+.panel.cfb-mark{position:relative}
+.panel.cfb-mark::before{
+  content:"";position:absolute;top:-6px;right:-10px;width:240px;height:240px;
+  background:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMyREQ0QkYiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTY0IDIyIEwyNCAxMDYgTDEwNCAxMDYgWiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PC9nPjxsaW5lIHgxPSI2NCIgeTE9IjMyIiB4Mj0iNjQiIHkyPSIxMDIiIHN0cm9rZT0iIzJERDRCRiIgc3Ryb2tlLXdpZHRoPSIxLjYiLz48ZyBzdHJva2U9IiMyREQ0QkYiIHN0cm9rZS13aWR0aD0iMi40IiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxsaW5lIHgxPSI1OCIgeTE9IjUyIiB4Mj0iNzAiIHkyPSI1MiIvPjxsaW5lIHgxPSI1NSIgeTE9IjcwIiB4Mj0iNzMiIHkyPSI3MCIvPjxsaW5lIHgxPSI1MiIgeTE9Ijg4IiB4Mj0iNzYiIHkyPSI4OCIvPjwvZz48L3N2Zz4=") no-repeat center/contain;
+  opacity:.045;pointer-events:none;z-index:0}
+.panel.cfb-mark > *{position:relative;z-index:1}
+@media(max-width:700px){ .panel.cfb-mark::before{width:150px;height:150px;opacity:.05} }
+@media(prefers-reduced-motion:no-preference){ .panel.cfb-mark::before{transition:opacity .3s} }
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -482,11 +498,11 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
   <button data-tab="ripple" data-sec="nfl" class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
+  <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
-  <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
@@ -2124,9 +2140,12 @@ function setSection(s, wantTab){
   });
   if(!vis.length) return;
   const remembered=dlPref('delta_lasttab_'+s);
+  // Fall back through SEC_TABS order, not DOM order — the intended first tab of a
+  // section should not depend on where its button happens to sit in the markup.
+  const byOrder = SEC_TABS[s].map(id=>vis.find(b=>b.dataset.tab===id)).filter(Boolean);
   const target = (wantTab && vis.find(b=>b.dataset.tab===wantTab))
               || vis.find(b=>b.dataset.tab===remembered)
-              || vis[0];
+              || byOrder[0] || vis[0];
   showTab(target.dataset.tab, target, true);
 }
 function dlUnlock(id){ DL_LOCKED.delete(id); if(SEC_OF[id]===DL_SECTION) setSection(DL_SECTION); }
@@ -2270,6 +2289,10 @@ function renderDeck(p){
   }
   else { hsEl.style.display='none'; hsEl.src=''; hsEl.onload=null; }
   document.getElementById('dd-card').dataset.player=p.n;
+  { const h=document.getElementById('dd-college'); if(h) h.innerHTML=''; }
+  if(typeof DELTA_CFB!=='undefined' && DELTA_CFB && (p.g25||0)===0 && (p.ppg24||0)===0 && (p.ppg23||0)===0){
+    ensureCollegeQuiet().then(()=>renderDeckCollege(p.n)).catch(()=>{});
+  }
   { const s=document.getElementById('dd-star'), on=dwHas(p.n);
     if(s){ s.textContent=on?'\u2605':'\u2606'; s.style.color=on?'var(--topaz)':'var(--fog-2)'; } }
   // Score animations fire after innerHTML renders
@@ -3087,7 +3110,7 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- DELTA Deck — Player Card Modal -->
-<div id="panel-rookies" class="panel">
+<div id="panel-rookies" class="panel cfb-mark">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
     <div class="section-label" style="margin-bottom:0">2026 Rookie Prospect Board</div>
   </div>
@@ -3183,6 +3206,7 @@ document.addEventListener('click', function(e) {
               style="cursor:pointer;font-size:17px;line-height:1;color:var(--fog-2)">&#9734;</span>
           </div>
           <div class="dd-meta" id="dd-meta"></div>
+          <div id="dd-college"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -3222,7 +3246,7 @@ document.addEventListener('click', function(e) {
   <div id="wl-cfb" style="margin-top:1.5rem"></div>
 </div>
 
-<div id="panel-portal" class="panel">
+<div id="panel-portal" class="panel cfb-mark">
   <div class="section-label">Transfer Portal</div>
   <div style="font-size:11.5px;color:var(--fog);max-width:760px;line-height:1.6;margin-bottom:.9rem">
     Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
@@ -3251,7 +3275,7 @@ document.addEventListener('click', function(e) {
   <div id="pt-body"></div>
 </div>
 
-<div id="panel-college" class="panel">
+<div id="panel-college" class="panel cfb-mark">
   <!-- Outline finish of the brand mark, per the style guide: "hero · watermark · merch · >=40px".
        Rendered at 46px so it clears that floor. Same silhouette as the solid mark so it still
        registers as DELTA; the hollow read is the visual note that separates college from NFL.
@@ -3301,6 +3325,7 @@ document.addEventListener('click', function(e) {
       style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
     <select id="cfb-sort" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="scout">Scout order (pedigree + level + production)</option>
+      <option value="mover">Weekly movers (last 3 vs prior 3)</option>
       <option value="pr">Production (position rank)</option>
       <option value="scrim">Scrimmage yards</option>
       <option value="rey">Receiving yards</option>
@@ -3417,6 +3442,20 @@ function cfbProd(p){ return p.pos==='QB' ? (p.py||0) : (p.rey||0)+(p.ry||0); }
 //     ADDITIVE (chosen)    14     19      34       #72        #39
 // Beats pure production on every hit count, rescues the late bloomer, demotes the trap.
 // This orders a BROWSING list. No number is shown and it never feeds any score.
+function cfbRecentSplit(p, k){
+  // Last k games vs the k before, on scrimmage yards (passing for QBs). Returns null
+  // when there is not enough of a season to compare — better a blank than a fake trend.
+  const g=(p.g||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
+  if(g.length < k*2) return null;
+  const val=r=> p.pos==='QB' ? (+r.py||0) : (+r.rey||0)+(+r.ry||0);
+  const recent=g.slice(-k).reduce((s,r)=>s+val(r),0)/k;
+  const prior =g.slice(-k*2,-k).reduce((s,r)=>s+val(r),0)/k;
+  return {recent, prior, diff: recent-prior};
+}
+function cfbMoverScore(p){
+  const s=cfbRecentSplit(p,3);
+  return s ? s.diff : -1e9;              // players without a comparison sort last
+}
 function cfbComp(p){
   // Competition level, MECHANICALLY derived from conference — deliberately NOT the
   // prospect board's hand-assigned comp. That one is a per-player scouting judgement:
@@ -3512,6 +3551,7 @@ function renderCollege(){
   const BIG=1e9;
   const key={
     scout: p=>-cfbScout(p),
+    mover: p=>-cfbMoverScore(p),
     pr:    p=>(p._rk||9999),        // rank within position, ascending -> interleaves
     scrim: p=>-((p.rey||0)+(p.ry||0)),
     rey:   p=>-(p.rey||0), ry: p=>-(p.ry||0), py: p=>-(p.py||0),
@@ -3551,6 +3591,10 @@ function renderCollege(){
       +'<td class="col-hide-mobile">'+dash(p.py)+'</td>'
       +'<td class="col-hide-mobile">'+dash(td)+'</td>'
       +'<td>'+(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-')+'</td>'
+      +'<td style="white-space:nowrap">'+(()=>{ const s=cfbRecentSplit(p,3); if(!s) return '<span style="color:var(--fog-2)">-</span>';
+          const up=s.diff>=0, col=up?'var(--emerald)':'var(--coral)';
+          return '<span style="font-weight:700;color:'+col+'">'+(up?'\u25b2':'\u25bc')+' '+Math.abs(Math.round(s.diff))+'</span>'
+            +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; })()+'</td>'
       +'</tr>';
   }).join('');
   host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' player'
@@ -3572,6 +3616,7 @@ function renderCollege(){
     +'<th class="col-hide-mobile" data-tip="Passing yards.">PassYd</th>'
     +'<th class="col-hide-mobile" data-tip="All touchdowns: receiving + rushing + passing.">TD</th>'
     +'<th data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh</th>'
+    +'<th data-tip="Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games. This is what the Weekly movers sort ranks on \u2014 during a live season it answers who broke out on Saturday, which a season-totals table cannot.">Trend</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Season <b>'+CFB.season+'</b> \u00b7 universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
@@ -3764,6 +3809,42 @@ function renderPortal(){
         +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.date||'-')+'</td>'
         +'</tr>';
     }).join('')+'</tbody></table></div>';
+}
+
+
+// ── College production on an NFL rookie card ───────────────────────────────
+// Closes the loop the other way: the college tab links out to an NFL card, this brings
+// the college season back in. Only for players with no NFL production in any tracked
+// season — an established pro sharing a name with a college player must never match
+// (Malik Washington is two different people).
+async function ensureCollegeQuiet(){
+  if(CFB_STATE==='loaded'||CFB_STATE==='loading') return;
+  try{ await ensureCollege(); }catch(e){}
+}
+function renderDeckCollege(name){
+  const host=document.getElementById('dd-college'); if(!host) return;
+  host.innerHTML='';
+  if(!CFB || !CFB.players || typeof COMP==='undefined') return;
+  const nfl=COMP.find(x=>x.n===name);
+  if(!nfl || (nfl.g25||0)!==0 || (nfl.ppg24||0)!==0 || (nfl.ppg23||0)!==0) return;  // not a rookie
+  const c=CFB.players.find(x=>x.n===name); if(!c) return;
+  const n=v=>(v==null||v===0)?'-':v;
+  const line = c.pos==='QB'
+    ? n(c.py)+' pass yds \u00b7 '+n(c.pt)+' TD \u00b7 '+n(c.pi)+' INT \u00b7 '+n(c.ry)+' rush yds'
+    : n(c.rec)+' rec \u00b7 '+n(c.rey)+' yds \u00b7 '+n(c.ret)+' TD'
+      +((c.ry||0)?' \u00b7 '+c.ry+' rush yds':'');
+  const comp=cfbComp(c);
+  host.innerHTML='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:11px">'
+    +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:6px">'
+    +'LAST COLLEGE SEASON \u2014 '+CFB.season+'</div>'
+    +'<div style="font-size:12px;color:var(--paper);font-weight:600;margin-bottom:5px">'+line+'</div>'
+    +'<div style="font-size:10.5px;color:var(--fog-2);line-height:1.55">'+(c.tm||'')
+    +(c.conf?' \u00b7 '+c.conf:'')+(comp<1?' \u00b7 Comp \u00d7'+comp.toFixed(2):' \u00b7 P4')
+    +(c.stars?' \u00b7 '+c.stars+'\u2605 recruit':'')+(c.gms?' \u00b7 '+c.gms+' games':'')
+    +' \u00b7 <span style="color:var(--teal-br);cursor:pointer" onclick="closeDeck&&closeDeck();showTab(\'college\',dlTabBtn(\'college\'));setTimeout(()=>openCfbCard(\''
+    +name.replace(/'/g,"\\'")+'\'),120)">full college game log</span></div>'
+    +'<div style="font-size:9px;color:var(--fog-2);margin-top:7px;line-height:1.5">'
+    +'Context only \u2014 college production is not the same quantity as NFL value and is never scored.</div></div>';
 }
 
 function initEngineAudit(){
