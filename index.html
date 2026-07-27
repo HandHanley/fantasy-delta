@@ -174,7 +174,7 @@ tr:hover td{background:var(--panel)}
 .score-reveal{animation:scoreReveal .35s cubic-bezier(.34,1.56,.64,1) forwards}
 .dd-stat-val{font-size:16px;font-weight:700;line-height:1}
 .dd-stat-lbl{font-size:9px;color:var(--fog);margin-top:2px}
-.dd-arc{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:4px}
+.dd-arc{display:flex;gap:4px;align-items:flex-end;min-height:70px;margin-top:4px}
 .dd-arc-bar{flex:0 0 auto;border-radius:3px 3px 0 0;min-height:3px;position:relative;transition:height .3s}
 .dd-arc-yr{font-size:8px;color:var(--fog-2);text-align:center;margin-top:2px}
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
@@ -2118,7 +2118,9 @@ const SEC_TABS={ nfl:['rankings','projections','trade','epa','ripple','contracts
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
-const DL_LOCKED=new Set(['college','portal','audit']);
+// Engine Audit stays gated behind ?dev; College is public — a visible College section
+// already announces itself, so hiding its contents bought nothing.
+const DL_LOCKED=new Set(['audit']);
 let DL_SECTION='nfl';
 
 function dlTabBtn(id){ return document.querySelector('.tab[data-tab="'+id+'"]'); }
@@ -2290,7 +2292,7 @@ function renderDeck(p){
   else { hsEl.style.display='none'; hsEl.src=''; hsEl.onload=null; }
   document.getElementById('dd-card').dataset.player=p.n;
   { const h=document.getElementById('dd-college'); if(h) h.innerHTML=''; }
-  if(typeof DELTA_CFB!=='undefined' && DELTA_CFB && (p.g25||0)===0 && (p.ppg24||0)===0 && (p.ppg23||0)===0){
+  if((p.g25||0)===0 && (p.ppg24||0)===0 && (p.ppg23||0)===0){
     ensureCollegeQuiet().then(()=>renderDeckCollege(p.n)).catch(()=>{});
   }
   { const s=document.getElementById('dd-star'), on=dwHas(p.n);
@@ -2434,7 +2436,7 @@ function renderDeck(p){
           <div style="font-size:10px;color:var(--fog-2)">Lg Avg. <b style="font-family:var(--mono)">${TDP_LG}%</b></div>
         </div>
       </div>
-      <div class="dd-arc" style="height:56px;margin-top:6px;position:relative">${blLine}${tdBars}</div>
+      <div class="dd-arc" style="margin-top:6px;position:relative">${blLine}${tdBars}</div>
       <div style="display:flex;gap:10px;margin-top:5px;font-size:9px;color:var(--fog-2)">
         <span><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--topaz);margin-right:3px"></span>above his norm — due to regress</span>
         <span><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--sky);margin-right:3px"></span>below — due to bounce back</span>
@@ -2601,13 +2603,13 @@ function renderDeck(p){
         <div class="dd-section-label" style="margin-bottom:0">PPG Trend</div>
         <div style="font-size:10px;color:var(--fog)">2026 proj <b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b></div>
       </div>
-      <div class="dd-arc" style="height:52px;margin-top:6px">${ppgBars}</div>
+      <div class="dd-arc" style="margin-top:6px">${ppgBars}</div>
     </div>
     ${tdPctBlock}
 
     <div class="dd-section">
       <div class="dd-section-label">${epaLabel} Arc</div>
-      ${epas.length?`<div class="dd-arc" style="height:52px">${epaBars}</div>`
+      ${epas.length?`<div class="dd-arc">${epaBars}</div>`
         :'<div style="font-size:11px;color:var(--fog-2)">No multi-year data</div>'}
       ${p.epaTr&&epas.length?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'var(--emerald)':p.epaTr==='down'?'var(--coral)':'var(--fog)'}">${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span></div>`:''}
     </div>
@@ -3408,10 +3410,7 @@ function showDataFreshness(fetchedAt, playerCount, staleCount) {
 // "tab doesn't render" instead of taking the app down.
 let CFB=null, CFB_STATE='idle', CFB_POS='ALL', CFB_BLUE=false;
 
-function initCollege(){
-  if(typeof DELTA_CFB==='undefined' || !DELTA_CFB) return;
-  dlUnlock('college'); dlUnlock('portal');
-}
+function initCollege(){ /* College is no longer gated; kept as a hook. */ }
 async function ensureCollege(){
   if(CFB_STATE==='loaded'||CFB_STATE==='loading') return CFB_STATE;
   CFB_STATE='loading';
