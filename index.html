@@ -423,8 +423,11 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
    but by disabling pinch-zoom entirely, which is an accessibility failure.
    Scoped to pointer:coarse so desktop density is untouched. */
 @media (pointer:coarse){
-  input, select, textarea, .dl-search, .set-sel{font-size:16px !important}
-  .dl-search{padding-top:8px;padding-bottom:8px}
+  /* Scoped to TEXT ENTRY only. Applying this to <select> too inflated every filter
+     pill on the rankings tab — a select opens a native picker rather than an inline
+     caret, so it is a far less common zoom trigger and not worth the visual cost. */
+  input[type="text"], input[type="search"], input:not([type]), textarea, .dl-search{font-size:16px !important}
+  .dl-search{padding-top:7px;padding-bottom:7px}
 }
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
@@ -3781,12 +3784,14 @@ function cfbTeammates(p){
   }).join('');
   return '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:12px">'
     +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">'
-    +'SAME OFFENSE \u2014 WHO ELSE IS EATING</div>'
+    +(p.pos==='QB' ? 'HIS WEAPONS' : 'SAME OFFENSE \u2014 WHO ELSE IS EATING')+'</div>'
     +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
     +'<th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>'
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:7px;line-height:1.5">'
-    +'A reception share only means something next to the players competing for the same targets. '
+    +(p.pos==='QB'
+      ? 'Who he actually throws to. These shares are of his own passing game, not competition for it. '
+      : 'A reception share only means something next to the players competing for the same targets. ')
     +'Only tracked players appear here \u2014 depth receivers below the universe floor are missing, '
     +'so these shares will not sum to 100%.</div></div>';
 }
