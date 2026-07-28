@@ -45,7 +45,9 @@ KEYMAP = {
     ("passing",   "YDS"): "py",  ("passing",   "TD"): "pt",   ("passing",   "INT"): "pi",
     ("passing", "C/ATT"): "ca",  ("passing",  "COMPLETIONS"): "cmp", ("passing", "ATT"): "pa",
 }
-OUT = "data/college-players.json"
+OUT      = f"data/college-players-{YEAR}.json"
+OUT_CURR = "data/college-players.json"   # alias the app loads by default
+PREV_FILE = f"data/college-players-{YEAR-1}.json"
 
 if not KEY:
     print("ERROR: CFBD_API_KEY not set"); sys.exit(1)
@@ -287,8 +289,27 @@ for k, v in ply.items():
     if v["stars"] >= 4 and (v["cls"] or 9) <= 2:      # blue-chip underclassmen only
         picked[k] = v; by_door["pedigree"] += 1
 
+# ── door 3: continuity ─────────────────────────────────────────────────────
+# Anyone in LAST season's universe stays in, provided he is still on an FBS roster.
+# Without this a player who qualified in year N-1 and then slumps simply vanishes in
+# year N — and his card would lose the current season at exactly the moment the decline
+# became the interesting fact. A fade should be visible, not a disappearance.
+prev_names = set()
+try:
+    with open(PREV_FILE) as f:
+        prev_names = {norm(x["n"]) for x in json.load(f).get("players", [])}
+    print(f"\n  prior season file: {PREV_FILE} ({len(prev_names):,} players)")
+except FileNotFoundError:
+    print(f"\n  prior season file: none ({PREV_FILE} absent - first season, fine)")
+except Exception as e:
+    print(f"\n  prior season file: unreadable ({e}) - continuing without continuity")
+for k, v in ply.items():
+    if k in picked: continue
+    if k[0] in prev_names:
+        picked[k] = v; by_door["continuity"] += 1
+
 print(f"\n  door: production {by_door['production']:,} | pedigree {by_door['pedigree']:,}"
-      f" | UNIVERSE {len(picked):,}")
+      f" | continuity {by_door['continuity']:,} | UNIVERSE {len(picked):,}")
 
 # ---- emit ----
 out = {
@@ -323,8 +344,11 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
 os.makedirs("data", exist_ok=True)
 with open(OUT, "w") as f:
     json.dump(out, f, separators=(",", ":"))
+# The app loads the alias; season files are what the player card reaches back through.
+import shutil; shutil.copyfile(OUT, OUT_CURR)
 size = os.path.getsize(OUT)
 print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
+print(f"  wrote {OUT_CURR} (alias for the current season)")
 
 # ── transfer portal ────────────────────────────────────────────────────────
 # Filtered to skill positions landing at an FBS school — an FCS-bound transfer is not
