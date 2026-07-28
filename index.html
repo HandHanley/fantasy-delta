@@ -423,12 +423,18 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
    but by disabling pinch-zoom entirely, which is an accessibility failure.
    Scoped to pointer:coarse so desktop density is untouched. */
 @media (pointer:coarse){
-  /* Scoped to TEXT ENTRY only. Applying this to <select> too inflated every filter
-     pill on the rankings tab — a select opens a native picker rather than an inline
-     caret, so it is a far less common zoom trigger and not worth the visual cost. */
-  input[type="text"], input[type="search"], input:not([type]), textarea, .dl-search{font-size:16px !important}
-  .dl-search{padding-top:7px;padding-bottom:7px}
+  /* 16px is the threshold below which iOS zooms a focused field, so text inputs must
+     hit it. Selects are left alone — they open a native picker and inflating them made
+     every filter pill oversized. To stop the two from looking mismatched, the inputs
+     get tighter padding so their BOX height still matches the selects; only the glyphs
+     are larger, which is the part iOS actually measures. */
+  input[type="text"], input[type="search"], input:not([type]), textarea, .dl-search{
+    font-size:16px !important; padding-top:3px !important; padding-bottom:3px !important;
+    line-height:1.15 !important}
 }
+/* Placeholders were rendering lighter than the select text beside them. */
+.controls input::placeholder, .dl-search::placeholder{color:var(--fog-2);opacity:1}
+.controls input, .controls select{color:var(--paper)}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
 .set-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
@@ -598,13 +604,16 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <option value="0">Any age</option><option value="24">≤24</option>
       <option value="26">≤26</option><option value="28">≤28</option><option value="30">≤30</option>
     </select>
-    <button id="lg-badge" onclick="toggleSettings(event)" title="League settings"
+    
+
+  </div>
+  
+  <div style="display:flex;justify-content:flex-end;margin:0 0 8px">
+  <button id="lg-badge" onclick="toggleSettings(event)" title="League settings"
       style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--fog);
       background:var(--ink-2);border:1px solid var(--line);border-radius:8px;
       padding:5px 10px;cursor:pointer;white-space:nowrap"></button>
-
   </div>
-  <div id="sort-explainer" style="display:none;font-size:11px;color:var(--fog);padding:7px 11px;margin-bottom:8px;background:var(--ink-2);border-left:2px solid var(--teal-br);border-radius:6px;line-height:1.5"></div>
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
       <th onclick="setSortR('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
@@ -884,10 +893,8 @@ function syncSettingsUI(){
 }
 
 let sortK='ktc',sortDir=-1;
-let explainerHidden=false;
-function dismissExplainer(){explainerHidden=true;const e=document.getElementById('sort-explainer');if(e)e.style.display='none';}
-function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;explainerHidden=false;}renderRankings();}
-function setSortRDropdown(k){if(k!==sortK)explainerHidden=false;sortK=k;sortDir=-1;renderRankings();}
+function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
+function setSortRDropdown(k){sortK=k;sortDir=-1;renderRankings();}
 let sortKContracts='aav',sortDirContracts=1;
 function setSortContracts(k){if(sortKContracts===k)sortDirContracts*=-1;else{sortKContracts=k;sortDirContracts=1;}renderContracts();}
 let sortKEPA='epaSc',sortDirEPA=1;
@@ -942,20 +949,6 @@ function renderRankings(){
   let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
   const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore',ppg25:'ppg25',ppg24:'ppg24'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
-  // Contextual explainer — only for the three confusable value metrics
-  const explainEl=document.getElementById('sort-explainer');
-  if(explainEl){
-    const explainers={
-      ds:'<strong style="color:var(--teal-br)">Δ DELTA Score</strong> (0–99): our proprietary grade of a player&rsquo;s <strong>demonstrated</strong> dynasty value — built on what they have actually produced, their usage, age, and contract, not projections. Compare it to Market Value to spot players the market is over- or under-pricing.',
-      ktc:'<strong style="color:var(--paper)">Market Value</strong>: consensus player value from FantasyCalc — what the market currently pays in trades. Compare to Model Value to find gaps.',
-      mv:'<strong style="color:var(--teal-br)">Model Value</strong>: DELTA&rsquo;s projected player value from our PPG model. When it runs higher than Market Value, the model sees a buy; lower, a sell.'
-    };
-    if(explainers[sortK]&&!explainerHidden){
-      explainEl.innerHTML='<span onclick="dismissExplainer()" title="Dismiss" style="float:right;cursor:pointer;color:var(--fog-2);padding:0 2px 4px 10px;font-size:13px;line-height:1">✕</span>'+explainers[sortK];
-      explainEl.style.display='block';
-    }
-    else{explainEl.style.display='none';}
-  }
   // Build position rank counters
   const posRanks={QB:0,RB:0,WR:0,TE:0};
   // Pre-compute position ranks based on current sort order
