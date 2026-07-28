@@ -323,6 +323,10 @@ out = {
              "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
              "Included via production quota or 4-5 star underclassman pedigree."),
     "quota": QUOTA, "min_games": MIN_GAMES,
+    # Every season file present after this run, so the UI can offer a season picker
+    # without a second request or a hard-coded list.
+    "seasons": sorted({int(f.split("-")[-1].split(".")[0])
+                       for f in __import__("glob").glob("data/college-players-2*.json")} | {YEAR}),
     "counts": {"universe": len(picked), **dict(by_door)},
     "players": [],
 }
