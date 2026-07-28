@@ -578,7 +578,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 
 
 <div id="panel-rankings" class="panel active">
-  <div class="controls">
+  <div style="display:none"><select id="scoring-fmt" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select></div>
+<div class="controls">
     <input type="text" id="s-rank" placeholder="Search..." oninput="renderRankings()">
     <select id="pos-rank" onchange="renderRankings()">
       <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
@@ -594,20 +595,11 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
       <option value="0">Any age</option><option value="24">≤24</option>
       <option value="26">≤26</option><option value="28">≤28</option><option value="30">≤30</option>
     </select>
-      <select id="scoring-fmt" onchange="applyScoring()" title="Scoring format">
-      <option value="half_tep">0.5PPR + TE Prem</option>
-      <option value="half">0.5 PPR</option>
-      <option value="full_tep">Full PPR + TE Prem</option>
-      <option value="full">Full PPR</option>
-      <option value="std">Standard</option>
-    </select>
-      <select id="lg-teams" onchange="applyLeagueSettings('main')" title="League size">
-      <option value="8">8-team</option><option value="10">10-team</option>
-      <option value="12" selected>12-team</option><option value="14">14-team</option>
-    </select>
-      <select id="lg-qb" onchange="applyLeagueSettings('main')" title="QB format">
-      <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
-    </select>
+    <button id="lg-badge" onclick="toggleSettings(event)" title="League settings"
+      style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--fog);
+      background:var(--ink-2);border:1px solid var(--line);border-radius:8px;
+      padding:5px 10px;cursor:pointer;white-space:nowrap"></button>
+
   </div>
   <div id="sort-explainer" style="display:none;font-size:11px;color:var(--fog);padding:7px 11px;margin-bottom:8px;background:var(--ink-2);border-left:2px solid var(--teal-br);border-radius:6px;line-height:1.5"></div>
   <div style="overflow-x:auto"><table class="dtable">
@@ -1975,6 +1967,7 @@ function renderAll(){
   // market center is calibrated — or names can't match and totals would be wrong.
   loadTradeFromUrl();
   applyLanding();
+  dlLeagueBadge();
 }
 
 
@@ -2085,10 +2078,12 @@ function renderWatchlist(){
   cfbHost.innerHTML=ch;
 }
 function applySetScoring(v){
+  setTimeout(dlLeagueBadge,0);
   ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=v;});
   applyScoring();
 }
 function applySetLeague(){
+  setTimeout(dlLeagueBadge,0);
   const t=document.getElementById('lg-teams-set'), q=document.getElementById('lg-qb-set');
   const tm=document.getElementById('lg-teams'), qm=document.getElementById('lg-qb');
   if(t&&tm) tm.value=t.value;
@@ -2102,6 +2097,11 @@ function deckStar(el){
   if(document.getElementById('pos-rank') && document.getElementById('pos-rank').value==='WL') renderRankings();
 }
 function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
+function dlLeagueBadge(){
+  const b=document.getElementById('lg-badge'); if(!b) return;
+  const fmt={half_tep:'0.5PPR+TE',half:'0.5PPR',full_tep:'PPR+TE',full:'PPR',std:'Std'}[scoringFmt]||scoringFmt;
+  b.textContent = leagueTeams+'-team \u00b7 '+(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+fmt;
+}
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
 function toggleSettings(e){
   e.stopPropagation();
@@ -3350,7 +3350,12 @@ document.addEventListener('click', function(e) {
     </svg>
     <div>
       <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">College Tracking</div>
-      <div style="font-size:11px;color:var(--fog-2);margin-top:2px">Know them before the draft</div>
+      <div style="font-size:11px;color:var(--fog-2);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+        <span id="cfb-season-label"></span><span>Know them before the draft</span>
+        <select id="cfb-season" onchange="cfbSetSeason(this.value)" style="display:none;font-family:var(--mono);
+          font-size:10.5px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
+          border-radius:6px;padding:2px 5px"></select>
+      </div>
     </div>
   </div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
@@ -3458,7 +3463,7 @@ async function ensureCollege(){
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j=await r.json();
     if(!j || !Array.isArray(j.players)) throw new Error('unexpected shape');
-    CFB=j; cfbIndex(); CFB_STATE='loaded';
+    CFB=j; cfbIndex(); CFB_STATE='loaded'; cfbSeasonUI();
   }catch(e){ console.warn('college data unavailable:',e); CFB=null; CFB_STATE='error'; }
   return CFB_STATE;
 }
@@ -3559,6 +3564,35 @@ function cfbRookieTag(name){
     +'title="In DELTA as an incoming rookie \u2014 open NFL card" '
     +'style="font-size:8.5px;font-weight:700;color:var(--teal-br);border:1px solid var(--teal-br);border-radius:3px;padding:0 3px;cursor:pointer">NFL</span>';
 }
+function cfbSeasonUI(){
+  const lab=document.getElementById('cfb-season-label'), sel=document.getElementById('cfb-season');
+  if(!CFB) return;
+  if(lab) lab.innerHTML='<b style="color:var(--paper)">'+CFB.season+' season</b> \u00b7';
+  const seasons=(CFB.seasons||[]).slice().sort((a,b)=>b-a);
+  if(sel){
+    // A picker for one season is just clutter; it appears the year a second file exists.
+    if(seasons.length>1){
+      sel.innerHTML=seasons.map(s=>'<option value="'+s+'"'+(s===CFB.season?' selected':'')+'>'+s+'</option>').join('');
+      sel.style.display='';
+    } else sel.style.display='none';
+  }
+}
+async function cfbSetSeason(yr){
+  yr=parseInt(yr); if(!yr || (CFB && CFB.season===yr)) return;
+  const host=document.getElementById('cfb-body');
+  if(host) host.innerHTML='<div style="font-size:12px;color:var(--fog-2);padding:14px">Loading '+yr+'\u2026</div>';
+  try{
+    const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j||!Array.isArray(j.players)) throw new Error('unexpected shape');
+    if(!j.seasons && CFB) j.seasons=CFB.seasons;   // older files predate the seasons list
+    CFB=j; cfbIndex(); cfbSeasonUI(); renderCollege();
+  }catch(e){
+    console.warn('season load failed',e);
+    if(host) host.innerHTML='<div style="font-size:12px;color:var(--topaz);padding:14px">Couldn\u2019t load the '+yr+' season.</div>';
+  }
+}
 function renderCollege(){
   const host=document.getElementById('cfb-body'), foot=document.getElementById('cfb-foot');
   if(!host) return;
@@ -3656,7 +3690,7 @@ function renderCollege(){
     +'<th data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh</th>'
     +'<th data-tip="Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games. This is what the Weekly movers sort ranks on \u2014 during a live season it answers who broke out on Saturday, which a season-totals table cannot.">Trend</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
-  if(foot) foot.innerHTML='Season <b>'+CFB.season+'</b> \u00b7 universe '+CFB.players.length
+  if(foot) foot.innerHTML='Universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
     +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
     +'(CFBD publishes no target counts) \u00b7 QB rushing is net of sacks, per college convention.';
