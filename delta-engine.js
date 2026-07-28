@@ -87,8 +87,14 @@ async function ensureStartData(){
   START_DATA_STATE='loading';
   try{
     const [gl,th]=await Promise.all([
-      fetch('./data/game-logs.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject('logs '+r.status)),
-      fetch('./data/start-profile-thresholds.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
+// NOTE ON CACHING: these used to append ?t=<timestamp>, which guaranteed a unique URL
+// on every single load and therefore a full re-download of every data file, every time,
+// from origin — roughly 1.8 MB raw on each launch with no possibility of a cache hit.
+// {cache:'no-cache'} asks the browser to REVALIDATE instead: it sends the ETag, and an
+// unchanged file comes back as a 304 with no body. Same freshness guarantee, a fraction
+// of the bytes and round trips on repeat visits.
+      fetch('./data/game-logs.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('logs '+r.status)),
+      fetch('./data/start-profile-thresholds.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
     ]);
     GAMELOGS=gl.games||{}; STARTLINES=th.lines||{};
     let mx=0; for(const k in GAMELOGS){ for(const g of GAMELOGS[k]){ if(g.s>mx) mx=g.s; } }
@@ -3406,7 +3412,7 @@ let SCOUT_LOADED=false, SCOUT_LOADING=null;
 function ensureScoutData(){
   if(SCOUT_LOADED) return Promise.resolve();
   if(SCOUT_LOADING) return SCOUT_LOADING;
-  SCOUT_LOADING=fetch('./data/scout-reports.json?t='+Date.now())
+  SCOUT_LOADING=fetch('./data/scout-reports.json',{cache:'no-cache'})
     .then(r=>r.ok?r.json():Promise.reject('scout '+r.status))
     .then(d=>{SCOUT=d.reports||d; SCOUT_LOADED=true; console.log('[DELTA] Scout reports loaded:',Object.keys(SCOUT).length);})
     .catch(e=>{console.warn('[DELTA] Scout reports unavailable:',e); SCOUT_LOADED=true;});
@@ -4226,7 +4232,7 @@ const FC_ALIASES = {
 
 async function loadPlayerStats() {
   try {
-    const res = await fetch('./data/player-stats.json?t='+Date.now());
+    const res = await fetch('./data/player-stats.json',{cache:'no-cache'});
     if (!res.ok) return;
     const data = await res.json();
     if (!data?.players) return;
@@ -4434,7 +4440,7 @@ async function loadPlayerStats() {
 // ── LOADER ────────────────────────────────────────────────────────────────
 async function loadLiveMarketValues() {
   try {
-    const res = await fetch('./data/market-values.json?t=' + Date.now()); // cache-bust: bypass Pages CDN edge cache
+    const res = await fetch('./data/market-values.json',{cache:'no-cache'}); // cache-bust: bypass Pages CDN edge cache
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -4528,7 +4534,7 @@ async function loadLiveMarketValues() {
 // ── FRESHNESS INDICATOR ───────────────────────────────────────────────────
 async function loadPlayerContracts() {
   try {
-    const res = await fetch('./data/player-contracts.json?t='+Date.now());
+    const res = await fetch('./data/player-contracts.json',{cache:'no-cache'});
     if (!res.ok) return; // non-fatal
     const data = await res.json();
     if (!data?.contracts) return;
@@ -4596,7 +4602,7 @@ async function loadPlayerContracts() {
 // fetch → rebuild → recompute projections → re-render.
 async function loadRipples() {
   try {
-    const res = await fetch('./data/ripple.json?t='+Date.now());
+    const res = await fetch('./data/ripple.json',{cache:'no-cache'});
     if (!res.ok) throw new Error('ripple '+res.status);
     const data = await res.json();
     const arr = Array.isArray(data) ? data : (data.ripples || []);
@@ -4723,7 +4729,7 @@ function buildDSBreakdownHTML(p){
 let READS={};
 async function loadReads(){
   try{
-    const res=await fetch('./data/reads.json?t='+Date.now());
+    const res=await fetch('./data/reads.json',{cache:'no-cache'});
     if(!res.ok) return;                       // absent file = template-only mode
     const arr=await res.json();
     if(!Array.isArray(arr)) return;
