@@ -433,7 +433,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     line-height:1.15 !important}
 }
 /* Placeholders were rendering lighter than the select text beside them. */
-.controls input::placeholder, .dl-search::placeholder{color:var(--fog-2);opacity:1}
+input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1}
 .controls input, .controls select{color:var(--paper)}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
@@ -608,7 +608,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 
   </div>
   
-  <div style="display:flex;justify-content:flex-end;margin:0 0 8px">
+  <div style="display:flex;justify-content:flex-start;margin:0 0 8px">
   <button id="lg-badge" onclick="toggleSettings(event)" title="League settings"
       style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--fog);
       background:var(--ink-2);border:1px solid var(--line);border-radius:8px;
