@@ -433,7 +433,13 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     line-height:1.15 !important}
 }
 /* Placeholders were rendering lighter than the select text beside them. */
-input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1}
+input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size:12px}
+@media (pointer:coarse){
+  /* The field must stay 16px or iOS zooms on focus, but the placeholder does not have
+     to match it — shrinking only the placeholder keeps the resting state visually in
+     line with the 12px controls beside it while preserving the zoom guard. */
+  input::placeholder, textarea::placeholder{font-size:12.5px}
+}
 .controls input, .controls select{color:var(--paper)}
 /* ── Settings popover: pills mirror the main tab styling ─────────────────── */
 .set-sec{font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin:0 0 7px}
@@ -622,7 +628,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1}
       <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
       <th onclick="setSortR('ppg25')" data-tip="Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded." style="cursor:pointer">PPG'25</th><th onclick="setSortR('ppg24')" data-tip="Points per game in the 2024 season, adjusted for your current scoring format." class="col-hide-mobile" style="cursor:pointer">PPG'24</th><th onclick="setSortR('epaSc')" data-tip="Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value." class="col-hide-mobile">EPA</th>
       <th onclick="setSortR('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.">Proj PPG</th>
-      <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict." class="col-hide-mobile">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle." class="col-hide-mobile">Sys</th>
+      <th onclick="setSortR('mv')" data-tip="DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.">Mod val</th><th onclick="setSortR('sys')" data-tip="Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle." class="col-hide-mobile">Sys</th>
       <th data-tip="Offensive coordinator. ⚠ flags a coordinator change this cycle — everything the player demonstrated came under the old scheme. Shown for context; it does not adjust the projection. No flag = stable staff." class="col-hide-mobile">OC</th><th>Tag</th>
     </tr></thead>
     <tbody id="rank-body"></tbody>
@@ -972,7 +978,7 @@ function renderRankings(){
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
     <td class="col-hide-mobile">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
     <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
-    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}" class="col-hide-mobile">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
+    <td style="font-weight:600;color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td${p.och?' data-tip="New OC this cycle — prior production came under the old scheme. Shown for context; it does not adjust the projection."':''} style="font-size:10px;color:${p.och?'var(--topaz)':'var(--fog-2)'}" class="col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
     <td>${vTag(p)}</td>
@@ -4546,7 +4552,7 @@ function renderSlpRoster(rid){
     +'<th title="DELTA Score \u2014 proprietary 0-99 dynasty rating" style="font-family:var(--geo);font-size:15px;color:var(--teal-br)">\u0394</th>'
     +'<th>Player</th><th class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>'
     +'<th class="col-hide-mobile">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %">M/H/E</th>'
-    +'<th>Mkt Val</th><th class="col-hide-mobile">Mod val</th><th>Tag</th>'
+    +'<th>Mkt Val</th><th>Mod val</th><th>Tag</th>'
     +'</tr></thead><tbody>'+order.map(rows).join('')+'</tbody></table></div>';
 
   // Draft-pick inventory
@@ -4652,10 +4658,15 @@ function slpAssistCol(rid,side,title,color){
   const roster=slpRosterById(rid);
   if(!roster) return '';
   const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
-  const players=[];
+  // Count what we CANNOT price as well as what we can. A Sleeper roster carries
+  // kickers, defenses and deep bench players that DELTA's ~409-player universe does
+  // not track; dropping them silently is indistinguishable from a bug, and that is
+  // exactly how it was reported ("it shows some of my players").
+  const players=[]; let unpriced=0;
   for(const pid of (roster.players||[])){
     const dn=SLP.match?SLP.match[pid]:null;
     if(dn&&byName[dn]) players.push(byName[dn]);
+    else unpriced++;
   }
   players.sort(function(a,b){ return (b.ktcEff||0)-(a.ktcEff||0); });
   const chip=function(label,onclick,enabled,title2){
@@ -4663,7 +4674,10 @@ function slpAssistCol(rid,side,title,color){
       +' style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:'+(enabled?'var(--paper)':'var(--fog-2)')+';cursor:'+(enabled?'pointer':'default')+';margin:0 4px 4px 0"'
       +(title2?' title="'+title2+'"':'')+'>'+label+'</button>';
   };
-  const pChips=players.slice(0,14).map(function(p){
+  // No cap. A dynasty roster runs 25-35 players; the old slice(0,14) silently hid
+  // roughly half of them, and because the list is sorted by market value the hidden
+  // ones were always the cheaper half — the depth pieces trades actually turn on.
+  const pChips=players.map(function(p){
     return chip(p.n+' <span style="color:var(--fog)">'+(p.ktcEff||0).toLocaleString()+'</span>',
                 "addAsset('"+side+"','"+p.n.replace(/'/g,"\\'")+"')",true);
   }).join('');
@@ -4681,6 +4695,8 @@ function slpAssistCol(rid,side,title,color){
   return '<div style="flex:1;min-width:260px">'
     +'<div style="font-size:10px;font-weight:700;color:'+color+';letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">'+title+' \u2192 side '+side.toUpperCase()+'</div>'
     +'<div>'+pChips+'</div>'
+    +(unpriced?'<div style="font-size:9.5px;color:var(--fog-2);margin-top:4px">'
+       +unpriced+' more not tracked by DELTA (kickers, defenses, deep bench)</div>':'')
     +(pkChips?'<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--line)">'+pkChips+'</div>':'')
     +'</div>';
 }
