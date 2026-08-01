@@ -1104,7 +1104,10 @@ function calcAdjustedSide(arrA, arrB) {
   // SCARCITY REACHES THE 2-TEAM VERDICT: V4 is built on market value (not mvAsset),
   // so apply the league-settings scarcity factor to each asset's market value here.
   // Picks pass through. At the 12-team SF default the factor is 1.0 → verdict unchanged.
-  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt));
+  // formatMvShift folds in the scoring format (half/full PPR, TE premium, standard) —
+  // the SAME ±10% per-player lever the ranking model uses (mvAssetRaw's d_fmt), so the
+  // verdict and the rankings agree on format. 0 at the half_tep base → anchor unchanged.
+  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt) * (1 + formatMvShift(p.n, p.pos||p.p||'WR', scoringFmt)));
 
   function peakKtc(arr) {
     return arr.reduce((mx, p) => Math.max(mx, skv(p)), 0);
@@ -1209,7 +1212,8 @@ function calcAdjustedSide(arrA, arrB) {
 // but without cross-side peak comparison. Used by the multi-team (3-4 way) trade path.
 function calcSingleSideAdjusted(arr) {
   const ELITE = 7500, LEAGUE_AVG = 4000, CONC_EXP = 0.35, CONC_CAP = 1.18, THROW_IN = 2000;
-  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt));
+  // format-aware to match calcAdjustedSide and the rankings (see note there)
+  const skv = p => (p.k||0) * (p.ip ? 1 : scarcity(p.pos||p.p||'WR', leagueTeams, qbFmt) * (1 + formatMvShift(p.n, p.pos||p.p||'WR', scoringFmt)));
   const peakKtc = arr.reduce((mx,p) => Math.max(mx, skv(p)), 0);
   const posCount = {}, teamCount = {};
   const detail = [];

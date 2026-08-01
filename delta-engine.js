@@ -3787,17 +3787,27 @@ function dsAge(age, pos) {
   // likely to retain, NOT their theoretical decline to retirement. Onset of
   // decline is position-specific (RB earliest ~26, WR ~28, TE ~29, QB latest
   // ~33). Max 25 pts.
-  const a = Math.floor(age);
   const curves = {
     QB:[[21,32,25],[33,33,23],[34,34,20],[35,35,16],[36,36,12],[37,37,8],[38,38,5],[39,99,3]],
     WR:[[20,26,25],[27,27,23],[28,28,21],[29,29,18],[30,30,14],[31,31,10],[32,32,7],[33,33,5],[34,99,3]],
     RB:[[20,25,25],[26,26,23],[27,27,21],[28,28,18],[29,29,15],[30,30,11],[31,31,8],[32,32,6],[33,33,4],[34,99,2]],
     TE:[[20,27,25],[28,28,23],[29,29,20],[30,30,17],[31,31,13],[32,32,10],[33,33,7],[34,34,4],[35,99,3]],
   };
-  for (const [lo,hi,pts] of (curves[pos]||curves.WR)) {
-    if (a>=lo && a<=hi) return pts;
-  }
-  return 2;
+  const curve = curves[pos] || curves.WR;
+  // Value at an INTEGER age from the bucket table (young→max, old→last segment).
+  const valAt = (x) => {
+    if (x <= curve[0][0]) return curve[0][2];
+    for (const [lo,hi,pts] of curve) if (x>=lo && x<=hi) return pts;
+    return curve[curve.length-1][2];
+  };
+  // Interpolate LINEARLY between integer breakpoints so 27.9 no longer equals
+  // 27.0 and then cliffs at 28. At whole ages this returns exactly the old
+  // bucket value (frac=0), so integer-age scores are unchanged; only the
+  // in-between months move, gliding smoothly across each year boundary.
+  const a = Math.floor(age);
+  const frac = age - a;
+  const lo = valAt(a), hi = valAt(a+1);
+  return lo + (hi - lo) * frac;
 }
 
 function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
