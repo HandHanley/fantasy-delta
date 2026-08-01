@@ -145,13 +145,11 @@ def fetch_season_stats():
         if col_name and col_name in pdf.columns:
             agg_dict[stat_name] = (col_name, 'sum')
 
-    # target_share and air_yards_share are per-week fractions — average them, not sum
-    for stat_name, col_name in [
-        ('target_share',   tgt_share_col),
-        ('air_yds_share',  air_yds_share_col),
-    ]:
-        if col_name and col_name in pdf.columns:
-            agg_dict[stat_name] = (col_name, 'mean')
+    # NOTE: target_share / air_yds_share are intentionally NOT aggregated here.
+    # nflverse's per-week shares are team-relative, but averaging them across
+    # weeks breaks the sum-to-100 property and inflates part-time / low-volume
+    # players. They are computed AFTER the traded-player collapse as season
+    # total / team season total (see team_pass_src below).
 
     result = pdf.groupby(group_cols).agg(**agg_dict).reset_index()
     result.rename(columns={name_col: 'player_name', season_col: 'season'}, inplace=True)
@@ -174,6 +172,24 @@ def fetch_season_stats():
         )
     else:
         result['rush_share'] = 0.0
+
+    # Team-season passing denominators for TRUE target/air-yard shares.
+    # nflverse's per-week air_yards_share/target_share are team-relative, but
+    # averaging them across weeks (old behavior) breaks the sum-to-100 property
+    # and badly inflates part-time / low-volume players (2025 LaPorta read 17.5%
+    # vs a true 7.5%). Compute the season share as player-season-total /
+    # team-season-total instead — sums to 100% across the team and mirrors how
+    # rush_share is derived. Denominators come from the weekly pdf (every player,
+    # so RBs and non-fantasy receivers are correctly in the pie); the division
+    # runs AFTER the traded-player collapse so player totals are full-season.
+    team_pass_src = None
+    if season_col and team_col and team_col in pdf.columns:
+        pass_agg = {}
+        if tgt_col and tgt_col in pdf.columns:         pass_agg['team_tgt'] = (tgt_col, 'sum')
+        if air_yds_col and air_yds_col in pdf.columns: pass_agg['team_air'] = (air_yds_col, 'sum')
+        if pass_agg:
+            team_pass_src = pdf.groupby([team_col, season_col]).agg(**pass_agg).reset_index()
+            team_pass_src.rename(columns={team_col: 'team', season_col: 'season'}, inplace=True)
 
     # ── Collapse multi-team (traded) player-seasons into ONE row ────────────
     # The groupby above includes team (required for per-stint rush_share
@@ -209,6 +225,22 @@ def fetch_season_stats():
         result = __import__('pandas').concat([result[~dup_mask], collapsed], ignore_index=True)
         print(f'[DELTA] Collapsed multi-team seasons for {n_traded} traded players')
     result = result.drop(columns=['_last_week'], errors='ignore')
+
+    # TRUE target/air-yard shares from full-season totals (see team_pass_src).
+    # Runs post-collapse so a traded player's summed totals divide by his most
+    # recent team's season total — the same edge behavior as rush_share, and far
+    # closer than the old weekly mean.
+    if team_pass_src is not None:
+        result = result.merge(team_pass_src, on=['team', 'season'], how='left')
+        if 'targets' in result.columns and 'team_tgt' in result.columns:
+            result['target_share'] = result.apply(
+                lambda r: round(float(r['targets']) / float(r['team_tgt']), 4)
+                if float(r.get('team_tgt') or 0) > 0 else 0.0, axis=1)
+        if 'air_yds' in result.columns and 'team_air' in result.columns:
+            result['air_yds_share'] = result.apply(
+                lambda r: round(float(r['air_yds']) / float(r['team_air']), 4)
+                if float(r.get('team_air') or 0) > 0 else 0.0, axis=1)
+        result = result.drop(columns=['team_tgt', 'team_air'], errors='ignore')
 
     # Build headshot lookup from weekly data while pdf is in scope
     headshots = {}
@@ -859,27 +891,39 @@ def fetch_draft_and_college(delta_names, meta):
     except Exception as e:
         print(f'[DELTA] draft picks fetch failed: {e}')
 
-    # ---- COLLEGE ----
+    # ---- COLLEGE + AGE (POSITION-KEYED to defeat same-name collisions) ----
+    # load_players() spans all of nflverse history and repeats names across
+    # positions — e.g. TWO Lamar Jacksons: QB (born 1997-01-07, age 29.6) and a
+    # CB (born 1998-04-13, age 28.3). Keying the maps on NAME ALONE let the last
+    # row win, so the DB's birth date clobbered the QB's and DELTA showed Lamar at
+    # 28.3. Key on (norm name, position) and match against the DELTA player's own
+    # position from `meta`; this mirrors the (name, pos) guard already used for
+    # team-matching above. A position miss falls back to the trusted baked age —
+    # safe — while a wrong cross-position match (the actual bug) is eliminated.
     try:
         df = nfl.load_players()
         pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
         cols = set(pdf.columns)
         name_col = next((c for c in ['display_name','full_name','player_name','football_name'] if c in cols), None)
+        pos_c    = next((c for c in ['position','pos'] if c in cols), None)
         col_col  = next((c for c in ['college','college_name','college_conference'] if c in cols and 'conference' not in c), None)
         # age (years, 1-decimal) from birth_date if present — same dataset, one pass
         bd_col = next((c for c in ['birth_date','birthdate','birth_year'] if c in cols), None)
-        if name_col and col_col:
-            raw = {}
-            raw_age = {}
+        if name_col and pos_c:
             from datetime import date
             today = date.today()
+            raw_col = {}   # (norm name, pos) -> college
+            raw_age = {}   # (norm name, pos) -> age
             for _, row in pdf.iterrows():
                 nm = row.get(name_col)
-                if not nm:
+                ps = row.get(pos_c)
+                if not nm or not ps:
                     continue
-                cg = row.get(col_col)
-                if cg and str(cg).strip() and str(cg).lower() != 'none':
-                    raw[nm] = str(cg).strip()
+                key = (norm(nm), str(ps))
+                if col_col:
+                    cg = row.get(col_col)
+                    if cg and str(cg).strip() and str(cg).lower() != 'none':
+                        raw_col[key] = str(cg).strip()
                 if bd_col:
                     bd = row.get(bd_col)
                     if bd is not None and str(bd).strip() and str(bd).lower() != 'none':
@@ -888,20 +932,23 @@ def fetch_draft_and_college(delta_names, meta):
                             y, m, d = int(s[0:4]), int(s[5:7]), int(s[8:10])
                             age_yrs = (today - date(y, m, d)).days / 365.25
                             if 18 <= age_yrs <= 50:
-                                raw_age[nm] = round(age_yrs, 1)
+                                raw_age[key] = round(age_yrs, 1)
                         except (ValueError, TypeError):
                             pass
-            matched = _match(raw, delta_names)
-            for dn, nfl_name in matched.items():
-                college_map[dn] = raw[nfl_name]
-            age_matched = _match(raw_age, delta_names)
-            for dn, nfl_name in age_matched.items():
-                age_map[dn] = raw_age[nfl_name]
-            print(f'[DELTA] college: {len(college_map)} matched · age: {len(age_map)} matched')
+            for dn in delta_names:
+                dpos = meta.get(dn, (None, None))[1]
+                if not dpos:
+                    continue
+                k = (norm(DRAFT_ALIASES.get(dn, dn)), dpos)
+                if k in raw_col:
+                    college_map[dn] = raw_col[k]
+                if k in raw_age:
+                    age_map[dn] = raw_age[k]
+            print(f'[DELTA] college: {len(college_map)} matched · age: {len(age_map)} matched (position-keyed)')
         else:
-            print(f'[DELTA] college: missing expected columns — skipping')
+            print(f'[DELTA] college/age: no name or position column — skipping')
     except Exception as e:
-        print(f'[DELTA] college fetch failed: {e}')
+        print(f'[DELTA] college/age fetch failed: {e}')
 
     return draft_map, college_map, age_map
 
