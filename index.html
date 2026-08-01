@@ -4433,7 +4433,7 @@ function renderSlpSubNav(){
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
     +pills
     +'<span style="flex-basis:100%;height:0"></span>'
-    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'var(--line)':'var(--line)')+';background:'+(boardActive?'var(--ink-2)':'var(--ink-2)')+';color:'+(boardActive?'var(--emerald)':'var(--sky)')+';cursor:pointer">\u26a1 League Board \u2014 buy/sell targets</button>'
+    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'var(--line)':'var(--line)')+';background:'+(boardActive?'var(--ink-2)':'var(--ink-2)')+';color:'+(boardActive?'var(--emerald)':'var(--sky)')+';cursor:pointer">League Board \u2014 buy/sell targets</button>'
     +'</div>';
 }
 
@@ -4523,7 +4523,7 @@ function renderSlpRoster(rid){
       const mvCol=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
       return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
-        +'<td style="font-weight:600;white-space:nowrap">'+(x.starter?'<span title="In the starting lineup" style="color:var(--topaz);margin-right:3px">\u2605</span>':'')+p.n+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
         +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
         +'<td class="col-hide-mobile">'+p.t+'</td>'
         +'<td class="col-hide-mobile">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
@@ -4535,7 +4535,7 @@ function renderSlpRoster(rid){
     const uRows=g.u.map(function(x){
       return '<tr style="opacity:.72">'
         +'<td style="font-weight:800;font-size:14px;color:var(--fog-2)">\u2014</td>'
-        +'<td style="font-weight:600;white-space:nowrap;color:var(--fog)">'+(x.starter?'<span title="In the starting lineup" style="color:var(--topaz);margin-right:3px">\u2605</span>':'')+x.u.n+'</td>'
+        +'<td style="font-weight:600;white-space:nowrap;color:var(--fog)">'+x.u.n+'</td>'
         +'<td class="col-hide-mobile">'+(x.u.a!=null?x.u.a:'-')+'</td>'
         +'<td class="col-hide-mobile">'+(x.u.t||'FA')+'</td>'
         +'<td class="col-hide-mobile">-</td>'
@@ -4628,7 +4628,7 @@ function renderSlpBoard(){
     ?'<div style="overflow-x:auto"><table class="dtable">'+thead(false)+'<tbody>'+rowsOf(ship,false)+'</tbody></table></div>'
     :'<div style="color:var(--fog-2);font-size:11.5px;padding:6px 0">Nothing on your roster is sell-tagged. Clean sheet.</div>';
 
-  return '<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:var(--paper)">\u26a1 League Board</span>'
+  return '<div style="margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:var(--paper)">League Board</span>'
     +'<span style="font-size:10.5px;color:var(--fog);margin-left:8px">every rostered player in the league, crossed with DELTA\u2019s verdicts \u00b7 tags are league-invariant per-player signals</span></div>'
     +'<div style="font-size:10px;font-weight:700;color:var(--emerald);letter-spacing:.06em;text-transform:uppercase;margin:12px 0 4px">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
     +targetsTbl
