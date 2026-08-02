@@ -40,6 +40,9 @@ MIN_GAMES = int(os.environ.get("MIN_GAMES") or 4)
 # PROVISIONAL — calibrate against /draft/picks (does dDOM beat raw dom at predicting draft
 # capital?) before treating the magnitude as final. Tunable via env for the calibration loop.
 DDOM_SWING = float(os.environ.get("DDOM_SWING") or 0.50)
+# Platform season-picker floor. Older seasons may be backfilled for calibration but must
+# not appear on the live platform; only seasons >= this show in the picker.
+VISIBLE_FROM = int(os.environ.get("CFBD_VISIBLE_FROM") or 2024)
 SKILL = set(QUOTA)
 OFF_CATS = {"passing", "rushing", "receiving"}
 # Canonical compact keys, mirroring data/game-logs.json so the front end reads one dialect.
@@ -419,8 +422,11 @@ out = {
     "quota": QUOTA, "min_games": MIN_GAMES,
     # Every season file present after this run, so the UI can offer a season picker
     # without a second request or a hard-coded list.
-    "seasons": sorted({int(f.split("-")[-1].split(".")[0])
-                       for f in __import__("glob").glob("data/college-players-2*.json")} | {YEAR}),
+    # Season picker floor: backtest seasons can be backfilled into data/ for calibration
+    # WITHOUT surfacing on the platform. Only seasons >= VISIBLE_FROM appear in the picker.
+    "seasons": sorted(s for s in ({int(f.split("-")[-1].split(".")[0])
+                       for f in __import__("glob").glob("data/college-players-2*.json")} | {YEAR})
+                      if s >= VISIBLE_FROM),
     "counts": {"universe": len(picked), **dict(by_door)},
     "players": [],
 }
