@@ -200,6 +200,8 @@ with cfbd.ApiClient(cfg) as api:
     MATCH = collections.Counter()
     MISS = []
     TEAM_REC = collections.Counter()   # (team) -> season receptions, all players
+    TEAM_REY = collections.Counter()   # (team) -> season receiving YARDS, all players (Dominator denom)
+    TEAM_RET = collections.Counter()   # (team) -> season receiving TDs, all players (Dominator denom)
     for wk in range(1, WEEKS + 1):
         games = call(f"GET /games/players wk{wk}", games_api.get_game_player_stats,
                      year=YEAR, week=wk, classification="fbs", season_type="regular")
@@ -218,11 +220,15 @@ with cfbd.ApiClient(cfg) as api:
                         if ck is None: continue          # drops AVG / LONG / unmapped
                         STAT_KEYS[f"{cname}.{tkey}"] += 1
                         for ath in (g(typ, "athletes") or []):
-                            # Team reception denominator must include EVERY receiver, not
+                            # Team receiving denominators must include EVERY receiver, not
                             # just our universe, or shares inflate. Accumulated before the
                             # roster-match filter for that reason.
-                            if ck == "rec" and tname in fbs_names:
-                                try: TEAM_REC[tname] += float(g(ath, "stat") or 0)
+                            if tname in fbs_names:
+                                try:
+                                    s = float(g(ath, "stat") or 0)
+                                    if   ck == "rec": TEAM_REC[tname] += s
+                                    elif ck == "rey": TEAM_REY[tname] += s
+                                    elif ck == "ret": TEAM_RET[tname] += s
                                 except (TypeError, ValueError): pass
                             aid = g(ath, "id")
                             v = by_id.get(str(aid)) if aid is not None else None
@@ -251,6 +257,8 @@ with cfbd.ApiClient(cfg) as api:
         print(f"    {kk:<26} {n:>6,}")
 
 TEAM_REC_TOTAL = dict(TEAM_REC)
+TEAM_REY_TOTAL = dict(TEAM_REY)   # Dominator denominator: team season receiving yards
+TEAM_RET_TOTAL = dict(TEAM_RET)   # Dominator denominator: team season receiving TDs
 
 # ---- production scoring (yards only; TD/eff live as display columns) ----
 def num(v):
@@ -273,6 +281,16 @@ for v in ply.values():
     tr = TEAM_REC_TOTAL.get(v["tm"], 0)
     v["rshare"] = round(pr / tr, 4) if tr > 0 else None
     v["recs"] = int(pr)
+    # Dominator Rating — the classic college WR/TE dynasty signal: the average of the
+    # player's share of team receiving YARDS and team receiving TDs. Denominators are
+    # every receiver on the team (same population as reception share). If a team scored
+    # zero receiving TDs, fall back to the yard share alone rather than halving toward 0.
+    # Display/context only — NOT a ranking input until validated against draft outcomes.
+    ty  = TEAM_REY_TOTAL.get(v["tm"], 0)
+    tdd = TEAM_RET_TOTAL.get(v["tm"], 0)
+    y_share = (v["tot"]["rey"] / ty)  if ty  > 0 else 0.0
+    t_share = (v["tot"]["ret"] / tdd) if tdd > 0 else 0.0
+    v["dom"] = round((y_share + t_share) / 2 if tdd > 0 else y_share, 4)
     v["prod"] = rec_y + rush_y + pass_y * 0.4     # pass yards discounted to compare positions
     v["games"] = len(v["g"])
 
@@ -318,6 +336,8 @@ out = {
     "note": ("College TRACKING data. Production facts only — no DELTA Score, no projections. "
              "usg = CFBD share of ALL team offensive plays (NOT target share; ~0.53x it). "
              "rsh = reception share (player receptions / team receptions) - the available proxy. "
+             "dom = Dominator Rating: avg of receiving-yard share and receiving-TD share (all team "
+             "receivers as denominator); the classic WR/TE college dynasty signal. Context only - never scored. "
              "Season totals use the SAME keys as weekly rows: rey/ret=receiving, ry/rt=rushing, py/pt=passing. "
              "ageEst = ESTIMATE ONLY: 18 + (season - recruiting class). CFBD exposes no birth dates. "
              "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
@@ -337,7 +357,7 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
         "rcls": v.get("rcls"),
         "ageEst": (18 + (YEAR - v["rcls"])) if v.get("rcls") else None,
-        "usg": v["usg"], "rsh": v["rshare"],
+        "usg": v["usg"], "rsh": v["rshare"], "dom": v["dom"],
         "rec": int(v["tot"]["rec"]), "rey": round(v["tot"]["rey"]), "ret": int(v["tot"]["ret"]),
         "car": int(v["tot"]["car"]), "ry": round(v["tot"]["ry"]),  "rt":  int(v["tot"]["rt"]),
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
