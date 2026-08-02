@@ -36,6 +36,10 @@ QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
          "WR": int(os.environ.get("Q_WR") or 160),
          "TE": int(os.environ.get("Q_TE") or 70)}
 MIN_GAMES = int(os.environ.get("MIN_GAMES") or 4)
+# dDOM competition-weighting swing. Median-talent team => x1.0; top/bottom => x(1 +/- SWING).
+# PROVISIONAL — calibrate against /draft/picks (does dDOM beat raw dom at predicting draft
+# capital?) before treating the magnitude as final. Tunable via env for the calibration loop.
+DDOM_SWING = float(os.environ.get("DDOM_SWING") or 0.50)
 SKILL = set(QUOTA)
 OFF_CATS = {"passing", "rushing", "receiving"}
 # Canonical compact keys, mirroring data/game-logs.json so the front end reads one dialect.
@@ -97,6 +101,17 @@ with cfbd.ApiClient(cfg) as api:
     P4 = {"SEC", "Big Ten", "Big 12", "ACC"}
     roster = call("GET /roster (fbs)", teams_api.get_roster, year=YEAR, classification="fbs")
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
+    # Team talent composite (247 roster-talent sum). The competition-strength signal for
+    # dDOM: a target-share earned amid NFL-caliber teammates and schedule is worth more
+    # than the same share against weak competition. One call; keyed by team.
+    talent = call("GET /talent", teams_api.get_talent, year=YEAR)
+    TEAM_TALENT = {}
+    for t in (talent or []):
+        nm = g(t, "team", "school")
+        tv = g(t, "talent")
+        if nm and tv is not None:
+            try: TEAM_TALENT[nm] = float(tv)
+            except (TypeError, ValueError): pass
     # Transfer portal. A receiver moving from a G5 offence to an SEC one is a genuine
     # dynasty event: his competition level, his target competition and his old team's
     # vacated share all change at once. One call; emitted as a separate file so the
@@ -202,6 +217,8 @@ with cfbd.ApiClient(cfg) as api:
     TEAM_REC = collections.Counter()   # (team) -> season receptions, all players
     TEAM_REY = collections.Counter()   # (team) -> season receiving YARDS, all players (Dominator denom)
     TEAM_RET = collections.Counter()   # (team) -> season receiving TDs, all players (Dominator denom)
+    TEAM_RY  = collections.Counter()   # (team) -> season rushing YARDS, all players (rush-Dominator denom)
+    TEAM_RT  = collections.Counter()   # (team) -> season rushing TDs, all players (rush-Dominator denom)
     for wk in range(1, WEEKS + 1):
         games = call(f"GET /games/players wk{wk}", games_api.get_game_player_stats,
                      year=YEAR, week=wk, classification="fbs", season_type="regular")
@@ -229,6 +246,8 @@ with cfbd.ApiClient(cfg) as api:
                                     if   ck == "rec": TEAM_REC[tname] += s
                                     elif ck == "rey": TEAM_REY[tname] += s
                                     elif ck == "ret": TEAM_RET[tname] += s
+                                    elif ck == "ry":  TEAM_RY[tname]  += s
+                                    elif ck == "rt":  TEAM_RT[tname]  += s
                                 except (TypeError, ValueError): pass
                             aid = g(ath, "id")
                             v = by_id.get(str(aid)) if aid is not None else None
@@ -259,6 +278,17 @@ with cfbd.ApiClient(cfg) as api:
 TEAM_REC_TOTAL = dict(TEAM_REC)
 TEAM_REY_TOTAL = dict(TEAM_REY)   # Dominator denominator: team season receiving yards
 TEAM_RET_TOTAL = dict(TEAM_RET)   # Dominator denominator: team season receiving TDs
+TEAM_RY_TOTAL  = dict(TEAM_RY)    # rush-Dominator denominator: team season rushing yards
+TEAM_RT_TOTAL  = dict(TEAM_RT)    # rush-Dominator denominator: team season rushing TDs
+
+# Team talent percentile (0-1) across all FBS teams with 247 talent data — the dDOM
+# competition-strength axis. Median team lands at ~0.5 (=> no dDOM adjustment).
+TALENT_PCT = {}
+if TEAM_TALENT:
+    ranked = sorted(TEAM_TALENT.items(), key=lambda kv: kv[1])
+    n = len(ranked)
+    for i, (tm, _) in enumerate(ranked):
+        TALENT_PCT[tm] = i / (n - 1) if n > 1 else 0.5
 
 # ---- production scoring (yards only; TD/eff live as display columns) ----
 def num(v):
@@ -291,6 +321,46 @@ for v in ply.values():
     y_share = (v["tot"]["rey"] / ty)  if ty  > 0 else 0.0
     t_share = (v["tot"]["ret"] / tdd) if tdd > 0 else 0.0
     v["dom"] = round((y_share + t_share) / 2 if tdd > 0 else y_share, 4)
+    # Rushing Dominator (RB signal): share of team rushing yards + TDs, same all-player
+    # denominators. Context only — pairs with receiving dom for dual-threat backs.
+    t_ry = TEAM_RY_TOTAL.get(v["tm"], 0)
+    t_rt = TEAM_RT_TOTAL.get(v["tm"], 0)
+    ry_share = (v["tot"]["ry"] / t_ry) if t_ry > 0 else 0.0
+    rt_share = (v["tot"]["rt"] / t_rt) if t_rt > 0 else 0.0
+    v["rdom"] = round((ry_share + rt_share) / 2 if t_rt > 0 else ry_share, 4)
+    # dDOM — DELTA Dominator: raw dominator scaled by team competition strength (247 talent
+    # percentile). Median-talent team = x1.0; the swing rewards dominance amid strong
+    # competition and discounts small-school target-hogging. This is an ANALYTICAL DELTA
+    # metric, not a raw fact like dom — shown alongside dom, never replacing it. Magnitude
+    # is PROVISIONAL until DDOM_SWING is calibrated against draft outcomes.
+    tp = TALENT_PCT.get(v["tm"])
+    if tp is None:
+        v["ddom"], v["tpct"] = v["dom"], None
+    else:
+        mult = 1.0 + DDOM_SWING * (tp - 0.5) * 2.0
+        mult = max(1.0 - DDOM_SWING, min(1.0 + DDOM_SWING, mult))
+        v["ddom"], v["tpct"] = round(v["dom"] * mult, 4), round(tp, 3)
+    # QB efficiency — season totals omit completions/attempts, but the game-log rows carry
+    # a 'ca' field ("16/24"). Aggregate it to expose completion% and yards/attempt.
+    comp = att = 0
+    for row in v["g"].values():
+        ca = row.get("ca")
+        if ca and "/" in str(ca):
+            try:
+                c_, a_ = str(ca).split("/")[:2]
+                comp += int(float(c_)); att += int(float(a_))
+            except (ValueError, TypeError):
+                pass
+    v["cmp"], v["att"] = comp, att
+    v["cmppct"] = round(comp / att, 4) if att else None
+    v["ypa"]    = round(v["tot"]["py"] / att, 2) if att else None
+    v["tdpct"]  = round(v["tot"]["pt"] / att, 4) if att else None
+    v["intpct"] = round(v["tot"]["pi"] / att, 4) if att else None
+    # ANY/A — adjusted net yards per attempt: (yds + 20*TD - 45*INT) / att. The single
+    # best one-number QB-efficiency measure; rewards TDs, punishes INTs, so a
+    # completion-inflated dink-and-dunk QB does NOT grade out elite. (Box scores carry no
+    # sack data, so this is the passing-only variant of ANY/A.)
+    v["anya"] = round((v["tot"]["py"] + 20*v["tot"]["pt"] - 45*v["tot"]["pi"]) / att, 2) if att else None
     v["prod"] = rec_y + rush_y + pass_y * 0.4     # pass yards discounted to compare positions
     v["games"] = len(v["g"])
 
@@ -338,6 +408,10 @@ out = {
              "rsh = reception share (player receptions / team receptions) - the available proxy. "
              "dom = Dominator Rating: avg of receiving-yard share and receiving-TD share (all team "
              "receivers as denominator); the classic WR/TE college dynasty signal. Context only - never scored. "
+             "rdom = rushing Dominator (share of team rushing yards+TDs) for RB dual-threat context. "
+             "ddom = dDOM (DELTA Dominator): raw dom scaled by team 247-talent percentile (tpct) - an "
+             "ANALYTICAL metric adjusting for competition, shown beside raw dom; swing is provisional "
+             "pre-calibration. cmp/att/cmppct/ypa/tdpct/intpct/anya = QB efficiency (anya = adj net yds/att). "
              "Season totals use the SAME keys as weekly rows: rey/ret=receiving, ry/rt=rushing, py/pt=passing. "
              "ageEst = ESTIMATE ONLY: 18 + (season - recruiting class). CFBD exposes no birth dates. "
              "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
@@ -357,7 +431,10 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "stars": v["stars"] or None, "rating": round(v["rating"], 4) or None,
         "rcls": v.get("rcls"),
         "ageEst": (18 + (YEAR - v["rcls"])) if v.get("rcls") else None,
-        "usg": v["usg"], "rsh": v["rshare"], "dom": v["dom"],
+        "usg": v["usg"], "rsh": v["rshare"], "dom": v["dom"], "rdom": v["rdom"],
+        "ddom": v["ddom"], "tpct": v["tpct"],
+        "cmp": v["cmp"], "att": v["att"], "cmppct": v["cmppct"], "ypa": v["ypa"],
+        "tdpct": v["tdpct"], "intpct": v["intpct"], "anya": v["anya"],
         "rec": int(v["tot"]["rec"]), "rey": round(v["tot"]["rey"]), "ret": int(v["tot"]["ret"]),
         "car": int(v["tot"]["car"]), "ry": round(v["tot"]["ry"]),  "rt":  int(v["tot"]["rt"]),
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
