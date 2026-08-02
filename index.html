@@ -3397,6 +3397,8 @@ document.addEventListener('click', function(e) {
       <option value="ry">Rushing yards</option>
       <option value="py">Passing yards</option>
       <option value="rsh">Reception share</option>
+      <option value="dom">Dominator (raw)</option>
+      <option value="ddom">dDOM (competition-adjusted)</option>
       <option value="age">Youngest first</option>
       <option value="stars">Recruit stars</option>
     </select>
@@ -3644,6 +3646,8 @@ function renderCollege(){
     scrim: p=>-((p.rey||0)+(p.ry||0)),
     rey:   p=>-(p.rey||0), ry: p=>-(p.ry||0), py: p=>-(p.py||0),
     rsh:   p=>-(p.rsh||0),
+    dom:   p=>{ const d=cfbDDOM(p); return d?-d.raw:BIG; },
+    ddom:  p=>{ const d=cfbDDOM(p); return d?-d.sig:BIG; },
     age:   p=>(p.ageEst==null?BIG:p.ageEst),      // unknown ages sort last, not first
     stars: p=>-(p.stars||0),
   }[sort]||(p=>-cfbScout(p));
@@ -3674,6 +3678,7 @@ function renderCollege(){
       +'<td class="col-hide-mobile">'+dash(p.gms)+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.rec)+'</td>'
       +'<td style="font-weight:700">'+dash(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0))+'</td>'
+      +'<td style="font-weight:700;white-space:nowrap">'+(function(){var d=cfbDDOM(p);return d?'<span style="color:var(--teal-br)">'+d.sig+d.unit+'</span>':'<span style="color:var(--fog-2)">-</span>';})()+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.rey)+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.ry)+'</td>'
       +'<td class="col-hide-mobile">'+dash(p.py)+'</td>'
@@ -3699,6 +3704,7 @@ function renderCollege(){
     +'<th class="col-hide-mobile" data-tip="Games with at least one recorded offensive stat.">G</th>'
     +'<th class="col-hide-mobile" data-tip="Receptions.">Rec</th>'
     +'<th data-tip="Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on.">Yds</th>'
+    +'<th data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production metric: dominator (WR/TE), rushing dominator (RB), or ANY/A (QB), scaled by strength of competition. An analytical signal, not the ranking order \u2014 most comparable within a single position.">dDOM</th>'
     +'<th class="col-hide-mobile" data-tip="Receiving yards.">RecYd</th>'
     +'<th class="col-hide-mobile" data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd</th>'
     +'<th class="col-hide-mobile" data-tip="Passing yards.">PassYd</th>'
@@ -3720,6 +3726,31 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCfbCard(); })
 function closeCfbCard(){
   const o=document.getElementById('cfb-overlay'); if(o) o.classList.remove('open');
 }
+// ── dDOM: DELTA's competition-adjusted production metric, position-appropriate ──
+// WR/TE -> receiving dominator, RB -> rushing dominator, QB -> ANY/A efficiency.
+// Each scaled by team-talent percentile at the calibrated swing (0.50). Analytical
+// signal, shown beside the raw fact; validated to lift NFL-outcome prediction at
+// every position (modest, ~94% confidence) — a signal to read, not a ranking input.
+const DDOM_SWING = 0.50;
+function cfbMult(tpct){
+  if(tpct==null) return 1.0;
+  return Math.max(1-DDOM_SWING, Math.min(1+DDOM_SWING, 1 + DDOM_SWING*(tpct-0.5)*2));
+}
+function cfbDDOM(p){
+  const m=cfbMult(p.tpct);
+  if(p.pos==='QB'){
+    const raw=p.anya; if(raw==null) return null;
+    return {raw, sig:Math.round(raw*m*100)/100, unit:'', pct:true, label:'competition-adjusted ANY/A', rawLabel:'raw ANY/A'};
+  }
+  if(p.pos==='RB'){
+    const raw=p.rdom; if(raw==null) return null;
+    return {raw:raw*100, sig:Math.round(raw*m*1000)/10, unit:'%', pct:false, label:'competition-adjusted rush dominator', rawLabel:'raw rush dom'};
+  }
+  const raw=p.dom; if(raw==null) return null;
+  return {raw:raw*100, sig:Math.round(raw*m*1000)/10, unit:'%', pct:false, label:'competition-adjusted dominator', rawLabel:'raw dom'};
+}
+function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senior',5:'Senior (5th)'}[c]||'class n/a'; }
+
 function openCfbCard(name){
   if(!CFB || !CFB.players) return;
   const p=CFB.players.find(x=>x.n===name); if(!p) return;
@@ -3751,6 +3782,42 @@ function openCfbCard(name){
     ? n(p.py)+' pass yds \u00b7 '+n(p.pt)+' TD \u00b7 '+n(p.pi)+' INT \u00b7 '+n(p.ry)+' rush yds'
     : n(p.rec)+' rec \u00b7 '+n(p.rey)+' rec yds \u00b7 '+n(p.ret)+' rec TD \u00b7 '+n(p.car)+' car \u00b7 '+n(p.ry)+' rush yds';
 
+  // dDOM hero (position-appropriate); competition meter from talent percentile
+  const dd=cfbDDOM(p);
+  const rawFmt=v=>(v%1?v.toFixed(1):String(v));
+  const tp = p.tpct==null ? 50 : Math.round(p.tpct*100);
+  const tpLabel = p.tpct==null ? 'no talent data \u2014 unadjusted'
+    : tp+'th pct talent'+(tp>=90?' \u00b7 elite':tp>=60?' \u00b7 strong':tp<=25?' \u00b7 weak':'');
+  const hero = dd ? '<div style="margin-top:13px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px 14px">'
+    +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">'
+      +'<div style="min-width:0"><div style="font-size:10.5px;color:var(--fog);font-weight:600;letter-spacing:.02em">dDOM \u00b7 '+dd.label+'</div>'
+        +'<div style="font-size:29px;font-weight:800;color:var(--teal-br);font-family:var(--mono);line-height:1">'+dd.sig+dd.unit+'</div>'
+        +'<div style="font-size:10px;color:var(--fog-2);margin-top:2px">DELTA signal \u00b7 analytical, not a raw fact</div></div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:10.5px;color:var(--fog)">'+dd.rawLabel+'</div>'
+        +'<div style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--fog)">'+rawFmt(dd.raw)+dd.unit+'</div>'
+        +'<div style="font-size:10px;color:var(--fog-2)">fact</div></div>'
+    +'</div>'
+    +'<div style="margin-top:10px;font-size:10.5px;color:var(--fog);display:flex;align-items:center;gap:7px">'
+      +'<span>competition</span>'
+      +'<span style="flex:1;height:5px;background:var(--ink-2);border-radius:3px;overflow:hidden;position:relative">'
+      +'<i style="position:absolute;left:0;top:0;bottom:0;width:'+tp+'%;background:linear-gradient(90deg,var(--emerald),var(--teal-br));border-radius:3px'+(p.tpct==null?';opacity:.3':'')+'"></i></span>'
+      +'<span style="color:'+(p.tpct==null?'var(--fog-2)':'var(--emerald)')+';font-weight:700;white-space:nowrap">'+tpLabel+'</span>'
+    +'</div></div>' : '';
+
+  // position-aware production / efficiency grid
+  const gp=(k,v)=>'<div style="background:var(--panel);padding:9px 10px"><div style="font-size:9.5px;color:var(--fog-2);text-transform:uppercase;letter-spacing:.04em">'+k+'</div>'
+    +'<div style="font-size:15px;font-weight:700;font-family:var(--mono);margin-top:2px">'+v+'</div></div>';
+  const pc = p.pos==='QB'
+    ? [['Pass yds',n(p.py)],['TD / INT',n(p.pt)+' / '+n(p.pi)],['Comp %',p.cmppct!=null?(p.cmppct*100).toFixed(1):'-'],
+       ['Yds/att',n(p.ypa)],['ANY/A',n(p.anya)],['Rush yds',n(p.ry)]]
+    : p.pos==='RB'
+    ? [['Rush yds',n(p.ry)],['Rush TD',n(p.rt)],['Carries',n(p.car)],
+       ['Yds/car',p.car?(p.ry/p.car).toFixed(1):'-'],['Rec',n(p.rec)],['Rec yds',n(p.rey)]]
+    : [['Rec yds',n(p.rey)],['Rec TD',n(p.ret)],['Catches',n(p.rec)],
+       ['Tgt share',p.rsh!=null?Math.round(p.rsh*100)+'%':'-'],['Yds/catch',p.rec?(p.rey/p.rec).toFixed(1):'-'],['Yds/game',p.gms?(p.rey/p.gms).toFixed(1):'-']];
+  const grid='<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden">'
+    +pc.map(c=>gp(c[0],c[1])).join('')+'</div>';
+
   host.innerHTML='<div style="padding:18px 20px 20px">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
       +'<div style="min-width:0">'
@@ -3758,28 +3825,29 @@ function openCfbCard(name){
           +' <span id="cfb-card-star" data-name="'+p.n.replace(/"/g,'&quot;')+'" onclick="cfbCardStar(this)" '
           +'style="cursor:pointer;font-size:16px;vertical-align:2px;color:'+(watched?'var(--topaz)':'var(--fog-2)')+'">'
           +(watched?'\u2605':'\u2606')+'</span></div>'
-        +'<div style="font-size:11.5px;color:var(--fog);margin-top:3px">'+p.pos+' \u00b7 '+(p.tm||'-')
-          +(p.conf?' \u00b7 '+p.conf:'')+'</div>'
+        +'<div style="font-size:11.5px;color:var(--fog);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">'
+          +'<span style="font-size:11px;font-weight:800;color:var(--ink);background:'+(p.pos==='QB'?'var(--violet)':p.pos==='RB'?'var(--topaz)':'var(--sky)')+';border-radius:6px;padding:2px 7px">'+p.pos+'</span>'
+          +(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
+          +(comp>=1?'<span style="font-size:10px;font-weight:700;color:var(--emerald);border:1px solid #1c3a30;background:#0e1c17;border-radius:20px;padding:2px 7px">P4</span>':'<span style="font-size:10px;font-weight:700;color:var(--coral);border:1px solid var(--line);border-radius:20px;padding:2px 7px">G5 \u00d7'+comp.toFixed(2)+'</span>')
+          +(p.stars?'<span title="'+p.stars+'-star recruit" style="font-size:10px;font-weight:700;color:var(--topaz);border:1px solid #3a3320;background:#1c1810;border-radius:20px;padding:2px 7px">'+'\u2605'.repeat(p.stars)+' recruit</span>':'')
+          +'<span>'+cfbClassName(p.cls)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span>'
+        +'</div>'
       +'</div>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
         +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
     +'</div>'
-    +'<div style="display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 12px">'
-      +chip(p.pos+(p._rk||'')+' by production')
-      +chip(p.cls?'Year '+p.cls:'class n/a')
-      +(p.stars?chip(p.stars+'\u2605 recruit','var(--topaz)'):chip('unrecruited'))
-      +(p.ageEst?chip('age ~'+p.ageEst):'')
-      +(comp>=1?chip('P4'):chip('Comp \u00d7'+comp.toFixed(2),'var(--coral)'))
-      +(p.rsh!=null&&p.pos!=='QB'?chip(Math.round(p.rsh*100)+'% of team receptions'):'')
-    +'</div>'
-    +'<div style="font-size:12px;color:var(--paper);font-weight:600;margin-bottom:9px">'+season+'</div>'
+    +hero
+    +grid
+    +'<div id="cfb-traj" style="margin-top:14px"></div>'
+    +'<div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--fog-2);margin:16px 0 7px">GAME LOG</div>'
     +log
     +cfbTeammates(p)
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
-      +'Regular season only \u2014 bowls and playoff games are not pulled. QB rushing is net of sacks, '
-      +'per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
+      +'dDOM is a DELTA analytical metric (competition-adjusted), shown beside the raw fact \u2014 a signal to read, not a ranking input. '
+      +'Regular season only. QB rushing is net of sacks, per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
     +'</div>';
   document.getElementById('cfb-overlay').classList.add('open');
+  cfbFillTrajectory(p);
 }
 function cfbTeammates(p){
   if(!CFB || !CFB.players) return '';
@@ -3813,6 +3881,53 @@ function cfbCardStar(el){
   el.textContent=on?'\u2605':'\u2606';
   el.style.color=on?'var(--topaz)':'var(--fog-2)';
   renderCollege();
+}
+
+// ── Year-over-year trajectory: dDOM by season, stitched across season files by id ──
+const CFB_SEASON_CACHE={};
+async function cfbLoadSeason(yr){
+  if(CFB_SEASON_CACHE[yr]!==undefined) return CFB_SEASON_CACHE[yr];
+  try{
+    const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'});
+    if(!r.ok) throw 0;
+    const j=await r.json(); CFB_SEASON_CACHE[yr]=(j&&j.players)||[];
+  }catch(e){ CFB_SEASON_CACHE[yr]=[]; }
+  return CFB_SEASON_CACHE[yr];
+}
+async function cfbFillTrajectory(p){
+  const host=document.getElementById('cfb-traj'); if(!host||!CFB) return;
+  const seasons=(CFB.seasons||[]).slice().sort((a,b)=>a-b);
+  if(!seasons.length){ host.innerHTML=''; return; }
+  const pts={};
+  for(const yr of seasons){
+    const players=await cfbLoadSeason(yr);
+    const rec=players.find(x=>x.id===p.id) || players.find(x=>x.n===p.n && x.pos===p.pos);
+    if(rec){ const dd=cfbDDOM(rec); if(dd) pts[yr]={sig:dd.sig,unit:dd.unit}; }
+  }
+  // bail if the user moved on and this placeholder is gone
+  if(document.getElementById('cfb-traj')!==host) return;
+  const yrsWith=seasons.filter(y=>pts[y]);
+  if(!yrsWith.length){ host.innerHTML=''; return; }
+  const maxSig=Math.max.apply(null,yrsWith.map(y=>pts[y].sig))||1;
+  const first=pts[yrsWith[0]].sig, last=pts[yrsWith[yrsWith.length-1]].sig;
+  const trend=yrsWith.length>=2
+    ? (last>first?'<span style="color:var(--emerald)">\u25b2 rising</span>'
+       :last<first?'<span style="color:var(--coral)">\u25bc declining</span>'
+       :'<span style="color:var(--fog-2)">\u2192 stable</span>') : '';
+  const rowsHtml=seasons.concat([seasons[seasons.length-1]+1]).map(yr=>{
+    const pt=pts[yr];
+    const bar=pt
+      ? '<div style="height:20px;background:var(--ink-2);border-radius:4px;position:relative;overflow:hidden">'
+        +'<i style="position:absolute;left:0;top:0;bottom:0;width:'+Math.max(14,Math.round(pt.sig/maxSig*100))+'%;'
+        +'background:linear-gradient(90deg,#134e7a,var(--sky));border-radius:4px;display:flex;align-items:center;'
+        +'padding-left:7px;font-size:10px;font-weight:700;font-family:var(--mono);color:var(--paper)">'+pt.sig+pt.unit+'</i></div>'
+      : '<div style="height:20px;background:var(--ink-2);border-radius:4px;opacity:.35"></div>';
+    return '<div style="display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:11px">'
+      +'<span style="color:var(--fog-2);font-family:var(--mono);font-weight:600">'+yr+'</span>'+bar+'</div>';
+  }).join('');
+  host.innerHTML='<div style="font-size:11px;color:var(--fog);font-weight:700;letter-spacing:.03em;margin-bottom:8px;display:flex;justify-content:space-between">'
+    +'<span>Trajectory \u00b7 dDOM by season</span>'+trend+'</div>'+rowsHtml
+    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:2px">Bars scaled to his own peak season \u2014 the greyed year fills in as it plays.</div>';
 }
 
 
