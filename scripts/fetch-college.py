@@ -106,7 +106,7 @@ with cfbd.ApiClient(cfg) as api:
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
     # Team talent composite (247 roster-talent sum). The competition-strength signal for
     # dDOM: a target-share earned amid NFL-caliber teammates and schedule is worth more
-    # than the same share against weak competition. One call; keyed by team.
+    # than the same share against weak competition. Keyed by team.
     talent = call("GET /talent", teams_api.get_talent, year=YEAR)
     TEAM_TALENT = {}
     for t in (talent or []):
@@ -115,6 +115,29 @@ with cfbd.ApiClient(cfg) as api:
         if nm and tv is not None:
             try: TEAM_TALENT[nm] = float(tv)
             except (TypeError, ValueError): pass
+    # CARRY-FORWARD: some teams (notably service academies) are missing from a given
+    # season's 247 talent feed. Without this, their competition penalty silently vanishes
+    # and weak-competition players' dDOM inflates (e.g. a Navy WR jumping to the 100th
+    # percentile). Team talent barely moves year to year, so fall back to the most recent
+    # prior season we can find. Only fills teams that ACTUALLY have players this season.
+    have_teams = {t for t in TEAM_CONF}
+    missing = [t for t in have_teams if t not in TEAM_TALENT]
+    for back in (1, 2, 3):
+        if not missing:
+            break
+        prev = call(f"GET /talent (carry-forward {YEAR-back})", teams_api.get_talent, year=YEAR - back)
+        pmap = {}
+        for t in (prev or []):
+            nm = g(t, "team", "school"); tv = g(t, "talent")
+            if nm and tv is not None:
+                try: pmap[nm] = float(tv)
+                except (TypeError, ValueError): pass
+        filled = [t for t in missing if t in pmap]
+        for t in filled:
+            TEAM_TALENT[t] = pmap[t]
+        if filled:
+            print(f"  [talent] carried forward {len(filled)} team(s) from {YEAR-back}: {', '.join(sorted(filled)[:8])}{'...' if len(filled)>8 else ''}")
+        missing = [t for t in missing if t not in TEAM_TALENT]
     # Transfer portal. A receiver moving from a G5 offence to an SEC one is a genuine
     # dynasty event: his competition level, his target competition and his old team's
     # vacated share all change at once. One call; emitted as a separate file so the
