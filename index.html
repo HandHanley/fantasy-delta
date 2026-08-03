@@ -3388,7 +3388,7 @@ document.addEventListener('click', function(e) {
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
     <input id="cfb-q" oninput="renderCollege()" placeholder="Search players…"
       style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
-    <select id="cfb-sort" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
+    <select id="cfb-sort" onchange="cfbSortFromDropdown(this.value)" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="scout">Scout order (pedigree + level + production)</option>
       <option value="mover">Weekly movers (last 3 vs prior 3)</option>
       <option value="pr">Production (position rank)</option>
@@ -3621,6 +3621,17 @@ async function cfbSetSeason(yr){
     if(host) host.innerHTML='<div style="font-size:12px;color:var(--topaz);padding:14px">Couldn\u2019t load the '+yr+' season.</div>';
   }
 }
+// Click-to-sort state for the college table. Each key's natural direction is baked into
+// the key fn (descending for stats, ascending for rank/age); clicking a header toggles it.
+let cfbSortKey='scout', cfbSortDir=1;
+function cfbSetSort(k){
+  if(k===cfbSortKey){ cfbSortDir=-cfbSortDir; } else { cfbSortKey=k; cfbSortDir=1; }
+  const sel=document.getElementById('cfb-sort');
+  if(sel && [].some.call(sel.options,o=>o.value===k)) sel.value=k;
+  renderCollege();
+}
+function cfbSortFromDropdown(v){ cfbSortKey=v; cfbSortDir=1; renderCollege(); }
+
 function renderCollege(){
   const host=document.getElementById('cfb-body'), foot=document.getElementById('cfb-foot');
   if(!host) return;
@@ -3631,7 +3642,7 @@ function renderCollege(){
     if(foot) foot.textContent=''; return;
   }
   const gv=id=>{ const e=document.getElementById(id); return e?e.value:''; };
-  const q=(gv('cfb-q')||'').toLowerCase().trim(), cls=gv('cfb-cls'), sort=gv('cfb-sort')||'scout';
+  const q=(gv('cfb-q')||'').toLowerCase().trim(), cls=gv('cfb-cls'), sort=cfbSortKey||'scout';
   const cf=gv('cfb-conf');
   const watch=new Set(dwList('cfb'));
 
@@ -3654,14 +3665,24 @@ function renderCollege(){
     mover: p=>-cfbMoverScore(p),
     pr:    p=>(p._rk||9999),        // rank within position, ascending -> interleaves
     scrim: p=>-((p.rey||0)+(p.ry||0)),
+    prod:  p=>-(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0)),
     rey:   p=>-(p.rey||0), ry: p=>-(p.ry||0), py: p=>-(p.py||0),
+    td:    p=>-((p.ret||0)+(p.rt||0)+(p.pt||0)),
+    gms:   p=>-(p.gms||0),
+    rec:   p=>-(p.rec||0),
     rsh:   p=>-(p.rsh||0),
     dom:   p=>{ const d=cfbDDOM(p); return d?-d.raw:BIG; },
     ddom:  p=>{ const d=cfbDDOM(p); return d?-d.pct:BIG; },
     age:   p=>(p.ageEst==null?BIG:p.ageEst),      // unknown ages sort last, not first
     stars: p=>-(p.stars||0),
+    cls:   p=>(p.cls||99),
+    comp:  p=>-cfbComp(p),
+    name:  p=>(p.n||'').toLowerCase(),
+    pos:   p=>p.pos||'',
+    team:  p=>(p.tm||'').toLowerCase(),
+    trend: p=>{ const s=cfbRecentSplit(p,3); return s? -s.diff : BIG; },
   }[sort]||(p=>-cfbScout(p));
-  rows.sort((a,b)=>key(a)-key(b));
+  rows.sort((a,b)=>{ const ka=key(a),kb=key(b); const c=(typeof ka==='string')?ka.localeCompare(kb):(ka-kb); return c*cfbSortDir; });
 
   if(!rows.length){
     host.innerHTML='<div style="font-size:12px;color:var(--fog-2);border:1px solid var(--line);border-radius:8px;padding:16px">'
@@ -3700,27 +3721,31 @@ function renderCollege(){
             +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; })()+'</td>'
       +'</tr>';
   }).join('');
+  const sar=k=>cfbSortKey===k?' <span style="color:var(--teal-br);font-size:9px">'+(cfbSortDir>0?'\u25be':'\u25b4')+'</span>':'';
+  const SC=' style="cursor:pointer;user-select:none"';
   host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' player'
     +(rows.length===1?'':'s')+'</div>'
     +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
     +'<th></th>'
-    +'<th data-tip="Position in this list, under the sort you have chosen.">#</th>'
-    +'<th class="col-hide-mobile" data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#</th>'
-    +'<th>Player</th><th data-tip="Position.">Pos</th><th>Team</th>'
-    +'<th data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp</th>'
-    +'<th data-tip="Class standing. Highlighted in blue once he is DRAFT-ELIGIBLE \u2014 the NFL requires three years removed from high school, so Y3 may declare early and Y4 must. Dimmed years are future classes you are scouting early.">Cls</th>'
-    +'<th class="col-hide-mobile" data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age</th>'
-    +'<th data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars</th>'
-    +'<th class="col-hide-mobile" data-tip="Games with at least one recorded offensive stat.">G</th>'
-    +'<th class="col-hide-mobile" data-tip="Receptions.">Rec</th>'
-    +'<th data-tip="Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on.">Yds</th>'
-    +'<th data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only (6+ games and a volume floor). 90 = top 10% at his position, identically across positions. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.">dDOM</th>'
-    +'<th class="col-hide-mobile" data-tip="Receiving yards.">RecYd</th>'
-    +'<th class="col-hide-mobile" data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd</th>'
-    +'<th class="col-hide-mobile" data-tip="Passing yards.">PassYd</th>'
-    +'<th class="col-hide-mobile" data-tip="All touchdowns: receiving + rushing + passing.">TD</th>'
-    +'<th data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh</th>'
-    +'<th data-tip="Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games. This is what the Weekly movers sort ranks on \u2014 during a live season it answers who broke out on Saturday, which a season-totals table cannot.">Trend</th>'
+    +'<th onclick="cfbSetSort(\'scout\')"'+SC+' data-tip="Position in this list, under the sort you have chosen.">#'+sar('scout')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'pr\')"'+SC+' data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#'+sar('pr')+'</th>'
+    +'<th onclick="cfbSetSort(\'name\')"'+SC+'>Player'+sar('name')+'</th>'
+    +'<th onclick="cfbSetSort(\'pos\')"'+SC+' data-tip="Position.">Pos'+sar('pos')+'</th>'
+    +'<th onclick="cfbSetSort(\'team\')"'+SC+'>Team'+sar('team')+'</th>'
+    +'<th onclick="cfbSetSort(\'comp\')"'+SC+' data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp'+sar('comp')+'</th>'
+    +'<th onclick="cfbSetSort(\'cls\')"'+SC+' data-tip="Class standing. Highlighted in blue once he is DRAFT-ELIGIBLE \u2014 the NFL requires three years removed from high school, so Y3 may declare early and Y4 must. Dimmed years are future classes you are scouting early.">Cls'+sar('cls')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'age\')"'+SC+' data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age'+sar('age')+'</th>'
+    +'<th onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'gms\')"'+SC+' data-tip="Games with at least one recorded offensive stat.">G'+sar('gms')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'rec\')"'+SC+' data-tip="Receptions.">Rec'+sar('rec')+'</th>'
+    +'<th onclick="cfbSetSort(\'prod\')"'+SC+' data-tip="Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on.">Yds'+sar('prod')+'</th>'
+    +'<th onclick="cfbSetSort(\'ddom\')"'+SC+' data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only (6+ games and a volume floor). 90 = top 10% at his position, identically across positions. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.">dDOM'+sar('ddom')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'rey\')"'+SC+' data-tip="Receiving yards.">RecYd'+sar('rey')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'ry\')"'+SC+' data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd'+sar('ry')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'py\')"'+SC+' data-tip="Passing yards.">PassYd'+sar('py')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'td\')"'+SC+' data-tip="All touchdowns: receiving + rushing + passing.">TD'+sar('td')+'</th>'
+    +'<th onclick="cfbSetSort(\'rsh\')"'+SC+' data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh'+sar('rsh')+'</th>'
+    +'<th onclick="cfbSetSort(\'trend\')"'+SC+' data-tip="Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games. This is what the Weekly movers sort ranks on \u2014 during a live season it answers who broke out on Saturday, which a season-totals table cannot.">Trend'+sar('trend')+'</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
@@ -3807,22 +3832,8 @@ function openCfbCard(name){
   const comp=cfbComp(p);
   const watched=dwHas(p.n,'cfb');
 
-  // position-appropriate game-log columns — a QB log and a WR log share almost nothing
-  const cols = p.pos==='QB'
-    ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
-    : p.pos==='RB'
-    ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
-    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry']];
-
-  const games=(p.g||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
-  const log = games.length
-    ? '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
-      +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
-      +games.map(g=>'<tr><td style="font-weight:600">'+(g.w||'-')+'</td>'
-        +'<td class="txt" style="white-space:nowrap">'+(g.opp||'-')+'</td>'
-        +cols.map(c=>'<td>'+n(g[c[1]])+'</td>').join('')+'</tr>').join('')
-      +'</tbody></table></div>'
-    : '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
+  // Game log is season-aware — built by cfbFillGameLog() into a placeholder below, with a
+  // season switcher. Defaults to the player's most recent season with games.
 
   const chip=(txt,col)=>'<span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;'
     +'background:var(--ink-2);color:'+(col||'var(--fog)')+';white-space:nowrap">'+txt+'</span>';
@@ -3888,7 +3899,7 @@ function openCfbCard(name){
     +grid
     +'<div id="cfb-traj" style="margin-top:14px"></div>'
     +'<div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--fog-2);margin:16px 0 7px">GAME LOG</div>'
-    +log
+    +'<div id="cfb-gamelog"></div>'
     +cfbTeammates(p)
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
       +'dDOM is a DELTA analytical metric \u2014 a 0-100 percentile of competition-adjusted production WITHIN his position, ranked among QUALIFIED players (6+ games and a volume floor), so 90 = top 10% at his position. Low-volume players show no dDOM. A signal to read, not a ranking input. '
@@ -3896,6 +3907,7 @@ function openCfbCard(name){
     +'</div>';
   document.getElementById('cfb-overlay').classList.add('open');
   cfbFillTrajectory(p);
+  cfbFillGameLog(p);
 }
 function cfbTeammates(p){
   if(!CFB || !CFB.players) return '';
@@ -3975,6 +3987,54 @@ async function cfbFillTrajectory(p){
   host.innerHTML='<div style="font-size:11px;color:var(--fog);font-weight:700;letter-spacing:.03em;margin-bottom:8px;display:flex;justify-content:space-between">'
     +'<span>Trajectory \u00b7 dDOM by season</span>'+trend+'</div>'+rowsHtml
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:2px">dDOM = percentile among his position that season \u00b7 bar end = 100. The greyed year fills in as it plays.</div>';
+}
+
+// ── Season-aware game log: defaults to the player's most recent season with games,
+// with a switcher back to earlier seasons. Reuses the cross-season fetch cache. ──
+const CFB_GL={};   // {pid, sel, data:{yr:{games,pos}}}
+function cfbGameLogTable(pos, games){
+  const n=v=>(v==null||v===''||v===0)?'-':v;
+  const cols = pos==='QB'
+    ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+    : pos==='RB'
+    ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry']];
+  const g=(games||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
+  if(!g.length) return '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
+  return '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
+    +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
+    +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w||'-')+'</td>'
+      +'<td class="txt" style="white-space:nowrap">'+(gm.opp||'-')+'</td>'
+      +cols.map(c=>'<td>'+n(gm[c[1]])+'</td>').join('')+'</tr>').join('')
+    +'</tbody></table></div>';
+}
+function cfbGameLogSeason(y){ if(CFB_GL.data && CFB_GL.data[y]){ CFB_GL.sel=y; cfbRenderGameLog(); } }
+function cfbRenderGameLog(){
+  const host=document.getElementById('cfb-gamelog'); if(!host||!CFB_GL.data) return;
+  const yrs=Object.keys(CFB_GL.data).map(Number).sort((a,b)=>a-b);
+  const pills = yrs.length>1
+    ? '<div style="display:flex;gap:6px;margin-bottom:9px">'+yrs.map(y=>
+        '<button onclick="cfbGameLogSeason('+y+')" style="font-size:10.5px;font-weight:700;padding:3px 11px;border-radius:14px;cursor:pointer;'
+        +'border:1px solid '+(y===CFB_GL.sel?'var(--teal-br)':'var(--line)')+';background:'+(y===CFB_GL.sel?'var(--ink)':'transparent')
+        +';color:'+(y===CFB_GL.sel?'var(--teal-br)':'var(--fog)')+'">'+y+'</button>').join('')+'</div>'
+    : '';
+  const cur=CFB_GL.data[CFB_GL.sel];
+  host.innerHTML=pills+cfbGameLogTable(cur.pos, cur.games);
+}
+async function cfbFillGameLog(p){
+  const host=document.getElementById('cfb-gamelog'); if(!host||!CFB) return;
+  const seasons=(CFB.seasons||[]).slice().sort((a,b)=>a-b);
+  const data={};
+  for(const yr of seasons){
+    const players=await cfbLoadSeason(yr);
+    const rec=players.find(x=>x.id===p.id) || players.find(x=>x.n===p.n && x.pos===p.pos);
+    if(rec && rec.g && rec.g.length) data[yr]={games:rec.g, pos:rec.pos};
+  }
+  if(document.getElementById('cfb-gamelog')!==host) return;
+  const yrsWith=Object.keys(data).map(Number).sort((a,b)=>a-b);
+  if(!yrsWith.length){ host.innerHTML='<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows.</div>'; return; }
+  CFB_GL.pid=p.id; CFB_GL.data=data; CFB_GL.sel=yrsWith[yrsWith.length-1];   // newest season with games
+  cfbRenderGameLog();
 }
 
 
