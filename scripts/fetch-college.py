@@ -451,11 +451,17 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
 os.makedirs("data", exist_ok=True)
 with open(OUT, "w") as f:
     json.dump(out, f, separators=(",", ":"))
-# The app loads the alias; season files are what the player card reaches back through.
-import shutil; shutil.copyfile(OUT, OUT_CURR)
 size = os.path.getsize(OUT)
 print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
-print(f"  wrote {OUT_CURR} (alias for the current season)")
+# The app loads OUT_CURR (the default alias) as the newest season. ONLY the current
+# season may overwrite it — otherwise a backfill run (e.g. 2023) clobbers the default and
+# the platform opens to an old season. Backfills write their year-file only.
+CURRENT_SEASON = int(os.environ.get("CFBD_CURRENT_SEASON") or 2025)
+if YEAR >= CURRENT_SEASON:
+    import shutil; shutil.copyfile(OUT, OUT_CURR)
+    print(f"  wrote {OUT_CURR} (alias for the current season)")
+else:
+    print(f"  skipped {OUT_CURR} alias (backfill season {YEAR} < current {CURRENT_SEASON})")
 
 # ── transfer portal ────────────────────────────────────────────────────────
 # Filtered to skill positions landing at an FBS school — an FCS-bound transfer is not
