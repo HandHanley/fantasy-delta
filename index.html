@@ -3900,7 +3900,7 @@ function openCfbCard(name){
     +'<div id="cfb-traj" style="margin-top:14px"></div>'
     +'<div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--fog-2);margin:16px 0 7px">GAME LOG</div>'
     +'<div id="cfb-gamelog"></div>'
-    +cfbTeammates(p)
+    +'<div id="cfb-teammates"></div>'
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
       +'dDOM is a DELTA analytical metric \u2014 a 0-100 percentile of competition-adjusted production WITHIN his position, ranked among QUALIFIED players (6+ games and a volume floor), so 90 = top 10% at his position. Low-volume players show no dDOM. A signal to read, not a ranking input. '
       +'Regular season only. QB rushing is net of sacks, per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
@@ -3909,9 +3909,10 @@ function openCfbCard(name){
   cfbFillTrajectory(p);
   cfbFillGameLog(p);
 }
-function cfbTeammates(p){
-  if(!CFB || !CFB.players) return '';
-  const mates=CFB.players.filter(x=>x.tm===p.tm && x.pos!=='QB' && (x.rec||0)>0)
+function cfbTeammates(p, pool){
+  pool=pool||((CFB&&CFB.players)||[]);
+  if(!p || !pool.length) return '';
+  const mates=pool.filter(x=>x.tm===p.tm && x.pos!=='QB' && (x.rec||0)>0)
     .sort((a,b)=>(b.rsh||0)-(a.rsh||0)).slice(0,6);
   if(mates.length<2) return '';
   const rows=mates.map(m=>{
@@ -3924,15 +3925,14 @@ function cfbTeammates(p){
       +'<td style="font-weight:600">'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>';
   }).join('');
   return '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:12px">'
-    +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">'
-    +(p.pos==='QB' ? 'HIS WEAPONS' : 'SAME OFFENSE \u2014 WHO ELSE IS EATING')+'</div>'
+    +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">TEAM CONSTRUCTION</div>'
     +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
     +'<th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>'
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:7px;line-height:1.5">'
     +(p.pos==='QB'
-      ? 'Who he actually throws to. These shares are of his own passing game, not competition for it. '
-      : 'A reception share only means something next to the players competing for the same targets. ')
+      ? 'The pass-catchers he shares an offense with \u2014 a QB\u2019s efficiency reflects his weapons, so this is context for his dDOM. '
+      : 'A reception share only means something next to the players competing for the same targets \u2014 this is who he shares the offense with. ')
     +'Only tracked players appear here \u2014 depth receivers below the universe floor are missing, '
     +'so these shares will not sum to 100%.</div></div>';
 }
@@ -3998,7 +3998,7 @@ function cfbGameLogTable(pos, games){
     ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
     : pos==='RB'
     ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
-    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry']];
+    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
   const g=(games||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
   if(!g.length) return '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
   return '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
@@ -4020,6 +4020,9 @@ function cfbRenderGameLog(){
     : '';
   const cur=CFB_GL.data[CFB_GL.sel];
   host.innerHTML=pills+cfbGameLogTable(cur.pos, cur.games);
+  // Team construction switches with the game log so the whole story moves year to year.
+  const tm=document.getElementById('cfb-teammates');
+  if(tm) tm.innerHTML=cfbTeammates(cur.rec, cur.players);
 }
 async function cfbFillGameLog(p){
   const host=document.getElementById('cfb-gamelog'); if(!host||!CFB) return;
@@ -4028,7 +4031,7 @@ async function cfbFillGameLog(p){
   for(const yr of seasons){
     const players=await cfbLoadSeason(yr);
     const rec=players.find(x=>x.id===p.id) || players.find(x=>x.n===p.n && x.pos===p.pos);
-    if(rec && rec.g && rec.g.length) data[yr]={games:rec.g, pos:rec.pos};
+    if(rec && rec.g && rec.g.length) data[yr]={games:rec.g, pos:rec.pos, rec:rec, players:players};
   }
   if(document.getElementById('cfb-gamelog')!==host) return;
   const yrsWith=Object.keys(data).map(Number).sort((a,b)=>a-b);
