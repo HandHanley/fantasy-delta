@@ -3714,7 +3714,7 @@ function renderCollege(){
     +'<th class="col-hide-mobile" data-tip="Games with at least one recorded offensive stat.">G</th>'
     +'<th class="col-hide-mobile" data-tip="Receptions.">Rec</th>'
     +'<th data-tip="Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on.">Yds</th>'
-    +'<th data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production metric: dominator (WR/TE), rushing dominator (RB), or ANY/A (QB), scaled by strength of competition. An analytical signal, not the ranking order \u2014 most comparable within a single position.">dDOM</th>'
+    +'<th data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only (6+ games and a volume floor). 90 = top 10% at his position, identically across positions. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.">dDOM</th>'
     +'<th class="col-hide-mobile" data-tip="Receiving yards.">RecYd</th>'
     +'<th class="col-hide-mobile" data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd</th>'
     +'<th class="col-hide-mobile" data-tip="Passing yards.">PassYd</th>'
@@ -3725,7 +3725,9 @@ function renderCollege(){
   if(foot) foot.innerHTML='Universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
     +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
-    +'(CFBD publishes no target counts) \u00b7 QB rushing is net of sacks, per college convention.';
+    +'(CFBD publishes no target counts) \u00b7 <b>dDOM</b> = 0\u2013100 percentile of competition-adjusted production within position, '
+    +'ranked among qualified players (6+ games + a volume floor); low-volume players show \u2018-\u2019 \u00b7 '
+    +'QB rushing is net of sacks, per college convention.';
 }
 
 
@@ -3755,10 +3757,20 @@ function cfbAdjVal(p){                                   // competition-adjusted
   if(p.pos==='WR'||p.pos==='TE') return p.dom==null?null:p.dom*m;
   return null;
 }
+// dDOM is percentiled over a QUALIFIED pool — real contributors only — so "top 10%"
+// means top 10% of players who actually competed, not padding from depth guys. Players
+// below the floor get NO dDOM (shown as "-"). Floors are position-appropriate + tunable.
+function cfbQualifies(p){
+  if((p.gms||0) < 6) return false;
+  if(p.pos==='WR'||p.pos==='TE') return (p.rec||0) >= 20;
+  if(p.pos==='RB') return (p.car||0) >= 60;
+  if(p.pos==='QB') return (p.att||0) >= 120;
+  return false;
+}
 let CFB_PCT=null, CFB_PCT_POOL=null;
 function cfbBuildPct(pool){
   const groups={};
-  pool.forEach(p=>{ const v=cfbAdjVal(p); if(v==null) return; (groups[p.pos]=groups[p.pos]||[]).push({p,v}); });
+  pool.forEach(p=>{ if(!cfbQualifies(p)) return; const v=cfbAdjVal(p); if(v==null) return; (groups[p.pos]=groups[p.pos]||[]).push({p,v}); });
   const map=new Map();
   Object.keys(groups).forEach(k=>{ const arr=groups[k].sort((a,b)=>a.v-b.v); const nn=arr.length;
     arr.forEach((o,i)=>map.set(o.p, nn>1?Math.round(100*i/(nn-1)):50)); });
@@ -3768,13 +3780,14 @@ function cfbPct(p, pool){
   pool=pool||((CFB&&CFB.players)||[]);
   if(pool!==CFB_PCT_POOL||!CFB_PCT){ CFB_PCT=cfbBuildPct(pool); CFB_PCT_POOL=pool; }
   if(CFB_PCT.has(p)) return CFB_PCT.get(p);
-  const av=cfbAdjVal(p); if(av==null) return null;      // cross-season object: rank vs pool peers
-  const peers=pool.filter(x=>x.pos===p.pos).map(cfbAdjVal).filter(x=>x!=null).sort((a,b)=>a-b);
+  const av=cfbAdjVal(p); if(av==null) return null;      // cross-season object: rank vs qualified peers
+  const peers=pool.filter(x=>x.pos===p.pos && cfbQualifies(x)).map(cfbAdjVal).filter(x=>x!=null).sort((a,b)=>a-b);
   if(peers.length<2) return 50;
   let below=0; for(const x of peers){ if(x<av) below++; }
   return Math.round(100*below/(peers.length-1));
 }
 function cfbDDOM(p, pool){
+  if(!cfbQualifies(p)) return null;                     // below the volume floor -> no dDOM
   const raw = p.pos==='QB'?p.anya : p.pos==='RB'?p.rdom : (p.pos==='WR'||p.pos==='TE')?p.dom : null;
   if(raw==null) return null;
   const pct=cfbPct(p, pool); if(pct==null) return null;
@@ -3878,7 +3891,7 @@ function openCfbCard(name){
     +log
     +cfbTeammates(p)
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
-      +'dDOM is a DELTA analytical metric (competition-adjusted), shown beside the raw fact \u2014 a signal to read, not a ranking input. '
+      +'dDOM is a DELTA analytical metric \u2014 a 0-100 percentile of competition-adjusted production WITHIN his position, ranked among QUALIFIED players (6+ games and a volume floor), so 90 = top 10% at his position. Low-volume players show no dDOM. A signal to read, not a ranking input. '
       +'Regular season only. QB rushing is net of sacks, per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
     +'</div>';
   document.getElementById('cfb-overlay').classList.add('open');
