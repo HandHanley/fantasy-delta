@@ -3908,7 +3908,8 @@ function openCfbCard(name){
           +(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
           +(comp>=1?'<span style="font-size:10px;font-weight:700;color:var(--emerald);border:1px solid #1c3a30;background:#0e1c17;border-radius:20px;padding:2px 7px">P4</span>':'<span style="font-size:10px;font-weight:700;color:var(--coral);border:1px solid var(--line);border-radius:20px;padding:2px 7px">G5 \u00d7'+comp.toFixed(2)+'</span>')
           +(p.stars?'<span title="'+p.stars+'-star recruit" style="font-size:10px;font-weight:700;color:var(--topaz);border:1px solid #3a3320;background:#1c1810;border-radius:20px;padding:2px 7px">'+'\u2605'.repeat(p.stars)+' recruit</span>':'')
-          +'<span>'+cfbClassName(p.cls)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span>'
+          +'<span>'+cfbClassName(p.ageEst?p.ageEst-17:p.cls)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span>'
+          +'<span id="cfb-breakout"></span>'
         +'</div>'
       +'</div>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
@@ -3978,10 +3979,28 @@ async function cfbFillTrajectory(p){
   const seasons=(CFB.seasons||[]).slice().sort((a,b)=>a-b);
   if(!seasons.length){ host.innerHTML=''; return; }
   const pts={};
+  let breakout=null;   // earliest season the player was an underclassman AND top-20% dDOM
   for(const yr of seasons){
     const players=await cfbLoadSeason(yr);
     const rec=players.find(x=>x.id===p.id) || players.find(x=>x.n===p.n && x.pos===p.pos);
-    if(rec){ const dd=cfbDDOM(rec, players); if(dd) pts[yr]=dd.pct; }
+    if(rec){
+      const dd=cfbDDOM(rec, players);
+      if(dd){
+        pts[yr]=dd.pct;
+        const cin = rec.rcls ? (yr - rec.rcls + 1) : (rec.ageEst ? rec.ageEst - 17 : null);
+        if(!breakout && cin!=null && cin<=2 && dd.pct>=80) breakout={season:yr, cls:cin};
+      }
+    }
+  }
+  // Early-breakout badge — a player who posted top-20% competition-adjusted production while
+  // an underclassman. After-the-fact for the college breakout, but the young-breakout profile
+  // is the strongest single dynasty signal (it caught Jeremiah Smith as a true freshman).
+  const boEl=document.getElementById('cfb-breakout');
+  if(boEl && breakout){
+    const cn={1:'Fr',2:'So'}[breakout.cls]||'';
+    boEl.outerHTML='<span title="Posted top-20% competition-adjusted production ('+"dDOM \u2265 80"+') while an underclassman \u2014 the strongest single college-to-NFL signal." '
+      +'style="font-size:10px;font-weight:800;color:var(--topaz);border:1px solid #3a3320;background:#1c1810;border-radius:20px;padding:2px 8px;letter-spacing:.02em">'
+      +'\u25c6 Early breakout \u00b7 '+cn+" \u2019"+String(breakout.season).slice(2)+'</span>';
   }
   // bail if the user moved on and this placeholder is gone
   if(document.getElementById('cfb-traj')!==host) return;
