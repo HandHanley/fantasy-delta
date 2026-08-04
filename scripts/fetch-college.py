@@ -103,6 +103,17 @@ with cfbd.ApiClient(cfg) as api:
     TEAM_CONF = {g(t, "school"): (g(t, "conference") or "") for t in fbs if g(t, "school")}
     P4 = {"SEC", "Big Ten", "Big 12", "ACC"}
     roster = call("GET /roster (fbs)", teams_api.get_roster, year=YEAR, classification="fbs")
+    # PRE-SEASON / NO-DATA GUARD. An empty roster means season YEAR isn't underway yet
+    # (rosters populate in late summer) — or a transient API hiccup. Either way there is
+    # nothing to build, so skip NOW, before spending ~27 more calls on usage/talent/portal/
+    # recruiting/16 weeks of games that would all come back empty. Exit 0 (clean no-op) so
+    # the nightly job doesn't flag red every night in the off-season, and the existing
+    # current-season file is left untouched. A genuine mid-season join failure (roster
+    # present but nothing joins) still errors loudly further down.
+    if not roster:
+        print(f"\n  Season {YEAR} has no FBS roster yet — not underway (or API returned nothing).")
+        print(f"  Nothing to build. Leaving the existing current-season file untouched; exiting cleanly.")
+        sys.exit(0)
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
     # Team talent composite (247 roster-talent sum). The competition-strength signal for
     # dDOM: a target-share earned amid NFL-caliber teammates and schedule is worth more
@@ -295,6 +306,12 @@ with cfbd.ApiClient(cfg) as api:
           " e.g. OL on a trick play. Defensive rows are no longer counted at all.)")
     if MISS: print("    unmatched samples:", "; ".join(MISS))
     if MATCH['by_id'] + MATCH['by_name'] == 0:
+        if sum(MATCH.values()) == 0:
+            # Rosters exist but no game stat rows yet — season is between roster release and
+            # week 1. Nothing to build; skip cleanly rather than fail or overwrite good data.
+            print(f"    Season {YEAR} has rosters but no games played yet — nothing to build. Exiting cleanly.")
+            sys.exit(0)
+        # Game rows exist but none joined to the roster index -> a genuine join bug. Alert.
         print("    !! JOIN FAILED COMPLETELY — production door would be empty. Not writing.")
         sys.exit(1)
     print(f"\n  stat keys discovered: {len(STAT_KEYS)}")
