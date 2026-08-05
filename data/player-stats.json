@@ -1,6 +1,7 @@
 {
-  "fetched": "2026-08-05T08:40:26.061883+00:00",
+  "fetched": "2026-08-05T16:08:40.651669+00:00",
   "seasons": [
+    2022,
     2023,
     2024,
     2025
@@ -8,6 +9,31 @@
   "note": "Raw stats \u2014 PPG calculated client-side per scoring format dropdown",
   "players": {
     "Josh Allen": {
+      "2022": {
+        "games": 16,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 762,
+        "rush_td": 7,
+        "rush_att": 124,
+        "rush_share": 0.0,
+        "pass_yds": 4283,
+        "pass_td": 35,
+        "pass_att": 567,
+        "pass_int": 14,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 28,
+        "gl_targets": null,
+        "gl_carries": 13,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.3294,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.52
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -85,6 +111,7 @@
       }
     },
     "Drake Maye": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -138,6 +165,7 @@
       }
     },
     "Jayden Daniels": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -191,6 +219,7 @@
       }
     },
     "Caleb Williams": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -244,6 +273,31 @@
       }
     },
     "Lamar Jackson": {
+      "2022": {
+        "games": 12,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 764,
+        "rush_td": 3,
+        "rush_att": 112,
+        "rush_share": 0.0,
+        "pass_yds": 2242,
+        "pass_td": 17,
+        "pass_att": 326,
+        "pass_int": 7,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 19,
+        "gl_targets": null,
+        "gl_carries": 4,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.2065,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2105
+      },
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -321,6 +375,31 @@
       }
     },
     "Patrick Mahomes": {
+      "2022": {
+        "games": 17,
+        "rec": 1.0,
+        "rec_yds": 6,
+        "rec_td": 0,
+        "rush_yds": 358,
+        "rush_td": 4,
+        "rush_att": 61,
+        "rush_share": 0.0,
+        "pass_yds": 5250,
+        "pass_td": 41,
+        "pass_att": 648,
+        "pass_int": 12,
+        "targets": 1,
+        "target_share": 0.0016,
+        "air_yds_share": -0.002,
+        "rz_targets": null,
+        "rz_carries": 15,
+        "gl_targets": null,
+        "gl_carries": 6,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1648,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2069
+      },
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -398,6 +477,31 @@
       }
     },
     "Jalen Hurts": {
+      "2022": {
+        "games": 15,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 760,
+        "rush_td": 13,
+        "rush_att": 165,
+        "rush_share": 0.0,
+        "pass_yds": 3701,
+        "pass_td": 22,
+        "pass_att": 460,
+        "pass_int": 6,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 46,
+        "gl_targets": null,
+        "gl_carries": 22,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.3566,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.4583
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -475,6 +579,31 @@
       }
     },
     "Justin Herbert": {
+      "2022": {
+        "games": 17,
+        "rec": 2.0,
+        "rec_yds": -10,
+        "rec_td": 0,
+        "rush_yds": 147,
+        "rush_td": 0,
+        "rush_att": 54,
+        "rush_share": 0.0,
+        "pass_yds": 4739,
+        "pass_td": 25,
+        "pass_att": 699,
+        "pass_int": 10,
+        "targets": 2,
+        "target_share": 0.0029,
+        "air_yds_share": -0.0035,
+        "rz_targets": 1,
+        "rz_carries": 7,
+        "gl_targets": 1,
+        "gl_carries": 2,
+        "rz_tgt_share": 0.0096,
+        "rz_car_share": 0.0886,
+        "gl_tgt_share": 0.04,
+        "gl_car_share": 0.1
+      },
       "2023": {
         "games": 13,
         "rec": 1.0,
@@ -552,6 +681,7 @@
       }
     },
     "Bo Nix": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -605,6 +735,31 @@
       }
     },
     "Trevor Lawrence": {
+      "2022": {
+        "games": 17,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 291,
+        "rush_td": 5,
+        "rush_att": 62,
+        "rush_share": 0.0,
+        "pass_yds": 4113,
+        "pass_td": 25,
+        "pass_att": 584,
+        "pass_int": 8,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 15,
+        "gl_targets": null,
+        "gl_carries": 6,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1667,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2
+      },
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -682,6 +837,31 @@
       }
     },
     "Jared Goff": {
+      "2022": {
+        "games": 17,
+        "rec": 1.0,
+        "rec_yds": 5,
+        "rec_td": 0,
+        "rush_yds": 73,
+        "rush_td": 0,
+        "rush_att": 29,
+        "rush_share": 0.0,
+        "pass_yds": 4438,
+        "pass_td": 29,
+        "pass_att": 587,
+        "pass_int": 7,
+        "targets": 1,
+        "target_share": 0.0018,
+        "air_yds_share": -0.001,
+        "rz_targets": null,
+        "rz_carries": 6,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0588,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0233
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -759,6 +939,31 @@
       }
     },
     "Dak Prescott": {
+      "2022": {
+        "games": 12,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 182,
+        "rush_td": 1,
+        "rush_att": 45,
+        "rush_share": 0.0,
+        "pass_yds": 2860,
+        "pass_td": 23,
+        "pass_att": 394,
+        "pass_int": 15,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 7,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0921,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -836,6 +1041,31 @@
       }
     },
     "Brock Purdy": {
+      "2022": {
+        "games": 9,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 13,
+        "rush_td": 1,
+        "rush_att": 22,
+        "rush_share": 0.0,
+        "pass_yds": 1374,
+        "pass_td": 13,
+        "pass_att": 170,
+        "pass_int": 4,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 7,
+        "gl_targets": null,
+        "gl_carries": 5,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0667,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1351
+      },
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -913,6 +1143,31 @@
       }
     },
     "Jordan Love": {
+      "2022": {
+        "games": 4,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": -1,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0,
+        "pass_yds": 195,
+        "pass_td": 1,
+        "pass_att": 21,
+        "pass_int": 0,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -990,6 +1245,31 @@
       }
     },
     "Baker Mayfield": {
+      "2022": {
+        "games": 12,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 89,
+        "rush_td": 1,
+        "rush_att": 31,
+        "rush_share": 0.0,
+        "pass_yds": 2163,
+        "pass_td": 10,
+        "pass_att": 335,
+        "pass_int": 8,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 7,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1273,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -1067,6 +1347,31 @@
       }
     },
     "Sam Darnold": {
+      "2022": {
+        "games": 6,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 106,
+        "rush_td": 2,
+        "rush_att": 26,
+        "rush_share": 0.0,
+        "pass_yds": 1143,
+        "pass_td": 7,
+        "pass_att": 140,
+        "pass_int": 3,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 6,
+        "gl_targets": null,
+        "gl_carries": 3,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0741,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1429
+      },
       "2023": {
         "games": 10,
         "rec": 0.0,
@@ -1144,6 +1449,7 @@
       }
     },
     "C.J. Stroud": {
+      "2022": null,
       "2023": {
         "games": 15,
         "rec": 1.0,
@@ -1221,6 +1527,7 @@
       }
     },
     "Jaxson Dart": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -1250,6 +1557,7 @@
       }
     },
     "Cam Ward": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -1279,6 +1587,7 @@
       }
     },
     "Bryce Young": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -1356,6 +1665,31 @@
       }
     },
     "Matthew Stafford": {
+      "2022": {
+        "games": 9,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 9,
+        "rush_td": 1,
+        "rush_att": 13,
+        "rush_share": 0.0,
+        "pass_yds": 2087,
+        "pass_td": 10,
+        "pass_att": 303,
+        "pass_int": 8,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 1,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0182,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0667
+      },
       "2023": {
         "games": 15,
         "rec": 0.0,
@@ -1433,6 +1767,31 @@
       }
     },
     "Kyler Murray": {
+      "2022": {
+        "games": 11,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 418,
+        "rush_td": 3,
+        "rush_att": 67,
+        "rush_share": 0.0,
+        "pass_yds": 2368,
+        "pass_td": 14,
+        "pass_att": 390,
+        "pass_int": 7,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 13,
+        "gl_targets": null,
+        "gl_carries": 6,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1757,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2609
+      },
       "2023": {
         "games": 8,
         "rec": 0.0,
@@ -1510,6 +1869,31 @@
       }
     },
     "Joe Burrow": {
+      "2022": {
+        "games": 16,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 257,
+        "rush_td": 5,
+        "rush_att": 75,
+        "rush_share": 0.0,
+        "pass_yds": 4475,
+        "pass_td": 35,
+        "pass_att": 606,
+        "pass_int": 12,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 21,
+        "gl_targets": null,
+        "gl_carries": 9,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.2593,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.3103
+      },
       "2023": {
         "games": 10,
         "rec": 0.0,
@@ -1587,6 +1971,31 @@
       }
     },
     "Tua Tagovailoa": {
+      "2022": {
+        "games": 13,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 70,
+        "rush_td": 0,
+        "rush_att": 24,
+        "rush_share": 0.0,
+        "pass_yds": 3548,
+        "pass_td": 25,
+        "pass_att": 400,
+        "pass_int": 8,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 5,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0943,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 0.0,
@@ -1664,6 +2073,31 @@
       }
     },
     "Geno Smith": {
+      "2022": {
+        "games": 17,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 366,
+        "rush_td": 1,
+        "rush_att": 68,
+        "rush_share": 0.0,
+        "pass_yds": 4282,
+        "pass_td": 30,
+        "pass_att": 572,
+        "pass_int": 11,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 7,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1029,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 1.0,
@@ -1741,6 +2175,7 @@
       }
     },
     "J.J. McCarthy": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -1770,6 +2205,31 @@
       }
     },
     "Daniel Jones": {
+      "2022": {
+        "games": 16,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 708,
+        "rush_td": 7,
+        "rush_att": 120,
+        "rush_share": 0.0,
+        "pass_yds": 3205,
+        "pass_td": 15,
+        "pass_att": 472,
+        "pass_int": 5,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 25,
+        "gl_targets": null,
+        "gl_carries": 9,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.3086,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.3214
+      },
       "2023": {
         "games": 6,
         "rec": 0.0,
@@ -1847,6 +2307,7 @@
       }
     },
     "Tyler Shough": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -1876,6 +2337,7 @@
       }
     },
     "Michael Penix Jr.": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 5,
@@ -1929,6 +2391,7 @@
       }
     },
     "Shedeur Sanders": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -1958,6 +2421,7 @@
       }
     },
     "Mason Rudolph": {
+      "2022": null,
       "2023": {
         "games": 4,
         "rec": 0.0,
@@ -2035,6 +2499,31 @@
       }
     },
     "Aaron Rodgers": {
+      "2022": {
+        "games": 17,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 94,
+        "rush_td": 1,
+        "rush_att": 34,
+        "rush_share": 0.0,
+        "pass_yds": 3695,
+        "pass_td": 26,
+        "pass_att": 542,
+        "pass_int": 12,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": 1,
+        "rz_carries": 7,
+        "gl_targets": 1,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.0119,
+        "rz_car_share": 0.1,
+        "gl_tgt_share": 0.0455,
+        "gl_car_share": 0.2353
+      },
       "2023": {
         "games": 1,
         "rec": 0.0,
@@ -2112,6 +2601,31 @@
       }
     },
     "Malik Willis": {
+      "2022": {
+        "games": 7,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 123,
+        "rush_td": 1,
+        "rush_att": 27,
+        "rush_share": 0.0,
+        "pass_yds": 276,
+        "pass_td": 0,
+        "pass_att": 61,
+        "pass_int": 3,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 3,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0566,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.05
+      },
       "2023": {
         "games": 2,
         "rec": 0.0,
@@ -2189,6 +2703,31 @@
       }
     },
     "Jacoby Brissett": {
+      "2022": {
+        "games": 14,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 243,
+        "rush_td": 2,
+        "rush_att": 49,
+        "rush_share": 0.0,
+        "pass_yds": 2608,
+        "pass_td": 12,
+        "pass_att": 369,
+        "pass_int": 6,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 11,
+        "gl_targets": null,
+        "gl_carries": 2,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1294,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0952
+      },
       "2023": {
         "games": 2,
         "rec": 0.0,
@@ -2266,6 +2805,7 @@
       }
     },
     "Bijan Robinson": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 58.0,
@@ -2343,6 +2883,7 @@
       }
     },
     "Jahmyr Gibbs": {
+      "2022": null,
       "2023": {
         "games": 15,
         "rec": 52.0,
@@ -2420,6 +2961,31 @@
       }
     },
     "James Cook": {
+      "2022": {
+        "games": 16,
+        "rec": 21.0,
+        "rec_yds": 180,
+        "rec_td": 1,
+        "rush_yds": 507,
+        "rush_td": 2,
+        "rush_att": 89,
+        "rush_share": 0.2957,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 32,
+        "target_share": 0.0581,
+        "air_yds_share": 0.0161,
+        "rz_targets": 6,
+        "rz_carries": 13,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0682,
+        "rz_car_share": 0.1529,
+        "gl_tgt_share": 0.0476,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 44.0,
@@ -2497,6 +3063,31 @@
       }
     },
     "Jonathan Taylor": {
+      "2022": {
+        "games": 11,
+        "rec": 28.0,
+        "rec_yds": 143,
+        "rec_td": 0,
+        "rush_yds": 861,
+        "rush_td": 4,
+        "rush_att": 192,
+        "rush_share": 0.4885,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 40,
+        "target_share": 0.0691,
+        "air_yds_share": -0.0197,
+        "rz_targets": 5,
+        "rz_carries": 33,
+        "gl_targets": 3,
+        "gl_carries": 10,
+        "rz_tgt_share": 0.0746,
+        "rz_car_share": 0.4342,
+        "gl_tgt_share": 0.1579,
+        "gl_car_share": 0.5556
+      },
       "2023": {
         "games": 10,
         "rec": 19.0,
@@ -2574,6 +3165,31 @@
       }
     },
     "Derrick Henry": {
+      "2022": {
+        "games": 16,
+        "rec": 33.0,
+        "rec_yds": 398,
+        "rec_td": 0,
+        "rush_yds": 1538,
+        "rush_td": 13,
+        "rush_att": 349,
+        "rush_share": 0.8349,
+        "pass_yds": 4,
+        "pass_td": 1,
+        "pass_att": 2,
+        "pass_int": 0,
+        "targets": 41,
+        "target_share": 0.094,
+        "air_yds_share": -0.0021,
+        "rz_targets": 6,
+        "rz_carries": 40,
+        "gl_targets": 2,
+        "gl_carries": 15,
+        "rz_tgt_share": 0.1,
+        "rz_car_share": 0.7547,
+        "gl_tgt_share": 0.25,
+        "gl_car_share": 0.75
+      },
       "2023": {
         "games": 17,
         "rec": 28.0,
@@ -2651,6 +3267,31 @@
       }
     },
     "Kyren Williams": {
+      "2022": {
+        "games": 8,
+        "rec": 9.0,
+        "rec_yds": 76,
+        "rec_td": 0,
+        "rush_yds": 139,
+        "rush_td": 0,
+        "rush_att": 35,
+        "rush_share": 0.0983,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 12,
+        "target_share": 0.0232,
+        "air_yds_share": 0.0046,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0147,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 12,
         "rec": 32.0,
@@ -2728,6 +3369,31 @@
       }
     },
     "Saquon Barkley": {
+      "2022": {
+        "games": 16,
+        "rec": 57.0,
+        "rec_yds": 338,
+        "rec_td": 0,
+        "rush_yds": 1312,
+        "rush_td": 10,
+        "rush_att": 295,
+        "rush_share": 0.7584,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 76,
+        "target_share": 0.1554,
+        "air_yds_share": -0.0051,
+        "rz_targets": 3,
+        "rz_carries": 38,
+        "gl_targets": 1,
+        "gl_carries": 15,
+        "rz_tgt_share": 0.0667,
+        "rz_car_share": 0.4691,
+        "gl_tgt_share": 0.0833,
+        "gl_car_share": 0.5357
+      },
       "2023": {
         "games": 14,
         "rec": 41.0,
@@ -2805,6 +3471,31 @@
       }
     },
     "Christian McCaffrey": {
+      "2022": {
+        "games": 17,
+        "rec": 85.0,
+        "rec_yds": 741,
+        "rec_td": 5,
+        "rush_yds": 1139,
+        "rush_td": 8,
+        "rush_att": 244,
+        "rush_share": 0.3022,
+        "pass_yds": 34,
+        "pass_td": 1,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 108,
+        "target_share": 0.2143,
+        "air_yds_share": 0.0386,
+        "rz_targets": 13,
+        "rz_carries": 40,
+        "gl_targets": 2,
+        "gl_carries": 14,
+        "rz_tgt_share": 0.2031,
+        "rz_car_share": 0.381,
+        "gl_tgt_share": 0.125,
+        "gl_car_share": 0.3784
+      },
       "2023": {
         "games": 16,
         "rec": 67.0,
@@ -2882,6 +3573,7 @@
       }
     },
     "Chase Brown": {
+      "2022": null,
       "2023": {
         "games": 12,
         "rec": 14.0,
@@ -2959,6 +3651,31 @@
       }
     },
     "Travis Etienne": {
+      "2022": {
+        "games": 17,
+        "rec": 35.0,
+        "rec_yds": 316,
+        "rec_td": 0,
+        "rush_yds": 1125,
+        "rush_td": 5,
+        "rush_att": 220,
+        "rush_share": 0.5759,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 45,
+        "target_share": 0.0784,
+        "air_yds_share": 0.001,
+        "rz_targets": 6,
+        "rz_carries": 44,
+        "gl_targets": 1,
+        "gl_carries": 14,
+        "rz_tgt_share": 0.0698,
+        "rz_car_share": 0.4889,
+        "gl_tgt_share": 0.0435,
+        "gl_car_share": 0.4667
+      },
       "2023": {
         "games": 17,
         "rec": 58.0,
@@ -3036,6 +3753,31 @@
       }
     },
     "Javonte Williams": {
+      "2022": {
+        "games": 4,
+        "rec": 16.0,
+        "rec_yds": 76,
+        "rec_td": 0,
+        "rush_yds": 204,
+        "rush_td": 0,
+        "rush_att": 47,
+        "rush_share": 0.1227,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 22,
+        "target_share": 0.0407,
+        "air_yds_share": -0.0051,
+        "rz_targets": 7,
+        "rz_carries": 10,
+        "gl_targets": 3,
+        "gl_carries": 3,
+        "rz_tgt_share": 0.1296,
+        "rz_car_share": 0.2439,
+        "gl_tgt_share": 0.2,
+        "gl_car_share": 0.15
+      },
       "2023": {
         "games": 16,
         "rec": 47.0,
@@ -3113,6 +3855,31 @@
       }
     },
     "Josh Jacobs": {
+      "2022": {
+        "games": 17,
+        "rec": 53.0,
+        "rec_yds": 400,
+        "rec_td": 0,
+        "rush_yds": 1653,
+        "rush_td": 12,
+        "rush_att": 340,
+        "rush_share": 0.8718,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 64,
+        "target_share": 0.1147,
+        "air_yds_share": 0.0067,
+        "rz_targets": 4,
+        "rz_carries": 44,
+        "gl_targets": null,
+        "gl_carries": 13,
+        "rz_tgt_share": 0.0541,
+        "rz_car_share": 0.7586,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.8667
+      },
       "2023": {
         "games": 13,
         "rec": 37.0,
@@ -3190,6 +3957,7 @@
       }
     },
     "Ashton Jeanty": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3219,6 +3987,31 @@
       }
     },
     "Jaylen Warren": {
+      "2022": {
+        "games": 16,
+        "rec": 28.0,
+        "rec_yds": 214,
+        "rec_td": 0,
+        "rush_yds": 379,
+        "rush_td": 1,
+        "rush_att": 77,
+        "rush_share": 0.1808,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 33,
+        "target_share": 0.0602,
+        "air_yds_share": -0.0036,
+        "rz_targets": 5,
+        "rz_carries": 13,
+        "gl_targets": null,
+        "gl_carries": 2,
+        "rz_tgt_share": 0.0758,
+        "rz_car_share": 0.1646,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0741
+      },
       "2023": {
         "games": 17,
         "rec": 61.0,
@@ -3296,6 +4089,31 @@
       }
     },
     "Rico Dowdle": {
+      "2022": {
+        "games": 2,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 17.0,
@@ -3373,6 +4191,31 @@
       }
     },
     "Breece Hall": {
+      "2022": {
+        "games": 7,
+        "rec": 19.0,
+        "rec_yds": 218,
+        "rec_td": 1,
+        "rush_yds": 463,
+        "rush_td": 4,
+        "rush_att": 80,
+        "rush_share": 0.2228,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 31,
+        "target_share": 0.0527,
+        "air_yds_share": 0.031,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 76.0,
@@ -3450,6 +4293,7 @@
       }
     },
     "TreVeyon Henderson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3479,6 +4323,7 @@
       }
     },
     "RJ Harvey": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3508,6 +4353,31 @@
       }
     },
     "Kenneth Walker III": {
+      "2022": {
+        "games": 15,
+        "rec": 27.0,
+        "rec_yds": 165,
+        "rec_td": 0,
+        "rush_yds": 1050,
+        "rush_td": 9,
+        "rush_att": 228,
+        "rush_share": 0.6387,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 35,
+        "target_share": 0.0633,
+        "air_yds_share": -0.0176,
+        "rz_targets": 1,
+        "rz_carries": 51,
+        "gl_targets": null,
+        "gl_carries": 10,
+        "rz_tgt_share": 0.0133,
+        "rz_car_share": 0.75,
+        "gl_tgt_share": null,
+        "gl_car_share": 1.0
+      },
       "2023": {
         "games": 15,
         "rec": 29.0,
@@ -3585,6 +4455,7 @@
       }
     },
     "Zach Charbonnet": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 33.0,
@@ -3662,6 +4533,31 @@
       }
     },
     "Tony Pollard": {
+      "2022": {
+        "games": 16,
+        "rec": 39.0,
+        "rec_yds": 371,
+        "rec_td": 3,
+        "rush_yds": 1007,
+        "rush_td": 9,
+        "rush_att": 193,
+        "rush_share": 0.4046,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 55,
+        "target_share": 0.1009,
+        "air_yds_share": 0.0169,
+        "rz_targets": 9,
+        "rz_carries": 23,
+        "gl_targets": null,
+        "gl_carries": 7,
+        "rz_tgt_share": 0.1169,
+        "rz_car_share": 0.3026,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2593
+      },
       "2023": {
         "games": 17,
         "rec": 55.0,
@@ -3739,6 +4635,31 @@
       }
     },
     "Rhamondre Stevenson": {
+      "2022": {
+        "games": 17,
+        "rec": 69.0,
+        "rec_yds": 421,
+        "rec_td": 1,
+        "rush_yds": 1040,
+        "rush_td": 5,
+        "rush_att": 210,
+        "rush_share": 0.5707,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 88,
+        "target_share": 0.1699,
+        "air_yds_share": -0.0034,
+        "rz_targets": 9,
+        "rz_carries": 32,
+        "gl_targets": 3,
+        "gl_carries": 12,
+        "rz_tgt_share": 0.1636,
+        "rz_car_share": 0.4776,
+        "gl_tgt_share": 0.1579,
+        "gl_car_share": 0.6
+      },
       "2023": {
         "games": 12,
         "rec": 38.0,
@@ -3816,6 +4737,7 @@
       }
     },
     "Quinshon Judkins": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3845,6 +4767,31 @@
       }
     },
     "David Montgomery": {
+      "2022": {
+        "games": 16,
+        "rec": 34.0,
+        "rec_yds": 316,
+        "rec_td": 1,
+        "rush_yds": 801,
+        "rush_td": 5,
+        "rush_att": 201,
+        "rush_share": 0.5154,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 40,
+        "target_share": 0.1114,
+        "air_yds_share": 0.016,
+        "rz_targets": 3,
+        "rz_carries": 34,
+        "gl_targets": null,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.0652,
+        "rz_car_share": 0.3736,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.16
+      },
       "2023": {
         "games": 14,
         "rec": 16.0,
@@ -3922,6 +4869,7 @@
       }
     },
     "Woody Marks": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3951,6 +4899,7 @@
       }
     },
     "Kyle Monangai": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -3980,6 +4929,31 @@
       }
     },
     "Kareem Hunt": {
+      "2022": {
+        "games": 17,
+        "rec": 35.0,
+        "rec_yds": 210,
+        "rec_td": 1,
+        "rush_yds": 468,
+        "rush_td": 3,
+        "rush_att": 123,
+        "rush_share": 0.2752,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 44,
+        "target_share": 0.0868,
+        "air_yds_share": -0.0029,
+        "rz_targets": 8,
+        "rz_carries": 25,
+        "gl_targets": 1,
+        "gl_carries": 5,
+        "rz_tgt_share": 0.1053,
+        "rz_car_share": 0.2941,
+        "gl_tgt_share": 0.0588,
+        "gl_car_share": 0.2381
+      },
       "2023": {
         "games": 15,
         "rec": 15.0,
@@ -4057,6 +5031,7 @@
       }
     },
     "Jacory Croskey-Merritt": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4086,6 +5061,7 @@
       }
     },
     "Bucky Irving": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -4139,6 +5115,31 @@
       }
     },
     "Rachaad White": {
+      "2022": {
+        "games": 17,
+        "rec": 50.0,
+        "rec_yds": 290,
+        "rec_td": 2,
+        "rush_yds": 481,
+        "rush_td": 1,
+        "rush_att": 129,
+        "rush_share": 0.3613,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 58,
+        "target_share": 0.0801,
+        "air_yds_share": -0.0036,
+        "rz_targets": 8,
+        "rz_carries": 12,
+        "gl_targets": 1,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.0727,
+        "rz_car_share": 0.2222,
+        "gl_tgt_share": 0.0357,
+        "gl_car_share": 0.2353
+      },
       "2023": {
         "games": 17,
         "rec": 64.0,
@@ -4216,6 +5217,31 @@
       }
     },
     "Jordan Mason": {
+      "2022": {
+        "games": 12,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 258,
+        "rush_td": 1,
+        "rush_att": 43,
+        "rush_share": 0.0975,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 4,
+        "gl_targets": null,
+        "gl_carries": 2,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0381,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0541
+      },
       "2023": {
         "games": 16,
         "rec": 3.0,
@@ -4293,6 +5319,7 @@
       }
     },
     "Omarion Hampton": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4322,6 +5349,7 @@
       }
     },
     "Blake Corum": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -4375,6 +5403,7 @@
       }
     },
     "Cam Skattebo": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4404,6 +5433,31 @@
       }
     },
     "J.K. Dobbins": {
+      "2022": {
+        "games": 8,
+        "rec": 7.0,
+        "rec_yds": 42,
+        "rec_td": 1,
+        "rush_yds": 520,
+        "rush_td": 2,
+        "rush_att": 92,
+        "rush_share": 0.25,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 8,
+        "target_share": 0.0172,
+        "air_yds_share": 0.001,
+        "rz_targets": 2,
+        "rz_carries": 14,
+        "gl_targets": 1,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.0274,
+        "rz_car_share": 0.1522,
+        "gl_tgt_share": 0.0667,
+        "gl_car_share": 0.2105
+      },
       "2023": {
         "games": 1,
         "rec": 2.0,
@@ -4481,6 +5535,31 @@
       }
     },
     "Chuba Hubbard": {
+      "2022": {
+        "games": 14,
+        "rec": 14.0,
+        "rec_yds": 171,
+        "rec_td": 0,
+        "rush_yds": 466,
+        "rush_td": 2,
+        "rush_att": 95,
+        "rush_share": 0.2184,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 17,
+        "target_share": 0.0398,
+        "air_yds_share": 0.0028,
+        "rz_targets": 1,
+        "rz_carries": 16,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.0233,
+        "rz_car_share": 0.1975,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0476
+      },
       "2023": {
         "games": 17,
         "rec": 39.0,
@@ -4558,6 +5637,7 @@
       }
     },
     "Bhayshul Tuten": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4587,6 +5667,31 @@
       }
     },
     "Aaron Jones": {
+      "2022": {
+        "games": 17,
+        "rec": 59.0,
+        "rec_yds": 395,
+        "rec_td": 5,
+        "rush_yds": 1121,
+        "rush_td": 2,
+        "rush_att": 213,
+        "rush_share": 0.5059,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 72,
+        "target_share": 0.1333,
+        "air_yds_share": -0.0036,
+        "rz_targets": 11,
+        "rz_carries": 31,
+        "gl_targets": 3,
+        "gl_carries": 3,
+        "rz_tgt_share": 0.131,
+        "rz_car_share": 0.4429,
+        "gl_tgt_share": 0.1364,
+        "gl_car_share": 0.1765
+      },
       "2023": {
         "games": 11,
         "rec": 30.0,
@@ -4664,6 +5769,7 @@
       }
     },
     "Tyjae Spears": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 52.0,
@@ -4741,6 +5847,31 @@
       }
     },
     "Alvin Kamara": {
+      "2022": {
+        "games": 15,
+        "rec": 57.0,
+        "rec_yds": 490,
+        "rec_td": 2,
+        "rush_yds": 897,
+        "rush_td": 2,
+        "rush_att": 223,
+        "rush_share": 0.5186,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 77,
+        "target_share": 0.1562,
+        "air_yds_share": 0.0166,
+        "rz_targets": 11,
+        "rz_carries": 25,
+        "gl_targets": null,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.1719,
+        "rz_car_share": 0.3846,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2857
+      },
       "2023": {
         "games": 13,
         "rec": 75.0,
@@ -4818,6 +5949,7 @@
       }
     },
     "Ollie Gordon": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4847,6 +5979,7 @@
       }
     },
     "Isaac Guerendo": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 16,
@@ -4900,6 +6033,7 @@
       }
     },
     "Trey Benson": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 12,
@@ -4953,6 +6087,7 @@
       }
     },
     "Dylan Sampson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -4982,6 +6117,7 @@
       }
     },
     "Jaylen Wright": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -5035,6 +6171,7 @@
       }
     },
     "Braelon Allen": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -5088,6 +6225,31 @@
       }
     },
     "James Conner": {
+      "2022": {
+        "games": 13,
+        "rec": 46.0,
+        "rec_yds": 300,
+        "rec_td": 1,
+        "rush_yds": 782,
+        "rush_td": 7,
+        "rush_att": 183,
+        "rush_share": 0.5479,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 58,
+        "target_share": 0.0913,
+        "air_yds_share": -0.0105,
+        "rz_targets": 4,
+        "rz_carries": 25,
+        "gl_targets": 1,
+        "gl_carries": 8,
+        "rz_tgt_share": 0.0548,
+        "rz_car_share": 0.3378,
+        "gl_tgt_share": 0.0556,
+        "gl_car_share": 0.3478
+      },
       "2023": {
         "games": 13,
         "rec": 27.0,
@@ -5165,6 +6327,31 @@
       }
     },
     "Isiah Pacheco": {
+      "2022": {
+        "games": 17,
+        "rec": 13.0,
+        "rec_yds": 130,
+        "rec_td": 0,
+        "rush_yds": 830,
+        "rush_td": 5,
+        "rush_att": 170,
+        "rush_share": 0.4843,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 14,
+        "target_share": 0.0228,
+        "air_yds_share": -0.002,
+        "rz_targets": 1,
+        "rz_carries": 31,
+        "gl_targets": null,
+        "gl_carries": 10,
+        "rz_tgt_share": 0.0088,
+        "rz_car_share": 0.3407,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.3448
+      },
       "2023": {
         "games": 14,
         "rec": 44.0,
@@ -5242,6 +6429,7 @@
       }
     },
     "Jonathon Brooks": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 3,
@@ -5271,6 +6459,7 @@
       "2025": null
     },
     "Tank Bigsby": {
+      "2022": null,
       "2023": {
         "games": 13,
         "rec": 1.0,
@@ -5348,6 +6537,31 @@
       }
     },
     "Alexander Mattison": {
+      "2022": {
+        "games": 17,
+        "rec": 15.0,
+        "rec_yds": 91,
+        "rec_td": 1,
+        "rush_yds": 283,
+        "rush_td": 5,
+        "rush_att": 74,
+        "rush_share": 0.2005,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 18,
+        "target_share": 0.0281,
+        "air_yds_share": -0.0068,
+        "rz_targets": 5,
+        "rz_carries": 14,
+        "gl_targets": null,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.045,
+        "rz_car_share": 0.2,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1429
+      },
       "2023": {
         "games": 16,
         "rec": 30.0,
@@ -5401,6 +6615,7 @@
       "2025": null
     },
     "Audric Estime": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -5454,6 +6669,7 @@
       }
     },
     "MarShawn Lloyd": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 1,
@@ -5483,6 +6699,7 @@
       "2025": null
     },
     "Kimani Vidal": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 9,
@@ -5536,6 +6753,7 @@
       }
     },
     "Puka Nacua": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 105.0,
@@ -5613,6 +6831,7 @@
       }
     },
     "Jaxon Smith-Njigba": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 63.0,
@@ -5690,6 +6909,31 @@
       }
     },
     "Amon-Ra St. Brown": {
+      "2022": {
+        "games": 16,
+        "rec": 106.0,
+        "rec_yds": 1161,
+        "rec_td": 6,
+        "rush_yds": 95,
+        "rush_td": 0,
+        "rush_att": 9,
+        "rush_share": 0.0202,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 146,
+        "target_share": 0.2593,
+        "air_yds_share": 0.2323,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1818,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1538,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 119.0,
@@ -5767,6 +7011,31 @@
       }
     },
     "George Pickens": {
+      "2022": {
+        "games": 17,
+        "rec": 52.0,
+        "rec_yds": 801,
+        "rec_td": 4,
+        "rush_yds": 24,
+        "rush_td": 1,
+        "rush_att": 3,
+        "rush_share": 0.007,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 84,
+        "target_share": 0.1533,
+        "air_yds_share": 0.2754,
+        "rz_targets": 8,
+        "rz_carries": 1,
+        "gl_targets": 2,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.1212,
+        "rz_car_share": 0.0127,
+        "gl_tgt_share": 0.1429,
+        "gl_car_share": 0.037
+      },
       "2023": {
         "games": 17,
         "rec": 63.0,
@@ -5844,6 +7113,31 @@
       }
     },
     "Chris Olave": {
+      "2022": {
+        "games": 15,
+        "rec": 72.0,
+        "rec_yds": 1042,
+        "rec_td": 4,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 119,
+        "target_share": 0.2414,
+        "air_yds_share": 0.3823,
+        "rz_targets": 12,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1875,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 87.0,
@@ -5921,6 +7215,7 @@
       }
     },
     "Zay Flowers": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 77.0,
@@ -5998,6 +7293,31 @@
       }
     },
     "Davante Adams": {
+      "2022": {
+        "games": 17,
+        "rec": 100.0,
+        "rec_yds": 1516,
+        "rec_td": 14,
+        "rush_yds": -1,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0077,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 180,
+        "target_share": 0.3226,
+        "air_yds_share": 0.4073,
+        "rz_targets": 23,
+        "rz_carries": null,
+        "gl_targets": 9,
+        "gl_carries": null,
+        "rz_tgt_share": 0.3108,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.5,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 103.0,
@@ -6075,6 +7395,31 @@
       }
     },
     "Nico Collins": {
+      "2022": {
+        "games": 10,
+        "rec": 37.0,
+        "rec_yds": 481,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 66,
+        "target_share": 0.1183,
+        "air_yds_share": 0.1879,
+        "rz_targets": 8,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1143,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0833,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 80.0,
@@ -6152,6 +7497,31 @@
       }
     },
     "Jameson Williams": {
+      "2022": {
+        "games": 6,
+        "rec": 1.0,
+        "rec_yds": 41,
+        "rec_td": 1,
+        "rush_yds": 40,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0022,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 9,
+        "target_share": 0.016,
+        "air_yds_share": 0.0368,
+        "rz_targets": 7,
+        "rz_carries": 10,
+        "gl_targets": 3,
+        "gl_carries": 3,
+        "rz_tgt_share": 0.0795,
+        "rz_car_share": 0.098,
+        "gl_tgt_share": 0.1154,
+        "gl_car_share": 0.0698
+      },
       "2023": {
         "games": 12,
         "rec": 24.0,
@@ -6229,6 +7599,31 @@
       }
     },
     "Courtland Sutton": {
+      "2022": {
+        "games": 15,
+        "rec": 64.0,
+        "rec_yds": 829,
+        "rec_td": 2,
+        "rush_yds": 5,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0026,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 109,
+        "target_share": 0.2015,
+        "air_yds_share": 0.2847,
+        "rz_targets": 14,
+        "rz_carries": null,
+        "gl_targets": 5,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2593,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3333,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 59.0,
@@ -6306,6 +7701,31 @@
       }
     },
     "Tee Higgins": {
+      "2022": {
+        "games": 14,
+        "rec": 74.0,
+        "rec_yds": 1029,
+        "rec_td": 7,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 109,
+        "target_share": 0.1835,
+        "air_yds_share": 0.2865,
+        "rz_targets": 13,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.134,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1429,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 12,
         "rec": 42.0,
@@ -6383,6 +7803,31 @@
       }
     },
     "A.J. Brown": {
+      "2022": {
+        "games": 17,
+        "rec": 88.0,
+        "rec_yds": 1496,
+        "rec_td": 11,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 145,
+        "target_share": 0.2871,
+        "air_yds_share": 0.4067,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2963,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.4,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 106.0,
@@ -6460,6 +7905,7 @@
       }
     },
     "Tetairoa McMillan": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -6489,6 +7935,31 @@
       }
     },
     "Drake London": {
+      "2022": {
+        "games": 17,
+        "rec": 72.0,
+        "rec_yds": 866,
+        "rec_td": 4,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 117,
+        "target_share": 0.2925,
+        "air_yds_share": 0.3092,
+        "rz_targets": 17,
+        "rz_carries": null,
+        "gl_targets": 5,
+        "gl_carries": null,
+        "rz_tgt_share": 0.3333,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3571,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 69.0,
@@ -6566,6 +8037,7 @@
       }
     },
     "Emeka Egbuka": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -6595,6 +8067,31 @@
       }
     },
     "CeeDee Lamb": {
+      "2022": {
+        "games": 17,
+        "rec": 107.0,
+        "rec_yds": 1359,
+        "rec_td": 9,
+        "rush_yds": 47,
+        "rush_td": 0,
+        "rush_att": 10,
+        "rush_share": 0.021,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 156,
+        "target_share": 0.2862,
+        "air_yds_share": 0.3518,
+        "rz_targets": 15,
+        "rz_carries": 1,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1948,
+        "rz_car_share": 0.0132,
+        "gl_tgt_share": 0.2143,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 135.0,
@@ -6672,6 +8169,31 @@
       }
     },
     "DeVonta Smith": {
+      "2022": {
+        "games": 17,
+        "rec": 95.0,
+        "rec_yds": 1196,
+        "rec_td": 7,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 136,
+        "target_share": 0.2693,
+        "air_yds_share": 0.3056,
+        "rz_targets": 15,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2778,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 81.0,
@@ -6749,6 +8271,31 @@
       }
     },
     "Michael Pittman Jr.": {
+      "2022": {
+        "games": 16,
+        "rec": 99.0,
+        "rec_yds": 925,
+        "rec_td": 4,
+        "rush_yds": 30,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0076,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 141,
+        "target_share": 0.2435,
+        "air_yds_share": 0.2656,
+        "rz_targets": 15,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2239,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3158,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 109.0,
@@ -6826,6 +8373,31 @@
       }
     },
     "Jaylen Waddle": {
+      "2022": {
+        "games": 17,
+        "rec": 75.0,
+        "rec_yds": 1356,
+        "rec_td": 8,
+        "rush_yds": 26,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0086,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 117,
+        "target_share": 0.2082,
+        "air_yds_share": 0.27,
+        "rz_targets": 9,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1343,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1053,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 72.0,
@@ -6903,6 +8475,31 @@
       }
     },
     "Alec Pierce": {
+      "2022": {
+        "games": 16,
+        "rec": 41.0,
+        "rec_yds": 593,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 78,
+        "target_share": 0.1347,
+        "air_yds_share": 0.2464,
+        "rz_targets": 6,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0896,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0526,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 32.0,
@@ -6980,6 +8577,31 @@
       }
     },
     "Justin Jefferson": {
+      "2022": {
+        "games": 17,
+        "rec": 128.0,
+        "rec_yds": 1809,
+        "rec_td": 8,
+        "rush_yds": 24,
+        "rush_td": 1,
+        "rush_att": 4,
+        "rush_share": 0.0108,
+        "pass_yds": 34,
+        "pass_td": 0,
+        "pass_att": 2,
+        "pass_int": 0,
+        "targets": 184,
+        "target_share": 0.2871,
+        "air_yds_share": 0.3866,
+        "rz_targets": 31,
+        "rz_carries": 1,
+        "gl_targets": 6,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.2793,
+        "rz_car_share": 0.0143,
+        "gl_tgt_share": 0.2308,
+        "gl_car_share": 0.0357
+      },
       "2023": {
         "games": 10,
         "rec": 68.0,
@@ -7057,6 +8679,31 @@
       }
     },
     "DK Metcalf": {
+      "2022": {
+        "games": 17,
+        "rec": 90.0,
+        "rec_yds": 1048,
+        "rec_td": 6,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 141,
+        "target_share": 0.255,
+        "air_yds_share": 0.3701,
+        "rz_targets": 29,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.3867,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.4444,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 66.0,
@@ -7134,6 +8781,7 @@
       }
     },
     "Parker Washington": {
+      "2022": null,
       "2023": {
         "games": 8,
         "rec": 16.0,
@@ -7211,6 +8859,7 @@
       }
     },
     "Ladd McConkey": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 16,
@@ -7264,6 +8913,7 @@
       }
     },
     "Troy Franklin": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 16,
@@ -7317,6 +8967,31 @@
       }
     },
     "Jakobi Meyers": {
+      "2022": {
+        "games": 14,
+        "rec": 67.0,
+        "rec_yds": 804,
+        "rec_td": 6,
+        "rush_yds": -11,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0054,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 96,
+        "target_share": 0.1853,
+        "air_yds_share": 0.2323,
+        "rz_targets": 10,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1818,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3158,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 71.0,
@@ -7394,6 +9069,31 @@
       }
     },
     "Romeo Doubs": {
+      "2022": {
+        "games": 13,
+        "rec": 42.0,
+        "rec_yds": 425,
+        "rec_td": 3,
+        "rush_yds": 11,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0024,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 67,
+        "target_share": 0.1241,
+        "air_yds_share": 0.145,
+        "rz_targets": 8,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0952,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0455,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 59.0,
@@ -7471,6 +9171,7 @@
       }
     },
     "Quentin Johnston": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 38.0,
@@ -7548,6 +9249,31 @@
       }
     },
     "Khalil Shakir": {
+      "2022": {
+        "games": 10,
+        "rec": 10.0,
+        "rec_yds": 161,
+        "rec_td": 1,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 20,
+        "target_share": 0.0363,
+        "air_yds_share": 0.0401,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0114,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0476,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 39.0,
@@ -7625,6 +9351,7 @@
       }
     },
     "Rome Odunze": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -7678,6 +9405,7 @@
       }
     },
     "Rashee Rice": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 79.0,
@@ -7755,6 +9483,31 @@
       }
     },
     "Christian Watson": {
+      "2022": {
+        "games": 14,
+        "rec": 41.0,
+        "rec_yds": 611,
+        "rec_td": 7,
+        "rush_yds": 80,
+        "rush_td": 2,
+        "rush_att": 7,
+        "rush_share": 0.0166,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 66,
+        "target_share": 0.1222,
+        "air_yds_share": 0.2101,
+        "rz_targets": 14,
+        "rz_carries": 3,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1667,
+        "rz_car_share": 0.0429,
+        "gl_tgt_share": 0.1818,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 9,
         "rec": 28.0,
@@ -7832,6 +9585,7 @@
       }
     },
     "Brian Thomas Jr.": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -7885,6 +9639,7 @@
       }
     },
     "Jordan Addison": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 70.0,
@@ -7962,6 +9717,7 @@
       }
     },
     "Luther Burden": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -7991,6 +9747,7 @@
       }
     },
     "Elic Ayomanor": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -8020,6 +9777,31 @@
       }
     },
     "Terry McLaurin": {
+      "2022": {
+        "games": 17,
+        "rec": 77.0,
+        "rec_yds": 1191,
+        "rec_td": 5,
+        "rush_yds": 29,
+        "rush_td": 0,
+        "rush_att": 7,
+        "rush_share": 0.0145,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 120,
+        "target_share": 0.226,
+        "air_yds_share": 0.3533,
+        "rz_targets": 14,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.209,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0588,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 79.0,
@@ -8097,6 +9879,7 @@
       }
     },
     "Tre Harris": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -8126,6 +9909,7 @@
       }
     },
     "Jayden Higgins": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -8155,6 +9939,7 @@
       }
     },
     "Matthew Golden": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -8184,6 +9969,7 @@
       }
     },
     "Ricky Pearsall": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 11,
@@ -8237,6 +10023,31 @@
       }
     },
     "Mike Evans": {
+      "2022": {
+        "games": 15,
+        "rec": 77.0,
+        "rec_yds": 1124,
+        "rec_td": 6,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 127,
+        "target_share": 0.1754,
+        "air_yds_share": 0.3333,
+        "rz_targets": 15,
+        "rz_carries": null,
+        "gl_targets": 5,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1364,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1786,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 79.0,
@@ -8314,6 +10125,7 @@
       }
     },
     "Marvin Harrison Jr.": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -8367,6 +10179,31 @@
       }
     },
     "Garrett Wilson": {
+      "2022": {
+        "games": 17,
+        "rec": 83.0,
+        "rec_yds": 1103,
+        "rec_td": 4,
+        "rush_yds": 4,
+        "rush_td": 0,
+        "rush_att": 4,
+        "rush_share": 0.0111,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 147,
+        "target_share": 0.25,
+        "air_yds_share": 0.316,
+        "rz_targets": 19,
+        "rz_carries": 1,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.3016,
+        "rz_car_share": 0.0156,
+        "gl_tgt_share": 0.4,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 95.0,
@@ -8444,6 +10281,7 @@
       }
     },
     "Xavier Worthy": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 16,
@@ -8497,6 +10335,7 @@
       }
     },
     "Keon Coleman": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -8550,6 +10389,7 @@
       }
     },
     "Josh Downs": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 68.0,
@@ -8627,6 +10467,7 @@
       }
     },
     "Travis Hunter": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -8656,6 +10497,31 @@
       }
     },
     "Brandon Aiyuk": {
+      "2022": {
+        "games": 17,
+        "rec": 78.0,
+        "rec_yds": 1015,
+        "rec_td": 8,
+        "rush_yds": 23,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0045,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 114,
+        "target_share": 0.2262,
+        "air_yds_share": 0.3321,
+        "rz_targets": 15,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2344,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.125,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 75.0,
@@ -8709,6 +10575,7 @@
       "2025": null
     },
     "Jalen Coker": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 11,
@@ -8762,6 +10629,7 @@
       }
     },
     "Malik Nabers": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -8815,6 +10683,31 @@
       }
     },
     "Deebo Samuel": {
+      "2022": {
+        "games": 13,
+        "rec": 56.0,
+        "rec_yds": 632,
+        "rec_td": 2,
+        "rush_yds": 232,
+        "rush_td": 3,
+        "rush_att": 42,
+        "rush_share": 0.0952,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 94,
+        "target_share": 0.1865,
+        "air_yds_share": 0.115,
+        "rz_targets": 13,
+        "rz_carries": 8,
+        "gl_targets": 3,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.2031,
+        "rz_car_share": 0.0762,
+        "gl_tgt_share": 0.1875,
+        "gl_car_share": 0.027
+      },
       "2023": {
         "games": 15,
         "rec": 60.0,
@@ -8892,6 +10785,31 @@
       }
     },
     "Jauan Jennings": {
+      "2022": {
+        "games": 16,
+        "rec": 35.0,
+        "rec_yds": 416,
+        "rec_td": 1,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 56,
+        "target_share": 0.1111,
+        "air_yds_share": 0.136,
+        "rz_targets": 3,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0469,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.125,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 13,
         "rec": 19.0,
@@ -8969,6 +10887,31 @@
       }
     },
     "Stefon Diggs": {
+      "2022": {
+        "games": 16,
+        "rec": 108.0,
+        "rec_yds": 1429,
+        "rec_td": 11,
+        "rush_yds": -3,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0033,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 154,
+        "target_share": 0.2795,
+        "air_yds_share": 0.3401,
+        "rz_targets": 24,
+        "rz_carries": null,
+        "gl_targets": 8,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2727,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.381,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 107.0,
@@ -9046,6 +10989,7 @@
       }
     },
     "Jayden Reed": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 64.0,
@@ -9123,6 +11067,7 @@
       }
     },
     "Calvin Ridley": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 76.0,
@@ -9200,6 +11145,31 @@
       }
     },
     "Rashid Shaheed": {
+      "2022": {
+        "games": 12,
+        "rec": 28.0,
+        "rec_yds": 488,
+        "rec_td": 2,
+        "rush_yds": 57,
+        "rush_td": 1,
+        "rush_att": 4,
+        "rush_share": 0.0093,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 34,
+        "target_share": 0.069,
+        "air_yds_share": 0.09,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0156,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 46.0,
@@ -9277,6 +11247,31 @@
       }
     },
     "Darnell Mooney": {
+      "2022": {
+        "games": 11,
+        "rec": 40.0,
+        "rec_yds": 493,
+        "rec_td": 2,
+        "rush_yds": 2,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0026,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 61,
+        "target_share": 0.1699,
+        "air_yds_share": 0.2287,
+        "rz_targets": 8,
+        "rz_carries": 1,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1739,
+        "rz_car_share": 0.011,
+        "gl_tgt_share": 0.25,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 31.0,
@@ -9354,6 +11349,31 @@
       }
     },
     "Rashod Bateman": {
+      "2022": {
+        "games": 6,
+        "rec": 15.0,
+        "rec_yds": 285,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 28,
+        "target_share": 0.0602,
+        "air_yds_share": 0.0968,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0137,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0667,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 32.0,
@@ -9431,6 +11451,7 @@
       }
     },
     "Jalen McMillan": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -9484,6 +11505,7 @@
       }
     },
     "Isaac TeSlaa": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -9513,6 +11535,7 @@
       }
     },
     "Xavier Legette": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -9566,6 +11589,7 @@
       }
     },
     "Devaughn Vele": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -9619,6 +11643,7 @@
       }
     },
     "Chimere Dike": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -9648,6 +11673,31 @@
       }
     },
     "Jalen Nailor": {
+      "2022": {
+        "games": 8,
+        "rec": 9.0,
+        "rec_yds": 179,
+        "rec_td": 1,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 13,
+        "target_share": 0.0203,
+        "air_yds_share": 0.0313,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.009,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 3,
         "rec": 3.0,
@@ -9725,6 +11775,7 @@
       }
     },
     "Marvin Mims": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 22.0,
@@ -9802,6 +11853,31 @@
       }
     },
     "K.J. Osborn": {
+      "2022": {
+        "games": 17,
+        "rec": 60.0,
+        "rec_yds": 650,
+        "rec_td": 5,
+        "rush_yds": 6,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0081,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 90,
+        "target_share": 0.1404,
+        "air_yds_share": 0.1559,
+        "rz_targets": 11,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0991,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1154,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 48.0,
@@ -9855,6 +11931,7 @@
       "2025": null
     },
     "Dontayvion Wicks": {
+      "2022": null,
       "2023": {
         "games": 15,
         "rec": 39.0,
@@ -9932,6 +12009,31 @@
       }
     },
     "Trey McBride": {
+      "2022": {
+        "games": 12,
+        "rec": 29.0,
+        "rec_yds": 265,
+        "rec_td": 1,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 39,
+        "target_share": 0.0614,
+        "air_yds_share": 0.0537,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0137,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0556,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 81.0,
@@ -10009,6 +12111,7 @@
       }
     },
     "Brock Bowers": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -10062,6 +12165,31 @@
       }
     },
     "George Kittle": {
+      "2022": {
+        "games": 15,
+        "rec": 60.0,
+        "rec_yds": 765,
+        "rec_td": 11,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 86,
+        "target_share": 0.1706,
+        "air_yds_share": 0.1598,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.25,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.375,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 65.0,
@@ -10139,6 +12267,7 @@
       }
     },
     "Sam LaPorta": {
+      "2022": null,
       "2023": {
         "games": 17,
         "rec": 86.0,
@@ -10216,6 +12345,31 @@
       }
     },
     "Kyle Pitts": {
+      "2022": {
+        "games": 10,
+        "rec": 28.0,
+        "rec_yds": 356,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 59,
+        "target_share": 0.1475,
+        "air_yds_share": 0.206,
+        "rz_targets": 5,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.098,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1429,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 53.0,
@@ -10293,6 +12447,31 @@
       }
     },
     "Travis Kelce": {
+      "2022": {
+        "games": 17,
+        "rec": 110.0,
+        "rec_yds": 1338,
+        "rec_td": 12,
+        "rush_yds": 5,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0057,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 152,
+        "target_share": 0.2476,
+        "air_yds_share": 0.2368,
+        "rz_targets": 32,
+        "rz_carries": 2,
+        "gl_targets": 14,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.2832,
+        "rz_car_share": 0.022,
+        "gl_tgt_share": 0.4,
+        "gl_car_share": 0.0345
+      },
       "2023": {
         "games": 15,
         "rec": 93.0,
@@ -10370,6 +12549,7 @@
       }
     },
     "Tyler Warren": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -10399,6 +12579,7 @@
       }
     },
     "Harold Fannin Jr.": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -10428,6 +12609,31 @@
       }
     },
     "Dallas Goedert": {
+      "2022": {
+        "games": 12,
+        "rec": 55.0,
+        "rec_yds": 702,
+        "rec_td": 3,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 69,
+        "target_share": 0.1366,
+        "air_yds_share": 0.0985,
+        "rz_targets": 10,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1852,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 59.0,
@@ -10505,6 +12711,31 @@
       }
     },
     "Juwan Johnson": {
+      "2022": {
+        "games": 16,
+        "rec": 42.0,
+        "rec_yds": 508,
+        "rec_td": 7,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 65,
+        "target_share": 0.1318,
+        "air_yds_share": 0.1361,
+        "rz_targets": 11,
+        "rz_carries": 1,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1719,
+        "rz_car_share": 0.0154,
+        "gl_tgt_share": 0.1,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 13,
         "rec": 37.0,
@@ -10582,6 +12813,31 @@
       }
     },
     "Hunter Henry": {
+      "2022": {
+        "games": 16,
+        "rec": 41.0,
+        "rec_yds": 509,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 59,
+        "target_share": 0.1139,
+        "air_yds_share": 0.111,
+        "rz_targets": 7,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1273,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0526,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 13,
         "rec": 42.0,
@@ -10659,6 +12915,31 @@
       }
     },
     "Dalton Schultz": {
+      "2022": {
+        "games": 15,
+        "rec": 57.0,
+        "rec_yds": 577,
+        "rec_td": 5,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 89,
+        "target_share": 0.1633,
+        "air_yds_share": 0.1439,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2078,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1429,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 59.0,
@@ -10736,6 +13017,7 @@
       }
     },
     "Colston Loveland": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -10765,6 +13047,7 @@
       }
     },
     "AJ Barner": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -10818,6 +13101,7 @@
       }
     },
     "Oronde Gadsden": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -10847,6 +13131,31 @@
       }
     },
     "Mark Andrews": {
+      "2022": {
+        "games": 15,
+        "rec": 73.0,
+        "rec_yds": 847,
+        "rec_td": 5,
+        "rush_yds": 8,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0082,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 113,
+        "target_share": 0.243,
+        "air_yds_share": 0.286,
+        "rz_targets": 19,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2603,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.4,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 10,
         "rec": 45.0,
@@ -10924,6 +13233,7 @@
       }
     },
     "Theo Johnson": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 11,
@@ -10977,6 +13287,7 @@
       }
     },
     "Dalton Kincaid": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 73.0,
@@ -11054,6 +13365,31 @@
       }
     },
     "Chigoziem Okonkwo": {
+      "2022": {
+        "games": 16,
+        "rec": 32.0,
+        "rec_yds": 450,
+        "rec_td": 3,
+        "rush_yds": 2,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0072,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 46,
+        "target_share": 0.1055,
+        "air_yds_share": 0.1055,
+        "rz_targets": 7,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1167,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.125,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 54.0,
@@ -11131,6 +13467,31 @@
       }
     },
     "Cade Otton": {
+      "2022": {
+        "games": 16,
+        "rec": 42.0,
+        "rec_yds": 391,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 65,
+        "target_share": 0.0898,
+        "air_yds_share": 0.0763,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1455,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1071,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 47.0,
@@ -11208,6 +13569,7 @@
       }
     },
     "Brenton Strange": {
+      "2022": null,
       "2023": {
         "games": 7,
         "rec": 5.0,
@@ -11285,6 +13647,7 @@
       }
     },
     "Tucker Kraft": {
+      "2022": null,
       "2023": {
         "games": 14,
         "rec": 31.0,
@@ -11362,6 +13725,31 @@
       }
     },
     "Pat Freiermuth": {
+      "2022": {
+        "games": 15,
+        "rec": 63.0,
+        "rec_yds": 732,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 98,
+        "target_share": 0.1788,
+        "air_yds_share": 0.1824,
+        "rz_targets": 13,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.197,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0714,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 11,
         "rec": 32.0,
@@ -11439,6 +13827,31 @@
       }
     },
     "T.J. Hockenson": {
+      "2022": {
+        "games": 17,
+        "rec": 86.0,
+        "rec_yds": 914,
+        "rec_td": 6,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 129,
+        "target_share": 0.2012,
+        "air_yds_share": 0.2031,
+        "rz_targets": 22,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1982,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2308,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 95.0,
@@ -11516,6 +13929,31 @@
       }
     },
     "Evan Engram": {
+      "2022": {
+        "games": 17,
+        "rec": 73.0,
+        "rec_yds": 766,
+        "rec_td": 4,
+        "rush_yds": 13,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0052,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 98,
+        "target_share": 0.1707,
+        "air_yds_share": 0.1464,
+        "rz_targets": 12,
+        "rz_carries": 1,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1395,
+        "rz_car_share": 0.0111,
+        "gl_tgt_share": 0.1739,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 114.0,
@@ -11593,6 +14031,7 @@
       }
     },
     "Gunnar Helm": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -11622,6 +14061,7 @@
       }
     },
     "Mason Taylor": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -11651,6 +14091,31 @@
       }
     },
     "Isaiah Likely": {
+      "2022": {
+        "games": 14,
+        "rec": 36.0,
+        "rec_yds": 373,
+        "rec_td": 3,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 60,
+        "target_share": 0.129,
+        "air_yds_share": 0.1048,
+        "rz_targets": 11,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1507,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0667,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 30.0,
@@ -11728,6 +14193,31 @@
       }
     },
     "Cole Kmet": {
+      "2022": {
+        "games": 17,
+        "rec": 50.0,
+        "rec_yds": 544,
+        "rec_td": 7,
+        "rush_yds": 9,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0051,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 69,
+        "target_share": 0.1922,
+        "air_yds_share": 0.1456,
+        "rz_targets": 11,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2391,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.25,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 73.0,
@@ -11805,6 +14295,31 @@
       }
     },
     "Jake Ferguson": {
+      "2022": {
+        "games": 11,
+        "rec": 19.0,
+        "rec_yds": 174,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 22,
+        "target_share": 0.0404,
+        "air_yds_share": 0.0173,
+        "rz_targets": 3,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.039,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0714,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 71.0,
@@ -11882,6 +14397,31 @@
       }
     },
     "Dawson Knox": {
+      "2022": {
+        "games": 15,
+        "rec": 48.0,
+        "rec_yds": 517,
+        "rec_td": 6,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 65,
+        "target_share": 0.118,
+        "air_yds_share": 0.0997,
+        "rz_targets": 11,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.125,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1429,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 10,
         "rec": 22.0,
@@ -11959,6 +14499,31 @@
       }
     },
     "Noah Fant": {
+      "2022": {
+        "games": 17,
+        "rec": 50.0,
+        "rec_yds": 486,
+        "rec_td": 4,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 63,
+        "target_share": 0.1139,
+        "air_yds_share": 0.095,
+        "rz_targets": 9,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.12,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2222,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 32.0,
@@ -12036,6 +14601,31 @@
       }
     },
     "Jonnu Smith": {
+      "2022": {
+        "games": 12,
+        "rec": 27.0,
+        "rec_yds": 245,
+        "rec_td": 0,
+        "rush_yds": 5,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0027,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 38,
+        "target_share": 0.0734,
+        "air_yds_share": 0.0284,
+        "rz_targets": 5,
+        "rz_carries": 1,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0909,
+        "rz_car_share": 0.0149,
+        "gl_tgt_share": 0.0526,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 50.0,
@@ -12113,6 +14703,31 @@
       }
     },
     "Charlie Kolar": {
+      "2022": {
+        "games": 1,
+        "rec": 4.0,
+        "rec_yds": 49,
+        "rec_td": 0,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 6,
+        "target_share": 0.0129,
+        "air_yds_share": 0.0127,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0137,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 9,
         "rec": 7.0,
@@ -12190,6 +14805,7 @@
       }
     },
     "Elijah Higgins": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 14.0,
@@ -12267,6 +14883,31 @@
       }
     },
     "Jalen Tolbert": {
+      "2022": {
+        "games": 3,
+        "rec": 2.0,
+        "rec_yds": 12,
+        "rec_td": 0,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 3,
+        "target_share": 0.0055,
+        "air_yds_share": 0.0101,
+        "rz_targets": 1,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.013,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 22.0,
@@ -12344,6 +14985,31 @@
       }
     },
     "Christian Kirk": {
+      "2022": {
+        "games": 17,
+        "rec": 84.0,
+        "rec_yds": 1108,
+        "rec_td": 8,
+        "rush_yds": 11,
+        "rush_td": 0,
+        "rush_att": 5,
+        "rush_share": 0.0131,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 133,
+        "target_share": 0.2317,
+        "air_yds_share": 0.2899,
+        "rz_targets": 24,
+        "rz_carries": null,
+        "gl_targets": 9,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2791,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3913,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 12,
         "rec": 57.0,
@@ -12421,6 +15087,7 @@
       }
     },
     "Jack Bech": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -12450,6 +15117,31 @@
       }
     },
     "Jerry Jeudy": {
+      "2022": {
+        "games": 15,
+        "rec": 67.0,
+        "rec_yds": 972,
+        "rec_td": 6,
+        "rush_yds": 40,
+        "rush_td": 0,
+        "rush_att": 4,
+        "rush_share": 0.0104,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 100,
+        "target_share": 0.1848,
+        "air_yds_share": 0.243,
+        "rz_targets": 11,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2037,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0667,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 54.0,
@@ -12527,6 +15219,31 @@
       }
     },
     "Cooper Kupp": {
+      "2022": {
+        "games": 9,
+        "rec": 75.0,
+        "rec_yds": 812,
+        "rec_td": 6,
+        "rush_yds": 52,
+        "rush_td": 1,
+        "rush_att": 9,
+        "rush_share": 0.0253,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 98,
+        "target_share": 0.1896,
+        "air_yds_share": 0.1943,
+        "rz_targets": 11,
+        "rz_carries": 1,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1618,
+        "rz_car_share": 0.0182,
+        "gl_tgt_share": 0.2353,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 12,
         "rec": 59.0,
@@ -12604,6 +15321,7 @@
       }
     },
     "Tez Johnson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -12633,6 +15351,31 @@
       }
     },
     "Chris Godwin": {
+      "2022": {
+        "games": 15,
+        "rec": 104.0,
+        "rec_yds": 1023,
+        "rec_td": 3,
+        "rush_yds": 5,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0084,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 142,
+        "target_share": 0.1961,
+        "air_yds_share": 0.163,
+        "rz_targets": 18,
+        "rz_carries": 2,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1636,
+        "rz_car_share": 0.037,
+        "gl_tgt_share": 0.2143,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 83.0,
@@ -12710,6 +15453,7 @@
       }
     },
     "Cedric Tillman": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 21.0,
@@ -12787,6 +15531,7 @@
       }
     },
     "Pat Bryant": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -12816,6 +15561,7 @@
       }
     },
     "Tre Tucker": {
+      "2022": null,
       "2023": {
         "games": 13,
         "rec": 19.0,
@@ -12893,6 +15639,7 @@
       }
     },
     "Kyle Williams": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -12922,6 +15669,7 @@
       }
     },
     "Tank Dell": {
+      "2022": null,
       "2023": {
         "games": 10,
         "rec": 47.0,
@@ -12975,6 +15723,7 @@
       "2025": null
     },
     "DeMario Douglas": {
+      "2022": null,
       "2023": {
         "games": 14,
         "rec": 49.0,
@@ -13052,6 +15801,7 @@
       }
     },
     "Adonai Mitchell": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -13105,6 +15855,7 @@
       }
     },
     "Jaylin Noel": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -13134,6 +15885,7 @@
       }
     },
     "Malik Washington": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 14,
@@ -13187,6 +15939,7 @@
       }
     },
     "Kayshon Boutte": {
+      "2022": null,
       "2023": {
         "games": 3,
         "rec": 2.0,
@@ -13264,6 +16017,7 @@
       }
     },
     "Michael Wilson": {
+      "2022": null,
       "2023": {
         "games": 13,
         "rec": 38.0,
@@ -13341,6 +16095,31 @@
       }
     },
     "Darius Slayton": {
+      "2022": {
+        "games": 13,
+        "rec": 46.0,
+        "rec_yds": 724,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 71,
+        "target_share": 0.1452,
+        "air_yds_share": 0.2805,
+        "rz_targets": 3,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0667,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 50.0,
@@ -13418,6 +16197,31 @@
       }
     },
     "Marquise Brown": {
+      "2022": {
+        "games": 12,
+        "rec": 67.0,
+        "rec_yds": 709,
+        "rec_td": 3,
+        "rush_yds": 1,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.003,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 107,
+        "target_share": 0.1685,
+        "air_yds_share": 0.2686,
+        "rz_targets": 14,
+        "rz_carries": 4,
+        "gl_targets": 2,
+        "gl_carries": 3,
+        "rz_tgt_share": 0.1918,
+        "rz_car_share": 0.0541,
+        "gl_tgt_share": 0.1111,
+        "gl_car_share": 0.1304
+      },
       "2023": {
         "games": 13,
         "rec": 51.0,
@@ -13495,6 +16299,7 @@
       }
     },
     "Tyrone Tracy": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -13548,6 +16353,31 @@
       }
     },
     "Brian Robinson": {
+      "2022": {
+        "games": 12,
+        "rec": 9.0,
+        "rec_yds": 60,
+        "rec_td": 1,
+        "rush_yds": 797,
+        "rush_td": 2,
+        "rush_att": 205,
+        "rush_share": 0.4244,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 12,
+        "target_share": 0.0226,
+        "air_yds_share": -0.0025,
+        "rz_targets": 1,
+        "rz_carries": 24,
+        "gl_targets": null,
+        "gl_carries": 9,
+        "rz_tgt_share": 0.0149,
+        "rz_car_share": 0.2963,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.375
+      },
       "2023": {
         "games": 15,
         "rec": 36.0,
@@ -13625,6 +16455,7 @@
       }
     },
     "George Holani": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 3,
@@ -13678,6 +16509,7 @@
       }
     },
     "Keaton Mitchell": {
+      "2022": null,
       "2023": {
         "games": 7,
         "rec": 9.0,
@@ -13755,6 +16587,7 @@
       }
     },
     "Chris Rodriguez": {
+      "2022": null,
       "2023": {
         "games": 9,
         "rec": 2.0,
@@ -13832,6 +16665,7 @@
       }
     },
     "Sean Tucker": {
+      "2022": null,
       "2023": {
         "games": 3,
         "rec": 2.0,
@@ -13909,6 +16743,7 @@
       }
     },
     "Ray Davis": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 17,
@@ -13962,6 +16797,31 @@
       }
     },
     "Tyler Allgeier": {
+      "2022": {
+        "games": 16,
+        "rec": 16.0,
+        "rec_yds": 139,
+        "rec_td": 1,
+        "rush_yds": 1035,
+        "rush_td": 3,
+        "rush_att": 210,
+        "rush_share": 0.4585,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 17,
+        "target_share": 0.0425,
+        "air_yds_share": -0.0081,
+        "rz_targets": null,
+        "rz_carries": 40,
+        "gl_targets": null,
+        "gl_carries": 11,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.3419,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.3929
+      },
       "2023": {
         "games": 17,
         "rec": 18.0,
@@ -14039,6 +16899,31 @@
       }
     },
     "Greg Dulcich": {
+      "2022": {
+        "games": 10,
+        "rec": 33.0,
+        "rec_yds": 411,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 55,
+        "target_share": 0.1017,
+        "air_yds_share": 0.1323,
+        "rz_targets": 2,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.037,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 2,
         "rec": 3.0,
@@ -14116,6 +17001,31 @@
       }
     },
     "David Njoku": {
+      "2022": {
+        "games": 14,
+        "rec": 58.0,
+        "rec_yds": 628,
+        "rec_td": 4,
+        "rush_yds": -8,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0045,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 80,
+        "target_share": 0.1578,
+        "air_yds_share": 0.1283,
+        "rz_targets": 20,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2632,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2353,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 81.0,
@@ -14193,6 +17103,31 @@
       }
     },
     "Colby Parkinson": {
+      "2022": {
+        "games": 14,
+        "rec": 25.0,
+        "rec_yds": 322,
+        "rec_td": 2,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 34,
+        "target_share": 0.0615,
+        "air_yds_share": 0.0651,
+        "rz_targets": 6,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.08,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1111,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 25.0,
@@ -14270,6 +17205,7 @@
       }
     },
     "Terrance Ferguson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -14299,6 +17235,31 @@
       }
     },
     "Jake Tonges": {
+      "2022": {
+        "games": 1,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 1,
+        "target_share": 0.0028,
+        "air_yds_share": 0.0041,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": null,
       "2024": {
         "games": 2,
@@ -14352,6 +17313,7 @@
       }
     },
     "Michael Mayer": {
+      "2022": null,
       "2023": {
         "games": 13,
         "rec": 27.0,
@@ -14429,6 +17391,7 @@
       }
     },
     "JaTavion Sanders": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -14482,6 +17445,7 @@
       }
     },
     "Ben Sinnott": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 7,
@@ -14535,6 +17499,31 @@
       }
     },
     "Zach Ertz": {
+      "2022": {
+        "games": 10,
+        "rec": 47.0,
+        "rec_yds": 406,
+        "rec_td": 4,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 69,
+        "target_share": 0.1087,
+        "air_yds_share": 0.1221,
+        "rz_targets": 17,
+        "rz_carries": null,
+        "gl_targets": 7,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2329,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3889,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 7,
         "rec": 27.0,
@@ -14612,6 +17601,31 @@
       }
     },
     "Mac Jones": {
+      "2022": {
+        "games": 14,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 102,
+        "rush_td": 1,
+        "rush_att": 47,
+        "rush_share": 0.0,
+        "pass_yds": 2997,
+        "pass_td": 14,
+        "pass_att": 442,
+        "pass_int": 11,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": 11,
+        "rz_carries": 9,
+        "gl_targets": 1,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.2,
+        "rz_car_share": 0.1343,
+        "gl_tgt_share": 0.0526,
+        "gl_car_share": 0.05
+      },
       "2023": {
         "games": 11,
         "rec": 0.0,
@@ -14689,6 +17703,31 @@
       }
     },
     "Joe Flacco": {
+      "2022": {
+        "games": 5,
+        "rec": 0.0,
+        "rec_yds": -3,
+        "rec_td": 0,
+        "rush_yds": 6,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0,
+        "pass_yds": 1051,
+        "pass_td": 5,
+        "pass_att": 191,
+        "pass_int": 3,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 5,
         "rec": 0.0,
@@ -14766,6 +17805,31 @@
       }
     },
     "Justin Fields": {
+      "2022": {
+        "games": 15,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 1143,
+        "rush_td": 8,
+        "rush_att": 160,
+        "rush_share": 0.0,
+        "pass_yds": 2242,
+        "pass_td": 17,
+        "pass_att": 318,
+        "pass_int": 11,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 29,
+        "gl_targets": null,
+        "gl_carries": 11,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.3187,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.44
+      },
       "2023": {
         "games": 13,
         "rec": 0.0,
@@ -14843,6 +17907,31 @@
       }
     },
     "Kirk Cousins": {
+      "2022": {
+        "games": 17,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 97,
+        "rush_td": 2,
+        "rush_att": 31,
+        "rush_share": 0.0,
+        "pass_yds": 4547,
+        "pass_td": 29,
+        "pass_att": 643,
+        "pass_int": 14,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 7,
+        "gl_targets": null,
+        "gl_carries": 3,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1071
+      },
       "2023": {
         "games": 8,
         "rec": 0.0,
@@ -14920,6 +18009,31 @@
       }
     },
     "Deshaun Watson": {
+      "2022": {
+        "games": 6,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 175,
+        "rush_td": 1,
+        "rush_att": 36,
+        "rush_share": 0.0,
+        "pass_yds": 1102,
+        "pass_td": 7,
+        "pass_att": 170,
+        "pass_int": 5,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 6,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0706,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0476
+      },
       "2023": {
         "games": 6,
         "rec": 0.0,
@@ -14973,6 +18087,7 @@
       "2025": null
     },
     "Anthony Richardson": {
+      "2022": null,
       "2023": {
         "games": 4,
         "rec": 0.0,
@@ -15050,6 +18165,7 @@
       }
     },
     "Jalen Milroe": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -15079,6 +18195,31 @@
       }
     },
     "Marcus Mariota": {
+      "2022": {
+        "games": 13,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 438,
+        "rush_td": 4,
+        "rush_att": 85,
+        "rush_share": 0.0,
+        "pass_yds": 2219,
+        "pass_td": 15,
+        "pass_att": 300,
+        "pass_int": 9,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 19,
+        "gl_targets": null,
+        "gl_carries": 4,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1624,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1429
+      },
       "2023": {
         "games": 2,
         "rec": 0.0,
@@ -15156,6 +18297,7 @@
       }
     },
     "Riley Leonard": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -15185,6 +18327,7 @@
       }
     },
     "Quinn Ewers": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -15214,6 +18357,31 @@
       }
     },
     "Jameis Winston": {
+      "2022": {
+        "games": 3,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 16,
+        "rush_td": 0,
+        "rush_att": 5,
+        "rush_share": 0.0,
+        "pass_yds": 858,
+        "pass_td": 4,
+        "pass_att": 115,
+        "pass_int": 5,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 6,
         "rec": 0.0,
@@ -15291,6 +18459,7 @@
       }
     },
     "Joe Milton": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 1,
@@ -15344,6 +18513,7 @@
       }
     },
     "Dillon Gabriel": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -15373,6 +18543,31 @@
       }
     },
     "Gardner Minshew": {
+      "2022": {
+        "games": 5,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 3,
+        "rush_td": 1,
+        "rush_att": 7,
+        "rush_share": 0.0,
+        "pass_yds": 663,
+        "pass_td": 3,
+        "pass_att": 76,
+        "pass_int": 3,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 2,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0155,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0208
+      },
       "2023": {
         "games": 16,
         "rec": 0.0,
@@ -15450,6 +18645,31 @@
       }
     },
     "Kenny Pickett": {
+      "2022": {
+        "games": 13,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 237,
+        "rush_td": 3,
+        "rush_att": 55,
+        "rush_share": 0.0,
+        "pass_yds": 2404,
+        "pass_td": 7,
+        "pass_att": 389,
+        "pass_int": 9,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 11,
+        "gl_targets": null,
+        "gl_carries": 6,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1392,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.2222
+      },
       "2023": {
         "games": 12,
         "rec": 0.0,
@@ -15527,6 +18747,31 @@
       }
     },
     "Tyler Huntley": {
+      "2022": {
+        "games": 5,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 137,
+        "rush_td": 1,
+        "rush_att": 43,
+        "rush_share": 0.0,
+        "pass_yds": 658,
+        "pass_td": 2,
+        "pass_att": 112,
+        "pass_int": 3,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 12,
+        "gl_targets": null,
+        "gl_carries": 3,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.1304,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1579
+      },
       "2023": {
         "games": 5,
         "rec": 0.0,
@@ -15604,6 +18849,7 @@
       }
     },
     "Will Levis": {
+      "2022": null,
       "2023": {
         "games": 9,
         "rec": 0.0,
@@ -15657,6 +18903,7 @@
       "2025": null
     },
     "Tyson Bagent": {
+      "2022": null,
       "2023": {
         "games": 5,
         "rec": 0.0,
@@ -15734,6 +18981,31 @@
       }
     },
     "Trey Lance": {
+      "2022": {
+        "games": 2,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 67,
+        "rush_td": 0,
+        "rush_att": 16,
+        "rush_share": 0.0,
+        "pass_yds": 194,
+        "pass_td": 0,
+        "pass_att": 31,
+        "pass_int": 1,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 4,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0381,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": null,
       "2024": {
         "games": 4,
@@ -15787,6 +19059,31 @@
       }
     },
     "Tyrod Taylor": {
+      "2022": {
+        "games": 2,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 70,
+        "rush_td": 0,
+        "rush_att": 5,
+        "rush_share": 0.0,
+        "pass_yds": 58,
+        "pass_td": 1,
+        "pass_att": 8,
+        "pass_int": 1,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 2,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0247,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0357
+      },
       "2023": {
         "games": 10,
         "rec": 0.0,
@@ -15864,6 +19161,31 @@
       }
     },
     "Davis Mills": {
+      "2022": {
+        "games": 15,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 108,
+        "rush_td": 2,
+        "rush_att": 32,
+        "rush_share": 0.0,
+        "pass_yds": 3118,
+        "pass_td": 17,
+        "pass_att": 479,
+        "pass_int": 15,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": 6,
+        "gl_targets": null,
+        "gl_carries": 2,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0968,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.1111
+      },
       "2023": {
         "games": 5,
         "rec": 0.0,
@@ -15941,6 +19263,7 @@
       }
     },
     "Tanner McKee": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 2,
@@ -15994,6 +19317,7 @@
       }
     },
     "Kaleb Johnson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16023,6 +19347,7 @@
       }
     },
     "Jaydon Blue": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16052,6 +19377,7 @@
       }
     },
     "DJ Giddens": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16081,6 +19407,7 @@
       }
     },
     "Emanuel Wilson": {
+      "2022": null,
       "2023": {
         "games": 5,
         "rec": 4.0,
@@ -16158,6 +19485,7 @@
       }
     },
     "Devin Neal": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16187,6 +19515,7 @@
       }
     },
     "LeQuint Allen": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16216,6 +19545,7 @@
       }
     },
     "Trevor Etienne": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16245,6 +19575,7 @@
       }
     },
     "Tahj Brooks": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16274,6 +19605,7 @@
       }
     },
     "Chris Brooks": {
+      "2022": null,
       "2023": {
         "games": 3,
         "rec": 0.0,
@@ -16351,6 +19683,7 @@
       }
     },
     "Isaiah Davis": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -16404,6 +19737,7 @@
       }
     },
     "Brashard Smith": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -16433,6 +19767,31 @@
       }
     },
     "Najee Harris": {
+      "2022": {
+        "games": 17,
+        "rec": 41.0,
+        "rec_yds": 229,
+        "rec_td": 3,
+        "rush_yds": 1034,
+        "rush_td": 7,
+        "rush_att": 272,
+        "rush_share": 0.6385,
+        "pass_yds": 4,
+        "pass_td": 0,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 53,
+        "target_share": 0.0967,
+        "air_yds_share": 0.0211,
+        "rz_targets": 7,
+        "rz_carries": 42,
+        "gl_targets": 1,
+        "gl_carries": 12,
+        "rz_tgt_share": 0.1061,
+        "rz_car_share": 0.5316,
+        "gl_tgt_share": 0.0714,
+        "gl_car_share": 0.4444
+      },
       "2023": {
         "games": 17,
         "rec": 29.0,
@@ -16510,6 +19869,31 @@
       }
     },
     "Joe Mixon": {
+      "2022": {
+        "games": 14,
+        "rec": 60.0,
+        "rec_yds": 441,
+        "rec_td": 2,
+        "rush_yds": 814,
+        "rush_td": 7,
+        "rush_att": 210,
+        "rush_share": 0.6542,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 75,
+        "target_share": 0.1263,
+        "air_yds_share": -0.0036,
+        "rz_targets": 13,
+        "rz_carries": 39,
+        "gl_targets": 3,
+        "gl_carries": 17,
+        "rz_tgt_share": 0.134,
+        "rz_car_share": 0.4815,
+        "gl_tgt_share": 0.1071,
+        "gl_car_share": 0.5862
+      },
       "2023": {
         "games": 17,
         "rec": 52.0,
@@ -16563,6 +19947,31 @@
       "2025": null
     },
     "Malik Davis": {
+      "2022": {
+        "games": 6,
+        "rec": 6.0,
+        "rec_yds": 63,
+        "rec_td": 0,
+        "rush_yds": 161,
+        "rush_td": 1,
+        "rush_att": 38,
+        "rush_share": 0.0797,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 7,
+        "target_share": 0.0128,
+        "air_yds_share": -0.0016,
+        "rz_targets": 2,
+        "rz_carries": 6,
+        "gl_targets": null,
+        "gl_carries": 2,
+        "rz_tgt_share": 0.026,
+        "rz_car_share": 0.0789,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0741
+      },
       "2023": {
         "games": 1,
         "rec": 0.0,
@@ -16616,6 +20025,7 @@
       }
     },
     "Kendre Miller": {
+      "2022": null,
       "2023": {
         "games": 7,
         "rec": 10.0,
@@ -16693,6 +20103,31 @@
       }
     },
     "Justice Hill": {
+      "2022": {
+        "games": 15,
+        "rec": 12.0,
+        "rec_yds": 58,
+        "rec_td": 0,
+        "rush_yds": 262,
+        "rush_td": 0,
+        "rush_att": 49,
+        "rush_share": 0.1332,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 12,
+        "target_share": 0.0258,
+        "air_yds_share": -0.0065,
+        "rz_targets": null,
+        "rz_carries": 4,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0435,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 28.0,
@@ -16770,6 +20205,7 @@
       }
     },
     "Emari Demercado": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 21.0,
@@ -16847,6 +20283,31 @@
       }
     },
     "Ty Johnson": {
+      "2022": {
+        "games": 12,
+        "rec": 12.0,
+        "rec_yds": 88,
+        "rec_td": 0,
+        "rush_yds": 160,
+        "rush_td": 1,
+        "rush_att": 30,
+        "rush_share": 0.0836,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 24,
+        "target_share": 0.0408,
+        "air_yds_share": 0.0098,
+        "rz_targets": null,
+        "rz_carries": 2,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0312,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 9,
         "rec": 7.0,
@@ -16924,6 +20385,31 @@
       }
     },
     "Devin Singletary": {
+      "2022": {
+        "games": 16,
+        "rec": 38.0,
+        "rec_yds": 280,
+        "rec_td": 1,
+        "rush_yds": 819,
+        "rush_td": 5,
+        "rush_att": 177,
+        "rush_share": 0.588,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 52,
+        "target_share": 0.0944,
+        "air_yds_share": 0.0016,
+        "rz_targets": 8,
+        "rz_carries": 35,
+        "gl_targets": 2,
+        "gl_carries": 10,
+        "rz_tgt_share": 0.0909,
+        "rz_car_share": 0.4118,
+        "gl_tgt_share": 0.0952,
+        "gl_car_share": 0.4
+      },
       "2023": {
         "games": 17,
         "rec": 30.0,
@@ -17001,6 +20487,31 @@
       }
     },
     "Jerome Ford": {
+      "2022": {
+        "games": 13,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 12,
+        "rush_td": 0,
+        "rush_att": 8,
+        "rush_share": 0.0179,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 44.0,
@@ -17078,6 +20589,7 @@
       }
     },
     "Will Shipley": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -17131,6 +20643,7 @@
       }
     },
     "Phil Mafah": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -17160,6 +20673,31 @@
       }
     },
     "Samaje Perine": {
+      "2022": {
+        "games": 16,
+        "rec": 38.0,
+        "rec_yds": 287,
+        "rec_td": 4,
+        "rush_yds": 394,
+        "rush_td": 2,
+        "rush_att": 95,
+        "rush_share": 0.296,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 51,
+        "target_share": 0.0859,
+        "air_yds_share": 0.0029,
+        "rz_targets": 8,
+        "rz_carries": 18,
+        "gl_targets": 1,
+        "gl_carries": 2,
+        "rz_tgt_share": 0.0825,
+        "rz_car_share": 0.2222,
+        "gl_tgt_share": 0.0357,
+        "gl_car_share": 0.069
+      },
       "2023": {
         "games": 17,
         "rec": 50.0,
@@ -17237,6 +20775,31 @@
       }
     },
     "Michael Carter": {
+      "2022": {
+        "games": 17,
+        "rec": 0.0,
+        "rec_yds": 0,
+        "rec_td": 0,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 0,
+        "target_share": 0.0,
+        "air_yds_share": 0.0,
+        "rz_targets": null,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 0.0,
@@ -17314,6 +20877,7 @@
       }
     },
     "Roschon Johnson": {
+      "2022": null,
       "2023": {
         "games": 15,
         "rec": 34.0,
@@ -17391,6 +20955,7 @@
       }
     },
     "Kenny McIntosh": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 11,
@@ -17420,6 +20985,31 @@
       "2025": null
     },
     "Nick Chubb": {
+      "2022": {
+        "games": 17,
+        "rec": 27.0,
+        "rec_yds": 239,
+        "rec_td": 1,
+        "rush_yds": 1525,
+        "rush_td": 12,
+        "rush_att": 302,
+        "rush_share": 0.6756,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 37,
+        "target_share": 0.073,
+        "air_yds_share": 0.0,
+        "rz_targets": 1,
+        "rz_carries": 42,
+        "gl_targets": 1,
+        "gl_carries": 13,
+        "rz_tgt_share": 0.0132,
+        "rz_car_share": 0.4941,
+        "gl_tgt_share": 0.0588,
+        "gl_car_share": 0.619
+      },
       "2023": {
         "games": 2,
         "rec": 4.0,
@@ -17497,6 +21087,31 @@
       }
     },
     "Austin Ekeler": {
+      "2022": {
+        "games": 17,
+        "rec": 107.0,
+        "rec_yds": 722,
+        "rec_td": 5,
+        "rush_yds": 915,
+        "rush_td": 13,
+        "rush_att": 204,
+        "rush_share": 0.5845,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 127,
+        "target_share": 0.1849,
+        "air_yds_share": -0.0233,
+        "rz_targets": 25,
+        "rz_carries": 51,
+        "gl_targets": 4,
+        "gl_carries": 11,
+        "rz_tgt_share": 0.2404,
+        "rz_car_share": 0.6456,
+        "gl_tgt_share": 0.16,
+        "gl_car_share": 0.55
+      },
       "2023": {
         "games": 14,
         "rec": 51.0,
@@ -17574,6 +21189,7 @@
       }
     },
     "Raheim Sanders": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -17603,6 +21219,7 @@
       }
     },
     "Elijah Arroyo": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -17632,6 +21249,7 @@
       }
     },
     "Darnell Washington": {
+      "2022": null,
       "2023": {
         "games": 8,
         "rec": 7.0,
@@ -17709,6 +21327,31 @@
       }
     },
     "Mike Gesicki": {
+      "2022": {
+        "games": 17,
+        "rec": 32.0,
+        "rec_yds": 362,
+        "rec_td": 5,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 52,
+        "target_share": 0.0925,
+        "air_yds_share": 0.0935,
+        "rz_targets": 14,
+        "rz_carries": null,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.209,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.3158,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 29.0,
@@ -17786,6 +21429,7 @@
       }
     },
     "Luke Musgrave": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 34.0,
@@ -17863,6 +21507,31 @@
       }
     },
     "Noah Gray": {
+      "2022": {
+        "games": 17,
+        "rec": 28.0,
+        "rec_yds": 299,
+        "rec_td": 1,
+        "rush_yds": 1,
+        "rush_td": 1,
+        "rush_att": 1,
+        "rush_share": 0.0028,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 34,
+        "target_share": 0.0554,
+        "air_yds_share": 0.0375,
+        "rz_targets": 4,
+        "rz_carries": 1,
+        "gl_targets": null,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.0354,
+        "rz_car_share": 0.011,
+        "gl_tgt_share": null,
+        "gl_car_share": 0.0345
+      },
       "2023": {
         "games": 16,
         "rec": 28.0,
@@ -17940,6 +21609,31 @@
       }
     },
     "Tyler Higbee": {
+      "2022": {
+        "games": 16,
+        "rec": 72.0,
+        "rec_yds": 620,
+        "rec_td": 3,
+        "rush_yds": 0,
+        "rush_td": 0,
+        "rush_att": 0,
+        "rush_share": 0.0,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 108,
+        "target_share": 0.2089,
+        "air_yds_share": 0.0891,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2353,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1176,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 47.0,
@@ -18017,6 +21711,7 @@
       }
     },
     "Erick All": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 8,
@@ -18046,6 +21741,7 @@
       "2025": null
     },
     "Tory Horton": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18075,6 +21771,31 @@
       }
     },
     "Tyreek Hill": {
+      "2022": {
+        "games": 17,
+        "rec": 119.0,
+        "rec_yds": 1710,
+        "rec_td": 7,
+        "rush_yds": 32,
+        "rush_td": 1,
+        "rush_att": 7,
+        "rush_share": 0.0201,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 170,
+        "target_share": 0.3025,
+        "air_yds_share": 0.4021,
+        "rz_targets": 14,
+        "rz_carries": 20,
+        "gl_targets": 7,
+        "gl_carries": 4,
+        "rz_tgt_share": 0.209,
+        "rz_car_share": 0.3774,
+        "gl_tgt_share": 0.3684,
+        "gl_car_share": 0.2857
+      },
       "2023": {
         "games": 16,
         "rec": 119.0,
@@ -18152,6 +21873,7 @@
       }
     },
     "Ryan Flournoy": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 9,
@@ -18205,6 +21927,7 @@
       }
     },
     "Isaiah Bond": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18234,6 +21957,7 @@
       }
     },
     "Jalen Royals": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18263,6 +21987,7 @@
       }
     },
     "Jaylin Lane": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18292,6 +22017,31 @@
       }
     },
     "Jahan Dotson": {
+      "2022": {
+        "games": 12,
+        "rec": 35.0,
+        "rec_yds": 523,
+        "rec_td": 7,
+        "rush_yds": -7,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0041,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 61,
+        "target_share": 0.1149,
+        "air_yds_share": 0.1946,
+        "rz_targets": 10,
+        "rz_carries": null,
+        "gl_targets": 4,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1493,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.2353,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 49.0,
@@ -18369,6 +22119,31 @@
       }
     },
     "Tyquan Thornton": {
+      "2022": {
+        "games": 12,
+        "rec": 22.0,
+        "rec_yds": 247,
+        "rec_td": 2,
+        "rush_yds": 16,
+        "rush_td": 1,
+        "rush_att": 3,
+        "rush_share": 0.0082,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 45,
+        "target_share": 0.0869,
+        "air_yds_share": 0.1579,
+        "rz_targets": 5,
+        "rz_carries": 2,
+        "gl_targets": 3,
+        "gl_carries": 1,
+        "rz_tgt_share": 0.0909,
+        "rz_car_share": 0.0299,
+        "gl_tgt_share": 0.1579,
+        "gl_car_share": 0.05
+      },
       "2023": {
         "games": 9,
         "rec": 13.0,
@@ -18446,6 +22221,7 @@
       }
     },
     "Savion Williams": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18475,6 +22251,7 @@
       }
     },
     "Odell Beckham": {
+      "2022": null,
       "2023": {
         "games": 14,
         "rec": 35.0,
@@ -18528,6 +22305,7 @@
       "2025": null
     },
     "Andrei Iosivas": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 15.0,
@@ -18605,6 +22383,7 @@
       }
     },
     "Calvin Austin": {
+      "2022": null,
       "2023": {
         "games": 16,
         "rec": 17.0,
@@ -18682,6 +22461,7 @@
       }
     },
     "KeAndre Lambert-Smith": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -18711,6 +22491,7 @@
       }
     },
     "John Metchie": {
+      "2022": null,
       "2023": {
         "games": 14,
         "rec": 16.0,
@@ -18788,6 +22569,7 @@
       }
     },
     "Luke McCaffrey": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 13,
@@ -18841,6 +22623,31 @@
       }
     },
     "Keenan Allen": {
+      "2022": {
+        "games": 10,
+        "rec": 66.0,
+        "rec_yds": 752,
+        "rec_td": 4,
+        "rush_yds": 8,
+        "rush_td": 0,
+        "rush_att": 1,
+        "rush_share": 0.0029,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 89,
+        "target_share": 0.1295,
+        "air_yds_share": 0.1777,
+        "rz_targets": 16,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1538,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.12,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 13,
         "rec": 108.0,
@@ -18918,6 +22725,31 @@
       }
     },
     "Treylon Burks": {
+      "2022": {
+        "games": 11,
+        "rec": 33.0,
+        "rec_yds": 444,
+        "rec_td": 1,
+        "rush_yds": 47,
+        "rush_td": 0,
+        "rush_att": 4,
+        "rush_share": 0.0096,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 54,
+        "target_share": 0.1239,
+        "air_yds_share": 0.1865,
+        "rz_targets": 4,
+        "rz_carries": null,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0667,
+        "rz_car_share": null,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 9,
         "rec": 16.0,
@@ -18995,6 +22827,7 @@
       }
     },
     "Jahdae Walker": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19024,6 +22857,31 @@
       }
     },
     "KaVontae Turpin": {
+      "2022": {
+        "games": 17,
+        "rec": 1.0,
+        "rec_yds": 9,
+        "rec_td": 0,
+        "rush_yds": 17,
+        "rush_td": 0,
+        "rush_att": 3,
+        "rush_share": 0.0063,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 2,
+        "target_share": 0.0037,
+        "air_yds_share": 0.0029,
+        "rz_targets": null,
+        "rz_carries": 1,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": null,
+        "rz_car_share": 0.0132,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 12.0,
@@ -19101,6 +22959,7 @@
       }
     },
     "Xavier Hutchinson": {
+      "2022": null,
       "2023": {
         "games": 12,
         "rec": 8.0,
@@ -19178,6 +23037,31 @@
       }
     },
     "Kendrick Bourne": {
+      "2022": {
+        "games": 16,
+        "rec": 35.0,
+        "rec_yds": 434,
+        "rec_td": 1,
+        "rush_yds": 39,
+        "rush_td": 0,
+        "rush_att": 6,
+        "rush_share": 0.0163,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 48,
+        "target_share": 0.0927,
+        "air_yds_share": 0.1205,
+        "rz_targets": 5,
+        "rz_carries": 2,
+        "gl_targets": 2,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0909,
+        "rz_car_share": 0.0299,
+        "gl_tgt_share": 0.1053,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 8,
         "rec": 37.0,
@@ -19255,6 +23139,7 @@
       }
     },
     "Roman Wilson": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19284,6 +23169,31 @@
       }
     },
     "Mack Hollins": {
+      "2022": {
+        "games": 17,
+        "rec": 57.0,
+        "rec_yds": 690,
+        "rec_td": 4,
+        "rush_yds": 40,
+        "rush_td": 0,
+        "rush_att": 4,
+        "rush_share": 0.0103,
+        "pass_yds": 4,
+        "pass_td": 0,
+        "pass_att": 1,
+        "pass_int": 0,
+        "targets": 94,
+        "target_share": 0.1685,
+        "air_yds_share": 0.2288,
+        "rz_targets": 12,
+        "rz_carries": null,
+        "gl_targets": 3,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1622,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.1667,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 12,
         "rec": 18.0,
@@ -19361,6 +23271,7 @@
       }
     },
     "Tai Felton": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19390,6 +23301,7 @@
       }
     },
     "Jimmy Horn": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19419,6 +23331,7 @@
       }
     },
     "Konata Mumpfield": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19448,6 +23361,7 @@
       }
     },
     "Arian Smith": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19477,6 +23391,7 @@
       }
     },
     "Jordan Whittington": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 14,
@@ -19530,6 +23445,7 @@
       }
     },
     "Xavier Restrepo": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19559,6 +23475,7 @@
       }
     },
     "Kameron Johnson": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 4,
@@ -19612,6 +23529,31 @@
       }
     },
     "Tutu Atwell": {
+      "2022": {
+        "games": 12,
+        "rec": 18.0,
+        "rec_yds": 298,
+        "rec_td": 1,
+        "rush_yds": 34,
+        "rush_td": 1,
+        "rush_att": 9,
+        "rush_share": 0.0253,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 35,
+        "target_share": 0.0677,
+        "air_yds_share": 0.1695,
+        "rz_targets": 2,
+        "rz_carries": 3,
+        "gl_targets": null,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0294,
+        "rz_car_share": 0.0545,
+        "gl_tgt_share": null,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 14,
         "rec": 39.0,
@@ -19689,6 +23631,31 @@
       }
     },
     "Olamide Zaccheaus": {
+      "2022": {
+        "games": 16,
+        "rec": 40.0,
+        "rec_yds": 533,
+        "rec_td": 3,
+        "rush_yds": 7,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0044,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 61,
+        "target_share": 0.1525,
+        "air_yds_share": 0.1821,
+        "rz_targets": 6,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.1176,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0714,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 11,
         "rec": 10.0,
@@ -19766,6 +23733,7 @@
       }
     },
     "Jacob Cowing": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 15,
@@ -19795,6 +23763,7 @@
       "2025": null
     },
     "Efton Chism": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -19824,6 +23793,31 @@
       }
     },
     "D'Andre Swift": {
+      "2022": {
+        "games": 14,
+        "rec": 48.0,
+        "rec_yds": 389,
+        "rec_td": 3,
+        "rush_yds": 542,
+        "rush_td": 5,
+        "rush_att": 99,
+        "rush_share": 0.222,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 70,
+        "target_share": 0.1243,
+        "air_yds_share": 0.008,
+        "rz_targets": 14,
+        "rz_carries": 25,
+        "gl_targets": 1,
+        "gl_carries": 5,
+        "rz_tgt_share": 0.1591,
+        "rz_car_share": 0.2451,
+        "gl_tgt_share": 0.0385,
+        "gl_car_share": 0.1163
+      },
       "2023": {
         "games": 16,
         "rec": 39.0,
@@ -19901,6 +23895,7 @@
       }
     },
     "De'Von Achane": {
+      "2022": null,
       "2023": {
         "games": 11,
         "rec": 27.0,
@@ -19978,6 +23973,31 @@
       }
     },
     "Wan'Dale Robinson": {
+      "2022": {
+        "games": 6,
+        "rec": 23.0,
+        "rec_yds": 227,
+        "rec_td": 1,
+        "rush_yds": -1,
+        "rush_td": 0,
+        "rush_att": 2,
+        "rush_share": 0.0051,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 31,
+        "target_share": 0.0634,
+        "air_yds_share": 0.0609,
+        "rz_targets": 2,
+        "rz_carries": null,
+        "gl_targets": 1,
+        "gl_carries": null,
+        "rz_tgt_share": 0.0444,
+        "rz_car_share": null,
+        "gl_tgt_share": 0.0833,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 15,
         "rec": 60.0,
@@ -20055,6 +24075,31 @@
       }
     },
     "Ja'Marr Chase": {
+      "2022": {
+        "games": 12,
+        "rec": 87.0,
+        "rec_yds": 1046,
+        "rec_td": 9,
+        "rush_yds": 8,
+        "rush_td": 0,
+        "rush_att": 5,
+        "rush_share": 0.0156,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 134,
+        "target_share": 0.2256,
+        "air_yds_share": 0.295,
+        "rz_targets": 26,
+        "rz_carries": 1,
+        "gl_targets": 6,
+        "gl_carries": null,
+        "rz_tgt_share": 0.268,
+        "rz_car_share": 0.0123,
+        "gl_tgt_share": 0.2143,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 16,
         "rec": 100.0,
@@ -20132,6 +24177,31 @@
       }
     },
     "D.J. Moore": {
+      "2022": {
+        "games": 17,
+        "rec": 63.0,
+        "rec_yds": 888,
+        "rec_td": 7,
+        "rush_yds": 53,
+        "rush_td": 0,
+        "rush_att": 10,
+        "rush_share": 0.023,
+        "pass_yds": 0,
+        "pass_td": 0,
+        "pass_att": 0,
+        "pass_int": 0,
+        "targets": 118,
+        "target_share": 0.2763,
+        "air_yds_share": 0.4763,
+        "rz_targets": 11,
+        "rz_carries": 1,
+        "gl_targets": 5,
+        "gl_carries": null,
+        "rz_tgt_share": 0.2558,
+        "rz_car_share": 0.0123,
+        "gl_tgt_share": 0.4167,
+        "gl_car_share": null
+      },
       "2023": {
         "games": 17,
         "rec": 96.0,
@@ -20209,6 +24279,7 @@
       }
     },
     "Dont'e Thornton": {
+      "2022": null,
       "2023": null,
       "2024": null,
       "2025": {
@@ -20238,6 +24309,7 @@
       }
     },
     "Ja'Lynn Polk": {
+      "2022": null,
       "2023": null,
       "2024": {
         "games": 14,
@@ -21025,6 +25097,7 @@
   },
   "epa": {
     "Josh Allen": {
+      "e21": 0.099,
       "e22": 0.17,
       "e23": 0.152,
       "e24": 0.262,
@@ -21043,24 +25116,28 @@
       "e25": 0.072
     },
     "Lamar Jackson": {
+      "e21": 0.046,
       "e22": 0.03,
       "e23": 0.119,
       "e24": 0.349,
       "e25": 0.055
     },
     "Patrick Mahomes": {
+      "e21": 0.202,
       "e22": 0.285,
       "e23": 0.082,
       "e24": 0.115,
       "e25": 0.127
     },
     "Jalen Hurts": {
+      "e21": 0.043,
       "e22": 0.143,
       "e23": 0.108,
       "e24": 0.1,
       "e25": 0.071
     },
     "Justin Herbert": {
+      "e21": 0.171,
       "e22": 0.033,
       "e23": 0.057,
       "e24": 0.134,
@@ -21071,18 +25148,21 @@
       "e25": 0.098
     },
     "Trevor Lawrence": {
+      "e21": -0.093,
       "e22": 0.136,
       "e23": -0.0,
       "e24": 0.02,
       "e25": 0.064
     },
     "Jared Goff": {
+      "e21": -0.046,
       "e22": 0.168,
       "e23": 0.129,
       "e24": 0.298,
       "e25": 0.174
     },
     "Dak Prescott": {
+      "e21": 0.172,
       "e22": 0.102,
       "e23": 0.191,
       "e24": -0.031,
@@ -21095,17 +25175,20 @@
       "e25": 0.212
     },
     "Jordan Love": {
+      "e21": -0.107,
       "e23": 0.145,
       "e24": 0.141,
       "e25": 0.24
     },
     "Baker Mayfield": {
+      "e21": -0.011,
       "e22": -0.138,
       "e23": 0.082,
       "e24": 0.189,
       "e25": 0.001
     },
     "Sam Darnold": {
+      "e21": -0.174,
       "e22": 0.148,
       "e23": -0.003,
       "e24": 0.084,
@@ -21128,30 +25211,35 @@
       "e25": -0.043
     },
     "Matthew Stafford": {
+      "e21": 0.185,
       "e22": -0.072,
       "e23": 0.098,
       "e24": 0.059,
       "e25": 0.245
     },
     "Kyler Murray": {
+      "e21": 0.125,
       "e22": -0.041,
       "e23": -0.057,
       "e24": 0.115,
       "e25": 0.032
     },
     "Joe Burrow": {
+      "e21": 0.174,
       "e22": 0.136,
       "e23": 0.015,
       "e24": 0.165,
       "e25": 0.132
     },
     "Tua Tagovailoa": {
+      "e21": 0.052,
       "e22": 0.228,
       "e23": 0.206,
       "e24": 0.203,
       "e25": 0.034
     },
     "Geno Smith": {
+      "e21": -0.016,
       "e22": 0.043,
       "e23": 0.064,
       "e24": 0.035,
@@ -21161,6 +25249,7 @@
       "e25": -0.198
     },
     "Daniel Jones": {
+      "e21": -0.029,
       "e22": 0.042,
       "e23": -0.321,
       "e24": -0.098,
@@ -21177,11 +25266,13 @@
       "e25": -0.252
     },
     "Mason Rudolph": {
+      "e21": -0.151,
       "e23": 0.179,
       "e24": -0.005,
       "e25": 0.046
     },
     "Aaron Rodgers": {
+      "e21": 0.306,
       "e22": -0.009,
       "e24": 0.018,
       "e25": 0.051
@@ -21191,6 +25282,7 @@
       "e24": 0.243
     },
     "Jacoby Brissett": {
+      "e21": -0.095,
       "e22": 0.048,
       "e24": -0.207,
       "e25": -0.007
@@ -21213,12 +25305,14 @@
       "e25": 0.018
     },
     "Jonathan Taylor": {
+      "e21": 0.084,
       "e22": -0.169,
       "e23": -0.06,
       "e24": -0.073,
       "e25": 0.058
     },
     "Derrick Henry": {
+      "e21": -0.022,
       "e22": -0.064,
       "e23": -0.007,
       "e24": 0.125,
@@ -21230,12 +25324,14 @@
       "e25": 0.014
     },
     "Saquon Barkley": {
+      "e21": -0.126,
       "e22": -0.053,
       "e23": -0.199,
       "e24": 0.107,
       "e25": -0.086
     },
     "Christian McCaffrey": {
+      "e21": 0.018,
       "e22": 0.008,
       "e23": 0.053,
       "e24": -0.058,
@@ -21253,12 +25349,14 @@
       "e25": -0.073
     },
     "Javonte Williams": {
+      "e21": -0.035,
       "e22": -0.138,
       "e23": -0.19,
       "e24": -0.154,
       "e25": 0.034
     },
     "Josh Jacobs": {
+      "e21": -0.148,
       "e22": -0.005,
       "e23": -0.19,
       "e24": -0.067,
@@ -21286,6 +25384,7 @@
       "e25": 0.047
     },
     "Kenneth Gainwell": {
+      "e21": 0.04,
       "e22": 0.149,
       "e23": -0.137,
       "e24": -0.153,
@@ -21306,12 +25405,14 @@
       "e25": -0.006
     },
     "Tony Pollard": {
+      "e21": 0.099,
       "e22": 0.023,
       "e23": -0.066,
       "e24": -0.1,
       "e25": -0.09
     },
     "Rhamondre Stevenson": {
+      "e21": 0.017,
       "e22": -0.046,
       "e23": -0.082,
       "e24": -0.183,
@@ -21321,6 +25422,7 @@
       "e25": -0.109
     },
     "David Montgomery": {
+      "e21": -0.096,
       "e22": -0.076,
       "e23": 0.052,
       "e24": -0.047,
@@ -21333,6 +25435,7 @@
       "e25": 0.021
     },
     "Kareem Hunt": {
+      "e21": 0.083,
       "e22": -0.094,
       "e23": -0.037,
       "e24": 0.011,
@@ -21373,6 +25476,7 @@
       "e25": 0.027
     },
     "Chuba Hubbard": {
+      "e21": -0.139,
       "e22": 0.019,
       "e23": -0.09,
       "e24": 0.043,
@@ -21382,6 +25486,7 @@
       "e25": -0.121
     },
     "Aaron Jones": {
+      "e21": 0.009,
       "e22": 0.057,
       "e23": 0.017,
       "e24": -0.053,
@@ -21393,6 +25498,7 @@
       "e25": -0.054
     },
     "Alvin Kamara": {
+      "e21": -0.168,
       "e22": -0.184,
       "e23": -0.006,
       "e24": -0.08,
@@ -21418,6 +25524,7 @@
       "e24": -0.091
     },
     "James Conner": {
+      "e21": -0.018,
       "e22": -0.014,
       "e23": 0.057,
       "e24": 0.005
@@ -21434,6 +25541,7 @@
       "e25": 0.115
     },
     "Alexander Mattison": {
+      "e21": -0.193,
       "e22": 0.005,
       "e23": -0.176,
       "e24": -0.23
@@ -21479,6 +25587,7 @@
       "e25": -0.081
     },
     "Mac Jones": {
+      "e21": 0.096,
       "e22": -0.062,
       "e23": -0.149,
       "e24": -0.012,
@@ -21491,18 +25600,21 @@
       "e25": -0.095
     },
     "Justin Fields": {
+      "e21": -0.213,
       "e22": -0.179,
       "e23": -0.092,
       "e24": 0.042,
       "e25": -0.093
     },
     "Kirk Cousins": {
+      "e21": 0.117,
       "e22": 0.029,
       "e23": 0.115,
       "e24": 0.045,
       "e25": -0.007
     },
     "Jeremiyah Love": {
+      "e21": -0.107,
       "e23": 0.145,
       "e24": 0.141,
       "e25": 0.24
@@ -21530,6 +25642,7 @@
       "e25": -0.025
     },
     "Jameis Winston": {
+      "e21": 0.127,
       "e22": -0.034,
       "e24": -0.077,
       "e25": 0.223
@@ -21538,6 +25651,7 @@
       "e25": -0.22
     },
     "Gardner Minshew": {
+      "e21": 0.241,
       "e22": 0.096,
       "e23": -0.013,
       "e24": -0.137
@@ -21548,6 +25662,7 @@
       "e25": -0.55
     },
     "Tyler Huntley": {
+      "e21": -0.148,
       "e22": -0.056,
       "e24": -0.137,
       "e25": 0.078
@@ -21560,13 +25675,16 @@
       "e23": -0.177
     },
     "Trey Lance": {
+      "e21": 0.142,
       "e25": -0.651
     },
     "Tyrod Taylor": {
+      "e21": -0.323,
       "e23": 0.008,
       "e25": -0.09
     },
     "Davis Mills": {
+      "e21": -0.104,
       "e22": -0.145,
       "e25": -0.099
     },
@@ -21589,16 +25707,19 @@
       "e25": -0.221
     },
     "Najee Harris": {
+      "e21": -0.063,
       "e22": -0.105,
       "e23": -0.101,
       "e24": -0.065
     },
     "Joe Mixon": {
+      "e21": -0.087,
       "e22": -0.055,
       "e23": -0.07,
       "e24": -0.061
     },
     "Malik Davis": {
+      "e21": -0.129,
       "e22": -0.141,
       "e25": 0.016
     },
@@ -21615,7 +25736,11 @@
       "e23": -0.091,
       "e25": -0.157
     },
+    "Ty Johnson": {
+      "e21": -0.173
+    },
     "Devin Singletary": {
+      "e21": -0.02,
       "e22": -0.095,
       "e23": -0.077,
       "e24": -0.099,
@@ -21626,6 +25751,7 @@
       "e24": 0.048
     },
     "Samaje Perine": {
+      "e21": -0.123,
       "e22": -0.041,
       "e23": -0.179,
       "e25": -0.003
@@ -21642,16 +25768,19 @@
       "e24": -0.081
     },
     "Nick Chubb": {
+      "e21": 0.047,
       "e22": 0.047,
       "e24": -0.202,
       "e25": -0.112
     },
     "Austin Ekeler": {
+      "e21": -0.004,
       "e22": -0.013,
       "e23": -0.23,
       "e24": 0.065
     },
     "D'Andre Swift": {
+      "e21": -0.178,
       "e22": 0.066,
       "e23": 0.008,
       "e24": -0.154,
@@ -21663,6 +25792,7 @@
       "e25": 0.059
     },
     "J'Mari Taylor": {
+      "e21": 0.084,
       "e22": -0.169,
       "e23": -0.06,
       "e24": -0.073,
