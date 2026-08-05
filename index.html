@@ -3866,6 +3866,14 @@ function openCfbCard(name){
   const tp = p.tpct==null ? 50 : Math.round(p.tpct*100);
   const tpLabel = p.tpct==null ? 'no talent data \u2014 unadjusted'
     : tp+'th pct talent'+(tp>=90?' \u00b7 elite':tp>=60?' \u00b7 strong':tp<=25?' \u00b7 weak':'');
+  const ppaHead = p.pos==='QB'?p.ppaPass : p.pos==='RB'?p.ppaRush : p.ppa;
+  const ppaLbl  = p.pos==='QB'?'passing PPA/play' : p.pos==='RB'?'rushing PPA/play' : 'PPA/play';
+  const ppaBench = ppaHead==null?'' : (ppaHead>=0.4?'elite':ppaHead>=0.2?'strong':ppaHead>=0?'solid':'below avg');
+  const ppaRow = ppaHead==null ? '' :
+    '<div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:8px">'
+    +'<span style="font-size:10.5px;color:var(--fog)" title="Predicted points added per play \u2014 the college equivalent of EPA. Garbage time excluded. ~0 is average.">PPA \u00b7 '+ppaLbl+'</span>'
+    +'<span><b style="font-size:15px;font-family:var(--mono);color:var(--sky)">'+ppaHead.toFixed(2)+'</b>'
+    +'<span style="font-size:10px;color:var(--fog-2);margin-left:6px">'+ppaBench+'</span></span></div>';
   const hero = dd ? '<div style="margin-top:13px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px 14px">'
     +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">'
       +'<div style="min-width:0"><div style="font-size:10.5px;color:var(--fog);font-weight:600;letter-spacing:.02em">dDOM \u00b7 '+dd.label+'</div>'
@@ -3880,7 +3888,7 @@ function openCfbCard(name){
       +'<span style="flex:1;height:5px;background:var(--ink-2);border-radius:3px;overflow:hidden;position:relative">'
       +'<i style="position:absolute;left:0;top:0;bottom:0;width:'+tp+'%;background:linear-gradient(90deg,var(--emerald),var(--teal-br));border-radius:3px'+(p.tpct==null?';opacity:.3':'')+'"></i></span>'
       +'<span style="color:'+(p.tpct==null?'var(--fog-2)':'var(--emerald)')+';font-weight:700;white-space:nowrap">'+tpLabel+'</span>'
-    +'</div></div>' : '';
+    +'</div>'+ppaRow+'</div>' : '';
 
   // position-aware production / efficiency grid
   const gp=(k,v)=>'<div style="background:var(--panel);padding:9px 10px"><div style="font-size:9.5px;color:var(--fog-2);text-transform:uppercase;letter-spacing:.04em">'+k+'</div>'
@@ -3899,7 +3907,10 @@ function openCfbCard(name){
   host.innerHTML='<div style="padding:18px 20px 20px">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
       +'<div style="min-width:0">'
-        +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.15">'+p.n
+        +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.15">'
+          +'<a href="./cfb-player.html?name='+encodeURIComponent(p.n)+'" '
+          +'title="Open '+p.n.replace(/"/g,'&quot;')+'\u2019s full page" '
+          +'style="color:var(--paper);text-decoration:none;border-bottom:1px dotted var(--fog-2)">'+p.n+'</a>'
           +' <span id="cfb-card-star" data-name="'+p.n.replace(/"/g,'&quot;')+'" onclick="cfbCardStar(this)" '
           +'style="cursor:pointer;font-size:16px;vertical-align:2px;color:'+(watched?'var(--topaz)':'var(--fog-2)')+'">'
           +(watched?'\u2605':'\u2606')+'</span></div>'
@@ -3913,8 +3924,8 @@ function openCfbCard(name){
         +'</div>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-      +'<a href="./cfb-player.html?name='+encodeURIComponent(p.n)+'" target="_blank" rel="noopener" '
-        +'title="Open full page in a new tab" style="font-size:11px;font-weight:700;color:var(--teal-br);text-decoration:none;white-space:nowrap">Full page \u2197</a>'
+      +'<a href="./cfb-player.html?name='+encodeURIComponent(p.n)+'" '
+        +'title="Open full page" aria-label="Open full page" style="color:var(--fog-2);text-decoration:none;font-size:15px;line-height:1;padding:2px 4px">\u2197</a>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
         +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
       +'</div>'
