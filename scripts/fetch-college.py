@@ -93,6 +93,7 @@ cfg = cfbd.Configuration(access_token=KEY)
 with cfbd.ApiClient(cfg) as api:
     teams_api, players_api, games_api = cfbd.TeamsApi(api), cfbd.PlayersApi(api), cfbd.GamesApi(api)
     recruit_api = cfbd.RecruitingApi(api)
+    metrics_api = cfbd.MetricsApi(api)
 
     print("\n-- roster & context " + "-" * 51)
     fbs    = call("GET /teams/fbs", teams_api.get_fbs_teams, year=YEAR)
@@ -149,6 +150,25 @@ with cfbd.ApiClient(cfg) as api:
         if filled:
             print(f"  [talent] carried forward {len(filled)} team(s) from {YEAR-back}: {', '.join(sorted(filled)[:8])}{'...' if len(filled)>8 else ''}")
         missing = [t for t in missing if t not in TEAM_TALENT]
+
+    # Player PPA/EPA — the college equivalent of EPA: per-play predicted points added, a real
+    # efficiency signal beyond box-score volume. One call; garbage time excluded for signal.
+    # Keyed by athlete id (fallback name+position). Feeds the standalone player page's depth.
+    ppa_rows = call("GET /ppa/players/season",
+                    metrics_api.get_predicted_points_added_by_player_season,
+                    year=YEAR, exclude_garbage_time=True)
+    PPA = {}
+    for r in (ppa_rows or []):
+        avg = g(r, "average_ppa"); tot = g(r, "total_ppa")
+        def _f(o, *names):
+            v = g(o, *names) if o is not None else None
+            try: return round(float(v), 3) if v is not None else None
+            except (TypeError, ValueError): return None
+        rec = {"ppa": _f(avg, "all"), "ppaPass": _f(avg, "var_pass", "pass"),
+               "ppaRush": _f(avg, "rush"), "ppaTot": _f(tot, "all")}
+        pid = g(r, "id"); nm = g(r, "name"); pos = g(r, "position")
+        if pid is not None: PPA[str(pid)] = rec
+        if nm: PPA[("nm", norm(nm), pos)] = rec
     # Transfer portal. A receiver moving from a G5 offence to an SEC one is a genuine
     # dynasty event: his competition level, his target competition and his old team's
     # vacated share all change at once. One call; emitted as a separate file so the
@@ -448,6 +468,7 @@ out = {
     "season": YEAR,
     "note": ("College TRACKING data. Production facts only — no DELTA Score, no projections. "
              "usg = CFBD share of ALL team offensive plays (NOT target share; ~0.53x it). "
+             "ppa = avg predicted points added per play (college EPA); ppaPass/ppaRush split; ppaTot = cumulative. "
              "rsh = reception share (player receptions / team receptions) - the available proxy. "
              "dom = Dominator Rating: avg of receiving-yard share and receiving-TD share (all team "
              "receivers as denominator); the classic WR/TE college dynasty signal. Context only - never scored. "
@@ -471,6 +492,7 @@ out = {
     "players": [],
 }
 for v in sorted(picked.values(), key=lambda x: -x["prod"]):
+    _ppa = PPA.get(str(v["id"])) or PPA.get(("nm", norm(v["n"]), v["pos"])) or {}
     out["players"].append({
         "id": v["id"], "n": v["n"], "pos": v["pos"], "tm": v["tm"],
         "conf": v.get("conf") or None, "p4": v.get("p4", 0), "cls": v["cls"],
@@ -481,6 +503,8 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "ddom": v["ddom"], "tpct": v["tpct"],
         "cmp": v["cmp"], "att": v["att"], "cmppct": v["cmppct"], "ypa": v["ypa"],
         "tdpct": v["tdpct"], "intpct": v["intpct"], "anya": v["anya"],
+        "ppa": _ppa.get("ppa"), "ppaPass": _ppa.get("ppaPass"),
+        "ppaRush": _ppa.get("ppaRush"), "ppaTot": _ppa.get("ppaTot"),
         "rec": int(v["tot"]["rec"]), "rey": round(v["tot"]["rey"]), "ret": int(v["tot"]["ret"]),
         "car": int(v["tot"]["car"]), "ry": round(v["tot"]["ry"]),  "rt":  int(v["tot"]["rt"]),
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
