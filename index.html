@@ -2307,6 +2307,8 @@ function openDeck(name){  const p=COMP.find(x=>x.n===name);
   if(!p) return;
   document.getElementById('dd-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  const fp=document.getElementById('dd-fullpage');
+  if(fp) fp.href='player.html?name='+encodeURIComponent(p.n);
   renderDeck(p);
 }
 
@@ -3294,7 +3296,9 @@ document.addEventListener('click', function(e) {
           <div id="dd-college"></div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:9px;flex-shrink:0">
+        <a id="dd-fullpage" href="#" title="Open full page"
+           style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full profile</a>
         <button class="dd-close" onclick="closeDeckNow()">✕</button>
       </div>
     </div>
@@ -3925,7 +3929,8 @@ function openCfbCard(name){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
       +'<a href="./cfb-player.html?name='+encodeURIComponent(p.n)+'" '
-        +'title="Open full page" aria-label="Open full page" style="color:var(--fog-2);text-decoration:none;font-size:15px;line-height:1;padding:2px 4px">\u2197</a>'
+        +'title="Open full page" style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;'
+        +'border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full profile</a>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
         +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
       +'</div>'
