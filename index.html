@@ -3912,8 +3912,12 @@ function openCfbCard(name){
           +'<span id="cfb-breakout"></span>'
         +'</div>'
       +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+      +'<a href="./cfb-player.html?name='+encodeURIComponent(p.n)+'" target="_blank" rel="noopener" '
+        +'title="Open full page in a new tab" style="font-size:11px;font-weight:700;color:var(--teal-br);text-decoration:none;white-space:nowrap">Full page \u2197</a>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
         +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
+      +'</div>'
     +'</div>'
     +hero
     +grid

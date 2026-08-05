@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DELTA · college player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
+  --teal-br:#2DD4BF; --emerald:#10B981; --fog:#8CA0B3; --fog-2:#5C7080;
+  --paper:#EAF0F4; --coral:#E05745; --topaz:#E0B34D; --sky:#6BB6E0; --violet:#9B8AF0;
+  --sans:'Nunito Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box} html,body{margin:0} body{background:var(--ink);color:var(--paper);font-family:var(--sans);padding:18px 16px 60px}
+.wrap{max-width:760px;margin:0 auto}
+a{color:var(--teal-br);text-decoration:none}
+.back{font-size:12px;color:var(--fog);display:inline-block;margin-bottom:14px}
+.back:hover{color:var(--teal-br)}
+.nm{font-size:27px;font-weight:800;letter-spacing:-.4px;line-height:1.05}
+.sub{margin-top:7px;font-size:13px;color:var(--fog);display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.posdot{font-size:12px;font-weight:800;color:var(--ink);border-radius:6px;padding:3px 9px}
+.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid var(--line)}
+.b-p4{color:var(--emerald);border-color:#1c3a30;background:#0e1c17}
+.b-g5{color:var(--coral);border-color:var(--line)}
+.b-star{color:var(--topaz);border-color:#3a3320;background:#1c1810}
+.b-bo{color:var(--topaz);border-color:#3a3320;background:#1c1810;font-weight:800}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:640px){.cols{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px}
+.hlab{font-size:10.5px;color:var(--fog);font-weight:600;letter-spacing:.02em}
+.big{font-size:34px;font-weight:800;font-family:var(--mono);line-height:1}
+.sec-h{font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--fog-2);margin:24px 0 9px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.cell{background:var(--panel);padding:10px 11px}
+.cell .k{font-size:9.5px;color:var(--fog-2);text-transform:uppercase;letter-spacing:.04em}
+.cell .v{font-size:16px;font-weight:700;font-family:var(--mono);margin-top:2px}
+table.gl{width:100%;border-collapse:collapse;font-size:11.5px}
+table.gl th{text-align:right;color:var(--fog-2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.gl th:nth-child(-n+2),table.gl td:nth-child(-n+2){text-align:left}
+table.gl td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--ink-2);font-family:var(--mono)}
+.pill{font-size:10.5px;font-weight:700;padding:3px 11px;border-radius:14px;cursor:pointer}
+.muted{font-size:10px;color:var(--fog-2);line-height:1.5;margin-top:8px}
+#err{color:var(--fog);font-size:14px;padding:40px 0;text-align:center}
+</style></head>
+<body><div class="wrap">
+<a class="back" href="./?tab=college">&larr; DELTA college</a>
+<div id="app"><div id="err">Loading…</div></div>
+</div>
+<script>
+// ── shared dDOM math (kept in sync with index.html; pure functions, stable/calibrated) ──
+const DDOM_SWING=0.50;
+function cfbMult(t){ if(t==null) return 1.0; return Math.max(1-DDOM_SWING,Math.min(1+DDOM_SWING,1+DDOM_SWING*(t-0.5)*2)); }
+function cfbAdjVal(p){ const m=cfbMult(p.tpct);
+  if(p.pos==='QB') return p.anya==null?null:p.anya*m;
+  if(p.pos==='RB') return p.rdom==null?null:p.rdom*m;
+  if(p.pos==='WR'||p.pos==='TE') return p.dom==null?null:p.dom*m; return null; }
+function cfbQualifies(p){ if((p.gms||0)<6) return false;
+  if(p.pos==='WR'||p.pos==='TE') return (p.rec||0)>=20;
+  if(p.pos==='RB') return (p.car||0)>=60;
+  if(p.pos==='QB') return (p.att||0)>=120; return false; }
+function cfbPct(p,pool){
+  const peers=pool.filter(x=>x.pos===p.pos&&cfbQualifies(x)).map(cfbAdjVal).filter(x=>x!=null).sort((a,b)=>a-b);
+  if(peers.length<2) return 50;
+  const av=cfbAdjVal(p); if(av==null) return null;
+  let below=0; for(const x of peers){ if(x<av) below++; } return Math.round(100*below/(peers.length-1)); }
+function cfbDDOM(p,pool){ if(!cfbQualifies(p)) return null;
+  const raw=p.pos==='QB'?p.anya:p.pos==='RB'?p.rdom:(p.pos==='WR'||p.pos==='TE')?p.dom:null;
+  if(raw==null) return null; const pct=cfbPct(p,pool); if(pct==null) return null;
+  return { pct, raw:p.pos==='QB'?Math.round(raw*10)/10:Math.round(raw*1000)/10, rawUnit:p.pos==='QB'?'':'%',
+    rawLabel:p.pos==='QB'?'ANY/A':p.pos==='RB'?'rush dom':'dominator',
+    label:p.pos==='QB'?'competition-adjusted efficiency':p.pos==='RB'?'competition-adjusted rush production':'competition-adjusted dominance' }; }
+function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senior',5:'Senior (5th)'}[c]||'class n/a'; }
+const N=v=>(v==null||v===''||v===0)?'-':(''+v);
+
+// ── data loading ──
+const SEASON_CACHE={};
+async function loadSeason(yr){ if(SEASON_CACHE[yr]!==undefined) return SEASON_CACHE[yr];
+  try{ const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'}); if(!r.ok) throw 0;
+    const j=await r.json(); SEASON_CACHE[yr]=(j&&j.players)||[]; }catch(e){ SEASON_CACHE[yr]=[]; }
+  return SEASON_CACHE[yr]; }
+
+async function boot(){
+  const name=new URLSearchParams(location.search).get('name');
+  const app=document.getElementById('app');
+  if(!name){ app.innerHTML='<div id="err">No player specified.</div>'; return; }
+  // resolve newest visible season (same logic as the app)
+  let data;
+  try{ const r=await fetch('./data/college-players.json',{cache:'no-cache'}); data=await r.json(); }
+  catch(e){ app.innerHTML='<div id="err">College data unavailable.</div>'; return; }
+  const vis=(data.seasons||[]).slice().sort((a,b)=>b-a); const newest=vis[0];
+  if(newest && data.season!==newest){ const s=await loadSeason(newest); if(s.length) data={players:s,seasons:data.seasons,season:newest}; }
+  SEASON_CACHE[data.season]=data.players;
+  const pool=data.players;
+  const p=pool.find(x=>x.n===name) || pool.find(x=>x.n.toLowerCase()===name.toLowerCase());
+  if(!p){ app.innerHTML='<div id="err">Player not found: '+name.replace(/[<>]/g,'')+'</div>'; return; }
+  render(p, pool, data.seasons||[data.season]);
+}
+
+function render(p, pool, seasons){
+  const dd=cfbDDOM(p, pool);
+  const clsNum=p.ageEst?p.ageEst-17:p.cls;
+  const posCol=p.pos==='QB'?'var(--violet)':p.pos==='RB'?'var(--topaz)':'var(--sky)';
+  const compHtml=(p.p4?'<span class="badge b-p4">P4</span>':'<span class="badge b-g5">G5</span>');
+  const starsHtml=p.stars?'<span class="badge b-star" title="'+p.stars+'-star recruit">'+'\u2605'.repeat(p.stars)+' recruit</span>':'';
+
+  // dDOM hero
+  const posPlural={QB:'QBs',RB:'RBs',WR:'WRs',TE:'TEs'}[p.pos]||'players';
+  const tp=p.tpct==null?50:Math.round(p.tpct*100);
+  const heroCard = dd
+    ? '<div class="card"><div class="hlab">dDOM \u00b7 '+dd.label+'</div>'
+      +'<div class="big" style="color:var(--teal-br)">'+dd.pct+'</div>'
+      +'<div class="muted" style="margin-top:3px">'+(dd.pct>=50?'top '+(100-dd.pct)+'% of '+posPlural:'below median of '+posPlural)+' \u00b7 percentile at position \u00b7 raw '+dd.rawLabel+' '+dd.raw+dd.rawUnit+'</div>'
+      +'<div style="margin-top:11px;font-size:10.5px;color:var(--fog);display:flex;align-items:center;gap:7px"><span>competition</span>'
+      +'<span style="flex:1;height:5px;background:var(--ink-2);border-radius:3px;overflow:hidden;position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:'+tp+'%;background:linear-gradient(90deg,var(--emerald),var(--teal-br));border-radius:3px'+(p.tpct==null?';opacity:.3':'')+'"></i></span>'
+      +'<span style="color:'+(p.tpct==null?'var(--fog-2)':'var(--emerald)')+';font-weight:700;white-space:nowrap">'+(p.tpct==null?'no talent data':tp+'th pct talent')+'</span></div></div>'
+    : '<div class="card"><div class="hlab">dDOM</div><div class="muted" style="margin-top:6px">Below the qualifying volume floor (6+ games and a position minimum), so no competition-adjusted percentile is computed.</div></div>';
+
+  // PPA / EPA card — the standalone page's added depth
+  const ppaHead = p.pos==='QB'?p.ppaPass : p.pos==='RB'?p.ppaRush : p.ppa;
+  const ppaLbl  = p.pos==='QB'?'passing PPA/play' : p.pos==='RB'?'rushing PPA/play' : 'PPA/play';
+  const ppaBench = ppaHead==null?'' : (ppaHead>=0.4?' \u00b7 elite':ppaHead>=0.2?' \u00b7 strong':ppaHead>=0?' \u00b7 solid':' \u00b7 below average');
+  const ppaCard = (p.ppa!=null||ppaHead!=null)
+    ? '<div class="card"><div class="hlab">PPA \u00b7 predicted points added (college EPA)</div>'
+      +'<div class="big" style="color:var(--sky)">'+(ppaHead!=null?ppaHead.toFixed(2):(p.ppa!=null?p.ppa.toFixed(2):'-'))+'</div>'
+      +'<div class="muted" style="margin-top:3px">'+ppaLbl+ppaBench+' \u2014 per-play efficiency, garbage time excluded. '
+      +(p.ppaTot!=null?'Cumulative PPA '+p.ppaTot.toFixed(1)+' (season value). ':'')
+      +'~0 is average, positive is above-expected.</div></div>'
+    : '<div class="card"><div class="hlab">PPA (college EPA)</div><div class="muted" style="margin-top:6px">No PPA on record for this season.</div></div>';
+
+  // production / efficiency grid
+  const pc = p.pos==='QB'
+    ? [['Pass yds',N(p.py)],['TD / INT',N(p.pt)+' / '+N(p.pi)],['Comp %',p.cmppct!=null?(p.cmppct*100).toFixed(1):'-'],['Yds/att',N(p.ypa)],['ANY/A',N(p.anya)],['Rush yds',N(p.ry)]]
+    : p.pos==='RB'
+    ? [['Rush yds',N(p.ry)],['Rush TD',N(p.rt)],['Carries',N(p.car)],['Yds/car',p.car?(p.ry/p.car).toFixed(1):'-'],['Rec',N(p.rec)],['Rec yds',N(p.rey)]]
+    : [['Rec yds',N(p.rey)],['Rec TD',N(p.ret)],['Catches',N(p.rec)],['Tgt share',p.rsh!=null?Math.round(p.rsh*100)+'%':'-'],['Yds/catch',p.rec?(p.rey/p.rec).toFixed(1):'-'],['Yds/game',p.gms?(p.rey/p.gms).toFixed(1):'-']];
+  const gridHtml='<div class="grid3">'+pc.map(c=>'<div class="cell"><div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div></div>').join('')+'</div>';
+
+  document.getElementById('app').innerHTML=
+    '<div class="nm">'+p.n+' <span id="bo"></span></div>'
+    +'<div class="sub"><span class="posdot" style="background:'+posCol+'">'+p.pos+'</span>'+(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
+      +compHtml+starsHtml+'<span>'+cfbClassName(clsNum)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span></div>'
+    +'<div class="cols">'+heroCard+ppaCard+'</div>'
+    +'<div class="sec-h">PRODUCTION &amp; EFFICIENCY</div>'+gridHtml
+    +'<div class="sec-h">TRAJECTORY \u00b7 dDOM BY SEASON</div><div id="traj" class="muted">loading…</div>'
+    +'<div class="sec-h">GAME LOG</div><div id="gamelog" class="muted">loading…</div>'
+    +'<div id="teammates"></div>'
+    +'<div class="muted" style="margin-top:22px;border-top:1px solid var(--line);padding-top:12px">'
+    +'dDOM is a DELTA analytical metric (competition-adjusted production percentile among qualified players). PPA is CFBD\u2019s predicted-points-added, the college EPA. Age is an estimate from recruiting class. Regular season only.</div>';
+
+  fillCrossSeason(p, seasons);
+}
+
+// ── cross-season: trajectory, breakout badge, season-switchable game log + team construction ──
+const GL={};
+function classInSeason(rec, yr){ return rec.rcls ? (yr-rec.rcls+1) : (rec.ageEst?rec.ageEst-17:null); }
+function gameLogTable(pos, games){
+  const cols = pos==='QB'?[['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+    : pos==='RB'?[['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
+  const g=(games||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
+  if(!g.length) return '<div class="muted">No game rows for this season.</div>';
+  return '<table class="gl"><thead><tr><th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
+    +g.map(gm=>'<tr><td>'+(gm.w||'-')+'</td><td>'+(gm.opp||'-')+'</td>'+cols.map(c=>'<td>'+N(gm[c[1]])+'</td>').join('')+'</tr>').join('')
+    +'</tbody></table>';
+}
+function teammatesTable(p, pool){
+  const mates=pool.filter(x=>x.tm===p.tm&&x.pos!=='QB'&&(x.rec||0)>0).sort((a,b)=>(b.rsh||0)-(a.rsh||0)).slice(0,6);
+  if(mates.length<2) return '';
+  return '<div class="sec-h">TEAM CONSTRUCTION</div><table class="gl"><thead><tr><th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead><tbody>'
+    +mates.map(m=>'<tr'+(m.n===p.n?' style="background:#0e1c17"':'')+'><td'+(m.n===p.n?' style="font-weight:800"':'')+'>'+m.n+(m.n===p.n?' \u2190':'')+'</td><td>'+m.pos+'</td><td>'+(m.cls?'Y'+m.cls:'-')+'</td><td>'+(m.rec||0)+'</td><td>'+(m.rey||0)+'</td><td>'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>').join('')
+    +'</tbody></table><div class="muted">Only tracked players appear \u2014 shares will not sum to 100%.</div>';
+}
+function glSeason(y){ if(GL.data&&GL.data[y]){ GL.sel=y; renderGL(); } }
+function renderGL(){
+  const yrs=Object.keys(GL.data).map(Number).sort((a,b)=>a-b);
+  const pills=yrs.length>1?'<div style="display:flex;gap:6px;margin-bottom:10px">'+yrs.map(y=>
+    '<button class="pill" onclick="glSeason('+y+')" style="border:1px solid '+(y===GL.sel?'var(--teal-br)':'var(--line)')+';background:'+(y===GL.sel?'var(--ink)':'transparent')+';color:'+(y===GL.sel?'var(--teal-br)':'var(--fog)')+'">'+y+'</button>').join('')+'</div>':'';
+  const cur=GL.data[GL.sel];
+  document.getElementById('gamelog').innerHTML=pills+gameLogTable(cur.pos,cur.games);
+  document.getElementById('teammates').innerHTML=teammatesTable(cur.rec,cur.players);
+}
+async function fillCrossSeason(p, seasons){
+  seasons=seasons.slice().sort((a,b)=>a-b);
+  const pts={}, data={}; let breakout=null;
+  for(const yr of seasons){
+    const players=await loadSeason(yr);
+    const rec=players.find(x=>x.id===p.id)||players.find(x=>x.n===p.n&&x.pos===p.pos);
+    if(!rec) continue;
+    const dd=cfbDDOM(rec, players);
+    if(dd){ pts[yr]=dd.pct; const cin=classInSeason(rec,yr); if(!breakout&&cin!=null&&cin<=2&&dd.pct>=80) breakout={season:yr,cls:cin}; }
+    if(rec.g&&rec.g.length) data[yr]={games:rec.g,pos:rec.pos,rec:rec,players:players};
+  }
+  // trajectory
+  const yw=seasons.filter(y=>pts[y]!=null);
+  const tEl=document.getElementById('traj');
+  if(tEl){ if(!yw.length){ tEl.innerHTML='<div class="muted">Not enough qualified seasons to chart.</div>'; }
+    else { const first=pts[yw[0]],last=pts[yw[yw.length-1]];
+      const trend=yw.length>=2?(last>first?'<span style="color:var(--emerald)">\u25b2 rising</span>':last<first?'<span style="color:var(--coral)">\u25bc declining</span>':'<span style="color:var(--fog-2)">\u2192 stable</span>'):'';
+      const rows=seasons.concat([seasons[seasons.length-1]+1]).map(yr=>{ const pt=pts[yr];
+        const bar=pt!=null?'<div style="height:22px;background:var(--ink-2);border-radius:4px;position:relative;overflow:hidden"><i style="position:absolute;left:0;top:0;bottom:0;width:'+Math.max(8,pt)+'%;background:linear-gradient(90deg,#134e7a,var(--sky));border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;font-family:var(--mono);color:var(--paper)">'+pt+'</i></div>':'<div style="height:22px;background:var(--ink-2);border-radius:4px;opacity:.35"></div>';
+        return '<div style="display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:center;margin-bottom:7px;font-size:12px"><span style="color:var(--fog-2);font-family:var(--mono);font-weight:600">'+yr+'</span>'+bar+'</div>'; }).join('');
+      tEl.innerHTML='<div style="text-align:right;margin-bottom:6px">'+trend+'</div>'+rows+'<div class="muted">Percentile among his position that season \u00b7 bar end = 100.</div>'; } }
+  // breakout badge
+  const boEl=document.getElementById('bo');
+  if(boEl&&breakout){ const cn={1:'Fr',2:'So'}[breakout.cls]||'';
+    boEl.outerHTML='<span class="badge b-bo" title="Top-20% competition-adjusted production as an underclassman \u2014 the strongest single college-to-NFL signal.">\u25c6 Early breakout \u00b7 '+cn+" \u2019"+String(breakout.season).slice(2)+'</span>'; }
+  // game log + team construction
+  const yd=Object.keys(data).map(Number).sort((a,b)=>a-b);
+  const glEl=document.getElementById('gamelog');
+  if(!yd.length){ if(glEl) glEl.innerHTML='<div class="muted">No game rows.</div>'; }
+  else { GL.data=data; GL.sel=yd[yd.length-1]; renderGL(); }
+}
+boot();
+</script>
+</body></html>
