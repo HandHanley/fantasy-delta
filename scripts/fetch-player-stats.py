@@ -19,7 +19,9 @@ except ImportError:
     import polars as pl
     import pandas as pd
 
-SEASONS    = [2023, 2024, 2025]
+# Season window for the stat/trend history. Extended back to 2022 so player pages can
+# toggle a multi-season stat line. EPA still looks back one additional year (see fetch_pbp).
+SEASONS    = [2022, 2023, 2024, 2025]
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "player-stats.json"
 INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
