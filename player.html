@@ -246,23 +246,47 @@ function buildHeroHTML(p) {
 // they ground every derived metric. Rendered AFTER the DELTA Score so the signature metric
 // leads and the stats read as its evidence — matching the college page's order.
 function buildStatLineHTML(p) {
-  const s25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
-  if (!s25) return '';
+  const all = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n];
+  if (!all) return '';
+  const yrs = Object.keys(all).filter(y => /^\d{4}$/.test(y)).sort();
+  if (!yrs.length) return '';
+  _slPlayer = p; _slSeason = yrs[yrs.length - 1];
+  return `<div id="statline-host" style="margin-bottom:12px">${statLineInner(p, _slSeason, yrs)}</div>`;
+}
+let _slPlayer = null, _slSeason = null;
+function statLineSeason(y) {
+  if (!_slPlayer) return;
+  _slSeason = String(y);
+  const all = PLAYER_STATS[_slPlayer.n] || {};
+  const yrs = Object.keys(all).filter(k => /^\d{4}$/.test(k)).sort();
+  const host = document.getElementById('statline-host');
+  if (host) host.innerHTML = statLineInner(_slPlayer, _slSeason, yrs);
+}
+function statLineInner(p, season, yrs) {
+  const s = (PLAYER_STATS[p.n] || {})[season];
   const nz = v => (v == null || v === 0) ? '—' : v.toLocaleString();
+  const pills = yrs.length > 1
+    ? `<div style="display:flex;gap:6px">` + yrs.map(y =>
+        `<button onclick="statLineSeason('${y}')" style="font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:14px;cursor:pointer;`
+        + `border:1px solid ${y === season ? '#2DD4BF' : '#1E2A3A'};background:${y === season ? '#0A0F1A' : 'transparent'};`
+        + `color:${y === season ? '#2DD4BF' : '#8CA0B3'}">${y}</button>`).join('') + `</div>`
+    : '';
+  const head = `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px">`
+    + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:#5C7080">${season} SEASON</div>${pills}</div>`;
+  if (!s) return head + `<div style="font-size:11.5px;color:#5C7080;padding:10px 0">No stats on record for ${season}.</div>`;
   const cells = p.pos === 'QB'
-    ? [['Pass yds', nz(s25.pass_yds)], ['Pass TD', nz(s25.pass_td)], ['INT', nz(s25.pass_int)],
-       ['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Games', nz(s25.games)]]
+    ? [['Pass yds', nz(s.pass_yds)], ['Pass TD', nz(s.pass_td)], ['INT', nz(s.pass_int)],
+       ['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)], ['Games', nz(s.games)]]
     : p.pos === 'RB'
-    ? [['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Carries', nz(s25.rush_att)],
-       ['Rec', nz(s25.rec)], ['Rec yds', nz(s25.rec_yds)], ['Games', nz(s25.games)]]
-    : [['Rec yds', nz(s25.rec_yds)], ['Rec TD', nz(s25.rec_td)], ['Rec', nz(s25.rec)],
-       ['Targets', nz(s25.targets)], ['Yds/rec', s25.rec ? (s25.rec_yds / s25.rec).toFixed(1) : '—'], ['Games', nz(s25.games)]];
-  return `<div style="margin-bottom:12px">`
-    + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:#5C7080;margin:0 0 8px">2025 SEASON</div>`
+    ? [['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)], ['Carries', nz(s.rush_att)],
+       ['Rec', nz(s.rec)], ['Rec yds', nz(s.rec_yds)], ['Games', nz(s.games)]]
+    : [['Rec yds', nz(s.rec_yds)], ['Rec TD', nz(s.rec_td)], ['Rec', nz(s.rec)],
+       ['Targets', nz(s.targets)], ['Yds/rec', s.rec ? (s.rec_yds / s.rec).toFixed(1) : '—'], ['Games', nz(s.games)]];
+  return head
     + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1E2A3A;border:1px solid #1E2A3A;border-radius:10px;overflow:hidden">`
     + cells.map(c => `<div style="background:#111A28;padding:10px 11px"><div style="font-size:9.5px;color:#5C7080;text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
         + `<div style="font-size:16px;font-weight:700;font-family:var(--mono,monospace);margin-top:2px">${c[1]}</div></div>`).join('')
-    + `</div></div>`;
+    + `</div>`;
 }
 
 // ── DELTA Score Arc ──────────────────────────────────────────────────────────

@@ -151,12 +151,22 @@ function render(p, pool, seasons){
   const ppaHead = p.pos==='QB'?p.ppaPass : p.pos==='RB'?p.ppaRush : p.ppa;
   const ppaLbl  = p.pos==='QB'?'passing PPA/play' : p.pos==='RB'?'rushing PPA/play' : 'PPA/play';
   const ppaBench = ppaHead==null?'' : (ppaHead>=0.4?' \u00b7 elite':ppaHead>=0.2?' \u00b7 strong':ppaHead>=0?' \u00b7 solid':' \u00b7 below average');
+  const splitRow=(lab,val,tip)=> val==null?'' :
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0;border-top:1px solid var(--line)">'
+    +'<span style="font-size:10.5px;color:var(--fog)"'+(tip?' title="'+tip+'"':'')+'>'+lab+'</span>'
+    +'<b style="font-size:13px;font-family:var(--mono);color:'+(val>=0?'var(--paper)':'var(--coral)')+'">'+val.toFixed(2)+'</b></div>';
   const ppaCard = (p.ppa!=null||ppaHead!=null)
     ? '<div class="card"><div class="hlab">PPA \u00b7 predicted points added (college EPA)</div>'
       +'<div class="big" style="color:var(--sky)">'+(ppaHead!=null?ppaHead.toFixed(2):(p.ppa!=null?p.ppa.toFixed(2):'-'))+'</div>'
-      +'<div class="muted" style="margin-top:3px">'+ppaLbl+ppaBench+' \u2014 per-play efficiency, garbage time excluded. '
-      +(p.ppaTot!=null?'Cumulative PPA '+p.ppaTot.toFixed(1)+' (season value). ':'')
-      +'~0 is average, positive is above-expected.</div></div>'
+      +'<div class="muted" style="margin-top:3px">'+ppaLbl+ppaBench+' \u2014 per-play efficiency, garbage time excluded. ~0 is average.</div>'
+      +'<div style="margin-top:10px">'
+        +splitRow('All plays', p.ppa, 'Average predicted points added across every play he was involved in.')
+        +splitRow('Passing', p.ppaPass, 'PPA on passing plays \u2014 for a receiver, the value created on targets thrown his way.')
+        +splitRow('Rushing', p.ppaRush, 'PPA on rushing plays.')
+        +(p.ppaTot!=null?'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0;border-top:1px solid var(--line)">'
+          +'<span style="font-size:10.5px;color:var(--fog)" title="Cumulative points added over the season \u2014 a volume measure, unlike the per-play averages above.">Season total</span>'
+          +'<b style="font-size:13px;font-family:var(--mono);color:var(--sky)">'+p.ppaTot.toFixed(1)+'</b></div>':'')
+      +'</div></div>'
     : '<div class="card"><div class="hlab">PPA (college EPA)</div><div class="muted" style="margin-top:6px">No PPA on record for this season.</div></div>';
 
   // production / efficiency grid
@@ -202,14 +212,29 @@ function teammatesTable(p, pool){
     +mates.map(m=>'<tr'+(m.n===p.n?' style="background:#0e1c17"':'')+'><td'+(m.n===p.n?' style="font-weight:800"':'')+'>'+m.n+(m.n===p.n?' \u2190':'')+'</td><td>'+m.pos+'</td><td>'+(m.cls?'Y'+m.cls:'-')+'</td><td>'+(m.rec||0)+'</td><td>'+(m.rey||0)+'</td><td>'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>').join('')
     +'</tbody></table><div class="muted">Only tracked players appear \u2014 shares will not sum to 100%.</div>';
 }
-function glSeason(y){ if(GL.data&&GL.data[y]){ GL.sel=y; renderGL(); } }
+function glSeason(y){ if(y==='all'){ GL.sel='all'; renderGL(); return; } if(GL.data&&GL.data[y]){ GL.sel=y; renderGL(); } }
 function renderGL(){
   const yrs=Object.keys(GL.data).map(Number).sort((a,b)=>a-b);
-  const pills=yrs.length>1?'<div style="display:flex;gap:6px;margin-bottom:10px">'+yrs.map(y=>
-    '<button class="pill" onclick="glSeason('+y+')" style="border:1px solid '+(y===GL.sel?'var(--teal-br)':'var(--line)')+';background:'+(y===GL.sel?'var(--ink)':'transparent')+';color:'+(y===GL.sel?'var(--teal-br)':'var(--fog)')+'">'+y+'</button>').join('')+'</div>':'';
-  const cur=GL.data[GL.sel];
-  document.getElementById('gamelog').innerHTML=pills+gameLogTable(cur.pos,cur.games);
-  document.getElementById('teammates').innerHTML=teammatesTable(cur.rec,cur.players);
+  const opts=yrs.length>1?yrs.concat(['all']):yrs;
+  const lab=y=>y==='all'?'All seasons':y;
+  const pills=opts.length>1?'<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'+opts.map(y=>
+    '<button class="pill" onclick="glSeason(\''+y+'\')" style="border:1px solid '+(String(y)===String(GL.sel)?'var(--teal-br)':'var(--line)')+';background:'+(String(y)===String(GL.sel)?'var(--ink)':'transparent')+';color:'+(String(y)===String(GL.sel)?'var(--teal-br)':'var(--fog)')+'">'+lab(y)+'</button>').join('')+'</div>':'';
+  let body, teamHost;
+  if(GL.sel==='all'){
+    // Stacked multi-season log — the full career view the quick-look modal can't show.
+    body=yrs.map(y=>{ const d=GL.data[y];
+      const tot=(d.games||[]).reduce((a,g)=>{['rec','rey','ret','car','ry','rt','py','pt','pi'].forEach(k=>a[k]=(a[k]||0)+(+g[k]||0));return a;},{});
+      const sum=d.pos==='QB'?`${tot.py||0} pass yds \u00b7 ${tot.pt||0} TD \u00b7 ${tot.pi||0} INT`
+        :d.pos==='RB'?`${tot.ry||0} rush yds \u00b7 ${tot.rt||0} TD \u00b7 ${tot.rec||0} rec`
+        :`${tot.rey||0} rec yds \u00b7 ${tot.ret||0} TD \u00b7 ${tot.rec||0} rec`;
+      return '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
+        +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+y+'</div>'
+        +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+sum+' \u00b7 '+(d.games||[]).length+' g</div></div>'
+        +gameLogTable(d.pos,d.games)+'</div>'; }).join('');
+    teamHost=GL.data[yrs[yrs.length-1]];
+  } else { const cur=GL.data[GL.sel]; body=gameLogTable(cur.pos,cur.games); teamHost=cur; }
+  document.getElementById('gamelog').innerHTML=pills+body;
+  document.getElementById('teammates').innerHTML=teammatesTable(teamHost.rec,teamHost.players);
 }
 async function fillCrossSeason(p, seasons){
   seasons=seasons.slice().sort((a,b)=>a-b);
