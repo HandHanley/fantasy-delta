@@ -276,14 +276,23 @@ function statLineInner(p, season, yrs) {
   const head = `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px">`
     + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:#5C7080">${season} SEASON</div>${pills}</div>`;
   if (!s) return head + `<div style="font-size:11.5px;color:#5C7080;padding:10px 0">No stats on record for ${season}.</div>`;
-  const cells = p.pos === 'QB'
-    ? [['Pass yds', nz(s.pass_yds)], ['Pass TD', nz(s.pass_td)], ['INT', nz(s.pass_int)],
-       ['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)], ['Games', nz(s.games)]]
-    : p.pos === 'RB'
-    ? [['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)], ['Carries', nz(s.rush_att)],
-       ['Rec', nz(s.rec)], ['Rec yds', nz(s.rec_yds)], ['Games', nz(s.games)]]
-    : [['Rec yds', nz(s.rec_yds)], ['Rec TD', nz(s.rec_td)], ['Rec', nz(s.rec)],
-       ['Targets', nz(s.targets)], ['Yds/rec', s.rec ? (s.rec_yds / s.rec).toFixed(1) : '—'], ['Games', nz(s.games)]];
+  // Position-appropriate stat rows. Rows of three; a rushing row appears for a
+  // receiver only when he actually has carries, so the grid never shows dead cells.
+  let cells;
+  if (p.pos === 'QB') {
+    cells = [['Pass yds', nz(s.pass_yds)], ['Pass TD', nz(s.pass_td)], ['INT', nz(s.pass_int)],
+             ['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)], ['Fumbles lost', s.fum_lost == null ? '—' : s.fum_lost]];
+  } else if (p.pos === 'RB') {
+    cells = [['Carries', nz(s.rush_att)], ['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)],
+             ['Rec', nz(s.rec)], ['Rec yds', nz(s.rec_yds)], ['Rec TD', nz(s.rec_td)]];
+  } else {
+    cells = [['Targets', nz(s.targets)], ['Rec', nz(s.rec)], ['Rec yds', nz(s.rec_yds)],
+             ['Rec TD', nz(s.rec_td)], ['Yds/rec', s.rec ? (s.rec_yds / s.rec).toFixed(1) : '—'],
+             ['Games', nz(s.games)]];
+    if ((s.rush_att || 0) > 0) {
+      cells = cells.concat([['Carries', nz(s.rush_att)], ['Rush yds', nz(s.rush_yds)], ['Rush TD', nz(s.rush_td)]]);
+    }
+  }
   return head
     + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1E2A3A;border:1px solid #1E2A3A;border-radius:10px;overflow:hidden">`
     + cells.map(c => `<div style="background:#111A28;padding:10px 11px"><div style="font-size:9.5px;color:#5C7080;text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
