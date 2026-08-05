@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-04T08:42:02.738329+00:00",
+  "fetched": "2026-08-05T08:40:28.380446+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -973,7 +973,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1372,6 +1372,16 @@
       "guaranteed": 29.21,
       "is_active": true
     },
+    "Deebo Samuel": {
+      "team": "49ers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.0,
+      "total": 0.0,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Jauan Jennings": {
       "team": "Vikings",
       "year_signed": 2026,
@@ -1463,7 +1473,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1853,7 +1863,7 @@
       "is_active": true
     },
     "Elijah Higgins": {
-      "team": "MIA/ARI",
+      "team": "ARI/MIA",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
