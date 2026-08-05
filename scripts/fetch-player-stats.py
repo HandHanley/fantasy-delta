@@ -689,6 +689,7 @@ def build_output(agg, matched, rz_data=None, headshots=None):
                 "pass_td":       int(r.get("pass_td",  0)),
                 "pass_att":      int(r.get("pass_att", 0)),
                 "pass_int":      int(r.get("pass_int", 0)),
+                "fum_lost":      int(r.get("fum_lost", 0) or 0),
                 "targets":       int(r.get("targets",  0)),
                 "target_share":  round(float(r.get("target_share",  0)), 4),
                 "air_yds_share": round(float(r.get("air_yds_share", 0)), 4),
