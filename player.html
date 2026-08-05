@@ -221,27 +221,7 @@ function buildHeroHTML(p) {
   if (dp) bgParts.push(`${dp.y} Rd${dp.r} Pick ${dp.p}`);
   const bgLine = bgParts.length ? `<div class="hero-bg">${bgParts.join(' · ')}</div>` : '';
 
-  // Season stat line — the raw counting stats. DELTA is rate-driven, so these were never
-  // shown; but they ground every derived metric below and users expect them. Mirrors the
-  // college page's grid, same position (directly under the header) for brand cohesion.
-  const s25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
-  let statLine = '';
-  if (s25) {
-    const nz = v => (v == null || v === 0) ? '—' : v.toLocaleString();
-    const cells = p.pos === 'QB'
-      ? [['Pass yds', nz(s25.pass_yds)], ['Pass TD', nz(s25.pass_td)], ['INT', nz(s25.pass_int)],
-         ['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Games', nz(s25.games)]]
-      : p.pos === 'RB'
-      ? [['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Carries', nz(s25.rush_att)],
-         ['Rec', nz(s25.rec)], ['Rec yds', nz(s25.rec_yds)], ['Games', nz(s25.games)]]
-      : [['Rec yds', nz(s25.rec_yds)], ['Rec TD', nz(s25.rec_td)], ['Rec', nz(s25.rec)],
-         ['Targets', nz(s25.targets)], ['Yds/rec', s25.rec ? (s25.rec_yds / s25.rec).toFixed(1) : '—'], ['Games', nz(s25.games)]];
-    statLine = `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:#5C7080;margin:18px 0 8px">2025 SEASON</div>`
-      + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1E2A3A;border:1px solid #1E2A3A;border-radius:8px;overflow:hidden">`
-      + cells.map(c => `<div style="background:#111A28;padding:10px 11px"><div style="font-size:9.5px;color:#5C7080;text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
-          + `<div style="font-size:16px;font-weight:700;font-family:var(--mono,monospace);margin-top:2px">${c[1]}</div></div>`).join('')
-      + `</div>`;
-  }
+  // Season stat line is rendered separately (after the DELTA Score) — see buildStatLineHTML.
 
   return `<div class="hero">
     ${hsHtml}
@@ -259,7 +239,30 @@ function buildHeroHTML(p) {
         <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>
       </div>
     </div>
-  </div>${statLine}`;
+  </div>`;
+}
+
+// Season stat line — raw counting stats. DELTA is rate-driven, so these were never shown;
+// they ground every derived metric. Rendered AFTER the DELTA Score so the signature metric
+// leads and the stats read as its evidence — matching the college page's order.
+function buildStatLineHTML(p) {
+  const s25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
+  if (!s25) return '';
+  const nz = v => (v == null || v === 0) ? '—' : v.toLocaleString();
+  const cells = p.pos === 'QB'
+    ? [['Pass yds', nz(s25.pass_yds)], ['Pass TD', nz(s25.pass_td)], ['INT', nz(s25.pass_int)],
+       ['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Games', nz(s25.games)]]
+    : p.pos === 'RB'
+    ? [['Rush yds', nz(s25.rush_yds)], ['Rush TD', nz(s25.rush_td)], ['Carries', nz(s25.rush_att)],
+       ['Rec', nz(s25.rec)], ['Rec yds', nz(s25.rec_yds)], ['Games', nz(s25.games)]]
+    : [['Rec yds', nz(s25.rec_yds)], ['Rec TD', nz(s25.rec_td)], ['Rec', nz(s25.rec)],
+       ['Targets', nz(s25.targets)], ['Yds/rec', s25.rec ? (s25.rec_yds / s25.rec).toFixed(1) : '—'], ['Games', nz(s25.games)]];
+  return `<div style="margin-bottom:12px">`
+    + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:#5C7080;margin:0 0 8px">2025 SEASON</div>`
+    + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1E2A3A;border:1px solid #1E2A3A;border-radius:10px;overflow:hidden">`
+    + cells.map(c => `<div style="background:#111A28;padding:10px 11px"><div style="font-size:9.5px;color:#5C7080;text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
+        + `<div style="font-size:16px;font-weight:700;font-family:var(--mono,monospace);margin-top:2px">${c[1]}</div></div>`).join('')
+    + `</div></div>`;
 }
 
 // ── DELTA Score Arc ──────────────────────────────────────────────────────────
@@ -838,6 +841,7 @@ function _renderPlayerPage(p) {
   showContent(`
     ${buildHeroHTML(p)}
     ${buildDSBreakdownHTML(p)}
+    ${buildStatLineHTML(p)}
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
     ${buildGameLogCard(p)}
