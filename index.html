@@ -3286,11 +3286,11 @@ document.addEventListener('click', function(e) {
           onerror="this.style.display='none'"
           onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)">
         <div style="min-width:0">
-          <div style="display:flex;align-items:center;gap:9px">
-            <div class="dd-name" id="dd-name" style="cursor:pointer" title="Open full player page"
+          <div style="display:flex;align-items:baseline;gap:7px;min-width:0">
+            <div class="dd-name" id="dd-name" style="cursor:pointer;min-width:0" title="Open full player page"
               onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
             <span id="dd-star" onclick="deckStar(this)" title="Watchlist"
-              style="cursor:pointer;font-size:17px;line-height:1;color:var(--fog-2)">&#9734;</span>
+              style="cursor:pointer;font-size:15px;line-height:1;color:var(--fog-2);flex-shrink:0;align-self:baseline">&#9734;</span>
           </div>
           <div class="dd-meta" id="dd-meta"></div>
           <div id="dd-college"></div>

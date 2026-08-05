@@ -248,7 +248,9 @@ function buildHeroHTML(p) {
 function buildStatLineHTML(p) {
   const all = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n];
   if (!all) return '';
-  const yrs = Object.keys(all).filter(y => /^\d{4}$/.test(y)).sort();
+  // Only seasons the player actually played. The pipeline emits a null placeholder for
+  // seasons before a player entered the league — those must not get a pill.
+  const yrs = Object.keys(all).filter(y => /^\d{4}$/.test(y) && all[y] && (all[y].games || 0) > 0).sort();
   if (!yrs.length) return '';
   _slPlayer = p; _slSeason = yrs[yrs.length - 1];
   return `<div id="statline-host" style="margin-bottom:12px">${statLineInner(p, _slSeason, yrs)}</div>`;
@@ -258,7 +260,7 @@ function statLineSeason(y) {
   if (!_slPlayer) return;
   _slSeason = String(y);
   const all = PLAYER_STATS[_slPlayer.n] || {};
-  const yrs = Object.keys(all).filter(k => /^\d{4}$/.test(k)).sort();
+  const yrs = Object.keys(all).filter(k => /^\d{4}$/.test(k) && all[k] && (all[k].games || 0) > 0).sort();
   const host = document.getElementById('statline-host');
   if (host) host.innerHTML = statLineInner(_slPlayer, _slSeason, yrs);
 }

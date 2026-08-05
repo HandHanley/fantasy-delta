@@ -166,7 +166,7 @@ function render(p, pool, seasons){
         +(p.ppaTot!=null?'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0;border-top:1px solid var(--line)">'
           +'<span style="font-size:10.5px;color:var(--fog)" title="Cumulative points added over the season \u2014 a volume measure, unlike the per-play averages above.">Season total</span>'
           +'<b style="font-size:13px;font-family:var(--mono);color:var(--sky)">'+p.ppaTot.toFixed(1)+'</b></div>':'')
-      +'</div></div>'
+      +'</div><div id="ppa-hist"></div></div>'
     : '<div class="card"><div class="hlab">PPA (college EPA)</div><div class="muted" style="margin-top:6px">No PPA on record for this season.</div></div>';
 
   // production / efficiency grid
@@ -238,7 +238,7 @@ function renderGL(){
 }
 async function fillCrossSeason(p, seasons){
   seasons=seasons.slice().sort((a,b)=>a-b);
-  const pts={}, data={}; let breakout=null;
+  const pts={}, data={}, ppaBySeason={}; let breakout=null;
   for(const yr of seasons){
     const players=await loadSeason(yr);
     const rec=players.find(x=>x.id===p.id)||players.find(x=>x.n===p.n&&x.pos===p.pos);
@@ -246,6 +246,24 @@ async function fillCrossSeason(p, seasons){
     const dd=cfbDDOM(rec, players);
     if(dd){ pts[yr]=dd.pct; const cin=classInSeason(rec,yr); if(!breakout&&cin!=null&&cin<=2&&dd.pct>=80) breakout={season:yr,cls:cin}; }
     if(rec.g&&rec.g.length) data[yr]={games:rec.g,pos:rec.pos,rec:rec,players:players};
+    const head = rec.pos==='QB'?rec.ppaPass : rec.pos==='RB'?rec.ppaRush : rec.ppa;
+    if(head!=null||rec.ppa!=null) ppaBySeason[yr]={head, all:rec.ppa, pass:rec.ppaPass, rush:rec.ppaRush, tot:rec.ppaTot};
+  }
+  // PPA by season — the multi-year efficiency view the modal can't show.
+  const phEl=document.getElementById('ppa-hist');
+  const pYrs=Object.keys(ppaBySeason).map(Number).sort((a,b)=>a-b);
+  if(phEl && pYrs.length>1){
+    const vals=pYrs.map(y=>ppaBySeason[y].head).filter(v=>v!=null);
+    const mx=Math.max(0.6, ...vals.map(Math.abs));
+    phEl.innerHTML='<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">'
+      +'<div class="hlab" style="margin-bottom:7px">PPA by season</div>'
+      +pYrs.map(y=>{ const v=ppaBySeason[y].head; if(v==null) return '';
+        const w=Math.max(4,Math.round(Math.abs(v)/mx*100));
+        return '<div style="display:grid;grid-template-columns:42px 1fr 46px;gap:8px;align-items:center;margin-bottom:5px;font-size:11px">'
+          +'<span style="color:var(--fog-2);font-family:var(--mono)">'+y+'</span>'
+          +'<div style="height:14px;background:var(--ink-2);border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:'+w+'%;background:'+(v>=0?'linear-gradient(90deg,#134e7a,var(--sky))':'var(--coral)')+';border-radius:3px"></i></div>'
+          +'<b style="font-family:var(--mono);font-size:11.5px;text-align:right;color:'+(v>=0?'var(--paper)':'var(--coral)')+'">'+v.toFixed(2)+'</b></div>'; }).join('')
+      +'<div class="muted">Per-play PPA each season \u00b7 bars scaled to his own peak.</div></div>';
   }
   // trajectory
   const yw=seasons.filter(y=>pts[y]!=null);
