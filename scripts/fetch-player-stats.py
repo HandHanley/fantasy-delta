@@ -102,6 +102,8 @@ def fetch_season_stats():
     tgt_share_col    = col('target_share')
     air_yds_col      = col('receiving_air_yards', 'air_yards')
     air_yds_share_col= col('air_yards_share')
+    # Fumbles lost — a real negative-value signal on player pages (esp. RB/QB ball security).
+    fum_col          = col('fumbles_lost_total', 'rushing_fumbles_lost', 'fumbles_lost')
     team_col         = col('team', 'recent_team', 'posteam')
 
     if not name_col:
@@ -115,7 +117,7 @@ def fetch_season_stats():
     # Fill nulls
     for c in [pass_yd_col, pass_td_col, pass_att_col, pass_int_col, rush_yd_col, rush_td_col,
               rush_att_col, rec_col, rec_yd_col, rec_td_col,
-              tgt_col, tgt_share_col, air_yds_col, air_yds_share_col]:
+              tgt_col, tgt_share_col, air_yds_col, air_yds_share_col, fum_col]:
         if c and c in pdf.columns:
             pdf[c] = pdf[c].fillna(0)
 
@@ -142,6 +144,7 @@ def fetch_season_stats():
         ('rush_td',        rush_td_col),   ('rush_att',       rush_att_col),
         ('rec',            rec_col),       ('rec_yds',        rec_yd_col),
         ('rec_td',         rec_td_col),    ('targets',        tgt_col),
+        ('fum_lost',       fum_col),
         ('air_yds',        air_yds_col),
     ]:
         if col_name and col_name in pdf.columns:
@@ -207,7 +210,7 @@ def fetch_season_stats():
     if dup_mask.any():
         n_traded = result.loc[dup_mask, 'player_name'].nunique()
         sum_cols = [c for c in ['games','pass_yds','pass_td','pass_att','pass_int','rush_yds','rush_td',
-                                'rush_att','rec','rec_yds','rec_td','targets','air_yds']
+                                'rush_att','rec','rec_yds','rec_td','targets','air_yds','fum_lost']
                     if c in result.columns]
         share_cols = [c for c in ['target_share','air_yds_share','rush_share'] if c in result.columns]
 
