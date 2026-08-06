@@ -3248,12 +3248,35 @@ document.addEventListener('click', function(e) {
           <li><b>System Score (0–100)</b> — offensive environment quality: coordinator, scheme fit, role clarity. League median ≈ 60. Descriptive context only — it does not enter the projection.</li>
           <li><b>⚠ OC change</b> — a new coordinator: everything demonstrated came under the old scheme. Flagged for context only — the model no longer discounts for it. Rookies never had a prior scheme, so the flag never appears.</li>
           <li><b>Offense style factors</b> — validated play-by-play tendencies (2022–25): pre-snap motion helps RB production, heavy 12-personnel squeezes WR3s, pass-lean identity (PROE) lifts WR rooms. Small (±2–4%), explained on each affected card.</li>
-          <li><b>EPA / YPRR</b> — per-play efficiency (Expected Points Added) and yards per route run: quality of play independent of volume.</li>
+          <li><b>EPA</b> — Expected Points Added per play: quality of play independent of volume. (Yards per route run is not shown anywhere in DELTA — routes-run data is not available in any free source.)</li>
           <li><b>Ripple Effects</b> — measured value shifts on <i>incumbent</i> players when teammates arrive or depart, calibrated on eight seasons of history.</li>
           <li><b>Format sensitivity</b> — how much a player's value shifts between standard / half / full PPR, from their reception volume vs. position average.</li>
           <li><b>5th-year option</b> — first-round rookie deals carry a team option for a fifth season; shown as "+opt" until exercised.</li>
+          <li><b>Season stat line</b> — raw counting stats on the full player page, toggleable by season back to 2022. Position-aware, and a rushing row appears for a receiver only when he actually carried the ball. These are the plain facts behind every derived metric on the page.</li>
           <li><b>† stale</b> — a market value not refreshed in the latest fetch; excluded from graded records until it updates.</li>
         </ul>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">College terms</div>
+        <p style="margin-bottom:6px;font-size:11px;color:var(--fog)">The college arm tracks production facts plus a small number of DELTA analytical metrics. Nothing here feeds an NFL projection.</p>
+        <ul class="about-list">
+          <li><b style="color:var(--teal-br)">dDOM (0–100)</b> — DELTA Dominator: competition-adjusted production expressed as a <i>percentile within his own position</i>. A 90 means top 10% at that position — identically for a QB, RB, WR or TE, so the numbers are comparable across positions even though the underlying metric differs. Ranked among <b>qualified</b> players only (6+ games plus a volume floor: 20 catches for WR/TE, 60 carries for RB, 120 attempts for QB); below that, no dDOM is shown. An analytical signal to read, <i>not</i> the ranking order.</li>
+          <li><b>What dDOM adjusts for</b> — the strength of competition, using the team's 247 recruiting-talent percentile. A 30% target share at a loaded Power-4 roster is harder than 50% at a thin one, so the former is adjusted up and the latter down. It does <i>not</i> adjust for a player's own teammates — a QB's efficiency still reflects the weapons he throws to.</li>
+          <li><b>Dominator</b> — the raw fact underneath dDOM for receivers: the average of a player's share of team receiving yards and receiving touchdowns. The classic college dynasty signal. <b>Rush dominator</b> is the same idea on team rushing yards and TDs, used for backs.</li>
+          <li><b>ANY/A</b> — adjusted net yards per attempt: (passing yards + 20 × TD − 45 × INT) ÷ attempts. The QB base metric for dDOM. It rewards touchdowns and punishes interceptions, so a quarterback cannot look elite on completion percentage alone by throwing checkdowns.</li>
+          <li><b>PPA</b> — predicted points added per play, the college equivalent of EPA (from CollegeFootballData, garbage time excluded). Roughly 0 is average and higher is better; the player page splits it into all plays, passing, rushing, a season total, and a season-by-season view.</li>
+          <li><b style="color:var(--topaz)">◆ Early breakout</b> — the player posted a top-20% dDOM while still an underclassman. Dominating young is the strongest single college-to-NFL indicator, so the badge flags the profile. It records what already happened; it is not a prediction.</li>
+          <li><b>Reception share (RecSh)</b> — receptions as a share of the team's. A stand-in for target share, which CollegeFootballData does not publish.</li>
+          <li><b>Usage</b> — share of <i>all</i> team offensive plays, not target share. It runs roughly half the size of a true target share; read it as relative, not absolute.</li>
+          <li><b>P4 / G5</b> — Power 4 conferences (SEC, Big Ten, Big 12, ACC) plus Notre Dame, versus the Group of 5. A blunt competition tier; dDOM's talent percentile is the finer-grained version.</li>
+          <li><b>Age (~)</b> — always an estimate, derived from recruiting class, because no free college source publishes birth dates. Never scored, and absent for unrecruited players.</li>
+          <li><b>Trajectory</b> — dDOM by season, so a rising freshman-to-sophomore line is visible at a glance. The next season sits greyed until games are played.</li>
+          <li><b>Team construction</b> — the teammates competing for the same touches. A dominator only means something next to the players it was earned against.</li>
+        </ul>
+      </div>
+      <div class="about-section">
+        <div class="about-heading">How much to trust dDOM</div>
+        <p>dDOM was validated against real NFL outcomes: college classes 2020–2023 matched to their first three NFL seasons. The competition adjustment improved prediction at every position, but modestly — and at 94% statistical confidence, just under the 95% bar DELTA requires before a metric may influence ranking order. So dDOM is displayed as a signal and is deliberately excluded from the college ranking. College production is a genuinely noisy predictor of NFL success; a 99 means a player dominated his position against real competition, which shifts the odds rather than settling them.</p>
       </div>
       <div class="about-section">
         <div class="about-heading">What the model can't see</div>
