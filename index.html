@@ -2217,7 +2217,9 @@ function applyLanding(){
   if(target&&DL_TABS.indexOf(target)>=0){
     const b=dlTabBtn(target); if(b){ showTab(target,b); return; }
   }
-  setSection(dlPref('delta_section')||'nfl');          // otherwise resume where you left off
+  // Fresh loads always land on NFL — it's the primary surface. Explicit deep links
+  // (?tab=) above still win, and the section still persists within a session as you navigate.
+  setSection('nfl');
 }
 
 function showTab(id,el,skipSection){
