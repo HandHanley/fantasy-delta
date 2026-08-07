@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-06T08:41:27.111012+00:00",
+  "fetched": "2026-08-07T07:20:32.413150+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -334,12 +334,12 @@
     },
     "Bijan Robinson": {
       "team": "Falcons",
-      "year_signed": 2023,
-      "years": 4,
-      "end_year": 2026,
-      "aav": 5.49,
-      "total": 21.96,
-      "guaranteed": 21.96,
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 22.25,
+      "total": 66.75,
+      "guaranteed": 37.57,
       "is_active": true
     },
     "Jahmyr Gibbs": {
@@ -724,12 +724,12 @@
     },
     "Alvin Kamara": {
       "team": "Saints",
-      "year_signed": 2024,
-      "years": 2,
-      "end_year": 2025,
-      "aav": 12.25,
-      "total": 24.5,
-      "guaranteed": 19.23,
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 6.0,
+      "total": 6.0,
+      "guaranteed": 3.5,
       "is_active": true
     },
     "Ollie Gordon": {
@@ -823,7 +823,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -973,7 +973,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "NE/PHI",
+      "team": "PHI/NE",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1473,7 +1473,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3863,7 +3863,7 @@
       "is_active": true
     },
     "D.J. Moore": {
-      "team": "CHI/BUF",
+      "team": "BUF/CHI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3913,7 +3913,7 @@
       "is_active": true
     },
     "Ja'Lynn Polk": {
-      "team": "NO/NE",
+      "team": "NE/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
