@@ -462,6 +462,34 @@ for k, v in ply.items():
 print(f"\n  door: production {by_door['production']:,} | pedigree {by_door['pedigree']:,}"
       f" | continuity {by_door['continuity']:,} | UNIVERSE {len(picked):,}")
 
+# Game-log rows dominate the payload (~56% of the college file), and CFBD returns every
+# stat as a STRING with zero-value keys present. Storing numbers instead of strings and
+# dropping zeros cuts the file substantially with no loss of information — the UI already
+# renders a missing key and a 0 identically (as "-").
+def compact_row(row):
+    out = {}
+    for k, val in row.items():
+        if k in ("w", "opp"):
+            out[k] = val
+            continue
+        if val is None or val == "":
+            continue
+        if k == "ca":                      # "16/24" — keep as-is, it isn't numeric
+            if val and val != "0/0":
+                out[k] = val
+            continue
+        try:
+            f = float(val)
+        except (TypeError, ValueError):
+            out[k] = val
+            continue
+        if f == 0:                         # zero == absent for display purposes
+            continue
+        out[k] = int(f) if f == int(f) else round(f, 2)
+    return out
+
+
+
 # ---- emit ----
 out = {
     "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -509,7 +537,7 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "car": int(v["tot"]["car"]), "ry": round(v["tot"]["ry"]),  "rt":  int(v["tot"]["rt"]),
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
         "gms": v["games"],
-        "g": [v["g"][w] for w in sorted(v["g"])],
+        "g": [compact_row(v["g"][w]) for w in sorted(v["g"])],
     })
 
 os.makedirs("data", exist_ok=True)
