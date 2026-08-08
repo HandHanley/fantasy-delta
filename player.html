@@ -166,6 +166,14 @@ a{color:#2DD4BF}
   <div id="player-content" style="display:none"></div>
 </div>
 <script src="delta-engine.js"></script>
+<script src="delta-sync.js" defer></script>
+<script>
+/* Sync boot for the player page. No account UI here — this page only needs the
+   watchlist star to reach the cloud when the user is already signed in. */
+window.addEventListener('load', function(){
+  try{ if(typeof DSYNC!=='undefined') DSYNC.init(); }catch(e){}
+});
+</script>
 <script>
 // Monochrome headshot placeholder (replaces the emoji placeholder — site is emoji-free)
 const HERO_PH_SVG='<svg viewBox="0 0 24 24" width="58%" height="58%" aria-hidden="true">'

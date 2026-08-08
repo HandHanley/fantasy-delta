@@ -78,6 +78,9 @@ function dwToggle(n, ns){
   const k=dwKey(n,ns), a=dwRaw(), i=a.indexOf(k);
   if(i>=0) a.splice(i,1); else a.push(k);
   try{ localStorage.setItem(DW_LS, JSON.stringify(a)); }catch(e){}
+  // Cloud sync. No-op when signed out or when delta-sync.js failed to load;
+  // the local write above has already happened either way.
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteWatch(ns||'nfl', n, i<0); }catch(e){}
   return i<0;                                        // true = now watched
 }
 function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
@@ -3734,6 +3737,7 @@ try{
 }catch(e){}
 function saveLeaguePrefs(){
   try{ localStorage.setItem('delta_settings', JSON.stringify({teams:leagueTeams,qb:qbFmt,fmt:scoringFmt})); }catch(e){}
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteSettings(); }catch(e){}
 }
 const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
 // Positional value-by-rank curves.  v(r) = (PPG of the rank-r player) / (PPG of the rank-1 player).

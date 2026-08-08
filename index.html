@@ -592,12 +592,26 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
       <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
       <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
     </div>
+    <div class="set-sec">ACCOUNT</div>
+    <div id="dsync-box" style="margin-bottom:14px">
+      <div id="dsync-signed-out" style="display:none">
+        <div style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:8px">Sign in to sync your settings and watchlist across devices.</div>
+        <button class="set-pill" onclick="dsyncGoogle()" style="width:100%;justify-content:center;margin-bottom:6px">Continue with Google</button>
+        <input id="dsync-email" type="email" placeholder="you@example.com" class="set-sel" style="margin-bottom:6px" autocomplete="email">
+        <button class="set-pill" onclick="dsyncEmail()" style="width:100%;justify-content:center">Email me a link</button>
+      </div>
+      <div id="dsync-signed-in" style="display:none">
+        <div id="dsync-who" style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:8px"></div>
+        <button class="set-pill" onclick="dsyncOut()" style="width:100%;justify-content:center">Sign out</button>
+      </div>
+      <div id="dsync-msg" style="font-size:10px;color:var(--fog-2);margin-top:7px;line-height:1.5"></div>
+    </div>
     <div class="set-sec">DATA</div>
     <div id="set-fresh" style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:14px"></div>
     <div style="border-top:1px solid var(--line);padding-top:12px">
       <button class="set-pill" onclick="closeSettings();openAbout()" style="width:100%;justify-content:center">About DELTA</button>
     </div>
-    <div style="font-size:9px;color:var(--fog-2);margin-top:9px;line-height:1.5">Saved on this device only &mdash; every visitor has their own.</div>
+    <div id="dsync-scope-note" style="font-size:9px;color:var(--fog-2);margin-top:9px;line-height:1.5">Saved on this device only &mdash; every visitor has their own.</div>
   </div>
 </div>
 
@@ -892,6 +906,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 </div>
 
 <script src="delta-engine.js"></script>
+<script src="delta-sync.js" defer></script>
 <script>
 function renderStartProfile(p){
   const host=document.getElementById('dd-startprofile');
@@ -2131,7 +2146,10 @@ function deckStar(el){
   el.textContent=on?'\u2605':'\u2606'; el.style.color=on?'var(--topaz)':'var(--fog-2)';
   if(document.getElementById('pos-rank') && document.getElementById('pos-rank').value==='WL') renderRankings();
 }
-function setTheme(name){ dlPref('delta_theme',name); dlThemeApply(name); }
+function setTheme(name){
+  dlPref('delta_theme',name); dlThemeApply(name);
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteTheme(); }catch(e){}
+}
 function dlLeagueBadge(){
   const b=document.getElementById('lg-badge'); if(!b) return;
   const fmt={half_tep:'0.5PPR+TE',half:'0.5PPR',full_tep:'PPR+TE',full:'PPR',std:'Std'}[scoringFmt]||scoringFmt;
@@ -4519,6 +4537,7 @@ async function slpSelectTeam(rosterId,user){
     userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
   };
   try{ localStorage.setItem(SLP_LS_CONN,JSON.stringify(SLP.conn)); }catch(e){ slpLog('conn save failed:',e); }
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
   SLP.viewRosterId=roster.roster_id; SLP.view='rosters';
   slpLog('CONNECTED:',JSON.stringify(SLP.conn));
   slpStatus('Connected \u2014 matching players\u2026');
@@ -4624,6 +4643,7 @@ async function sleeperRefresh(){
 function sleeperDisconnect(){
   slpLog('disconnecting (player DB cache kept)');
   try{ localStorage.removeItem(SLP_LS_CONN); }catch(e){}
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperDisconnect(); }catch(e){}
   SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
   SLP.leagues=null; SLP.pendingUser=null; SLP.match=null; SLP.unmatched=[];
   SLP.tradedPicks=null; SLP.view='rosters'; SLP.viewRosterId=null;
@@ -5133,6 +5153,75 @@ if (document.readyState === 'complete') {
     new MutationObserver(function(){ wireIcons(); }).observe(document.body, {childList:true, subtree:true});
   }
   start();
+})();
+</script>
+
+<script>
+/* ── Account UI + sync boot ───────────────────────────────────────────────────
+   Isolated in its own block on purpose: if anything here throws, the rest of
+   DELTA keeps working exactly as it did before accounts existed. */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function msg(t){ var m=$('dsync-msg'); if(m) m.textContent=t||''; }
+
+  /* Called by delta-sync.js when a cloud pull wins the settings merge. Applies
+     the values to the live app rather than waiting for a reload. */
+  window.dsyncApplySettings = function(s){
+    try{
+      if(!s) return;
+      if([8,10,12,14].indexOf(Number(s.teams))>=0) leagueTeams=Number(s.teams);
+      if(['sf','1qb'].indexOf(s.qb)>=0) qbFmt=s.qb;
+      if(['std','half','half_tep','full','full_tep'].indexOf(s.fmt)>=0) scoringFmt=s.fmt;
+      if(typeof syncSettingsUI==='function') syncSettingsUI();
+      if(typeof dlLeagueBadge==='function') dlLeagueBadge();
+      if(typeof renderAll==='function') renderAll();
+    }catch(e){}
+  };
+
+  window.dsyncGoogle=function(){
+    if(typeof DSYNC==='undefined'){ msg('Sync is still loading.'); return; }
+    msg('Opening Google\u2026');
+    DSYNC.signInGoogle().then(function(r){ if(r&&r.error) msg(r.error.message); });
+  };
+  window.dsyncEmail=function(){
+    if(typeof DSYNC==='undefined'){ msg('Sync is still loading.'); return; }
+    var el=$('dsync-email'), email=el?el.value.trim():'';
+    if(!email||email.indexOf('@')<0){ msg('Enter a valid email address.'); return; }
+    msg('Sending\u2026');
+    DSYNC.signInEmail(email).then(function(r){
+      msg(r&&r.error ? r.error.message : 'Check your email for the sign-in link.');
+    });
+  };
+  window.dsyncOut=function(){
+    if(typeof DSYNC==='undefined') return;
+    DSYNC.signOut().then(function(){ msg('Signed out. Your data stays on this device.'); });
+  };
+
+  function paint(st){
+    var out=$('dsync-signed-out'), inn=$('dsync-signed-in'), note=$('dsync-scope-note');
+    if(!out||!inn) return;
+    var signedIn = !!st.user;
+    out.style.display = signedIn ? 'none' : 'block';
+    inn.style.display = signedIn ? 'block' : 'none';
+    if(signedIn){
+      var who=$('dsync-who');
+      if(who) who.textContent='Signed in as '+(st.user.email||'your account')+'.';
+      if(note) note.innerHTML='Synced to your account &mdash; available on any device you sign in on.';
+      if(st.status==='syncing') msg('Syncing\u2026');
+      else if(st.status==='ready') msg('');
+    } else {
+      if(note) note.innerHTML='Saved on this device only &mdash; every visitor has their own.';
+    }
+    if(st.status==='error') msg('Sync unavailable. DELTA still works normally on this device.');
+  }
+
+  /* Boot AFTER load, never before. Local-first means first paint has already
+     happened by the time any of this runs. */
+  window.addEventListener('load', function(){
+    if(typeof DSYNC==='undefined') return;   // sync file blocked or failed
+    DSYNC.onChange(paint);
+    DSYNC.init();
+  });
 })();
 </script>
 </body>
