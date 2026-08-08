@@ -3235,6 +3235,16 @@ document.addEventListener('click', function(e) {
   <div id="rookie-board"></div>
 </div>
 
+<!-- Site footer -->
+<footer style="margin-top:2.25rem;padding-top:.9rem;border-top:1px solid var(--line);
+  display:flex;gap:16px;flex-wrap:wrap;align-items:center;
+  font-size:10.5px;color:var(--fog-2);line-height:1.6">
+  <span>Not affiliated with the NFL, NFLPA, or Sleeper.</span>
+  <a href="./privacy.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Privacy</a>
+  <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
+  <a href="#" onclick="openAbout();return false;" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">About</a>
+</footer>
+
 <!-- About DELTA modal -->
 <div class="about-overlay" id="about-overlay" onclick="closeAboutOverlay(event)">
   <div class="about-card">
@@ -3313,6 +3323,11 @@ document.addEventListener('click', function(e) {
       </div>
       <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:10px;color:var(--fog-2)">
         Data refreshes nightly via the nflverse pipeline. Model calibrated against the 2023–2024 NFL seasons.
+        <div style="margin-top:7px">
+          <a href="./privacy.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Privacy</a>
+          <span style="opacity:.5;padding:0 6px">&middot;</span>
+          <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
+        </div>
       </div>
     </div>
   </div>
