@@ -1,0 +1,14 @@
+{
+  "_comment": "Hand-maintained stopgap for players who have demonstrably signed but whose contract has not yet reached the nflverse/OTC data release. OTC ALWAYS WINS: an entry here is applied only when the player has no active upstream contract, so each one expires itself once the real deal lands. The nightly log prints which entries have become redundant — delete those. Keys starting with underscore are ignored. Required fields: team, year_signed, years, aav. end_year, total and guaranteed are filled in if omitted. Keep 'note' on every entry: it records where the figures came from, which is what makes this file auditable rather than a pile of magic numbers.",
+
+  "Stefon Diggs": {
+    "team": "Commanders",
+    "year_signed": 2026,
+    "years": 1,
+    "end_year": 2026,
+    "aav": 12.0,
+    "total": 12.0,
+    "guaranteed": 6.0,
+    "note": "Signed with Washington 5 Aug 2026 — reported as a one-year deal worth up to $12M. Present on OTC's website, absent from the OTC data release as of 8 Aug 2026 (all five of his rows read is_active=false, latest being the 2025 Patriots deal). VERIFY the guaranteed figure against OTC before the accuracy-ledger freeze; 'up to $12M' is a max-value headline and base/guarantee may differ. Delete this entry once the nightly log reports it redundant."
+  }
+}
