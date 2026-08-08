@@ -1268,7 +1268,12 @@ const SYS={
   TEN:{s:58,c:.35,oc:'Daboll',ch:true},WAS:{s:55,c:.35,oc:'Blough',ch:true},
   FA:{s:50,c:.20,oc:'Unknown',ch:true}
 };
-const AL={NEP:'NE',NOS:'NO',LVR:'LV',GBP:'GB',TBB:'TB',KCC:'KC',SFO:'SF',OAK:'LV',RFA:'FA',LA:'LAR',JAX:'JAC',WSH:'WAS',ARZ:'ARI'};
+// Team-code aliases: every spelling DELTA might receive -> the code the SYS,
+// QBQ and COMP_IDX tables are actually keyed by. An unaliased code does not
+// error; gs() falls through to SYS.FA and the player is silently scored as a
+// free agent. 'AZ' (the 2026 nflverse roster spelling of Arizona) did exactly
+// that to ten Cardinals before it was caught.
+const AL={NEP:'NE',NOS:'NO',LVR:'LV',GBP:'GB',TBB:'TB',KCC:'KC',SFO:'SF',OAK:'LV',RFA:'FA',LA:'LAR',JAX:'JAC',WSH:'WAS',ARZ:'ARI',AZ:'ARI'};
 function gs(t){return SYS[AL[t]||t]||SYS.FA;}
 
 // ============================================================
