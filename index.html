@@ -545,6 +545,30 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
+  <button class="about-tab" id="signin-btn" title="Sign in to sync across your devices"
+    onclick="openSettingsAtAccount(event)" style="display:none;padding:6px 11px;font-size:11px">Sign in</button>
+  <script>
+  /* Synchronous, pre-paint visibility for the button above.
+     supabase-js persists its session in localStorage under a key shaped like
+     sb-<project-ref>-auth-token. We scan for the SHAPE rather than hard-coding
+     the exact key, so a change in Supabase's naming degrades to a brief flash
+     rather than a permanently wrong button.
+     PRESENCE ONLY — this is not proof of a valid session, and it is not treated
+     as such. DSYNC.onChange has the final say once auth actually resolves. */
+  (function(){
+    try{
+      var btn=document.getElementById('signin-btn'); if(!btn) return;
+      var hasSession=false;
+      try{
+        for(var i=0;i<localStorage.length;i++){
+          var k=localStorage.key(i);
+          if(k && k.indexOf('sb-')===0 && k.indexOf('auth-token')>0){ hasSession=true; break; }
+        }
+      }catch(e){}
+      if(!hasSession) btn.style.display='';
+    }catch(e){}
+  })();
+  </script>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
     <div class="set-sec">LEAGUE</div>
@@ -2156,20 +2180,41 @@ function dlLeagueBadge(){
   b.textContent = leagueTeams+'-team \u00b7 '+(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+fmt;
 }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
+function settingsInit(){
+  const sel=document.getElementById('landing-pref');
+  if(sel) sel.value=dlPref('delta_landing')||'rankings';
+  dlThemeApply(dlPref('delta_theme')||'teal');
+  const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
+  const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
+  const st=document.getElementById('lg-teams-set'); if(st) st.value=String(leagueTeams);
+  const sq=document.getElementById('lg-qb-set');    if(sq) sq.value=qbFmt;
+}
 function toggleSettings(e){
   e.stopPropagation();
   const pop=document.getElementById('settings-pop');
   const open=pop.style.display!=='none';
   pop.style.display=open?'none':'block';
-  if(!open){
-    const sel=document.getElementById('landing-pref');
-    if(sel) sel.value=dlPref('delta_landing')||'rankings';
-    dlThemeApply(dlPref('delta_theme')||'teal');
-    const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
-    const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
-    const st=document.getElementById('lg-teams-set'); if(st) st.value=String(leagueTeams);
-    const sq=document.getElementById('lg-qb-set');    if(sq) sq.value=qbFmt;
-  }
+  if(!open) settingsInit();
+}
+/* Entry point for the header button: open the popover and put the ACCOUNT
+   section in front of the user. Deliberately does NOT focus the email field —
+   on mobile that throws up the keyboard before they have chosen Google vs
+   email, which is worse than making them tap once more. */
+function openSettingsAtAccount(e){
+  if(e) e.stopPropagation();
+  const pop=document.getElementById('settings-pop');
+  if(!pop) return;
+  pop.style.display='block';
+  settingsInit();
+  const box=document.getElementById('dsync-box');
+  if(!box) return;
+  try{ box.scrollIntoView({block:'nearest'}); }catch(_){}
+  // Brief highlight so the eye lands on the right section rather than the top
+  // of a popover full of unrelated settings.
+  box.style.transition='box-shadow .18s ease';
+  box.style.boxShadow='0 0 0 2px var(--teal-br)';
+  box.style.borderRadius='9px';
+  setTimeout(function(){ box.style.boxShadow='none'; }, 1100);
 }
 function closeSettings(){ const p=document.getElementById('settings-pop'); if(p) p.style.display='none'; }
 document.addEventListener('click',e=>{ if(!e.target.closest('#settings-pop')&&!e.target.closest('#gear-btn')) closeSettings(); });
@@ -3235,16 +3280,6 @@ document.addEventListener('click', function(e) {
   <div id="rookie-board"></div>
 </div>
 
-<!-- Site footer -->
-<footer style="margin-top:2.25rem;padding-top:.9rem;border-top:1px solid var(--line);
-  display:flex;gap:16px;flex-wrap:wrap;align-items:center;
-  font-size:10.5px;color:var(--fog-2);line-height:1.6">
-  <span>Not affiliated with the NFL, NFLPA, or Sleeper.</span>
-  <a href="./privacy.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Privacy</a>
-  <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
-  <a href="#" onclick="openAbout();return false;" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">About</a>
-</footer>
-
 <!-- About DELTA modal -->
 <div class="about-overlay" id="about-overlay" onclick="closeAboutOverlay(event)">
   <div class="about-card">
@@ -3513,6 +3548,17 @@ document.addEventListener('click', function(e) {
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
 </div>
+
+<!-- Site footer -->
+<footer style="margin-top:2.25rem;padding-top:.9rem;border-top:1px solid var(--line);
+  display:flex;gap:16px;flex-wrap:wrap;align-items:center;
+  font-size:10.5px;color:var(--fog-2);line-height:1.6">
+  <span>Not affiliated with the NFL, NFLPA, or Sleeper.</span>
+  <a href="./privacy.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Privacy</a>
+  <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
+  <a href="#" onclick="openAbout();return false;" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">About</a>
+</footer>
+
 
 <script>
 
@@ -5214,8 +5260,12 @@ if (document.readyState === 'complete') {
 
   function paint(st){
     var out=$('dsync-signed-out'), inn=$('dsync-signed-in'), note=$('dsync-scope-note');
-    if(!out||!inn) return;
     var signedIn = !!st.user;
+    // The header button is corrected here regardless of the popover's state —
+    // it lives outside the popover, so an early return must not skip it.
+    var sbtn=$('signin-btn');
+    if(sbtn) sbtn.style.display = signedIn ? 'none' : '';
+    if(!out||!inn) return;
     out.style.display = signedIn ? 'none' : 'block';
     inn.style.display = signedIn ? 'block' : 'none';
     if(signedIn){
