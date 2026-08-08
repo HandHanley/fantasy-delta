@@ -384,6 +384,85 @@ def fetch_current_teams():
         print(f'[DELTA] roster feed unavailable ({e}) — using RAW baked teams')
         return None
 
+SLEEPER_PLAYERS_URL = 'https://api.sleeper.app/v1/players/nfl'
+
+def fetch_sleeper_teams():
+    """Current team per skill player from Sleeper's live roster feed.
+
+    Sleeper is the PRIMARY team authority (nflverse is the fallback) because it
+    reflects signings within hours, where the nflverse roster release is a
+    periodic snapshot that can sit a week or more behind in-season transactions.
+
+    Returns {(normalized_name, position): team} or None if the feed is
+    unreachable, in which case the caller falls back to nflverse.
+
+    Two deliberate behaviours:
+
+      * team = null means Sleeper considers the player a free agent. We return
+        NO OPINION for those rather than writing 'FA'. Writing 'FA' on a stale
+        null would resolve to SYS.FA and silently price the player as a free
+        agent — the exact failure mode the 'AZ' bug produced on ten Cardinals.
+        A missed release is a stale team; a wrong 'FA' moves scores.
+
+      * A (name, position) pair that maps to more than one team fails CLOSED,
+        the same as the nflverse path. That is either two players who normalize
+        to one key, or genuinely contradictory data. Neither should overwrite a
+        known-good team.
+
+    Note Sleeper lists practice-squad players with a team. That is correct for
+    DELTA's purposes: the field answers "whose roster is he on", not "is he
+    starting" — snap share already carries the second question.
+    """
+    import urllib.request
+    from collections import defaultdict
+    try:
+        req = urllib.request.Request(SLEEPER_PLAYERS_URL,
+                                     headers={'User-Agent': 'DELTA/1.0 (+fantasydelta.com)'})
+        with urllib.request.urlopen(req, timeout=90) as resp:
+            raw = json.loads(resp.read().decode('utf-8'))
+    except Exception as e:
+        print(f'[DELTA] Sleeper feed unavailable ({e}) — falling back to nflverse roster feed')
+        return None
+
+    if not isinstance(raw, dict) or not raw:
+        print('[DELTA] Sleeper feed: empty or unexpected shape — falling back to nflverse')
+        return None
+
+    SKILL_POS = {'QB', 'RB', 'WR', 'TE'}
+    seen = defaultdict(set)
+    raw_names = defaultdict(set)
+    free_agents = 0
+    for _pid, p in raw.items():
+        if not isinstance(p, dict):
+            continue
+        pos = p.get('position')
+        if pos not in SKILL_POS:
+            continue
+        full = p.get('full_name') or ' '.join(
+            [x for x in (p.get('first_name'), p.get('last_name')) if x])
+        if not full:
+            continue
+        team = p.get('team')
+        if not team:
+            free_agents += 1
+            continue                      # no opinion — see docstring
+        key = (norm(full), pos)
+        seen[key].add(team)
+        raw_names[key].add(full)
+
+    out, ambiguous = {}, []
+    for key, teams in seen.items():
+        if len(teams) == 1:
+            out[key] = next(iter(teams))
+        else:
+            ambiguous.append(f"{'/'.join(sorted(raw_names[key]))}/{key[1]}:{sorted(teams)}")
+    if ambiguous:
+        print(f'[DELTA] Sleeper feed: {len(ambiguous)} ambiguous (name,pos) skipped — {ambiguous[:6]}')
+    print(f'[DELTA] Sleeper feed: teams for {len(out)} skill (name,pos) keys '
+          f'({free_agents} free agents skipped)')
+    return out or None
+
+
 def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
     """Conservative QB backup flags — only when an UNAMBIGUOUS established
     incumbent sits ahead. Rules (binary, asymmetric, QB-only by design — depth
@@ -1104,6 +1183,7 @@ def main():
     agg, headshots, qb_starts = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     roster_teams = fetch_current_teams()
+    sleeper_teams = fetch_sleeper_teams()
     qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
     # Team overrides for the runtime: only DELTA players the roster feed
     # resolves; RAW's baked team stays the fallback for everyone else.
@@ -1133,17 +1213,34 @@ def main():
     team_overrides = {}
     unresolved = []
     unknown_codes = {}
-    if roster_teams:
+    disagreements = []
+    src_counts = {'sleeper': 0, 'nflverse': 0}
+    if roster_teams or sleeper_teams:
         for dn, nfl_name in matched.items():
             pos = meta.get(dn, (None, None))[1]
             if not pos:
                 continue
-            # Normalized on BOTH sides — see fetch_current_teams() for why.
-            t = roster_teams.get((norm(nfl_name), pos))   # name AND position must agree
+            # Both feeds are keyed on the SAME normalized (name, position) —
+            # see fetch_current_teams() for why normalization is required.
+            key = (norm(nfl_name), pos)
+            s_t = (sleeper_teams or {}).get(key)
+            n_t = (roster_teams or {}).get(key)
+
+            # Record disagreements before choosing. These are informative rather
+            # than alarming: usually a transaction nflverse has not picked up
+            # yet, occasionally a Sleeper error. Either way it should be visible.
+            if s_t and n_t:
+                cs, cn = TEAM_CANON.get(s_t, s_t), TEAM_CANON.get(n_t, n_t)
+                if cs != cn:
+                    disagreements.append(f'{dn}: sleeper={cs} nflverse={cn}')
+
+            # Sleeper wins when it has an opinion; nflverse covers the rest.
+            t, source = (s_t, 'sleeper') if s_t else ((n_t, 'nflverse') if n_t else (None, None))
             if t:
                 canon = TEAM_CANON.get(t, t)
                 if canon in DELTA_TEAMS:
                     team_overrides[dn] = canon
+                    src_counts[source] += 1
                 else:
                     # Fail CLOSED. See DELTA_TEAMS above for why an unknown code
                     # is worse than a stale one.
@@ -1155,7 +1252,14 @@ def main():
         # whether a real-world signing reached the model, so a truncated tail is
         # exactly the wrong thing to hide (21 moves printing 20 sent us chasing
         # a phantom Diggs bug).
-        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} genuine moves: {moved}')
+        print(f'[DELTA] team overrides: {len(team_overrides)} resolved '
+              f'({src_counts["sleeper"]} from Sleeper, {src_counts["nflverse"]} from nflverse), '
+              f'{len(moved)} genuine moves: {moved}')
+        if disagreements:
+            # Expected during the season; a long list in the offseason means one
+            # of the two feeds has gone stale and is worth a look.
+            print(f'[DELTA] team source disagreements ({len(disagreements)}, Sleeper wins): '
+                  f'{sorted(disagreements)[:25]}')
         # Two distinct ways a DELTA player keeps their baked team. Logged
         # separately because they have different fixes: a stats-unmatched player
         # needs a name alias, a roster-feed miss needs the feed to carry them.
