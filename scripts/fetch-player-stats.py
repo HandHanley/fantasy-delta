@@ -1111,9 +1111,28 @@ def main():
     # team field on pure abbreviation differences (feed JAX/LA/WSH/ARZ vs DELTA
     # JAC/LAR/WAS/ARI) — the runtime AL map aliases these anyway, but writing the
     # canonical form keeps the data clean and the "moved" log honest.
-    TEAM_CANON = {'JAX': 'JAC', 'LA': 'LAR', 'WSH': 'WAS', 'ARZ': 'ARI'}
+    # Feed abbreviation -> DELTA's convention.
+    #
+    # 'AZ' was the expensive omission: the 2026 roster feed spells Arizona AZ,
+    # TEAM_CANON only knew ARZ, and the engine's AL map only knew ARZ too. So
+    # every Cardinal was written as 'AZ', gs('AZ') missed the SYS table, and ten
+    # players were scored with SYS.FA — a free agent's system score — while
+    # QBQ silently fell back to its 0.85 default. Nothing errored.
+    TEAM_CANON = {'JAX': 'JAC', 'LA': 'LAR', 'WSH': 'WAS', 'ARZ': 'ARI', 'AZ': 'ARI'}
+
+    # The 32 codes the engine's SYS/QBQ/COMP_IDX tables are keyed by. Any code
+    # outside this set is a code the engine cannot resolve, and an unresolvable
+    # code does not fail loudly downstream — it quietly becomes a free agent.
+    # So we refuse to emit it at all: the player keeps their baked RAW team,
+    # which is stale at worst rather than wrong in a way that moves scores.
+    DELTA_TEAMS = {
+        'ARI','ATL','BAL','BUF','CAR','CHI','CIN','CLE','DAL','DEN','DET','GB',
+        'HOU','IND','JAC','KC','LAC','LAR','LV','MIA','MIN','NE','NO','NYG',
+        'NYJ','PHI','PIT','SEA','SF','TB','TEN','WAS',
+    }
     team_overrides = {}
     unresolved = []
+    unknown_codes = {}
     if roster_teams:
         for dn, nfl_name in matched.items():
             pos = meta.get(dn, (None, None))[1]
@@ -1122,7 +1141,13 @@ def main():
             # Normalized on BOTH sides — see fetch_current_teams() for why.
             t = roster_teams.get((norm(nfl_name), pos))   # name AND position must agree
             if t:
-                team_overrides[dn] = TEAM_CANON.get(t, t)
+                canon = TEAM_CANON.get(t, t)
+                if canon in DELTA_TEAMS:
+                    team_overrides[dn] = canon
+                else:
+                    # Fail CLOSED. See DELTA_TEAMS above for why an unknown code
+                    # is worse than a stale one.
+                    unknown_codes.setdefault(t, []).append(dn)
             else:
                 unresolved.append(f'{dn}/{pos}')
         moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
@@ -1134,6 +1159,18 @@ def main():
         # Two distinct ways a DELTA player keeps their baked team. Logged
         # separately because they have different fixes: a stats-unmatched player
         # needs a name alias, a roster-feed miss needs the feed to carry them.
+        if unknown_codes:
+            # Loud on purpose. This is the alarm that would have caught 'AZ' on
+            # day one instead of ten players quietly priced as free agents.
+            print('[DELTA] ' + '!' * 68)
+            print(f'[DELTA] !! UNKNOWN TEAM CODE(S) FROM ROSTER FEED: {sorted(unknown_codes)}')
+            print('[DELTA] !! These do not exist in the engine SYS/QBQ tables. No team')
+            print('[DELTA] !! override was written for the players below; they keep their')
+            print('[DELTA] !! baked RAW team. Add the mapping to TEAM_CANON (and to AL in')
+            print('[DELTA] !! delta-engine.js) to resolve.')
+            for code, names in sorted(unknown_codes.items()):
+                print(f'[DELTA] !!   {code}: {len(names)} player(s) — {sorted(names)[:15]}')
+            print('[DELTA] ' + '!' * 68)
         no_stats = sorted(set(delta_names) - set(matched.keys()))
         if unresolved:
             print(f'[DELTA] team overrides: {len(unresolved)} matched players absent from the 2026 roster feed '
