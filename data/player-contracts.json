@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-08T18:50:28.050353+00:00",
+  "fetched": "2026-08-08T21:40:03.563332+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -200,6 +200,16 @@
       "aav": 9.49,
       "total": 37.96,
       "guaranteed": 37.96,
+      "is_active": true
+    },
+    "Matthew Stafford": {
+      "team": "Rams",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 55.0,
+      "total": 55.0,
+      "guaranteed": 90.0,
       "is_active": true
     },
     "Kyler Murray": {
@@ -3921,6 +3931,17 @@
       "total": 9.69,
       "guaranteed": 8.21,
       "is_active": true
+    },
+    "Stefon Diggs": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 12.0,
+      "total": 12.0,
+      "guaranteed": 6.0,
+      "is_active": true,
+      "source": "override"
     }
   }
 }
