@@ -309,6 +309,15 @@ body{font-family:var(--sans);background:var(--ink);color:var(--paper)}
 .tab:hover{color:var(--paper);background:var(--teal-soft)}
 .tab.active{background:var(--teal-tint);color:var(--teal-br);font-weight:700;border-bottom:none}
 .about-tab{color:var(--fog-2);border-radius:8px}
+/* Sign in + gear travel together, pinned right as ONE unit. Previously both
+   carried .about-tab, which sets margin-left:auto — two auto margins split the
+   free space between them, leaving Sign in stranded mid-bar. */
+.tab-right{margin-left:auto;display:flex;align-items:center;gap:2px}
+.tab-right .about-tab{margin-left:0}
+/* Inherits .tab typography (12px/600/--fog) so it matches Projections, Trade
+   Calc et al automatically rather than drifting if .tab is ever restyled. */
+.signin-tab{margin-left:0}
+.signin-tab:hover{color:var(--paper);background:var(--teal-soft)}
 .about-tab:hover{color:var(--fog);background:var(--teal-soft)}
 .tc-active{background:var(--teal-tint);color:var(--teal-br)}
 .trade-side{background:var(--panel);border:1px solid var(--line);border-radius:12px}
@@ -545,8 +554,9 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
-  <button class="about-tab" id="signin-btn" title="Sign in to sync across your devices"
-    onclick="openSettingsAtAccount(event)" style="display:none;padding:6px 11px;font-size:11px">Sign in</button>
+  <span class="tab-right">
+  <button class="tab signin-tab" id="signin-btn" title="Sign in to sync across your devices"
+    onclick="openSettingsAtAccount(event)" style="display:none">Sign in</button>
   <script>
   /* Synchronous, pre-paint visibility for the button above.
      supabase-js persists its session in localStorage under a key shaped like
@@ -570,6 +580,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   })();
   </script>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </span>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
     <div class="set-sec">LEAGUE</div>
     <select id="set-scoring" class="set-sel" onchange="applySetScoring(this.value)" title="Scoring format">
