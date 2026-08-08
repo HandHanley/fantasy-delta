@@ -350,17 +350,32 @@ def fetch_current_teams():
             pdf = pdf[pdf[week_c] == pdf[week_c].max()]
         pdf = pdf.dropna(subset=[name_c, team_c, pos_c])
         pdf = pdf[pdf[pos_c].isin(SKILL)]
-        # (name, pos) -> set of teams seen; only emit unambiguous ones
+        # (NORMALIZED name, pos) -> set of teams seen; only emit unambiguous ones.
+        #
+        # The name is normalized because the two feeds spell people differently:
+        # the roster feed's full_name carries suffixes ("Deebo Samuel Sr.") while
+        # the stats feed's player_name often does not ("Deebo Samuel"). The
+        # lookup side keys off the stats name, so an exact tuple match silently
+        # dropped every suffixed player and left them on their baked RAW team —
+        # invisible, because a miss is indistinguishable from "no override".
+        # norm() is the same function match_names() already uses, so both joins
+        # now agree on what a name is.
         from collections import defaultdict
         seen = defaultdict(set)
+        raw_names = defaultdict(set)
         for _, row in pdf.iterrows():
-            seen[(row[name_c], row[pos_c])].add(row[team_c])
+            key = (norm(row[name_c]), row[pos_c])
+            seen[key].add(row[team_c])
+            raw_names[key].add(str(row[name_c]))
         out, ambiguous = {}, []
-        for (nm, pos), teams in seen.items():
+        for key, teams in seen.items():
             if len(teams) == 1:
-                out[(nm, pos)] = next(iter(teams))
+                out[key] = next(iter(teams))
             else:
-                ambiguous.append(f'{nm}/{pos}:{sorted(teams)}')
+                # Either a genuine mid-season move, or two distinct players who
+                # normalize to the same key. Both fail CLOSED (baked team kept).
+                shown = '/'.join(sorted(raw_names[key]))
+                ambiguous.append(f'{shown}/{key[1]}:{sorted(teams)}')
         if ambiguous:
             print(f'[DELTA] roster feed: {len(ambiguous)} ambiguous (name,pos) skipped — {ambiguous[:6]}')
         print(f'[DELTA] roster feed: 2026 skill-position teams for {len(out)} (name,pos) keys')
@@ -1098,16 +1113,34 @@ def main():
     # canonical form keeps the data clean and the "moved" log honest.
     TEAM_CANON = {'JAX': 'JAC', 'LA': 'LAR', 'WSH': 'WAS', 'ARZ': 'ARI'}
     team_overrides = {}
+    unresolved = []
     if roster_teams:
         for dn, nfl_name in matched.items():
             pos = meta.get(dn, (None, None))[1]
             if not pos:
                 continue
-            t = roster_teams.get((nfl_name, pos))   # name AND position must agree
+            # Normalized on BOTH sides — see fetch_current_teams() for why.
+            t = roster_teams.get((norm(nfl_name), pos))   # name AND position must agree
             if t:
                 team_overrides[dn] = TEAM_CANON.get(t, t)
+            else:
+                unresolved.append(f'{dn}/{pos}')
         moved = [f'{dn} {meta[dn][0]}->{t}' for dn, t in team_overrides.items() if dn in meta and meta[dn][0] != t]
-        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} genuine moves: {moved[:20]}')
+        # Print the FULL move list, not a slice. This is the line that tells you
+        # whether a real-world signing reached the model, so a truncated tail is
+        # exactly the wrong thing to hide (21 moves printing 20 sent us chasing
+        # a phantom Diggs bug).
+        print(f'[DELTA] team overrides: {len(team_overrides)} resolved, {len(moved)} genuine moves: {moved}')
+        # Two distinct ways a DELTA player keeps their baked team. Logged
+        # separately because they have different fixes: a stats-unmatched player
+        # needs a name alias, a roster-feed miss needs the feed to carry them.
+        no_stats = sorted(set(delta_names) - set(matched.keys()))
+        if unresolved:
+            print(f'[DELTA] team overrides: {len(unresolved)} matched players absent from the 2026 roster feed '
+                  f'(baked team kept): {sorted(unresolved)[:30]}')
+        if no_stats:
+            print(f'[DELTA] team overrides: {len(no_stats)} DELTA players have no 2025 stats match, so no team '
+                  f'override is possible (baked team kept): {no_stats[:30]}')
     rz_data, epa_raw = fetch_pbp(SEASONS)
     players, headshot_out, rec_pg, ts_delta = build_output(agg, matched, rz_data, headshots)
 
