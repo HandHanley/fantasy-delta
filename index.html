@@ -1032,7 +1032,7 @@ function renderRankings(){
     <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
     <td style="font-size:11px;font-weight:600;color:var(--fog-2);padding-right:6px" class="col-hide-mobile">${p.pos}${posRankMap[p.n]||''}</td>
     <td style="font-weight:600${p.mktStale?';color:var(--fog)':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span data-tip="Not in the latest market fetch — this market value may be stale." style="color:var(--topaz);cursor:help">†</span>':''}</td>
-    <td class="pname" style="font-weight:600;white-space:nowrap">${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
+    <td class="pname" style="font-weight:600;white-space:nowrap">${typeof injBadge==='function'?injBadge(p.n):''}${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt" style="margin-right:3px;font-size:9px">R</span>':(p.hasOv?'<span class="badge bn" style="margin-right:3px">✎</span>':''); })()}${p.n}</td>
     <td class="txt">${p.pos}</td><td class="col-hide-mobile">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="col-hide-mobile txt">${p.t}</td>
     <td>${(p.g25===0&&p.ppg25>0)?'—':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td><td class="col-hide-mobile">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>
@@ -5141,6 +5141,7 @@ window.addEventListener('load', async function() {
   await loadPlayerStats();
   await loadPlayerContracts();
   await loadRipples(); await loadReads();
+  await loadInjuryOverrides();   // season-enders; must run before first render
   await ensureStartData();
   // Unlock gated tabs BEFORE the first render, so section filtering and the landing
   // restore see the final tab set and nothing has to re-render to correct itself.
@@ -5151,7 +5152,7 @@ window.addEventListener('load', async function() {
 if (document.readyState === 'complete') {
   syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); if(typeof renderProspects==='function') renderProspects(); }).then(() => initEngineAudit());
+  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => loadInjuryOverrides()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); if(typeof renderProspects==='function') renderProspects(); }).then(() => initEngineAudit());
 }
 
 </script>
