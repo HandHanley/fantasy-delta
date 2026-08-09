@@ -3838,11 +3838,17 @@ function dsAge(age, pos) {
   return lo + (hi - lo) * frac;
 }
 
-function dsProduction(ppg25, ppg24, ppg23, g25, pos, p) {
+function dsProduction(ppg25, ppg24, ppg23, g25, pos, p, neutral) {
   // Production QUALITY relative to positional baseline, recency-weighted. Max 32 pts.
+  //
+  // `neutral` — omit LEAGUE scarcity from the calculation (the positional DS_SCAR
+  // constant still applies). calcDynastyScore passes true and re-applies scarcity
+  // AFTER the 45-point clip; see the note there for why. Callers that want the
+  // historical behaviour just omit the argument.
   const _fmtScale = (DS_FMT_SCALE[typeof scoringFmt!=='undefined'?scoringFmt:'half_tep'] || DS_FMT_SCALE.half_tep)[pos] || 1;
   const avg = (DS_AVG[pos]||12) * _fmtScale, elite = (DS_ELITE[pos]||14) * _fmtScale;
-  const trans = DS_TRANS[pos]||1.15, scarMult = (DS_SCAR[pos]||1.0) * scarcity(pos, leagueTeams, qbFmt);
+  const trans = DS_TRANS[pos]||1.15;
+  const scarMult = (DS_SCAR[pos]||1.0) * (neutral ? 1 : scarcity(pos, leagueTeams, qbFmt));
 
   // No NFL data (rookie) — placeholder scales with draft capital (premium picks get benefit of doubt)
   if (ppg25===0 && ppg24===0 && ppg23===0) return p ? dsRookieProd(p) : 12;
@@ -4025,8 +4031,9 @@ function calcDynastyScore(p) {
   const pos = p.pos||p.p||'WR';
   const noNFL = p.g25===0;  // rookie or no NFL data — cap applies (unproven)
   const age = p.a || 22;
+  const scar = scarcity(pos, leagueTeams, qbFmt) || 1;
   const a    = dsAge(age, pos);                                                       // raw max 25
-  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p);  // raw max 32
+  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p, true); // league-NEUTRAL, raw max 32
   const opp  = dsOpportunity(p);                                                     // raw max 33
   const c    = dsCont(p);                                                            // max 10
 
@@ -4036,7 +4043,21 @@ function calcDynastyScore(p) {
   // predicts the next 2-3 seasons more reliably than the same output at 30+.
   const mult  = dsYouthMult(age);
   const aW    = (a / 25)  * 15;
-  const prodW = Math.min(45, (prod / 32) * 45 * mult);
+
+  /* LEAGUE SCARCITY IS APPLIED AFTER THE CLIP — ORDER IS LOAD-BEARING.
+     Scarcity used to be multiplied in INSIDE dsProduction, so it was clipped twice
+     (at 32 there, at 45 here, the second time after the youth multiplier). For any
+     player whose contribution exceeded the ceiling the entire league adjustment was
+     discarded. Measured on live data: Brock Bowers scored 85 in 8-team 1QB AND 85
+     in 14-team superflex — identical — while unclipped players at his own position
+     moved 7-8 points. 33 players were completely league-insensitive, including all
+     13 rookies (dsRookieProd never saw scarcity at all).
+     Clipping on a league-neutral basis and applying scarcity afterwards means the
+     adjustment can never be thrown away. scarcity(pos,12,'sf') === 1.000 exactly,
+     so every 12-team-superflex score — the freeze anchor — is unchanged.
+     The multipliers themselves are externally validated: 29 of 32 agree with the
+     FantasyCalc VOR market factor within 0.06 (data/scarcity-validation.json). */
+  const prodW = Math.min(45, (prod / 32) * 45 * mult) * scar;
   const oppW  = (opp / 33) * 30;
 
   // RB OPPORTUNITY DOWNWEIGHT (backtest-diagnosed): usage/Workhorse axis overlaps
@@ -4792,14 +4813,18 @@ function buildDSBreakdownHTML(p){
   const noNFL=p.g25===0;
   const age=p.a||22;
   const aPts=dsAge(age,pos);
-  const prodPts=dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p);
+  // MUST mirror calcDynastyScore exactly, including the league-neutral prod and the
+  // post-clip scarcity multiply. If that changes, change it here in the same commit
+  // or the displayed bars stop summing to the displayed score.
+  const scar=scarcity(pos, leagueTeams, qbFmt) || 1;
+  const prodPts=dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p,true);
   const oppPts=dsOpportunity(p);
   const conPts=dsCont(p);
   const col=dsColor(ds);
   // Scale to effective weighted values (mirrors calcDynastyScore)
   const mult=dsYouthMult(age);
   const aW=Math.round((aPts/25)*15*10)/10;
-  const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*10)/10;
+  const prodW=Math.round(Math.min(45,(prodPts/32)*45*mult)*scar*10)/10;
   const oppW=Math.round((oppPts/33)*30*10)/10;
   const hasNFLProd=(p.ppg25||0)>0||(p.ppg24||0)>0||(p.ppg23||0)>0;
   const multLbl=(mult>1.00 && hasNFLProd)?' ×'+mult.toFixed(2):'';
