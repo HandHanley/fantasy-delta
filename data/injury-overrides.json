@@ -1,0 +1,9 @@
+{
+  "_comment": "Hand-maintained list of players CONFIRMED out for the full season. This is the ONLY thing that zeroes a projection. It is deliberately manual: Sleeper's IR flag means 'unavailable now', not 'done for the year' — NFL rules permit return from injured reserve and designated-to-return is routine, so automating IR -> 0 would print false zeros on players who come back. Sleeper's status still drives a visible IR/PUP badge automatically; that is display only. Effects of an entry here: projected PPG goes to 0, an OUT tag appears, and the player is excluded from the accuracy-ledger graded set (a near-zero projection on a player everyone knows is out is not a prediction the model made). Model value and DELTA Score are deliberately NOT touched — the market prices the absence, and the DELTA Score picks it up on its own at the offseason roll when the missed season lands in the data. See docs/ACCURACY-LEDGER.md section 6. Keys beginning with underscore are ignored. Remove an entry once the player is active again.",
+
+  "Ricky Pearsall": {
+    "out_for_season": true,
+    "since": "2026-08-07",
+    "note": "PCL surgery, out for 2026. Confirmed via team announcement. VERIFY before the 6 Sep freeze that this is still accurate and that no other confirmed season-enders are missing from this file — anything stale at freeze time is frozen permanently."
+  }
+}
