@@ -49,6 +49,23 @@ vm.createContext(sb); vm.runInContext(src, sb);
   H.recompute();
 
   const comp = H.COMP;
+
+  /* CENTER FIRST — ORDER IS LOAD-BEARING.
+     mvAsset() runs values through applyCenter(), which divides by MV_CENTER.
+     computeMvCenter() must itself run while MV_CENTER===1 (raw basis), so the
+     sequence is: compute -> set -> read everything else.
+
+     This block previously sat AFTER the player loop, so mv, gap AND the positional
+     ranks were all recorded on the raw basis (MV_CENTER===1) while verdicts were
+     read on the centered basis (~0.84). Measured against live data:
+       - 76 of 409 players had a recorded gap whose SIGN contradicted their
+         recorded verdict (Jalen Hurts: gap -1.6% but verdict "strong buy")
+       - 262 of 409 positional ranks moved once centered (max shift 11 places)
+     Ranks move because applyCenter() is SELECTIVE, not a uniform divisor: values
+     already at/above market are left alone and only below-market values are
+     scaled, so the transform does not preserve order. */
+  H.setCenter(H.computeMvCenter());
+
   // positional ranks at the anchor
   const byPosMv = {}, byPosMk = {};
   for (const pos of ['QB','RB','WR','TE']) {
@@ -76,13 +93,12 @@ vm.createContext(sb); vm.runInContext(src, sb);
     };
   }
 
-  // verdicts: center on the live population median, then read vTag — the same
-  // code path the app uses, so the frozen verdicts match the site exactly
-  H.setCenter(H.computeMvCenter());
+  // verdicts: MV_CENTER was set above, so these are read on the SAME basis the
+  // mv/gap figures were recorded on — and the same basis the live app uses.
   for (const c of comp) {
     if (!players[c.n]) continue;
-    const vm = (H.vTag(c).match(/>([a-z ]+)</) || [, null])[1];
-    players[c.n].verdict = vm;
+    const vTxt = (H.vTag(c).match(/>([a-z ]+)</) || [, null])[1];
+    players[c.n].verdict = vTxt;
   }
 
   // human-readable headline: the calls the season will be judged on
