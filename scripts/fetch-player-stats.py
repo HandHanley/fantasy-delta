@@ -422,16 +422,17 @@ def fetch_sleeper_teams():
             raw = json.loads(resp.read().decode('utf-8'))
     except Exception as e:
         print(f'[DELTA] Sleeper feed unavailable ({e}) — falling back to nflverse roster feed')
-        return None
+        return None, {}
 
     if not isinstance(raw, dict) or not raw:
         print('[DELTA] Sleeper feed: empty or unexpected shape — falling back to nflverse')
-        return None
+        return None, {}
 
     SKILL_POS = {'QB', 'RB', 'WR', 'TE'}
     seen = defaultdict(set)
     raw_names = defaultdict(set)
     free_agents = 0
+    injuries = {}
     for _pid, p in raw.items():
         if not isinstance(p, dict):
             continue
@@ -442,6 +443,23 @@ def fetch_sleeper_teams():
             [x for x in (p.get('first_name'), p.get('last_name')) if x])
         if not full:
             continue
+
+        # Injury status is captured for EVERY skill player, including free
+        # agents, and is recorded independently of the team decision below.
+        #
+        # IMPORTANT: this is a DISPLAY signal only. It never zeroes a
+        # projection. NFL rules permit return from injured reserve and
+        # designated-to-return is routine, so 'IR' means "out now", not "out
+        # for the season". Season-ending calls are made by hand in
+        # data/injury-overrides.json. See docs/ACCURACY-LEDGER.md section 6.
+        st = (p.get('injury_status') or '').strip()
+        if st:
+            injuries[(norm(full), pos)] = {
+                'status': st,
+                'name': full,
+                'body_part': (p.get('injury_body_part') or '').strip() or None,
+            }
+
         team = p.get('team')
         if not team:
             free_agents += 1
@@ -459,8 +477,8 @@ def fetch_sleeper_teams():
     if ambiguous:
         print(f'[DELTA] Sleeper feed: {len(ambiguous)} ambiguous (name,pos) skipped — {ambiguous[:6]}')
     print(f'[DELTA] Sleeper feed: teams for {len(out)} skill (name,pos) keys '
-          f'({free_agents} free agents skipped)')
-    return out or None
+          f'({free_agents} free agents skipped) · {len(injuries)} carrying an injury status')
+    return (out or None), injuries
 
 
 def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
@@ -1112,6 +1130,36 @@ def load_contract_overrides():
     return out
 
 
+INJURY_LOG_FILE = Path(__file__).resolve().parent.parent / 'data' / 'injury-log.jsonl'
+
+def append_injury_log(injury_status):
+    """Append today's injury statuses, one JSON object per line.
+
+    NOTHING READS THIS IN 2026. It exists so that next offseason there is a real
+    record of when players went down and came back, to calibrate in-season
+    ripple magnitudes against. Building that model from nothing would mean
+    waiting another full season; this costs a few KB a night.
+
+    Append-only and one line per day, so it stays diffable and a bad run
+    corrupts one line rather than the file.
+    """
+    if not injury_status:
+        return
+    try:
+        entry = {
+            'date': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+            'ts': datetime.now(timezone.utc).isoformat(),
+            'players': {k: v.get('status') for k, v in sorted(injury_status.items())},
+        }
+        INJURY_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(INJURY_LOG_FILE, 'a', encoding='utf-8') as fh:
+            fh.write(json.dumps(entry) + '\n')
+        print(f'[DELTA] injury log: appended {len(entry["players"])} statuses to {INJURY_LOG_FILE.name}')
+    except Exception as e:
+        # Never fail the run over the observability log.
+        print(f'[DELTA] injury log append failed ({e}) — continuing')
+
+
 def fetch_contracts(delta_names):
     """Fetch active NFL contracts from nflverse (sourced from OTC)"""
     print("\n[DELTA] Fetching contracts from nflverse/OTC...")
@@ -1274,7 +1322,7 @@ def main():
     agg, headshots, qb_starts = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     roster_teams = fetch_current_teams()
-    sleeper_teams = fetch_sleeper_teams()
+    sleeper_teams, sleeper_injuries = fetch_sleeper_teams()
     qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
     # Team overrides for the runtime: only DELTA players the roster feed
     # resolves; RAW's baked team stays the fallback for everyone else.
@@ -1302,6 +1350,7 @@ def main():
         'NYJ','PHI','PIT','SEA','SF','TB','TEN','WAS',
     }
     team_overrides = {}
+    injury_status = {}
     unresolved = []
     unknown_codes = {}
     disagreements = []
@@ -1366,6 +1415,22 @@ def main():
             for code, names in sorted(unknown_codes.items()):
                 print(f'[DELTA] !!   {code}: {len(names)} player(s) — {sorted(names)[:15]}')
             print('[DELTA] ' + '!' * 68)
+        # Map the Sleeper injury statuses onto DELTA names, using the same
+        # normalized (name, position) join the team override uses.
+        for dn, nfl_name in matched.items():
+            pos = meta.get(dn, (None, None))[1]
+            if not pos:
+                continue
+            rec = (sleeper_injuries or {}).get((norm(nfl_name), pos))
+            if rec:
+                injury_status[dn] = {'status': rec['status'], 'body_part': rec.get('body_part')}
+        if injury_status:
+            by_status = {}
+            for dn, r in injury_status.items():
+                by_status.setdefault(r['status'], []).append(dn)
+            print('[DELTA] injury status: ' + ', '.join(
+                f'{k}={len(v)}' for k, v in sorted(by_status.items())))
+            append_injury_log(injury_status)
         no_stats = sorted(set(delta_names) - set(matched.keys()))
         if unresolved:
             print(f'[DELTA] team overrides: {len(unresolved)} matched players absent from the 2026 roster feed '
@@ -1420,6 +1485,7 @@ def main():
         'headshots': headshot_out,
         'qb_roles': qb_roles,
         'teams': team_overrides,
+        'injury': injury_status,   # display-only; see docs/ACCURACY-LEDGER.md s.6
         'epa': epa_out,
         'draft': draft_map,
         'college': college_map,
