@@ -3222,19 +3222,50 @@ PROSPECTS_2026.forEach(p => {
 
 
 // ── WATCHLIST (localStorage) ──────────────────────────────────────────────
-function getWatchlist() {
-  try { return JSON.parse(localStorage.getItem('delta_watchlist') || '[]'); }
-  catch(e) { return []; }
+/* These three used to be an INDEPENDENT second implementation. They wrote bare
+   names ("Josh Allen") to the same delta_watchlist key that delta-engine.js
+   writes namespaced entries ("nfl:Josh Allen") to, which produced three faults:
+     1. A star set on the rookie board never appeared in the Watchlist tab
+        (dwHas looks for "nfl:Name" and found a bare "Name"), and vice versa.
+     2. Neither path called DSYNC.noteWatch, so rookie-board stars NEVER synced
+        to the account — they were silently local-only.
+     3. On sign-in, pullAndMerge normalises bare entries to "nfl:Name", so the
+        rookie-board stars visually VANISHED at the moment of signing in.
+   They now delegate to the engine's namespaced API, which is the single writer
+   and carries the DSYNC hook. Keep it that way: do not reintroduce a direct
+   localStorage write to delta_watchlist anywhere in this file. */
+
+/* One-time, idempotent: promote any legacy bare entry to the 'nfl:' namespace so
+   existing users keep the stars they already set. Signed-in users got this free
+   via pullAndMerge; signed-out users never ran it, so it has to happen locally.
+   Runs before first render (see bootDelta) and is safe to call repeatedly. */
+function migrateLegacyWatchlist(){
+  try{
+    const raw = JSON.parse(localStorage.getItem('delta_watchlist') || '[]');
+    if(!Array.isArray(raw)) return;
+    let changed = false;
+    const seen = {}, out = [];
+    for(const e of raw){
+      if(typeof e !== 'string' || !e) { changed = true; continue; }
+      const k = e.indexOf(':') < 0 ? ('nfl:' + e) : e;   // bare → nfl
+      if(k !== e) changed = true;
+      if(seen[k]) { changed = true; continue; }
+      seen[k] = 1; out.push(k);
+    }
+    if(changed){
+      localStorage.setItem('delta_watchlist', JSON.stringify(out));
+      console.log('[DELTA] watchlist migrated to namespaced entries:', out.length);
+    }
+  }catch(e){ /* private mode / quota — the app must still boot */ }
 }
-function isWatched(name) { return getWatchlist().includes(name); }
+
+function getWatchlist() {                    // kept as a back-compat alias
+  return (typeof dwList === 'function') ? dwList('nfl') : [];
+}
+function isWatched(name) { return typeof dwHas === 'function' && dwHas(name, 'nfl'); }
 function toggleWatch(e, name) {
-  e.stopPropagation();
-  const list = getWatchlist();
-  const idx = list.indexOf(name);
-  if (idx > -1) list.splice(idx, 1);
-  else list.push(name);
-  try { localStorage.setItem('delta_watchlist', JSON.stringify(list)); }
-  catch(e) {}
+  if (e && e.stopPropagation) e.stopPropagation();
+  if (typeof dwToggle === 'function') dwToggle(name, 'nfl');   // syncs via DSYNC
   renderProspects();
 }
 
@@ -3259,14 +3290,12 @@ document.addEventListener('click', function(e) {
   e.stopPropagation();
   const name = star.dataset.name;
   if (!name) return;
-  const list = getWatchlist();
-  const idx = list.indexOf(name);
-  if (idx > -1) list.splice(idx, 1);
-  else list.push(name);
-  try { localStorage.setItem('delta_watchlist', JSON.stringify(list)); } catch(e) {}
-  // Update all stars for this player
+  // Single writer: dwToggle namespaces the entry AND fires DSYNC.noteWatch.
+  // This handler previously wrote a bare name straight to localStorage, which
+  // bypassed both. Do not revert it to a direct write.
+  const watched = (typeof dwToggle === 'function') ? dwToggle(name, 'nfl') : false;
+  // Update every star for this player
   document.querySelectorAll('.watch-star[data-name="' + name + '"]').forEach(s => {
-    const watched = list.includes(name);
     s.textContent = watched ? '★' : '☆';
     s.style.color = watched ? 'var(--topaz)' : 'var(--fog-2)';
   });
@@ -5162,6 +5191,9 @@ function renderSlpTradeAssist(){
    Never inline a second copy of these steps. */
 async function bootDelta(){
   syncSettingsUI();
+  // Normalise any legacy bare watchlist entries BEFORE the first render, so the
+  // rookie board and the Watchlist tab agree on day one rather than after a toggle.
+  migrateLegacyWatchlist();
   // NOTE: showDataFreshness() is deliberately NOT called here. It used to be primed
   // with (now, 0), which rendered "Just updated" before a single byte had loaded.
   // DL_FRESH===null renders "loading…" instead, and loadLiveMarketValues() reports
