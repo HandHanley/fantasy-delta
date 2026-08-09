@@ -4076,14 +4076,28 @@ function injBadge(n){
   const st=rec && rec.status;
   if(!st) return '';
   const lbl=String(st).toUpperCase();
+
+  /* ROSTER DESIGNATIONS ONLY.
+     The test a tag has to pass is whether it matches DELTA's time horizon and
+     explains itself without a click.
+
+       IR / PUP / NFI / SUS  — multi-week minimums, structural, self-explanatory.
+                               The label IS the explanation, so the tag does not
+                               invite a question DELTA cannot answer.
+
+       Questionable / Doubtful / Out — DELIBERATELY NOT SHOWN. These describe a
+                               single Sunday, churn daily off practice reports,
+                               and most Questionable players suit up. At a 2-3
+                               year dynasty horizon they are noise, and DELTA is
+                               not a news product — Sleeper and the beat writers
+                               own that clock and always will. A "Q" that makes
+                               someone click through to nothing is worse than no
+                               tag at all.
+
+     Season-ending calls still come from data/injury-overrides.json, handled
+     above, and carry their own note in the tooltip. */
   if(lbl==='IR'||lbl==='PUP'||lbl==='NFI'||lbl==='SUS')
     return '<span class="badge bw" style="margin-right:3px;font-size:9px" title="Sleeper status: '+lbl+' — currently unavailable. Not necessarily out for the season.">'+lbl+'</span>';
-  if(lbl==='OUT')
-    return '<span class="badge bw" style="margin-right:3px;font-size:9px" title="Sleeper status: out">OUT</span>';
-  if(lbl==='DOUBTFUL')
-    return '<span class="badge bw" style="margin-right:3px;font-size:9px" title="Sleeper status: doubtful">D</span>';
-  if(lbl==='QUESTIONABLE')
-    return '<span class="badge bn" style="margin-right:3px;font-size:9px" title="Sleeper status: questionable">Q</span>';
   return '';
 }
 function sTag(s){const c=s>=70?'bs':s>=55?'bi':s>=40?'bw':'bd';return`<span class="badge ${c}">${s}</span>`;}
