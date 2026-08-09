@@ -73,6 +73,61 @@ function sliceFromResponse(data) {
   return out;
 }
 
+/**
+ * Append one line per night to data/market-price-log.jsonl.
+ *
+ * Records the DEFAULT SETTING ONLY (12-SF). The full grid is eight times the
+ * size for information that is almost perfectly correlated across settings —
+ * FantasyCalc reprices the whole board together. The freeze captures the full
+ * grid once, which is what the basis-independence argument actually needs; the
+ * nightly series only has to show MOVEMENT over time.
+ *
+ * Stores value and overall rank per player. Rank matters because raw values
+ * drift as the pool changes (picks convert to players, veterans retire), so a
+ * player can hold identical real-world value and show a different number. Rank
+ * is immune to that, and it is what the 2027 comparison is graded on.
+ *
+ * JSONL, append-only: one line per day keeps it diffable, and a bad run
+ * corrupts a single line rather than the file.
+ */
+function appendPriceLog(settings, defaultKey) {
+  const slice = settings[defaultKey];
+  if (!slice) { console.warn('[DELTA] price log: default slice missing, skipped'); return; }
+  try {
+    const players = {};
+    for (const [name, v] of Object.entries(slice)) {
+      if (!v || v.value == null) continue;
+      players[name] = [v.value, v.overallRank || null];   // array, not object: ~40% smaller
+    }
+    const line = JSON.stringify({
+      date: new Date().toISOString().slice(0, 10),
+      ts: new Date().toISOString(),
+      setting: defaultKey,
+      n: Object.keys(players).length,
+      players,
+    });
+    const p = path.join(process.cwd(), 'data', 'market-price-log.jsonl');
+
+    // One line per DAY. A re-run on the same date replaces that day's line
+    // rather than appending a duplicate, so a manual workflow_dispatch does not
+    // put two rows on one date and quietly skew any future series analysis.
+    const today = new Date().toISOString().slice(0, 10);
+    let prior = [];
+    if (fs.existsSync(p)) {
+      prior = fs.readFileSync(p, 'utf8').split('\n').filter(Boolean)
+        .filter(l => { try { return JSON.parse(l).date !== today; } catch (e) { return true; } });
+    }
+    fs.writeFileSync(p, prior.concat(line).join('\n') + '\n');
+    const kb = Math.round(fs.statSync(p).size / 1024);
+    console.log(`[DELTA] price log: ${Object.keys(players).length} players at ${defaultKey} ` +
+                `(${prior.length + 1} days recorded, ${kb}KB)`);
+  } catch (e) {
+    // Never fail the run over the observability log — fresh market data
+    // publishing matters more than the archive.
+    console.warn('[DELTA] price log append failed:', e.message);
+  }
+}
+
 async function main() {
   console.log(`[DELTA] Fetching FantasyCalc grid at ${new Date().toISOString()} (ppr=${PPR})`);
 
@@ -111,6 +166,10 @@ async function main() {
   const kb = Math.round(fs.statSync(outPath).size / 1024);
   console.log(`[DELTA] Wrote ${outPath} — ${Object.keys(settings).length} settings, ` +
               `${out.playerCount} players at default, ${kb}KB`);
+
+  // Append-only history. Runs AFTER the grid is safely written, so a problem
+  // here can never cost us the fresh market data.
+  appendPriceLog(settings, DEFAULT);
 }
 
 main().catch(e => { console.error('[DELTA] FATAL:', e.message); process.exit(1); });
