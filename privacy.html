@@ -1,169 +1,243 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Description" content="What DELTA collects, why, and how to have it deleted.">
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    body {background-color: #0a0d14}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1; min-height: 17.0px}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 25.0px Futura; color: #e5ecf1; -webkit-text-stroke: #e5ecf1}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.5px '.AppleSystemUIFontMonospaced'; color: #4a5d6d; -webkit-text-stroke: #4a5d6d}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px '.AppleSystemUIFontMonospaced'; color: #4a5d6d; -webkit-text-stroke: #4a5d6d}
-    p.p6 {margin: 0.0px 0.0px 22.8px 0.0px; font: 15.0px 'Helvetica Neue'; color: #7a8ea4; -webkit-text-stroke: #7a8ea4}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.5px '.AppleSystemUIFontMonospaced'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.5px '.AppleSystemUIFontMonospaced'; color: #7a8ea4; -webkit-text-stroke: #7a8ea4}
-    p.p11 {margin: 0.0px 0.0px 10.2px 0.0px; font: 14.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1}
-    p.p13 {margin: 0.0px 0.0px 10.2px 0.0px; font: 12.0px 'Helvetica Neue'; color: #4a5d6d; -webkit-text-stroke: #4a5d6d}
-    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.5px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1}
-    li.li12 {margin: 0.0px 0.0px 4.8px 0.0px; font: 14.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1}
-    span.s1 {font-kerning: none}
-    span.s2 {font-kerning: none; background-color: #0e141e}
-    span.s3 {-webkit-text-stroke: 0px #000000}
-    span.s4 {font-kerning: none; color: #2ccdb1; -webkit-text-stroke: 0px #2ccdb1}
-    span.s5 {font: 11.5px 'Helvetica Neue'; font-kerning: none; color: #2ccdb1; -webkit-text-stroke: 0px #2ccdb1}
-    table.t1 {border-collapse: collapse}
-    td.td1 {width: 275.1px; border-style: solid; border-width: 0.0px 0.0px 1.0px 0.0px; border-color: #e5ecf1 #e5ecf1 #171f2c #e5ecf1; padding: 6.0px 10.0px 6.0px 0.0px}
-    td.td2 {width: 448.9px; border-style: solid; border-width: 0.0px 0.0px 1.0px 0.0px; border-color: #7a8ea4 #7a8ea4 #171f2c #7a8ea4; padding: 6.0px 10.0px 6.0px 0.0px}
-    td.td3 {width: 275.1px; padding: 6.0px 10.0px 6.0px 0.0px}
-    td.td4 {width: 448.9px; padding: 6.0px 10.0px 6.0px 0.0px}
-    ul.ul1 {list-style-type: disc}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy — DELTA</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
+<meta name="description" content="What DELTA collects, why, and how to have it deleted.">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DELTA">
+<meta property="og:title" content="Privacy — DELTA">
+<meta property="og:description" content="What DELTA collects, why, and how to have it deleted.">
+<meta property="og:url" content="https://fantasydelta.com/privacy.html">
+<meta name="theme-color" content="#0A0F1A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@400;500;700&family=Josefin+Sans:wght@600;700&display=swap">
+
+<style>
+:root{
+  --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
+  --teal-br:#2DD4BF; --teal:#14B8A6; --emerald:#10B981;
+  --mint:#CCFBF1; --fog:#8CA0B3; --fog-2:#5C7080; --paper:#EAF0F4;
+  --coral:#E05745; --topaz:#E0B34D;
+  --teal-tint:rgba(45,212,191,.12); --teal-soft:rgba(45,212,191,.07);
+  --topaz-tint:rgba(224,179,77,.14);
+  --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+  --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--ink);color:var(--paper);
+  font-size:15px;line-height:1.65;padding:1.5rem 1rem 3rem;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto}
+
+/* ── Header lockup ─────────────────────────────────────────────────────── */
+.dl-head{display:flex;align-items:center;gap:14px}
+.dl-mark{width:46px;height:46px;flex-shrink:0;display:block}
+.dl-word{font-family:var(--geo);font-weight:700;font-size:25px;letter-spacing:5.5px;
+  text-transform:uppercase;color:var(--paper);line-height:1;padding-left:1px}
+.dl-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fog-2);margin-top:5px}
+
+h1{font-family:var(--geo);font-weight:700;font-size:27px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--paper);line-height:1.1;margin:1.8rem 0 .35rem}
+.updated{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fog-2)}
+.lede{color:var(--fog);font-size:15.5px;margin:1.25rem 0 2rem}
+
+h2{font-size:15px;font-weight:800;color:var(--teal-br);letter-spacing:.01em;
+  margin:2.25rem 0 .7rem}
+h3{font-size:13.5px;font-weight:700;color:var(--paper);margin:1.5rem 0 .4rem}
+p{margin-bottom:.85rem}
+ul{margin:0 0 .85rem 1.15rem}
+li{margin-bottom:.45rem}
+a{color:var(--teal-br);text-decoration:none;border-bottom:1px solid var(--teal-tint)}
+a:hover{border-bottom-color:var(--teal-br)}
+.fine{font-size:12.5px;color:var(--fog-2);margin-top:.6rem}
+
+/* ── Definition rows (replaces the fixed-width tables) ─────────────────── */
+.defs{border-top:1px solid var(--line);margin:.4rem 0 .5rem}
+.def{display:grid;grid-template-columns:230px 1fr;gap:0 20px;
+  border-bottom:1px solid var(--line);padding:11px 0;align-items:start}
+.def dt{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--paper)}
+.def dd{color:var(--fog);font-size:13.5px;line-height:1.55}
+
+/* ── Callout ───────────────────────────────────────────────────────────── */
+.note{background:var(--ink-2);border:1px solid var(--line);border-left:2px solid var(--teal);
+  border-radius:8px;padding:14px 16px;margin:1rem 0 1.25rem}
+.note p:last-child{margin-bottom:0}
+
+footer{margin-top:2.75rem;padding-top:.9rem;border-top:1px solid var(--line);
+  display:flex;gap:16px;flex-wrap:wrap;align-items:center;
+  font-size:11px;color:var(--fog-2);line-height:1.6}
+footer a{color:var(--fog);border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
+
+@media(max-width:620px){
+  body{font-size:14.5px;padding:1.15rem .9rem 2.5rem}
+  .dl-head{gap:10px}
+  .dl-mark{width:38px;height:38px}
+  .dl-word{font-size:21px;letter-spacing:4px}
+  h1{font-size:23px;letter-spacing:2px}
+  .lede{font-size:15px}
+  /* stack the definition rows so nothing can overflow a phone */
+  .def{grid-template-columns:1fr;gap:3px}
+  .def dt{font-size:11.5px;color:var(--teal-br)}
+  .def dd{font-size:14px}
+}
+</style>
+
+<script>
+/* Apply the saved accent theme BEFORE first paint (no flash of the default).
+   Self-contained on purpose — this page loads no app code. */
+(function(){try{
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+  var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
+  function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
+  s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
+  s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
+}catch(e){}})();
+</script>
+
+<script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><b>DELTA</b></span></p>
-<p class="p3"><span class="s1">DYNASTY EFFICIENCY + LONG-TERM ANALYSIS</span></p>
-<h1 style="margin: 0.0px 0.0px 6.0px 0.0px; font: 27.0px Futura; color: #e5ecf1; -webkit-text-stroke: #e5ecf1"><span class="s1"><b>PRIVACY</b></span></h1>
-<p class="p5"><span class="s1">LAST UPDATED 8 AUGUST 2026</span></p>
-<p class="p6"><span class="s1">DELTA is a dynasty fantasy football analytics tool. It collects the minimum needed to make the site work and to sync your settings across your devices. There are no ads, no trackers that follow you to other sites, and nothing is sold.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">The short version</span></h2>
-<table cellspacing="0" cellpadding="0" class="t1">
-  <tbody>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">If you never sign in</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Nothing about you is stored on any server. Your settings and watchlist live in your own browser.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">If you sign in</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Your email address, plus the settings, watchlist, and Sleeper league details you already had.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">Sold or shared</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Never.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td3">
-        <p class="p8"><span class="s2">Deleting it all</span></p>
-      </td>
-      <td valign="top" class="td4">
-        <p class="p9"><span class="s2">Email a request and the account and its data are removed.</span></p>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">What DELTA stores</span></h2>
-<h3 style="margin: 0.0px 0.0px 4.2px 0.0px; font: 13.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1"><span class="s1">On your device, whether or not you sign in</span></h3>
-<p class="p11"><span class="s1">DELTA saves your preferences in your browser's local storage so the site remembers you between visits. That covers your league settings (league size, QB format, scoring format), your colour theme, your watchlist, your connected Sleeper league, and a cached list of Sleeper player names so the roster view loads quickly. None of this leaves your device unless you sign in. Clearing your browser data removes it.</span></p>
-<h3 style="margin: 0.0px 0.0px 4.2px 0.0px; font: 13.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1"><span class="s1">In your account, only if you sign in</span></h3>
-<p class="p11"><span class="s1">Signing in is optional. DELTA works fully without an account; signing in exists so your setup follows you from a laptop to a phone. When you do sign in, the following is stored:</span></p>
-<ul class="ul1">
-  <li class="li12"><span class="s3"></span><span class="s1">Your email address, used as the account identifier and to send sign-in links. If you sign in with Google, Google confirms your email address to DELTA. DELTA does not receive your Google password and cannot access your Gmail, contacts, Drive, or any other Google service.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">Your league settings and theme — league size, QB format, scoring format, colour theme.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">Your watchlist — the names of the NFL and college players you have starred.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">Your Sleeper league connection — league ID, league name, season, your roster ID and team name, and your Sleeper user ID and username. This is the information DELTA needs to show your roster.</span></li>
-</ul>
-<p class="p11"><span class="s1">There is no profile, no display name, and no password. DELTA does not ask for your real name, address, phone number, date of birth, or any payment information, because it has no use for them.</span></p>
-<h3 style="margin: 0.0px 0.0px 4.2px 0.0px; font: 13.0px 'Helvetica Neue'; color: #e5ecf1; -webkit-text-stroke: #e5ecf1"><span class="s1">Analytics</span></h3>
-<p class="p11"><span class="s1">DELTA uses GoatCounter to count page views. It is a privacy-focused analytics service that does not set cookies and does not build a profile of you across sites. It records aggregate counts, not individual people.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Who else is involved</span></h2>
-<p class="p11"><span class="s1">DELTA is a small independent project and relies on a few outside services. Each one sees only what it needs to do its job.</span></p>
-<table cellspacing="0" cellpadding="0" class="t1">
-  <tbody>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">Supabase</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Stores accounts and synced data. Hosted in the United States (US West).</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">Google</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Only if you choose "Continue with Google". Confirms your email address.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">GitHub Pages</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Serves the site itself.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td1">
-        <p class="p8"><span class="s2">GoatCounter</span></p>
-      </td>
-      <td valign="top" class="td2">
-        <p class="p9"><span class="s2">Aggregate page-view counts.</span></p>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" class="td3">
-        <p class="p8"><span class="s2">Sleeper</span></p>
-      </td>
-      <td valign="top" class="td4">
-        <p class="p9"><span class="s2">When you connect a league, your browser contacts Sleeper's public API directly, so Sleeper receives that request.</span></p>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<p class="p13"><span class="s1">Player statistics, contract data, and market values shown in DELTA are compiled ahead of time and served as static files from the site. Viewing them does not send any information about you to those data sources.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">What DELTA does not do</span></h2>
-<ul class="ul1">
-  <li class="li12"><span class="s3"></span><span class="s1">No selling, renting, or trading of personal information, to anyone, ever.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">No advertising and no advertising trackers.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">No third-party analytics that follow you across the web.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">No reading of your email, contacts, files, or anything else in your Google account.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">No marketing emails. The only emails DELTA sends are sign-in links you asked for.</span></li>
-</ul>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">How long it is kept</span></h2>
-<p class="p11"><span class="s1">Account data is kept for as long as the account exists. Delete the account and the associated settings, watchlist, and league records are deleted with it. Data stored in your browser stays until you clear it or sign out and clear it yourself.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Your choices</span></h2>
-<ul class="ul1">
-  <li class="li12"><span class="s3"></span><span class="s1">Use DELTA without an account. Everything except cross-device sync works signed out.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">Sign out at any time. Signing out does not delete anything; your local settings and watchlist stay on that device.</span></li>
-  <li class="li12"><span class="s3"></span><span class="s1">Get a copy of your data, correct it, or delete it. Email the address below and it will be handled.</span></li>
-</ul>
-<p class="p11"><span class="s1">Depending on where you live, you may have additional rights over your personal information, including the right to access it, correct it, delete it, or object to its use. DELTA honours these requests regardless of where you live — email is the way to make one.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Children</span></h2>
-<p class="p11"><span class="s1">DELTA is not directed at children under 13 and accounts should not be created by them. If you believe a child under 13 has created an account, email the address below and it will be removed.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Security</span></h2>
-<p class="p11"><span class="s1">Accounts are protected by database-level access rules, so one account cannot read another's data. Traffic is encrypted in transit. No system is perfect, and DELTA is a personal project rather than a company with a security team, so please do not store anything in it that you would be harmed by losing.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Changes</span></h2>
-<p class="p11"><span class="s1">If this policy changes in a way that meaningfully affects what is collected or how it is used, the date at the top will change and the change will be noted on the site.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.6px 0.0px; font: 15.0px 'Helvetica Neue'; color: #2ccdb1; -webkit-text-stroke: #2ccdb1"><span class="s1">Contact</span></h2>
-<p class="p11"><span class="s1">Questions, requests, or corrections: </span><span class="s4">revolver7724@gmail.com<span class="Apple-converted-space"> </span></span></p>
-<p class="p14"><span class="s1"><a href="file:///Users/smccarthy/Desktop/index.html">Back to DELTA<span class="s5"></span></a></span></p>
-<p class="p14"><span class="s1"><a href="file:///Users/smccarthy/Desktop/terms.html">Terms of service<span class="s5"></span></a></span></p>
+<div class="wrap">
+
+  <div class="dl-head">
+    <svg class="dl-mark" viewBox="0 0 128 128" aria-label="DELTA">
+      <defs>
+        <linearGradient id="hgL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+        <linearGradient id="hgR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+      </defs>
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#hgL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#hgR)"/>
+      <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
+      <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </svg>
+    <div>
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="dl-word">DELTA</span>
+      </div>
+      <div class="dl-sub">Dynasty Efficiency + Long-Term Analysis</div>
+    </div>
+  </div>
+
+  <h1>Privacy</h1>
+  <p class="updated">Last updated 8 August 2026</p>
+
+  <p class="lede">DELTA is a dynasty fantasy football analytics tool. It collects the minimum needed to make the site work and to sync your settings across your devices. There are no ads, no trackers that follow you to other sites, and nothing is sold.</p>
+
+  <h2>The short version</h2>
+  <dl class="defs">
+    <div class="def">
+      <dt>If you never sign in</dt>
+      <dd>Nothing about you is stored on any server. Your settings and watchlist live in your own browser.</dd>
+    </div>
+    <div class="def">
+      <dt>If you sign in</dt>
+      <dd>Your email address, plus the settings, watchlist, and Sleeper league details you already had.</dd>
+    </div>
+    <div class="def">
+      <dt>Sold or shared</dt>
+      <dd>Never.</dd>
+    </div>
+    <div class="def">
+      <dt>Deleting it all</dt>
+      <dd>Email a request and the account and its data are removed.</dd>
+    </div>
+  </dl>
+
+  <h2>What DELTA stores</h2>
+
+  <h3>On your device, whether or not you sign in</h3>
+  <p>DELTA saves your preferences in your browser's local storage so the site remembers you between visits. That covers your league settings (league size, QB format, scoring format), your colour theme, your watchlist, your connected Sleeper league, and a cached list of Sleeper player names so the roster view loads quickly. None of this leaves your device unless you sign in. Clearing your browser data removes it.</p>
+
+  <h3>In your account, only if you sign in</h3>
+  <p>Signing in is optional. DELTA works fully without an account; signing in exists so your setup follows you from a laptop to a phone. When you do sign in, the following is stored:</p>
+  <ul>
+    <li>Your email address, used as the account identifier and to send sign-in links. If you sign in with Google, Google confirms your email address to DELTA. DELTA does not receive your Google password and cannot access your Gmail, contacts, Drive, or any other Google service.</li>
+    <li>Your league settings and theme — league size, QB format, scoring format, colour theme.</li>
+    <li>Your watchlist — the names of the NFL and college players you have starred.</li>
+    <li>Your Sleeper league connection — league ID, league name, season, your roster ID and team name, and your Sleeper user ID and username. This is the information DELTA needs to show your roster.</li>
+  </ul>
+  <p>There is no profile, no display name, and no password. DELTA does not ask for your real name, address, phone number, date of birth, or any payment information, because it has no use for them.</p>
+
+  <h3>Analytics</h3>
+  <p>DELTA uses GoatCounter to count page views. It is a privacy-focused analytics service that does not set cookies and does not build a profile of you across sites. It records aggregate counts, not individual people.</p>
+
+  <h2>Who else is involved</h2>
+  <p>DELTA is a small independent project and relies on a few outside services. Each one sees only what it needs to do its job.</p>
+  <dl class="defs">
+    <div class="def">
+      <dt>Supabase</dt>
+      <dd>Stores accounts and synced data. Hosted in the United States (US West).</dd>
+    </div>
+    <div class="def">
+      <dt>Google</dt>
+      <dd>Only if you choose "Continue with Google". Confirms your email address.</dd>
+    </div>
+    <div class="def">
+      <dt>GitHub Pages</dt>
+      <dd>Serves the site itself.</dd>
+    </div>
+    <div class="def">
+      <dt>GoatCounter</dt>
+      <dd>Aggregate page-view counts.</dd>
+    </div>
+    <div class="def">
+      <dt>Sleeper</dt>
+      <dd>When you connect a league, your browser contacts Sleeper's public API directly, so Sleeper receives that request.</dd>
+    </div>
+  </dl>
+  <p class="fine">Player statistics, contract data, and market values shown in DELTA are compiled ahead of time and served as static files from the site. Viewing them does not send any information about you to those data sources.</p>
+
+  <h2>What DELTA does not do</h2>
+  <ul>
+    <li>No selling, renting, or trading of personal information, to anyone, ever.</li>
+    <li>No advertising and no advertising trackers.</li>
+    <li>No third-party analytics that follow you across the web.</li>
+    <li>No reading of your email, contacts, files, or anything else in your Google account.</li>
+    <li>No marketing emails. The only emails DELTA sends are sign-in links you asked for.</li>
+  </ul>
+
+  <h2>How long it is kept</h2>
+  <p>Account data is kept for as long as the account exists. Delete the account and the associated settings, watchlist, and league records are deleted with it. Data stored in your browser stays until you clear it or sign out and clear it yourself.</p>
+
+  <h2>Your choices</h2>
+  <ul>
+    <li>Use DELTA without an account. Everything except cross-device sync works signed out.</li>
+    <li>Sign out at any time. Signing out does not delete anything; your local settings and watchlist stay on that device.</li>
+    <li>Get a copy of your data, correct it, or delete it. Email the address below and it will be handled.</li>
+  </ul>
+  <p>Depending on where you live, you may have additional rights over your personal information, including the right to access it, correct it, delete it, or object to its use. DELTA honours these requests regardless of where you live — email is the way to make one.</p>
+
+  <h2>Children</h2>
+  <p>DELTA is not directed at children under 13 and accounts should not be created by them. If you believe a child under 13 has created an account, email the address below and it will be removed.</p>
+
+  <h2>Security</h2>
+  <p>Accounts are protected by database-level access rules, so one account cannot read another's data. Traffic is encrypted in transit. No system is perfect, and DELTA is a personal project rather than a company with a security team, so please do not store anything in it that you would be harmed by losing.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes in a way that meaningfully affects what is collected or how it is used, the date at the top will change and the change will be noted on the site.</p>
+
+  <h2>Contact</h2>
+  <div class="note">
+    <p>Questions, requests, or corrections: <a href="mailto:revolver7724@gmail.com">revolver7724@gmail.com</a></p>
+  </div>
+
+  <footer>
+    <span>Not affiliated with the NFL, NFLPA, or Sleeper.</span>
+    <a href="./index.html">Back to DELTA</a>
+    <a href="./terms.html">Terms of service</a>
+  </footer>
+
+</div>
 </body>
 </html>

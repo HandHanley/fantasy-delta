@@ -5134,7 +5134,17 @@ function renderSlpTradeAssist(){
 }
 
 
-window.addEventListener('load', async function() {
+/* ── Boot ─────────────────────────────────────────────────────────────────────
+   ONE canonical sequence, two possible triggers. These were previously two
+   separately-written copies and they DRIFTED: the warm-cache copy rendered
+   before initEngineAudit(), so dlUnlock('audit') landed AFTER applyLanding()
+   had already run inside renderAll(). A ?dev=1 session whose last tab was the
+   Engine Audit therefore lost its landing restore and fell back to NFL. The
+   copy also called initCollege() in one path but not the other.
+
+   If the boot sequence needs to change, edit bootDelta() and ONLY bootDelta().
+   Never inline a second copy of these steps. */
+async function bootDelta(){
   syncSettingsUI();
   showDataFreshness(new Date().toISOString(), 0);
   await loadLiveMarketValues();
@@ -5148,11 +5158,14 @@ window.addEventListener('load', async function() {
   initEngineAudit();
   try{ initCollege(); }catch(e){ console.warn("college init failed",e); }
   if(typeof renderAll==='function') renderAll();
-});
+}
+/* 'complete' means the load event already fired and the listener would never
+   run; the two branches are mutually exclusive, so boot cannot double-fire.
+   ({once:true} is belt-and-braces.) */
 if (document.readyState === 'complete') {
-  syncSettingsUI();
-  showDataFreshness(new Date().toISOString(), 0);
-  loadLiveMarketValues().then(() => loadPlayerStats()).then(() => loadPlayerContracts()).then(() => loadRipples()).then(() => loadReads()).then(() => loadInjuryOverrides()).then(() => ensureStartData()).then(() => { if(typeof renderAll==='function') renderAll(); if(typeof renderProspects==='function') renderProspects(); }).then(() => initEngineAudit());
+  bootDelta();
+} else {
+  window.addEventListener('load', bootDelta, {once:true});
 }
 
 </script>
