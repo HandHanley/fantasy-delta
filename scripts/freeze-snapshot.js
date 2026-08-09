@@ -21,6 +21,8 @@ const fs = require('fs'), path = require('path'), vm = require('vm');
 const src = fs.readFileSync('delta-engine.js', 'utf8') + `
 ;globalThis.__H__={
   get COMP(){return COMP}, mvAsset, glOf, vTag, computeMvCenter,
+  get PLAYER_STATS(){ return typeof PLAYER_STATS!=='undefined' ? PLAYER_STATS : null; },
+  get MKT_LOADED(){ return typeof MKT!=='undefined' ? MKT : null; },
   setCenter:(v)=>{ MV_CENTER=v; },
   styleFactors:(typeof styleFactors!=='undefined'?styleFactors:null),
   set:(t,q,fmt)=>{ if(t)leagueTeams=t; if(q)qbFmt=q; if(fmt)scoringFmt=fmt; },
@@ -48,7 +50,40 @@ vm.createContext(sb); vm.runInContext(src, sb);
   H.set(12, 'sf', 'half_tep');   // the anchor basis — matches the verdict engine
   H.recompute();
 
-  const comp = H.COMP;
+  /* ── PRE-FLIGHT GUARDS ───────────────────────────────────────────────────
+     Every loader in delta-engine.js SWALLOWS its errors by design — a missing
+     data file leaves the site fully usable on baked fallbacks rather than blank.
+     That is right for the app and dangerous here: without these checks a run with
+     no market data still writes data/freeze-2026.json, still prints a success
+     line, and still exits 0. The freeze is the immutable baseline for the whole
+     accuracy ledger, so it must refuse rather than record something plausible.
+     Abort loudly; a missed freeze day is recoverable, a wrong freeze is not. */
+  const die = m => { console.error('FREEZE ABORTED — ' + m); console.error('Nothing was written. Fix the data and re-run.'); process.exit(1); };
+
+  const compAll = H.COMP;
+  if (!compAll || compAll.length < 300) die(`only ${compAll ? compAll.length : 0} players in COMP (expected ~400) — player data did not load`);
+
+  const withMkt = compAll.filter(c => (c.kMkt || 0) > 0).length;
+  if (withMkt < 300) die(`only ${withMkt}/${compAll.length} players have a market value — data/market-values.json is missing, empty or stale`);
+
+  /* Check the PARSED artefact, not fields that also exist as baked fallbacks.
+     An earlier version of this guard tested c.g25 / c.ppg25, which are present in
+     the baked RAW table — so a run with data/player-stats.json deleted sailed
+     straight through and wrote a snapshot with a completely different top-sell. */
+  const ps = H.PLAYER_STATS;
+  const psCount = ps ? Object.keys(ps).length : 0;
+  if (psCount < 250) die(`PLAYER_STATS holds ${psCount} players (expected ~325) — data/player-stats.json did not load; scores would come from baked fallbacks`);
+
+  /* computeMvCenter() returns exactly 1 both as "raw basis" and as its own
+     out-of-range fallback (see the warn inside it). Either way, a real freeze
+     should land near the population median, not on the fallback. */
+  const centerProbe = H.computeMvCenter();
+  if (!(centerProbe > 0.6 && centerProbe < 1.3) || centerProbe === 1)
+    die(`model-value population center is ${centerProbe} — out of range or on the 1.0 fallback; market/stats data is suspect`);
+
+  console.log(`pre-flight OK · ${compAll.length} players · ${withMkt} with market · ${psCount} stat lines · center ${centerProbe.toFixed(4)}`);
+
+  const comp = compAll;
 
   /* CENTER FIRST — ORDER IS LOAD-BEARING.
      mvAsset() runs values through applyCenter(), which divides by MV_CENTER.
