@@ -4524,6 +4524,10 @@ async function loadLiveMarketValues() {
     // Skip if file is the empty placeholder
     if (data.playerCount === 0) {
       console.log('[DELTA] Market values not yet populated — using baked-in values');
+      // Report it. This path used to return without touching the badge, which left
+      // whatever the previous call had set — so an unpopulated file was indistinguishable
+      // from a healthy load. -2 is the "not yet published" sentinel (see dlFreshHtml).
+      if (typeof showDataFreshness === 'function') showDataFreshness(data.fetched || new Date().toISOString(), -2);
       return;
     }
 

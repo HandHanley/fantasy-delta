@@ -3590,6 +3590,22 @@ function showDataFreshness(fetchedAt, playerCount, staleCount) {
 function dlFreshHtml(){
   if(!DL_FRESH) return '<span style="color:var(--fog-2)">Market values: loading\u2026</span>';
   const f=DL_FRESH;
+  // playerCount is a SENTINEL on the non-success paths of loadLiveMarketValues():
+  //   -1  the fetch/parse failed outright
+  //   -2  the file loaded but is the empty placeholder (playerCount===0)
+  // Both must be caught BEFORE the label is used. The failure path passes
+  // Date.now() as its timestamp, so without these branches a total failure
+  // rendered as "Just updated" — i.e. the broken state looked FRESHER than a
+  // real load of slightly-old data, and the gap column was silently running on
+  // baked KTC instead of live market values.
+  if(f.playerCount===-1){
+    return '<span style="color:var(--coral)">Market values unavailable</span>'
+         + '<span style="color:var(--fog-2)"> \u00b7 showing baked values</span>';
+  }
+  if(f.playerCount===-2){
+    return '<span style="color:var(--topaz)">Market values not yet published</span>'
+         + '<span style="color:var(--fog-2)"> \u00b7 showing baked values</span>';
+  }
   return 'Market values <b style="color:var(--paper)">'+f.label+'</b>'
     + (f.playerCount>0 ? ' \u00b7 '+f.playerCount+' players' : '')
     + (f.staleCount>0 ? ' \u00b7 <span style="color:var(--topaz)">'+f.staleCount+' stale</span>' : '');
@@ -5146,7 +5162,10 @@ function renderSlpTradeAssist(){
    Never inline a second copy of these steps. */
 async function bootDelta(){
   syncSettingsUI();
-  showDataFreshness(new Date().toISOString(), 0);
+  // NOTE: showDataFreshness() is deliberately NOT called here. It used to be primed
+  // with (now, 0), which rendered "Just updated" before a single byte had loaded.
+  // DL_FRESH===null renders "loading…" instead, and loadLiveMarketValues() reports
+  // the real state on every one of its three exits (success / placeholder / failure).
   await loadLiveMarketValues();
   await loadPlayerStats();
   await loadPlayerContracts();
