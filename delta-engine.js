@@ -3658,13 +3658,18 @@ function calcAlphaScore(name) {
      absence. Brenton Strange (12 games) read as an 11.0% target share when his
      share across games he actually played was 15.6%.
 
-     The multiplier is CAPPED at 1.7 (= 17/10) on purpose. Uncapped, a 4-game
-     sample gets extrapolated 4.25x, which is projection rather than measurement
-     and rewards a hot start followed by an injury — Malik Nabers jumped to WR7
-     on four games in testing. 10+ games gets the full correction (enough of a
-     season to know the role); below that the correction is damped.
+     The correction TAPERS rather than stopping at a cliff. 10+ games gets the full
+     rate (enough of a season to trust the role). Below 10 the player still gets
+     credit, but only 40% of the amount beyond the 10-game rate, and never more than
+     the 8-game rate (2.12x) no matter how few games he played. A flat cap at 1.70
+     under-corrected exactly the group it was meant to help — Tucker Kraft (8 games)
+     was short 20% of his earned correction, Garrett Wilson (7 games) short 30% —
+     while an uncapped 17/g extrapolated a 4-game sample 4.25x, which is projection,
+     not measurement, and rewards a hot start followed by an injury.
      Players who appeared in all 17 games are unaffected by construction. */
-  const _gn   = Math.min(17 / games, 1.7);
+  const _earned = 17 / games;
+  const _gn = games >= 10 ? _earned
+            : Math.min(1.7 + (_earned - 1.7) * 0.4, 17 / 8);
   const tgtS  = (s.target_share  || 0) * _gn;
   const airS  = (s.air_yds_share || 0) * _gn;
   const rzT   = s.rz_targets != null ? s.rz_targets * _gn : s.rz_targets;
@@ -3698,9 +3703,12 @@ function calcWorkhorseScore(name) {
      was NOT, on the stated belief that it "is already a games-weighted per-game mean
      (from nflverse weekly data)". That belief was wrong — implied team targets are
      identical across teammates regardless of games played, which can only happen with
-     a full-season denominator. Both are corrected now, with the same 1.7 cap used in
-     calcAlphaScore (full correction at 10+ games; see the note there). */
-  const _gn   = Math.min(17 / g, 1.7);
+     a full-season denominator. Both are corrected now, using the same taper as
+     calcAlphaScore (full rate at 10+ games; 40% partial credit below, ceilinged at
+     the 8-game rate). Keep the two in step — if one changes, change both. */
+  const _earnedW = 17 / g;
+  const _gn = g >= 10 ? _earnedW
+            : Math.min(1.7 + (_earnedW - 1.7) * 0.4, 17 / 8);
   const rushS = Math.min(1, (s.rush_share || 0) * (17 / g));
   const tgtS  = (s.target_share || 0) * _gn;
   const rzC   = s.rz_carries;
@@ -3975,11 +3983,20 @@ function dsOpportunity(p) {
   const noNFL = p.g25===0;
   const { pick, year } = dsDraftInfo(p.n);
   const expW = dsExpWeight(year);
-  // Draft-capital opportunity is CAPPED below the proven-elite ceiling (max ~26 of 33).
+  // Draft-capital opportunity is CAPPED BELOW what a proven starter can earn (max 19 of 33).
   // PHILOSOPHY: pedigree earns a strong opportunity FLOOR, but the full max is reserved for
   // players who've DEMONSTRATED elite usage. Unproven potential < proven production.
   // (MHJ — elite capital, weak film — must be separable from a pure-capital rookie.)
-  const capitalOpp = 3 + dsCapitalScore(pick) * 23; // map capital → 3-26 (capped)
+  //
+  // The span was 23 (max 26), which was described as "capped below the proven-elite
+  // ceiling" — true only against an elite RUSHING QB (18+13=31). A proven POCKET
+  // passer maxes at 18+3=21, so a top-pick rookie who had never taken an NFL snap
+  // outscored every proven pocket passer alive on the opportunity axis. Fernando
+  // Mendoza (0 games) sat above Joe Burrow on this axis alone.
+  // Span 16 puts the rookie ceiling at 19 — deliberately BELOW the 21 pocket-passer
+  // floor, because rookies start slower and earn opportunity as they go. Costs
+  // proven players nothing: capital only blends in during a player's first two years.
+  const capitalOpp = 3 + dsCapitalScore(pick) * 16; // map capital → 3-19 (capped)
 
   // Base demonstrated opportunity
   let baseOpp;
