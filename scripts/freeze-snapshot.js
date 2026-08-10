@@ -16,13 +16,18 @@
  *    style factors so the record shows System Score v2 was in the frozen model.
  *  - Run AFTER a green data nightly, with the stale badge in its normal band.
  */
-const fs = require('fs'), path = require('path'), vm = require('vm');
+const fs = require('fs'), path = require('path'), vm = require('vm'), crypto = require('crypto');
 
 const src = fs.readFileSync('delta-engine.js', 'utf8') + `
 ;globalThis.__H__={
   get COMP(){return COMP}, mvAsset, glOf, vTag, computeMvCenter,
   get PLAYER_STATS(){ return typeof PLAYER_STATS!=='undefined' ? PLAYER_STATS : null; },
   get MKT_LOADED(){ return typeof MKT!=='undefined' ? MKT : null; },
+  // Provenance: the constants that decide every league adjustment. Frozen alongside
+  // the calls so a 2027 grader can tell WHICH curve produced them.
+  get SCAR_CURVE(){ return typeof SCAR_CURVE!=='undefined' ? SCAR_CURVE : null; },
+  get SCAR_STARTERS(){ return typeof SCAR_STARTERS!=='undefined' ? SCAR_STARTERS : null; },
+  scarcity: (p,t,q)=>scarcity(p,t,q),
   setCenter:(v)=>{ MV_CENTER=v; },
   styleFactors:(typeof styleFactors!=='undefined'?styleFactors:null),
   set:(t,q,fmt)=>{ if(t)leagueTeams=t; if(q)qbFmt=q; if(fmt)scoringFmt=fmt; },
@@ -143,11 +148,57 @@ vm.createContext(sb); vm.runInContext(src, sb);
   const sells = graded.filter(([,p]) => p.gap < 0).sort((a,b) => a[1].gap - b[1].gap).slice(0,15)
     .map(([n,p]) => `${n} (${p.pos}${p.rankMv} model vs ${p.pos}${p.rankMk} mkt, ${p.gap}%)`);
 
+  /* ── PROVENANCE ──────────────────────────────────────────────────────────
+     The ledger is graded in Feb 2027 and again before Week 1 2027. By then the
+     engine will have moved on. Without this block the frozen calls cannot be
+     attributed to a specific engine or scarcity curve, and "was this call made
+     before or after the scarcity fix?" becomes unanswerable.
+
+     Input files are FINGERPRINTED, not copied. market-values.json alone is 425 KB
+     across 8 formats x 475 players; duplicating it here would multiply the freeze
+     file for data already committed in the repo at the same SHA. A hash proves
+     which bytes were used and stays a few dozen characters. */
+  const sha = f => { try { return crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex').slice(0,16); }
+                     catch(e){ return null; } };
+  // Read the market file's own fetched stamp straight off disk — it records when
+  // FantasyCalc was polled, which is not the same as when this snapshot ran.
+  let mktFetched = null;
+  try { mktFetched = JSON.parse(fs.readFileSync('data/market-values.json','utf8')).fetched || null; } catch(e) {}
+
+  // Resolve every scarcity cell the engine can produce, so the curve is recorded
+  // both as its source constants AND as the values actually applied.
+  const scarTable = {};
+  for (const t of [8,10,12,14]) for (const q of ['1qb','sf']) {
+    const cell = {};
+    for (const pos of ['QB','RB','WR','TE']) cell[pos] = +H.scarcity(pos,t,q).toFixed(4);
+    scarTable[`${t}|${q}`] = cell;
+  }
+
+  const provenance = {
+    engine_sha:       sha('delta-engine.js'),
+    freeze_script_sha: sha('scripts/freeze-snapshot.js'),
+    node_version:     process.version,
+    inputs: {
+      'market-values.json':    { sha: sha('data/market-values.json'),    fetched: mktFetched },
+      'player-stats.json':     { sha: sha('data/player-stats.json') },
+      'player-contracts.json': { sha: sha('data/player-contracts.json') },
+      'injury-overrides.json': { sha: sha('data/injury-overrides.json') },
+      'game-logs.json':        { sha: sha('data/game-logs.json') },
+    },
+    scarcity_curve:    H.SCAR_CURVE,
+    scarcity_starters: H.SCAR_STARTERS,
+    scarcity_resolved: scarTable,
+    mv_center:         +centerProbe.toFixed(6),
+    note: 'Fingerprints, not copies — the input files live in the repo at this commit. '
+        + 'scarcity_resolved is the applied 32-cell table; scarcity_curve is its source.',
+  };
+
   const out = {
     frozen_at: new Date().toISOString(),
     basis: { teams:12, superflex:true, scoring:'half_tep',
       note: 'League-invariant anchor — same basis as the live verdict engine.' },
     engine_note: 'Includes System Score v2 offense-style factors (motion/TE2/PROE, validated 2022-25).',
+    provenance,
     count: Object.keys(players).length,
     excluded_stale: excluded.sort(),
     headline: { top_buys: buys, top_sells: sells },
