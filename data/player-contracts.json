@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-09T07:01:09.202687+00:00",
+  "fetched": "2026-08-10T07:47:20.764423+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -354,12 +354,12 @@
     },
     "Jahmyr Gibbs": {
       "team": "Lions",
-      "year_signed": 2023,
-      "years": 4,
-      "end_year": 2026,
-      "aav": 4.46,
-      "total": 17.85,
-      "guaranteed": 17.85,
+      "year_signed": 2026,
+      "years": 3,
+      "end_year": 2028,
+      "aav": 22.5,
+      "total": 67.5,
+      "guaranteed": 37.73,
       "is_active": true
     },
     "James Cook": {
@@ -924,12 +924,12 @@
     },
     "Zay Flowers": {
       "team": "Ravens",
-      "year_signed": 2023,
+      "year_signed": 2026,
       "years": 4,
-      "end_year": 2026,
-      "aav": 3.51,
-      "total": 14.04,
-      "guaranteed": 14.04,
+      "end_year": 2029,
+      "aav": 35.0,
+      "total": 140.0,
+      "guaranteed": 54.0,
       "is_active": true
     },
     "Davante Adams": {
@@ -1053,7 +1053,7 @@
       "is_active": true
     },
     "Jaylen Waddle": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1402,6 +1402,16 @@
       "guaranteed": 6.13,
       "is_active": true
     },
+    "Stefon Diggs": {
+      "team": "Commanders",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.0,
+      "total": 0.0,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Jayden Reed": {
       "team": "Packers",
       "year_signed": 2026,
@@ -1483,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1873,7 +1883,7 @@
       "is_active": true
     },
     "Elijah Higgins": {
-      "team": "MIA/ARI",
+      "team": "ARI/MIA",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2013,7 +2023,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "NYJ/IND",
+      "team": "IND/NYJ",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3931,17 +3941,6 @@
       "total": 9.69,
       "guaranteed": 8.21,
       "is_active": true
-    },
-    "Stefon Diggs": {
-      "team": "Commanders",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 12.0,
-      "total": 12.0,
-      "guaranteed": 6.0,
-      "is_active": true,
-      "source": "override"
     }
   }
 }
