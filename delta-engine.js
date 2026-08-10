@@ -3643,10 +3643,31 @@ let HEADSHOTS = {};    // player name → headshot URL
 function calcAlphaScore(name) {
   const s = PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
-  const tgtS  = s.target_share  || 0;
-  const airS  = s.air_yds_share || 0;
-  const rzT   = s.rz_targets;
   const games = s.games || 1;
+
+  /* MISSED-GAME CORRECTION — target_share, air_yds_share and rz_targets are all
+     measured against FULL-SEASON team totals, so a player who missed games has
+     his share mechanically depressed by the fraction of the season he sat out.
+     Verified against the live data: implied team targets come out IDENTICAL for
+     every teammate regardless of games played (every JAX player = 547, every DAL
+     player = 607), which is only possible if the denominator is the full season.
+
+     This mattered because tgtN(35%) + airN(30%) + rzN(25%) = 90% of this score
+     scaled with availability, while gamesN(10%) below is the ONLY term that is
+     SUPPOSED to. Injured players were docked roughly four times over for one
+     absence. Brenton Strange (12 games) read as an 11.0% target share when his
+     share across games he actually played was 15.6%.
+
+     The multiplier is CAPPED at 1.7 (= 17/10) on purpose. Uncapped, a 4-game
+     sample gets extrapolated 4.25x, which is projection rather than measurement
+     and rewards a hot start followed by an injury — Malik Nabers jumped to WR7
+     on four games in testing. 10+ games gets the full correction (enough of a
+     season to know the role); below that the correction is damped.
+     Players who appeared in all 17 games are unaffected by construction. */
+  const _gn   = Math.min(17 / games, 1.7);
+  const tgtS  = (s.target_share  || 0) * _gn;
+  const airS  = (s.air_yds_share || 0) * _gn;
+  const rzT   = s.rz_targets != null ? s.rz_targets * _gn : s.rz_targets;
 
   // Ceilings calibrated against 2025 dataset:
   // tgt: Chase .321, JSN .368 → ceil .32 (JSN slightly above = max)
@@ -3672,8 +3693,16 @@ function calcWorkhorseScore(name) {
   // to per-game equivalent so injury absences don't misrepresent role intensity.
   // target_share is already a games-weighted per-game mean (from nflverse weekly
   // data), so no adjustment needed there.
+  /* Both shares are season totals over a FULL-SEASON team denominator, so both
+     are diluted by missed games. rush_share was already corrected here; target_share
+     was NOT, on the stated belief that it "is already a games-weighted per-game mean
+     (from nflverse weekly data)". That belief was wrong — implied team targets are
+     identical across teammates regardless of games played, which can only happen with
+     a full-season denominator. Both are corrected now, with the same 1.7 cap used in
+     calcAlphaScore (full correction at 10+ games; see the note there). */
+  const _gn   = Math.min(17 / g, 1.7);
   const rushS = Math.min(1, (s.rush_share || 0) * (17 / g));
-  const tgtS  = s.target_share || 0;
+  const tgtS  = (s.target_share || 0) * _gn;
   const rzC   = s.rz_carries;
   const rzT   = s.rz_targets;
 
