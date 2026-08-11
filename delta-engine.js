@@ -4162,7 +4162,16 @@ function injBadge(n){
                                tag at all.
 
      Season-ending calls still come from data/injury-overrides.json, handled
-     above, and carry their own note in the tooltip. */
+     above, and carry their own note in the tooltip.
+
+       DNR — reserve/did-not-report or left-squad. Added because it passes the
+             same test: structural, open-ended, and a longer-horizon fact than
+             any weekly injury tag. The player is not with the team at all.
+             Its absence was actively misleading — a player off the roster
+             entirely rendered as perfectly healthy. Coral, not amber: this is
+             a harder state than "currently unavailable". */
+  if(lbl==='DNR')
+    return '<span class="badge bd" style="margin-right:3px;font-size:9px" title="Sleeper status: DNR — reserve/did not report. Not with the team.">DNR</span>';
   if(lbl==='IR'||lbl==='PUP'||lbl==='NFI'||lbl==='SUS')
     return '<span class="badge bw" style="margin-right:3px;font-size:9px" title="Sleeper status: '+lbl+' — currently unavailable. Not necessarily out for the season.">'+lbl+'</span>';
   return '';
@@ -4697,9 +4706,30 @@ async function loadPlayerContracts() {
       'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
     };
 
-    let updated = 0;
+    /* VOIDED CONTRACTS — the feed is stale in a way no formula can detect.
+       OTC keeps listing a deal that no longer legally exists (voided, released,
+       left squad). Applying it would hand the player a security bonus for a
+       contract he does not have — the opposite of the truth.
+       A name here is treated as HAVING NO CONTRACT, which dsCont() scores as 5
+       (neutral), not as a penalty: absence of security is not a red flag.
+       Hand-maintained. Add a name ONLY when the void is confirmed. */
+    const CONTRACT_VOID = {
+      'Brandon Aiyuk': 'Voided his SF deal; on the reserve/left-squad list. OTC still lists 2027.',
+    };
+
+    let updated = 0, added = 0, voided = 0;
     for (const player of RAW) {
       if (!player || !player.n) continue;
+
+      // Void first — and drop any baked entry too, so the void holds regardless
+      // of whether the player also sits in the hand table.
+      if (CONTRACT_VOID[player.n]) {
+        const i = CONTRACTS.findIndex(x => x.n === player.n);
+        if (i >= 0) CONTRACTS.splice(i, 1);
+        voided++;
+        continue;
+      }
+
       const c = data.contracts[player.n];
       if (!c) continue;
 
@@ -4728,11 +4758,34 @@ async function loadPlayerContracts() {
         if (c.total > 0) existing.total = Math.round(c.total * 1000000);
         existing.end = pipeEnd; // pipeline is the source of truth; overwrites baked
         updated++;
+      } else {
+        /* CREATE, don't skip. This branch used to not exist: a player absent from
+           the baked CONTRACTS hand table had his pipeline contract silently
+           discarded. Measured on live data, that was 167 of 409 players — 99 of
+           whom scored a neutral 5 on dsCont() while holding a real multi-year
+           deal worth 6, 7 or 9. The gap fell almost entirely on young players on
+           rookie contracts, the exact group the axis is meant to reward, and it
+           also cost every one of them the -0.02 "no contract = uncertainty"
+           model-value nudge they should never have taken.
+           The hand table remains the override layer for names the feed gets
+           wrong; it is no longer the gate deciding who is allowed a contract. */
+        CONTRACTS.push({
+          n:     player.n,
+          pos:   player.p || player.pos || '',
+          team:  player.t || c.team || '',
+          aav:   Math.round((c.aav   || 0) * 1000000),
+          total: Math.round((c.total || 0) * 1000000),
+          end:   pipeEnd,
+          note:  'From nflverse/OTC feed',
+        });
+        added++;
       }
     }
 
-    if (updated > 0) {
-      console.log(`[DELTA] Contracts updated: ${updated} players`);
+    if (updated > 0 || added > 0 || voided > 0) {
+      console.log(`[DELTA] Contracts updated: ${updated} players` +
+                  (added  ? `, ${added} added from feed` : '') +
+                  (voided ? `, ${voided} voided` : ''));
       COMP.length = 0;
       RAW.forEach(r => COMP.push(calcProj(r)));
       ASSETS.length = 0;
