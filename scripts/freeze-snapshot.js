@@ -18,6 +18,91 @@
  */
 const fs = require('fs'), path = require('path'), vm = require('vm'), crypto = require('crypto');
 
+/* ── RUN GUARD ───────────────────────────────────────────────────────────
+   THIS BLOCK MUST STAY ABOVE THE ENGINE LOAD. The `readFileSync` below runs
+   at module top-level and is not wrapped by the .catch() at the foot of the
+   file, so a guard placed after it turns "wrong directory" into an ENOENT
+   stack trace instead of a refusal. A guard that crashes is not a guard.
+
+   The freeze is the immutable baseline for the entire accuracy ledger. The
+   pre-flight guards further down protect against BAD data; this one protects
+   against an UNINTENDED run — a stray `node scripts/freeze-snapshot.js`, a
+   re-run to "check something", a copy-pasted command. Both failure modes end
+   the same way: a plausible file replacing the real record, with no complaint.
+
+   Locks:
+     --confirm   required for ANY write
+     --force     required IN ADDITION when data/freeze-2026.json already exists
+     --dry-run   runs every check and prints the headline, writes nothing
+   A missed freeze day is recoverable. A wrong freeze is not. */
+const OUT_PATH = path.join('data', 'freeze-2026.json');
+const ARGS     = process.argv.slice(2);
+const KNOWN    = ['--confirm', '--force', '--dry-run', '--help', '-h'];
+
+const USAGE = [
+  'Usage: node scripts/freeze-snapshot.js --confirm [--force]',
+  '       node scripts/freeze-snapshot.js --dry-run',
+  '',
+  '  --confirm   Required for any write. Writes ' + OUT_PATH + '.',
+  '  --force     Required IN ADDITION to --confirm when ' + OUT_PATH,
+  '              already exists. Overwrites the frozen record.',
+  '  --dry-run   Run the engine, the pre-flight guards and the full snapshot,',
+  '              print the headline, and write nothing. Needs no --confirm.',
+  '  --help      This message.',
+  '',
+  'Run from the repository root, after a green data nightly.',
+].join('\n');
+
+const refuse = (why, hint) => {
+  console.error('FREEZE REFUSED — ' + why);
+  if (hint) console.error(hint);
+  console.error('Nothing was written.\n');
+  console.error(USAGE);
+  process.exit(1);
+};
+
+if (ARGS.includes('--help') || ARGS.includes('-h')) { console.log(USAGE); process.exit(0); }
+
+// Reject typos rather than ignoring them: a silently-dropped "--confrim" would
+// leave the operator believing a flag was honoured that never parsed.
+const unknown = ARGS.filter(a => !KNOWN.includes(a));
+if (unknown.length) refuse('unrecognised argument: ' + unknown.join(' '));
+
+const DRY_RUN = ARGS.includes('--dry-run');
+const CONFIRM = ARGS.includes('--confirm');
+const FORCE   = ARGS.includes('--force');
+
+if (DRY_RUN && (CONFIRM || FORCE))
+  refuse('--dry-run cannot be combined with --confirm or --force.',
+         'Pick one: rehearse with --dry-run, or write with --confirm.');
+
+// Both the engine and the output path are resolved relative to the working
+// directory, so the wrong cwd must fail here with an explanation.
+if (!fs.existsSync('delta-engine.js'))
+  refuse('delta-engine.js not found in the current directory.',
+         'Run from the repository root: node scripts/freeze-snapshot.js --confirm');
+
+if (!DRY_RUN && !CONFIRM)
+  refuse(FORCE ? '--force does not imply --confirm.' : 'this run would write the frozen accuracy-ledger record.',
+         FORCE ? 'Overwriting takes BOTH flags: --confirm --force.'
+               : 'Add --confirm to write it, or --dry-run to rehearse without writing.');
+
+const EXISTING = fs.existsSync(OUT_PATH);
+if (EXISTING && !DRY_RUN) {
+  // Name what would be destroyed. "Are you sure?" is useless without the stakes.
+  let was = '';
+  try {
+    const prev = JSON.parse(fs.readFileSync(OUT_PATH, 'utf8'));
+    was = `Existing snapshot: frozen_at ${prev.frozen_at || '?'} · ${prev.count != null ? prev.count : '?'} players graded.`;
+  } catch (e) { was = 'Existing snapshot is present but could not be parsed.'; }
+
+  if (!FORCE) refuse(OUT_PATH + ' already exists.', was + '\nOverwriting the frozen record takes --confirm --force.');
+  console.warn('⚠  OVERWRITING an existing freeze snapshot (--force).');
+  console.warn('   ' + was.replace('\n', '\n   '));
+}
+
+console.log(DRY_RUN ? 'mode: DRY RUN — nothing will be written' : 'mode: WRITE — ' + OUT_PATH + (EXISTING ? ' (overwrite)' : ' (new)'));
+
 const src = fs.readFileSync('delta-engine.js', 'utf8') + `
 ;globalThis.__H__={
   get COMP(){return COMP}, mvAsset, glOf, vTag, computeMvCenter,
@@ -204,10 +289,20 @@ vm.createContext(sb); vm.runInContext(src, sb);
     headline: { top_buys: buys, top_sells: sells },
     players,
   };
-  fs.mkdirSync('data', { recursive: true });
-  fs.writeFileSync('data/freeze-2026.json', JSON.stringify(out, null, 1));
-  console.log(`FREEZE SNAPSHOT: ${out.count} players graded · ${excluded.length} excluded (stale/no market)`);
+  // Serialise once so a dry run can report the exact size it would have written.
+  const json = JSON.stringify(out, null, 1);
+  const kb   = (Buffer.byteLength(json) / 1024).toFixed(1);
+
+  console.log(`${DRY_RUN ? 'DRY RUN' : 'FREEZE SNAPSHOT'}: ${out.count} players graded · ${excluded.length} excluded (stale/no market)`);
   console.log(`top buy:  ${buys[0] || '—'}`);
   console.log(`top sell: ${sells[0] || '—'}`);
-  console.log('wrote data/freeze-2026.json');
+
+  if (DRY_RUN) {
+    console.log(`nothing written — would have written ${OUT_PATH} (${kb} KB)`);
+    console.log('Re-run with --confirm' + (EXISTING ? ' --force' : '') + ' to write it.');
+  } else {
+    fs.mkdirSync('data', { recursive: true });
+    fs.writeFileSync(OUT_PATH, json);
+    console.log(`wrote ${OUT_PATH} (${kb} KB)`);
+  }
 })().catch(e => { console.error('SNAPSHOT FAILED:', e.stack || e.message); process.exit(1); });
