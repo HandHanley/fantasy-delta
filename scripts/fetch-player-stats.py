@@ -5,7 +5,7 @@ Uses nflreadpy to fetch NFL weekly stats from nflverse.
 Stores raw stat lines in data/player-stats.json.
 """
 
-import json, os, re
+import json, os, re, sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,6 +19,31 @@ except ImportError:
     import polars as pl
     import pandas as pd
 
+# ── DATA FLOORS ──────────────────────────────────────────────────────────────
+# Every sub-fetch in this file swallows its own exception and returns empty, by
+# design: one dead upstream feed should not cost us the other twelve. The cost of
+# that design is that a BADLY degraded run still reaches the end, still writes a
+# valid-looking JSON file, still exits 0 — and the workflow then commits and
+# pushes it to production. The freeze script refuses rather than record something
+# plausible; the nightly that FEEDS the freeze should hold the same line.
+#
+# Floors sit at roughly 75% of observed live counts (11 Aug 2026), so ordinary
+# week-to-week drift can never trip them and only real degradation can:
+#     players 327 · contracts 394 · draft 372 · universe 409
+# Raise these when the universe grows; never lower them to make a red run pass.
+MIN_PLAYERS   = 250   # live 327 — matches the freeze pre-flight's own floor
+MIN_CONTRACTS = 300   # live 394
+MIN_DRAFT     = 250   # live 372 — feeds the rookie draft-capital baseline
+MIN_UNIVERSE  = 350   # live 409 — RAW parsed out of delta-engine.js
+
+def die(msg):
+    """Abort loudly WITHOUT writing. A missed nightly is recoverable (the site
+    keeps serving yesterday's committed data); a nightly that publishes garbage
+    is not, because the workflow commits and deploys whatever lands on disk."""
+    print(f"\n[DELTA] ABORTED — {msg}", file=sys.stderr)
+    print("[DELTA] Nothing was written. Existing data/ files are untouched.", file=sys.stderr)
+    sys.exit(1)
+
 # Season window for the stat/trend history. Extended back to 2022 so player pages can
 # toggle a multi-season stat line. EPA still looks back one additional year (see fetch_pbp).
 SEASONS    = [2022, 2023, 2024, 2025]
@@ -28,7 +53,11 @@ INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved
 
 def get_delta_players():
     if not INDEX_HTML.exists():
-        return [], set()
+        # Previously returned ([], set()), which flowed all the way to a written
+        # file containing zero players. The universe is the spine of this script:
+        # without it there is nothing to match stats against.
+        die(f"{INDEX_HTML} not found — cannot read the player universe. "
+            "Run from the repo root so scripts/../delta-engine.js resolves.")
     html  = INDEX_HTML.read_text(encoding='utf-8')
     start = html.find('const RAW=[')
     end   = html.find('\nconst PICKS=', start)
@@ -1318,6 +1347,11 @@ def main():
 
     delta_names, no_data, meta = get_delta_players()
     print(f"[DELTA] {len(delta_names)} players in DELTA RAW ({len(no_data)} with no 2025 NFL data)")
+    # A silent regex miss here (RAW renamed, quoting style changed) would produce a
+    # short universe and a short-but-valid output file. Catch it at the source.
+    if len(delta_names) < MIN_UNIVERSE:
+        die(f"only {len(delta_names)} players parsed from the RAW array (expected ~409). "
+            "The RAW block in delta-engine.js may have been renamed or reformatted.")
 
     agg, headshots, qb_starts = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
@@ -1477,6 +1511,19 @@ def main():
     draft_map, college_map, age_map = fetch_draft_and_college(delta_names, meta)
     rb_snap_map = fetch_rb_snap_share(delta_names, meta)
 
+    # DRAFT CAPITAL IS LOAD-BEARING — promote its failure from a log line to an abort.
+    # fetch_draft_and_college() catches its own exception and returns an empty map, so
+    # an upstream schema change or outage prints one line and the run continues green.
+    # But draft capital is the input to the rookie PPG baseline (median by position x
+    # capital tier, 29.9% out-of-sample RMSE improvement over the old flat 8.0). With an
+    # empty draft map every prospect silently falls back to that flat value — the exact
+    # bug that had 63 of 81 prospects priced as injured veterans. It is invisible in the
+    # output: the file is well-formed and full-length, the rookies are just wrong.
+    if len(draft_map) < MIN_DRAFT:
+        die(f"draft-capital map holds {len(draft_map)} entries (expected ~372). "
+            "Rookies would fall back to the flat PPG baseline and price as injured "
+            "veterans. Refusing to publish.")
+
     output = {
         'fetched': datetime.now(timezone.utc).isoformat(),
         'seasons': SEASONS,
@@ -1494,6 +1541,12 @@ def main():
         'rec_pg': rec_pg,
         'ts_delta': ts_delta,
     }
+    # VALIDATE BEFORE WRITING. spot_check() below is print-only and runs after the
+    # write, so it has never been able to stop a bad file from being committed.
+    if len(players) < MIN_PLAYERS:
+        die(f"only {len(players)} players have stat lines (expected ~327) — the nflverse "
+            "weekly-stats fetch returned a partial or empty result.")
+
     OUT_FILE.write_text(json.dumps(output, indent=2))
     kb = len(json.dumps(output)) // 1024
     print(f"[DELTA] player-stats.json written ({kb}KB, {len(players)} players)")
@@ -1531,6 +1584,13 @@ def main():
         'contracts': contracts,
     }
     contracts_file = OUT_DIR / "player-contracts.json"
+    # Same rule as the stats file. Note this one now matters MORE than it used to:
+    # the engine no longer gates contracts behind its baked hand table, so a short
+    # contracts file propagates straight to the contract axis for every player in it.
+    if len(contracts) < MIN_CONTRACTS:
+        die(f"only {len(contracts)} contracts resolved (expected ~394) — the nflverse/OTC "
+            "contract feed returned a partial or empty result. player-stats.json was "
+            "written; data/ is otherwise unchanged and the previous contracts file stands.")
     contracts_file.write_text(json.dumps(contracts_output, indent=2))
     kb = len(json.dumps(contracts_output)) // 1024
     print(f"[DELTA] player-contracts.json written ({kb}KB, {len(contracts)} contracts)")

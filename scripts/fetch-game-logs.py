@@ -20,10 +20,25 @@ spot check matches the threshold derivation:
   + rec*PPR + rec_yds*.1 + rec_td*6 + fum_lost*-2 + two_pt*2 + ret_td*6
 """
 
-import json, os, re, unicodedata
+import json, os, re, sys, unicodedata
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+
+# ── DATA FLOORS ──────────────────────────────────────────────────────────────
+# game-logs.json is the largest artefact this pipeline produces and the one whose
+# degradation is hardest to see: a run that emits a third of the games still writes
+# a well-formed file, still prints a spot check, still exits 0, and the workflow
+# commits it. Floors at ~75% of observed live counts (11 Aug 2026: 328 players,
+# 18,823 active games) so normal drift cannot trip them.
+MIN_GL_PLAYERS = 250     # live 328
+MIN_GL_GAMES   = 10000   # live 18,823
+
+def die(msg):
+    """Abort WITHOUT writing — the previously committed game-logs.json stands."""
+    print(f"\n[DELTA] ABORTED — {msg}", file=sys.stderr)
+    print("[DELTA] Nothing was written. Existing data/game-logs.json is untouched.", file=sys.stderr)
+    sys.exit(1)
 
 SEASONS    = [2023, 2024, 2025, 2026]   # 2026 = current season: played weeks fill in, future weeks come from the schedule
 OUT_DIR    = Path(__file__).parent.parent / "data"
@@ -339,6 +354,13 @@ def main():
         'games': games,
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    # VALIDATE BEFORE WRITING — the spot check below is print-only and runs after.
+    _total_games = sum(len(v) for v in games.values())
+    if len(games) < MIN_GL_PLAYERS:
+        die(f"only {len(games)} players have game logs (expected ~328) — partial upstream fetch.")
+    if _total_games < MIN_GL_GAMES:
+        die(f"only {_total_games} active games emitted (expected ~18,800) — the weekly stat "
+            "pull looks truncated even though player coverage is intact.")
     OUT_FILE.write_text(json.dumps(output, separators=(',', ':')))
     kb = len(json.dumps(output)) // 1024
     total_games = sum(len(v) for v in games.values())

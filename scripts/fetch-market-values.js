@@ -54,6 +54,13 @@ function fetchUrl(url) {
   });
 }
 
+// Minimum entries per grid slice. FantasyCalc returns ~474 per setting (11 Aug 2026)
+// with includePicksAsPlayers=true. sliceFromResponse() only ever threw on an EMPTY or
+// non-array response, so a degraded-but-non-empty reply — 20 players instead of 474 —
+// wrote cleanly, committed, and shipped. The freeze pre-flight would catch it a layer
+// later; the live site would not. Floor at ~75% so roster churn cannot trip it.
+const MIN_PER_SLICE = 350;
+
 function sliceFromResponse(data) {
   if (!Array.isArray(data) || !data.length) throw new Error('Bad FC response');
   const out = {};
@@ -141,8 +148,11 @@ async function main() {
       try {
         const data  = await fetchUrl(fcUrl(teams, qb));
         const slice = sliceFromResponse(data);
+        const n     = Object.keys(slice).length;
+        if (n < MIN_PER_SLICE)
+          throw new Error(`only ${n} entries (expected ~474) — degraded response, refusing to ship`);
         settings[key] = slice;
-        console.log(`[DELTA]   ${key}: ${Object.keys(slice).length} entries`);
+        console.log(`[DELTA]   ${key}: ${n} entries`);
       } catch (e) {
         console.error(`[DELTA]   ${key}: FAILED — ${e.message}`);
         throw e; // fail the run rather than ship a partial grid
