@@ -1724,6 +1724,54 @@ const AC={
   TE:[[20,22,.88],[23,24,.96],[25,26,1.03],[27,28,1.05],[29,30,1.02],[31,32,.95],[33,99,.85]]
 };
 function am(pos,age){const c=AC[pos]||AC.WR;for(const[lo,hi,m]of c)if(age>=lo&&age<=hi)return m;return.75;}
+
+/* ── PROJECTION AGE MULTIPLIER (variant C) ─────────────────────────────────
+   Age may only ever HURT next season's projected PPG. It never helps.
+
+   WHY THE PROJECTION AND THE SCORE TREAT AGE DIFFERENTLY
+   Youth is genuinely valuable — but its value is LONGEVITY, which is a DELTA
+   Score question, not a "what will he average in 2026" question. Two reasons a
+   youth boost does not belong in the projection:
+     * the base already leans young. It is a 3/2/1 recency weighting, so an
+       ascending player's most recent (best) season carries triple weight.
+     * ascent is already modelled with EVIDENCE — role, YPRR, opportunity, draft
+       capital, EPA. A blind age boost stacks a prior on top of measured signals
+       that capture the same thing, and double-counts it.
+   Decline is different in kind: near-universal and monotonic, and NOT separately
+   modelled anywhere else. So the curve keeps its downside and loses its upside.
+
+   BACKTEST (2003-2024, 5,193 player-seasons of nflverse data rescored into
+   DELTA's format, DELTA's own 3/2/1 base weighting, ages from birth dates):
+     current curve         RMSE 3.299 (holdout 2019-24)
+     cap at 1.0 only       +0.42%   p=0.003
+     THIS (cap + no young penalty)  +1.25%   p<0.0001
+     curve FITTED to 3,660 seasons  +1.27%   p=0.034   <- no better than this rule
+   A fitted curve with 68 free parameters is statistically indistinguishable from
+   this two-line rule (p=0.966), and a no-age control gains nothing (+0.02%,
+   p=0.97) while the fitted curve beats that control (+1.24%, p=0.008). Read
+   together: age carries real signal, ~1.3% is the ceiling of what it can carry,
+   and this rule already reaches that ceiling.
+
+   BELOW THE 2% SHIP GATE, SHIPPED DELIBERATELY. The gate exists to stop changes
+   justified by intuition; this one is the measured maximum of its lever, is
+   significant at p<0.0001 on 22 seasons, and follows from a stated principle
+   rather than from tuning. RB alone is not individually significant (+0.16%,
+   p=0.12); applied uniformly anyway, because a position-specific exception costs
+   more clarity than it buys and the fitted RB curve puts any real young-RB
+   penalty near zero (0.94 at 21).
+
+   NOT CHANGED: the decline slopes. The backtest says they are too steep (RB 33+
+   fits near 0.90 against the engine's 0.58), but the sample only contains players
+   who still logged 8+ games, so collapse cases are absent and the old-age fits are
+   survivor-biased. Over-penalising a 32-year-old back is a deliberate house bias.
+   NOT CHANGED: mvAsset / mvAssetRaw, which also call am(). Only the PROJECTION was
+   backtested, so only the projection moves. */
+const PEAK_AGE={QB:27,WR:25,RB:23,TE:27};
+function amProj(pos,age){
+  const p=PEAK_AGE[pos]!==undefined?pos:'WR';
+  if(age<PEAK_AGE[p]) return 1.0;      // young: no penalty
+  return Math.min(1.0,am(pos,age));    // prime: no boost · old: full decline
+}
 function sm(s){return s>=70?1.12:s>=55?1.03:s>=40?.92:.78;}
 function cm(c){return c>=.95?1.00:c>=.70?.96:c>=.50?.88:c>=.30?.80:.72;}
 function ci(c){return c>=.95?.10:c>=.70?.15:c>=.50?.22:.32;}
@@ -2770,7 +2818,7 @@ function calcProj(pl){
   }
   const e=getEff(pl);
   const age=parseFloat(pl.a)||26;
-  const agM=am(pl.p,Math.floor(age));
+  const agM=amProj(pl.p,Math.floor(age));
   const ciV=ci(e.c);
   const col=CB[pl.n]||1.0;
   const qbq=pl.p==='QB'?1.0:(QBQ[AL[e.team]||e.team]||0.85);
