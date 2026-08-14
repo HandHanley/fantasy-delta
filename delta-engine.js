@@ -1911,6 +1911,53 @@ const TREND_TAG={
 function trendTag(n){ return ''; }
 const OV={};let editTarget=null;
 
+/* ── AVAILABILITY / EFFECTIVENESS MULTIPLIERS ──────────────────────────────
+   Hand-maintained. A multiplier < 1 says: this player is expected to play, but
+   the projection built from his history overstates what he can repeat.
+
+   This is NOT the season-ender list (data/injury-overrides.json, which zeroes a
+   projection outright). It is the middle case the engine previously could not
+   express: available, but materially diminished.
+
+   Add a name only with a written reason. Every entry is a judgement, not a
+   measurement, and the accuracy ledger will grade it as such. */
+const AVAIL={
+  'Patrick Mahomes':{m:0.88, why:'Torn ACL. His passing PPG is flat across three seasons '
+    +'(15.46 / 14.95 / 14.96); the entire 2025 rise to 20.1 came from rushing (2.43 -> 2.67 -> 5.16 PPG). '
+    +'calcProj rewards that rise through d_curve (+0.039), so the model is crediting him for exactly the '
+    +'production the injury removes. 0.88 reverts the rushing share toward his own pre-2025 norm and lands '
+    +'at ~17.9 PPG, between CBS 18.0 and ESPN 17.1.'},
+};
+
+/* ── BACKUP ROLE SUPPRESSION ───────────────────────────────────────────────
+   QB_ROLES already carries pipeline-emitted backup flags (loaded from
+   data/player-stats.json) but until now they only reached dsOpportunity — the
+   PROJECTION ignored them, so Justin Fields and Jameis Winston were projected as
+   if they were starting. NON_QB_BACKUP is the hand-maintained equivalent for
+   skill positions, where the pipeline has no depth-chart feed.
+
+   The multiplier is deliberately NOT near zero. DELTA is a dynasty tool and a
+   backup with starter upside holds real value; printing ~1 PPG would be as wrong
+   in the other direction and would crater model value. This says "fewer snaps
+   than his history implies", not "he will never play". */
+const BACKUP_MULT=0.55;
+const NON_QB_BACKUP={
+  'Jake Tonges':'TE2 behind George Kittle — plays almost only when Kittle is off the field.',
+};
+function availMult(pl){
+  let m=1;
+  if(AVAIL[pl.n]) m*=AVAIL[pl.n].m;
+  /* QB_ROLES is declared further down the file (beside its loader) but getEff runs
+     during the FIRST COMP population, above that line — reading it directly here
+     throws a ReferenceError from the temporal dead zone and blanks the whole app.
+     The typeof guard makes the first pass see no flags; the flags land on the
+     recompute that follows loadPlayerStats(), which is when they exist anyway. */
+  const roles=(typeof QB_ROLES!=='undefined')?QB_ROLES:{};
+  const isBackup=(roles[pl.n]&&roles[pl.n].role==='backup')||NON_QB_BACKUP[pl.n];
+  if(isBackup) m*=BACKUP_MULT;
+  return m;
+}
+
 /* Injury state — see loadInjuryOverrides() below for the full rationale.
    Declared HERE rather than beside the loader because calcProj runs during
    initial COMP population, before the loader block is reached. */
@@ -1921,7 +1968,7 @@ function getEff(pl){
   const team=o.team||pl.t;
   const td=gs(team);
   return{team,s:o.s!==undefined?o.s:td.s,c:o.c!==undefined?o.c:td.c,
-    oc:td.oc,ch:td.ch,inj:o.inj!==undefined?o.inj:1.0,
+    oc:td.oc,ch:td.ch,inj:o.inj!==undefined?o.inj:availMult(pl),
     ktc:o.ktc!==undefined?o.ktc:pl.k,notes:o.notes||'',hasOv:Object.keys(o).length>0};
 }
 
@@ -2754,13 +2801,23 @@ function calcProj(pl){
   // skip all delta/efficiency adjustments — projection already accounts for situation.
   // Apply only the age curve multiplier since that's position-universal.
   if(g25===0 && pl.ppg25>0){
-    const rookieProj = pl.ppg25 * agM;
+    /* This early return previously bypassed TWO things that the main path applies,
+       because both live below it:
+         1. e.inj — the availability multiplier. Every forward-projected player was
+            hard-coded to inj:1.0, so 19 of the 23 pipeline-flagged backup QBs
+            (Winston, Mac Jones, Davis Mills, Tyrod Taylor...) kept a full starter
+            projection no matter what the depth chart said.
+         2. INJ_OUT — the season-ender list. A projected rookie confirmed out for
+            the year would have kept his full projection, since the zeroing block
+            sits after this return. Latent rather than live today (no current
+            entry takes this path), but it would have failed silently. */
     const e2=getEff(pl);
+    const rookieProj = pl.ppg25 * agM * e2.inj;
     const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
     const ciV2=ci(e2.c);
     const rookieResult={...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
-      gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:1.0,
+      gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:e2.inj,
       ktcEff:e2.ktc,notes:'',hasOv:true,
       epaSc:1.0,epaFl:false,epaFr:null,epaTr:'flat',
       role:0,roleLabel:'—',sys:50,oppSc:null};
@@ -2772,6 +2829,12 @@ function calcProj(pl){
     // through scoreless while rookies who logged any 2025 snap got a score —
     // an inconsistency (e.g. #33 pick Stribling blank, later picks scored).
     rookieResult.dsScore=calcDynastyScore(rookieResult);
+    // Same intervention the main path makes below: projection zeroed and tagged,
+    // model value and DELTA Score deliberately untouched.
+    if (INJ_OUT[rookieResult.n]) {
+      rookieResult.proj = 0; rookieResult.floor = 0; rookieResult.ceil = 0;
+      rookieResult.outForSeason = true;
+    }
     return rookieResult;
   }
 
