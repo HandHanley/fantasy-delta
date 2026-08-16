@@ -117,8 +117,18 @@ const src = fs.readFileSync('delta-engine.js', 'utf8') + `
   styleFactors:(typeof styleFactors!=='undefined'?styleFactors:null),
   set:(t,q,fmt)=>{ if(t)leagueTeams=t; if(q)qbFmt=q; if(fmt)scoringFmt=fmt; },
   recompute:()=>{ applyMarketForSetting(); },
+  get INJ_OUT(){ return typeof INJ_OUT!=='undefined' ? INJ_OUT : {}; },
+  /* loadInjuryOverrides() MUST be in this chain. It was missing, and because every
+     loader swallows its own errors the omission was silent: INJ_OUT stayed {}, no
+     projection was ever zeroed, and a player confirmed out for the season was frozen
+     with a full projection AND a buy/sell verdict the ledger would then grade. The
+     live app has always called it (bootDelta), so the freeze was recording something
+     the site never showed. Verified against live data: without this line the snapshot
+     wrote Ricky Pearsall at proj 6.83 / "strong buy"; with it he zeroes and is
+     excluded below. Any loader added to index.html's bootDelta belongs here too. */
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
     await loadRipples(); await loadReads();
+    if(typeof loadInjuryOverrides==='function'){ try{ await loadInjuryOverrides(); }catch(e){} }
     if(typeof ensureStartData==='function'){ try{ await ensureStartData(); }catch(e){} }
     applyMarketForSetting(); }
 };`;
@@ -171,7 +181,28 @@ vm.createContext(sb); vm.runInContext(src, sb);
   if (!(centerProbe > 0.6 && centerProbe < 1.3) || centerProbe === 1)
     die(`model-value population center is ${centerProbe} — out of range or on the 1.0 fallback; market/stats data is suspect`);
 
-  console.log(`pre-flight OK · ${compAll.length} players · ${withMkt} with market · ${psCount} stat lines · center ${centerProbe.toFixed(4)}`);
+  /* The season-ender list is HAND-maintained and small, so "empty" is a legitimate
+     state — it cannot be guarded by a count. Guard the MISMATCH instead: read the
+     file straight off disk and require that every out_for_season entry in it actually
+     reached the engine. That catches the real failure mode (loader missing from the
+     boot chain, a fetch that 404s, a malformed file) without firing on a genuinely
+     empty list. A name in the file that the engine never saw is also caught — it means
+     the entry is misspelled against RAW and would silently do nothing. */
+  const injOut = H.INJ_OUT || {};
+  let injFile = null;
+  try { injFile = JSON.parse(fs.readFileSync(path.join('data','injury-overrides.json'),'utf8')); } catch(e) {}
+  if (injFile) {
+    const want = Object.keys(injFile).filter(k => !k.startsWith('_') && injFile[k] && injFile[k].out_for_season);
+    const gotAll = want.filter(n => injOut[n]);
+    if (want.length !== gotAll.length) {
+      const lost = want.filter(n => !injOut[n]);
+      die(`injury-overrides.json lists ${want.length} season-ender(s) but the engine applied ${gotAll.length} — missing: ${lost.join(', ')}. Either the loader did not run or the name does not match RAW.`);
+    }
+    const namedNotInComp = want.filter(n => !compAll.some(c => c.n === n));
+    if (namedNotInComp.length) die(`injury-overrides.json names player(s) not in the universe: ${namedNotInComp.join(', ')} — check the spelling against RAW.`);
+  }
+
+  console.log(`pre-flight OK · ${compAll.length} players · ${withMkt} with market · ${psCount} stat lines · center ${centerProbe.toFixed(4)} · ${Object.keys(injOut).length} season-ender(s) applied`);
 
   const comp = compAll;
 
@@ -198,9 +229,19 @@ vm.createContext(sb); vm.runInContext(src, sb);
     byPosMk[pos] = comp.filter(c => c.pos === pos).sort((a,b) => (b.kMkt||0) - (a.kMkt||0)).map(c => c.n);
   }
 
-  const players = {}, excluded = [];
+  const players = {}, excluded = [], excludedOut = [];
   for (const c of comp) {
     if (c.mktStale) { excluded.push(c.n); continue; }
+    /* KNOWN-OUT EXCLUSION — the third documented exclusion, previously absent from
+       this script while both docs/ACCURACY-LEDGER.md and the header of
+       data/injury-overrides.json stated it. A near-zero projection on a player
+       everyone already knows is out is not a prediction the model made, so grading it
+       would flatter the ledger. Listed by name in excluded_out rather than dropped
+       silently, the same way stale players are, so 2027 can see exactly who was set
+       aside and why. Note this is the PROJECTION test only — their model value and
+       DELTA Score are untouched by the override and remain honest; they are held out
+       of all three tests here purely to keep one rule and one graded set. */
+    if (H.INJ_OUT && H.INJ_OUT[c.n]) { excludedOut.push(c.n); continue; }
     const mv = Math.round(H.mvAsset(c));
     const mkt = Math.round(c.kMkt || 0);
     if (!mkt) { excluded.push(c.n); continue; }
@@ -286,6 +327,7 @@ vm.createContext(sb); vm.runInContext(src, sb);
     provenance,
     count: Object.keys(players).length,
     excluded_stale: excluded.sort(),
+    excluded_out: excludedOut.sort(),   // confirmed season-enders — held out of the graded set by design
     headline: { top_buys: buys, top_sells: sells },
     players,
   };
@@ -293,7 +335,8 @@ vm.createContext(sb); vm.runInContext(src, sb);
   const json = JSON.stringify(out, null, 1);
   const kb   = (Buffer.byteLength(json) / 1024).toFixed(1);
 
-  console.log(`${DRY_RUN ? 'DRY RUN' : 'FREEZE SNAPSHOT'}: ${out.count} players graded · ${excluded.length} excluded (stale/no market)`);
+  console.log(`${DRY_RUN ? 'DRY RUN' : 'FREEZE SNAPSHOT'}: ${out.count} players graded · ${excluded.length} excluded (stale/no market)`
+    + (excludedOut.length ? ` · ${excludedOut.length} excluded (out for season: ${excludedOut.join(', ')})` : ' · 0 season-enders'));
   console.log(`top buy:  ${buys[0] || '—'}`);
   console.log(`top sell: ${sells[0] || '—'}`);
 
