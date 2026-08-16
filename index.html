@@ -4524,15 +4524,18 @@ function slpBuildDeltaIndex(){
   const idx={};
   const rawNames=new Set();
   for(const p of RAW){ if(p&&p.n){ idx[slpNorm(p.n)]=p.n; rawNames.add(p.n); } }
-  // FC_ALIASES (alias → DELTA name) covers known external-source variants;
-  // Sleeper tends to share the same Jr./initials quirks FantasyCalc has.
-  // RAW-derived entries win, and an alias is only used if its target actually
-  // exists in RAW (guards against stale aliases like 'DK Metcalf'→'D.K. Metcalf'
-  // when RAW spells him 'DK Metcalf').
+  /* FC_ALIASES is keyed DELTA name → external name (see its header). This index
+     needs the inverse — external name → DELTA name — so the mapping is flipped here
+     rather than the table being maintained in two directions. Sleeper shares the same
+     spelling quirks FantasyCalc has ('Kenny Gainwell'), so the same table serves both.
+     Guarded on the DELTA name existing in RAW: a stale alias can then never invent a
+     roster slot for a player the model does not carry. slpNorm() already handles
+     punctuation and Jr/Sr/II/III/IV, so only real spelling differences reach here. */
   if(typeof FC_ALIASES!=='undefined'){
-    for(const k in FC_ALIASES){
-      const key=slpNorm(k);
-      if(!idx[key]&&rawNames.has(FC_ALIASES[k])) idx[key]=FC_ALIASES[k];
+    for(const deltaName in FC_ALIASES){
+      if(!rawNames.has(deltaName)) continue;
+      const key=slpNorm(FC_ALIASES[deltaName]);
+      if(!idx[key]) idx[key]=deltaName;
     }
   }
   return idx;

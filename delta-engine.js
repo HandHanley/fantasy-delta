@@ -4460,33 +4460,31 @@ function fcNormIndex(slice){
   for(const k in slice){ const n=fcNorm(k); if(!(n in idx)) idx[n]=k; }
   return idx;
 }
+/* DELTA name → FantasyCalc name. THE KEY IS DELTA'S SPELLING — that is the
+   direction both consumers read it (valOf() in loadLiveMarketValues, and the
+   kMkt lookup in applyMarketForSetting), and it matches the convention the
+   nightly pipeline already uses ('DELTA name -> nflverse display name' in
+   fetch-player-stats.py). The header used to say the opposite, and the table was
+   written to that wrong header: of 22 entries exactly ONE ever fired.
+
+   WHAT BELONGS HERE: only names normalization cannot bridge — a different first
+   name, a nickname, a genuinely different string. Nothing else. fcNorm() already
+   strips periods, apostrophes, hyphens and Jr/Sr/II/III/IV from both sides, so
+   FC's 'Kenneth Walker' / 'Marvin Harrison Jr' / 'Michael Pittman' / 'Sam LaPorta'
+   / 'Brian Thomas' / 'C.J. Stroud' all resolve on their own. Measured against the
+   live 12|sf slice on 16 Aug 2026: 361 names hit FC directly, 10 more resolve
+   through fcNorm, 1 needs this table. The twenty entries removed here were all
+   inert — either no-ops ('CeeDee Lamb': 'CeeDee Lamb') or punctuation variants
+   fcNorm already handled. Adding a dead entry is worse than adding none: it reads
+   as coverage that does not exist, which is how Gainwell sat mispriced.
+
+   Gainwell is the shape that DOES need an entry: FantasyCalc, nflverse
+   load_player_stats and nflverse load_players all say 'Kenny', while DELTA, OTC
+   contracts, the game logs, nflverse load_draft_picks and nflverse snap counts all
+   say 'Kenneth'. No normalizer bridges Kenneth→Kenny; only a stated alias does. */
 const FC_ALIASES = {
-  // FC name → DELTA name (when FC uses different format)
-  'CeeDee Lamb':           'CeeDee Lamb',
-  'Cee Dee Lamb':          'CeeDee Lamb',
-  'DK Metcalf':            'D.K. Metcalf',
-  'AJ Brown':              'A.J. Brown',
-  'Deebo Samuel Sr.':      'Deebo Samuel',
-  "De'Von Achane":         "De'Von Achane",
-  'Devon Achane':          "De'Von Achane",
-  'Travis Etienne Jr.':    'Travis Etienne',
-  'Michael Pittman':       'Michael Pittman Jr.',
-  'Ken Walker III':        'Kenneth Walker III',
-  // Jr./Sr. variations
-  'Marvin Harrison':       'Marvin Harrison Jr.',
-  'Michael Penix':         'Michael Penix Jr.',
-  'Harold Fannin':         'Harold Fannin Jr.',
   'Chigoziem Okonkwo':     'Chig Okonkwo',
-  'Brian Thomas':          'Brian Thomas Jr.',
-  // Initials without dots
-  'CJ Stroud':             'C.J. Stroud',
-  'JJ McCarthy':           'J.J. McCarthy',
-  'JK Dobbins':            'J.K. Dobbins',
-  'TJ Hockenson':          'T.J. Hockenson',
-  'KJ Osborn':             'K.J. Osborn',
-  // Other common variants
-  'Samuel LaPorta':        'Sam LaPorta',
-  'Javonte Williams':      'Javonte Williams',
+  'Kenneth Gainwell':      'Kenny Gainwell',
 };
 
 
@@ -4781,8 +4779,51 @@ async function loadLiveMarketValues() {
     console.log(`[DELTA] Live values loaded: ${updated} players updated, ${notFound.length} not matched` +
                 (MARKET_SETTINGS ? ` · grid ${Object.keys(MARKET_SETTINGS).length} settings` : ' · legacy flat'));
     if (typeof showDataFreshness === 'function') showDataFreshness(data.fetched, updated, notFound.length);
-    if (notFound.length > 0 && notFound.length < 20) {
-      console.log('[DELTA] Unmatched players:', notFound.join(', '));
+    /* ALWAYS print the names. This used to be gated on `notFound.length < 20`, which
+       suppressed the list at exactly 28 unmatched — so the one entry that mattered was
+       invisible. Most unmatched names are legitimate (free agents outside FC's top ~475);
+       the list is noise until you need it, and then it is the only place to look. */
+    if (notFound.length) console.log('[DELTA] Unmatched players (' + notFound.length + '):', notFound.join(', '));
+
+    /* SURNAME COLLISION DETECTOR — the whole point of the two lines above.
+       An unmatched DELTA name whose surname DOES appear in the FC slice is almost
+       always a spelling difference, not a genuine absence: DELTA said 'Kenneth
+       Gainwell', FantasyCalc said 'Kenny Gainwell', the match failed silently, and he
+       carried a baked value 76% above his real price into the freeze. A player FC has
+       simply never heard of produces no collision, so this stays quiet in the normal
+       case. Every hit here wants either an FC_ALIASES entry or a RAW rename. */
+    if (notFound.length) {
+      const parts = s => fcNorm(s).split(' ');
+      const last  = s => parts(s).pop();
+      const first = s => parts(s)[0] || '';
+      /* Surname alone is far too loose — it flagged 'Elijah Higgins' against Tee Higgins
+         and 'Ty Johnson' against six unrelated Johnsons. A detector that cries wolf gets
+         ignored, which is the failure it exists to prevent. So also require the first
+         names to be plausibly the same person: one a prefix of the other (Chig/Chigoziem,
+         Sam/Samuel, Ken/Kenneth) or sharing three leading letters (Kenneth/Kenny).
+         This deliberately will NOT catch a true nickname substitution like Mike/Michael
+         or Bob/Robert — nothing short of a nickname table would. The full unmatched list
+         printed above is the backstop for those; scan it when a name looks wrong. */
+      const related = (a, b) => {
+        const x = first(a), y = first(b);
+        if (!x || !y) return false;
+        if (x === y || x.startsWith(y) || y.startsWith(x)) return true;
+        let i = 0; while (i < x.length && i < y.length && x[i] === y[i]) i++;
+        return i >= 3;
+      };
+      const fcBySurname = {};
+      for (const k of Object.keys(anchorSlice)) (fcBySurname[last(k)] = fcBySurname[last(k)] || []).push(k);
+      const suspects = notFound
+        .map(n => ({ n, cands: (fcBySurname[last(n)] || []).filter(c => related(n, c)) }))
+        .filter(x => x.cands.length);
+      if (suspects.length) {
+        console.warn('[DELTA] ' + '!'.repeat(68));
+        console.warn('[DELTA] !! POSSIBLE NAME MISMATCH — unmatched here, but FantasyCalc lists a near-identical name.');
+        console.warn('[DELTA] !! These keep a BAKED market value and are excluded from the freeze ledger.');
+        for (const s of suspects) console.warn(`[DELTA] !!   DELTA "${s.n}"  ←→  FC ${s.cands.map(c => '"' + c + '"').join(', ')}`);
+        console.warn('[DELTA] !! Fix with an FC_ALIASES entry (DELTA name → FC name) or a RAW rename.');
+        console.warn('[DELTA] ' + '!'.repeat(68));
+      }
     }
 
     // Point kMkt at the currently-selected format and rebuild COMP/ASSETS/render.
