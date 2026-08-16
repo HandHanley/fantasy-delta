@@ -585,17 +585,31 @@ def match_names(agg, delta_names, no_data=None):
     print(f"[DELTA] nfl_norm size: {len(nfl_norm)}")
     print(f"[DELTA] 'josh allen' in nfl_norm: {'josh allen' in nfl_norm}")
 
-    # Known aliases: DELTA name -> nflverse display name
+    # Known aliases: DELTA name -> nflverse display name.
+    #
+    # DIRECT FIRST, ALIAS SECOND. This used to try the alias first, which is fine
+    # while every nflverse table agrees on a spelling — and they did, until Gainwell.
+    # nflverse is NOT internally consistent about him:
+    #     load_player_stats  player_display_name -> 'Kenny Gainwell'
+    #     load_players       display_name        -> 'Kenny Gainwell'
+    #     load_draft_picks   pfr_player_name     -> 'Kenneth Gainwell'
+    #     load_snap_counts   player              -> 'Kenneth Gainwell'
+    # DELTA, OTC contracts and the game logs all say 'Kenneth'. Alias-first would fix
+    # this join and break the draft/snap joins that use the same alias table; trying
+    # the real name first and only falling back to the alias satisfies both, and
+    # cannot regress an existing entry (Chig Okonkwo has no direct hit either way).
     ALIASES = {
         'Chigoziem Okonkwo': 'Chig Okonkwo',
+        'Kenneth Gainwell':  'Kenny Gainwell',
     }
 
     matched   = {}
     not_found = []
 
     for name in delta_names:
-        lookup = ALIASES.get(name, name)
-        key    = norm(lookup)
+        key = norm(name)
+        if key not in nfl_norm and name in ALIASES:
+            key = norm(ALIASES[name])
 
         if key in nfl_norm:
             matched[name] = nfl_norm[key]
@@ -996,15 +1010,23 @@ def fetch_draft_and_college(delta_names, meta):
     # only; we do NOT do partial/startswith here because draft+college are
     # identity facts where a fuzzy hit (e.g. two "Mike Williams") is worse than
     # a miss that falls back to the baked table.
-    DRAFT_ALIASES = {'Chigoziem Okonkwo': 'Chig Okonkwo'}
+    # Direct spelling first, alias only as a fallback — see the note in match_names().
+    # This table is shared by TWO sources that disagree: load_draft_picks says
+    # 'Kenneth Gainwell' while load_players says 'Kenny Gainwell'. Alias-first would
+    # fix college/age and silently break the draft join for the same player.
+    DRAFT_ALIASES = {
+        'Chigoziem Okonkwo': 'Chig Okonkwo',
+        'Kenneth Gainwell':  'Kenny Gainwell',
+    }
     def _match(raw, delta_names):
         rawnorm = {}
         for k in raw:
             rawnorm.setdefault(norm(k), k)
         out = {}
         for dn in delta_names:
-            lk = DRAFT_ALIASES.get(dn, dn)
-            hit = rawnorm.get(norm(lk))
+            hit = rawnorm.get(norm(dn))
+            if hit is None and dn in DRAFT_ALIASES:
+                hit = rawnorm.get(norm(DRAFT_ALIASES[dn]))
             if hit is not None:
                 out[dn] = hit
         return out
@@ -1086,7 +1108,13 @@ def fetch_draft_and_college(delta_names, meta):
                 dpos = meta.get(dn, (None, None))[1]
                 if not dpos:
                     continue
-                k = (norm(DRAFT_ALIASES.get(dn, dn)), dpos)
+                # Direct spelling first, alias as fallback (see _match above). This
+                # join reads load_players, which says 'Kenny Gainwell' — so without
+                # the fallback he had no college and no age, while the draft join
+                # right above resolved him fine under 'Kenneth'.
+                k = (norm(dn), dpos)
+                if k not in raw_col and k not in raw_age and dn in DRAFT_ALIASES:
+                    k = (norm(DRAFT_ALIASES[dn]), dpos)
                 if k in raw_col:
                     college_map[dn] = raw_col[k]
                 if k in raw_age:
