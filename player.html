@@ -234,7 +234,7 @@ function buildHeroHTML(p) {
   return `<div class="hero">
     ${hsHtml}
     <div class="hero-info">
-      <div class="hero-name">${p.n} <span data-name="${p.n}" onclick="heroStar(this)" style="cursor:pointer;font-size:17px;vertical-align:2px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span></div>
+      <div class="hero-name">${typeof injBadge==='function'?injBadge(p.n):''}${p.n} <span data-name="${p.n}" onclick="heroStar(this)" style="cursor:pointer;font-size:17px;vertical-align:2px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span></div>
       <div class="hero-meta">
         <span class="badge bn">${p.pos}</span>
         <span>${team}</span>
@@ -915,12 +915,36 @@ try {
 if (!PLAYER_NAME) {
   showError('No player specified. Use <code>player.html?name=Josh+Allen</code>');
 } else {
+  /* THIS CHAIN MUST MIRROR index.html's bootDelta(), IN ORDER. It did not, and the
+     two pages disagreed on 186 buy/sell verdicts, 218 projections and 46 DELTA Scores
+     measured against live data. Two separate causes, both fixed here:
+
+       1. loadInjuryOverrides() was missing entirely, so INJ_OUT stayed {} and a player
+          confirmed out for the season kept a full projection on his own page while the
+          rankings row showed 0 and an OUT badge.
+
+       2. Nothing rebuilt COMP after ensureStartData(). That loader syncs g25 from the
+          game logs (136 players on current data) — it mutates RAW, not COMP, so the
+          objects built by the earlier loaders kept a stale g25. index.html gets away
+          with the same ordering only because renderAll() rebuilds COMP afterwards.
+          A stale g25 of 0 on a veteran is not a rounding error: calcProj has an
+          early-return rookie path gated on g25===0, so real veterans were being scored
+          through the rookie branch. Darnell Washington read "52 · sell" in the rankings
+          and "47 · buy" here.
+
+     applyMarketForSetting() is the rebuild (it repoints kMkt and re-runs calcProj over
+     RAW). It must run BEFORE the COMP.find below, or p points at a discarded object,
+     and while MV_CENTER is still 1, because computeMvCenter() must measure on the raw
+     basis — the same compute -> set -> read sequence renderAll() and the freeze use.
+     If a loader is ever added to bootDelta, add it here too. */
   loadLiveMarketValues()
     .then(() => loadPlayerStats())
     .then(() => loadPlayerContracts())
     .then(() => loadRipples()).then(() => loadReads())
+    .then(() => loadInjuryOverrides())
     .then(() => ensureStartData())
     .then(() => {
+      applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
       const p = COMP.find(x => x.n === PLAYER_NAME);
       if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
       MV_CENTER = computeMvCenter(); // calibrate to population median — same as renderAll() in index.html
