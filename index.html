@@ -463,6 +463,22 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 .set-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
 .set-sel{width:100%;font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
   border-radius:8px;padding:6px 8px;font-family:inherit;margin-bottom:15px}
+/* ── Rankings panel header (Option C) ────────────────────────────────────
+   Search + sort share one row and the search flexes, so removing the age filter
+   does not leave a visible gap where a control used to sit. */
+.ctl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.55rem}
+.fld-8{font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
+  border-radius:8px;padding:6px 9px;font-family:inherit;flex:1;min-width:150px}
+.rk-state{margin-top:5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rk-chip{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--teal-br);
+  background:var(--ink-2);border:1px solid var(--teal-tint);border-radius:6px;padding:2px 7px;
+  cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+  font-weight:600;transition:border-color .15s}
+.rk-chip:hover{border-color:var(--teal-br)}
+/* Muted ✕ so the chip reads as a value first and a control second. Hidden when the
+   setting is already at the anchor — nothing to revert to, so no affordance. */
+.rk-chip .x{color:var(--fog-2);font-weight:700;font-size:11px;line-height:1}
+.rk-chip:hover .x{color:var(--coral)}
 /* ═══════════════════════ end DELTA brand layer ═══════════════════════════ */
 </style>
 <script>
@@ -644,33 +660,63 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 
 
 <div id="panel-rankings" class="panel active">
-  <div style="display:none"><select id="scoring-fmt" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select></div>
-<div class="controls">
-    <input type="text" id="s-rank" placeholder="Search..." oninput="renderRankings()">
-    <select id="pos-rank" onchange="renderRankings()">
+  <!-- Hidden state stores. pos-rank lives here rather than being replaced outright: the
+       position pills below write to it, and renderRankings() + deckStar() keep reading it
+       exactly as before, so the filter swap is presentation-only. Same pattern the scoring
+       and league selects already use. -->
+  <div style="display:none"><select id="scoring-fmt" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select><select id="pos-rank" onchange="renderRankings()">
       <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
-    </select>
-    <select id="sort-rank" onchange="setSortRDropdown(this.value)">
+    </select></div>
+
+  <!-- Panel lockup, matching #panel-college. Solid mark here, outline there — that pairing
+       already carries the NFL/college distinction, so nothing else has to. -->
+  <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:.25rem">
+    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block;margin-top:2px">
+      <defs>
+        <linearGradient id="rkL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+        <linearGradient id="rkR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+      </defs>
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#rkL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#rkR)"/>
+      <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
+      <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Rankings</div>
+      <!-- Filled by dlLeagueBadge(). The subtitle IS the live league state: these three
+           settings rescore all 409 players, so they belong on screen rather than behind
+           the gear. College has no equivalent state and keeps a plain subtitle. -->
+      <div id="rk-state" class="rk-state"></div>
+    </div>
+  </div>
+
+  <details class="cfb-about" style="margin:.75rem 0 .7rem"><summary>About</summary><div class="cfb-about-body">Every number here is anchored to the market price, not a replacement for it.
+    <b style="color:var(--paper)">Model value answers one question</b> — what the profile is worth if the market repriced it on production, age,
+    opportunity and contract. The verdict is the gap between the two, not a prediction of next week. Change a setting above and the whole board
+    rescores: scarcity is a function of league size and QB format, so a 10-team superflex QB is not worth what a 14-team 1-QB QB is worth.</div></details>
+
+  <div class="ctl-row">
+    <input type="text" id="s-rank" class="fld-8" placeholder="Search players…" oninput="renderRankings()">
+    <select id="sort-rank" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)">
       <option value="ds">Δ DELTA Score</option>
       <option value="ktc">Mkt Val</option><option value="mv">Model val</option>
       <option value="proj">Proj PPG</option><option value="epaSc">EPA</option>
       <option value="a">Age</option><option value="sys">System</option><option value="opp">Alpha / Workhorse</option>
     </select>
-    <select id="age-rank" onchange="renderRankings()">
-      <option value="0">Any age</option><option value="24">≤24</option>
-      <option value="26">≤26</option><option value="28">≤28</option><option value="30">≤30</option>
-    </select>
-    
+  </div>
 
+  <div class="set-row" id="rk-pos-row" style="margin-bottom:.75rem">
+    <button class="set-pill on" data-rpos="ALL" onclick="rkSetPos('ALL')">All</button>
+    <button class="set-pill" data-rpos="QB" onclick="rkSetPos('QB')">QB</button>
+    <button class="set-pill" data-rpos="RB" onclick="rkSetPos('RB')">RB</button>
+    <button class="set-pill" data-rpos="WR" onclick="rkSetPos('WR')">WR</button>
+    <button class="set-pill" data-rpos="TE" onclick="rkSetPos('TE')">TE</button>
+    <button class="set-pill" data-rpos="WL" onclick="rkSetPos('WL')">★ Watchlist</button>
   </div>
-  
-  <div style="display:flex;justify-content:flex-start;margin:0 0 8px">
-  <button id="lg-badge" onclick="toggleSettings(event)" title="League settings"
-      style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--fog);
-      background:var(--ink-2);border:1px solid var(--line);border-radius:8px;
-      padding:5px 10px;cursor:pointer;white-space:nowrap"></button>
-  </div>
+
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
       <th onclick="setSortR('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
@@ -1004,8 +1050,9 @@ function barColor(s){return s>=70?'var(--emerald-bri)':s>=55?'var(--emerald)':s>
 function renderRankings(){
   const q=(document.getElementById('s-rank').value||'').toLowerCase();
   const pos=document.getElementById('pos-rank').value;
-  const ageMax=parseInt(document.getElementById('age-rank').value)||99;
-  let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&(p.a||0)<=ageMax&&p.n.toLowerCase().includes(q));
+  /* Age filter removed with the Option C header — it was the only panel carrying one, and
+     Age is still available as a sort, which covers the same need without a permanent control. */
+  let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&p.n.toLowerCase().includes(q));
   const km={ktc:'ktcEff',mv:'mv',proj:'proj',epaSc:'epaSc',a:'a',sys:'sys',ds:'dsScore',ppg25:'ppg25',ppg24:'ppg24'};
   data.sort((a,b)=>(b[km[sortK]||'ktcEff']??0)-(a[km[sortK]||'ktcEff']??0));
   // Build position rank counters
@@ -2052,6 +2099,7 @@ function renderAll(){
   loadTradeFromUrl();
   applyLanding();
   dlLeagueBadge();
+  rkSyncPos();   // pills follow the hidden #pos-rank, including a restored/URL-set value
 }
 
 
@@ -2184,10 +2232,50 @@ function setTheme(name){
   dlPref('delta_theme',name); dlThemeApply(name);
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteTheme(); }catch(e){}
 }
+/* The old #lg-badge was one mono chip that opened the settings sheet. It is now three
+   chips, one per setting, because these are three independent things and collapsing them
+   into a single string meant you could not see which one you had changed.
+
+   Tapping ✕ reverts that ONE setting to the anchor — 12-team / SF / 0.5 PPR + TE — which
+   is what an ✕ implies, and gives a one-tap route back to the basis the freeze and every
+   buy/sell verdict are computed on. The ✕ is only rendered when the setting is off-anchor;
+   a chip already at the default is a label, not a control. The chip body itself still
+   opens the settings sheet, so nothing that used to be reachable stopped being reachable. */
+const RK_ANCHOR={teams:12,qb:'sf',fmt:'half_tep'};
 function dlLeagueBadge(){
-  const b=document.getElementById('lg-badge'); if(!b) return;
-  const fmt={half_tep:'0.5PPR+TE',half:'0.5PPR',full_tep:'PPR+TE',full:'PPR',std:'Std'}[scoringFmt]||scoringFmt;
-  b.textContent = leagueTeams+'-team \u00b7 '+(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+fmt;
+  const host=document.getElementById('rk-state'); if(!host) return;
+  const fmtLbl={half_tep:'0.5 PPR + TE',half:'0.5 PPR',full_tep:'Full PPR + TE',full:'Full PPR',std:'Standard'};
+  const chip=(label,key,atAnchor)=>
+    '<button class="rk-chip" onclick="rkChipClick(event,\''+key+'\')" title="'+
+      (atAnchor?'League setting — tap to open settings':'Tap ✕ to reset to the '+
+        (key==='teams'?'12-team':key==='qb'?'superflex':'0.5 PPR + TE')+' anchor')+'">'+
+    label+(atAnchor?'':'<span class="x" data-reset="'+key+'">\u2715</span>')+'</button>';
+  host.innerHTML =
+      chip(leagueTeams+'-team','teams',leagueTeams===RK_ANCHOR.teams)
+    + chip(qbFmt==='sf'?'Superflex':'1-QB','qb',qbFmt===RK_ANCHOR.qb)
+    + chip(fmtLbl[scoringFmt]||scoringFmt,'fmt',scoringFmt===RK_ANCHOR.fmt);
+}
+/* One handler for the whole chip: the ✕ resets, anywhere else opens settings. Reading the
+   click target rather than nesting a button inside a button, which is invalid HTML. */
+function rkChipClick(e,key){
+  if(e.target && e.target.dataset && e.target.dataset.reset){ e.stopPropagation(); rkResetSetting(key); return; }
+  toggleSettings(e);
+}
+function rkResetSetting(key){
+  if(key==='teams'){ const el=document.getElementById('lg-teams'); if(el){el.value=String(RK_ANCHOR.teams); applyLeagueSettings('main');} return; }
+  if(key==='qb'){    const el=document.getElementById('lg-qb');    if(el){el.value=RK_ANCHOR.qb;            applyLeagueSettings('main');} return; }
+  if(key==='fmt'){   const el=document.getElementById('scoring-fmt'); if(el){el.value=RK_ANCHOR.fmt;        applyScoring();} }
+}
+/* Position filter is pills now, but #pos-rank (hidden) is still the single source of
+   truth — renderRankings() and deckStar() read it unchanged. */
+function rkSetPos(v){
+  const sel=document.getElementById('pos-rank'); if(sel) sel.value=v;
+  rkSyncPos();
+  renderRankings();
+}
+function rkSyncPos(){
+  const sel=document.getElementById('pos-rank'); const v=sel?sel.value:'ALL';
+  document.querySelectorAll('#rk-pos-row .set-pill').forEach(b=>b.classList.toggle('on', b.dataset.rpos===v));
 }
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
 function settingsInit(){
