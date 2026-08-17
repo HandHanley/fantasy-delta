@@ -328,23 +328,26 @@ function buildDSTrajectoryHTML(p) {
   }
   const ds = p.dsScore;
   if (ds == null) return '';
-  const pos = p.pos || p.p || 'WR';
 
-  // 2024 estimate: age-1, use ppg24 as recent production, same opp/contract as approx
-  const prevAge = (p.a || 22) - 1;
-  const pA = dsAge(prevAge, pos);
-  const pP = dsProduction(p.ppg24||0, p.ppg23||0, p.ppg22||0, p.g24||16, pos, p);
-  const pO = dsOpportunity(p);
-  const pC = dsCont(p);
-  const ds2024 = Math.round(Math.min(99, pA + pP + pO + pC));
+  /* CALL THE REAL SCORER. These two estimates used to be computed here as
+     pA + pP + pO + pC — the RAW axis maxima, 25/32/33/10 — while the 2025 score
+     sitting between them comes from calcDynastyScore's WEIGHTED 15/45/30/10, with
+     the youth multiplier, the RB opportunity downweight and post-clip scarcity.
+     Two different scales on one chart: the arrows were reading partly as movement
+     in the player and partly as the difference between two formulas. Feeding shifted
+     inputs through the real function is the only version that cannot drift again —
+     if the weights change, all three numbers change together.
 
-  // 2026 projection: age+1, projected PPG as new recent season
-  const nextAge = (p.a || 22) + 1;
-  const nA = dsAge(nextAge, pos);
-  const nP = dsProduction(p.proj||p.ppg25||0, p.ppg25||0, p.ppg24||0, p.g25||0, pos, p);
-  const nO = dsOpportunity(p);
-  const nC = dsCont(p);
-  const ds2026 = Math.round(Math.min(p.g25===0 ? 89 : 99, nA + nP + nO + nC));
+     What is shifted, and nothing else: age, and which seasons count as recent
+     production. Opportunity and contract stay at today's values (the footnote says
+     so) because there is no honest way to age them. p.ppg22 is not a field any RAW
+     row carries, so 2024's third season is genuinely absent and passes as 0 — the
+     same as it did before. */
+  const at = (age, r1, r2, r3, games) =>
+    calcDynastyScore({ ...p, a: age, ppg25: r1 || 0, ppg24: r2 || 0, ppg23: r3 || 0, g25: games });
+
+  const ds2024 = at((p.a || 22) - 1, p.ppg24, p.ppg23, 0,        p.g24 || 16);
+  const ds2026 = at((p.a || 22) + 1, p.proj || p.ppg25, p.ppg25, p.ppg24, p.g25 || 0);
 
   const dsC = dsColor(ds);
   const d4C = dsColor(ds2024);
@@ -352,7 +355,7 @@ function buildDSTrajectoryHTML(p) {
 
   const bar = (score, color) => `
     <div style="height:4px;background:#111A28;border-radius:3px;overflow:hidden;margin-bottom:4px">
-      <div style="width:${Math.round((score/99)*100)}%;height:100%;background:${color};border-radius:3px"></div>
+      <div style="width:${Math.round((score/100)*100)}%;height:100%;background:${color};border-radius:3px"></div>
     </div>`;
 
   const pt = (yr, score, color, note) => `

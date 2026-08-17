@@ -755,7 +755,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--teal-br);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team A<select onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--teal-br);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team A<select class="win-sel" onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
@@ -763,7 +763,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--sky);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team B<select onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--sky);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team B<select class="win-sel" onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
@@ -771,7 +771,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--violet);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team C<select onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--violet);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team C<select class="win-sel" onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
       <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
@@ -779,7 +779,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--topaz);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team D<select onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--topaz);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team D<select class="win-sel" onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
       <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
@@ -1401,7 +1401,7 @@ function recalcTrade(){
           </div>
           <div class="added-metarow"><span class="added-meta">${metaHtml}</span>${destSel}</div>
         </div>
-        <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\'")}')">✕</button>
+        <button class="rm" onclick="removeAsset('${s.id}','${p.n.replace(/'/g,"\\'")}')">✕</button>
       </div>`;
     }).join('');
     const kt=s.arr.reduce((x,p)=>x+p.k,0);
@@ -1691,7 +1691,14 @@ function windowFraming(){
     for(const a of s.arr){
       const v=a.k||0; tot+=v;
       if(v>topV){topV=v;top=a;}
-      const age=typeof a.age==='number'?a.age:null;
+      /* p.a, NOT p.age. Trade assets are spread from COMP/ASSETS, whose rows use `a`
+         for age — `age` exists only on the college prospect objects. Reading the wrong
+         field returned undefined for every player, so nothing ever cleared the 27+ or
+         the ≤22 test and every non-pick fell through to "core": a contender taking back
+         a 33-year-old Mike Evans read "productive core — fits your window" instead of
+         the aging-vet warning this block exists to give. Three of the six messages
+         below were unreachable. */
+      const age=typeof a.a==='number'?a.a:null;
       if(a.ip || (age!==null && age<=22 && v<2500)) fut+=v;   // picks + unproven youth (upside, not producing)
       else if(!a.ip && age!==null && age>=27) now+=v;          // aging vets (produce now, declining)
       else core+=v;                                            // prime + young studs — serve both windows
@@ -1788,6 +1795,11 @@ function setTradeTeams(n){
   });
   document.getElementById('trade-col-c').style.display=n>=3?'':'none';
   document.getElementById('trade-col-d').style.display=n>=4?'':'none';
+  /* windowFraming() returns '' for anything other than a 2-team trade — "receives" is
+     only an unambiguous 1:1 in a straight swap. The dropdowns were rendering on all
+     four columns regardless, so in a 3- or 4-team trade every one of them was a
+     control that did nothing. Show them only when the feature can actually answer. */
+  document.querySelectorAll('.win-sel').forEach(s=>{ s.style.display = n===2 ? '' : 'none'; });
   const grid=document.getElementById('trade-grid');
   grid.className='trade-grid'+(n===3?' three-col':n===4?' four-col':'');
   // Clear hidden side data when shrinking
