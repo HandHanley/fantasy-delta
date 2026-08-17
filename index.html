@@ -485,7 +485,11 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
    on purpose: this runs before delta-engine.js exists. */
 (function(){try{
-  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+  /* MUST match DL_THEMES in index.html. This table is duplicated in three places on purpose —
+     it runs before delta-engine.js exists, so it cannot read the real one — and player.html
+     has NO other copy, so a theme missing here renders that whole page in teal. */
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
+         cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
   var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
   function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
@@ -633,6 +637,8 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
       <button class="set-pill" data-theme="teal"   onclick="setTheme('teal')"><span class="set-dot" style="background:#2DD4BF"></span>Teal</button>
       <button class="set-pill" data-theme="violet" onclick="setTheme('violet')"><span class="set-dot" style="background:#9B8AF0"></span>Violet</button>
       <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
+      <button class="set-pill" data-theme="cobalt" onclick="setTheme('cobalt')"><span class="set-dot" style="background:#5B8DEF"></span>Cobalt</button>
+      <button class="set-pill" data-theme="orchid" onclick="setTheme('orchid')"><span class="set-dot" style="background:#D96BC4"></span>Orchid</button>
       <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
     </div>
     <div class="set-sec">ACCOUNT</div>
@@ -2109,8 +2115,22 @@ function renderAll(){
 // Chrome accent ONLY. Emerald / coral / topaz are deliberately not offered as themes:
 // they carry buy / sell / watch meaning, and reusing them as chrome would invent
 // false signals. Semantic colors never change with the theme.
+/* Accent is CHROME ONLY. Emerald, coral and topaz are never offered here because they
+   mean buy, sell and hold — borrowing one as chrome would invent a signal that isn't there.
+   That constraint is what keeps this list short: it rules out every green, every orange-red
+   and every gold, which is most of the wheel.
+
+   Measured hue distance from the three signal colours before adding these two:
+     orchid #D96BC4 — 151° from emerald, 90° from topaz, 56° from coral. 6.3:1 on --ink.
+     cobalt #5B8DEF — 178° from topaz, 147° from coral,  60° from emerald. 5.9:1 on --ink.
+   Both clear 4.5:1 against the page. Orchid is the only accent in the whole set with no
+   other job anywhere in the app; note that sky and violet double as the info/mid-score and
+   chart-series hues, so on those themes chrome and data share a colour. Cobalt is a milder
+   case of the same thing, and is the reason it sits below Sky rather than replacing it —
+   it is the blue that is actually distinguishable from --sky. */
 const DL_THEMES={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],
-                 sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+                 sky:['#6BB6E0','#4E96BE'],cobalt:['#5B8DEF','#3F6FD1'],
+                 orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
 function dlThemeApply(name){
   const th=DL_THEMES[name]||DL_THEMES.teal, s=document.documentElement.style;
   const rgba=(h,a)=>{const b=parseInt(h.slice(1),16);return 'rgba('+(b>>16&255)+','+(b>>8&255)+','+(b&255)+','+a+')';};
