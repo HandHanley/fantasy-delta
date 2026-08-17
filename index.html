@@ -168,11 +168,6 @@ tr:hover td{background:var(--panel)}
 .dd-close{background:none;border:none;color:var(--fog);font-size:20px;cursor:pointer;
   padding:0 4px;line-height:1;flex-shrink:0}
 .dd-close:hover{color:var(--paper)}
-.dd-copy{background:none;border:1px solid var(--line);border-radius:6px;color:var(--fog);
-  font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;
-  padding:3px 8px;line-height:1.4;flex-shrink:0;transition:all .15s}
-.dd-copy:hover{background:var(--line);color:var(--paper)}
-.dd-copy.copied{border-color:var(--emerald);color:var(--emerald)}
 .dd-body{padding:1rem 1.25rem}
 .dd-section{margin-bottom:1.1rem}
 .dd-section-label{font-size:9px;font-weight:700;letter-spacing:.08em;
@@ -361,9 +356,6 @@ tr:hover td{background:var(--ink-2)}
 .dd-name:hover{color:var(--teal-br)}
 .dd-meta{color:var(--fog)}
 .dd-close{color:var(--fog)} .dd-close:hover{color:var(--paper)}
-.dd-copy{border:1px solid var(--line);color:var(--fog)}
-.dd-copy:hover{background:var(--ink-2);color:var(--paper)}
-.dd-copy.copied{border-color:var(--teal-br);color:var(--teal-br)}
 .dd-section-label{color:var(--fog-2)}
 .dd-stat{background:var(--ink-2)}
 .dd-stat-val{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -681,7 +673,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   </div>
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
-      <th onclick="setSortR('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
+      <th onclick="setSortR('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
       <th style="padding-right:6px" class="col-hide-mobile">Pos#</th>
       <th onclick="setSortR('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades.">Mkt Val</th><th onclick="setSortR('n')">Player</th>
       <th>Pos</th><th onclick="setSortR('a')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>
@@ -708,7 +700,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   </div>
   <div style="overflow-x:auto"><table class="dtable">
     <thead><tr>
-      <th onclick="setSortP('ds')" data-tip="DELTA Score (0-99): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
+      <th onclick="setSortP('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
       <th onclick="setSortP('name')" style="cursor:pointer">Player</th><th onclick="setSortP('pos')" style="cursor:pointer">Pos</th><th onclick="setSortP('age')" style="cursor:pointer">Age</th><th onclick="setSortP('team')" style="cursor:pointer">Team</th>
       <th onclick="setSortP('floor')" data-tip="Conservative-case projection — roughly the low end of the player's likely PPG range for the season." style="cursor:pointer;color:var(--coral)">Floor</th><th onclick="setSortP('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and opportunity." style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" data-tip="Upside-case projection — roughly the high end of the player's likely PPG range if things break their way." style="cursor:pointer;color:var(--emerald)">Ceiling</th>
       <th onclick="setSortP('epa')" data-tip="Per-play efficiency grade. Positive = above average on each touch or route; negative = below." style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades." style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" data-tip="DELTA's internal valuation. Higher than Mkt Val = underpriced; lower = overpriced." style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" data-tip="Mod val minus Mkt Val. Positive (green) = DELTA sees the player as underpriced vs the market; negative (coral) = overpriced." style="cursor:pointer">Gap</th><th data-tip="Confidence interval — the ± range around the projection. Tight (±10%) = a stable, predictable profile; wide (±32%) = volatile, boom-or-bust. Lower isn't 'better,' just more certain.">CI</th>
@@ -885,6 +877,13 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 </div>
 
 <div id="panel-edit" class="panel">
+<!-- NOT WIRED TO A TAB. This panel appears in neither SEC_TABS nor DL_TABS, so it is
+     unreachable in the UI and OV is empty in every live session. Kept deliberately
+     rather than deleted: OV is read in five places in delta-engine.js that sit on the
+     scoring path (mvAsset, the kMkt selection in calcProj, computeMvCenter, vTag), and
+     this panel is its only writer. Deleting the writer three weeks before the freeze
+     would leave live scoring code with no way to exercise it. Costs nothing on screen
+     because it never renders. Revisit after the ledger resolves. -->
   <div class="section-label">Search and edit any player</div>
   <div class="edit-search-wrap">
     <input id="edit-search" placeholder="Search player..." oninput="doEditSearch()">
@@ -971,12 +970,6 @@ function applyScoring(){
   scoringFmt=document.getElementById('scoring-fmt').value;
   saveLeaguePrefs();
   // Update disclaimer text
-  const labels={
-    'half_tep':'0.5 PPR + TE Premium','half':'0.5 PPR (no TE Prem)',
-    'full_tep':'Full PPR + TE Premium','full':'Full PPR (no TE Prem)','std':'Standard'
-  };
-  const disc=document.getElementById('scoring-disc');
-  if(disc) disc.textContent=labels[scoringFmt]+' · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0';
   renderRankings();
   if(typeof renderProj==='function') renderProj();
   if(typeof renderDepth==='function') renderDepth();
@@ -1365,12 +1358,6 @@ function applyTradeScoring(){
   const main=document.getElementById('scoring-fmt');
   if(main) main.value=scoringFmt;
   // Update main disclaimer
-  const labels={
-    'half_tep':'0.5PPR + TE Prem','half':'0.5 PPR (no TE Prem)',
-    'full_tep':'Full PPR + TE Prem','full':'Full PPR (no TE Prem)','std':'Standard'
-  };
-  const disc=document.getElementById('scoring-disc');
-  if(disc) disc.textContent=labels[scoringFmt]+' · 4PT Pass TD · 6PT Rush/Rec TD · DELTA v1.0';
   recalcTrade();
 }
 
@@ -1390,7 +1377,7 @@ function recalcTrade(){
       const nameHtml=p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`;
       const valsHtml=`<span style="color:var(--fog)">Mkt ${p.k.toLocaleString()}</span>`
         +(p.ip?'':`<span title="DELTA model value \u2014 market value adjusted by age, opportunity, EPA, scarcity and format. Green = model sees him above market, coral = below."><span style="color:var(--fog);font-weight:400">Mdl</span> <b style="color:${mvCol}">${mv.toLocaleString()}</b></span>`)
-        +(p.ip?'':`<span title="DELTA Score — demonstrated dynasty value (0–99)"><span style="color:var(--fog);font-weight:400">DS</span> <span style="font-weight:600;color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></span>`);
+        +(p.ip?'':`<span title="DELTA Score — demonstrated dynasty value (0–100)"><span style="color:var(--fog);font-weight:400">DS</span> <span style="font-weight:600;color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></span>`);
       const metaHtml=p.ip?'Pick':`${p.p||p.pos} · ${e?e.team:p.t}${e&&e.ch?' · <span style="color:var(--topaz)">⚠ OC</span>':''} · ${getAdjProj(p).toFixed(1)} PPG`;
       const destSel=tradeTeams>2?`<select onchange="setDest('${s.id}','${p.n.replace(/'/g,"\\'")}',this.value)" title="Which team receives this asset" class="dest-sel" style="font-size:9px;background:var(--ink-2);border:1px solid var(--line);border-radius:4px;color:var(--fog);padding:2px 5px">${SIDES.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}" ${(p.to||defaultDest(s.id))===x.id?'selected':''}>→ ${x.label.replace('Team ','')}</option>`).join('')}</select>`:'';
       return`<div class="added">
@@ -2032,7 +2019,7 @@ function renderOVList(){
     return`<div class="override-item">
       <span style="font-weight:600">${name}</span>
       <span style="font-size:11px;color:var(--fog);flex:1;margin:0 8px">${parts.join(' · ')}</span>
-      <button onclick="clearOV('${name.replace(/'/g,"\\'")}'')" style="font-size:11px;color:var(--coral);background:none;border:none;cursor:pointer">clear</button>
+      <button onclick="clearOV('${name.replace(/'/g,"\\'")}')" style="font-size:11px;color:var(--coral);background:none;border:none;cursor:pointer">clear</button>
     </div>`;
   }).join('');
 }
@@ -2356,34 +2343,6 @@ function countUp(el, target, duration=600) {
     else el.textContent = target;
   }
   requestAnimationFrame(step);
-}
-
-function copyPlayerCard() {
-  const name = document.getElementById('dd-card').dataset.player;
-  if (!name) return;
-  const p = COMP.find(x => x.n === name);
-  if (!p) return;
-  const oppSc = getOppScore(p.n, p.pos);
-  const oppLbl = oppSc != null ? (oppScoreLabel(p.pos) + ' ' + oppSc) : null;
-  const verdict = document.querySelector('.badge') ? 
-    (vTag(p).match(/>([^<]+)<\/span>/) || [])[1] || '—' : '—';
-  const lines = [
-    name + ' · ' + p.pos + ' · ' + (p.t || '—'),
-    p.dsScore != null ? 'Δ DELTA Score: ' + p.dsScore + '/99' : null,
-    'PPG \u201925: ' + (p.ppg25 > 0 ? p.ppg25.toFixed(1) : '—') +
-      (p.ppg24 > 0 ? ' · PPG \u201924: ' + p.ppg24.toFixed(1) : ''),
-    oppLbl ? oppLbl : null,
-    'Model: ' + (p.mv || '—') + ' · Mkt: ' + (p.ktcEff || '—'),
-    'Signal: ' + vTag(p).replace(/<[^>]+>/g, '').trim(),
-    'via DELTA — handhanley.github.io/fantasy-delta',
-  ].filter(Boolean).join('\n');
-  navigator.clipboard.writeText(lines).then(() => {
-    const btn = document.getElementById('dd-copy');
-    if (!btn) return;
-    btn.textContent = 'COPIED';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {});
 }
 
 function openAbout(){document.getElementById('about-overlay').classList.add('open');}
@@ -2796,16 +2755,6 @@ function renderDeck(p){
 
   // Generate the scouting report via Claude API
   generateScoutingReport(p);
-}
-
-function askClaudeAbout(name){
-  const p=COMP.find(x=>x.n===name);
-  if(!p) return;
-  const gl=glOf(p);
-  const mv=mvAsset(p);
-  const prompt=`Evaluate ${name} as a dynasty asset. DELTA model data: Proj ${getAdjProj(p).toFixed(1)} PPG, Model Value ${mv.toLocaleString()} vs Mkt ${p.ktcEff.toLocaleString()} (${vTag(p).replace(/<[^>]+>/g,'')}), Age ${p.a.toFixed(1)}, ${p.pos} on ${p.t}, System score ${p.sys}, EPA score ${p.epaSc?.toFixed(2)||'N/A'}${gl?`, Start Profile miss/elite: ${gl.miss}%/${gl.elite}% (${gl.g} games)`:''}. Should I buy, sell, or hold at current market value?`;
-  closeDeckNow();
-  sendPrompt(prompt);
 }
 
 async function generateScoutingReport(p){
@@ -3282,18 +3231,6 @@ function toggleWatch(e, name) {
 }
 
 
-let _watchFilterOn = false;
-function toggleWatchFilter() {
-  _watchFilterOn = !_watchFilterOn;
-  const btn = document.getElementById('watch-filter-btn');
-  if (btn) {
-    btn.textContent = _watchFilterOn ? '★ Watchlist' : '☆ Watchlist';
-    btn.style.color = _watchFilterOn ? 'var(--topaz)' : 'var(--fog)';
-    btn.style.borderColor = _watchFilterOn ? 'var(--topaz)' : 'var(--line)';
-  }
-  renderProspects();
-}
-
 
 // ── WATCHLIST EVENT DELEGATION ────────────────────────────────────────────
 document.addEventListener('click', function(e) {
@@ -3355,7 +3292,7 @@ document.addEventListener('click', function(e) {
         <div class="about-heading">Glossary</div>
         <p style="margin-bottom:6px;font-size:11px;color:var(--fog)">Quick reference for DELTA's terms:</p>
         <ul class="about-list">
-          <li><b style="color:var(--emerald)">DELTA Score (0–99)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
+          <li><b style="color:var(--emerald)">DELTA Score (0–100)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
           <li><b style="color:var(--sky)">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
           <li><b style="color:var(--sky)">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
           <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to the rest of the league. Centered on the population, so "buy" means <i>cheaper than the typical player relative to the model</i>.</li>
@@ -4734,10 +4671,6 @@ function slpDetectAndApplyFormat(){
 function slpApplyFormat(teams,qb,fmt){
   leagueTeams=teams; qbFmt=qb; scoringFmt=fmt;
   syncSettingsUI();
-  const labels={half_tep:'0.5 PPR + TE Premium',half:'0.5 PPR (no TE Prem)',
-                full_tep:'Full PPR + TE Premium',full:'Full PPR (no TE Prem)',std:'Standard'};
-  const disc=document.getElementById('scoring-disc');
-  if(disc&&labels[fmt]) disc.textContent=labels[fmt]+' \u00b7 4PT Pass TD \u00b7 6PT Rush/Rec TD \u00b7 DELTA v1.0';
   applyMarketForSetting();   // re-point kMkt to the detected slice, rebuild COMP/ASSETS
   saveLeaguePrefs();
   if(typeof renderAll==='function') renderAll();
@@ -5023,7 +4956,7 @@ function renderSlpRoster(rid){
 
   const table='<div style="overflow-x:auto"><table class="dtable">'
     +'<thead><tr>'
-    +'<th title="DELTA Score \u2014 proprietary 0-99 dynasty rating" style="font-family:var(--geo);font-size:15px;color:var(--teal-br)">\u0394</th>'
+    +'<th title="DELTA Score \u2014 proprietary 0-100 dynasty rating" style="font-family:var(--geo);font-size:15px;color:var(--teal-br)">\u0394</th>'
     +'<th>Player</th><th class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>'
     +'<th class="col-hide-mobile">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %">M/H/E</th>'
     +'<th>Mkt Val</th><th>Mod val</th><th>Tag</th>'

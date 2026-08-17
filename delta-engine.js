@@ -43,7 +43,16 @@ function formatMvShift(name,pos,fmt){
 // (data/start-profile-thresholds.json) keyed pos|fmt|teams|qb. Per-game points
 // use the same scoring as fmtRecPts. DNP exclusion is handled at bake time
 // (game-logs.json contains only ACTIVE games), so a 0-pt game here = a real miss.
-// Data is lazy-loaded on first player-card open (~1.1MB), not on startup.
+// Data is EAGER, not lazy. This comment used to claim ensureStartData() ran on first
+// player-card open; both bootDelta() (index.html) and player.html await it before the
+// first render, and freeze-snapshot.js calls it too. That is deliberate and load-
+// bearing, not an oversight: ensureStartData() syncs g25 from the game logs for ~136
+// players, and calcProj has a rookie branch gated on g25===0, so a veteran scored
+// before the sync lands in the rookie path. Deferring it is what made player.html
+// disagree with the rankings on 186 verdicts. The cost is real and should be stated
+// honestly rather than wished away: game-logs.json is 2.1MB and sits on the critical
+// boot path, which is felt on mobile. If that ever needs fixing, the fix is a slim
+// g25-only index baked at pipeline time — NOT moving this call back off the boot path.
 // ════════════════════════════════════════════════════════════
 // ── Watchlist (localStorage — per-device, per-user; nothing global changes) ──
 // Entries are NAMESPACED as "nfl:Name" / "cfb:Name". A bare name cannot identify a
@@ -3744,7 +3753,11 @@ const COLLEGES={
 // ── OPPORTUNITY SCORES ────────────────────────────────────────────────────────
 // Alpha Score (WR/TE): target share + air yards share + RZ target share
 // Workhorse Score (RB): rush volume + target share + RZ carry share + RZ targets
-// Scale: 0-99. Elite ~93-97. League avg starter ~65-72. Committee/role ~45-60.
+// Scale: 0-100. Elite ~93-97. League avg starter ~65-72. Committee/role ~45-60.
+// 100 is reachable, not decorative: Josh Allen scores exactly 100 in 14-team
+// superflex on 16 Aug 2026 data. calcDynastyScore clips at Math.min(100, ...) and
+// the RB branch is scaled to the same ceiling (15 + 45*1.233 + 30*0.65 + 10 = 100).
+// Every user-facing "0-99" was wrong, not the code.
 // Data loaded from player-stats.json via loadPlayerStats()
 
 let PLAYER_STATS = {}; // populated by loadPlayerStats()
@@ -4186,7 +4199,19 @@ function dsYouthMult(age) {
 
 function calcDynastyScore(p) {
   const pos = p.pos||p.p||'WR';
-  const noNFL = p.g25===0;  // rookie or no NFL data — cap applies (unproven)
+  /* READS AS "ROOKIE", MEANS "NO 2025 GAMES" — the two are not the same, and this
+     catches veterans who missed the whole season. Measured at the 12sf anchor on
+     16 Aug 2026: 11 players have g25===0 with prior NFL production (Joe Mixon,
+     Brandon Aiyuk, Deshaun Watson, Tank Dell, Will Levis and 6 others). Not one is
+     within 38 points of the 89 cap — the highest scores 51 — so the cap binds on
+     nobody today and no score in the ledger is affected by this.
+     Left alone on purpose. Tightening it to "no NFL experience" is a change to the
+     rookie gate, and g25===0 is load-bearing in eight other places in this file with
+     four different companion conditions (ppg25>0 for a seeded rookie, ppg25===0 for
+     no-data, and so on). That untangling is an offseason job, not a pre-freeze one.
+     It cannot bite before the ledger resolves: the 2026 baseline locks on 6 Sep, so
+     the season a player would have to miss for this to matter has not started. */
+  const noNFL = p.g25===0;
   const age = p.a || 22;
   const scar = scarcity(pos, leagueTeams, qbFmt) || 1;
   const a    = dsAge(age, pos);                                                       // raw max 25
