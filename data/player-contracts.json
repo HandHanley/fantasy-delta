@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-17T07:01:18.764968+00:00",
+  "fetched": "2026-08-18T06:49:06.563262+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -983,7 +983,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "NE/PHI",
+      "team": "PHI/NE",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2023,7 +2023,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "IND/NYJ",
+      "team": "NYJ/IND",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2893,7 +2893,7 @@
       "is_active": true
     },
     "Joe Milton": {
-      "team": "DAL/NE",
+      "team": "NE/DAL",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3313,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "LAC/CLE",
+      "team": "Browns",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
@@ -3389,7 +3389,7 @@
       "end_year": 2029,
       "aav": 1.14,
       "total": 4.54,
-      "guaranteed": 0.0,
+      "guaranteed": 0.16,
       "is_active": true
     },
     "Mike Gesicki": {
@@ -3930,16 +3930,6 @@
       "aav": 1.31,
       "total": 5.25,
       "guaranteed": 1.05,
-      "is_active": true
-    },
-    "Ja'Lynn Polk": {
-      "team": "NE/NO",
-      "year_signed": 2024,
-      "years": 4,
-      "end_year": 2027,
-      "aav": 2.42,
-      "total": 9.69,
-      "guaranteed": 8.21,
       "is_active": true
     }
   }
