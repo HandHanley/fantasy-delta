@@ -1,0 +1,24 @@
+{
+  "_comment": "Quarterbacks confirmed as their team's Week 1 starter. Consumed by the starter-baseline override in calcProj (delta-engine.js).",
+
+  "_what_it_does": "For a QB with an entry here who played fewer than 8 games last season, the production-weighted base is blended toward the league starter baseline (median PPG among QBs with 14+ games last year, ~17.7 in half-PPR): base = w*own + (1-w)*baseline, with w = games/(games+6). It does nothing for a QB who already played a full season, and very little for one already projected near the baseline.",
+
+  "_why_hand_maintained": "Depth charts do not settle until the last week of August, after the nightly data pulls and right on top of the 6 Sep freeze. Deriving it from Week-1 depth charts works historically but that data does not exist before the season starts.",
+
+  "_evidence": "25 seasons, 97 veteran cases: MAE 4.22 -> 2.64 (37% better). Fit on 2000-2014, tested on 2015-2024: 4.71 -> 3.10, paired 95% CI [+0.54, +2.80]. Entrenched QBs project at 2.69 MAE vs 5.35 for backups; the same split at WR shows no difference at all.",
+
+  "_who_to_check": "Only QBs with under 8 games in 2025 AND prior NFL history can trigger it. As of Aug 2026 that is 17 names: Jayden Daniels, Kyler Murray, Malik Willis, Deshaun Watson, Anthony Richardson, Joe Milton, Jameis Winston, Tyson Bagent, Will Levis, Davis Mills, Tyler Huntley, Kenny Pickett, Trey Lance, Tanner McKee, Tyrod Taylor, Gardner Minshew, Mason Rudolph. Everyone else is unaffected, so the file never needs to list a full 32.",
+
+  "_spell_exactly_as_RAW_does": "The freeze pre-flight aborts on a name that does not resolve, so a typo stops the run rather than silently doing nothing.",
+
+  "_known_limit": "The rule assumes the Week-1 starter keeps the job. He often does not: a veteran starting ahead of a QB drafted in the top 64 loses the job 52% of the time versus 18% otherwise (n=52 over 25 seasons). That costs him GAMES rather than points per game, so it is deliberately NOT applied here — it belongs on the availability/opportunity side and is logged as post-freeze work.",
+
+  "_example": {
+    "Player Name": {
+      "starter": true,
+      "team": "GB",
+      "since": "2026-08-25",
+      "note": "Named Week 1 starter — source and date."
+    }
+  }
+}
