@@ -118,6 +118,7 @@ const src = fs.readFileSync('delta-engine.js', 'utf8') + `
   set:(t,q,fmt)=>{ if(t)leagueTeams=t; if(q)qbFmt=q; if(fmt)scoringFmt=fmt; },
   recompute:()=>{ applyMarketForSetting(); },
   get INJ_OUT(){ return typeof INJ_OUT!=='undefined' ? INJ_OUT : {}; },
+  get QB_STARTERS(){ return typeof QB_STARTERS!=='undefined' ? QB_STARTERS : {}; },
   /* loadInjuryOverrides() MUST be in this chain. It was missing, and because every
      loader swallows its own errors the omission was silent: INJ_OUT stayed {}, no
      projection was ever zeroed, and a player confirmed out for the season was frozen
@@ -129,6 +130,7 @@ const src = fs.readFileSync('delta-engine.js', 'utf8') + `
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
     await loadRipples(); await loadReads();
     if(typeof loadInjuryOverrides==='function'){ try{ await loadInjuryOverrides(); }catch(e){} }
+    if(typeof loadQBStarters==='function'){ try{ await loadQBStarters(); }catch(e){} }
     if(typeof ensureStartData==='function'){ try{ await ensureStartData(); }catch(e){} }
     applyMarketForSetting(); }
 };`;
@@ -202,7 +204,24 @@ vm.createContext(sb); vm.runInContext(src, sb);
     if (namedNotInComp.length) die(`injury-overrides.json names player(s) not in the universe: ${namedNotInComp.join(', ')} — check the spelling against RAW.`);
   }
 
-  console.log(`pre-flight OK · ${compAll.length} players · ${withMkt} with market · ${psCount} stat lines · center ${centerProbe.toFixed(4)} · ${Object.keys(injOut).length} season-ender(s) applied`);
+  /* Same mismatch guard as the injury file: an empty starter list is legitimate, so
+     guard the DISCREPANCY instead. Every name flagged in the file must have reached the
+     engine, and must exist in RAW. A misspelled quarterback would otherwise sit in the
+     file doing nothing at all, which is the failure mode this whole session kept finding. */
+  const qbStart = H.QB_STARTERS || {};
+  let qbFile = null;
+  try { qbFile = JSON.parse(fs.readFileSync(path.join('data','qb-starters.json'),'utf8')); } catch(e) {}
+  if (qbFile) {
+    const want = Object.keys(qbFile).filter(k => !k.startsWith('_') && qbFile[k] && qbFile[k].starter);
+    const lost = want.filter(n => !qbStart[n]);
+    if (lost.length) die(`qb-starters.json flags ${want.length} starter(s) but the engine applied ${want.length-lost.length} — missing: ${lost.join(', ')}. Either the loader did not run or the name does not match RAW.`);
+    const ghost = want.filter(n => !compAll.some(c => c.n === n));
+    if (ghost.length) die(`qb-starters.json names player(s) not in the universe: ${ghost.join(', ')} — check the spelling against RAW.`);
+    const notQB = want.filter(n => { const c = compAll.find(x => x.n === n); return c && c.pos !== 'QB'; });
+    if (notQB.length) die(`qb-starters.json lists non-quarterback(s): ${notQB.join(', ')}.`);
+  }
+
+  console.log(`pre-flight OK · ${compAll.length} players · ${withMkt} with market · ${psCount} stat lines · center ${centerProbe.toFixed(4)} · ${Object.keys(injOut).length} season-ender(s) applied · ${Object.keys(qbStart).length} QB starter(s) applied`);
 
   const comp = compAll;
 
