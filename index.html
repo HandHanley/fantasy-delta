@@ -5259,6 +5259,7 @@ async function bootDelta(){
   await loadPlayerContracts();
   await loadRipples(); await loadReads();
   await loadInjuryOverrides();   // season-enders; must run before first render
+  await loadQBStarters();        // Week-1 QB starters — same rule: must precede first render
   await ensureStartData();
   // Unlock gated tabs BEFORE the first render, so section filtering and the landing
   // restore see the final tab set and nothing has to re-render to correct itself.

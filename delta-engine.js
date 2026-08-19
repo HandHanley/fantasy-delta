@@ -2020,6 +2020,32 @@ function availMult(pl){
    initial COMP population, before the loader block is reached. */
 let INJ_STATUS = {};
 let INJ_OUT = {};
+
+/* Hand-maintained: quarterbacks confirmed as their team's Week-1 starter. Consumed by
+   the starter-baseline override in calcProj. Kept hand-maintained rather than derived
+   because depth charts do not settle until the last week of August, which is after most
+   data pulls and right on top of the freeze. Only 17 QBs in the current universe can
+   possibly trigger the rule (under 8 games in 2025 with prior NFL history), so the file
+   stays small. */
+let QB_STARTERS = {};
+
+/* Median PPG among quarterbacks who played a full season last year — the level a
+   starting job is worth. Computed from live stats rather than hard-coded so it tracks
+   the league and the selected scoring format (17.70 in half-PPR on 2025 data). Cached
+   per COMP rebuild; the cache key is the format, since changing format changes PPG. */
+let _qbSbCache = {fmt:null, val:0};
+function qbStarterBaseline(){
+  if(_qbSbCache.fmt === scoringFmt) return _qbSbCache.val;
+  const v=[];
+  for(const r of RAW){
+    if(r.p!=='QB') continue;
+    if((r.g25||0)>=14 && (r.ppg25||0)>0) v.push(r.ppg25);
+  }
+  v.sort((a,b)=>a-b);
+  const val = v.length>=8 ? v[Math.floor(v.length/2)] : 0;   // too few to trust -> disable
+  _qbSbCache={fmt:scoringFmt, val};
+  return val;
+}
 function getEff(pl){
   const o=OV[pl.n]||{};
   const team=o.team||pl.t;
@@ -2848,6 +2874,40 @@ function calcProj(pl){
   if(w24>0){num+=pl.ppg24*w24;den+=w24;}
   if(w23>0){num+=pl.ppg23*w23;den+=w23;}
   let base=den>0?num/den:pl.ppg25||pl.ppg24||8.0;
+
+  /* ── QB STARTER-BASELINE OVERRIDE ──────────────────────────────────────
+     A quarterback's per-game production is only meaningful if it was produced
+     as a starter. Average a veteran's mop-up snaps and you get Jordan Love
+     projected at 3.2 the year he threw for 4,000 yards.
+
+     Measured over 25 seasons of Week-1 starters (n=97 veterans with a thin prior
+     season, true rookies excluded since the rookie branch above already covers
+     them): MAE 4.22 -> 2.64, a 37% reduction. Fitting K on 2000-2014 and testing
+     on 2015-2024 gives 4.71 -> 3.10, a 34% reduction, paired 95% CI [+0.54, +2.80]
+     — it holds out of sample, and K came back at 6 from the early era alone.
+
+     Diagnosis behind it: split QB error by prior-season games and entrenched
+     starters sit at 2.69 MAE while backups sit at 5.35. The same split at WR is
+     2.33 vs 2.36 — no effect at all. DELTA projects quarterbacks fine; it just
+     doesn't know who has the job. This supplies that one fact.
+
+     Note the rule is self-limiting: a QB already projected near the baseline
+     barely moves. It only does real work where the average is built on snaps
+     that don't describe his coming role.
+
+     NOT included: the rookie-threat signal. A veteran starting ahead of a top-64
+     rookie QB loses the job 52% of the time vs 18% (n=52, significant), but
+     fitting a PPG haircut for it returned lambda = 0.00 out of sample — the threat
+     costs him GAMES, not points per game, and this projection is per-game. That
+     finding belongs on the availability/opportunity side, not here. */
+  if(pl.p==='QB' && QB_STARTERS[pl.n] && g25<8 && den>0){
+    const sb=qbStarterBaseline();
+    if(sb>0){
+      const K=6;                      // fitted 2000-2014, flat from 4 to 12
+      const w=g25/(g25+K);            // his own thin sample vs the starter baseline
+      base = w*base + (1-w)*sb;
+    }
+  }
 
   // Stale-production discount: if player has no 2025 games, prior data
   // is unconfirmed — reduce base to reflect health/role uncertainty
@@ -4989,6 +5049,36 @@ async function loadPlayerContracts() {
 
      INJ_OUT     — hand-maintained season-enders from data/injury-overrides.json.
                    THIS is what zeroes a projection, and only this. */
+/* Hand-maintained Week-1 starters. Same shape and same failure posture as the injury
+   loader above: absent is normal, a bad file disables the rule rather than corrupting
+   projections, and every name is logged so a typo is visible rather than silent. */
+async function loadQBStarters() {
+  try {
+    const res = await fetch('./data/qb-starters.json');
+    if (!res.ok) { QB_STARTERS = {}; return; }       // absent is normal — rule just won't fire
+    const raw = await res.json();
+    const out = {};
+    for (const [name, e] of Object.entries(raw || {})) {
+      if (name.startsWith('_') || !e || typeof e !== 'object') continue;
+      if (!e.starter) continue;                      // only an explicit true acts
+      out[name] = { team: e.team || null, since: e.since || null, note: e.note || '' };
+    }
+    QB_STARTERS = out;
+    const n = Object.keys(out).length;
+    if (n) console.log('[DELTA] Week-1 QB starters applied:', n, Object.keys(out).join(', '));
+    if (RAW && RAW.length && typeof calcProj === 'function') {
+      COMP.length = 0;
+      RAW.forEach(r => COMP.push(calcProj(r)));
+      ASSETS.length = 0;
+      ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+      if (typeof renderRankings === 'function') renderRankings();
+    }
+  } catch (e) {
+    console.warn('[DELTA] Could not load QB starters (rule inactive):', e.message);
+    QB_STARTERS = {};
+  }
+}
+
 async function loadInjuryOverrides() {
   try {
     const res = await fetch('./data/injury-overrides.json');

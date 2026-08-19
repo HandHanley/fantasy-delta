@@ -949,6 +949,7 @@ if (!PLAYER_NAME) {
     .then(() => loadPlayerContracts())
     .then(() => loadRipples()).then(() => loadReads())
     .then(() => loadInjuryOverrides())
+    .then(() => loadQBStarters())
     .then(() => ensureStartData())
     .then(() => {
       applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
