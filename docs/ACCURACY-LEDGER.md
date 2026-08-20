@@ -77,6 +77,61 @@ contaminate the read on whether the rate model works. Players known to be out
 *before* the freeze are excluded entirely (section 4); this split concerns
 injuries that happen during the season, which nobody knew at freeze time.
 
+#### Pre-registered expectation — declared 19 Aug 2026, before any 2026 result
+
+`scripts/backtest.js` runs the projection **core** (the 3/2/1 recency blend plus
+sample shrinkage) against five past seasons, each projected using only prior
+years. That gives a prior for what "normal" looks like, written down here so the
+February number is compared against a commitment rather than against whatever
+feels reasonable once it is known.
+
+| target season | N | MAE | bias | within ±3 |
+|---|---|---|---|---|
+| 2021 | 339 | 2.47 | +0.38 | 67% |
+| 2022 | 319 | 2.33 | +0.53 | 71% |
+| 2023 | 325 | 2.63 | +0.83 | 66% |
+| 2024 | 331 | 2.51 | +0.17 | 66% |
+| 2025 | 332 | 2.33 | +0.45 | 67% |
+
+**Expected 2026 MAE: 2.33–2.63, with roughly two thirds of players inside ±3 PPG.**
+Materially outside that band in either direction is the signal — above it means
+something broke, below it means the situational machinery is doing real work.
+
+By position (five-season pooled): TE 1.86 · WR 2.35 · RB 2.75 · **QB 3.43**.
+Positional MAE is expected to be ordered that way; QB being worst is structural,
+not a defect.
+
+**Bias runs positive in all five seasons** (+0.17 to +0.83). The projection is
+mildly hot. Recorded now so it is not rediscovered in February as a surprise.
+
+#### Baselines the projection must beat
+
+Reported alongside the headline number. Both are computed on the identical
+graded set, and neither requires any modelling:
+
+* **Last season's PPG**, carried forward unchanged.
+* **A plain 3-year average** of the last three seasons.
+
+Over 1,646 player-seasons (2021–2025) DELTA beats both, paired bootstrap:
+**+0.171 ppg vs last season** (95% CI [0.112, 0.232]) and **+0.097 ppg vs the
+3-year average** (95% CI [0.054, 0.141]), both p < 0.001.
+
+⚠️ **The margin is roughly 0.1 PPG.** It is real and consistent across five
+seasons, but it is small, and the defensible claim is "measurably the best of the
+simple options", not "materially more accurate than the alternatives". A 2026
+result that beats both baselines by a similar margin is a success. A result that
+loses to a 3-year average is a serious finding regardless of the headline MAE.
+
+#### What the backtest does NOT cover
+
+The backtest exercises the projection core only. System factors, OC changes,
+ripples, QB quality and the contract axis cannot be reconstructed as of a past
+date, so they are absent from it. Test 1 grades the **full** engine.
+
+That gap is itself informative: if February lands materially better than 2.4, the
+situational machinery is earning its keep; materially worse, it is costing
+accuracy. Report the comparison explicitly.
+
 ### Test 2 — Ranking accuracy (market-blind)
 
 Frozen `ds` ordering vs actual production ordering, within position, by rank
@@ -116,6 +171,12 @@ market grid to `data/freeze-2026-market.json`. Between them:
   `rankMv`, `rankMk`, `style`.
 * `scarcity_curve` — the SCAR_CURVE in force at freeze time.
 * `engine_sha` — the git commit of the engine that produced these numbers.
+* **The two hand-maintained input files**, copied verbatim into the snapshot:
+  `data/injury-overrides.json` and `data/qb-starters.json`. Both change frozen
+  projections — the first zeroes them, the second re-bases a quarterback onto the
+  starter baseline — and both are human judgements rather than derived data. A
+  number that depended on a judgement call is not reconstructable unless the call
+  is stored next to it.
 * The **full market grid** (all 8 league-size × QB-format settings), copied from
   `data/market-values.json`, which is otherwise overwritten nightly and lost.
 
@@ -136,7 +197,7 @@ Excluded from the graded set, listed by name in the snapshot for transparency:
 
 * **`mktStale`** — market value unreliable at snapshot time.
 * **No market value** — nothing to compare against.
-* **Known-out before freeze** (`excluded_known_out`) — players already ruled out
+* **Known-out before freeze** (`excluded_out`) — players already ruled out
   for the season at freeze time.
 
 The third deserves explanation. If a player is known to be out and DELTA
@@ -144,6 +205,12 @@ projects him near zero, he will "hit" that projection trivially, and including
 him **inflates apparent accuracy**. This is not a prediction the model made; it
 is information anyone had. Excluding them keeps the headline number honest.
 They remain in the snapshot, flagged, so the decision is auditable.
+
+⚠️ Field-name correction, 19 Aug 2026: this section previously specified
+`excluded_known_out`; the implemented field is **`excluded_out`**. The doc has
+been aligned to the code rather than the reverse, since the code is deployed.
+Recorded here because silently renaming a pre-registered field is exactly the
+kind of edit that erodes a ledger's credibility.
 
 ---
 
