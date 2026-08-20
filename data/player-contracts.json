@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-20T06:51:24.251382+00:00",
+  "fetched": "2026-08-20T15:47:45.504957+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -983,7 +983,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -3660,6 +3660,16 @@
       "aav": 1.04,
       "total": 3.11,
       "guaranteed": 0.01,
+      "is_active": true
+    },
+    "Keenan Allen": {
+      "team": "Colts",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.0,
+      "total": 0.0,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Treylon Burks": {
