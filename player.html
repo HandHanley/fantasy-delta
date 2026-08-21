@@ -879,7 +879,209 @@ function renderPlayerPage(p) {
     showError('Some sections could not render for this player. ' + (e.message||''));
   }
 }
+
+// ── College tab ───────────────────────────────────────────────────────────────
+// Reads data/college-index.json: one slim file holding every college season for
+// players who are also in DELTA's NFL universe, with dDOM and PPA percentiles
+// PRE-COMPUTED by scripts/build-college-index.js. Two reasons it is not the raw
+// season files: they total ~4.2 MB and a 2026 draftee appears in up to five of
+// them, and a percentile needs the FULL season pool, which a slim file cannot hold.
+//
+// LOADED LAZILY — only when the College tab is first opened, never on page load.
+// Nothing here feeds the DELTA Score, the projection or the buy/sell call.
+let CUR_P = null, _TAB = 'nfl', _CYR = null;
+let CFB_INDEX = null, _cfbState = 'idle';   // idle | loading | ready | missing
+
+function ensureCollegeData(p) {
+  if (_cfbState === 'ready' || _cfbState === 'loading' || _cfbState === 'missing') return;
+  _cfbState = 'loading';
+  fetch('./data/college-index.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { CFB_INDEX = (j && j.players) || {}; _cfbState = 'ready'; repaintCollege(); })
+    .catch(e => {
+      console.warn('[DELTA] college-index.json not loaded:', e.message);
+      _cfbState = 'missing'; repaintCollege();
+    });
+}
+function repaintCollege() {
+  const b = document.getElementById('tab-cfb');
+  if (b && CUR_P) b.innerHTML = buildCollegeHTML(CUR_P);
+}
+function buildTabsHTML() {
+  const on  = 'background:#111A28;color:var(--paper);border:1px solid var(--line);border-bottom:none';
+  const off = 'background:transparent;color:var(--fog-2);border:1px solid transparent;border-bottom:none';
+  const t = (id, lbl) => '<div onclick="setTab(\'' + id + '\')" style="cursor:pointer;font-size:12px;'
+    + 'font-weight:800;letter-spacing:.03em;padding:8px 15px;border-radius:8px 8px 0 0;position:relative;'
+    + 'top:1px;' + (_TAB === id ? on : off) + '">' + lbl + '</div>';
+  return '<div style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px">'
+    + t('nfl', 'NFL') + t('cfb', 'College') + '</div>';
+}
+function setTab(t) {
+  _TAB = t;
+  const a = document.getElementById('tab-nfl'), b = document.getElementById('tab-cfb'),
+        s = document.getElementById('tabstrip');
+  if (a) a.style.display = t === 'nfl' ? '' : 'none';
+  if (b) b.style.display = t === 'cfb' ? '' : 'none';
+  if (s) s.innerHTML = buildTabsHTML();
+  if (t === 'cfb' && CUR_P) ensureCollegeData(CUR_P);
+  window.scrollTo(0, 0);
+}
+function setCYr(y) { _CYR = String(y); repaintCollege(); }
+const _cpc = v => v == null ? '-' : (v * 100).toFixed(1) + '%';
+const _cN  = v => (v == null || v === '') ? '-' : v;
+const _ord = n => { const s = ['th','st','nd','rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; };
+function _cfbColor(p) {
+  return p >= 90 ? '#34D399' : p >= 70 ? '#10B981' : p >= 45 ? '#6BB6E0' : p >= 25 ? '#E0B34D' : '#E05745';
+}
+function cfbSeasonsFor(name) {
+  if (!CFB_INDEX) return {};
+  return CFB_INDEX[name] || {};
+}
+function buildCollegeHTML(p) {
+  if (_cfbState === 'idle' || _cfbState === 'loading')
+    return '<div class="card"><div class="card-label">College production</div>'
+      + '<div style="font-size:11.5px;color:#5C7080;padding:6px 0">Loading college seasons…</div></div>';
+  if (_cfbState === 'missing')
+    return '<div class="card"><div class="card-label">College production</div>'
+      + '<div style="font-size:11.5px;color:#5C7080;padding:6px 0;line-height:1.6">College data is unavailable right now. '
+      + 'If this persists, <code style="color:var(--sky)">data/college-index.json</code> may be missing — rebuild it with '
+      + '<code style="color:var(--sky)">node scripts/build-college-index.js</code>.</div></div>';
+
+  const all = cfbSeasonsFor(p.n), yrs = Object.keys(all).sort().reverse();
+  if (!yrs.length)
+    return '<div class="card"><div class="card-label">College production</div>'
+      + '<div style="font-size:11.5px;color:#5C7080;padding:6px 0;line-height:1.6">No college record on file for '
+      + p.n + '. DELTA carries the 2020\u20132025 college seasons, so players whose college career ended before 2020 '
+      + 'are not covered.</div></div>';
+
+  const yr = (_CYR && all[_CYR]) ? _CYR : yrs[0];
+  const r = all[yr], pos = r.pos;
+
+  // Recruiting rating / stars / class are STATIC career attributes, but the 2020-2022
+  // pipeline runs did not join them. Carry from the newest season that has one, and
+  // re-derive ageEst with the pipeline's own formula. Flagged in the UI when carried.
+  let carried = null;
+  if (r.rating == null) {
+    const donor = yrs.find(y => all[y].rating != null);
+    if (donor) {
+      const s = all[donor];
+      r.rating = s.rating; r.stars = s.stars; r.rcls = s.rcls; carried = donor;
+      if (r.ageEst == null && s.rcls) r.ageEst = 18 + (Number(yr) - s.rcls);
+    }
+  } else if (r._carried) carried = r._carried;
+
+  const pills = '<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">'
+    + yrs.map(y => '<span onclick="setCYr(\'' + y + '\')" style="cursor:pointer;font-size:10px;font-weight:700;'
+      + 'padding:3px 9px;border-radius:10px;'
+      + (String(y) === String(yr) ? 'background:var(--teal-br);color:#04231a' : 'background:var(--line);color:var(--fog)')
+      + '">' + y + '</span>').join('') + '</div>';
+
+  const dLabel = pos === 'QB' ? 'competition-adjusted efficiency'
+               : pos === 'RB' ? 'competition-adjusted rush production' : 'competition-adjusted dominance';
+  const dUnit  = pos === 'QB' ? '' : '%';
+  const dName  = pos === 'QB' ? 'ANY/A' : pos === 'RB' ? 'rush dom' : 'dominator';
+
+  // dDOM and PPA arcs, only when more than one season carries a percentile
+  const asc = yrs.slice().sort();
+  const arc = asc.filter(y => all[y]._ddomPct != null).length > 1
+    ? '<div style="margin-top:12px;padding-top:11px;border-top:1px solid var(--line)">'
+      + '<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px">By season · dDOM and PPA percentile</div>'
+      + asc.map(y => {
+          const a = all[y]; if (a._ddomPct == null) return '';
+          return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+            + '<span style="font-size:10px;color:var(--fog);width:30px;flex-shrink:0;font-family:var(--mono)">' + y + '</span>'
+            + '<span style="flex:1;height:5px;background:#0D1420;border-radius:3px;overflow:hidden">'
+            + '<span style="display:block;height:100%;border-radius:3px;width:' + a._ddomPct + '%;background:' + _cfbColor(a._ddomPct) + '"></span></span>'
+            + '<span style="font-size:10px;font-weight:600;width:24px;text-align:right;flex-shrink:0;font-family:var(--mono);color:' + _cfbColor(a._ddomPct) + '">' + a._ddomPct + '</span>'
+            + '<span style="font-size:10px;font-weight:600;width:30px;text-align:right;flex-shrink:0;font-family:var(--mono);color:' + (a._ppaPct != null ? _cfbColor(a._ppaPct) : '#5C7080') + '">' + (a._ppaPct != null ? a._ppaPct : '\u2013') + '</span>'
+            + '<span style="font-size:9.5px;color:#5C7080;width:52px;text-align:right;flex-shrink:0">' + (a.tm.length > 9 ? a.tm.slice(0, 9) : a.tm) + '</span></div>';
+        }).join('')
+      + '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid var(--line)">'
+      + '<span style="width:30px;flex-shrink:0"></span><span style="flex:1"></span>'
+      + '<span style="font-size:8.5px;color:#5C7080;width:24px;text-align:right;flex-shrink:0">dDOM</span>'
+      + '<span style="font-size:8.5px;color:#5C7080;width:30px;text-align:right;flex-shrink:0">PPA</span>'
+      + '<span style="width:52px;flex-shrink:0"></span></div></div>'
+    : '';
+
+  const ddCard = r._ddomPct != null
+    ? '<div class="card"><div class="card-label">dDOM \u00b7 ' + yr + ' \u00b7 ' + dLabel
+      + '<div class="card-sub">where he ranked among qualifying ' + pos + 's that season, adjusted for who he played</div></div>'
+      + '<div style="display:flex;align-items:baseline;gap:10px">'
+      + '<span style="font-size:30px;font-weight:800;font-family:var(--mono);line-height:1;color:' + _cfbColor(r._ddomPct) + '">' + r._ddomPct + '</span>'
+      + '<span style="font-size:11px;color:var(--fog)">percentile \u00b7 ' + r._ddomRaw + dUnit + ' ' + dName + '</span></div>'
+      + '<div style="height:6px;background:#0D1420;border-radius:3px;overflow:hidden;margin:10px 0 6px"><div style="height:100%;border-radius:3px;width:' + r._ddomPct + '%;background:' + _cfbColor(r._ddomPct) + '"></div></div>'
+      + '<div style="display:flex;justify-content:space-between;font-size:9px;color:#5C7080;font-family:var(--mono)"><span>0</span><span>vs ' + r._ddomPeers + ' qualifying ' + pos + 's</span><span>100</span></div>'
+      + '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">Opponent quality ' + _cpc(r.tpct) + '. '
+      + (r.p4 ? 'Power 4 conference.' : 'Non-Power-4 conference \u2014 the schedule adjustment pulls this number down, not up.') + '</div>'
+      + arc + '</div>'
+    : '<div class="card"><div class="card-label">dDOM \u00b7 ' + yr + '</div>'
+      + '<div style="font-size:11.5px;color:#5C7080;padding:6px 0;line-height:1.6">Below the qualifying volume floor that season, so no competition-adjusted percentile is computed.</div>' + arc + '</div>';
+
+  // Third box is the one number that describes his ROLE that season. It is NOT CFBD's
+  // usage share: that is the share of team plays he was the ball-handler on, which for a
+  // QB is just how pass-heavy the offence was (median .54 in 2024), not a fact about him.
+  const b3 = pos === 'QB' ? { v: _cpc(r.cmppct), l: 'completion %' }
+           : pos === 'RB' ? { v: _cpc(r.rdom),   l: 'rush dominator' }
+                          : { v: _cpc(r.rsh),    l: 'reception share' };
+  const ppaL = pos === 'QB' ? 'passing PPA/play' : pos === 'RB' ? 'rushing PPA/play' : 'PPA/play';
+  const hasPpa = r._ppaPct != null;
+
+  let rows;
+  if (pos === 'QB') rows = [['Completions', r.cmp + '/' + r.att], ['Pass yards', r.py],
+      ['Pass TD / INT', r.pt + ' / ' + r.pi], ['Yards per attempt', r.ypa], ['ANY/A', r.anya],
+      ['Rush yards / TD', r.ry + ' / ' + r.rt]];
+  else if (pos === 'RB') rows = [['Carries', r.car], ['Rush yards', r.ry],
+      ['Yards per carry', r.car ? (r.ry / r.car).toFixed(1) : '-'], ['Rush TD', r.rt],
+      ['Receptions', r.rec], ['Receiving yards', r.rey]];
+  else rows = [['Receptions', r.rec], ['Receiving yards', r.rey],
+      ['Yards per catch', r.rec ? (r.rey / r.rec).toFixed(1) : '-'], ['Receiving TD', r.ret],
+      ['Dominator', _cpc(r.dom)]];
+  if (hasPpa) rows.push([ppaL, r._ppaRaw.toFixed(2)]);
+
+  const prodCard = '<div class="card"><div class="card-label">' + yr + ' production \u00b7 ' + r.tm + '</div>'
+    + '<div class="stat-grid" style="margin-bottom:' + (hasPpa ? '12px' : '6px') + ';grid-template-columns:repeat(' + (hasPpa ? 3 : 2) + ',1fr)">'
+    + '<div class="stat-box"><div class="stat-val">' + r.gms + '</div><div class="stat-lbl">games</div></div>'
+    + (hasPpa ? '<div class="stat-box"><div class="stat-val" style="color:' + _cfbColor(r._ppaPct) + '">' + r._ppaPct + _ord(r._ppaPct) + '</div><div class="stat-lbl">per-play efficiency</div></div>' : '')
+    + '<div class="stat-box"><div class="stat-val">' + _cN(b3.v) + '</div><div class="stat-lbl">' + b3.l + '</div></div></div>'
+    + (!hasPpa ? '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-bottom:10px">No per-play efficiency percentile for ' + yr + ' \u2014 he was below the qualifying volume floor, or the season has no PPA on record.</div>' : '')
+    + rows.map(x => '<div class="bdr-row"><span style="color:var(--fog)">' + x[0] + '</span><b style="font-family:var(--mono);font-weight:600">' + _cN(x[1]) + '</b></div>').join('')
+    + '<div style="font-size:10px;color:#5C7080;line-height:1.7;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)">'
+    + '<b style="color:var(--fog)">Per-play efficiency</b> \u2014 his rank among qualifying ' + pos + 's that season on predicted points added per play. A rank, not a score, because the raw scale is not comparable across seasons: CFBD changed how it computes receiver efficiency in 2025 and halved every receiver\u2019s number with nothing changing on the field. The raw value is in the table above.'
+    + (pos === 'QB' ? '<br><b style="color:var(--fog)">ANY/A</b> \u2014 adjusted net yards per attempt: (pass yards + 20 \u00d7 TD \u2212 45 \u00d7 INT) \u00f7 attempts. One number for passing efficiency that rewards touchdowns and punishes picks, so a checkdown QB does not grade elite. College box scores carry no sack data, so this is the passing-only variant.' : '')
+    + (pos === 'RB' ? '<br><b style="color:var(--fog)">Rush dominator</b> \u2014 his share of the team\u2019s rushing yards and touchdowns.' : '')
+    + ((pos === 'WR' || pos === 'TE') ? '<br><b style="color:var(--fog)">Dominator</b> \u2014 average of his share of team receiving yards and receiving TDs. <b style="color:var(--fog)">Reception share</b> \u2014 his receptions over team receptions, the honest stand-in for target share.' : '')
+    + '</div></div>';
+
+  const cls = { 1:'Freshman', 2:'Sophomore', 3:'Junior', 4:'Senior', 5:'Senior (5th)' }[r.cls] || 'class n/a';
+  const pedCard = '<div class="card"><div class="card-label">Recruiting pedigree</div>'
+    + '<div class="bdr-row"><span style="color:var(--fog)">Recruit rating' + (carried ? '<span style="color:#5C7080"> \u00b7 from ' + carried + ' file</span>' : '') + '</span><b style="font-family:var(--mono)">' + (r.stars != null ? r.stars + '\u2605 \u00b7 ' + r.rating : '-') + '</b></div>'
+    + '<div class="bdr-row"><span style="color:var(--fog)">Recruiting class</span><b style="font-family:var(--mono)">' + _cN(r.rcls) + '</b></div>'
+    + '<div class="bdr-row"><span style="color:var(--fog)">Class<span style="color:#5C7080"> \u00b7 latest on file</span></span><b style="font-family:var(--mono)">' + cls + '</b></div>'
+    + '<div class="bdr-row"><span style="color:var(--fog)">Conference</span><b style="font-family:var(--mono)">' + r.conf + '</b></div>'
+    + '<div class="bdr-row"><span style="color:var(--fog)">Age that season</span><b style="font-family:var(--mono)">' + _cN(r.ageEst) + '</b></div></div>';
+
+  let glCard = ''; const g = r.g || [];
+  if (g.length) {
+    let head, body;
+    if (pos === 'QB') { head = ['Wk','Opponent','C/A','Yds','TD','INT','Rush'];
+      body = g.map(x => [x.w, x.opp, _cN(x.ca), _cN(x.py), _cN(x.pt), _cN(x.pi), x.ry != null ? x.ry : '-']); }
+    else if (pos === 'RB') { head = ['Wk','Opponent','Car','Yds','TD','Rec','RecYd'];
+      body = g.map(x => [x.w, x.opp, _cN(x.car), _cN(x.ry), _cN(x.rt), _cN(x.rec), _cN(x.rey)]); }
+    else { head = ['Wk','Opponent','Rec','Yds','TD'];
+      body = g.map(x => [x.w, x.opp, _cN(x.rec), _cN(x.rey), _cN(x.ret)]); }
+    glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div><table class="prod-table"><thead><tr>'
+      + head.map((h, i) => '<th' + (i === 1 ? ' style="text-align:left"' : '') + '>' + h + '</th>').join('')
+      + '</tr></thead><tbody>'
+      + body.map(rw => '<tr>' + rw.map((c, i) => '<td' + (i === 1 ? ' style="text-align:left;color:var(--fog)"' : '') + '>' + c + '</td>').join('') + '</tr>').join('')
+      + '</tbody></table></div>';
+  }
+  const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
+    + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only.</div></div>';
+  return pills + ddCard + prodCard + pedCard + glCard + foot;
+}
+
 function _renderPlayerPage(p) {
+  CUR_P = p;
   ensureScoutData().then(() => {
     const el = document.getElementById('scout-text');
     if (el) {
@@ -890,6 +1092,8 @@ function _renderPlayerPage(p) {
 
   showContent(`
     ${buildHeroHTML(p)}
+    <div id="tabstrip">${buildTabsHTML()}</div>
+    <div id="tab-nfl"${_TAB==='nfl'?'':' style="display:none"'}>
     ${buildDSBreakdownHTML(p)}
     ${buildStatLineHTML(p)}
     ${buildReadHTML(p)}
@@ -905,8 +1109,11 @@ function _renderPlayerPage(p) {
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
     ${buildScoutHTML()}
+    </div>
+    <div id="tab-cfb"${_TAB==='cfb'?'':' style="display:none"'}>${buildCollegeHTML(p)}</div>
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
+  if(_TAB==='cfb') ensureCollegeData(p);
   document.title = p.n + ' — DELTA';
 }
 
