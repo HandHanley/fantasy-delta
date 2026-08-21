@@ -1,0 +1,64 @@
+# One-off backfill: adds PPA to college season files built before the pipeline
+# started pulling /ppa/players/season (2020-2022). Deliberately manual-only — there
+# is no schedule, because this is a repair job, not a refresh. It only ever writes
+# ppa/ppaPass/ppaRush/ppaTot onto records that already exist; it never adds, removes
+# or reorders a player, and it will not rebuild a season's universe.
+#
+# Default is a DRY RUN. Set confirm to "yes" to actually write.
+name: Backfill College PPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: "Seasons to backfill, comma separated"
+        required: false
+        default: "2020,2021,2022"
+      confirm:
+        description: 'Write the files? Type "yes" to write. Anything else = dry run.'
+        required: false
+        default: "no"
+      force:
+        description: 'Overwrite seasons that ALREADY have PPA? "yes" to force. Normally no.'
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CFBD client
+        run: pip install --quiet cfbd
+
+      - name: Backfill PPA
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+        run: |
+          MODE="--dry-run"
+          if [ "${{ github.event.inputs.confirm }}" = "yes" ]; then MODE="--confirm"; fi
+          FORCE=""
+          if [ "${{ github.event.inputs.force }}" = "yes" ]; then FORCE="--force"; fi
+          echo "Running: python scripts/backfill-college-ppa.py $MODE $FORCE --years ${{ github.event.inputs.years }}"
+          python scripts/backfill-college-ppa.py $MODE $FORCE --years "${{ github.event.inputs.years }}"
+
+      - name: Commit if changed
+        if: ${{ github.event.inputs.confirm == 'yes' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/college-players*.json
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "Backfill college PPA (${{ github.event.inputs.years }})"
+            git push
+          fi
