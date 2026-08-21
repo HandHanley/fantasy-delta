@@ -4386,10 +4386,22 @@ function rTag(mult,lbl,pos){
   return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
 }
 function mvAssetBase(p){
-  // Verdict model is computed at the 12-SF anchor basis (0.5PPR+TEP, 12-team Superflex):
-  // scoring pinned so badges don't flip on format change, AND league size + QB format pinned
-  // so the buy/sell tag is a pure per-player signal (Allen vs Penix) rather than a position-wide
-  // scarcity shift. With scarcity(pos,12,sf)=1.0 the format scaling cancels against the anchor.
+  // Verdict model is computed at the 12-SF anchor basis (0.5PPR+TEP, 12-team Superflex).
+  // League size and QB format are pinned so the buy/sell tag is a pure per-player signal
+  // (Allen vs Penix) rather than a position-wide scarcity shift. With scarcity(pos,12,sf)=1.0
+  // the format scaling cancels against the anchor. Verified against live data: 0 verdict
+  // changes across 8/10/12/14 teams and sf/1qb.
+  //
+  // SCORING FORMAT IS *NOT* INVARIANT — this comment used to claim it was ("scoring pinned
+  // so badges don't flip on format change"). That was wrong. Pinning scoringFmt here fixes
+  // the format SCALING, but loadPlayerStats() rewrites ppg25/ppg24/ppg23 on RAW in place per
+  // format, so the INPUTS have already changed before this runs; a pin cannot undo a mutation
+  // to its own inputs. Measured on live data: 22 verdicts change half_tep -> std (11 half,
+  // 17 full_tep, 6 full), mostly RBs (Achane strong buy -> buy, Warren hold -> sell). Proven
+  // by restoring the half_tep PPG values with scoringFmt still 'std' — 0 changes.
+  // Not a freeze concern: the ledger basis is half_tep throughout. Arguably correct behaviour
+  // too, since a PPR back really is worth more in PPR. Just do not describe the tag as
+  // scoring-invariant — it is league-invariant only.
   const savedFmt=scoringFmt, savedTeams=leagueTeams, savedQb=qbFmt;
   scoringFmt='half_tep'; leagueTeams=12; qbFmt='sf';
   const mv=mvAsset(p);
