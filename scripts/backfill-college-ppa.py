@@ -100,16 +100,21 @@ def merge_ppa(players, PPA, force=False):
     return st
 
 
-def season_path(year, data):
-    """The alias file holds whichever season the app treats as current."""
-    p = f"data/college-players-{year}.json"
-    if os.path.exists(p): return p
+def season_paths(year):
+    """Every file that holds this season. The pipeline writes BOTH a numbered file and
+    the college-players.json alias the app actually fetches, so a backfill that updates
+    only one of them leaves the app reading stale data while reporting success. Returns
+    the numbered file first, then the alias when it holds the same season."""
+    out = []
+    numbered = f"data/college-players-{year}.json"
+    if os.path.exists(numbered): out.append(numbered)
     if os.path.exists(ALIAS):
         try:
-            if json.load(open(ALIAS)).get("season") == year: return ALIAS
+            if json.load(open(ALIAS)).get("season") == year: out.append(ALIAS)
         except Exception:
             pass
-    return p
+    if not out: out.append(numbered)
+    return out
 
 
 def main():
@@ -151,13 +156,16 @@ def main():
     with cfbd.ApiClient(cfg) as api:
         metrics_api = cfbd.MetricsApi(api)
         for year in years:
-            path = season_path(year, None)
+            paths = season_paths(year)
+            path = paths[0]
             if not os.path.exists(path):
                 print(f"\n{year}: SKIP — {path} does not exist"); continue
             data = json.load(open(path))
             players = data.get("players") or []
             have = sum(1 for p in players if p.get("ppa") is not None)
-            print(f"\n{year}  {path}  ({len(players)} players, {have} already have PPA)")
+            print(f"\n{year}  {' + '.join(paths)}  ({len(players)} players, {have} already have PPA)")
+            if len(paths) > 1:
+                print(f"  note: {paths[1]} is the alias the app fetches; it gets the same write.")
             if have and not force:
                 print(f"  SKIP — season already has PPA. Use --force to overwrite.")
                 continue
@@ -187,7 +195,8 @@ def main():
                 continue
 
             if dry:
-                print(f"  DRY RUN: would write {st['written']} records to {path}")
+                for outp in paths:
+                    print(f"  DRY RUN: would write {st['written']} records to {outp}")
             else:
                 data["players"] = players
                 data.setdefault("backfill", {})["ppa"] = {
@@ -198,11 +207,12 @@ def main():
                     "note": ("PPA added after the original build. All other fields are as "
                              "the original run produced them."),
                 }
-                tmp = path + ".tmp"
-                with open(tmp, "w") as f:
-                    json.dump(data, f, separators=(",", ":"))
-                os.replace(tmp, path)
-                print(f"  WROTE {st['written']} records to {path}")
+                for outp in paths:
+                    tmp = outp + ".tmp"
+                    with open(tmp, "w") as f:
+                        json.dump(data, f, separators=(",", ":"))
+                    os.replace(tmp, outp)
+                    print(f"  WROTE {st['written']} records to {outp}")
             results.append((year, st))
 
     print("\n" + "=" * 72)
