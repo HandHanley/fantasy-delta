@@ -947,6 +947,20 @@ function setCYr(y) { _CYR = String(y); repaintCollege(); }
 const _cpc = v => v == null ? '-' : (v * 100).toFixed(1) + '%';
 const _cN  = v => (v == null || v === '') ? '-' : v;
 const _ord = n => { const s = ['th','st','nd','rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; };
+// Opponent names run to 24 characters ("Southeast Missouri State") and the game log now
+// carries up to nine columns, so the least useful field gets squeezed first. Full name
+// stays in the cell's title attribute.
+function _opp(o) {
+  if (!o) return '-';
+  let s = String(o)
+    .replace(/\bUniversity of\b/i, '').replace(/\bUniversity\b/i, '')
+    .replace(/\bState\b/i, 'St').replace(/\bSouthern\b/i, 'Sthn')
+    .replace(/\bNorthern\b/i, 'Nthn').replace(/\bEastern\b/i, 'E')
+    .replace(/\bWestern\b/i, 'W').replace(/\bCentral\b/i, 'Cent')
+    .replace(/\bInternational\b/i, "Int'l").replace(/\bNorth Carolina\b/i, 'NC')
+    .replace(/\bSouth Carolina\b/i, 'SC').replace(/\s+/g, ' ').trim();
+  return s.length > 13 ? s.slice(0, 12) + '\u2026' : s;
+}
 function _cfbColor(p) {
   return p >= 90 ? '#34D399' : p >= 70 ? '#10B981' : p >= 45 ? '#6BB6E0' : p >= 25 ? '#E0B34D' : '#E05745';
 }
@@ -1084,18 +1098,27 @@ function buildCollegeHTML(p) {
 
   let glCard = ''; const g = r.g || [];
   if (g.length) {
-    let head, body;
-    if (pos === 'QB') { head = ['Wk','Opponent','C/A','Yds','TD','INT','Rush'];
-      body = g.map(x => [x.w, x.opp, _cN(x.ca), _cN(x.py), _cN(x.pt), _cN(x.pi), x.ry != null ? x.ry : '-']); }
-    else if (pos === 'RB') { head = ['Wk','Opponent','Car','Yds','TD','Rec','RecYd'];
-      body = g.map(x => [x.w, x.opp, _cN(x.car), _cN(x.ry), _cN(x.rt), _cN(x.rec), _cN(x.rey)]); }
-    else { head = ['Wk','Opponent','Rec','Yds','TD'];
-      body = g.map(x => [x.w, x.opp, _cN(x.rec), _cN(x.rey), _cN(x.ret)]); }
-    glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div><table class="prod-table"><thead><tr>'
-      + head.map((h, i) => '<th' + (i === 1 ? ' style="text-align:left"' : '') + '>' + h + '</th>').join('')
+    // Column sets match cfbGameLogTable() in index.html and gameLogTable() in
+    // cfb-player.html so the same game reads the same everywhere. The earlier set here
+    // dropped rushing TDs for QBs and receiving TDs for backs — a QB's rushing scores and
+    // a receiving back's touchdowns are exactly the production this tab exists to show.
+    const cols = pos === 'QB'
+      ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+      : pos === 'RB'
+      ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+      : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
+    const rows2 = g.slice().sort((a, b) => (a.w || 0) - (b.w || 0));
+    glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div>'
+      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
+      + '<table class="prod-table" style="font-size:10.5px"><thead><tr>'
+      + '<th>Wk</th><th style="text-align:left">Opp</th>'
+      + cols.map(c => '<th>' + c[0] + '</th>').join('')
       + '</tr></thead><tbody>'
-      + body.map(rw => '<tr>' + rw.map((c, i) => '<td' + (i === 1 ? ' style="text-align:left;color:var(--fog)"' : '') + '>' + c + '</td>').join('') + '</tr>').join('')
-      + '</tbody></table></div>';
+      + rows2.map(x => '<tr><td>' + (x.w || '-') + '</td>'
+          + '<td style="text-align:left;color:var(--fog);white-space:nowrap" title="'
+          + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
+          + cols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
+      + '</tbody></table></div></div>';
   }
   const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
     + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only.</div></div>';

@@ -117,6 +117,24 @@ function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senio
 const N=v=>(v==null||v===''||v===0)?'-':(''+v);
 
 // ── data loading ──
+
+// Career history seasons. Deliberately WIDER than CFB.seasons, which drives the browse
+// picker and stays at the recent seasons only. A player's own card should show every
+// season we hold him in; the season table should not sprout pills for 2020-2023.
+// Published by scripts/build-college-index.js so this list cannot rot when a season lands.
+let CFB_HIST=null;
+async function cfbHistorySeasons(fallback){
+  if(CFB_HIST) return CFB_HIST;
+  try{
+    const r=await fetch('./data/college-seasons.json',{cache:'no-cache'});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    CFB_HIST=(j&&Array.isArray(j.seasons)&&j.seasons.length)?j.seasons.slice():null;
+  }catch(e){ CFB_HIST=null; }
+  if(!CFB_HIST) CFB_HIST=(fallback||[]).slice();   // degrade to the browse list
+  CFB_HIST.sort((a,b)=>a-b);
+  return CFB_HIST;
+}
 const SEASON_CACHE={};
 async function loadSeason(yr){ if(SEASON_CACHE[yr]!==undefined) return SEASON_CACHE[yr];
   try{ const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'}); if(!r.ok) throw 0;
@@ -255,7 +273,7 @@ function renderGL(){
   document.getElementById('teammates').innerHTML=teammatesTable(teamHost.rec,teamHost.players);
 }
 async function fillCrossSeason(p, seasons){
-  seasons=seasons.slice().sort((a,b)=>a-b);
+  seasons=await cfbHistorySeasons(seasons);
   const pts={}, data={}, ppaBySeason={}; let breakout=null;
   for(const yr of seasons){
     const players=await loadSeason(yr);
@@ -289,7 +307,13 @@ async function fillCrossSeason(p, seasons){
   if(tEl){ if(!yw.length){ tEl.innerHTML='<div class="muted">Not enough qualified seasons to chart.</div>'; }
     else { const first=pts[yw[0]],last=pts[yw[yw.length-1]];
       const trend=yw.length>=2?(last>first?'<span style="color:var(--emerald)">\u25b2 rising</span>':last<first?'<span style="color:var(--coral)">\u25bc declining</span>':'<span style="color:var(--fog-2)">\u2192 stable</span>'):'';
-      const rows=seasons.concat([seasons[seasons.length-1]+1]).map(yr=>{ const pt=pts[yr];
+  // Render only the player's OWN span, not every season on file. The load list is wide so
+  // we find his whole career, but a 2024-25 player charted across 2020-2026 is five empty
+  // bars and one real one. Span = his first season with data to his last, plus the
+  // projected next year the chart already appended.
+      const spanA=yw[0], spanB=yw[yw.length-1];
+      const span=seasons.filter(y=>y>=spanA&&y<=spanB);
+      const rows=span.concat([spanB+1]).map(yr=>{ const pt=pts[yr];
         const bar=pt!=null?'<div style="height:22px;background:var(--ink-2);border-radius:4px;position:relative;overflow:hidden"><i style="position:absolute;left:0;top:0;bottom:0;width:'+Math.max(8,pt)+'%;background:linear-gradient(90deg,#134e7a,var(--sky));border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;font-family:var(--mono);color:var(--paper)">'+pt+'</i></div>':'<div style="height:22px;background:var(--ink-2);border-radius:4px;opacity:.35"></div>';
         return '<div style="display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:center;margin-bottom:7px;font-size:12px"><span style="color:var(--fog-2);font-family:var(--mono);font-weight:600">'+yr+'</span>'+bar+'</div>'; }).join('');
       tEl.innerHTML='<div style="text-align:right;margin-bottom:6px">'+trend+'</div>'+rows+'<div class="muted">Percentile among his position that season \u00b7 bar end = 100.</div>'; } }

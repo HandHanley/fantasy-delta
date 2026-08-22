@@ -4221,6 +4221,24 @@ function cfbCardStar(el){
 }
 
 // ── Year-over-year trajectory: dDOM by season, stitched across season files by id ──
+
+// Career history seasons. Deliberately WIDER than CFB.seasons, which drives the browse
+// picker and stays at the recent seasons only. A player's own card should show every
+// season we hold him in; the season table should not sprout pills for 2020-2023.
+// Published by scripts/build-college-index.js so this list cannot rot when a season lands.
+let CFB_HIST=null;
+async function cfbHistorySeasons(fallback){
+  if(CFB_HIST) return CFB_HIST;
+  try{
+    const r=await fetch('./data/college-seasons.json',{cache:'no-cache'});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    CFB_HIST=(j&&Array.isArray(j.seasons)&&j.seasons.length)?j.seasons.slice():null;
+  }catch(e){ CFB_HIST=null; }
+  if(!CFB_HIST) CFB_HIST=(fallback||[]).slice();   // degrade to the browse list
+  CFB_HIST.sort((a,b)=>a-b);
+  return CFB_HIST;
+}
 const CFB_SEASON_CACHE={};
 async function cfbLoadSeason(yr){
   if(CFB_SEASON_CACHE[yr]!==undefined) return CFB_SEASON_CACHE[yr];
@@ -4233,7 +4251,7 @@ async function cfbLoadSeason(yr){
 }
 async function cfbFillTrajectory(p){
   const host=document.getElementById('cfb-traj'); if(!host||!CFB) return;
-  const seasons=(CFB.seasons||[]).slice().sort((a,b)=>a-b);
+  const seasons=await cfbHistorySeasons(CFB.seasons);
   if(!seasons.length){ host.innerHTML=''; return; }
   const pts={};
   let breakout=null;   // earliest season the player was an underclassman AND top-20% dDOM
@@ -4268,7 +4286,13 @@ async function cfbFillTrajectory(p){
     ? (last>first?'<span style="color:var(--emerald)">\u25b2 rising</span>'
        :last<first?'<span style="color:var(--coral)">\u25bc declining</span>'
        :'<span style="color:var(--fog-2)">\u2192 stable</span>') : '';
-  const rowsHtml=seasons.concat([seasons[seasons.length-1]+1]).map(yr=>{
+  // Render only the player's OWN span, not every season on file. The load list is wide so
+  // we find his whole career, but a 2024-25 player charted across 2020-2026 is five empty
+  // bars and one real one. Span = his first season with data to his last, plus the
+  // projected next year the chart already appended.
+  const spanA=yrsWith[0], spanB=yrsWith[yrsWith.length-1];
+  const span=seasons.filter(y=>y>=spanA&&y<=spanB);
+  const rowsHtml=span.concat([spanB+1]).map(yr=>{
     const pt=pts[yr];
     const bar=(pt!=null)
       ? '<div style="height:20px;background:var(--ink-2);border-radius:4px;position:relative;overflow:hidden">'
@@ -4321,7 +4345,7 @@ function cfbRenderGameLog(){
 }
 async function cfbFillGameLog(p){
   const host=document.getElementById('cfb-gamelog'); if(!host||!CFB) return;
-  const seasons=(CFB.seasons||[]).slice().sort((a,b)=>a-b);
+  const seasons=await cfbHistorySeasons(CFB.seasons);
   const data={};
   for(const yr of seasons){
     const players=await cfbLoadSeason(yr);
