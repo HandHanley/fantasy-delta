@@ -228,6 +228,20 @@ if (fs.existsSync(OVR_PATH)) {
 // to decide whether to show the College tab at all, and only fetches the full index when
 // the tab is actually opened. Without it the page would have to pull ~0.8 MB on every
 // player view just to learn whether a tab should exist.
+// Third output: the list of college seasons that exist on disk. The college pages show a
+// BROWSE picker driven by college-players.json's `seasons` (deliberately just the recent
+// ones — we do not want a full-season table for 2020-2023), but a player's own CARD should
+// show his whole career. Those are different lists, so the wider one is published here
+// rather than hardcoded in three files where it would rot the moment a season is added.
+const SEASONS_OUT = 'data/college-seasons.json';
+const seasonsPayload = JSON.stringify({
+  generated: new Date().toISOString(),
+  seasons: years,
+  note: ('Every college season file present in data/. Used by the player CARDS to show a ' +
+         'full career history. NOT the browse list — that stays in college-players.json ' +
+         'under `seasons` so the season picker is unaffected.'),
+});
+
 const NAMES_OUT = 'data/college-index-names.json';
 const namesPayload = JSON.stringify({
   generated: payload.generated, seasons: years,
@@ -236,11 +250,13 @@ const namesPayload = JSON.stringify({
 });
 console.log(`manifest: ${Object.keys(out).length} names, ${(namesPayload.length / 1024).toFixed(0)} KB`);
 
-if (DRY) { console.log(`\nDRY RUN — ${OUT} and ${NAMES_OUT} not written.`); }
+if (DRY) { console.log(`\nDRY RUN — ${OUT}, ${NAMES_OUT} and ${SEASONS_OUT} not written.`); }
 else {
   fs.writeFileSync(OUT + '.tmp', json); fs.renameSync(OUT + '.tmp', OUT);
   fs.writeFileSync(NAMES_OUT + '.tmp', namesPayload); fs.renameSync(NAMES_OUT + '.tmp', NAMES_OUT);
+  fs.writeFileSync(SEASONS_OUT + '.tmp', seasonsPayload); fs.renameSync(SEASONS_OUT + '.tmp', SEASONS_OUT);
   console.log(`\nWROTE ${OUT}`);
   console.log(`WROTE ${NAMES_OUT}`);
+  console.log(`WROTE ${SEASONS_OUT}  (seasons: ${years.join(', ')})`);
 }
 console.log('='.repeat(72));
