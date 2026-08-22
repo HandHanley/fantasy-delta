@@ -189,5 +189,45 @@ plausibility check on the pipeline, not a re-litigation of §1.
 
 ## 10. Amendments
 
-_None. Any change after the first confirmatory run is recorded here with a date and a
-reason._
+**Amendment 1 — 22 Aug 2026, BEFORE any confirmatory run.**
+Section 6's one-standard-error rule is unchanged in intent, but the standard error is now
+computed the classic way: the spread across the k CV folds divided by sqrt(k), not the
+spread across every fold-score divided by the total count of them. The original form let
+SE shrink toward zero as CV repeats rose, which narrowed the 1-SE band to nothing and
+silently reduced the rule to "take the peak" — precisely the behaviour it exists to
+prevent, and precisely the mistake that produced w = 0.30 in the exploratory run.
+Found by the self-test, not by inspection.
+
+**Amendment 2 — 22 Aug 2026, BEFORE any confirmatory run.**
+Section 7's power check is replaced by two checks, because the original was invalid.
+It measured the width of the bootstrap CI on rho at w = 0.50 and called a narrow CI
+"powered". On data with no relationship at all, rho is reliably near zero and its CI is
+narrow, so pure noise scored as WELL POWERED. The self-test planted a no-signal dataset
+and the study confidently returned a weight, which is the failure this document exists to
+make impossible. Replaced by:
+
+- **Signal check** — the bootstrap CI on rho at w = 0.50 must exclude zero. If it does
+  not, the metric bears no relationship to the outcome and no weight may be inferred.
+- **Discrimination check** — the bootstrap CI on the difference rho(w*) − rho(0.50) must
+  exclude zero. If it does not, the CV curve is flat within noise and 0.50 ships as an
+  explicitly un-tuned default.
+
+If either check fails, w = 0.50 ships and the weight question stays open. The ship gates
+in section 7 (75% against 0.50, 60% against 1.00) are unchanged.
+
+**Amendment 3 — 22 Aug 2026, after the first confirmatory run, reporting only.**
+The discrimination check from Amendment 2 is marked NOT APPLICABLE when the empirical
+best weight IS the default 0.50. In that case rho(w*) − rho(0.50) is identically zero,
+the bootstrap CI collapses to [0, 0], and the check reports FAIL — labelling the study
+underpowered when the data in fact showed strong signal and agreed with the default. The
+check exists to stop a CHALLENGER being adopted on noise; with no challenger there is
+nothing to test.
+
+This changed no selected weight and no gate result — 0.50 ships either way. It changed
+only the verdict text, from "underpowered, question stays open" to "the empirical best
+and the pre-registered default are the same weight". Recorded here because it was made
+after seeing a result, which is exactly the kind of change that must never be silent.
+
+_Amendments 1 and 2 were made before the study touched real data. Amendment 3 was made
+after, affects reporting only, and is flagged as such. All are recorded here rather than
+edited into the sections above so the original design stays visible._
