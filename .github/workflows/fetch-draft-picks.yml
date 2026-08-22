@@ -1,0 +1,67 @@
+# One-off calibration fetch. Pulls CFBD /draft/picks and commits data/draft-picks.json.
+#
+# Path: .github/workflows/fetch-draft-picks.yml
+# In the Actions tab this appears as:  "Fetch Draft Picks (calibration)"   <-- click THIS
+# (GitHub lists workflows by their `name:` below, not by filename.)
+#
+# WHY THIS COMMITS, unlike "DELTA research study" which only uploads artifacts:
+#   draft-picks.json is an INPUT that later study runs read from a fresh checkout, not a
+#   result. It has to be in the repo for the analysis to see it. Nothing in the app reads
+#   it — no engine code, no page, no scoring path. It cannot affect the DELTA Score,
+#   projections, the buy/sell call, or the accuracy ledger.
+#
+# Manual only, no schedule. Draft results for a given year never change once the draft
+# has happened, so this is run once per new draft class and otherwise left alone.
+#
+# Default is a DRY RUN. Set confirm to "yes" to actually write.
+name: Fetch Draft Picks (calibration)
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Draft years, e.g. "2021-2026" or a single "2026"'
+        required: false
+        default: "2021-2026"
+      confirm:
+        description: 'Write data/draft-picks.json? Type "yes" to write. Anything else = dry run.'
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CFBD client
+        run: pip install --quiet cfbd
+
+      - name: Fetch draft picks
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+        run: |
+          MODE="--dry-run"
+          if [ "${{ github.event.inputs.confirm }}" = "yes" ]; then MODE="--confirm"; fi
+          echo "Running: python scripts/fetch-draft-picks.py $MODE --years ${{ github.event.inputs.years }}"
+          python scripts/fetch-draft-picks.py $MODE --years "${{ github.event.inputs.years }}"
+
+      - name: Commit if changed
+        if: ${{ github.event.inputs.confirm == 'yes' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/draft-picks.json
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "Fetch draft picks (${{ github.event.inputs.years }}) — calibration input"
+            git push
+          fi
