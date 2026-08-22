@@ -994,9 +994,9 @@ function buildCollegeHTML(p) {
       + '">' + y + '</span>').join('') + '</div>';
 
   const dLabel = pos === 'QB' ? 'competition-adjusted efficiency'
-               : pos === 'RB' ? 'competition-adjusted rush production' : 'competition-adjusted dominance';
+               : pos === 'RB' ? 'competition-adjusted all-purpose production' : 'competition-adjusted dominance';
   const dUnit  = pos === 'QB' ? '' : '%';
-  const dName  = pos === 'QB' ? 'ANY/A' : pos === 'RB' ? 'rush dom' : 'dominator';
+  const dName  = pos === 'QB' ? 'ANY/A' : pos === 'RB' ? 'all-purpose dom' : 'dominator';
 
   // dDOM and PPA arcs, only when more than one season carries a percentile
   const asc = yrs.slice().sort();
@@ -1038,7 +1038,7 @@ function buildCollegeHTML(p) {
   // usage share: that is the share of team plays he was the ball-handler on, which for a
   // QB is just how pass-heavy the offence was (median .54 in 2024), not a fact about him.
   const b3 = pos === 'QB' ? { v: _cpc(r.cmppct), l: 'completion %' }
-           : pos === 'RB' ? { v: _cpc(r.rdom),   l: 'rush dominator' }
+           : pos === 'RB' ? { v: _cpc(r.rdom),   l: 'rush dominator' }   // the RUSHING half, shown alongside the blended dDOM
                           : { v: _cpc(r.rsh),    l: 'reception share' };
   const ppaL = pos === 'QB' ? 'passing PPA/play' : pos === 'RB' ? 'rushing PPA/play' : 'PPA/play';
   const hasPpa = r._ppaPct != null;
@@ -1049,7 +1049,8 @@ function buildCollegeHTML(p) {
       ['Rush yards / TD', r.ry + ' / ' + r.rt]];
   else if (pos === 'RB') rows = [['Carries', r.car], ['Rush yards', r.ry],
       ['Yards per carry', r.car ? (r.ry / r.car).toFixed(1) : '-'], ['Rush TD', r.rt],
-      ['Receptions', r.rec], ['Receiving yards', r.rey]];
+      ['Receptions', r.rec], ['Receiving yards', r.rey],
+      ['Receiving dominator', _cpc(r.dom)]];
   else rows = [['Receptions', r.rec], ['Receiving yards', r.rey],
       ['Yards per catch', r.rec ? (r.rey / r.rec).toFixed(1) : '-'], ['Receiving TD', r.ret],
       ['Dominator', _cpc(r.dom)]];
@@ -1069,7 +1070,7 @@ function buildCollegeHTML(p) {
         + 's that season on predicted points added per play \u2014 NOT that he ranked ' + r._ppaPct + _ord(r._ppaPct) + '. ' : '')
     + 'A percentile rather than the raw score because the raw scale is not comparable across seasons: CFBD changed how it computes receiver efficiency in 2025 and halved every receiver\u2019s number with nothing changing on the field. The raw value is in the table above.'
     + (pos === 'QB' ? '<br><b style="color:var(--fog)">ANY/A</b> \u2014 adjusted net yards per attempt: (pass yards + 20 \u00d7 TD \u2212 45 \u00d7 INT) \u00f7 attempts. One number for passing efficiency that rewards touchdowns and punishes picks, so a checkdown QB does not grade elite. College box scores carry no sack data, so this is the passing-only variant.' : '')
-    + (pos === 'RB' ? '<br><b style="color:var(--fog)">Rush dominator</b> \u2014 his share of the team\u2019s rushing yards and touchdowns.' : '')
+    + (pos === 'RB' ? '<br><b style="color:var(--fog)">dDOM for backs is all-purpose</b> \u2014 an equal blend of his share of team rushing and his share of team receiving. Rushing-only undersold pass-catching backs; both halves are listed above.' : '')
     + ((pos === 'WR' || pos === 'TE') ? '<br><b style="color:var(--fog)">Dominator</b> \u2014 average of his share of team receiving yards and receiving TDs. <b style="color:var(--fog)">Reception share</b> \u2014 his receptions over team receptions, the honest stand-in for target share.' : '')
     + '</div></div>';
 

@@ -4015,10 +4015,24 @@ function cfbMult(tpct){
   if(tpct==null) return 1.0;
   return Math.max(1-DDOM_SWING, Math.min(1+DDOM_SWING, 1 + DDOM_SWING*(tpct-0.5)*2));
 }
+const RB_RUSH_W = 0.50;                                  // rushing share of RB dominator
+// RB dominator is ALL-PURPOSE: an equal blend of rushing and receiving share.
+// Rushing-only was the original definition and it systematically undersold pass-catching
+// backs — Jahmyr Gibbs took ~35% of his college scrimmage yards through the air and read
+// as a 47th-percentile back. Validated 22 Aug 2026 against draft capital on 306 backs
+// (91 drafted, 215 undrafted): 0.50 was the empirical peak of the CV curve AND the
+// pre-registered default, beating rushing-only on 92% of held-out splits, and agreeing
+// on a second outcome (NFL PPG, n=54: 0.249 vs 0.199). See docs/PREREG-rb-dominator-weight.md.
+// The 0.50 is deliberately un-tuned — the curve is flat between 0.3 and 0.8, so do NOT
+// "improve" it to a second decimal without a study that clears the same gates.
+function cfbRBDom(p){
+  if(p.rdom==null && p.dom==null) return null;
+  return RB_RUSH_W*(p.rdom||0) + (1-RB_RUSH_W)*(p.dom||0);
+}
 function cfbAdjVal(p){                                   // competition-adjusted value we rank
   const m=cfbMult(p.tpct);
   if(p.pos==='QB') return p.anya==null?null:p.anya*m;
-  if(p.pos==='RB') return p.rdom==null?null:p.rdom*m;
+  if(p.pos==='RB'){ const d=cfbRBDom(p); return d==null?null:d*m; }
   if(p.pos==='WR'||p.pos==='TE') return p.dom==null?null:p.dom*m;
   return null;
 }
@@ -4053,14 +4067,14 @@ function cfbPct(p, pool){
 }
 function cfbDDOM(p, pool){
   if(!cfbQualifies(p)) return null;                     // below the volume floor -> no dDOM
-  const raw = p.pos==='QB'?p.anya : p.pos==='RB'?p.rdom : (p.pos==='WR'||p.pos==='TE')?p.dom : null;
+  const raw = p.pos==='QB'?p.anya : p.pos==='RB'?cfbRBDom(p) : (p.pos==='WR'||p.pos==='TE')?p.dom : null;
   if(raw==null) return null;
   const pct=cfbPct(p, pool); if(pct==null) return null;
   return { pct,
     raw: p.pos==='QB'? Math.round(raw*10)/10 : Math.round(raw*1000)/10,
     rawUnit: p.pos==='QB'? '' : '%',
-    rawLabel: p.pos==='QB'?'ANY/A' : p.pos==='RB'?'rush dom' : 'dominator',
-    label: p.pos==='QB'?'competition-adjusted efficiency' : p.pos==='RB'?'competition-adjusted rush production' : 'competition-adjusted dominance' };
+    rawLabel: p.pos==='QB'?'ANY/A' : p.pos==='RB'?'all-purpose dom' : 'dominator',
+    label: p.pos==='QB'?'competition-adjusted efficiency' : p.pos==='RB'?'competition-adjusted all-purpose production' : 'competition-adjusted dominance' };
 }
 function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senior',5:'Senior (5th)'}[c]||'class n/a'; }
 
