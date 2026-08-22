@@ -60,7 +60,13 @@ function pctOf(peers, v) {
   let below = 0; for (const x of peers) if (x < v) below++;
   return Math.round(100 * below / (peers.length - 1));
 }
-const PPA_KEY = { QB: 'ppaPass', RB: 'ppaRush', WR: 'ppa', TE: 'ppa' };
+// RB headline PPA is ALL PLAYS, not rushing plays. Rushing-only made the same mistake
+// the dominator did: a box labelled "per-play efficiency" that could not see a third of a
+// receiving back's work. Gibbs 2022 read 43rd percentile on rushing plays and 70th on all
+// plays. Checked 22 Aug 2026 on 301 backs vs draft capital: all-plays 0.340 vs rushing
+// 0.320, winning 84% of held-out splits, and 0.316 vs 0.215 against NFL PPG (n=54).
+// No weight to choose here — CFBD returns the combined figure directly.
+const PPA_KEY = { QB: 'ppaPass', RB: 'ppa', WR: 'ppa', TE: 'ppa' };
 
 // ── name key — mirrors fetch-college.py's norm() ──────────────────────────────
 function norm(s) {
