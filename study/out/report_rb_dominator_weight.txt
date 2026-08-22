@@ -1,0 +1,66 @@
+==========================================================================
+DELTA — RB DOMINATOR WEIGHT STUDY
+Implements docs/PREREG-rb-dominator-weight.md. Primary outcome: draft capital.
+==========================================================================
+
+SAMPLE (prereg section 3)
+  distinct RBs with a qualifying final season : 450
+  dropped, final season 2025 (class 2026)     : 144
+  dropped, missing rdom or dom                : 0
+  PRIMARY SAMPLE                              : 306
+     drafted   : 91
+     undrafted : 215  (retained on purpose — dropping them
+                 would condition on the outcome)
+  by final college season: 2020:35, 2021:69, 2022:56, 2023:59, 2024:87
+
+CV CURVE (prereg section 6) — held-out Spearman rho by weight
+    w (rush share)   mean rho      SE
+              0.00     0.3269  0.0440  
+              0.10     0.4524  0.0383  
+              0.20     0.4975  0.0358 *
+              0.30     0.5154  0.0346 *
+              0.40     0.5205  0.0341 *
+              0.50     0.5220  0.0340 *  <- best
+              0.60     0.5201  0.0339 *
+              0.70     0.5158  0.0341 *
+              0.80     0.5138  0.0342 *
+              0.90     0.5093  0.0344 *
+              1.00     0.5068  0.0345 *
+  * = within 1 SE of the best
+
+POWER CHECKS (prereg section 7, as amended)
+  signal        : rho at w=0.50 CI [0.446, 0.598]  -> PASS (excludes 0)
+  discrimination: NOT APPLICABLE — the empirical best weight IS the
+                  default 0.50, so there is no challenger to test.
+  selection rule -> w = 0.50  (the empirical best and the
+  pre-registered default are the same weight — the data agreed with it)
+
+GATES (prereg section 7)
+  sanity gate: w=0.50 beats today's w=1.00 on 92% of 500 half-splits (need >= 60%)  -> PASS
+  challenger gate: not applicable, selection IS the default 0.50
+
+SECONDARY OUTCOME (reported regardless — prereg section 4)
+  n = 54 with real NFL games
+     w=0.50: rho = +0.249  (selected)
+     w=1.00: rho = +0.199  (today)
+  agrees with primary: yes
+
+BIGGEST MOVERS under w = 0.50 vs today's 1.00
+  falls:
+     Jaret Patterson           69 ->  59  (-10)
+     Abram Smith               76 ->  67  (-9)
+     Spencer Brown             68 ->  59  (-9)
+     Ayo Adeyi                 48 ->  40  (-8)
+     B.J. Baylor               68 ->  60  (-8)
+  rises:
+     CJ Marable                34 ->  52  (+18)
+     Michael Wiley             15 ->  34  (+19)
+     Tyrell Robinson            1 ->  25  (+24)
+     Johnny Ford               40 ->  68  (+28)
+     Calvin Turner Jr.         22 ->  51  (+29)
+  25 of 306 move 10+ percentile points (8%)
+
+==========================================================================
+RESULT: ship w = 0.50
+  dDOM_RB = [0.50 * rushDom + 0.50 * recDom] * competition
+==========================================================================
