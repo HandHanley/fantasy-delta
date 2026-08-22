@@ -1,0 +1,66 @@
+# Bowl and College Football Playoff lines. Writes data/college-postseason.json.
+#
+# In the Actions tab this appears as: "Fetch College Postseason"
+#
+# SEPARATE DATASET, ON PURPOSE. The regular-season files stay exactly as they are.
+# Postseason participation is not uniform — players sit out bowls, and a playoff team
+# plays several extra games — so this never enters dDOM, PPA, any percentile, any peer
+# pool, or the Scout ordering. It is shown as its own labelled section and nothing else
+# reads it. It cannot affect the DELTA Score, projections, the buy/sell call, or the
+# accuracy ledger.
+#
+# Manual only. Postseason results for a finished season never change, so this is run once
+# after each season's playoff concludes (roughly late January) and otherwise left alone.
+#
+# Default is a DRY RUN. Set confirm to "yes" to actually write.
+name: Fetch College Postseason
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Seasons, e.g. "2020-2025" or a single "2025". Blank = every season on disk.'
+        required: false
+        default: "2020-2025"
+      confirm:
+        description: 'Write data/college-postseason.json? Type "yes" to write.'
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CFBD client
+        run: pip install --quiet cfbd
+
+      - name: Fetch postseason lines
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+        run: |
+          MODE="--dry-run"
+          if [ "${{ github.event.inputs.confirm }}" = "yes" ]; then MODE="--confirm"; fi
+          echo "Running: python scripts/fetch-college-postseason.py $MODE --years ${{ github.event.inputs.years }}"
+          python scripts/fetch-college-postseason.py $MODE --years "${{ github.event.inputs.years }}"
+
+      - name: Commit if changed
+        if: ${{ github.event.inputs.confirm == 'yes' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/college-postseason.json
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "Fetch college postseason lines (${{ github.event.inputs.years }})"
+            git push
+          fi
