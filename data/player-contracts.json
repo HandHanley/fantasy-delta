@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-21T06:52:48.633680+00:00",
+  "fetched": "2026-08-22T02:30:32.417166+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -983,7 +983,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "NE/PHI",
+      "team": "PHI/NE",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1883,7 +1883,7 @@
       "is_active": true
     },
     "Elijah Higgins": {
-      "team": "ARI/MIA",
+      "team": "MIA/ARI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2893,7 +2893,7 @@
       "is_active": true
     },
     "Joe Milton": {
-      "team": "DAL/NE",
+      "team": "NE/DAL",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3162,6 +3162,16 @@
       "guaranteed": 0.13,
       "is_active": true
     },
+    "Najee Harris": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.22,
+      "total": 1.22,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Malik Davis": {
       "team": "Cowboys",
       "year_signed": 2025,
@@ -3313,7 +3323,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "LAC/CLE",
+      "team": "Browns",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
