@@ -137,6 +137,12 @@ def main():
                 seen_games += len(games)
                 print(f"  [{calls:>3}] wk{wk}: {len(games)} game(s)")
                 for gm in games:
+                    # Key on the GAME id, never on (week, team). CFBD files the entire
+                    # postseason under week 1 — December bowls and the January title game
+                    # alike — so a playoff team appears several times in the same week.
+                    # Keying by week+team silently SUMS those games into one line: Will
+                    # Howard's 2024 run came out as a single 1,150-yard "game".
+                    gid = g(gm, "id", "game_id")
                     teams = g(gm, "teams") or []
                     for tm in teams:
                         tname = g(tm, "team")
@@ -153,8 +159,10 @@ def main():
                                     if nm is None:
                                         nm = by_nt.get((norm(g(ath, "name")), norm(tname)))
                                     if nm is None: continue      # outside the universe
+                                    gkey = (gid if gid is not None else (wk, tname, opp))
                                     rec = matched[nm].setdefault(
-                                        (wk, tname), {"w": wk, "opp": opp, "tm": tname})
+                                        gkey, {"w": wk, "opp": opp, "tm": tname,
+                                               "gid": gid})
                                     val = g(ath, "stat")
                                     if ck == "ca":
                                         rec["ca"] = str(val)
@@ -164,7 +172,8 @@ def main():
             n_players = 0
             for nm, games_by_key in matched.items():
                 rows = []
-                for _, r in sorted(games_by_key.items()):
+                for _, r in sorted(games_by_key.items(), key=lambda kv: str(kv[0])):
+                    r.pop('gid', None)
                     for k, v in list(r.items()):
                         if isinstance(v, float) and v.is_integer(): r[k] = int(v)
                     rows.append(r)
@@ -172,7 +181,19 @@ def main():
                     out.setdefault(nm, {})[str(year)] = rows
                     n_players += 1
             totals[year] = n_players
+            dist = collections.Counter(len(v[str(year)]) for v in out.values() if str(year) in v)
             print(f"  -> {seen_games} postseason games · {n_players} tracked players with a line")
+            print(f"     games per player: " + ", ".join(f"{k}:{v}" for k, v in sorted(dist.items())))
+            # Physically impossible single-game lines are the signature of games being
+            # merged. Loud, because the numbers stay plausible-looking at a glance.
+            bad = []
+            for nm, v in out.items():
+                for r in v.get(str(year), []):
+                    if (r.get('py') or 0) > 650 or (r.get('car') or 0) > 45 or (r.get('rec') or 0) > 20:
+                        bad.append(f"{nm} ({r.get('py',0)} py, {r.get('car',0)} car, {r.get('rec',0)} rec)")
+            if bad:
+                print(f"     WARNING: {len(bad)} implausible single-game line(s) — games may be merging:")
+                for b in bad[:5]: print(f"       {b}")
 
     print()
     tot_players = len(out)
