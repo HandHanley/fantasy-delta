@@ -4101,7 +4101,13 @@ function openCfbCard(name){
   const tp = p.tpct==null ? 50 : Math.round(p.tpct*100);
   const tpLabel = p.tpct==null ? 'no talent data \u2014 unadjusted'
     : tp+'th pct talent'+(tp>=90?' \u00b7 elite':tp>=60?' \u00b7 strong':tp<=25?' \u00b7 weak':'');
-  const ppaHead = p.pos==='QB'?p.ppaPass : p.pos==='RB'?p.ppaRush : p.ppa;
+// RB headline PPA is ALL PLAYS, not rushing plays. Rushing-only made the same mistake
+// the dominator did: a box labelled "per-play efficiency" that could not see a third of a
+// receiving back's work. Gibbs 2022 read 43rd percentile on rushing plays and 70th on all
+// plays. Checked 22 Aug 2026 on 301 backs vs draft capital: all-plays 0.340 vs rushing
+// 0.320, winning 84% of held-out splits, and 0.316 vs 0.215 against NFL PPG (n=54).
+// No weight to choose here — CFBD returns the combined figure directly.
+  const ppaHead = p.pos==='QB'?p.ppaPass : p.ppa;
   const ppaLbl  = p.pos==='QB'?'passing PPA/play' : p.pos==='RB'?'rushing PPA/play' : 'PPA/play';
   const ppaBench = ppaHead==null?'' : (ppaHead>=0.4?'elite':ppaHead>=0.2?'strong':ppaHead>=0?'solid':'below avg');
   const ppaRow = ppaHead==null ? '' :

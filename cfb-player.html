@@ -160,7 +160,13 @@ function render(p, pool, seasons){
     : '<div class="card"><div class="hlab">dDOM</div><div class="muted" style="margin-top:6px">Below the qualifying volume floor (6+ games and a position minimum), so no competition-adjusted percentile is computed.</div></div>';
 
   // PPA / EPA card — the standalone page's added depth
-  const ppaHead = p.pos==='QB'?p.ppaPass : p.pos==='RB'?p.ppaRush : p.ppa;
+// RB headline PPA is ALL PLAYS, not rushing plays. Rushing-only made the same mistake
+// the dominator did: a box labelled "per-play efficiency" that could not see a third of a
+// receiving back's work. Gibbs 2022 read 43rd percentile on rushing plays and 70th on all
+// plays. Checked 22 Aug 2026 on 301 backs vs draft capital: all-plays 0.340 vs rushing
+// 0.320, winning 84% of held-out splits, and 0.316 vs 0.215 against NFL PPG (n=54).
+// No weight to choose here — CFBD returns the combined figure directly.
+  const ppaHead = p.pos==='QB'?p.ppaPass : p.ppa;
   const ppaLbl  = p.pos==='QB'?'passing PPA/play' : p.pos==='RB'?'rushing PPA/play' : 'PPA/play';
   const ppaBench = ppaHead==null?'' : (ppaHead>=0.4?' \u00b7 elite':ppaHead>=0.2?' \u00b7 strong':ppaHead>=0?' \u00b7 solid':' \u00b7 below average');
   const splitRow=(lab,val,tip)=> val==null?'' :
@@ -258,7 +264,7 @@ async function fillCrossSeason(p, seasons){
     const dd=cfbDDOM(rec, players);
     if(dd){ pts[yr]=dd.pct; const cin=classInSeason(rec,yr); if(!breakout&&cin!=null&&cin<=2&&dd.pct>=80) breakout={season:yr,cls:cin}; }
     if(rec.g&&rec.g.length) data[yr]={games:rec.g,pos:rec.pos,rec:rec,players:players};
-    const head = rec.pos==='QB'?rec.ppaPass : rec.pos==='RB'?rec.ppaRush : rec.ppa;
+    const head = rec.pos==='QB'?rec.ppaPass : rec.ppa;   // RB = all plays, see cfbPPA note
     if(head!=null||rec.ppa!=null) ppaBySeason[yr]={head, all:rec.ppa, pass:rec.ppaPass, rush:rec.ppaRush, tot:rec.ppaTot};
   }
   // PPA by season — the multi-year efficiency view the modal can't show.

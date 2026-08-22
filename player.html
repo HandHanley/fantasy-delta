@@ -1040,7 +1040,7 @@ function buildCollegeHTML(p) {
   const b3 = pos === 'QB' ? { v: _cpc(r.cmppct), l: 'completion %' }
            : pos === 'RB' ? { v: _cpc(r.rdom),   l: 'rush dominator' }   // the RUSHING half, shown alongside the blended dDOM
                           : { v: _cpc(r.rsh),    l: 'reception share' };
-  const ppaL = pos === 'QB' ? 'passing PPA/play' : pos === 'RB' ? 'rushing PPA/play' : 'PPA/play';
+  const ppaL = pos === 'QB' ? 'passing PPA/play' : 'PPA/play';   // RB = all plays, matching all-purpose dDOM
   const hasPpa = r._ppaPct != null;
 
   let rows;
