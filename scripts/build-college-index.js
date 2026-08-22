@@ -96,13 +96,33 @@ function seasonFiles() {
 }
 
 // ── build ────────────────────────────────────────────────────────────────────
+// Hand-maintained identity links for players the name+position join cannot reach —
+// almost always a position change between college and the NFL. Unverified entries are
+// ignored: a wrong link here silently attaches another human's career to a player card.
+let OVERRIDES = {};
+const OVR_PATH = 'data/college-overrides.json';
+if (fs.existsSync(OVR_PATH)) {
+  const raw = JSON.parse(fs.readFileSync(OVR_PATH, 'utf8'));
+  for (const [k, v] of Object.entries(raw)) {
+    if (k.startsWith('_')) continue;
+    if (v && v.verified === true && v.cfbName && v.cfbPos) OVERRIDES[k] = v;
+  }
+}
+
 const universe = loadUniverse();
 if (universe.length < MIN_UNIVERSE) {
   console.error(`ERROR: only ${universe.length} players read from RAW (expected >= ${MIN_UNIVERSE}).`);
   process.exit(1);
 }
-const want = new Set(universe.map(p => norm(p.n) + '|' + p.pos));
-const wantLoose = new Set(universe.map(p => normLoose(p.n) + '|' + p.pos));
+// Map the join key back to the NFL SPELLING. The index MUST be keyed by the name
+// player.html looks up (p.n from RAW), not by the college feed's spelling — the two
+// disagree often enough to matter ("Devon Achane" vs "De'Von Achane", "Luther Burden"
+// vs "Luther Burden III"). Keying by the college name silently orphaned 16 of 269
+// players: the record was built correctly and the page could never find it.
+const want = new Map(universe.map(p => [norm(p.n) + '|' + p.pos, p.n]));
+const wantOverride = new Map(
+  Object.entries(OVERRIDES).map(([nflName, o]) => [norm(o.cfbName) + '|' + o.cfbPos, nflName]));
+const wantLoose = new Map(universe.map(p => [normLoose(p.n) + '|' + p.pos, p.n]));
 console.log('='.repeat(72));
 console.log('DELTA — BUILD COLLEGE INDEX' + (DRY ? '   (DRY RUN)' : ''));
 console.log('='.repeat(72));
@@ -126,11 +146,14 @@ for (const y of years) {
     pPeers[pos] = q.map(p => p[k]).filter(v => v != null).sort((a, b) => a - b);
   }
 
-  let hit = 0, loose = 0;
+  let hit = 0, loose = 0, ovr = 0;
   for (const p of pool) {
-    const strict = want.has(norm(p.n) + '|' + p.pos);
-    if (!strict && !wantLoose.has(normLoose(p.n) + '|' + p.pos)) continue;
-    if (!strict) loose++;
+    const nflName = want.get(norm(p.n) + '|' + p.pos)
+                 || wantLoose.get(normLoose(p.n) + '|' + p.pos)
+                 || wantOverride.get(norm(p.n) + '|' + p.pos);
+    if (!nflName) continue;
+    if (wantOverride.has(norm(p.n) + '|' + p.pos)) ovr++;
+    else if (!want.has(norm(p.n) + '|' + p.pos)) loose++;
     hit++; seasonRows++;
     const pos = p.pos, q = cfbQualifies(p);
     const rawD = pos === 'QB' ? p.anya : pos === 'RB' ? p.rdom : p.dom;
@@ -144,13 +167,23 @@ for (const y of years) {
     rec._ppaPct = q ? pctOf(pPeers[pos], ppaRaw) : null;
     rec._ppaRaw = ppaRaw == null ? null : ppaRaw;
     rec._ppaPeers = pPeers[pos].length;
-    (out[p.n] = out[p.n] || {})[y] = rec;
+    rec._cfbName = p.n;                      // keep the college spelling for reference
+    (out[nflName] = out[nflName] || {})[y] = rec;
   }
   console.log(`  ${y}: pool ${String(pool.length).padStart(4)} · in NFL universe ${String(hit).padStart(3)}` +
               (loose ? ` (${loose} via suffix fallback)` : '') +
+              (ovr ? ` (${ovr} via override)` : '') +
               ` · qualifying peers QB/RB/WR/TE ${['QB','RB','WR','TE'].map(x=>dPeers[x].length).join('/')}`);
 }
 
+// Guard: every emitted key must be reachable from player.html.
+const nflNames = new Set(universe.map(p => p.n));
+const orphans = Object.keys(out).filter(k => !nflNames.has(k));
+if (orphans.length) {
+  console.error(`ERROR: ${orphans.length} index key(s) do not match an NFL name and would be ` +
+                `unreachable from the player page: ${orphans.slice(0, 10).join(', ')}`);
+  process.exit(1);
+}
 const players = Object.keys(out).length;
 const withPpa = Object.values(out).reduce((a, seasons) =>
   a + Object.values(seasons).filter(r => r._ppaPct != null).length, 0);
@@ -168,9 +201,31 @@ const payload = {
 const json = JSON.stringify(payload);
 console.log(`size: ${(json.length / 1e6).toFixed(2)} MB`);
 
-if (DRY) { console.log(`\nDRY RUN — ${OUT} not written.`); }
+const ovrCount = Object.keys(OVERRIDES).length;
+if (fs.existsSync(OVR_PATH)) {
+  const rawOvr = JSON.parse(fs.readFileSync(OVR_PATH, 'utf8'));
+  const pending = Object.entries(rawOvr).filter(([k, v]) => !k.startsWith('_') && v && v.verified !== true);
+  console.log(`overrides: ${ovrCount} active` + (pending.length
+    ? ` · ${pending.length} awaiting verification (ignored): ${pending.map(([k]) => k).join(', ')}` : ''));
+}
+
+// Companion manifest: just the covered names. player.html loads THIS at boot (a few KB)
+// to decide whether to show the College tab at all, and only fetches the full index when
+// the tab is actually opened. Without it the page would have to pull ~0.8 MB on every
+// player view just to learn whether a tab should exist.
+const NAMES_OUT = 'data/college-index-names.json';
+const namesPayload = JSON.stringify({
+  generated: payload.generated, seasons: years,
+  note: 'Names present in college-index.json. Used to decide College tab visibility without loading the full index.',
+  names: Object.keys(out).sort(),
+});
+console.log(`manifest: ${Object.keys(out).length} names, ${(namesPayload.length / 1024).toFixed(0)} KB`);
+
+if (DRY) { console.log(`\nDRY RUN — ${OUT} and ${NAMES_OUT} not written.`); }
 else {
   fs.writeFileSync(OUT + '.tmp', json); fs.renameSync(OUT + '.tmp', OUT);
+  fs.writeFileSync(NAMES_OUT + '.tmp', namesPayload); fs.renameSync(NAMES_OUT + '.tmp', NAMES_OUT);
   console.log(`\nWROTE ${OUT}`);
+  console.log(`WROTE ${NAMES_OUT}`);
 }
 console.log('='.repeat(72));
