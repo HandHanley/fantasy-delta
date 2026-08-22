@@ -1,7 +1,14 @@
-# College tracking pipeline. Writes data/college-players.json, which NOTHING in the
-# app fetches yet — completely invisible to users until the ?college=1 tab ships.
-# Separate from the nightly NFL pipeline on purpose: different cadence, and a failure
-# here must never touch NFL data.
+# College tracking pipeline. Writes data/college-players.json plus the numbered season
+# files, then rebuilds data/college-index.json and data/college-index-names.json, which
+# the NFL player page DOES consume (the College tab). Separate from the nightly NFL
+# pipeline on purpose: different cadence, and a failure here must never touch NFL data.
+#
+# The index rebuild runs BEFORE the commit on purpose. The index is derived from the
+# season files AND from RAW in delta-engine.js, so a refresh that committed season data
+# without rebuilding would leave the player page reading a stale index — showing last
+# week's college numbers, or hiding the tab for a player who now has data. Because the
+# rebuild sits ahead of the commit, a failure there aborts the job and nothing is
+# committed at all, rather than committing half a refresh.
 name: Fetch College Data
 
 on:
@@ -36,6 +43,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      # Needed for the index rebuild below, which runs the engine to read RAW.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install CFBD client
         run: pip install --quiet cfbd
 
@@ -47,14 +59,30 @@ jobs:
           CFBD_PORTAL_YEAR: ${{ github.event.inputs.portal_year }}
         run: python scripts/fetch-college.py
 
+      # Rebuilds the slim index the player page reads. Reads every
+      # data/college-players-YYYY.json plus RAW from delta-engine.js, recomputes the dDOM
+      # and PPA percentiles against each season's FULL pool, and writes only the players
+      # who are also in DELTA's NFL universe. The script exits non-zero if RAW comes back
+      # implausibly small or if any index key would be unreachable from the player page,
+      # so a broken join stops the run instead of shipping quietly.
+      - name: Rebuild college index
+        run: node scripts/build-college-index.js
+
       - name: Commit if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/college-players*.json data/college-portal*.json
+          git add data/college-players*.json data/college-portal*.json \
+                  data/college-index.json data/college-index-names.json
           if git diff --staged --quiet; then
             echo "no change"
           else
             git commit -m "College data refresh ($(date -u +%Y-%m-%d))"
             git push
           fi
+
+      # Pages does not redeploy on a workflow commit, so the refreshed data sits in the
+      # repo but not on the live domain until a deploy runs. Verify against
+      # fantasydelta.com, not the repo view.
+      - name: Reminder
+        run: echo "Data committed. Run Deploy Pages, then verify on fantasydelta.com (not the repo)."
