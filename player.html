@@ -72,6 +72,19 @@ a:hover{text-decoration:underline}
 .prod-table th:first-child{text-align:left}
 .prod-table td{text-align:right;padding:5px 8px;border-top:1px solid #111A28}
 .prod-table td:first-child{text-align:left;color:#8CA0B3;font-weight:600}
+/* College game log: up to nine columns, so it gets tighter padding than the season
+   tables and the opponent column — the least valuable field — gives up space first. */
+.cgl th,.cgl td{padding:4px 5px}
+.cgl .opp{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:600px){
+  .cgl{font-size:9.5px!important}
+  .cgl th,.cgl td{padding:3px 3px!important}
+  .cgl .opp{max-width:56px;font-size:9px}
+}
+@media(max-width:400px){
+  .cgl{font-size:9px!important}
+  .cgl .opp{max-width:46px;font-size:8.5px}
+}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-box{background:#0D1420;border-radius:6px;padding:8px 10px;text-align:center}
 .stat-val{font-size:18px;font-weight:700;line-height:1.1;margin-bottom:2px}
@@ -959,7 +972,7 @@ function _opp(o) {
     .replace(/\bWestern\b/i, 'W').replace(/\bCentral\b/i, 'Cent')
     .replace(/\bInternational\b/i, "Int'l").replace(/\bNorth Carolina\b/i, 'NC')
     .replace(/\bSouth Carolina\b/i, 'SC').replace(/\s+/g, ' ').trim();
-  return s.length > 13 ? s.slice(0, 12) + '\u2026' : s;
+  return s.length > 11 ? s.slice(0, 10) + '\u2026' : s;
 }
 function _cfbColor(p) {
   return p >= 90 ? '#34D399' : p >= 70 ? '#10B981' : p >= 45 ? '#6BB6E0' : p >= 25 ? '#E0B34D' : '#E05745';
@@ -1110,12 +1123,12 @@ function buildCollegeHTML(p) {
     const rows2 = g.slice().sort((a, b) => (a.w || 0) - (b.w || 0));
     glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div>'
       + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
-      + '<table class="prod-table" style="font-size:10.5px"><thead><tr>'
+      + '<table class="prod-table cgl" style="font-size:10.5px"><thead><tr>'
       + '<th>Wk</th><th style="text-align:left">Opp</th>'
       + cols.map(c => '<th>' + c[0] + '</th>').join('')
       + '</tr></thead><tbody>'
       + rows2.map(x => '<tr><td>' + (x.w || '-') + '</td>'
-          + '<td style="text-align:left;color:var(--fog);white-space:nowrap" title="'
+          + '<td class="opp" style="text-align:left;color:var(--fog)" title="'
           + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
           + cols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
       + '</tbody></table></div></div>';
