@@ -891,6 +891,20 @@ function renderPlayerPage(p) {
 // Nothing here feeds the DELTA Score, the projection or the buy/sell call.
 let CUR_P = null, _TAB = 'nfl', _CYR = null;
 let CFB_INDEX = null, _cfbState = 'idle';   // idle | loading | ready | missing
+let CFB_NAMES = null;                      // Set of players who HAVE a college record
+
+// The 4 KB companion manifest, loaded during boot. It exists so the College tab can be
+// hidden for players with no record WITHOUT pulling the full ~0.8 MB index on every page
+// view. If it fails to load the tab simply never shows — the NFL card is unaffected.
+function loadCollegeNames() {
+  return fetch('./data/college-index-names.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { CFB_NAMES = new Set((j && j.names) || []);
+                 console.log('[DELTA] college index manifest: ' + CFB_NAMES.size + ' players'); })
+    .catch(e => { console.warn('[DELTA] college-index-names.json not loaded:', e.message);
+                  CFB_NAMES = new Set(); });
+}
+function hasCollege(p) { return !!(p && CFB_NAMES && CFB_NAMES.has(p.n)); }
 
 function ensureCollegeData(p) {
   if (_cfbState === 'ready' || _cfbState === 'loading' || _cfbState === 'missing') return;
@@ -908,6 +922,9 @@ function repaintCollege() {
   if (b && CUR_P) b.innerHTML = buildCollegeHTML(CUR_P);
 }
 function buildTabsHTML() {
+  // No record means no tab. A tab that opens onto "no data" is worse than no tab:
+  // it reads as a broken page rather than an absent fact.
+  if (!hasCollege(CUR_P)) return '';
   const on  = 'background:#111A28;color:var(--paper);border:1px solid var(--line);border-bottom:none';
   const off = 'background:transparent;color:var(--fog-2);border:1px solid transparent;border-bottom:none';
   const t = (id, lbl) => '<div onclick="setTab(\'' + id + '\')" style="cursor:pointer;font-size:12px;'
@@ -1090,6 +1107,7 @@ function _renderPlayerPage(p) {
     }
   });
 
+  if (!hasCollege(p)) _TAB = 'nfl';
   showContent(`
     ${buildHeroHTML(p)}
     <div id="tabstrip">${buildTabsHTML()}</div>
@@ -1110,7 +1128,7 @@ function _renderPlayerPage(p) {
     ${buildComparableHTML(p)}
     ${buildScoutHTML()}
     </div>
-    <div id="tab-cfb"${_TAB==='cfb'?'':' style="display:none"'}>${buildCollegeHTML(p)}</div>
+    ${hasCollege(p) ? `<div id="tab-cfb"${_TAB==='cfb'?'':' style="display:none"'}>${buildCollegeHTML(p)}</div>` : ''}
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
   if(_TAB==='cfb') ensureCollegeData(p);
@@ -1157,6 +1175,7 @@ if (!PLAYER_NAME) {
     .then(() => loadRipples()).then(() => loadReads())
     .then(() => loadInjuryOverrides())
     .then(() => loadQBStarters())
+    .then(() => loadCollegeNames())
     .then(() => ensureStartData())
     .then(() => {
       applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
