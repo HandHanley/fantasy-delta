@@ -1002,7 +1002,7 @@ function buildCollegeHTML(p) {
   const asc = yrs.slice().sort();
   const arc = asc.filter(y => all[y]._ddomPct != null).length > 1
     ? '<div style="margin-top:12px;padding-top:11px;border-top:1px solid var(--line)">'
-      + '<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px">By season · dDOM and PPA percentile</div>'
+      + '<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5C7080;margin-bottom:8px">By season · percentile among peers</div>'
       + asc.map(y => {
           const a = all[y]; if (a._ddomPct == null) return '';
           return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
@@ -1025,7 +1025,7 @@ function buildCollegeHTML(p) {
       + '<div class="card-sub">where he ranked among qualifying ' + pos + 's that season, adjusted for who he played</div></div>'
       + '<div style="display:flex;align-items:baseline;gap:10px">'
       + '<span style="font-size:30px;font-weight:800;font-family:var(--mono);line-height:1;color:' + _cfbColor(r._ddomPct) + '">' + r._ddomPct + '</span>'
-      + '<span style="font-size:11px;color:var(--fog)">percentile \u00b7 ' + r._ddomRaw + dUnit + ' ' + dName + '</span></div>'
+      + '<span style="font-size:11px;color:var(--fog)">' + _ord(r._ddomPct) + ' percentile \u00b7 ' + r._ddomRaw + dUnit + ' ' + dName + '</span></div>'
       + '<div style="height:6px;background:#0D1420;border-radius:3px;overflow:hidden;margin:10px 0 6px"><div style="height:100%;border-radius:3px;width:' + r._ddomPct + '%;background:' + _cfbColor(r._ddomPct) + '"></div></div>'
       + '<div style="display:flex;justify-content:space-between;font-size:9px;color:#5C7080;font-family:var(--mono)"><span>0</span><span>vs ' + r._ddomPeers + ' qualifying ' + pos + 's</span><span>100</span></div>'
       + '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">Opponent quality ' + _cpc(r.tpct) + '. '
@@ -1058,12 +1058,16 @@ function buildCollegeHTML(p) {
   const prodCard = '<div class="card"><div class="card-label">' + yr + ' production \u00b7 ' + r.tm + '</div>'
     + '<div class="stat-grid" style="margin-bottom:' + (hasPpa ? '12px' : '6px') + ';grid-template-columns:repeat(' + (hasPpa ? 3 : 2) + ',1fr)">'
     + '<div class="stat-box"><div class="stat-val">' + r.gms + '</div><div class="stat-lbl">games</div></div>'
-    + (hasPpa ? '<div class="stat-box"><div class="stat-val" style="color:' + _cfbColor(r._ppaPct) + '">' + r._ppaPct + _ord(r._ppaPct) + '</div><div class="stat-lbl">per-play efficiency</div></div>' : '')
+    + (hasPpa ? '<div class="stat-box"><div class="stat-val" style="color:' + _cfbColor(r._ppaPct) + '">' + r._ppaPct + _ord(r._ppaPct) + '</div><div class="stat-lbl">percentile<br><span style="color:#5C7080">per-play efficiency</span></div></div>' : '')
     + '<div class="stat-box"><div class="stat-val">' + _cN(b3.v) + '</div><div class="stat-lbl">' + b3.l + '</div></div></div>'
     + (!hasPpa ? '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-bottom:10px">No per-play efficiency percentile for ' + yr + ' \u2014 he was below the qualifying volume floor, or the season has no PPA on record.</div>' : '')
     + rows.map(x => '<div class="bdr-row"><span style="color:var(--fog)">' + x[0] + '</span><b style="font-family:var(--mono);font-weight:600">' + _cN(x[1]) + '</b></div>').join('')
     + '<div style="font-size:10px;color:#5C7080;line-height:1.7;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)">'
-    + '<b style="color:var(--fog)">Per-play efficiency</b> \u2014 his rank among qualifying ' + pos + 's that season on predicted points added per play. A rank, not a score, because the raw scale is not comparable across seasons: CFBD changed how it computes receiver efficiency in 2025 and halved every receiver\u2019s number with nothing changing on the field. The raw value is in the table above.'
+    + '<b style="color:var(--fog)">Per-play efficiency</b> \u2014 a percentile, not a placing. '
+    + (hasPpa ? r._ppaPct + _ord(r._ppaPct) + ' percentile means he was ahead of about '
+        + Math.round(r._ppaPct * r._ppaPeers / 100) + ' of the ' + r._ppaPeers + ' qualifying ' + pos
+        + 's that season on predicted points added per play \u2014 NOT that he ranked ' + r._ppaPct + _ord(r._ppaPct) + '. ' : '')
+    + 'A percentile rather than the raw score because the raw scale is not comparable across seasons: CFBD changed how it computes receiver efficiency in 2025 and halved every receiver\u2019s number with nothing changing on the field. The raw value is in the table above.'
     + (pos === 'QB' ? '<br><b style="color:var(--fog)">ANY/A</b> \u2014 adjusted net yards per attempt: (pass yards + 20 \u00d7 TD \u2212 45 \u00d7 INT) \u00f7 attempts. One number for passing efficiency that rewards touchdowns and punishes picks, so a checkdown QB does not grade elite. College box scores carry no sack data, so this is the passing-only variant.' : '')
     + (pos === 'RB' ? '<br><b style="color:var(--fog)">Rush dominator</b> \u2014 his share of the team\u2019s rushing yards and touchdowns.' : '')
     + ((pos === 'WR' || pos === 'TE') ? '<br><b style="color:var(--fog)">Dominator</b> \u2014 average of his share of team receiving yards and receiving TDs. <b style="color:var(--fog)">Reception share</b> \u2014 his receptions over team receptions, the honest stand-in for target share.' : '')
