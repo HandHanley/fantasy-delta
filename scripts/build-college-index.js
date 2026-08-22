@@ -31,10 +31,19 @@ const MIN_UNIVERSE = 300;   // RAW should hold ~409; a parse that yields less is
 const DDOM_SWING = 0.50;
 const cfbMult = t => t == null ? 1.0
   : Math.max(1 - DDOM_SWING, Math.min(1 + DDOM_SWING, 1 + DDOM_SWING * (t - 0.5) * 2));
+// RB dominator is ALL-PURPOSE: an equal blend of rushing and receiving share. Must stay
+// identical to cfbAdjVal in index.html and cfb-player.html or the college table and the
+// NFL player card will disagree about the same player. Validated 22 Aug 2026 against
+// draft capital on 306 backs; see docs/PREREG-rb-dominator-weight.md.
+const RB_RUSH_W = 0.50;
+function cfbRBDom(p) {
+  if (p.rdom == null && p.dom == null) return null;
+  return RB_RUSH_W * (p.rdom || 0) + (1 - RB_RUSH_W) * (p.dom || 0);
+}
 function cfbAdjVal(p) {
   const m = cfbMult(p.tpct);
   if (p.pos === 'QB') return p.anya == null ? null : p.anya * m;
-  if (p.pos === 'RB') return p.rdom == null ? null : p.rdom * m;
+  if (p.pos === 'RB') { const d = cfbRBDom(p); return d == null ? null : d * m; }
   if (p.pos === 'WR' || p.pos === 'TE') return p.dom == null ? null : p.dom * m;
   return null;
 }
@@ -156,7 +165,7 @@ for (const y of years) {
     else if (!want.has(norm(p.n) + '|' + p.pos)) loose++;
     hit++; seasonRows++;
     const pos = p.pos, q = cfbQualifies(p);
-    const rawD = pos === 'QB' ? p.anya : pos === 'RB' ? p.rdom : p.dom;
+    const rawD = pos === 'QB' ? p.anya : pos === 'RB' ? cfbRBDom(p) : p.dom;
     const ppaRaw = p[PPA_KEY[pos]];
     const rec = Object.assign({}, p);
     rec._season = y;
