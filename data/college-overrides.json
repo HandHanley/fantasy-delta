@@ -1,0 +1,17 @@
+{
+  "_note": "Manual NFL -> college identity links for players the automatic join cannot match. The join keys on normalised name AND position, because position is what stops false matches between different humans who share a name (an NFL QB named Caleb Williams matching a Pittsburgh RB of the same name). That guard costs us real players who changed position between college and the NFL, so those go here by hand. Only add an entry when you are sure it is the same person. Key is the NFL name exactly as it appears in RAW.",
+  "_fields": "cfbName = the spelling in data/college-players-YYYY.json. cfbPos = the position on the COLLEGE record, not the NFL one. why = free text for the next person.",
+  "_unverified": "Entries marked verified:false are candidates found by the audit but not yet confirmed by a human. build-college-index.js SKIPS them until verified is true.",
+  "Elijah Higgins": {
+    "cfbName": "Elijah Higgins",
+    "cfbPos": "WR",
+    "verified": true,
+    "why": "Stanford WR through 2022, listed TE in the NFL. Position change, not a name mismatch. Confirmed by Steve, Aug 2026."
+  },
+  "Eli Heidenreich": {
+    "cfbName": "Eli Heidenreich",
+    "cfbPos": "WR",
+    "verified": true,
+    "why": "Navy WR 2023-2025, listed RB in DELTA. Confirmed by Steve, Aug 2026."
+  }
+}
