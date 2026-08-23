@@ -164,6 +164,12 @@ if (!years.length) { console.error('ERROR: no data/college-players-YYYY.json fil
 console.log(`college seasons on disk: ${years.join(', ')}`);
 
 const out = {};           // playerName -> { season -> record }
+// Team construction, keyed "Team|Season" rather than copied onto every player, because a
+// team's receiver room is the same for all its players and duplicating it per record would
+// add hundreds of KB for nothing. The NFL player card cannot rebuild this itself: it reads
+// the slim index, which by design holds only players DELTA tracks, while a receiver room is
+// mostly team-mates we do not track at all.
+const mates = {};
 let seasonRows = 0;
 for (const y of years) {
   const pool = JSON.parse(fs.readFileSync(`data/college-players-${y}.json`, 'utf8')).players || [];
@@ -176,6 +182,15 @@ for (const y of years) {
     const k = PPA_KEY[pos];
     pPeers[pos] = q.map(p => p[k]).filter(v => v != null).sort((a, b) => a - b);
   }
+
+  // Same rule as teammatesTable() in cfb-player.html: same team, non-QB, caught at least
+  // one pass, ordered by reception share, top six. Kept identical so both pages agree.
+  const roomFor = (team) => pool
+    .filter(x => x.tm === team && x.pos !== 'QB' && (x.rec || 0) > 0)
+    .sort((a, b) => (b.rsh || 0) - (a.rsh || 0))
+    .slice(0, 6)
+    .map(x => ({ n: x.n, pos: x.pos, cls: x.cls, rec: x.rec || 0,
+                 rey: x.rey || 0, rsh: x.rsh == null ? null : x.rsh }));
 
   let hit = 0, loose = 0, ovr = 0;
   for (const p of pool) {
@@ -199,6 +214,12 @@ for (const y of years) {
     rec._ppaRaw = ppaRaw == null ? null : ppaRaw;
     rec._ppaPeers = pPeers[pos].length;
     rec._cfbName = p.n;                      // keep the college spelling for reference
+    const mk = p.tm + '|' + y;
+    if (p.tm && !(mk in mates)) {
+      const room = roomFor(p.tm);
+      if (room.length >= 2) mates[mk] = room;   // a room of one says nothing
+    }
+    if (mates[mk]) rec._mates = mk;             // pointer, not a copy
     const post = (POSTSEASON[p.n] || {})[String(y)];
     if (post && post.length) rec._post = post;
     (out[nflName] = out[nflName] || {})[y] = rec;
@@ -225,6 +246,8 @@ const withPost = Object.values(out).reduce((a, seasons) =>
 const postGames = Object.values(out).reduce((a, seasons) =>
   a + Object.values(seasons).reduce((b, r) => b + ((r._post || []).length), 0), 0);
 console.log(`\nplayers covered: ${players} · player-seasons: ${seasonRows} · with a PPA percentile: ${withPpa}`);
+const mateRows = Object.values(mates).reduce((a, v) => a + v.length, 0);
+console.log(`team construction: ${Object.keys(mates).length} team-seasons, ${mateRows} rows`);
 console.log(`postseason: ${withPost} player-seasons carry ${postGames} game(s)` +
             (Object.keys(POSTSEASON).length ? '' : '  (no college-postseason.json found)'));
 
@@ -236,6 +259,7 @@ const payload = {
          'season pool at build time, because the pool is not present in this file. Tracking data ' +
          'only — nothing here feeds the DELTA Score, the projection or the buy/sell call.'),
   players: out,
+  mates: mates,
 };
 const json = JSON.stringify(payload);
 console.log(`size: ${(json.length / 1e6).toFixed(2)} MB`);
