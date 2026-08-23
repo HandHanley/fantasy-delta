@@ -946,7 +946,10 @@ function ensureCollegeData(p) {
   _cfbState = 'loading';
   fetch('./data/college-index.json', { cache: 'no-cache' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then(j => { CFB_INDEX = (j && j.players) || {}; _cfbState = 'ready'; repaintCollege(); })
+    .then(j => { CFB_INDEX = (j && j.players) || {};
+                 // Shared team-construction table rides alongside the player records.
+                 if (j && j.mates) CFB_INDEX._mates = j.mates;
+                 _cfbState = 'ready'; repaintCollege(); })
     .catch(e => {
       console.warn('[DELTA] college-index.json not loaded:', e.message);
       _cfbState = 'missing'; repaintCollege();
@@ -1209,6 +1212,35 @@ function buildCollegeHTML(p) {
     + '<div class="bdr-row"><span style="color:var(--fog)">Conference</span><b style="font-family:var(--mono)">' + r.conf + '</b></div>'
     + '<div class="bdr-row"><span style="color:var(--fog)">Age that season</span><b style="font-family:var(--mono)">' + _cN(r.ageEst) + '</b></div></div>';
 
+  // Team construction — who else was catching passes on his college team that year.
+  // Ported from cfb-player.html so the 63 players who now route to their NFL page keep it.
+  // The room comes from a shared table in the index keyed "Team|Season", because it is the
+  // same for every player on that team and mostly consists of players DELTA does not track.
+  let matesCard = '';
+  const mk = r._mates;
+  const room = (mk && CFB_INDEX && CFB_INDEX._mates) ? CFB_INDEX._mates[mk] : null;
+  if (room && room.length >= 2) {
+    matesCard = '<div class="card"><div class="card-label">Team construction \u00b7 ' + yr
+      + '<div class="card-sub">who else was catching the ball at ' + r.tm + ' that season</div></div>'
+      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
+      + '<table class="prod-table cgl"><thead><tr>'
+      + '<th style="text-align:left">Player</th><th>Pos</th><th>Rec</th><th>Yds</th><th>Share</th>'
+      + '</tr></thead><tbody>'
+      + room.map(m => {
+          const me = m.n === (r._cfbName || p.n);
+          return '<tr' + (me ? ' style="background:rgba(16,185,129,.07)"' : '') + '>'
+            + '<td class="opp" style="text-align:left;color:' + (me ? 'var(--paper)' : 'var(--fog)')
+            + ';font-weight:' + (me ? '700' : '400') + '" title="' + String(m.n).replace(/"/g,'&quot;') + '">'
+            + m.n + (me ? ' \u2190' : '') + '</td>'
+            + '<td>' + _cN(m.pos) + '</td><td>' + _cN(m.rec) + '</td><td>' + _cN(m.rey) + '</td>'
+            + '<td>' + (m.rsh != null ? Math.round(m.rsh * 100) + '%' : '\u2013') + '</td></tr>';
+        }).join('')
+      + '</tbody></table></div>'
+      + '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-top:9px">'
+      + 'Top six pass-catchers only, so shares will not add to 100%. Quarterbacks are excluded.'
+      + '</div></div>';
+  }
+
   let glCard = ''; const g = r.g || [];
   if (g.length) {
     // Column sets match cfbGameLogTable() in index.html and gameLogTable() in
@@ -1272,7 +1304,7 @@ function buildCollegeHTML(p) {
   const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
     + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only. '
     + 'Season totals and every percentile are <b style="color:var(--fog)">regular season</b>; bowl and playoff games appear only in the Postseason section.</div></div>';
-  return pills + ddCard + prodCard + pedCard + combCard + glCard + postCard + foot;
+  return pills + ddCard + prodCard + pedCard + combCard + matesCard + glCard + postCard + foot;
 }
 
 function _renderPlayerPage(p) {
