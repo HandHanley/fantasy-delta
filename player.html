@@ -909,6 +909,27 @@ let CFB_NAMES = null;                      // Set of players who HAVE a college 
 // The 4 KB companion manifest, loaded during boot. It exists so the College tab can be
 // hidden for players with no record WITHOUT pulling the full ~0.8 MB index on every page
 // view. If it fails to load the tab simply never shows — the NFL card is unaffected.
+// Athletic testing and current depth-chart position. Both are DISPLAY CONTEXT — neither
+// feeds the DELTA Score, the projection, the buy/sell call or the ledger. They answer the
+// two questions a rookie card could not: how did he test, and who is ahead of him. Depth
+// loads at boot (34 KB) because it renders on the NFL tab, the default view; combine loads
+// with the College tab, where the pre-NFL profile lives.
+let DEPTH = null, COMBINE = null, _combineTried = false;
+function loadDepthCharts() {
+  return fetch('./data/depth-charts.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { DEPTH = j || null;
+                 console.log('[DELTA] depth charts: ' + Object.keys((j && j.players) || {}).length + ' players'); })
+    .catch(e => { console.warn('[DELTA] depth-charts.json not loaded:', e.message); DEPTH = null; });
+}
+function loadCombine() {
+  if (_combineTried) return Promise.resolve();
+  _combineTried = true;
+  return fetch('./data/combine.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { COMBINE = j || null; repaintCollege(); })
+    .catch(e => { console.warn('[DELTA] combine.json not loaded:', e.message); COMBINE = null; });
+}
 function loadCollegeNames() {
   return fetch('./data/college-index-names.json', { cache: 'no-cache' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
@@ -934,6 +955,43 @@ function repaintCollege() {
   const b = document.getElementById('tab-cfb');
   if (b && CUR_P) b.innerHTML = buildCollegeHTML(CUR_P);
 }
+// The position room a rookie is walking into. Deliberately NOT a ranking: an August depth
+// chart order is noisy, and for an established starter it says nothing anyone needed told.
+// So this renders ONLY for players with no NFL game to their name, and it shows WHO ELSE IS
+// THERE — with age and DELTA Score where we track them — so the read is yours rather than
+// the depth chart's. A 32-year-old ahead of him is a different situation from a 25-year-old.
+function isRookie(p) {
+  return (p.g25 || 0) === 0 && !(p.ppg24 > 0) && !(p.ppg23 > 0);
+}
+function buildDepthHTML(p) {
+  if (!isRookie(p)) return '';                       // veterans do not need this
+  const d = (DEPTH && DEPTH.players) ? DEPTH.players[p.n] : null;
+  if (!d) return '';
+  const room = ((DEPTH.rooms || {})[d.team + '|' + d.slot] || []);
+  if (room.length < 2) return '';                    // a room of one tells you nothing
+  const when = (DEPTH.snapshot || '').slice(0, 10);
+  const meName = d.name || p.n;
+  const rows = room.map(nm => {
+    const me = nm === meName;
+    // Age and DELTA Score for room-mates we track; blank for those we don't.
+    const tm = (typeof COMP !== 'undefined' && COMP) ? COMP.find(x => x.n === nm) : null;
+    const age = tm && tm.a != null ? tm.a : null;
+    const ds  = tm && tm.dsScore != null ? tm.dsScore : null;
+    return '<div class="bdr-row"' + (me ? ' style="background:rgba(16,185,129,.07)"' : '') + '>'
+      + '<span style="color:' + (me ? 'var(--paper)' : 'var(--fog)') + ';font-weight:' + (me ? '700' : '400') + '">'
+      + nm + (me ? ' \u2190' : '') + '</span>'
+      + '<b style="font-family:var(--mono);font-weight:600;color:' + (ds != null ? dsColor(ds) : '#5C7080') + '">'
+      + (age != null ? age + ' yrs' : '\u2013')
+      + (ds != null ? ' \u00b7 ' + ds : '') + '</b></div>';
+  }).join('');
+  return '<div class="card"><div class="card-label">The ' + d.slot + ' room \u00b7 ' + d.team
+    + '<div class="card-sub">who else is on the roster at his position'
+    + (when ? ', as of ' + when : '') + ' \u2014 a camp snapshot, and the order moves</div></div>'
+    + rows
+    + '<div style="font-size:10px;color:#5C7080;line-height:1.6;margin-top:9px">'
+    + 'Age and DELTA Score shown where DELTA tracks the player. Listed in current depth-chart '
+    + 'order, which in August is a suggestion rather than a decision.</div></div>';
+}
 function buildTabsHTML() {
   // No record means no tab. A tab that opens onto "no data" is worse than no tab:
   // it reads as a broken page rather than an absent fact.
@@ -953,7 +1011,7 @@ function setTab(t) {
   if (a) a.style.display = t === 'nfl' ? '' : 'none';
   if (b) b.style.display = t === 'cfb' ? '' : 'none';
   if (s) s.innerHTML = buildTabsHTML();
-  if (t === 'cfb' && CUR_P) ensureCollegeData(CUR_P);
+  if (t === 'cfb' && CUR_P) { ensureCollegeData(CUR_P); loadCombine(); }
   window.scrollTo(0, 0);
 }
 function setCYr(y) { _CYR = String(y); repaintCollege(); }
@@ -1163,10 +1221,36 @@ function buildCollegeHTML(p) {
       + '</div>';
   }
 
+  // Combine: the pre-NFL athletic profile. Shown ONLY for players with no NFL game yet,
+  // for the same reason the position room is — once a player has actually produced in the
+  // NFL, how fast he ran at 22 is superseded by what he has since done on the field. It is
+  // pre-draft context for a card that has no NFL production to show, not a permanent stat.
+  let combCard = '';
+  const cmb = (isRookie(p) && COMBINE && COMBINE.players) ? COMBINE.players[p.n] : null;
+  if (cmb) {
+    const drills = [['forty','40 yd','s'],['vertical','Vertical','"'],['broad_jump','Broad','"'],
+                    ['cone','3-cone','s'],['shuttle','Shuttle','s'],['bench','Bench','reps']];
+    const have = drills.filter(d => cmb[d[0]] != null);
+    const size = [cmb.ht ? cmb.ht : null, cmb.wt ? Math.round(cmb.wt) + ' lb' : null]
+                   .filter(Boolean).join(' \u00b7 ');
+    combCard = '<div class="card"><div class="card-label">Combine'
+      + (cmb.season ? ' \u00b7 ' + cmb.season : '')
+      + '<div class="card-sub">measured, not rated \u2014 a blank drill means he did not run it</div></div>'
+      + (size ? '<div style="font-size:15px;font-weight:700;font-family:var(--mono);margin-bottom:'
+                + (have.length ? '11px' : '2px') + '">' + size + '</div>' : '')
+      + (have.length
+          ? '<div class="stat-grid" style="grid-template-columns:repeat(' + Math.min(3, have.length) + ',1fr)">'
+            + have.map(d => '<div class="stat-box"><div class="stat-val" style="color:var(--sky)">'
+                + cmb[d[0]] + '</div><div class="stat-lbl">' + d[1] + '</div></div>').join('')
+            + '</div>'
+          : '<div style="font-size:11px;color:#5C7080;line-height:1.6">Measured at the combine but ran no drills.</div>')
+      + '</div>';
+  }
+
   const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
     + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only. '
     + 'Season totals and every percentile are <b style="color:var(--fog)">regular season</b>; bowl and playoff games appear only in the Postseason section.</div></div>';
-  return pills + ddCard + prodCard + pedCard + glCard + postCard + foot;
+  return pills + ddCard + prodCard + pedCard + combCard + glCard + postCard + foot;
 }
 
 function _renderPlayerPage(p) {
@@ -1199,11 +1283,12 @@ function _renderPlayerPage(p) {
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
     ${buildScoutHTML()}
+    ${buildDepthHTML(p)}
     </div>
     ${hasCollege(p) ? `<div id="tab-cfb"${_TAB==='cfb'?'':' style="display:none"'}>${buildCollegeHTML(p)}</div>` : ''}
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
-  if(_TAB==='cfb') ensureCollegeData(p);
+  if(_TAB==='cfb'){ ensureCollegeData(p); loadCombine(); }
   document.title = p.n + ' — DELTA';
 }
 
@@ -1248,6 +1333,7 @@ if (!PLAYER_NAME) {
     .then(() => loadInjuryOverrides())
     .then(() => loadQBStarters())
     .then(() => loadCollegeNames())
+    .then(() => loadDepthCharts())
     .then(() => ensureStartData())
     .then(() => {
       applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
