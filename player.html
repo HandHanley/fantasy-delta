@@ -176,7 +176,7 @@ a{color:#2DD4BF}
       <span style="font-family:var(--geo);font-weight:700;font-size:16px;letter-spacing:3.5px;text-transform:uppercase;color:#EAF0F4">DELTA</span>
       
     </a>
-    <a class="nav-back" href="index.html">← Rankings</a>
+    <a class="nav-back" href="index.html" onclick="return goBack(event)">← Back</a>
   </nav>
   <div id="state-loading" class="state-msg">Loading player data…</div>
   <div id="state-error" class="state-msg" style="display:none"></div>
@@ -725,7 +725,7 @@ function buildRippleHTML(p) {
 function buildScoutHTML() {
   return `<div class="card">
     <div class="card-label" style="margin-bottom:2px">Scouting Report</div>
-    <div class="card-sub" style="margin-bottom:10px">AI-generated narrative — player context, history &amp; dynasty outlook. Complements The Read above with qualitative analysis.</div>
+
     <div id="scout-text" class="scout-text" style="color:#5C7080">Loading…</div>
     <div id="scout-stamp" style="font-size:9.5px;color:#5C7080;margin-top:10px"></div>
   </div>`;
@@ -955,6 +955,8 @@ function ensureCollegeData(p) {
 function repaintCollege() {
   const b = document.getElementById('tab-cfb');
   if (b && CUR_P) b.innerHTML = buildCollegeHTML(CUR_P);
+  const slot = document.getElementById('combine-slot');
+  if (slot && CUR_P) slot.innerHTML = buildCombineHTML(CUR_P);
 }
 // The position room a rookie is walking into. Deliberately NOT a ranking: an August depth
 // chart order is noisy, and for an established starter it says nothing anyone needed told.
@@ -964,6 +966,42 @@ function repaintCollege() {
 function isRookie(p) {
   return (p.g25 || 0) === 0 && !(p.ppg24 > 0) && !(p.ppg23 > 0);
 }
+// The back link used to be hardcoded to index.html, which always landed on the default
+// tab — so leaving a player opened from the watchlist dumped you on the rankings. Go back
+// through history when we arrived from within the site, which restores the tab AND the
+// scroll position; fall back to the rankings for a direct link or a shared URL.
+// Shared so the College tab and the NFL tab render an identical card.
+function buildCombineHTML(p) {
+  if (!isRookie(p)) return '';
+  const cmb = (COMBINE && COMBINE.players) ? COMBINE.players[p.n] : null;
+  if (!cmb) return '';
+  const drills = [['forty','40 yd'],['vertical','Vertical'],['broad_jump','Broad'],
+                  ['cone','3-cone'],['shuttle','Shuttle'],['bench','Bench']];
+  const have = drills.filter(d => cmb[d[0]] != null);
+  const size = [cmb.ht ? cmb.ht : null, cmb.wt ? Math.round(cmb.wt) + ' lb' : null]
+                 .filter(Boolean).join(' \u00b7 ');
+  return '<div class="card"><div class="card-label">Combine'
+    + (cmb.season ? ' \u00b7 ' + cmb.season : '')
+    + '<div class="card-sub">measured, not rated \u2014 a blank drill means he did not run it</div></div>'
+    + (size ? '<div style="font-size:15px;font-weight:700;font-family:var(--mono);margin-bottom:'
+              + (have.length ? '11px' : '2px') + '">' + size + '</div>' : '')
+    + (have.length
+        ? '<div class="stat-grid" style="grid-template-columns:repeat(' + Math.min(3, have.length) + ',1fr)">'
+          + have.map(d => '<div class="stat-box"><div class="stat-val" style="color:var(--sky)">'
+              + cmb[d[0]] + '</div><div class="stat-lbl">' + d[1] + '</div></div>').join('')
+          + '</div>'
+        : '<div style="font-size:11px;color:#5C7080;line-height:1.6">Measured at the combine but ran no drills.</div>')
+    + '</div>';
+}
+function goBack(e) {
+  try {
+    const ref = document.referrer;
+    if (ref && new URL(ref).origin === location.origin && history.length > 1) {
+      e.preventDefault(); history.back(); return false;
+    }
+  } catch (err) { /* malformed referrer — fall through to the plain link */ }
+  return true;               // let the href do its job
+}
 function buildDepthHTML(p) {
   if (!isRookie(p)) return '';                       // veterans do not need this
   const d = (DEPTH && DEPTH.players) ? DEPTH.players[p.n] : null;
@@ -972,11 +1010,14 @@ function buildDepthHTML(p) {
   if (room.length < 2) return '';                    // a room of one tells you nothing
   const when = (DEPTH.snapshot || '').slice(0, 10);
   const meName = d.name || p.n;
-  const rows = room.map(nm => {
+  const rows = room.map(entry => {
+    // Entries are {n, age}; older files stored bare strings, so tolerate both.
+    const nm = (entry && entry.n) ? entry.n : entry;
     const me = nm === meName;
-    // Age and DELTA Score for room-mates we track; blank for those we don't.
+    // Age now ships with the room for EVERY player, tracked or not. DELTA Score only
+    // exists for players we score, so that stays conditional.
     const tm = (typeof COMP !== 'undefined' && COMP) ? COMP.find(x => x.n === nm) : null;
-    const age = tm && tm.a != null ? tm.a : null;
+    const age = (entry && entry.age != null) ? entry.age : (tm && tm.a != null ? tm.a : null);
     const ds  = tm && tm.dsScore != null ? tm.dsScore : null;
     return '<div class="bdr-row"' + (me ? ' style="background:rgba(16,185,129,.07)"' : '') + '>'
       + '<span style="color:' + (me ? 'var(--paper)' : 'var(--fog)') + ';font-weight:' + (me ? '700' : '400') + '">'
@@ -1222,31 +1263,11 @@ function buildCollegeHTML(p) {
       + '</div>';
   }
 
-  // Combine: the pre-NFL athletic profile. Shown ONLY for players with no NFL game yet,
-  // for the same reason the position room is — once a player has actually produced in the
-  // NFL, how fast he ran at 22 is superseded by what he has since done on the field. It is
-  // pre-draft context for a card that has no NFL production to show, not a permanent stat.
-  let combCard = '';
-  const cmb = (isRookie(p) && COMBINE && COMBINE.players) ? COMBINE.players[p.n] : null;
-  if (cmb) {
-    const drills = [['forty','40 yd','s'],['vertical','Vertical','"'],['broad_jump','Broad','"'],
-                    ['cone','3-cone','s'],['shuttle','Shuttle','s'],['bench','Bench','reps']];
-    const have = drills.filter(d => cmb[d[0]] != null);
-    const size = [cmb.ht ? cmb.ht : null, cmb.wt ? Math.round(cmb.wt) + ' lb' : null]
-                   .filter(Boolean).join(' \u00b7 ');
-    combCard = '<div class="card"><div class="card-label">Combine'
-      + (cmb.season ? ' \u00b7 ' + cmb.season : '')
-      + '<div class="card-sub">measured, not rated \u2014 a blank drill means he did not run it</div></div>'
-      + (size ? '<div style="font-size:15px;font-weight:700;font-family:var(--mono);margin-bottom:'
-                + (have.length ? '11px' : '2px') + '">' + size + '</div>' : '')
-      + (have.length
-          ? '<div class="stat-grid" style="grid-template-columns:repeat(' + Math.min(3, have.length) + ',1fr)">'
-            + have.map(d => '<div class="stat-box"><div class="stat-val" style="color:var(--sky)">'
-                + cmb[d[0]] + '</div><div class="stat-lbl">' + d[1] + '</div></div>').join('')
-            + '</div>'
-          : '<div style="font-size:11px;color:#5C7080;line-height:1.6">Measured at the combine but ran no drills.</div>')
-      + '</div>';
-  }
+  // Combine lives in the College tab when there is a college story to sit beside; for a
+  // player with no college data it is rendered on the NFL tab instead (see the call site
+  // there), because trapping it behind a tab that never appears made it unreachable for
+  // nine rookies — including Bryce Lance, whose 4.34 is the only thing we know about him.
+  const combCard = isRookie(p) ? buildCombineHTML(p) : '';
 
   const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
     + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only. '
@@ -1256,6 +1277,16 @@ function buildCollegeHTML(p) {
 
 function _renderPlayerPage(p) {
   CUR_P = p;
+  // A rookie with no college data has nowhere else to show his testing, so the combine
+  // card is rendered on the NFL tab instead. Filled asynchronously because the file is
+  // only fetched when a player actually needs it.
+  if (!hasCollege(p) && isRookie(p)) {
+    loadCombine().then(() => {
+      const slot = document.getElementById('combine-slot');
+      if (slot && CUR_P === p) slot.innerHTML = buildCombineHTML(p);
+    });
+  }
+
   ensureScoutData().then(() => {
     const el = document.getElementById('scout-text');
     if (!el) return;
@@ -1269,7 +1300,7 @@ function _renderPlayerPage(p) {
         + '. It was written before that and describes a role he is not in right now.';
     } else {
       el.style.color = '#8CA0B3';
-      el.textContent = txt || 'No scouting report available yet.';
+      el.textContent = txt || 'No Scouting Report available.';
     }
     // Date stamp: an undated take invites "this is wrong"; a dated one reads as
     // "this was the view then", which is what it actually is.
@@ -1304,6 +1335,7 @@ function _renderPlayerPage(p) {
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
     ${buildScoutHTML()}
+    ${(!hasCollege(p) && isRookie(p)) ? '<div id="combine-slot"></div>' : ''}
     ${buildDepthHTML(p)}
     </div>
     ${hasCollege(p) ? `<div id="tab-cfb"${_TAB==='cfb'?'':' style="display:none"'}>${buildCollegeHTML(p)}</div>` : ''}
