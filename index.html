@@ -3441,6 +3441,21 @@ document.addEventListener('click', function(e) {
         <p>dDOM was validated against real NFL outcomes: college classes 2020–2023 matched to their first three NFL seasons. The competition adjustment improved prediction at every position, but modestly — and at 94% statistical confidence, just under the 95% bar DELTA requires before a metric may influence ranking order. So dDOM is displayed as a signal and is deliberately excluded from the college ranking. College production is a genuinely noisy predictor of NFL success; a 99 means a player dominated his position against real competition, which shifts the odds rather than settling them.</p>
       </div>
       <div class="about-section">
+        <div class="about-heading">Where the data comes from</div>
+        <p style="margin-bottom:6px;font-size:11px;color:var(--fog)">Every figure traces to one of these. Where a number is DELTA's own calculation rather than a third-party feed, it says so.</p>
+        <ul class="about-list">
+          <li><b style="color:var(--emerald)">NFL production, snaps, EPA, game logs</b> — <a href="https://github.com/nflverse" target="_blank" rel="noopener">nflverse</a> via nflreadpy: the open play-by-play project. Also the source for rosters, draft picks, combine testing and depth charts.</li>
+          <li><b style="color:var(--sky)">Market value</b> — <a href="https://fantasycalc.com" target="_blank" rel="noopener">FantasyCalc</a> dynasty consensus, refreshed daily. The yardstick DELTA is measured against, never an input to the score or projection.</li>
+          <li><b>Contracts</b> — <a href="https://overthecap.com" target="_blank" rel="noopener">OverTheCap</a>, plus a small hand-maintained override file for deals signed since the last refresh.</li>
+          <li><b>Injury designations</b> — <a href="https://docs.sleeper.com" target="_blank" rel="noopener">Sleeper</a> roster tags (IR / PUP / NFI / SUS). Only a separate hand-maintained list of confirmed season-ending injuries ever zeroes a projection: an IR flag means "unavailable now", not "done for the year".</li>
+          <li><b>College production, recruiting, PPA</b> — <a href="https://collegefootballdata.com" target="_blank" rel="noopener">College Football Data</a> (CFBD). Regular season only; bowl and playoff games sit in their own section and are excluded from every rating, because participation is not uniform.</li>
+          <li><b style="color:var(--topaz)">Play-callers and coaching tendencies</b> — <b>built and verified by hand at DELTA</b>, 2017–2026 at week level, because no public dataset tracks in-season play-calling changes reliably. Of 354 team-seasons: 307 confirmed against contemporaneous reporting, 32 projected for the coming season, 8 likely, 7 unverified. Building it removed 11 coaches other sources list who never actually called plays.</li>
+          <li><b>Offense style factors</b> — derived from nflverse play-by-play and FTN charting (2022–2025): pre-snap motion, personnel groupings, pass rate over expected. Each factor was validated against production before it was allowed to move a projection.</li>
+          <li><b>Scarcity curves and ripple effects</b> — not sourced, <i>derived</i>. Scarcity is fit on nine seasons of nflverse finishing data; ripples are calibrated on eight seasons of teammate arrivals and departures. Both are DELTA's own work.</li>
+        </ul>
+        <p style="margin-top:8px;font-size:11px;color:var(--fog)">Every pipeline that produces these files is in the public repository, so any figure can be traced to the code that made it.</p>
+      </div>
+      <div class="about-section">
         <div class="about-heading">What the model can't see</div>
         <ul class="about-list">
           <li>Recent injuries or transactions not yet reflected in production data — check the data freshness badge.</li>

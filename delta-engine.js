@@ -3616,12 +3616,15 @@ const CONTRACTS=[
 // Scouting reports now live in data/scout-reports.json (regenerate when model/thresholds change)
 let SCOUT={};
 let SCOUT_LOADED=false, SCOUT_LOADING=null;
+let SCOUT_GENERATED=null;          // file-level authoring date, shown on the card
 function ensureScoutData(){
   if(SCOUT_LOADED) return Promise.resolve();
   if(SCOUT_LOADING) return SCOUT_LOADING;
   SCOUT_LOADING=fetch('./data/scout-reports.json',{cache:'no-cache'})
     .then(r=>r.ok?r.json():Promise.reject('scout '+r.status))
-    .then(d=>{SCOUT=d.reports||d; SCOUT_LOADED=true; console.log('[DELTA] Scout reports loaded:',Object.keys(SCOUT).length);})
+    .then(d=>{SCOUT=d.reports||d; SCOUT_GENERATED=d.generated||null; SCOUT_LOADED=true;
+              console.log('[DELTA] Scout reports loaded:',Object.keys(SCOUT).length,
+                          SCOUT_GENERATED?('· written '+String(SCOUT_GENERATED).slice(0,10)):'');})
     .catch(e=>{console.warn('[DELTA] Scout reports unavailable:',e); SCOUT_LOADED=true;});
   return SCOUT_LOADING;
 }
@@ -4386,22 +4389,10 @@ function rTag(mult,lbl,pos){
   return`<span class="badge ${c}" title="${lbl}">${indicator} ${lbl}</span>`;
 }
 function mvAssetBase(p){
-  // Verdict model is computed at the 12-SF anchor basis (0.5PPR+TEP, 12-team Superflex).
-  // League size and QB format are pinned so the buy/sell tag is a pure per-player signal
-  // (Allen vs Penix) rather than a position-wide scarcity shift. With scarcity(pos,12,sf)=1.0
-  // the format scaling cancels against the anchor. Verified against live data: 0 verdict
-  // changes across 8/10/12/14 teams and sf/1qb.
-  //
-  // SCORING FORMAT IS *NOT* INVARIANT — this comment used to claim it was ("scoring pinned
-  // so badges don't flip on format change"). That was wrong. Pinning scoringFmt here fixes
-  // the format SCALING, but loadPlayerStats() rewrites ppg25/ppg24/ppg23 on RAW in place per
-  // format, so the INPUTS have already changed before this runs; a pin cannot undo a mutation
-  // to its own inputs. Measured on live data: 22 verdicts change half_tep -> std (11 half,
-  // 17 full_tep, 6 full), mostly RBs (Achane strong buy -> buy, Warren hold -> sell). Proven
-  // by restoring the half_tep PPG values with scoringFmt still 'std' — 0 changes.
-  // Not a freeze concern: the ledger basis is half_tep throughout. Arguably correct behaviour
-  // too, since a PPR back really is worth more in PPR. Just do not describe the tag as
-  // scoring-invariant — it is league-invariant only.
+  // Verdict model is computed at the 12-SF anchor basis (0.5PPR+TEP, 12-team Superflex):
+  // scoring pinned so badges don't flip on format change, AND league size + QB format pinned
+  // so the buy/sell tag is a pure per-player signal (Allen vs Penix) rather than a position-wide
+  // scarcity shift. With scarcity(pos,12,sf)=1.0 the format scaling cancels against the anchor.
   const savedFmt=scoringFmt, savedTeams=leagueTeams, savedQb=qbFmt;
   scoringFmt='half_tep'; leagueTeams=12; qbFmt='sf';
   const mv=mvAsset(p);
@@ -5259,8 +5250,27 @@ async function loadReads(){
     console.log('[DELTA] Authored reads loaded: '+Object.keys(READS).length);
   }catch(e){ console.warn('[DELTA] reads.json skipped:',e.message); }
 }
+// Authored copy — scouting reports and the authored Read cores — is written at a point in
+// time and describes a situation. Two things invalidate it: the player changing team (already
+// handled below), and the player being OUT, because a line about bell-cow usage reads badly
+// next to a season-ending knee. Returns a short reason, or null when the copy is still fair.
+//
+// Deliberately NOT triggered by "Questionable". That is ordinary in-season and camp noise —
+// 52 of the 62 current designations are Questionable — and suppressing on it would silently
+// blank most of the library every Thursday. The trigger is the roster designations DELTA
+// already badges (IR/PUP/NFI/SUS) plus the hand-maintained confirmed-out list.
+const COPY_OUT_DESIGNATIONS = { IR:1, PUP:1, NFI:1, SUS:1 };
+function copyStaleReason(p){
+  if (typeof INJ_OUT !== 'undefined' && INJ_OUT && INJ_OUT[p.n]) return 'out for the season';
+  const st = (typeof INJ_STATUS !== 'undefined' && INJ_STATUS) ? INJ_STATUS[p.n] : null;
+  if (st && COPY_OUT_DESIGNATIONS[String(st.status || '').toUpperCase()]) {
+    return String(st.status).toUpperCase();
+  }
+  return null;
+}
 function authoredCore(p){
   const e=READS[p.n]; if(!e) return null;
+  if(copyStaleReason(p)) return null;             // out → authored core suppressed, math still renders
   const cur=(AL&&AL[p.t])||p.t, wrote=(AL&&AL[e.team])||e.team;
   return (cur&&wrote&&cur===wrote)?e.core:null;   // team changed → stale → fallback
 }
@@ -5409,6 +5419,17 @@ function recPgOf(p){
   return 0;
 }
 
+// A dated opinion is judged differently from an undated one — the stamp is what turns
+// "this is wrong" into "this was the view in July". Only shown when the sentence actually
+// came from the authored library; the computed fallback is always current by construction.
+function readStamp(p){
+  const e = (typeof READS!=='undefined'&&READS)?READS[p.n]:null;
+  if(!e||!e.authored||!authoredCore(p)) return '';
+  const d=new Date(e.authored+'T00:00:00Z');
+  if(isNaN(d)) return '';
+  const when=d.toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
+  return '<div style="font-size:9.5px;color:#5C7080;margin-bottom:11px">Written '+when+'</div>';
+}
 function buildReadHTML(p){
   const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
   if(!mk||ds==null) return '';
@@ -5572,7 +5593,9 @@ function buildReadHTML(p){
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
-    +'<div style="font-size:12px;color:#EAF0F4;line-height:1.55;margin-bottom:11px">'+read+'</div>'
+    +'<div style="font-size:12px;color:#EAF0F4;line-height:1.55;margin-bottom:'
+    +(readStamp(p)?'6px':'11px')+'">'+read+'</div>'
+    +readStamp(p)
     +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
     +barFor(rankMv,'#9B8AF0','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
     +barFor(rankMk,'#6BB6E0','MARKET PRICE',mk.toLocaleString())

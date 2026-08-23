@@ -727,6 +727,7 @@ function buildScoutHTML() {
     <div class="card-label" style="margin-bottom:2px">Scouting Report</div>
     <div class="card-sub" style="margin-bottom:10px">AI-generated narrative — player context, history &amp; dynasty outlook. Complements The Read above with qualitative analysis.</div>
     <div id="scout-text" class="scout-text" style="color:#5C7080">Loading…</div>
+    <div id="scout-stamp" style="font-size:9.5px;color:#5C7080;margin-top:10px"></div>
   </div>`;
 }
 
@@ -1257,9 +1258,29 @@ function _renderPlayerPage(p) {
   CUR_P = p;
   ensureScoutData().then(() => {
     const el = document.getElementById('scout-text');
-    if (el) {
+    if (!el) return;
+    // Same suppression rule as the authored Read core, from the same shared test in the
+    // engine, so the two can never disagree about whether a player's copy still stands.
+    const reason = (typeof copyStaleReason === 'function') ? copyStaleReason(p) : null;
+    const txt = SCOUT[p.n];
+    if (txt && reason) {
+      el.style.color = '#5C7080';
+      el.textContent = 'Scouting report hidden — ' + p.n + ' is currently ' + reason
+        + '. It was written before that and describes a role he is not in right now.';
+    } else {
       el.style.color = '#8CA0B3';
-      el.textContent = SCOUT[p.n] || 'No scouting report available yet.';
+      el.textContent = txt || 'No scouting report available yet.';
+    }
+    // Date stamp: an undated take invites "this is wrong"; a dated one reads as
+    // "this was the view then", which is what it actually is.
+    const stamp = document.getElementById('scout-stamp');
+    if (stamp) {
+      const g = (typeof SCOUT_GENERATED !== 'undefined') ? SCOUT_GENERATED : null;
+      if (g && txt && !reason) {
+        const d = new Date(g);
+        stamp.textContent = isNaN(d) ? '' : 'Written ' +
+          d.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+      } else { stamp.textContent = ''; }
     }
   });
 
