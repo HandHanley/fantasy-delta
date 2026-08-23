@@ -229,6 +229,28 @@ function render(p, pool, seasons){
 }
 
 // ── cross-season: trajectory, breakout badge, season-switchable game log + team construction ──
+
+// Bowl / playoff lines, loaded lazily and kept OUT of every metric. These pages cover all
+// ~950 college players per season, not just the NFL universe, so they read the standalone
+// data/college-postseason.json rather than the slim NFL index. Fetched once, on demand.
+// Nothing here feeds dDOM, PPA, percentiles, peer pools or Scout ordering — postseason
+// participation is not uniform, so ranking on it would compare unequal amounts of football.
+let CFB_POST=null, _cfbPostTried=false;
+async function cfbPostseason(){
+  if(_cfbPostTried) return CFB_POST;
+  _cfbPostTried=true;
+  try{
+    const r=await fetch('./data/college-postseason.json',{cache:'no-cache'});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    CFB_POST=(j&&j.players)||{};
+  }catch(e){ CFB_POST={}; }   // absent file simply means no postseason section
+  return CFB_POST;
+}
+function cfbPostFor(name, yr){
+  if(!CFB_POST) return [];
+  return ((CFB_POST[name]||{})[String(yr)])||[];
+}
 const GL={};
 function classInSeason(rec, yr){ return rec.rcls ? (yr-rec.rcls+1) : (rec.ageEst?rec.ageEst-17:null); }
 function gameLogTable(pos, games){
@@ -240,6 +262,22 @@ function gameLogTable(pos, games){
   return '<table class="gl"><thead><tr><th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
     +g.map(gm=>'<tr><td>'+(gm.w||'-')+'</td><td>'+(gm.opp||'-')+'</td>'+cols.map(c=>'<td>'+N(gm[c[1]])+'</td>').join('')+'</tr>').join('')
     +'</tbody></table>';
+}
+function postseasonTable(pos, games, yr){
+  if(!games||!games.length) return '';
+  const cols = pos==='QB'?[['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+    : pos==='RB'?[['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+    : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
+  return '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'
+    +'<div style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--topaz);margin-bottom:4px">Postseason'+(yr?' \u00b7 '+yr:'')+'</div>'
+    +'<div class="muted" style="margin-bottom:8px">Bowl and playoff games. Not counted in any number above \u2014 '
+    +'participation is not uniform, so these are shown separately.</div>'
+    +'<table class="gl"><thead><tr><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
+    +games.map(gm=>'<tr><td style="font-weight:600">'+(gm.opp||'-')+'</td>'
+      +cols.map(c=>'<td>'+N(gm[c[1]])+'</td>').join('')+'</tr>').join('')
+    +'</tbody></table>'
+    +(games.length>1?'<div class="muted" style="margin-top:6px">'+games.length+' games \u2014 a College Football Playoff run.</div>':'')
+    +'</div>';
 }
 function teammatesTable(p, pool){
   const mates=pool.filter(x=>x.tm===p.tm&&x.pos!=='QB'&&(x.rec||0)>0).sort((a,b)=>(b.rsh||0)-(a.rsh||0)).slice(0,6);
@@ -266,9 +304,13 @@ function renderGL(){
       return '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
         +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+y+'</div>'
         +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+sum+' \u00b7 '+(d.games||[]).length+' g</div></div>'
-        +gameLogTable(d.pos,d.games)+'</div>'; }).join('');
+        +gameLogTable(d.pos,d.games)
+        +postseasonTable(d.pos, cfbPostFor(d.rec&&d.rec.n||GL.name, y), y)+'</div>'; }).join('');
     teamHost=GL.data[yrs[yrs.length-1]];
-  } else { const cur=GL.data[GL.sel]; body=gameLogTable(cur.pos,cur.games); teamHost=cur; }
+  } else { const cur=GL.data[GL.sel];
+    body=gameLogTable(cur.pos,cur.games)
+        +postseasonTable(cur.pos, cfbPostFor(cur.rec&&cur.rec.n||GL.name, GL.sel), GL.sel);
+    teamHost=cur; }
   document.getElementById('gamelog').innerHTML=pills+body;
   document.getElementById('teammates').innerHTML=teammatesTable(teamHost.rec,teamHost.players);
 }
@@ -325,7 +367,13 @@ async function fillCrossSeason(p, seasons){
   const yd=Object.keys(data).map(Number).sort((a,b)=>a-b);
   const glEl=document.getElementById('gamelog');
   if(!yd.length){ if(glEl) glEl.innerHTML='<div class="muted">No game rows.</div>'; }
-  else { GL.data=data; GL.sel=yd[yd.length-1]; renderGL(); }
+  else {
+    GL.data=data; GL.sel=yd[yd.length-1]; GL.name=p.n;
+    // Load the bowl/playoff file before the first paint so the section is present
+    // immediately rather than popping in a moment later.
+    await cfbPostseason();
+    renderGL();
+  }
 }
 boot();
 </script>
