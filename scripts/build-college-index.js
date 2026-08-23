@@ -124,6 +124,22 @@ if (fs.existsSync(OVR_PATH)) {
   }
 }
 
+// Bowl and playoff lines, attached per player-season as `_post`. Optional: if the file
+// is absent the index simply carries no postseason and the card hides the section.
+// Folded in here rather than fetched separately by the page — the standalone file covers
+// all 1,203 college players at 212 KB, while only the ~197 we track are ever displayed.
+//
+// THIS IS DISPLAY DATA ONLY. It is attached AFTER every percentile has been computed, and
+// no peer pool, dDOM, PPA or Scout ordering reads it. Postseason participation is not
+// uniform — opt-outs, and a playoff team plays up to four extra games — so folding it into
+// a ranked pool would compare players on different amounts of football.
+let POSTSEASON = {};
+const POST_PATH = 'data/college-postseason.json';
+if (fs.existsSync(POST_PATH)) {
+  try { POSTSEASON = JSON.parse(fs.readFileSync(POST_PATH, 'utf8')).players || {}; }
+  catch (e) { console.warn('  college-postseason.json unreadable, continuing without it:', e.message); }
+}
+
 const universe = loadUniverse();
 if (universe.length < MIN_UNIVERSE) {
   console.error(`ERROR: only ${universe.length} players read from RAW (expected >= ${MIN_UNIVERSE}).`);
@@ -183,6 +199,8 @@ for (const y of years) {
     rec._ppaRaw = ppaRaw == null ? null : ppaRaw;
     rec._ppaPeers = pPeers[pos].length;
     rec._cfbName = p.n;                      // keep the college spelling for reference
+    const post = (POSTSEASON[p.n] || {})[String(y)];
+    if (post && post.length) rec._post = post;
     (out[nflName] = out[nflName] || {})[y] = rec;
   }
   console.log(`  ${y}: pool ${String(pool.length).padStart(4)} · in NFL universe ${String(hit).padStart(3)}` +
@@ -202,7 +220,13 @@ if (orphans.length) {
 const players = Object.keys(out).length;
 const withPpa = Object.values(out).reduce((a, seasons) =>
   a + Object.values(seasons).filter(r => r._ppaPct != null).length, 0);
+const withPost = Object.values(out).reduce((a, seasons) =>
+  a + Object.values(seasons).filter(r => r._post && r._post.length).length, 0);
+const postGames = Object.values(out).reduce((a, seasons) =>
+  a + Object.values(seasons).reduce((b, r) => b + ((r._post || []).length), 0), 0);
 console.log(`\nplayers covered: ${players} · player-seasons: ${seasonRows} · with a PPA percentile: ${withPpa}`);
+console.log(`postseason: ${withPost} player-seasons carry ${postGames} game(s)` +
+            (Object.keys(POSTSEASON).length ? '' : '  (no college-postseason.json found)'));
 
 const payload = {
   generated: new Date().toISOString(),
