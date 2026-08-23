@@ -1133,9 +1133,40 @@ function buildCollegeHTML(p) {
           + cols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
       + '</tbody></table></div></div>';
   }
+  // Postseason: its own section, never merged into anything above. Hidden entirely when
+  // the player has no line — with opt-outs and only ~two thirds of teams reaching a bowl,
+  // an empty box would be the common case and would read as a fault rather than a fact.
+  let postCard = '';
+  const post = r._post || [];
+  if (post.length) {
+    const pcols = pos === 'QB'
+      ? [['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
+      : pos === 'RB'
+      ? [['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
+      : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
+    postCard = '<div class="card" style="border-color:#2A3547">'
+      + '<div class="card-label" style="color:var(--topaz)">Postseason \u00b7 ' + yr
+      + '<div class="card-sub" style="color:#5C7080">Bowl and playoff games. Shown separately and '
+      + 'NOT counted in any number above \u2014 participation is not uniform, so folding these in '
+      + 'would rank players on different amounts of football.</div></div>'
+      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
+      + '<table class="prod-table cgl"><thead><tr><th style="text-align:left">Opponent</th>'
+      + pcols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr></thead><tbody>'
+      + post.map(x => '<tr><td class="opp" style="text-align:left;color:var(--paper);font-weight:600" title="'
+          + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
+          + pcols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
+      + '</tbody></table></div>'
+      + (post.length > 1
+          ? '<div style="font-size:10px;color:#5C7080;margin-top:9px">'
+            + post.length + ' games \u2014 a College Football Playoff run.</div>'
+          : '')
+      + '</div>';
+  }
+
   const foot = '<div class="card" style="background:#0D1420"><div style="font-size:10.5px;color:#5C7080;line-height:1.65">'
-    + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only.</div></div>';
-  return pills + ddCard + prodCard + pedCard + glCard + foot;
+    + 'College numbers are tracking data only. They do not feed the DELTA Score, the projection, or the buy/sell call \u2014 those stay NFL production only. '
+    + 'Season totals and every percentile are <b style="color:var(--fog)">regular season</b>; bowl and playoff games appear only in the Postseason section.</div></div>';
+  return pills + ddCard + prodCard + pedCard + glCard + postCard + foot;
 }
 
 function _renderPlayerPage(p) {
