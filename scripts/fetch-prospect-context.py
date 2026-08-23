@@ -47,6 +47,18 @@ def norm(s):
     return "".join(c for c in s.lower() if c.isalnum())
 
 
+def norm_loose(s):
+    """Suffix-insensitive key. nflverse carries generational suffixes that DELTA often
+    does not — 'Ted Hurst III' vs 'Ted Hurst' — and a strict match silently drops the
+    player from his own depth chart. Strict first, this only as a fallback, and the run
+    reports how many matched loosely so a bad join stays visible."""
+    if not s: return ""
+    s = unicodedata.normalize("NFKD", str(s))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    s = re.sub(r'\b(jr|sr|ii|iii|iv|v)\b', '', s.lower())
+    return "".join(c for c in s if c.isalnum())
+
+
 def clean(v):
     """nflverse gives NaN for untested drills; those must become null, not 0."""
     if v is None: return None
@@ -104,6 +116,9 @@ def main():
         print(f'ERROR: only {len(universe)} players read from RAW (expected >= {MIN_UNIVERSE}).')
         sys.exit(1)
     want = {norm(p['n']): p for p in universe}
+    want_loose = {norm_loose(p['n']): p for p in universe}
+    def match(nm):
+        return want.get(norm(nm)) or want_loose.get(norm_loose(nm))
     print(f'DELTA universe: {len(universe)} players')
 
     # ── combine ──────────────────────────────────────────────────────────────
@@ -112,20 +127,23 @@ def main():
         df = nfl.load_combine(seasons=COMBINE_SEASONS)
         rows = df.to_dicts()
         out, drills = {}, 0
+        loose_hits = 0
         for r in rows:
-            k = norm(r.get('player_name'))
-            if k not in want: continue
+            hit = match(r.get('player_name'))
+            if hit is None: continue
+            if norm(r.get('player_name')) not in want: loose_hits += 1
             rec = {kk: clean(r.get(kk)) for kk in
                    ('ht', 'wt', 'forty', 'bench', 'vertical', 'broad_jump', 'cone', 'shuttle')}
             rec = {kk: vv for kk, vv in rec.items() if vv is not None}
             if not rec: continue
             rec['season'] = r.get('season')
             rec['school'] = r.get('school')
-            prev = out.get(want[k]['n'])
+            prev = out.get(hit['n'])
             # keep the most complete row if a player somehow appears twice
-            if prev is None or len(rec) > len(prev): out[want[k]['n']] = rec
+            if prev is None or len(rec) > len(prev): out[hit['n']] = rec
             drills += sum(1 for kk in ('forty','bench','vertical','broad_jump','cone','shuttle') if kk in rec)
-        print(f'  matched {len(out)} of {len(universe)} DELTA players · {drills} drill results')
+        print(f'  matched {len(out)} of {len(universe)} DELTA players · {drills} drill results'
+              + (f' · {loose_hits} via suffix fallback' if loose_hits else ''))
         have40 = sum(1 for v in out.values() if 'forty' in v)
         print(f'  with a forty: {have40} · measurements only (no drills): {len(out)-have40}')
         combine_payload = {
@@ -157,23 +175,51 @@ def main():
             groups = {}
             for r in cur:
                 groups.setdefault((r.get('team'), r.get('pos_abb')), []).append(r)
-            out, rooms = {}, {}
+            # Ages for EVERY player in a room, not just the ones DELTA tracks. The age is
+            # the most useful thing on the card — "Henry is 32" is the whole read — and 61%
+            # of room names are outside our universe, so without this most of the column is
+            # blank. nflverse has a birth date for every rostered player.
+            ages = {}
+            try:
+                today = datetime.date.today()
+                for r in nfl.load_players().to_dicts():
+                    bd = r.get('birth_date') or r.get('birthdate')
+                    nm = r.get('display_name') or r.get('full_name') or r.get('player_name')
+                    if not bd or not nm: continue
+                    try:
+                        b = datetime.date.fromisoformat(str(bd)[:10])
+                    except ValueError:
+                        continue
+                    yrs = (today - b).days / 365.25
+                    if 17 < yrs < 50: ages[norm_loose(nm)] = round(yrs, 1)
+                print(f'  ages available for {len(ages)} players league-wide')
+            except Exception as e:
+                print(f'  age lookup unavailable ({e}); rooms will show ages only for DELTA players')
+
+            out, rooms, loose_hits = {}, {}, 0
             for (team, slot), lst in groups.items():
                 lst.sort(key=lambda r: (r.get('pos_rank') or 99))
-                names = []
+                names, seen_nm = [], set()
                 for r in lst:
                     nm = r.get('player_name')
-                    if nm and nm not in names: names.append(nm)
+                    if not nm or nm in seen_nm: continue
+                    seen_nm.add(nm)
+                    names.append({'n': nm, 'age': ages.get(norm_loose(nm))})
                 rooms[f'{team}|{slot}'] = names
                 for r in lst:
-                    k = norm(r.get('player_name'))
-                    if k not in want: continue
+                    hit = match(r.get('player_name'))
+                    if hit is None: continue
+                    if norm(r.get('player_name')) not in want: loose_hits += 1
                     rank = r.get('pos_rank') or 99
-                    prev = out.get(want[k]['n'])
+                    prev = out.get(hit['n'])
                     if prev is not None and prev['rank'] <= rank: continue
-                    out[want[k]['n']] = {'team': team, 'slot': slot, 'rank': rank,
-                                         'name': r.get('player_name')}
-            print(f'  matched {len(out)} of {len(universe)} DELTA players · {len(rooms)} position rooms')
+                    out[hit['n']] = {'team': team, 'slot': slot, 'rank': rank,
+                                     'name': r.get('player_name')}
+            withAge = sum(1 for v in rooms.values() for x in v if x.get('age') is not None)
+            allNames = sum(len(v) for v in rooms.values())
+            print(f'  matched {len(out)} of {len(universe)} DELTA players · {len(rooms)} position rooms'
+                  + (f' · {loose_hits} via suffix fallback' if loose_hits else ''))
+            print(f'  room members with an age: {withAge} of {allNames}')
             avg = sum(len(v) for v in rooms.values()) / max(1, len(rooms))
             print(f'  average room size: {avg:.1f} players')
             depth_payload = {
@@ -181,7 +227,7 @@ def main():
                 'snapshot': latest, 'season': DEPTH_SEASON,
                 'note': ('Offensive skill depth chart, nflverse load_depth_charts. `players` maps a '
                          'DELTA player to his room; `rooms` holds every player in that room in listed '
-                         'order, including untracked ones. VOLATILE — a camp snapshot, not a settled '
+                         'order with an age for each, including players DELTA does not track. VOLATILE — a camp snapshot, not a settled '
                          'hierarchy. Display only: feeds no score, projection, verdict or ledger.'),
                 'players': out, 'rooms': rooms,
             }
