@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-24T07:04:09.243529+00:00",
+  "fetched": "2026-08-25T06:52:58.035497+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3242,16 +3242,6 @@
       "guaranteed": 0.0,
       "is_active": true
     },
-    "Jerome Ford": {
-      "team": "Commanders",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 1.4,
-      "total": 1.4,
-      "guaranteed": 0.44,
-      "is_active": true
-    },
     "Will Shipley": {
       "team": "Eagles",
       "year_signed": 2024,
@@ -3323,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "Browns",
+      "team": "CLE/LAC",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
