@@ -563,6 +563,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
+  <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
@@ -2345,7 +2346,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','projections','trade','epa','ripple','contracts','audit'],
-                 cfb:['college','portal','rookies'],
+                 cfb:['college','portal','rookies','bigboard'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
@@ -2384,7 +2385,10 @@ function setSection(s, wantTab){
 function dlUnlock(id){ DL_LOCKED.delete(id); if(SEC_OF[id]===DL_SECTION) setSection(DL_SECTION); }
 function tabBtnFor(id){ return [...document.querySelectorAll('.tab')].find(b=>(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>=0); }
 function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlist',b); }
-const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal'];
+// Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
+// missing here still works when clicked but cannot be linked to or bookmarked, which is
+// a silent failure. Any new tab needs adding to BOTH.
+const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -2472,6 +2476,7 @@ function showTab(id,el,skipSection){
   if(el) el.classList.add('active');
   if(id==='contracts')renderContracts();
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
+  if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
   if(id==='portal' && typeof openPortalTab==='function'){ try{ openPortalTab(); }catch(e){ console.warn('portal',e); } }
@@ -3414,6 +3419,40 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- DELTA Deck — Player Card Modal -->
+<div id="panel-bigboard" class="panel">
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem">
+    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block">
+      <circle cx="64" cy="64" r="40" fill="none" stroke="url(#cfbOStroke)" stroke-width="7"/>
+      <circle cx="64" cy="64" r="15" fill="none" stroke="#CCFBF1" stroke-width="2.4" stroke-opacity=".9"/>
+      <line x1="64" y1="14" x2="64" y2="30" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+      <line x1="64" y1="98" x2="64" y2="114" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+      <line x1="14" y1="64" x2="30" y2="64" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+      <line x1="98" y1="64" x2="114" y2="64" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+    </svg>
+    <div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)" id="devy-title">Consensus Big Board</div>
+    <div style="font-size:11px;color:var(--fog-2);margin-top:2px">Where consensus has them, and what they actually produced</div></div>
+  </div>
+
+  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">
+  <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
+    If you are not going to comb through 900 college players, start here. The order is the
+    <strong style="color:var(--sky)">consensus big board</strong>, compiled by hand from publicly published boards.
+    Alongside each player is what he actually produced last season.<br><br>
+    <strong style="color:var(--sky)">dDOM</strong> is his share of team production, adjusted for who he played,
+    as a percentile at his position. For reference, players who went in round 1 sat around the 90th percentile in
+    their final college season; day-2 picks around the 80th; undrafted players around the 41st.
+    <strong style="color:var(--sky)">PPA</strong> is per-play efficiency on the same basis — shown because it is
+    interesting, not because it predicts the draft, which on its own it barely does.<br><br>
+    <strong style="color:var(--topaz)">Early in a season these swing hard.</strong> Three or four games is almost
+    no sample and one big afternoon can move a player fifty places, so games played is shown on every row.<br><br>
+    Consensus tiers are context only — they feed no DELTA score, no percentile and no ranking, exactly like
+    market value on the NFL side. Production updates weekly in season; the board is updated by hand.
+  </div></div></details>
+
+  <div id="devy-filters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
+  <div id="devy-body"><div style="color:var(--fog-2);font-size:12px;padding:10px 0">Loading…</div></div>
+</div>
+
 <div id="panel-rookies" class="panel">
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">2026 Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
 
@@ -3865,6 +3904,132 @@ function cfbIndex(){
     a.forEach((pl,i)=>{ pl._rk=i+1; pl._pr=1-(i/Math.max(1,a.length-1)); });
   });
 }
+// ── Consensus Big Board ───────────────────────────────────────────────────────
+// Consensus draft board for skill-position prospects, with DELTA's own production
+// alongside. The ORDER is consensus, deliberately: the question this tab answers is
+// "who should I be paying attention to", and consensus is the honest answer to that.
+// DELTA's numbers are context beside it, never a competing ranking — we can separate a
+// real prospect from a name about four times in five, but ordering the first round is
+// barely better than a coin flip, so this page never projects a pick.
+//
+// Nothing here feeds a score. Same rule market value follows on the NFL side.
+let DEVY=null, DEVY_PROD=null, _devyTried=false, _devyPos='all';
+const DEVY_TIER={T1:'Top 10 overall',T2:'Round 1',T3:'Round 2',T4:'Round 3+'};
+
+async function openDevyTab(){
+  if(_devyTried){ renderDevy(); return; }
+  _devyTried=true;
+  try{
+    const r=await fetch('./data/devy-board.json',{cache:'no-cache'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    DEVY=await r.json();
+  }catch(e){
+    console.warn('[DELTA] devy-board.json not loaded:',e.message);
+    document.getElementById('devy-body').innerHTML=
+      '<div style="color:var(--fog-2);font-size:12px;padding:10px 0;line-height:1.6">'
+      +'The board is unavailable right now. If this persists, <code style="color:var(--sky)">data/devy-board.json</code> '
+      +'may be missing — rebuild it by pasting a consensus board into <code style="color:var(--sky)">data/big-board-raw.txt</code>.</div>';
+    return;
+  }
+  // Production comes from the newest college season file, which the College tab already
+  // knows how to load and cache. Percentiles are computed against that season's pool.
+  try{
+    const yrs=(await cfbHistorySeasons((CFB&&CFB.seasons)||[])).slice().sort((a,b)=>b-a);
+    for(const y of yrs){
+      const pool=await cfbLoadSeason(y);
+      if(pool && pool.length){ DEVY_PROD={year:y,pool:pool}; break; }
+    }
+  }catch(e){ console.warn('[DELTA] devy production unavailable:',e.message); }
+  renderDevy();
+}
+
+function devyProdFor(name){
+  if(!DEVY_PROD) return null;
+  const rec=DEVY_PROD.pool.find(p=>p.n===name);
+  if(!rec) return null;
+  const peers=DEVY_PROD.pool.filter(p=>p.pos===rec.pos && cfbQualifies(p));
+  const pct=(vals,v)=>{ vals=vals.filter(x=>x!=null).sort((a,b)=>a-b);
+    return (vals.length<2||v==null)?null:Math.round(100*vals.filter(x=>x<v).length/(vals.length-1)); };
+  const q=cfbQualifies(rec);
+  const key=rec.pos==='QB'?'ppaPass':'ppa';
+  return {
+    dd: q?pct(peers.map(cfbAdjVal),cfbAdjVal(rec)):null,
+    ppa:q?pct(peers.map(p=>p[key]),rec[key]):null,
+    tm:rec.tm, gms:rec.gms, tpct:rec.tpct, stars:rec.stars, pos:rec.pos,
+    line:(rec.pos==='QB'?((rec.py||0)+' pass yds · '+(rec.anya??'–')+' ANY/A')
+        : rec.pos==='RB'?((rec.car||0)+' car · '+(rec.ry||0)+' yds · '+(rec.rt||0)+' TD')
+        : ((rec.rec||0)+' rec · '+(rec.rey||0)+' yds · '+(rec.ret||0)+' TD'))
+  };
+}
+
+function renderDevy(){
+  const host=document.getElementById('devy-body'); if(!host||!DEVY) return;
+  const players=DEVY.players||{};
+  const rows=Object.keys(players).map(n=>Object.assign({n:n},players[n]))
+    .filter(r=>_devyPos==='all'||r.pos===_devyPos)
+    .sort((a,b)=>a.rank-b.rank);
+  // filters, with live counts so an empty position is obvious before you click it
+  const all=Object.values(players);
+  const counts={all:all.length};
+  ['QB','RB','WR','TE'].forEach(p=>counts[p]=all.filter(x=>x.pos===p).length);
+  // Matches the Prospects tab's filter styling so the two college tabs feel the same.
+  document.getElementById('devy-filters').innerHTML=
+    [['all','All'],['QB','QB'],['RB','RB'],['WR','WR'],['TE','TE']].map(f=>{
+      const on=_devyPos===f[0];
+      return '<button class="pos-filter-btn'+(on?' active':'')+'" onclick="devySetPos(\''+f[0]+'\',this)" '
+        +'style="padding:6px 14px;border-radius:20px;border:1px solid '+(on?'var(--sky)':'var(--line)')
+        +';background:'+(on?'rgba(107,182,224,.12)':'transparent')+';color:'+(on?'var(--sky)':'var(--fog)')
+        +';font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit">'
+        +f[1]+' '+(counts[f[0]]||0)+'</button>';}).join('');
+  const col=v=>v==null?'var(--fog-2)':v>=90?'#34D399':v>=80?'var(--emerald)':v>=68?'var(--sky)':v>=45?'var(--topaz)':'var(--coral)';
+  let html='', lastTier=null;
+  for(const r of rows){
+    if(r.tier!==lastTier){
+      html+='<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;'
+           +'color:var(--teal);padding:13px 0 5px;border-top:1px solid var(--line)">'
+           +(DEVY_TIER[r.tier]||r.tier)+'</div>';
+      lastTier=r.tier;
+    }
+    const pr=devyProdFor(r.cfbName||r.n);
+    const weak=pr&&pr.tpct!=null&&pr.tpct<0.72, thin=pr&&pr.gms!=null&&pr.gms<6;
+    // Movement against the previous pasted board. Absent on the first board of a season,
+    // which is correct — there is nothing to have moved from.
+    let mv='';
+    if(r.move!=null && r.move!==0){
+      const up=r.move>0;
+      mv='<span style="font-size:10px;font-weight:700;margin-left:6px;color:'+(up?'#34D399':'var(--coral)')+'">'
+        +(up?'▲':'▼')+Math.abs(r.move)+'</span>';
+    }else if(r.prevRank==null && DEVY.coverage && DEVY.coverage.hasPrevious){
+      mv='<span style="font-size:9.5px;font-weight:700;margin-left:6px;color:var(--violet)">NEW</span>';
+    }
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line-2,#16202E)">'
+      +'<span style="flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:800;color:var(--fog-2)">'+r.rank+'</span>'
+      +'<span style="flex:1;min-width:0">'
+        +'<span style="font-weight:700;font-size:13px;line-height:1.25">'+r.n+mv+'</span>'
+        +'<span style="display:block;font-size:10.5px;color:var(--fog-2);margin-top:4px">'
+          +(pr&&pr.stars?'<span style="color:var(--topaz);letter-spacing:1px;margin-right:6px">'+'★'.repeat(pr.stars)+'</span>':'')
+          +r.pos+' · '+((pr&&pr.tm)||r.school||'')
+          +(pr&&pr.line?' · '+pr.line:'')+(pr&&pr.gms?' · '+pr.gms+'g':'')+'</span>'
+        +(!pr?'<span style="display:block;font-size:9.5px;color:var(--fog-2);margin-top:3px">no '
+              +((DEVY_PROD&&DEVY_PROD.year)||'')+' production on file — transfer, or outside the tracking cut</span>':'')
+        +(weak?'<span style="display:block;font-size:9.5px;color:var(--topaz);margin-top:3px">⚠ soft schedule — opponent quality '+(pr.tpct*100).toFixed(0)+'%</span>':'')
+        +(thin?'<span style="display:block;font-size:9.5px;color:var(--topaz);margin-top:3px">⚠ small sample</span>':'')
+      +'</span>'
+      +'<span style="flex-shrink:0;display:flex;gap:5px">'
+        +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.dd)+'">'
+          +((pr&&pr.dd!=null)?pr.dd:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)">dDOM</span></span>'
+        +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.ppa)+'">'
+          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)">PPA</span></span>'
+      +'</span></div>';
+  }
+  const meta=DEVY.generated?('Board compiled '+DEVY.generated+(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'';
+  host.innerHTML=(rows.length?html:'<div style="color:var(--fog-2);font-size:12px;padding:12px 0">No players at this position on the current board.</div>')
+    +(meta?'<div style="font-size:10px;color:var(--fog-2);margin-top:14px;padding-top:11px;border-top:1px solid var(--line)">'+meta+'</div>':'');
+  const t=document.getElementById('devy-title');
+  if(t&&DEVY.class) t.textContent='Consensus Big Board · '+DEVY.class+' class';
+}
+function devySetPos(p,el){ _devyPos=p; renderDevy(); }
+
 async function openCollegeTab(){
   const host=document.getElementById('cfb-body');
   if(CFB_STATE!=='loaded'){
