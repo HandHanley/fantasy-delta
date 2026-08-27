@@ -43,6 +43,8 @@ DDOM_SWING = float(os.environ.get("DDOM_SWING") or 0.50)
 # Platform season-picker floor. Older seasons may be backfilled for calibration but must
 # not appear on the live platform; only seasons >= this show in the picker.
 VISIBLE_FROM = int(os.environ.get("CFBD_VISIBLE_FROM") or 2024)
+# Hand-maintained consensus draft board. Read-only here — this script never writes it.
+BOARD_FILE = os.environ.get("DELTA_BOARD_FILE") or "data/devy-board.json"
 SKILL = set(QUOTA)
 OFF_CATS = {"passing", "rushing", "receiving"}
 # Canonical compact keys, mirroring data/game-logs.json so the front end reads one dialect.
@@ -459,8 +461,40 @@ for k, v in ply.items():
     if k[0] in prev_names:
         picked[k] = v; by_door["continuity"] += 1
 
+# ── door 4: draft board ────────────────────────────────────────────────────
+# Anyone on DELTA's hand-maintained consensus draft board is tracked, whatever his
+# production. The other three doors ask "did he produce, was he a blue-chip, was he here
+# last year" — all backward-looking. This one asks "does the draft community think he
+# matters", which is the question the other three cannot answer.
+#
+# It exists because the board found real holes: Charlie Becker went 34/679/4 for Indiana
+# in 2025 and was absent, while 304 receivers with LESS production were in, including a
+# team-mate with three catches. Being on a top-100 board is sufficient reason to track a
+# player, and it costs a handful of rows.
+board_names = set()
+try:
+    with open(BOARD_FILE) as f:
+        board_names = {norm(n) for n in (json.load(f).get("players") or {})}
+    print(f"\n  draft board: {BOARD_FILE} ({len(board_names)} players)")
+except FileNotFoundError:
+    print(f"\n  draft board: none ({BOARD_FILE} absent - fine, door skipped)")
+except Exception as e:
+    print(f"\n  draft board: unreadable ({e}) - continuing without it")
+board_missing = set(board_names)
+for k, v in ply.items():
+    board_missing.discard(k[0])
+    if k in picked: continue
+    if k[0] in board_names:
+        picked[k] = v; by_door["board"] += 1
+# A board name CFBD has no record of at all is worth saying out loud — it is the only
+# way to tell "we chose not to track him" from "the upstream data does not have him".
+if board_missing:
+    print(f"  board players absent from CFBD entirely: {len(board_missing)}")
+    for n in sorted(board_missing)[:10]: print(f"     {n}")
+
 print(f"\n  door: production {by_door['production']:,} | pedigree {by_door['pedigree']:,}"
-      f" | continuity {by_door['continuity']:,} | UNIVERSE {len(picked):,}")
+      f" | continuity {by_door['continuity']:,} | board {by_door['board']:,}"
+      f" | UNIVERSE {len(picked):,}")
 
 # Game-log rows dominate the payload (~56% of the college file), and CFBD returns every
 # stat as a STRING with zero-value keys present. Storing numbers instead of strings and
