@@ -1,0 +1,72 @@
+# Rebuilds data/devy-board.json whenever you paste a new consensus board.
+#
+# In the Actions tab this appears as: "Build Devy Board"
+#
+# HOW THIS IS MEANT TO BE USED
+#   1. Open data/big-board-raw.txt in the GitHub web editor.
+#   2. Select all, paste the current consensus big board over it, commit.
+#   3. This runs automatically on that commit. Nothing else to do.
+#
+# That is the whole weekly job — one paste. Parsing, the position filter, tiering, the
+# match against college data, and the week-over-week movement are all automated from there.
+#
+# WHY THE FETCH ITSELF IS NOT AUTOMATED
+#   The consensus boards worth reading are somebody's product — NFL Mock Draft Database
+#   aggregates hundreds of sources and sells API access to the result. Scraping it would
+#   be taking the thing they sell, and their terms say so. So DELTA does not fetch the
+#   board; a human reads it and pastes it, which also makes the compilation ours rather
+#   than a copy of theirs.
+#
+# The script refuses to write on a truncated or unrecognised paste, so a bad copy leaves
+# the previous board in place rather than replacing it with rubbish.
+name: Build Devy Board
+
+on:
+  push:
+    paths:
+      - 'data/big-board-raw.txt'
+  workflow_dispatch:
+    inputs:
+      draft_class:
+        description: 'Draft class the board covers'
+        required: false
+        default: '2027'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # history is what makes the movement diff meaningful
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build board
+        run: |
+          CLASS="${{ github.event.inputs.draft_class }}"
+          if [ -z "$CLASS" ]; then CLASS=2027; fi
+          set -o pipefail
+          python scripts/build-devy-board.py --confirm --class "$CLASS" 2>&1 | tee board-run.log
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/devy-board.json data/board-history
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "Rebuild devy board from pasted consensus"
+            git push
+          fi
+
+      # Pages does not redeploy on a workflow commit, so the refreshed board sits in the
+      # repo but not on the live site until a deploy runs.
+      - name: Reminder
+        run: echo "Board rebuilt. Run Deploy Pages, then check fantasydelta.com (not the repo)."
