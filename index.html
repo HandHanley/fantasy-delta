@@ -3465,6 +3465,26 @@ document.addEventListener('click', function(e) {
       .bb-who{max-width:520px}
     }
     @media(min-width:900px){ .bb-stars{display:none} }   /* shown as a column instead */
+    /* Explanations on hover, DESKTOP ONLY. CSS rather than a `title` attribute, and inside
+       the media query on purpose: on a touch screen a tooltip either never fires or fires
+       on every tap. Below 900px these rules do not exist, so a phone gets the plain label. */
+    @media(min-width:900px){
+      .bb-row [data-tip]{position:relative;cursor:help;border-bottom:1px dotted rgba(140,160,179,.35)}
+      .bb-row [data-tip]:hover::after{
+        content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);right:0;
+        width:250px;white-space:normal;text-align:left;z-index:60;
+        background:var(--panel);border:1px solid var(--line);border-radius:7px;
+        padding:9px 11px;font-family:var(--sans);font-size:11px;font-weight:400;
+        line-height:1.55;color:var(--fog);letter-spacing:0;text-transform:none;
+        box-shadow:0 6px 22px rgba(0,0,0,.5);pointer-events:none}
+      .bb-row [data-tip]:hover::before{
+        content:'';position:absolute;bottom:calc(100% + 3px);right:14px;z-index:61;
+        border:5px solid transparent;border-top-color:var(--line);pointer-events:none}
+      /* the top rows would clip a tooltip against the panel edge, so flip those below */
+      .bb-row:nth-child(-n+3) [data-tip]:hover::after{bottom:auto;top:calc(100% + 8px)}
+      .bb-row:nth-child(-n+3) [data-tip]:hover::before{bottom:auto;top:calc(100% + 3px);
+        border-top-color:transparent;border-bottom-color:var(--line)}
+    }
     @media(min-width:1250px){ .bb-mid{gap:26px} }
   </style>
   <div id="devy-filters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
@@ -4021,7 +4041,7 @@ function renderDevy(){
       mv='<span style="font-size:9.5px;font-weight:700;margin-left:6px;color:var(--violet)">NEW</span>';
     }
     html+='<div class="bb-row">'
-      +'<span style="flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:800;color:var(--fog-2)">'+r.rank+'</span>'
+      +'<span data-tip="His position on the consensus big board, compiled by hand from publicly published boards. Where the draft community ranks him — not a DELTA rating." style="flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:800;color:var(--fog-2)">'+r.rank+'</span>'
       +'<span class="bb-who" style="flex:1;min-width:0">'
         +'<span style="font-weight:700;font-size:13px;line-height:1.25">'+r.n+mv+'</span>'
         +'<span style="display:block;font-size:10.5px;color:var(--fog-2);margin-top:4px">'
@@ -4036,16 +4056,16 @@ function renderDevy(){
       // Desktop-only columns. Each is real data already on the row's warning lines or in
       // the record, surfaced here so the space between name and percentiles carries weight.
       +'<span class="bb-mid">'
-        +'<span style="width:54px">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl">GAMES</span></span>'
+        +'<span style="width:54px">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl" data-tip="Games played in the season shown. Early in a year this is the number to watch — three or four games is almost no sample, and one big afternoon can move a percentile fifty places.">GAMES</span></span>'
         +'<span style="width:54px;color:'+((pr&&pr.tpct!=null&&pr.tpct<0.72)?'var(--topaz)':'var(--fog)')+'">'
-          +((pr&&pr.tpct!=null)?(pr.tpct*100).toFixed(0)+'%':'–')+'<span class="lbl">OPP QUAL</span></span>'
-        +'<span style="width:46px">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl">RECRUIT</span></span>'
+          +((pr&&pr.tpct!=null)?(pr.tpct*100).toFixed(0)+'%':'–')+'<span class="lbl" data-tip="Average quality of the opponents he faced. A big production share against a soft schedule is the most common false positive on this page.">OPP QUAL</span></span>'
+        +'<span style="width:46px">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl" data-tip="His high-school recruiting star rating. Independent of production, and it still carries real signal about where a player gets drafted.">RECRUIT</span></span>'
       +'</span>'
       +'<span style="flex-shrink:0;display:flex;gap:5px">'
         +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.dd)+'">'
-          +((pr&&pr.dd!=null)?pr.dd:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)">dDOM</span></span>'
+          +((pr&&pr.dd!=null)?pr.dd:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)" data-tip="His share of his team\'s production, adjusted for who he played, as a percentile against others at his position. Players drafted in round 1 sat near the 90th percentile in their final college season; day-2 picks near the 80th; undrafted near the 41st.">dDOM</span></span>'
         +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.ppa)+'">'
-          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)">PPA</span></span>'
+          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)" data-tip="Predicted points added per play, as a percentile at his position. Shown because it is interesting, not because it predicts the draft — on its own it barely does.">PPA</span></span>'
       +'</span></div>';
   }
   const meta=DEVY.generated?('Board compiled '+DEVY.generated+(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'';
