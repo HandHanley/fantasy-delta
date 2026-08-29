@@ -17,7 +17,7 @@ DELIBERATELY NOT DONE HERE:
     NFL dynasty value, and a comparable-looking number would imply false parity.
   - No projections. This is a tracker: what happened, not what will happen.
 
-Env: CFBD_API_KEY (required), CFBD_YEAR, CFBD_WEEKS,
+Env: CFBD_API_KEY (required), CFBD_YEAR, CFBD_WEEKS, CFBD_CURRENT_SEASON,
      Q_QB / Q_RB / Q_WR / Q_TE (quota overrides), MIN_GAMES
 """
 import os, sys, json, unicodedata, datetime, collections
@@ -27,8 +27,25 @@ try:
 except ImportError:
     print("ERROR: pip install cfbd"); sys.exit(1)
 
+def default_season(today=None):
+    """The season currently in progress.
+
+    A college season starts in August and finishes in January, so the calendar
+    year alone is wrong for half of it: in January 2027 the live season is still
+    2026. August is the cutover.
+
+    Derived rather than hard-coded because the hard-coded 2025 that used to sit
+    here went stale the moment the 2026 season kicked off, and it went stale
+    SILENTLY. It feeds the alias guard below (YEAR >= CURRENT_SEASON), so once
+    it lagged a year, a routine 2025 backfill was free to overwrite the live
+    season file the whole platform loads by default. A guard that needs an
+    annual hand-edit to keep working is a guard that will eventually be wrong.
+    """
+    d = today or datetime.date.today()
+    return d.year if d.month >= 8 else d.year - 1
+
 KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
-YEAR  = int(os.environ.get("CFBD_YEAR")  or 2025)
+YEAR  = int(os.environ.get("CFBD_YEAR")  or default_season())
 WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)
 PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
 QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
@@ -582,7 +599,7 @@ print(f"\n  wrote {OUT}: {size/1e6:.2f} MB  ({len(out['players']):,} players)")
 # The app loads OUT_CURR (the default alias) as the newest season. ONLY the current
 # season may overwrite it — otherwise a backfill run (e.g. 2023) clobbers the default and
 # the platform opens to an old season. Backfills write their year-file only.
-CURRENT_SEASON = int(os.environ.get("CFBD_CURRENT_SEASON") or 2025)
+CURRENT_SEASON = int(os.environ.get("CFBD_CURRENT_SEASON") or default_season())
 if YEAR >= CURRENT_SEASON:
     import shutil; shutil.copyfile(OUT, OUT_CURR)
     print(f"  wrote {OUT_CURR} (alias for the current season)")
