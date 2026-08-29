@@ -453,7 +453,27 @@ for v in ply.values():
     v["games"] = len(v["g"])
 
 # ---- the two doors ----
-elig = [v for v in ply.values() if v["games"] >= MIN_GAMES]
+# MIN_GAMES scales with how much season there IS. A flat 4 is right by October and
+# wrong every September: through week 3 nobody on earth has four games, so the
+# production door admits NOBODY and the universe is built purely from last year's
+# recruiting rankings and last year's universe — both backward-looking. A player who
+# breaks out in week 1 could not appear until week 4, which is exactly backwards for a
+# tracker whose job is catching risers.
+#
+# This was invisible in testing because every backfill runs on a COMPLETE season, where
+# a flat 4 and a scaled 4 are the same number. It only shows up on a live season, and it
+# showed up on day one of 2026: the leading receiver in the opening game was absent.
+#
+# Scaling to the longest slate anyone has actually played keeps the noise guard doing its
+# real job (a player with 1 of 12 games has not shown enough) while letting week 1 admit
+# week-1 leaders. Entering the universe is not the same as being ranked: college is never
+# scored, and games played is on every row.
+weeks_played = max((v["games"] for v in ply.values()), default=0)
+MIN_G_EFF = max(1, min(MIN_GAMES, weeks_played))
+if MIN_G_EFF != MIN_GAMES:
+    print(f"\n  early season: production door needs {MIN_G_EFF} game(s), not {MIN_GAMES} "
+          f"(most games played by anyone so far: {weeks_played})")
+elig = [v for v in ply.values() if v["games"] >= MIN_G_EFF]
 picked, by_door = {}, collections.Counter()
 for pos, n in QUOTA.items():
     pool = sorted([v for v in elig if v["pos"] == pos], key=lambda x: -x["prod"])[:n]
@@ -565,7 +585,7 @@ out = {
              "ageEst = ESTIMATE ONLY: 18 + (season - recruiting class). CFBD exposes no birth dates. "
              "Wrong for reclassers/prep-year/JUCO. Display context only - never scored. "
              "Included via production quota or 4-5 star underclassman pedigree."),
-    "quota": QUOTA, "min_games": MIN_GAMES,
+    "quota": QUOTA, "min_games": MIN_GAMES, "min_games_applied": MIN_G_EFF,
     # Every season file present after this run, so the UI can offer a season picker
     # without a second request or a hard-coded list.
     # Season picker floor: backtest seasons can be backfilled into data/ for calibration
