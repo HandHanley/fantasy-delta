@@ -85,6 +85,10 @@ tr:hover td{background:var(--panel)}
   th,td{padding:4px 5px}
   /* Hide lower-priority columns on mobile */
   .col-hide-mobile{display:none}
+  /* ...and its mirror: columns that exist ONLY on mobile. The All view shows a
+     full box score on desktop (pass/rush/rec split out), which cannot fit on a
+     phone. There it collapses to combined totals instead. */
+  .col-mobile-only{display:table-cell}
   /* Modal mobile */
   .dd-card{border-radius:10px 10px 0 0;max-height:85vh;margin-top:auto}
   .dd-overlay{align-items:flex-end;padding:0}
@@ -213,6 +217,10 @@ tr:hover td{background:var(--panel)}
 }
 [data-tip]:hover::after{ display:block; }
 @media (hover:none){ [data-tip].tip-show::after{ display:none !important; } }
+/* Wide-screen default for the mobile-only mirror; the mobile media query above
+   flips this to table-cell. Used by the All view, which shows a full box score
+   on desktop and combined totals on a phone. */
+.col-mobile-only{display:none}
 .dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
 .dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
 
@@ -4223,18 +4231,34 @@ function cfbCols(pos){
     {k:'ry',  label:'RushYd', mob:0, cell:p=>num(p.ry), tip:'Rushing yards.'},
     DDOM, RECSH, TREND ];
 
-  /* ALL / WATCH \u2014 the shared set. Yds is passing for QBs and scrimmage for
-     everyone else, so it stays comparable down a mixed column. */
+  /* ALL / WATCH — the full box score.
+
+     Every position keeps its own stats in its own columns, blanks and all. That
+     sparseness is the conventional layout for a mixed table and it reads fine,
+     because each position occupies a distinct block: a QB fills the passing
+     columns, a receiver the receiving ones. The alternative — squeezing
+     everyone into shared columns — is what produced "5 Rec, 169 Yds" for a
+     25-carry afternoon.
+
+     Ten stat columns cannot fit on a phone, so the narrow layout collapses to
+     combined totals (Yds/TD) via col-mobile-only, and the split columns are
+     desktop-only. Same data, two densities. */
+  const T=p=>(p.ret||0)+(p.rt||0)+(p.pt||0);
   return [
-    {k:'rec', label:'Rec',   mob:0, cell:p=>num(p.rec), tip:'Receptions.'},
-    {k:'prod',label:'Yds',   mob:1, bold:1, cell:p=>num(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0)),
-      tip:'Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on. Filter to a position for that position\u2019s own stat columns.'},
-    DDOM,
-    {k:'rey', label:'RecYd', mob:0, cell:p=>num(p.rey), tip:'Receiving yards.'},
-    {k:'ry',  label:'RushYd',mob:0, cell:p=>num(p.ry), tip:'Rushing yards. Net of sacks for QBs.'},
-    {k:'py',  label:'PassYd',mob:0, cell:p=>num(p.py), tip:'Passing yards.'},
-    {k:'td',  label:'TD',    mob:0, cell:p=>num((p.ret||0)+(p.rt||0)+(p.pt||0)), tip:'All touchdowns: receiving + rushing + passing.'},
-    RECSH, TREND ];
+    {k:'cmp', label:'Cmp/Att',mob:0, cell:p=>p.att?(p.cmp+'/'+p.att):'-', tip:'Completions / attempts.'},
+    {k:'py',  label:'PassYd', mob:0, bold:1, cell:p=>num(p.py), tip:'Passing yards.'},
+    {k:'pt',  label:'PassTD', mob:0, cell:p=>num(p.pt), tip:'Passing touchdowns.'},
+    {k:'car', label:'Att',    mob:0, cell:p=>num(p.car), tip:'Rushing attempts.'},
+    {k:'ry',  label:'RushYd', mob:0, bold:1, cell:p=>num(p.ry), tip:'Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.'},
+    {k:'rt',  label:'RushTD', mob:0, cell:p=>num(p.rt), tip:'Rushing touchdowns.'},
+    {k:'rec', label:'Rec',    mob:0, cell:p=>num(p.rec), tip:'Receptions.'},
+    {k:'rey', label:'RecYd',  mob:0, bold:1, cell:p=>num(p.rey), tip:'Receiving yards.'},
+    {k:'ret', label:'RecTD',  mob:0, cell:p=>num(p.ret), tip:'Receiving touchdowns.'},
+    /* phone-only summary of the ten above */
+    {k:'prod',label:'Yds',    mob:1, only:1, bold:1, cell:p=>num(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0)),
+      tip:'Primary production: passing yards for QBs, scrimmage yards for everyone else.'},
+    {k:'td',  label:'TD',     mob:1, only:1, cell:p=>num(T(p)), tip:'All touchdowns: passing + rushing + receiving.'},
+    DDOM, RECSH, TREND ];
 }
 
 function renderCollege(){
@@ -4327,7 +4351,7 @@ function renderCollege(){
       +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
       +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
       +'<td class="col-hide-mobile">'+((p.gms||p.gms===0)?p.gms:'-')+'</td>'
-      +COLS.map(c=>'<td'+(c.mob?'':' class="col-hide-mobile"')+(c.bold?' style="font-weight:700;white-space:nowrap"':' style="white-space:nowrap"')+'>'+c.cell(p)+'</td>').join('')
+      +COLS.map(c=>'<td'+(c.only?' class="col-mobile-only"':(c.mob?'':' class="col-hide-mobile"'))+(c.bold?' style="font-weight:700;white-space:nowrap"':' style="white-space:nowrap"')+'>'+c.cell(p)+'</td>').join('')
       +'</tr>';
   }).join('');
   const sar=k=>cfbSortKey===k?' <span style="color:var(--teal-br);font-size:9px">'+(cfbSortDir>0?'\u25be':'\u25b4')+'</span>':'';
@@ -4346,7 +4370,7 @@ function renderCollege(){
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'age\')"'+SC+' data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age'+sar('age')+'</th>'
     +'<th onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'gms\')"'+SC+' data-tip="Games with at least one recorded offensive stat.">G'+sar('gms')+'</th>'
-    +COLS.map(c=>'<th'+(c.mob?'':' class="col-hide-mobile"')+' onclick="cfbSetSort(\''+c.k+'\')"'+SC
+    +COLS.map(c=>'<th'+(c.only?' class="col-mobile-only"':(c.mob?'':' class="col-hide-mobile"'))+' onclick="cfbSetSort(\''+c.k+'\')"'+SC
         +' data-tip="'+String(c.tip||'').replace(/"/g,'&quot;')+'">'+c.label+sar(c.k)+'</th>').join('')
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Universe '+CFB.players.length
@@ -4356,7 +4380,7 @@ function renderCollege(){
     +'ranked among qualified players (6+ games + a volume floor); low-volume players show \u2018-\u2019 \u00b7 '
     +'QB rushing is net of sacks, per college convention \u00b7 '
     +(CFB_POS==='ALL'||CFB_POS==='WATCH'
-      ? '<b>Filter to a position</b> for that position\u2019s own stat columns \u2014 carries and yards per carry for RBs, completions and ANY/A for QBs.'
+      ? 'Full box score \u2014 each position fills its own columns, so blanks are expected. <b>Filter to a position</b> for that position\u2019s own view, with rates like yards per carry and ANY/A. On a phone these collapse to combined Yds and TD.'
       : 'Stat columns are '+CFB_POS+'-specific; choose <b>All</b> for the shared set.');
 }
 
