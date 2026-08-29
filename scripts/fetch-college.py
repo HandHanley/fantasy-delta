@@ -46,7 +46,7 @@ def default_season(today=None):
 
 KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
 YEAR  = int(os.environ.get("CFBD_YEAR")  or default_season())
-WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)
+WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)   # highest week fetched; the loop runs 0..WEEKS
 PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
 QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
          "RB": int(os.environ.get("Q_RB") or 110),
@@ -295,7 +295,13 @@ with cfbd.ApiClient(cfg) as api:
     TEAM_RET = collections.Counter()   # (team) -> season receiving TDs, all players (Dominator denom)
     TEAM_RY  = collections.Counter()   # (team) -> season rushing YARDS, all players (rush-Dominator denom)
     TEAM_RT  = collections.Counter()   # (team) -> season rushing TDs, all players (rush-Dominator denom)
-    for wk in range(1, WEEKS + 1):
+    # Range starts at ZERO. Week 0 is a real CFBD designation, not a media label:
+    # the season-opening slate (the Dublin game, the other late-August openers) is
+    # filed under week 0, a week before "week 1". Looping from 1 dropped those games
+    # entirely — invisible in a backfill, where they are a handful of rows among
+    # thousands, and total in late August, when they are the ONLY rows that exist.
+    # Costs one extra call per run; call() swallows a rejected week as an empty list.
+    for wk in range(0, WEEKS + 1):
         games = call(f"GET /games/players wk{wk}", games_api.get_game_player_stats,
                      year=YEAR, week=wk, classification="fbs", season_type="regular")
         for gm in games or []:
