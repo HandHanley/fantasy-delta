@@ -4614,7 +4614,7 @@ function cfbGameLogTable(pos, games){
   if(!g.length) return '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
   return '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
     +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
-    +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w||'-')+'</td>'
+    +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w==null?'-':gm.w)+'</td>'
       +'<td class="txt" style="white-space:nowrap">'+(gm.opp||'-')+'</td>'
       +cols.map(c=>'<td>'+n(gm[c[1]])+'</td>').join('')+'</tr>').join('')
     +'</tbody></table></div>';
