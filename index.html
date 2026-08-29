@@ -4980,7 +4980,14 @@ function slpStoreActive(st){
 function slpStoreUpsert(conn){
   const st=slpStoreRead();
   const i=st.leagues.findIndex(function(l){ return String(l.leagueId)===String(conn.leagueId); });
-  const rec=Object.assign({},conn,{settings:(i>=0?st.leagues[i].settings:null)});
+  /* `synced` means "the account has seen this league". Signed in, slpSelectTeam's
+     DSYNC.noteSleeperConnect() pushes it immediately, so it is true on arrival.
+     Signed out it stays false, which is what lets the reconciler tell a league
+     that is NEW ON THIS DEVICE from one that was DELETED ELSEWHERE. */
+  const wasSynced=(i>=0&&st.leagues[i].synced)||false;
+  let nowSynced=wasSynced;
+  try{ if(typeof DSYNC!=='undefined'&&typeof DSYNC.isSignedIn==='function'&&DSYNC.isSignedIn()) nowSynced=true; }catch(e){}
+  const rec=Object.assign({},conn,{settings:(i>=0?st.leagues[i].settings:null),synced:nowSynced});
   if(i>=0) st.leagues[i]=rec; else st.leagues.push(rec);
   st.active=conn.leagueId;
   slpStoreWrite(st);
@@ -5034,28 +5041,63 @@ function slpSignedIn(){
 // device-local. That is why this needs no schema change.
 async function slpSyncLeagues(){
   if(typeof DSYNC==='undefined'||typeof DSYNC.isSignedIn!=='function'||!DSYNC.isSignedIn()) return;
-  let cloud=[];
-  try{ cloud=await DSYNC.listLeagues(); }catch(e){ slpLog('league list failed:',e); return; }
+  if(typeof DSYNC.fetchLeagues!=='function') return;
+  const res=await DSYNC.fetchLeagues();
+  if(!res||res.error||!res.data){ slpLog('league sync skipped \u2014 could not read the account'); return; }
+  const cloud=res.data;
+  const cloudIds={}; cloud.forEach(function(c){ if(c&&c.leagueId) cloudIds[String(c.leagueId)]=1; });
+
   const st=slpStoreRead();
   if(!st.leagues) st.leagues=[];
+
+  /* DELETIONS FIRST. A local league already known to the account (synced) that is
+     absent from the account was removed on another device — drop it. Without this
+     the union below pushes it straight back, which is exactly what happened when
+     both leagues were removed on mobile and the desktop restored them. A league
+     that was never synced is simply new here, so it is kept and pushed. */
+  const dropped=st.leagues.filter(function(l){ return l.synced&&!cloudIds[String(l.leagueId)]; });
+  if(dropped.length) st.leagues=st.leagues.filter(function(l){ return !(l.synced&&!cloudIds[String(l.leagueId)]); });
+
+  // PULL: anything in the account this device has not got.
   const have={}; st.leagues.forEach(function(l){ have[String(l.leagueId)]=1; });
   let added=0;
-  (cloud||[]).forEach(function(c){
+  cloud.forEach(function(c){
     if(!c||!c.leagueId||have[String(c.leagueId)]) return;
     st.leagues.push({leagueId:c.leagueId,leagueName:c.leagueName,season:c.season,
                      rosterId:c.rosterId,teamName:c.teamName,userId:c.userId,
-                     username:c.username,settings:null});
+                     username:c.username,settings:null,synced:true});
     have[String(c.leagueId)]=1; added++;
   });
-  if(!st.active&&st.leagues.length) st.active=st.leagues[0].leagueId;
-  if(added) slpStoreWrite(st);
-  const cloudIds={}; (cloud||[]).forEach(function(c){ if(c&&c.leagueId) cloudIds[String(c.leagueId)]=1; });
+
+  // PUSH: anything here the account has not got (added while signed out).
   const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]; });
   if(missing.length&&typeof DSYNC.pushLeagues==='function'){
-    try{ await DSYNC.pushLeagues(missing,st.active); }catch(e){ slpLog('league push failed:',e); }
+    try{
+      await DSYNC.pushLeagues(missing,st.active);
+      missing.forEach(function(l){ l.synced=true; });
+    }catch(e){ slpLog('league push failed:',e); }
   }
-  slpLog('league sync \u2014 '+added+' pulled, '+missing.length+' pushed, '+st.leagues.length+' total');
-  if(added&&typeof renderMyTeam==='function') renderMyTeam();
+  // Everything reconciled against the account is, by definition, known to it.
+  cloud.forEach(function(c){
+    const l=st.leagues.find(function(x){ return String(x.leagueId)===String(c.leagueId); });
+    if(l) l.synced=true;
+  });
+
+  if(st.active&&!st.leagues.some(function(l){ return String(l.leagueId)===String(st.active); }))
+    st.active=st.leagues.length?st.leagues[0].leagueId:null;
+  slpStoreWrite(st);
+  slpLog('league sync \u2014 '+added+' pulled, '+missing.length+' pushed, '
+         +dropped.length+' removed elsewhere, '+st.leagues.length+' total');
+
+  // If the league on screen was one of the deletions, move off it rather than
+  // leaving a roster up for a league the account no longer has.
+  if(SLP.conn&&!st.leagues.some(function(l){ return String(l.leagueId)===String(SLP.conn.leagueId); })){
+    if(st.leagues.length){ slpSwitchLeague(st.active||st.leagues[0].leagueId); return; }
+    SLP.conn=null; SLP.loaded=false; SLP.league=null; SLP.rosters=null; SLP.users=null;
+    SLP.match=null; SLP.unmatched=[]; SLP.tradedPicks=null; SLP.viewRosterId=null;
+    SLP.trade=null; if(typeof renderSlpTradeAssist==='function') renderSlpTradeAssist();
+  }
+  if(added||dropped.length){ if(typeof renderMyTeam==='function') renderMyTeam(); }
 }
 
 // ── Switching ────────────────────────────────────────────────

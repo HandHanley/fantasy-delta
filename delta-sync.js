@@ -44,6 +44,12 @@ var DSYNC = (function () {
   var LS_WATCH    = 'delta_watchlist';
   var LS_SLEEPER  = 'delta_sleeper';
   var LS_META     = 'delta_sync_meta';   // new; this file only
+  /* Also new, also this file only: the set of watchlist keys the ACCOUNT is known
+     to hold as of the last successful reconcile. A plain union cannot tell "new
+     here" from "deleted there" — both look like "present on one side only". This
+     third set is what makes deletions survive. Kept separate from LS_META so a
+     corrupt timestamp blob cannot take the watchlist bookkeeping with it. */
+  var LS_WSEEN    = 'delta_watchlist_seen';
 
   var DEBOUNCE_MS = 1200;   // settings clicks arrive in bursts; coalesce them
 
@@ -90,6 +96,21 @@ var DSYNC = (function () {
   /* The watchlist on disk is an array of "ns:name" strings (see dwRaw in
      delta-engine.js). The table stores ns and player as separate columns.
      These two functions are the only place that translation happens. */
+  function wseen() {
+    var a = lsJSON(LS_WSEEN, null);
+    return Array.isArray(a) ? a : null;      // null = never reconciled (see merge3)
+  }
+  function wseenSet(keys) {
+    try { lsSet(LS_WSEEN, JSON.stringify(keys)); } catch (e) { log('wseen save failed:', e.message); }
+  }
+  function wseenMark(k, present) {
+    var a = wseen(); if (!a) return;         // not reconciled yet — nothing to keep in step
+    var i = a.indexOf(k);
+    if (present && i < 0) a.push(k);
+    else if (!present && i >= 0) a.splice(i, 1);
+    wseenSet(a);
+  }
+
   function watchLocalToRows(uid) {
     var arr = lsJSON(LS_WATCH, []);
     if (!Array.isArray(arr)) return [];
@@ -212,23 +233,62 @@ var DSYNC = (function () {
       : { value: cloudVal, source: 'cloud' };
   }
 
-  function mergeWatchlists(localRows, cloudRows) {
-    var seen = {}, merged = [], toPush = [];
-    var i, k;
-    for (i = 0; i < cloudRows.length; i++) {
-      k = cloudRows[i].ns + ':' + cloudRows[i].player;
-      if (seen[k]) continue;
-      seen[k] = 'cloud';
-      merged.push({ ns: cloudRows[i].ns, player: cloudRows[i].player });
+  /* THREE-WAY watchlist merge: local, cloud, and what the account last held.
+
+     The old version unioned local and cloud, which meant a removal could never
+     win: the device that still had the player pushed him straight back. That is
+     correct for "never lose a name" and wrong for "I removed him on purpose",
+     and there was no way to tell those apart from two sets alone.
+
+     `seen` is the third set. A key in seen tells us the account HAD it, so its
+     absence on one side is a deletion rather than a novelty:
+
+       in cloud, not local, in seen      -> removed here      -> delete from cloud
+       in cloud, not local, NOT in seen  -> new to this device -> add locally
+       in local, not cloud, in seen      -> removed elsewhere  -> drop locally
+       in local, not cloud, NOT in seen  -> new here           -> push to cloud
+
+     seen === null means this device has never reconciled (every existing user, on
+     the first run after this ships). Then there is no deletion history to trust,
+     so we fall back to a pure UNION exactly as before and simply record the
+     result. Deletions start working from the second reconcile onward — nobody
+     loses anything on the upgrade. */
+  function mergeWatchlists(localRows, cloudRows, seen) {
+    var L = {}, C = {}, S = {}, i, k;
+    for (i = 0; i < localRows.length; i++) L[localRows[i].ns + ':' + localRows[i].player] = localRows[i];
+    for (i = 0; i < cloudRows.length; i++) C[cloudRows[i].ns + ':' + cloudRows[i].player] = cloudRows[i];
+    var firstRun = !seen;
+    if (seen) for (i = 0; i < seen.length; i++) S[seen[i]] = 1;
+
+    /* SAFETY VALVE, deliberately narrow. An empty local list against a populated
+       account is ambiguous: either the user removed everything by hand, or this
+       device lost its localStorage. Mostly that resolves itself — losing
+       localStorage also loses the seen set, which gives firstRun and a plain
+       union. The gap is a PARTIAL loss (a failed write, a quota eviction) where
+       seen survives without the list, and there the deletions would empty the
+       account.
+       So: refuse only when the loss would be large. Clearing out the last few
+       names is ordinary and must work; silently dropping a long scouting list is
+       the unrecoverable one. Below the threshold, deletions propagate normally. */
+    var WIPE_GUARD = 5;
+    var localEmptyButSeen = !firstRun && localRows.length === 0 && cloudRows.length > WIPE_GUARD;
+    if (localEmptyButSeen) log('local watchlist is empty but the account holds ' + cloudRows.length +
+                               ' names — refusing to delete that many at once; pulling instead. ' +
+                               'If you meant to clear it, remove them while signed in.');
+
+    var merged = [], toPush = [], toDelete = [];
+    for (k in C) {
+      if (L[k]) { merged.push(C[k]); continue; }
+      if (!firstRun && !localEmptyButSeen && S[k]) { toDelete.push(C[k]); continue; }  // removed here
+      merged.push(C[k]);                                                              // new to this device
     }
-    for (i = 0; i < localRows.length; i++) {
-      k = localRows[i].ns + ':' + localRows[i].player;
-      if (seen[k]) continue;
-      seen[k] = 'local';
-      merged.push({ ns: localRows[i].ns, player: localRows[i].player });
-      toPush.push(localRows[i]);          // exists locally only → send up
+    for (k in L) {
+      if (C[k]) continue;
+      if (!firstRun && S[k]) continue;                                                // removed elsewhere
+      merged.push(L[k]); toPush.push(L[k]);                                           // new here
     }
-    return { merged: merged, toPush: toPush };
+    var seenNext = merged.map(function (r) { return r.ns + ':' + r.player; });
+    return { merged: merged, toPush: toPush, toDelete: toDelete, seenNext: seenNext, firstRun: firstRun };
   }
 
   function mergeLeagues(localConn, cloudRows) {
@@ -295,30 +355,38 @@ var DSYNC = (function () {
 
     // ---- watchlist ---------------------------------------------------------
     var localWatch = watchLocalToRows(uid);
-    var w = mergeWatchlists(localWatch, cloudWatch);
+    var w = mergeWatchlists(localWatch, cloudWatch, wseen());
     lsSet(LS_WATCH, JSON.stringify(watchRowsToLocal(w.merged)));
     if (w.toPush.length) {
       var wr = await sb.from('watchlist').upsert(w.toPush, { onConflict: 'user_id,ns,player' });
       if (wr.error) log('watchlist push failed:', wr.error.message);
     }
+    for (var di = 0; di < w.toDelete.length; di++) {
+      var d = w.toDelete[di];
+      var dr = await sb.from('watchlist').delete()
+        .eq('user_id', uid).eq('ns', d.ns).eq('player', d.player);
+      if (dr.error) log('watchlist delete failed:', dr.error.message);
+    }
+    /* Record the reconciled state LAST, and only after the writes above have been
+       attempted — if the tab closes mid-merge, a stale seen set is safe (it means
+       one more union) while a premature one would read as phantom deletions. */
+    wseenSet(w.seenNext);
+    /* A merge can now REMOVE names, not just add them, so a watchlist already on
+       screen has to be redrawn or it keeps showing players the account dropped. */
+    if (typeof renderWatchlist === 'function') { try { renderWatchlist(); } catch (e) {} }
 
-    // ---- sleeper leagues ---------------------------------------------------
-    var localConn = lsJSON(LS_SLEEPER, null);
-    var lg = mergeLeagues(localConn, cloudLeag);
-    if (lg.newLocalLeague) {
-      var lr = await sb.from('sleeper_leagues')
-        .upsert([connToRow(uid, lg.newLocalLeague, false)], { onConflict: 'user_id,league_id' });
-      if (lr.error) log('league push failed:', lr.error.message);
-    }
-    if (lg.activeId) {
-      // RPC, not a direct update: the partial unique index allows one active
-      // league per user, so turning B on while A is on fails. See schema §4b.
-      var ar = await sb.rpc('set_active_league', { p_league_id: lg.activeId });
-      if (ar.error) log('set_active_league failed:', ar.error.message);
-      if (!localConn && lg.byId[lg.activeId]) {
-        lsSet(LS_SLEEPER, JSON.stringify(rowToConn(lg.byId[lg.activeId])));
-      }
-    }
+    /* ---- sleeper leagues ---------------------------------------------------
+       DELEGATED to slpSyncLeagues() in index.html — do not reconcile leagues here.
+
+       This block used to read the single legacy key (delta_sleeper) and push it
+       back up whenever it was missing from the cloud. Once multi-league shipped,
+       that key is only a MIRROR of the active league, so the block could not tell
+       "this device has a league the account never saw" from "this league was
+       deleted on another device". It always chose the first reading and re-created
+       the row — deleting every league on a phone, then loading the desktop, put
+       them straight back. Deletion needs to beat a blind union, and only the app
+       side knows which local leagues have been synced before. */
+    var lgCount = (cloudLeag || []).length;
 
     // If local won a scalar, make sure the cloud reflects it.
     if (s.source === 'local' || t.source === 'local') await pushState(true);
@@ -326,8 +394,10 @@ var DSYNC = (function () {
     setStatus('ready');
     log('merge complete —',
         'settings:', s.source, 'theme:', t.source,
-        'watchlist:', w.merged.length, '(' + w.toPush.length + ' pushed)',
-        'leagues:', lg.ids.length);
+        'watchlist:', w.merged.length,
+        '(' + w.toPush.length + ' pushed, ' + w.toDelete.length + ' deleted' +
+        (w.firstRun ? ', first reconcile — union only' : '') + ')',
+        'leagues:', lgCount, '(app reconciles)');
   }
 
   function debounce(key, fn) {
@@ -429,7 +499,10 @@ var DSYNC = (function () {
         : sb.from('watchlist').delete()
             .eq('user_id', user.id).eq('ns', row.ns).eq('player', player);
       Promise.resolve(p).then(function (r) {
-        if (r && r.error) log('watch sync failed:', r.error.message);
+        if (r && r.error) { log('watch sync failed:', r.error.message); return; }
+        // The account now matches this toggle — keep `seen` in step so the next
+        // reconcile does not read our own change as somebody else's deletion.
+        wseenMark(row.ns + ':' + player, !!watched);
       });
     },
 
@@ -477,6 +550,19 @@ var DSYNC = (function () {
         if (a.error) log('set_active_league failed:', a.error.message);
       }
       log('pushed ' + rows.length + ' league(s) to the account');
+    },
+
+    /* Like listLeagues(), but distinguishes "the account has no leagues" from
+       "the request failed". The caller deletes local leagues that are missing
+       from this list, so an error returning [] would wipe the device. */
+    fetchLeagues: async function () {
+      if (!sb || !user) return { data: null, error: new Error('not signed in') };
+      var r = await sb.from('sleeper_leagues').select('*').eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
+      if (r.error) { log('fetch leagues failed:', r.error.message); return { data: null, error: r.error }; }
+      return { data: (r.data || []).map(function (row) {
+        var c = rowToConn(row); c.isActive = row.is_active; return c;
+      }), error: null };
     },
 
     listLeagues: async function () {
