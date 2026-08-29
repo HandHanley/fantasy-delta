@@ -4087,6 +4087,14 @@ async function openCollegeTab(){
 }
 function cfbSetPos(v){
   CFB_POS=v;
+  /* The stat columns change with the position, so a sort on a column that just
+     disappeared would leave the list in an order with no visible cause — sorted
+     by ANY/A on a screen with no ANY/A column. Identity columns (name, team,
+     class, stars) survive every switch and keep their sort; a stat sort that
+     does not exist in the new set falls back to the default order. */
+  const keep=new Set(['scout','mover','pr','name','pos','team','cls','age','stars','comp','gms']);
+  const avail=new Set(cfbCols(v).map(c=>c.k));
+  if(cfbSortKey && !keep.has(cfbSortKey) && !avail.has(cfbSortKey)){ cfbSortKey='scout'; cfbSortDir=1; }
   document.querySelectorAll('#cfb-pos-row .set-pill').forEach(b=>b.classList.toggle('on',b.dataset.cpos===v));
   renderCollege();
 }
@@ -4152,6 +4160,83 @@ function cfbSetSort(k){
 }
 function cfbSortFromDropdown(v){ cfbSortKey=v; cfbSortDir=1; renderCollege(); }
 
+/* ── College table: position-aware stat columns ──────────────────────────────
+   The identity columns (name, team, class, stars, games) never move. Only the
+   STAT block changes with the position filter.
+
+   ALL and WATCH keep the shared neutral set, because a mixed list has to use
+   columns that mean something for every row. Pick a position and the columns
+   become that position's: a back gets carries and yards per carry, a QB gets
+   completions, ANY/A and interceptions. Those numbers were always in the data
+   and the player CARD already showed them — only the table never caught up,
+   which is why a 25-carry, 142-yard game read as "5 Rec, 169 Yds".
+
+   Each column is {k, label, tip, cell, mob}. `k` matches a sort key in the
+   `key` map below; `mob` false hides it on narrow screens. Mobile is why this
+   matters most: it keeps roughly five stat columns, and before this they were
+   the same five receiving columns for everybody. */
+function cfbCols(pos){
+  const dash=v=>(v||v===0)?v:'-';
+  const num =v=>(v==null||v===0)?'-':v;
+  const ddomCell=p=>{ const d=cfbDDOM(p); return d?'<span style="color:var(--teal-br)">'+d.pct+'</span>':'<span style="color:var(--fog-2)">-</span>'; };
+  const trendCell=p=>{ const s=cfbRecentSplit(p,3); if(!s) return '<span style="color:var(--fog-2)">-</span>';
+    const up=s.diff>=0, col=up?'var(--emerald)':'var(--coral)';
+    return '<span style="font-weight:700;color:'+col+'">'+(up?'\u25b2':'\u25bc')+' '+Math.abs(Math.round(s.diff))+'</span>'
+      +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; };
+  const DDOM={k:'ddom',label:'dDOM',mob:1,bold:1,cell:ddomCell,
+    tip:'dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.'};
+  const TREND={k:'trend',label:'Trend',mob:1,cell:trendCell,
+    tip:'Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games.'};
+  const RECSH={k:'rsh',label:'RecSh',mob:1,cell:p=>(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-'),
+    tip:'Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.'};
+
+  if(pos==='QB') return [
+    {k:'cmp', label:'Cmp/Att', mob:0, cell:p=>p.att?(p.cmp+'/'+p.att):'-', tip:'Completions / attempts.'},
+    {k:'cmppct',label:'Cmp%',  mob:0, cell:p=>p.cmppct!=null?(p.cmppct*100).toFixed(1):'-', tip:'Completion percentage.'},
+    {k:'py',  label:'PassYd', mob:1, bold:1, cell:p=>num(p.py), tip:'Passing yards.'},
+    {k:'pt',  label:'PassTD', mob:1, cell:p=>num(p.pt), tip:'Passing touchdowns.'},
+    {k:'pi',  label:'INT',    mob:0, cell:p=>num(p.pi), tip:'Interceptions thrown.'},
+    {k:'anya',label:'ANY/A',  mob:1, bold:1, cell:p=>p.anya!=null?p.anya.toFixed(2):'-',
+      tip:'Adjusted net yards per attempt: (yards + 20\u00d7TD \u2212 45\u00d7INT) / attempts. The best one-number QB efficiency measure \u2014 a dink-and-dunk passer does not grade out elite. Passing-only variant; box scores carry no sack data.'},
+    {k:'ypa', label:'Y/A',    mob:0, cell:p=>p.ypa!=null?p.ypa.toFixed(1):'-', tip:'Yards per attempt.'},
+    {k:'car', label:'Car',    mob:0, cell:p=>num(p.car), tip:'Rushing attempts.'},
+    {k:'ry',  label:'RushYd', mob:1, cell:p=>num(p.ry), tip:'Rushing yards. Net of sacks \u2014 college charges sack yardage against rushing, unlike the NFL.'},
+    DDOM, TREND ];
+
+  if(pos==='RB') return [
+    {k:'car', label:'Att',    mob:1, cell:p=>num(p.car), tip:'Rushing attempts.'},
+    {k:'ry',  label:'RushYd', mob:1, bold:1, cell:p=>num(p.ry), tip:'Rushing yards.'},
+    {k:'ypc', label:'Y/Car',  mob:1, cell:p=>p.car?(p.ry/p.car).toFixed(1):'-', tip:'Yards per carry.'},
+    {k:'rt',  label:'RushTD', mob:0, cell:p=>num(p.rt), tip:'Rushing touchdowns.'},
+    {k:'rec', label:'Rec',    mob:1, cell:p=>num(p.rec), tip:'Receptions.'},
+    {k:'rey', label:'RecYd',  mob:0, cell:p=>num(p.rey), tip:'Receiving yards.'},
+    {k:'ret', label:'RecTD',  mob:0, cell:p=>num(p.ret), tip:'Receiving touchdowns.'},
+    {k:'scrim',label:'Scrim', mob:0, bold:1, cell:p=>num((p.rey||0)+(p.ry||0)), tip:'Scrimmage yards: rushing + receiving.'},
+    DDOM, RECSH, TREND ];
+
+  if(pos==='WR'||pos==='TE') return [
+    {k:'rec', label:'Rec',    mob:1, cell:p=>num(p.rec), tip:'Receptions.'},
+    {k:'rey', label:'RecYd',  mob:1, bold:1, cell:p=>num(p.rey), tip:'Receiving yards.'},
+    {k:'ypc', label:'Y/Rec',  mob:1, cell:p=>p.rec?(p.rey/p.rec).toFixed(1):'-', tip:'Yards per reception.'},
+    {k:'ret', label:'RecTD',  mob:1, cell:p=>num(p.ret), tip:'Receiving touchdowns.'},
+    {k:'car', label:'Car',    mob:0, cell:p=>num(p.car), tip:'Rushing attempts \u2014 jet sweeps and end-arounds.'},
+    {k:'ry',  label:'RushYd', mob:0, cell:p=>num(p.ry), tip:'Rushing yards.'},
+    DDOM, RECSH, TREND ];
+
+  /* ALL / WATCH \u2014 the shared set. Yds is passing for QBs and scrimmage for
+     everyone else, so it stays comparable down a mixed column. */
+  return [
+    {k:'rec', label:'Rec',   mob:0, cell:p=>num(p.rec), tip:'Receptions.'},
+    {k:'prod',label:'Yds',   mob:1, bold:1, cell:p=>num(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0)),
+      tip:'Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on. Filter to a position for that position\u2019s own stat columns.'},
+    DDOM,
+    {k:'rey', label:'RecYd', mob:0, cell:p=>num(p.rey), tip:'Receiving yards.'},
+    {k:'ry',  label:'RushYd',mob:0, cell:p=>num(p.ry), tip:'Rushing yards. Net of sacks for QBs.'},
+    {k:'py',  label:'PassYd',mob:0, cell:p=>num(p.py), tip:'Passing yards.'},
+    {k:'td',  label:'TD',    mob:0, cell:p=>num((p.ret||0)+(p.rt||0)+(p.pt||0)), tip:'All touchdowns: receiving + rushing + passing.'},
+    RECSH, TREND ];
+}
+
 function renderCollege(){
   const host=document.getElementById('cfb-body'), foot=document.getElementById('cfb-foot');
   if(!host) return;
@@ -4191,6 +4276,21 @@ function renderCollege(){
     gms:   p=>-(p.gms||0),
     rec:   p=>-(p.rec||0),
     rsh:   p=>-(p.rsh||0),
+    // position-specific columns
+    car:   p=>-(p.car||0),
+    rt:    p=>-(p.rt||0),
+    ret:   p=>-(p.ret||0),
+    pt:    p=>-(p.pt||0),
+    pi:    p=>-(p.pi||0),
+    cmp:   p=>-(p.att||0),
+    cmppct:p=>(p.cmppct==null?BIG:-p.cmppct),
+    ypa:   p=>(p.ypa==null?BIG:-p.ypa),
+    anya:  p=>(p.anya==null?BIG:-p.anya),
+    // per-touch rates: unknown sorts last, never first, so a 1-carry 20-yard
+    // run does not head the list ahead of a back with 200 carries
+    ypc:   p=>{ const d=(p.pos==='WR'||p.pos==='TE')?(p.rec||0):(p.car||0);
+                const y=(p.pos==='WR'||p.pos==='TE')?(p.rey||0):(p.ry||0);
+                return d?-(y/d):BIG; },
     dom:   p=>{ const d=cfbDDOM(p); return d?-d.raw:BIG; },
     ddom:  p=>{ const d=cfbDDOM(p); return d?-d.pct:BIG; },
     age:   p=>(p.ageEst==null?BIG:p.ageEst),      // unknown ages sort last, not first
@@ -4211,9 +4311,9 @@ function renderCollege(){
         : 'No players match these filters.')+'</div>';
     if(foot) foot.textContent=''; return;
   }
-  const dash=v=>(v?v:'-');
+  const COLS=cfbCols(CFB_POS);
   const body=rows.map((p,i)=>{
-    const on=watch.has(p.n), td=(p.ret||0)+(p.rt||0)+(p.pt||0);
+    const on=watch.has(p.n);
     return '<tr style="cursor:pointer" onclick="openCfbCard(this.dataset.name)" data-name="'+p.n.replace(/"/g,'&quot;')+'">'
       +'<td><span onclick="event.stopPropagation();cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
         +'style="cursor:pointer;color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
@@ -4226,19 +4326,8 @@ function renderCollege(){
       +'<td class="txt">'+(p.cls?'<span style="font-weight:'+((p.cls>=3)?'700':'500')+';color:'+((p.cls>=3)?'var(--sky)':'var(--fog-2)')+'">Y'+p.cls+'</span>':'-')+'</td>'
       +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
       +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
-      +'<td class="col-hide-mobile">'+dash(p.gms)+'</td>'
-      +'<td class="col-hide-mobile">'+dash(p.rec)+'</td>'
-      +'<td style="font-weight:700">'+dash(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0))+'</td>'
-      +'<td style="font-weight:700;white-space:nowrap">'+(function(){var d=cfbDDOM(p);return d?'<span style="color:var(--teal-br)">'+d.pct+'</span>':'<span style="color:var(--fog-2)">-</span>';})()+'</td>'
-      +'<td class="col-hide-mobile">'+dash(p.rey)+'</td>'
-      +'<td class="col-hide-mobile">'+dash(p.ry)+'</td>'
-      +'<td class="col-hide-mobile">'+dash(p.py)+'</td>'
-      +'<td class="col-hide-mobile">'+dash(td)+'</td>'
-      +'<td>'+(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-')+'</td>'
-      +'<td style="white-space:nowrap">'+(()=>{ const s=cfbRecentSplit(p,3); if(!s) return '<span style="color:var(--fog-2)">-</span>';
-          const up=s.diff>=0, col=up?'var(--emerald)':'var(--coral)';
-          return '<span style="font-weight:700;color:'+col+'">'+(up?'\u25b2':'\u25bc')+' '+Math.abs(Math.round(s.diff))+'</span>'
-            +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; })()+'</td>'
+      +'<td class="col-hide-mobile">'+((p.gms||p.gms===0)?p.gms:'-')+'</td>'
+      +COLS.map(c=>'<td'+(c.mob?'':' class="col-hide-mobile"')+(c.bold?' style="font-weight:700;white-space:nowrap"':' style="white-space:nowrap"')+'>'+c.cell(p)+'</td>').join('')
       +'</tr>';
   }).join('');
   const sar=k=>cfbSortKey===k?' <span style="color:var(--teal-br);font-size:9px">'+(cfbSortDir>0?'\u25be':'\u25b4')+'</span>':'';
@@ -4257,22 +4346,18 @@ function renderCollege(){
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'age\')"'+SC+' data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age'+sar('age')+'</th>'
     +'<th onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'gms\')"'+SC+' data-tip="Games with at least one recorded offensive stat.">G'+sar('gms')+'</th>'
-    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'rec\')"'+SC+' data-tip="Receptions.">Rec'+sar('rec')+'</th>'
-    +'<th onclick="cfbSetSort(\'prod\')"'+SC+' data-tip="Primary production: passing yards for QBs, scrimmage yards (receiving + rushing) for everyone else. This is what Pos# ranks on.">Yds'+sar('prod')+'</th>'
-    +'<th onclick="cfbSetSort(\'ddom\')"'+SC+' data-tip="dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only (6+ games and a volume floor). 90 = top 10% at his position, identically across positions. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.">dDOM'+sar('ddom')+'</th>'
-    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'rey\')"'+SC+' data-tip="Receiving yards.">RecYd'+sar('rey')+'</th>'
-    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'ry\')"'+SC+' data-tip="Rushing yards. Net of sacks for QBs \u2014 college charges sack yardage against rushing, unlike the NFL.">RushYd'+sar('ry')+'</th>'
-    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'py\')"'+SC+' data-tip="Passing yards.">PassYd'+sar('py')+'</th>'
-    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'td\')"'+SC+' data-tip="All touchdowns: receiving + rushing + passing.">TD'+sar('td')+'</th>'
-    +'<th onclick="cfbSetSort(\'rsh\')"'+SC+' data-tip="Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.">RecSh'+sar('rsh')+'</th>'
-    +'<th onclick="cfbSetSort(\'trend\')"'+SC+' data-tip="Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games. This is what the Weekly movers sort ranks on \u2014 during a live season it answers who broke out on Saturday, which a season-totals table cannot.">Trend'+sar('trend')+'</th>'
+    +COLS.map(c=>'<th'+(c.mob?'':' class="col-hide-mobile"')+' onclick="cfbSetSort(\''+c.k+'\')"'+SC
+        +' data-tip="'+String(c.tip||'').replace(/"/g,'&quot;')+'">'+c.label+sar(c.k)+'</th>').join('')
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Universe '+CFB.players.length
     +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
     +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
     +'(CFBD publishes no target counts) \u00b7 <b>dDOM</b> = 0\u2013100 percentile of competition-adjusted production within position, '
     +'ranked among qualified players (6+ games + a volume floor); low-volume players show \u2018-\u2019 \u00b7 '
-    +'QB rushing is net of sacks, per college convention.';
+    +'QB rushing is net of sacks, per college convention \u00b7 '
+    +(CFB_POS==='ALL'||CFB_POS==='WATCH'
+      ? '<b>Filter to a position</b> for that position\u2019s own stat columns \u2014 carries and yards per carry for RBs, completions and ANY/A for QBs.'
+      : 'Stat columns are '+CFB_POS+'-specific; choose <b>All</b> for the shared set.');
 }
 
 
@@ -4614,7 +4699,7 @@ function cfbGameLogTable(pos, games){
   if(!g.length) return '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
   return '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
     +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
-    +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w==null?'-':gm.w)+'</td>'
+    +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w||'-')+'</td>'
       +'<td class="txt" style="white-space:nowrap">'+(gm.opp||'-')+'</td>'
       +cols.map(c=>'<td>'+n(gm[c[1]])+'</td>').join('')+'</tr>').join('')
     +'</tbody></table></div>';
