@@ -22,6 +22,15 @@ on:
         description: "Weeks to pull"
         required: false
         default: "16"
+      probe:
+        description: "Probe only — report whether CFBD has this week's box scores yet, then exit. ~1-2 API calls, writes nothing."
+        type: boolean
+        required: false
+        default: false
+      probe_week:
+        description: "Week to probe (blank = newest week with data; set it to keep the probe at a single call)"
+        required: false
+        default: ""
       portal_year:
         description: "Transfer portal year (defaults to the season above; use the UPCOMING season to see who just moved)"
         required: false
@@ -60,6 +69,8 @@ jobs:
           # the script derives it from today's date — so this line is belt and braces,
           # not the only thing standing between a backfill and the live season file.
           CFBD_CURRENT_SEASON: "2026"
+          CFBD_PROBE: ${{ github.event.inputs.probe }}
+          CFBD_PROBE_WEEK: ${{ github.event.inputs.probe_week }}
           CFBD_WEEKS: ${{ github.event.inputs.weeks || '16' }}
           CFBD_PORTAL_YEAR: ${{ github.event.inputs.portal_year }}
         run: python scripts/fetch-college.py
