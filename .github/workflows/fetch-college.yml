@@ -15,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       year:
-        description: "Season to build (2025 = last completed, full year of data)"
+        description: "Season to build (blank/2026 = the season in progress; an earlier year is a backfill)"
         required: false
-        default: "2025"
+        default: "2026"
       weeks:
         description: "Weeks to pull"
         required: false
@@ -55,6 +55,11 @@ jobs:
         env:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
           CFBD_YEAR: ${{ github.event.inputs.year || '2026' }}
+          # The alias guard: only a run at or after this season may overwrite
+          # data/college-players.json, the file the app loads by default. Left unset,
+          # the script derives it from today's date — so this line is belt and braces,
+          # not the only thing standing between a backfill and the live season file.
+          CFBD_CURRENT_SEASON: "2026"
           CFBD_WEEKS: ${{ github.event.inputs.weeks || '16' }}
           CFBD_PORTAL_YEAR: ${{ github.event.inputs.portal_year }}
         run: python scripts/fetch-college.py
@@ -72,8 +77,14 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # college-seasons.json is written by build-college-index.js and drives the
+          # career-history season list on the player card. It was missing from this
+          # list, so every run since it was introduced rebuilt it in CI and then threw
+          # it away — the committed copy has been frozen since the day it was first
+          # added by hand. If the index builder gains another output, add it HERE too.
           git add data/college-players*.json data/college-portal*.json \
-                  data/college-index.json data/college-index-names.json
+                  data/college-index.json data/college-index-names.json \
+                  data/college-seasons.json
           if git diff --staged --quiet; then
             echo "no change"
           else

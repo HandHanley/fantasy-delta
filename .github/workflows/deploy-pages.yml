@@ -27,7 +27,11 @@ on:
   push:
     branches: [main]
   workflow_run:
-    workflows: ["Update Market Values"]     # <<< CHANGE ME to your data workflow's name:
+    # Every workflow that COMMITS DATA belongs in this list. A commit made by a
+    # workflow using the default GITHUB_TOKEN cannot trigger `on: push`, so a data
+    # job missing from here lands its files in the repo and never reaches the site.
+    # These are the `name:` values at the top of each workflow, not the filenames.
+    workflows: ["Update Market Values", "Fetch College Data"]
     types: [completed]
   workflow_dispatch:
 
