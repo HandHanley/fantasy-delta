@@ -5020,6 +5020,44 @@ function slpSignedIn(){
   return false;
 }
 
+// ── Cloud sync for the league list ───────────────────────────
+// The account already stores many leagues per user (sleeper_leagues); this is
+// the bridge between that table and the local store. Union in both directions,
+// same policy as the watchlist: never silently drop a league. A league removed
+// while signed OUT can reappear after signing in — accepted, identical to the
+// watchlist tradeoff, and one click to fix. Removals made while signed IN
+// delete the row and propagate.
+//
+// Cloud rows carry no per-league FORMAT (the table has no column for it), so a
+// league pulled onto a new device arrives with settings:null and re-detects
+// from the Sleeper league object on first switch. Only hand-set overrides are
+// device-local. That is why this needs no schema change.
+async function slpSyncLeagues(){
+  if(typeof DSYNC==='undefined'||typeof DSYNC.isSignedIn!=='function'||!DSYNC.isSignedIn()) return;
+  let cloud=[];
+  try{ cloud=await DSYNC.listLeagues(); }catch(e){ slpLog('league list failed:',e); return; }
+  const st=slpStoreRead();
+  if(!st.leagues) st.leagues=[];
+  const have={}; st.leagues.forEach(function(l){ have[String(l.leagueId)]=1; });
+  let added=0;
+  (cloud||[]).forEach(function(c){
+    if(!c||!c.leagueId||have[String(c.leagueId)]) return;
+    st.leagues.push({leagueId:c.leagueId,leagueName:c.leagueName,season:c.season,
+                     rosterId:c.rosterId,teamName:c.teamName,userId:c.userId,
+                     username:c.username,settings:null});
+    have[String(c.leagueId)]=1; added++;
+  });
+  if(!st.active&&st.leagues.length) st.active=st.leagues[0].leagueId;
+  if(added) slpStoreWrite(st);
+  const cloudIds={}; (cloud||[]).forEach(function(c){ if(c&&c.leagueId) cloudIds[String(c.leagueId)]=1; });
+  const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]; });
+  if(missing.length&&typeof DSYNC.pushLeagues==='function'){
+    try{ await DSYNC.pushLeagues(missing,st.active); }catch(e){ slpLog('league push failed:',e); }
+  }
+  slpLog('league sync \u2014 '+added+' pulled, '+missing.length+' pushed, '+st.leagues.length+' total');
+  if(added&&typeof renderMyTeam==='function') renderMyTeam();
+}
+
 // ── Switching ────────────────────────────────────────────────
 async function slpSwitchLeague(leagueId){
   if(SLP.busy) return;
@@ -5083,6 +5121,9 @@ function slpRemoveLeague(leagueId){
   if(!rec) return;
   if(!confirm('Remove "'+(rec.leagueName||leagueId)+'" from DELTA? Your Sleeper league is untouched.')) return;
   const st=slpStoreRemove(leagueId);
+  // Signed in: delete the row so the removal propagates instead of being
+  // re-added by the next union merge from another device.
+  try{ if(typeof DSYNC!=='undefined'&&typeof DSYNC.forgetLeague==='function') DSYNC.forgetLeague(leagueId); }catch(e){}
   slpLog('removed league',leagueId,'\u00b7',st.leagues.length,'remaining');
   if(!st.leagues.length){ sleeperDisconnect(); return; }
   const next=slpStoreActive(st);
@@ -5110,7 +5151,7 @@ function renderSlpLeagueSwitcher(){
   const cta=(!slpSignedIn()&&list.length>=2)
     ? '<div style="font-size:10.5px;color:var(--fog);margin-top:6px">'
       +list.length+' leagues connected on this device \u00b7 '
-      +'<a href="#" onclick="if(typeof dsyncOpenAuth===\'function\'){dsyncOpenAuth();}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
+      +'<a href="#" onclick="if(typeof openSettingsAtAccount===\'function\'){openSettingsAtAccount(event);}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
       +' and they follow you to every device.</div>'
     : '';
   return '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+chips+add+'</div>'+cta;
@@ -5984,9 +6025,19 @@ if (document.readyState === 'complete') {
     DSYNC.signOut().then(function(){ msg('Signed out. Your data stays on this device.'); });
   };
 
+  var leaguesSynced=false;
+
   function paint(st){
     var out=$('dsync-signed-out'), inn=$('dsync-signed-in'), note=$('dsync-scope-note');
     var signedIn = !!st.user;
+    /* Bridge the league list to the account, once per signed-in session and only
+       after the initial pull has settled — pullAndMerge() may itself write the
+       active league locally, and we want to union against the result, not race it. */
+    if(!signedIn) leaguesSynced=false;
+    else if(st.status==='ready'&&!leaguesSynced){
+      leaguesSynced=true;
+      if(typeof slpSyncLeagues==='function'){ try{ slpSyncLeagues(); }catch(e){} }
+    }
     // The header button is corrected here regardless of the popover's state —
     // it lives outside the popover, so an early return must not skip it.
     var sbtn=$('signin-btn');

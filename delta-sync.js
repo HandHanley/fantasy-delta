@@ -457,6 +457,28 @@ var DSYNC = (function () {
       if (r.error) log('forget league failed:', r.error.message);
     },
 
+    /* Multi-league: push EVERY locally stored league in one pass, then set the
+       active one ONCE. noteSleeperConnect() sets active on every call, so
+       looping it would leave whichever league went last marked active. */
+    pushLeagues: async function (list, activeId) {
+      touch('leagues');
+      if (!sb || !user || !list || !list.length) return;
+      var rows = [], i;
+      for (i = 0; i < list.length; i++) {
+        if (!list[i] || !list[i].leagueId) continue;
+        rows.push(connToRow(user.id, list[i], false));
+      }
+      if (!rows.length) return;
+      var r = await sb.from('sleeper_leagues')
+        .upsert(rows, { onConflict: 'user_id,league_id' });
+      if (r.error) { log('league bulk push failed:', r.error.message); return; }
+      if (activeId) {
+        var a = await sb.rpc('set_active_league', { p_league_id: String(activeId) });
+        if (a.error) log('set_active_league failed:', a.error.message);
+      }
+      log('pushed ' + rows.length + ' league(s) to the account');
+    },
+
     listLeagues: async function () {
       if (!sb || !user) return [];
       var r = await sb.from('sleeper_leagues').select('*').eq('user_id', user.id)
