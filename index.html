@@ -3654,6 +3654,7 @@ document.addEventListener('click', function(e) {
       </div>
       <div id="slp-status" style="font-size:11px;color:var(--fog);margin-top:9px;min-height:14px"></div>
       <div id="slp-pickers"></div>
+      <div id="slp-switch-back"></div>
     </div>
   </div>
   <div id="myteam-roster" style="display:none"></div>
@@ -4926,6 +4927,211 @@ const SLP={ conn:null, league:null, rosters:null, users:null, leagues:null,
             tradedPicks:null, view:'rosters', viewRosterId:null, trade:null,
             detected:null, loaded:false, busy:false, restoreError:null };
 
+// ── Multi-league store ───────────────────────────────────────
+// One record per connected league; `active` names the one on screen.
+// Rosters/users/picks are NOT stored — they are refetched on switch, so a
+// league record stays tiny (IDs, names, and that league's format).
+const SLP_LS_LEAGUES='delta_sleeper_leagues';
+
+// League names come from Sleeper and are arbitrary user text. Everything that
+// interpolates one into markup MUST escape it, or a name with an apostrophe
+// breaks its own onclick and a name with '<' injects markup.
+function slpEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function slpEscJs(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function slpStoreRead(){
+  let st=null;
+  try{ st=JSON.parse(localStorage.getItem(SLP_LS_LEAGUES)||'null'); }catch(e){}
+  if(st&&st.leagues&&st.leagues.length) return st;
+  // Migrate the single-connection key that every build before multi-league wrote.
+  // Without this, the next deploy silently disconnects everyone who is connected today.
+  let old=null;
+  try{ old=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
+  if(old&&old.leagueId){
+    let s=null;
+    try{ s=JSON.parse(localStorage.getItem('delta_settings')||'null'); }catch(e){}
+    const rec=Object.assign({},old,{settings:(s&&s.teams)?{teams:s.teams,qb:s.qb,fmt:s.fmt}:null});
+    const migrated={v:1,active:old.leagueId,leagues:[rec]};
+    slpStoreWrite(migrated);
+    slpLog('migrated saved single connection \u2192 league store:',old.leagueName||old.leagueId);
+    return migrated;
+  }
+  return {v:1,active:null,leagues:[]};
+}
+
+function slpStoreWrite(st){
+  try{ localStorage.setItem(SLP_LS_LEAGUES,JSON.stringify(st)); }catch(e){ slpLog('league store save failed:',e); }
+  // Mirror the active league back into the legacy key. If this deploy is ever
+  // rolled back, the previous build still finds a connection instead of an
+  // empty connect screen. Costs one write; buys a clean revert.
+  const act=slpStoreActive(st);
+  try{
+    if(act){ const c=Object.assign({},act); delete c.settings; localStorage.setItem(SLP_LS_CONN,JSON.stringify(c)); }
+    else localStorage.removeItem(SLP_LS_CONN);
+  }catch(e){}
+}
+
+function slpStoreActive(st){
+  st=st||slpStoreRead();
+  if(!st.leagues||!st.leagues.length) return null;
+  return st.leagues.find(function(l){ return String(l.leagueId)===String(st.active); })||st.leagues[0];
+}
+
+function slpStoreUpsert(conn){
+  const st=slpStoreRead();
+  const i=st.leagues.findIndex(function(l){ return String(l.leagueId)===String(conn.leagueId); });
+  const rec=Object.assign({},conn,{settings:(i>=0?st.leagues[i].settings:null)});
+  if(i>=0) st.leagues[i]=rec; else st.leagues.push(rec);
+  st.active=conn.leagueId;
+  slpStoreWrite(st);
+  return st;
+}
+
+function slpStoreRemove(leagueId){
+  const st=slpStoreRead();
+  st.leagues=(st.leagues||[]).filter(function(l){ return String(l.leagueId)!==String(leagueId); });
+  if(String(st.active)===String(leagueId)) st.active=st.leagues.length?st.leagues[0].leagueId:null;
+  slpStoreWrite(st);
+  return st;
+}
+
+// Called by saveLeaguePrefs() in delta-engine.js after ANY settings write.
+// A hand change to the dropdowns therefore means "for this league", and survives
+// switching away and back. The shared-trade-link path deliberately does not call
+// saveLeaguePrefs, so a friend's 14-team trade still cannot overwrite your league.
+function slpNoteSettings(){
+  const st=slpStoreRead();
+  const act=slpStoreActive(st);
+  if(!act) return;
+  act.settings={teams:leagueTeams,qb:qbFmt,fmt:scoringFmt};
+  slpStoreWrite(st);
+}
+
+// Sign-in probe. Multi-league works fully signed out; this only decides whether
+// to show the sync CTA. Returning false when actually signed in is harmless
+// (a CTA shows to someone who doesn't need it) — never gates functionality.
+function slpSignedIn(){
+  try{
+    if(typeof DSYNC==='undefined'||!DSYNC) return false;
+    if(typeof DSYNC.isSignedIn==='function') return !!DSYNC.isSignedIn();
+    if(DSYNC.user) return true;
+    if(DSYNC.state&&DSYNC.state.user) return true;
+  }catch(e){}
+  return false;
+}
+
+// ── Switching ────────────────────────────────────────────────
+async function slpSwitchLeague(leagueId){
+  if(SLP.busy) return;
+  const st=slpStoreRead();
+  const rec=(st.leagues||[]).find(function(l){ return String(l.leagueId)===String(leagueId); });
+  if(!rec) return;
+  if(SLP.conn&&String(SLP.conn.leagueId)===String(leagueId)&&SLP.loaded) return;
+
+  st.active=rec.leagueId; slpStoreWrite(st);   // set active FIRST so slpNoteSettings writes to the right league
+
+  SLP.busy=true; SLP.loaded=false; SLP.restoreError=null;
+  SLP.conn={leagueId:rec.leagueId,leagueName:rec.leagueName,season:rec.season,
+            rosterId:rec.rosterId,teamName:rec.teamName,userId:rec.userId,username:rec.username};
+  SLP.league=null; SLP.rosters=null; SLP.users=null; SLP.tradedPicks=null;
+  SLP.match=null; SLP.unmatched=[]; SLP.leagues=null; SLP.pendingUser=null;
+  SLP.viewRosterId=rec.rosterId; SLP.view='rosters';
+  SLP.trade=null; if(typeof renderSlpTradeAssist==='function') renderSlpTradeAssist();
+  renderMyTeam();
+  try{ if(typeof DSYNC!=='undefined'&&DSYNC.noteSleeperConnect) DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
+
+  try{
+    slpLog('switching to league',rec.leagueId,rec.leagueName);
+    const res=await Promise.all([
+      slpFetch('/league/'+rec.leagueId),
+      slpFetch('/league/'+rec.leagueId+'/rosters'),
+      slpFetch('/league/'+rec.leagueId+'/users'),
+      slpFetch('/league/'+rec.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
+    ]);
+    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
+    await slpEnsurePlayers();
+    slpRunMatch();
+    SLP.loaded=true;
+    // Re-score the whole platform to this league. Stored format wins when we have
+    // it (it carries any hand changes); otherwise detect it from the league object.
+    if(rec.settings&&rec.settings.teams) slpApplyFormat(rec.settings.teams,rec.settings.qb,rec.settings.fmt);
+    else slpDetectAndApplyFormat();
+    slpLog('switch complete');
+  }catch(e){
+    slpLog('switch FAILED:',e);
+    SLP.conn=null;
+    SLP.restoreError='Could not reach Sleeper to load "'+(rec.leagueName||rec.leagueId)+'": '+(e.message||e);
+  }finally{ SLP.busy=false; renderMyTeam(); }
+}
+
+// Show the connect form without dropping the leagues already stored.
+function slpAddLeague(){
+  if(SLP.busy) return;
+  SLP.loaded=false; SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
+  SLP.tradedPicks=null; SLP.match=null; SLP.unmatched=[]; SLP.leagues=null;
+  SLP.pendingUser=null; SLP.restoreError=null;
+  renderMyTeam();
+  const el=document.getElementById('slp-input');
+  if(el){ el.value=''; try{ el.focus(); }catch(e){} }
+  slpStatus('Add another league \u2014 enter your Sleeper username or a league ID.');
+}
+
+// Remove one league. If it was the last one, this is a full disconnect.
+function slpRemoveLeague(leagueId){
+  const st0=slpStoreRead();
+  const rec=(st0.leagues||[]).find(function(l){ return String(l.leagueId)===String(leagueId); });
+  if(!rec) return;
+  if(!confirm('Remove "'+(rec.leagueName||leagueId)+'" from DELTA? Your Sleeper league is untouched.')) return;
+  const st=slpStoreRemove(leagueId);
+  slpLog('removed league',leagueId,'\u00b7',st.leagues.length,'remaining');
+  if(!st.leagues.length){ sleeperDisconnect(); return; }
+  const next=slpStoreActive(st);
+  SLP.loaded=false; SLP.conn=null;
+  slpSwitchLeague(next.leagueId);
+}
+
+// ── League switcher (header) ─────────────────────────────────
+function renderSlpLeagueSwitcher(){
+  const st=slpStoreRead();
+  const list=st.leagues||[];
+  if(!list.length) return '';
+  const chips=list.map(function(l){
+    const on=SLP.conn&&String(l.leagueId)===String(SLP.conn.leagueId);
+    const s=l.settings;
+    const sub=(s&&s.teams)?(s.teams+'-team \u00b7 '+(s.qb==='sf'?'SF':'1QB')):'';
+    return '<button onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')"'
+      +' style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:14px;cursor:'+(on?'default':'pointer')+';'
+      +'border:1px solid '+(on?'var(--teal)':'var(--line)')+';background:'+(on?'var(--ink-2)':'var(--panel)')+';'
+      +'color:'+(on?'var(--teal)':'var(--fog)')+'">'+slpEsc(l.leagueName)
+      +(sub?'<span style="font-weight:500;opacity:.75"> \u00b7 '+sub+'</span>':'')+'</button>';
+  }).join('');
+  const add='<button onclick="slpAddLeague()" style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:14px;'
+    +'border:1px dashed var(--line);background:transparent;color:var(--fog);cursor:pointer">+ Add league</button>';
+  const cta=(!slpSignedIn()&&list.length>=2)
+    ? '<div style="font-size:10.5px;color:var(--fog);margin-top:6px">'
+      +list.length+' leagues connected on this device \u00b7 '
+      +'<a href="#" onclick="if(typeof dsyncOpenAuth===\'function\'){dsyncOpenAuth();}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
+      +' and they follow you to every device.</div>'
+    : '';
+  return '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+chips+add+'</div>'+cta;
+}
+
+// Shown in the connect state when leagues are already stored, so "Add league"
+// is never a one-way door.
+function renderSlpSwitchBack(){
+  const host=document.getElementById('slp-switch-back');
+  if(!host) return;
+  const st=slpStoreRead();
+  const list=st.leagues||[];
+  if(!list.length){ host.innerHTML=''; return; }
+  host.innerHTML='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Already connected</div>'
+    +list.map(function(l){
+      return '<button onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')" style="display:inline-block;margin:0 6px 6px 0;font-size:11.5px;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
+        +slpEsc(l.leagueName)+'</button>';
+    }).join('')+'</div>';
+}
+
 function slpLog(){ try{ console.log.apply(console,['[DELTA Sleeper]'].concat([].slice.call(arguments))); }catch(e){} }
 
 async function slpFetch(path){
@@ -5089,14 +5295,14 @@ async function slpSelectTeam(rosterId,user){
     rosterId:roster.roster_id, teamName:slpTeamLabel(roster),
     userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
   };
-  try{ localStorage.setItem(SLP_LS_CONN,JSON.stringify(SLP.conn)); }catch(e){ slpLog('conn save failed:',e); }
+  slpStoreUpsert(SLP.conn);   // adds or updates this league and makes it active (also mirrors to the legacy key)
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
   SLP.viewRosterId=roster.roster_id; SLP.view='rosters';
   slpLog('CONNECTED:',JSON.stringify(SLP.conn));
   slpStatus('Connected \u2014 matching players\u2026');
   await slpEnsurePlayers();
   slpRunMatch();
-  slpDetectAndApplyFormat();   // connect-time only; later manual dropdown changes are respected
+  slpDetectAndApplyFormat();   // detect on connect; saveLeaguePrefs() then stores the format on THIS league
   SLP.loaded=true; SLP.restoreError=null;
   renderMyTeam();
 }
@@ -5190,7 +5396,8 @@ async function sleeperRefresh(){
 }
 
 function sleeperDisconnect(){
-  slpLog('disconnecting (player DB cache kept)');
+  slpLog('disconnecting ALL leagues (player DB cache kept)');
+  try{ localStorage.removeItem(SLP_LS_LEAGUES); }catch(e){}
   try{ localStorage.removeItem(SLP_LS_CONN); }catch(e){}
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperDisconnect(); }catch(e){}
   SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
@@ -5205,12 +5412,15 @@ function sleeperDisconnect(){
 // ── Tab entry point (lazy init + saved-connection restore) ───
 async function openMyTeamTab(){
   if(SLP.loaded||SLP.busy){ renderMyTeam(); return; }
-  let saved=null;
-  try{ saved=JSON.parse(localStorage.getItem(SLP_LS_CONN)||'null'); }catch(e){}
-  if(!saved||!saved.leagueId){ renderMyTeam(); return; }   // no saved connection → connect UI
-  SLP.busy=true; SLP.conn=saved; SLP.viewRosterId=saved.rosterId; renderMyTeam();   // shows restoring state
+  const st=slpStoreRead();               // migrates the old single-connection key on first run
+  const saved=slpStoreActive(st);
+  if(!saved||!saved.leagueId){ renderMyTeam(); return; }   // nothing stored → connect UI
+  SLP.busy=true;
+  SLP.conn={leagueId:saved.leagueId,leagueName:saved.leagueName,season:saved.season,
+            rosterId:saved.rosterId,teamName:saved.teamName,userId:saved.userId,username:saved.username};
+  SLP.viewRosterId=saved.rosterId; renderMyTeam();   // shows restoring state
   try{
-    slpLog('restoring saved connection:',JSON.stringify(saved));
+    slpLog('restoring active league:',saved.leagueName||saved.leagueId,'\u00b7',(st.leagues||[]).length,'stored');
     const res=await Promise.all([
       slpFetch('/league/'+saved.leagueId),
       slpFetch('/league/'+saved.leagueId+'/rosters'),
@@ -5222,11 +5432,12 @@ async function openMyTeamTab(){
     slpRunMatch();
     SLP.loaded=true; SLP.restoreError=null;
     slpLog('restore complete');
-    // NOTE: format is NOT re-applied on restore — delta_settings already carries
-    // it, and any manual dropdown changes you made since connecting are respected.
+    // Format is still NOT re-applied on restore. delta_settings already holds the
+    // active league's format (it was written when you last switched to it), and any
+    // hand changes you made since are respected. Switching leagues is what re-scores.
   }catch(e){
     slpLog('restore FAILED:',e);
-    SLP.conn=null;   // fall back to connect UI but keep saved key for next attempt
+    SLP.conn=null;   // fall back to connect UI but keep the store for the next attempt
     SLP.restoreError='Could not reach Sleeper to restore "'+(saved.leagueName||saved.leagueId)+'": '+(e.message||e);
   }finally{ SLP.busy=false; renderMyTeam(); }
 }
@@ -5237,7 +5448,7 @@ function renderSlpLeaguePicker(){
   host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Your leagues</div>'
     +(SLP.leagues||[]).map(function(l){
       return '<button onclick="slpPickLeague(\''+l.league_id+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
-        +'<span style="font-weight:700">'+l.name+'</span>'
+        +'<span style="font-weight:700">'+slpEsc(l.name)+'</span>'
         +'<span style="color:var(--fog);font-size:10.5px"> \u00b7 '+(l.total_rosters||'?')+'-team \u00b7 '+l.season+'</span></button>';
     }).join('')+'</div>';
 }
@@ -5335,22 +5546,28 @@ function renderMyTeam(){
 
   if(SLP.busy&&SLP.conn){
     connectDiv.style.display='none'; rosterDiv.style.display='block';
-    rosterDiv.innerHTML='<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
+    rosterDiv.innerHTML=renderSlpLeagueSwitcher()
+      +'<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+slpEsc(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
     return;
   }
   if(!SLP.conn||!SLP.loaded){
     connectDiv.style.display='block'; rosterDiv.style.display='none';
+    renderSlpSwitchBack();
     if(SLP.restoreError) slpStatus(SLP.restoreError,true);
     return;
   }
   connectDiv.style.display='none'; rosterDiv.style.display='block';
 
-  const header='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
-    +'<div><div style="font-size:15px;font-weight:800;color:var(--paper)">'+SLP.conn.leagueName+'</div>'
-    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+SLP.conn.season+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+SLP.conn.teamName+'</span></div></div>'
+  const multi=((slpStoreRead().leagues)||[]).length>1;
+  const header=renderSlpLeagueSwitcher()
+    +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
+    +'<div><div style="font-size:15px;font-weight:800;color:var(--paper)">'+slpEsc(SLP.conn.leagueName)+'</div>'
+    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
-    +'<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Disconnect</button>'
+    +(multi
+      ? '<button onclick="slpRemoveLeague(\''+slpEscJs(SLP.conn.leagueId)+'\')" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Remove</button>'
+      : '<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Disconnect</button>')
     +'</div>'
     +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+slpFmtChips()+'</div>'
     +renderSlpSubNav();

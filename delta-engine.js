@@ -3986,6 +3986,9 @@ try{
 function saveLeaguePrefs(){
   try{ localStorage.setItem('delta_settings', JSON.stringify({teams:leagueTeams,qb:qbFmt,fmt:scoringFmt})); }catch(e){}
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteSettings(); }catch(e){}
+  // Multi-league: keep the ACTIVE league's stored format in step with the dropdowns,
+  // so a hand change means "for this league" and survives a switch away and back.
+  try{ if(typeof slpNoteSettings==='function') slpNoteSettings(); }catch(e){}
 }
 const SCAR_STARTERS = { QB:{ '1qb':1.0, 'sf':1.8 }, RB:2.4, WR:3.0, TE:1.1 };
 // Positional value-by-rank curves.  v(r) = (PPG of the rank-r player) / (PPG of the rank-1 player).
