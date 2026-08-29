@@ -48,6 +48,13 @@ KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
 YEAR  = int(os.environ.get("CFBD_YEAR")  or default_season())
 WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)   # highest week fetched; the loop runs 0..WEEKS
 PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
+# PROBE mode: answer one question — "does CFBD have the finished games yet?" — for
+# one or two API calls instead of ~29, and write nothing. Meant to be fired every
+# 20 minutes on a Saturday to measure how long after a final whistle the box score
+# actually lands. That number is what should set the real fetch cadence; right now
+# we only have an upper bound (under two hours) from a single run.
+PROBE = (os.environ.get("CFBD_PROBE") or "").strip().lower() in ("1", "true", "yes")
+PROBE_WEEK = os.environ.get("CFBD_PROBE_WEEK")
 QUOTA = {"QB": int(os.environ.get("Q_QB") or 70),
          "RB": int(os.environ.get("Q_RB") or 110),
          "WR": int(os.environ.get("Q_WR") or 160),
@@ -284,6 +291,48 @@ with cfbd.ApiClient(cfg) as api:
             uu = g(u, "usage")
             ov = getattr(uu, "overall", None) if uu is not None else None
             if ov is not None: ply[k]["usg"] = round(float(ov), 4)
+
+    # ---- probe: are the games in yet? ----
+    if PROBE:
+        wk = int(PROBE_WEEK) if PROBE_WEEK else None
+        if wk is None:
+            # Estimate the current week from the date, then check it and its
+            # neighbours. Walking down from WEEKS costs one call per empty week —
+            # 16 calls in August, which defeats the point of a cheap probe.
+            # Week 1 is the last-Saturday-of-August slate; add a week per 7 days.
+            est = ((datetime.date.today() - datetime.date(YEAR, 8, 25)).days // 7) + 1
+            est = max(1, min(WEEKS, est))
+            games = []
+            for cand in (est, est - 1, est + 1):     # estimate, then either side
+                if cand < 0 or cand > WEEKS: continue
+                rows = call(f"GET /games/players wk{cand} (probe)", games_api.get_game_player_stats,
+                            year=YEAR, week=cand, classification="fbs", season_type="regular")
+                if rows: wk = cand; games = rows; break
+            if wk is None: wk = est
+        else:
+            games = call(f"GET /games/players wk{wk} (probe)", games_api.get_game_player_stats,
+                         year=YEAR, week=wk, classification="fbs", season_type="regular")
+        stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        seen, athletes = [], set()
+        for gm in games or []:
+            names = [g(tm, "team") for tm in (g(gm, "teams") or [])]
+            seen.append(" vs ".join(n for n in names if n))
+            for tm in (g(gm, "teams") or []):
+                for cat in (g(tm, "categories") or []):
+                    for typ in (g(cat, "types") or []):
+                        for ath in (g(typ, "athletes") or []):
+                            if g(ath, "id") is not None: athletes.add(str(g(ath, "id")))
+        print(f"\n{'='*64}")
+        print(f"PROBE  {stamp}  season {YEAR} week {wk}")
+        print(f"  games with player stats : {len(seen)}")
+        print(f"  distinct athletes       : {len(athletes):,}")
+        for s in seen: print(f"    - {s}")
+        if not seen:
+            print("    (none yet — CFBD has not published box scores for this week)")
+        print(f"  API calls used: {CALLS}")
+        print(f"{'='*64}")
+        print("Probe only: nothing written, nothing committed.")
+        sys.exit(0)
 
     # ---- weekly game logs ----
     print("\n-- weekly game logs " + "-" * 51)
