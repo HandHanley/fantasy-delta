@@ -3,13 +3,22 @@ name: Freeze Snapshot (accuracy ledger)
 # THE FREEZE BUTTON. Manual trigger only — run this ONCE on freeze day, after:
 #   1. the final data nightly is green
 #   2. the stale badge is in its normal band (~26-28)
-#   3. the two leaguemate reviewers have signed off
+#   3. a --dry-run has been read and the headline numbers look defensible
+#      (the dry run is the review gate: the snapshot is generated at the
+#      12/SF/half-TEP anchor, which is NOT what anyone browsing the site sees,
+#      so nobody has laid eyes on this exact slice until the rehearsal does)
 # It generates data/freeze-2026.json (DELTA's graded opinions at the
 # 12-team/SF/half-TEP anchor, mktStale excluded) and commits it to main.
 # That file is the immutable public record the 2026 season grades.
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Rehearse only — run every check and print the headline, write and commit NOTHING. Leave this ON until freeze day."
+        type: boolean
+        required: false
+        default: true
 
 jobs:
   freeze:
@@ -28,13 +37,44 @@ jobs:
       - name: Run regression sweep first (freeze refuses to run on a broken engine)
         run: node scripts/sweep.js
 
-      - name: Generate freeze snapshot
-        run: node scripts/freeze-snapshot.js
+      # The script REFUSES to write without --confirm; that guard exists so nobody
+      # freezes by accident. This step has to supply it explicitly on the real run.
+      # Default is a dry run: the safe outcome is the one you get by not thinking.
+      - name: Rehearse the freeze (writes nothing)
+        if: ${{ github.event.inputs.dry_run != 'false' }}
+        run: node scripts/freeze-snapshot.js --dry-run
+
+      - name: Generate freeze snapshot (WRITES the permanent record)
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: node scripts/freeze-snapshot.js --confirm
 
       - name: Commit the ledger
+        if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
           git config user.name "delta-bot"
           git config user.email "actions@github.com"
           git add data/freeze-2026.json
           git diff --cached --quiet && echo "No changes" || git commit -m "FREEZE: 2026 accuracy-ledger snapshot"
           git push
+
+      - name: Publish the snapshot fingerprint
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        # The SHA-256 is what makes "unmodified" provable rather than asserted.
+        # Copy it somewhere timestamped and outside this repo (a post, the ledger
+        # page) on the day. Anyone can rerun this hash later and check it matches.
+        run: |
+          echo "::notice title=Freeze snapshot SHA-256::$(sha256sum data/freeze-2026.json | cut -d' ' -f1)"
+          echo "--------------------------------------------------------------"
+          sha256sum data/freeze-2026.json
+          echo "bytes: $(wc -c < data/freeze-2026.json)"
+          echo "--------------------------------------------------------------"
+
+      - name: Keep a copy off this repository
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        # Downloadable from the run page for 90 days. Grab it and store it
+        # somewhere that does not depend on this GitHub account surviving.
+        uses: actions/upload-artifact@v4
+        with:
+          name: freeze-2026-snapshot
+          path: data/freeze-2026.json
+          retention-days: 90

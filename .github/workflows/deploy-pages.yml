@@ -31,7 +31,7 @@ on:
     # workflow using the default GITHUB_TOKEN cannot trigger `on: push`, so a data
     # job missing from here lands its files in the repo and never reaches the site.
     # These are the `name:` values at the top of each workflow, not the filenames.
-    workflows: ["Update Market Values", "Fetch College Data"]
+    workflows: ["Update Market Values", "Fetch College Data", "Freeze Snapshot (accuracy ledger)"]
     types: [completed]
   workflow_dispatch:
 
