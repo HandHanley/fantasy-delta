@@ -89,6 +89,11 @@ tr:hover td{background:var(--panel)}
      full box score on desktop (pass/rush/rec split out), which cannot fit on a
      phone. There it collapses to combined totals instead. */
   .col-mobile-only{display:table-cell}
+  /* Phone: disclaimer on its own line, links on the next, rather than the links
+     spilling one at a time. */
+  footer{gap:8px!important}
+  .foot-note{flex-basis:100%}
+  .foot-links{gap:14px;width:100%}
   /* Modal mobile */
   .dd-card{border-radius:10px 10px 0 0;max-height:85vh;margin-top:auto}
   .dd-overlay{align-items:flex-end;padding:0}
@@ -221,6 +226,9 @@ tr:hover td{background:var(--panel)}
    flips this to table-cell. Used by the All view, which shows a full box score
    on desktop and combined totals on a phone. */
 .col-mobile-only{display:none}
+/* Footer: the four links travel as one group so they wrap together instead of
+   leaving a single orphaned link on its own line. */
+.foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
 .dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
 .dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
 
@@ -3810,15 +3818,19 @@ document.addEventListener('click', function(e) {
 </div>
 
 <!-- Site footer -->
-<footer style="margin-top:2.25rem;padding-top:.9rem;border-top:1px solid var(--line);
+<footer style="margin-top:2.25rem;padding-top:.9rem;padding-bottom:1.75rem;border-top:1px solid var(--line);
   display:flex;gap:16px;flex-wrap:wrap;align-items:center;
   font-size:10.5px;color:var(--fog-2);line-height:1.6">
-  <span>Not affiliated with the NFL, NFLPA, or Sleeper.</span>
+  <!-- padding-bottom is deliberate: without it the last row sits flush against the
+       viewport edge on a phone and reads as cut off rather than finished. -->
+  <span class="foot-note">Not affiliated with the NFL, NFLPA, or Sleeper.</span>
+  <span class="foot-links">
   <a href="./privacy.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Privacy</a>
   <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
   <a href="#" onclick="openAbout();return false;" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">About</a>
   <a href="https://ko-fi.com/fantasydelta" target="_blank" rel="noopener noreferrer"
      style="color:var(--teal-br);font-weight:700;text-decoration:none;border-bottom:1px solid var(--teal-br)">Support DELTA</a>
+  </span>
 </footer>
 
 
