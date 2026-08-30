@@ -5869,7 +5869,7 @@ function slpTeamValues(){
     const row={rosterId:r.roster_id, team:slpTeamLabel(r), _ref:REF,
                model:0, market:0, players:0, unmatched:0, nonSkill:0,
                pickModel:0, pickMarket:0, picks:0, picksUnpriced:0,
-               young:0, vet:0, pos:{}};
+               ageW:0, ageWA:0, pos:{}};
     POS.forEach(function(p){ row.pos[p]={model:0,n:0}; });
     const squad=[];
 
@@ -5910,7 +5910,11 @@ function slpTeamValues(){
       // Horizon split. Deliberately a plain age bucket, not a forward
       // projection — DELTA does not project three years out, and dressing an
       // age split as one would claim more than the model supports.
-      if((pl.a||99)<=25) row.young+=mw; else row.vet+=mw;
+      /* Value-weighted average age: a team's age should reflect the players it is
+         built around, not deep-bench filler. Weight by the same model value used
+         everywhere else, so one stud 22-year-old moves it more than four 30-year-old
+         roster fillers. Picks have no age and are excluded rather than counted as 0. */
+      if(pl.a){ row.ageW+=mw; row.ageWA+=mw*pl.a; }
     }
 
     for(const pk of slpPickInventory(r.roster_id)){
@@ -5918,11 +5922,11 @@ function slpTeamValues(){
       if(!v){ row.picksUnpriced++; continue; }
       const pw=slpPowerWeight(v.market,row._ref);
       row.pickModel+=v.model*pw; row.pickMarket+=v.market*pw; row.picks++;
-      row.young+=v.model*pw;                 // a future pick is future value
     }
     row.model+=row.pickModel; row.market+=row.pickMarket;
     const wn=slpWinNow(squad);
     row.winNow=wn.pts; row.lineupOpen=wn.open;
+    row.avgAge=row.ageW>0?(row.ageWA/row.ageW):null;
     return row;
   });
 
@@ -5930,9 +5934,21 @@ function slpTeamValues(){
   const totK=rows.reduce(function(a,b){return a+b.market;},0)||1;
   rows.forEach(function(r){
     r.shareModel=r.model/totM; r.shareMarket=r.market/totK;
-    // The story is the DISAGREEMENT: where DELTA's read of a roster differs from
-    // what the market would pay for it. Compared as shares of the league so the
-    // two scales are commensurable.
+    /* An "Edge" figure (share of league value under DELTA minus share under the
+       market) was shown here and REMOVED, deliberately. Two reasons, both real:
+
+       1. Team-level disagreement is tiny by construction. It is the average of
+          ~25 player-level disagreements pointing in different directions, so
+          ±20% per player over a full roster lands near ±3%. Averaging eats the
+          signal; no presentation fixes that.
+       2. Expressed as a share-of-league difference in a 10-team league, a 3%
+          relative gap prints as "0.3%", which reads as noise.
+
+       The legible version is the two RANKS disagreeing. If a magnitude is wanted
+       later, the honest one is per-player — a roster's biggest model-vs-market
+       gaps — which is more useful anyway and feeds Trade Targets.
+
+       Shares are kept: they are cheap and a future view may want them. */
     r.edge=r.shareModel-r.shareMarket;
   });
   const byModel=rows.slice().sort(function(a,b){return b.model-a.model;});
@@ -5943,7 +5959,6 @@ function slpTeamValues(){
     rows.slice().sort(function(a,b){return b.pos[p].model-a.pos[p].model;})
         .forEach(function(r,i){ r.pos[p].rank=i+1; });
   });
-  rows.slice().sort(function(a,b){return b.young-a.young;}).forEach(function(r,i){ r.rankYoung=i+1; });
   rows.slice().sort(function(a,b){return b.winNow-a.winNow;}).forEach(function(r,i){ r.rankWin=i+1; });
   return byModel;
 }
@@ -5959,31 +5974,28 @@ function renderSlpPower(){
 
   const head='<tr>'
     +'<th style="text-align:left">#</th><th style="text-align:left">Team</th>'
-    +'<th data-tip="DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25. Not a raw point total \u2014 a power score.">DELTA</th>'
-    +'<th data-tip="The same rosters and the same weighting, scored on dynasty market value instead of DELTA\u2019s model. Identical basis, so the two columns are comparable.">Market</th>'
-    +'<th data-tip="DELTA\u2019s share of league value minus the market\u2019s share. Positive means DELTA rates this roster higher than the market does \u2014 the same buy/sell logic DELTA runs on players, applied to teams.">Edge</th>'
+    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25.">DELTA</th>'
+    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster.">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
-    +'<th data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Now</th>'
-    +'<th class="col-hide-mobile" data-tip="Rank by value held in players aged 25 or under, plus future picks. An age split, NOT a three-year projection.">Young</th>'
+    +'<th data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
+    +'<th class="col-hide-mobile" data-tip="Average age of the roster, weighted by each player\u2019s DELTA value \u2014 so age reflects the players a team is actually built around, not deep-bench filler. Picks are not aged.">Avg Age</th>'
     +'</tr>';
 
   const body=rows.map(function(r){
     const me=String(r.rosterId)===String(mine);
-    const up=r.edge>=0, ec=Math.abs(r.edge)<0.004?'var(--fog-2)':(up?'var(--emerald)':'var(--coral)');
     const move=r.rankMarket-r.rankModel;   // positive: DELTA ranks them higher
     return '<tr'+(me?' style="background:var(--ink-2)"':'')+'>'
       +'<td style="font-weight:700;color:var(--fog-2)">'+r.rankModel+'</td>'
       +'<td style="white-space:nowrap;font-weight:'+(me?'800':'600')+';color:'+(me?'var(--teal-br)':'var(--paper)')+'">'
         +slpEsc(r.team)+(me?' \u2605':'')+'</td>'
-      +'<td style="font-weight:700">'+fmtK(r.model)+'</td>'
-      +'<td style="color:var(--fog)">'+fmtK(r.market)+'<span style="font-size:9px;color:var(--fog-2)"> ('+r.rankMarket+')</span></td>'
-      +'<td style="font-weight:700;color:'+ec+';white-space:nowrap">'+(up?'+':'\u2212')+Math.abs(r.edge*100).toFixed(1)+'%'
+      +'<td style="font-weight:700;color:var(--paper)">'+r.rankModel+'</td>'
+      +'<td style="white-space:nowrap"><span style="color:'+(move?(move>0?'var(--emerald)':'var(--coral)'):'var(--fog)')+'">'+r.rankMarket+'</span>'
         +(move?'<span style="font-size:9px;color:var(--fog-2)"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
       +POS.map(p=>'<td class="col-hide-mobile" style="color:var(--fog)">'+r.pos[p].rank+'</td>').join('')
       +'<td style="white-space:nowrap"><span style="font-weight:700;color:var(--paper)">'+r.winNow.toFixed(1)+'</span>'
         +'<span style="font-size:9px;color:var(--fog-2)"> ('+r.rankWin+')</span>'
         +(r.lineupOpen?'<span style="font-size:9px;color:var(--coral)"> '+r.lineupOpen+' open</span>':'')+'</td>'
-      +'<td class="col-hide-mobile" style="color:var(--fog)">'+r.rankYoung+'</td>'
+      +'<td class="col-hide-mobile" style="color:var(--fog)">'+(r.avgAge!=null?r.avgAge.toFixed(1):'\u2013')+'</td>'
       +'</tr>';
   }).join('');
 
@@ -6041,14 +6053,20 @@ function renderSlpSubNav(){
   }).join('');
   const boardActive=SLP.view==='board';
   const powerActive=SLP.view==='power';
-  const powerPill='<button onclick="slpViewPower()" style="font-size:10.5px;font-weight:'+(powerActive?'800':'600')
-    +';padding:4px 10px;border-radius:12px;border:1px solid var(--line);background:'+(powerActive?'var(--ink-2)':'var(--panel)')
-    +';color:'+(powerActive?'var(--teal-br)':'var(--fog)')+';cursor:pointer;white-space:nowrap">Power</button>';
+  /* Trade Targets and Power Rankings are LEAGUE-WIDE analysis, not a team to look
+     at. They share the team-pill row, so they need to read as a different KIND of
+     thing: one shared style (sky, emerald when active, on the raised surface)
+     marks them as a pair and separates them from the roster pills. */
+  const analysisPill=function(on,fn,label){
+    return '<button onclick="'+fn+'" style="font-size:10.5px;font-weight:'+(on?'800':'700')
+      +';padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2)'
+      +';color:'+(on?'var(--emerald)':'var(--sky)')+';cursor:pointer;white-space:nowrap">'+label+'</button>';
+  };
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
     +pills
     +'<span style="flex-basis:100%;height:0"></span>'
-    +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'var(--line)':'var(--line)')+';background:'+(boardActive?'var(--ink-2)':'var(--ink-2)')+';color:'+(boardActive?'var(--emerald)':'var(--sky)')+';cursor:pointer">League Board \u2014 buy/sell targets</button>'
-    +powerPill
+    +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
+    +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +'</div>';
 }
 
