@@ -50,4 +50,4 @@ or any data provider named above.
 
 ## Questions
 
-Commercial licensing enquiries: through https://fantasydelta.com
+Commercial licensing enquiries: steve@fantasydelta.com
