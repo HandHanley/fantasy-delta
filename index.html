@@ -5736,6 +5736,299 @@ function slpTagText(p){
 function slpViewRoster(rid){ SLP.view='rosters'; SLP.viewRosterId=rid; renderMyTeam(); }
 function slpShowBoard(){ SLP.view='board'; renderMyTeam(); }
 
+// ── League power rankings ────────────────────────────────────
+// Roster value = the sum of DELTA's MODEL value for every player, plus future
+// picks. Summing asset values sidesteps the starters-vs-depth argument instead
+// of solving it with a weighting curve: a model value already IS a dynasty asset
+// value, so a WR5 contributes what he is actually worth rather than zero (which
+// would punish depth) or a starter's share (which would flatter it). No decay
+// curve to defend, and it moves with league settings automatically.
+//
+// Picks: slpPickInventory() resolves ownership after trades, from NEXT season
+// onward — by September every league has drafted, so current-year picks are
+// players now and counting them would double-count. Note that mvAsset() returns
+// the MARKET value for a pick (DELTA does not model picks independently), so a
+// pick adds the same amount to both columns. Picks move the ranking; they cannot
+// move the gap.
+function slpPickValue(season, round){
+  const nm = season+' Mid '+slpOrd(round)+' Round Pick';
+  let a = (typeof ASSETS!=='undefined'&&ASSETS) ? ASSETS.find(function(x){return x.n===nm;}) : null;
+  if(!a && typeof PICKS!=='undefined') a = PICKS.find(function(x){return x.n===nm;});
+  if(!a) return null;                        // rounds 4+ have no published tier
+  const mkt=(a.kMkt!=null?a.kMkt:a.k)||0;
+  return {model: (typeof mvAsset==='function'?mvAsset(a):mkt), market: mkt};
+}
+
+/* Convexity: an asset counts for value x (value/reference)^POWER_K, so quality
+   outweighs quantity. A flat sum says three WR5s equal one WR2, which nobody
+   trades on, and it rewards banking bodies on taxi and IR.
+
+   A CURVE rather than tiers, and keyed to VALUE rather than to depth-chart rank.
+   Rank-based decay would make a player worth less on a stacked roster than on a
+   bad one purely because of who he sits behind — the same asset should be worth
+   the same everywhere. Tiers put a cliff in, and every argument about the
+   ranking becomes an argument about where the cliff sits.
+
+   POWER_K = 0.25 was chosen against the live 12|SF distribution (473 players,
+   30 Aug 2026). It lifts elite from 21% to 26.5% of league value and trims
+   flex/depth from 18% to 14%, leaving a real WR3 like Deebo at x0.89 rather than
+   erased. Higher values buy almost nothing at the bottom — deep bench and fringe
+   are only 4% of league value COMBINED, flat — while taxing the flex band the
+   curve is not meant to punish.
+
+   Be honest about what this number is: unlike scarcity (nine seasons) or ripples
+   (eight), it is a judgement call, not a fit. That is a reason this view stays
+   out of the accuracy ledger. If real league trades are ever logged, the honest
+   refit is the exponent under which accepted trades come out roughly even. */
+/* Win-now: the projected weekly output of a team's BEST LEGAL STARTING LINEUP.
+
+   Deliberately a different method from the asset ranking above, because it
+   answers a different question. Asset value counts every player weighted by
+   quality, because in dynasty a surplus QB is tradeable leverage. Win-now counts
+   ONLY the lineup, unweighted, because a bench player scores exactly zero points
+   on Sunday no matter how good he is. Depth is an asset, not a score.
+
+   Slots come from the league's own roster_positions, so a 3WR league and a 2WR
+   league get different answers, and FLEX/SUPER_FLEX are filled greedily from
+   whoever is left. Greedy is optimal here: every flex slot takes the best
+   remaining eligible player, and since the dedicated slots are filled first by
+   position, no better arrangement exists.
+
+   This is where a Davante Adams shows up correctly. The model discounts him hard
+   on age — right for what he is WORTH — while he is still a genuinely useful
+   starter. Asset value and win-now come apart on exactly those players, and
+   showing both is more honest than picking one. */
+const FLEX_ELIG = {
+  FLEX:        ['RB','WR','TE'],
+  WRRB_FLEX:   ['RB','WR'],
+  REC_FLEX:    ['WR','TE'],
+  WRRB_WRT:    ['RB','WR','TE'],
+  SUPER_FLEX:  ['QB','RB','WR','TE'],
+  IDP_FLEX:    []
+};
+
+function slpLineupSlots(){
+  const rp=(SLP.league&&SLP.league.roster_positions)||[];
+  const fixed={}, flex=[];
+  for(const s of rp){
+    if(s==='BN'||s==='TAXI'||s==='IR') continue;          // bench, taxi, IR do not score
+    if(FLEX_ELIG[s]){ if(FLEX_ELIG[s].length) flex.push(FLEX_ELIG[s]); continue; }
+    if(['QB','RB','WR','TE'].indexOf(s)>=0) fixed[s]=(fixed[s]||0)+1;
+    // K, DEF and IDP slots are ignored: DELTA does not project them, and a
+    // number that silently omits a scoring slot is worse than one that is
+    // openly about the skill positions.
+  }
+  return {fixed:fixed, flex:flex};
+}
+
+function slpWinNow(playerList){
+  const slots=slpLineupSlots();
+  const pool={QB:[],RB:[],WR:[],TE:[]};
+  for(const p of playerList){
+    const pos=p.p||p.pos;
+    if(pool[pos]) pool[pos].push((typeof getAdjProj==='function')?getAdjProj(p):(p.proj||0));
+  }
+  for(const k in pool) pool[k].sort(function(a,b){return b-a;});
+  let total=0, filled=0, open=0;
+  for(const pos in slots.fixed){
+    for(let i=0;i<slots.fixed[pos];i++){
+      if(pool[pos].length){ total+=pool[pos].shift(); filled++; } else open++;
+    }
+  }
+  for(const elig of slots.flex){
+    let best=-1, bestPos=null;
+    for(const pos of elig){ if(pool[pos].length && pool[pos][0]>best){ best=pool[pos][0]; bestPos=pos; } }
+    if(bestPos){ total+=pool[bestPos].shift(); filled++; } else open++;
+  }
+  return {pts:+total.toFixed(1), filled:filled, open:open};
+}
+
+const POWER_K = 0.25;
+
+/* Reference point: the 75th percentile of the live market, i.e. a genuinely
+   startable dynasty asset. Recomputed every render rather than hardcoded —
+   market values drift over a season and a frozen reference would quietly change
+   what the curve means. Assets above it are amplified, below it discounted. */
+function slpPowerRef(){
+  const v=[];
+  for(const p of COMP){ const k=(p.kMkt!=null?p.kMkt:p.k)||0; if(k>0) v.push(k); }
+  if(!v.length) return 1;
+  v.sort(function(a,b){return a-b;});
+  return v[Math.floor(v.length*0.75)]||1;
+}
+function slpPowerWeight(v,ref){ return v>0 ? Math.pow(v/ref, POWER_K) : 0; }
+
+function slpTeamValues(){
+  if(!SLP.rosters||!SLP.league||typeof COMP==='undefined') return null;
+  const byName={};
+  for(const p of COMP) byName[p.n]=p;
+  const POS=['QB','RB','WR','TE'];
+
+  const REF=slpPowerRef();
+  const rows=(SLP.rosters||[]).map(function(r){
+    const row={rosterId:r.roster_id, team:slpTeamLabel(r), _ref:REF,
+               model:0, market:0, players:0, unmatched:0, nonSkill:0,
+               pickModel:0, pickMarket:0, picks:0, picksUnpriced:0,
+               young:0, vet:0, pos:{}};
+    POS.forEach(function(p){ row.pos[p]={model:0,n:0}; });
+    const squad=[];
+
+    for(const pid of (r.players||[])){
+      const nm=SLP.match?SLP.match[pid]:null;
+      const pl=nm?byName[nm]:null;
+      if(!pl){
+        /* Three different things get lumped together if you are not careful, and
+           only one of them is a shortcoming.
+
+           A team DEFENCE uses the team abbreviation as its Sleeper id ('SF'),
+           everyone else is numeric. The cached player DB is trimmed to
+           QB/RB/WR/TE, so a NUMERIC id missing from it is a kicker or an IDP.
+           Either way there is nothing to value: the dynasty market prices zero
+           kickers and zero defences out of 473 assets. That is not a gap in
+           DELTA, it is the market declining to trade streamed positions.
+
+           A numeric id that IS in the player DB but has no DELTA match is the
+           real remainder — a skill player outside the tracked universe. */
+        const numeric=/^\d+$/.test(String(pid));
+        const known=SLP.players&&SLP.players[pid];
+        if(!numeric||!known) row.nonSkill++; else row.unmatched++;
+        continue;
+      }
+      const m=(typeof mvAsset==='function')?mvAsset(pl):0;
+      const k=(pl.kMkt!=null?pl.kMkt:pl.k)||0;
+      /* One weight, taken from MARKET value, applied to both columns. Weighting
+         each column by its own value would let the curve itself manufacture an
+         Edge — a player DELTA rates above market would be amplified twice over,
+         and the disagreement we report would partly be an artefact of the
+         weighting rather than of the model. Same multiplier on both sides keeps
+         the comparison honest. */
+      const wt=slpPowerWeight(k,row._ref);
+      const mw=m*wt, kw=k*wt;
+      row.model+=mw; row.market+=kw; row.players++; squad.push(pl);
+      const pos=pl.p||pl.pos;
+      if(row.pos[pos]){ row.pos[pos].model+=mw; row.pos[pos].n++; }
+      // Horizon split. Deliberately a plain age bucket, not a forward
+      // projection — DELTA does not project three years out, and dressing an
+      // age split as one would claim more than the model supports.
+      if((pl.a||99)<=25) row.young+=mw; else row.vet+=mw;
+    }
+
+    for(const pk of slpPickInventory(r.roster_id)){
+      const v=slpPickValue(pk.season, pk.round);
+      if(!v){ row.picksUnpriced++; continue; }
+      const pw=slpPowerWeight(v.market,row._ref);
+      row.pickModel+=v.model*pw; row.pickMarket+=v.market*pw; row.picks++;
+      row.young+=v.model*pw;                 // a future pick is future value
+    }
+    row.model+=row.pickModel; row.market+=row.pickMarket;
+    const wn=slpWinNow(squad);
+    row.winNow=wn.pts; row.lineupOpen=wn.open;
+    return row;
+  });
+
+  const totM=rows.reduce(function(a,b){return a+b.model;},0)||1;
+  const totK=rows.reduce(function(a,b){return a+b.market;},0)||1;
+  rows.forEach(function(r){
+    r.shareModel=r.model/totM; r.shareMarket=r.market/totK;
+    // The story is the DISAGREEMENT: where DELTA's read of a roster differs from
+    // what the market would pay for it. Compared as shares of the league so the
+    // two scales are commensurable.
+    r.edge=r.shareModel-r.shareMarket;
+  });
+  const byModel=rows.slice().sort(function(a,b){return b.model-a.model;});
+  const byMarket=rows.slice().sort(function(a,b){return b.market-a.market;});
+  byModel.forEach(function(r,i){ r.rankModel=i+1; });
+  byMarket.forEach(function(r,i){ r.rankMarket=i+1; });
+  ['QB','RB','WR','TE'].forEach(function(p){
+    rows.slice().sort(function(a,b){return b.pos[p].model-a.pos[p].model;})
+        .forEach(function(r,i){ r.pos[p].rank=i+1; });
+  });
+  rows.slice().sort(function(a,b){return b.young-a.young;}).forEach(function(r,i){ r.rankYoung=i+1; });
+  rows.slice().sort(function(a,b){return b.winNow-a.winNow;}).forEach(function(r,i){ r.rankWin=i+1; });
+  return byModel;
+}
+
+function slpViewPower(){ SLP.view='power'; renderMyTeam(); }
+
+function renderSlpPower(){
+  const rows=slpTeamValues();
+  if(!rows) return '<div style="color:var(--fog);font-size:12px;padding:1rem">Roster data not loaded.</div>';
+  const mine=SLP.conn?SLP.conn.rosterId:null;
+  const fmtK=v=>v>=1000?(v/1000).toFixed(1)+'k':Math.round(v);
+  const POS=['QB','RB','WR','TE'];
+
+  const head='<tr>'
+    +'<th style="text-align:left">#</th><th style="text-align:left">Team</th>'
+    +'<th data-tip="DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25. Not a raw point total \u2014 a power score.">DELTA</th>'
+    +'<th data-tip="The same rosters and the same weighting, scored on dynasty market value instead of DELTA\u2019s model. Identical basis, so the two columns are comparable.">Market</th>'
+    +'<th data-tip="DELTA\u2019s share of league value minus the market\u2019s share. Positive means DELTA rates this roster higher than the market does \u2014 the same buy/sell logic DELTA runs on players, applied to teams.">Edge</th>'
+    +POS.map(p=>'<th class="col-hide-mobile" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
+    +'<th data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Now</th>'
+    +'<th class="col-hide-mobile" data-tip="Rank by value held in players aged 25 or under, plus future picks. An age split, NOT a three-year projection.">Young</th>'
+    +'</tr>';
+
+  const body=rows.map(function(r){
+    const me=String(r.rosterId)===String(mine);
+    const up=r.edge>=0, ec=Math.abs(r.edge)<0.004?'var(--fog-2)':(up?'var(--emerald)':'var(--coral)');
+    const move=r.rankMarket-r.rankModel;   // positive: DELTA ranks them higher
+    return '<tr'+(me?' style="background:var(--ink-2)"':'')+'>'
+      +'<td style="font-weight:700;color:var(--fog-2)">'+r.rankModel+'</td>'
+      +'<td style="white-space:nowrap;font-weight:'+(me?'800':'600')+';color:'+(me?'var(--teal-br)':'var(--paper)')+'">'
+        +slpEsc(r.team)+(me?' \u2605':'')+'</td>'
+      +'<td style="font-weight:700">'+fmtK(r.model)+'</td>'
+      +'<td style="color:var(--fog)">'+fmtK(r.market)+'<span style="font-size:9px;color:var(--fog-2)"> ('+r.rankMarket+')</span></td>'
+      +'<td style="font-weight:700;color:'+ec+';white-space:nowrap">'+(up?'+':'\u2212')+Math.abs(r.edge*100).toFixed(1)+'%'
+        +(move?'<span style="font-size:9px;color:var(--fog-2)"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
+      +POS.map(p=>'<td class="col-hide-mobile" style="color:var(--fog)">'+r.pos[p].rank+'</td>').join('')
+      +'<td style="white-space:nowrap"><span style="font-weight:700;color:var(--paper)">'+r.winNow.toFixed(1)+'</span>'
+        +'<span style="font-size:9px;color:var(--fog-2)"> ('+r.rankWin+')</span>'
+        +(r.lineupOpen?'<span style="font-size:9px;color:var(--coral)"> '+r.lineupOpen+' open</span>':'')+'</td>'
+      +'<td class="col-hide-mobile" style="color:var(--fog)">'+r.rankYoung+'</td>'
+      +'</tr>';
+  }).join('');
+
+  const me=rows.find(function(r){ return String(r.rosterId)===String(mine); });
+  let lede='';
+  if(me){
+    const move=me.rankMarket-me.rankModel;
+    const best=POS.slice().sort((a,b)=>me.pos[a].rank-me.pos[b].rank)[0];
+    const worst=POS.slice().sort((a,b)=>me.pos[b].rank-me.pos[a].rank)[0];
+    lede='<div style="font-size:12px;color:var(--fog);margin-bottom:10px;line-height:1.65">'
+      +'DELTA has you <b style="color:var(--paper)">'+slpOrd(me.rankModel)+'</b> of '+rows.length
+      +'; the market has you '+slpOrd(me.rankMarket)+'.'
+      +(move>0?' DELTA rates your roster <b style="color:var(--emerald)">higher</b> than the market does.'
+       :move<0?' DELTA rates your roster <b style="color:var(--coral)">lower</b> than the market does.'
+       :' Those agree.')
+      +' Strongest at <b style="color:var(--paper)">'+best+'</b> ('+slpOrd(me.pos[best].rank)+'), thinnest at <b style="color:var(--paper)">'+worst+'</b> ('+slpOrd(me.pos[worst].rank)+').'
+      +' On projected starting lineup you are <b style="color:var(--paper)">'+slpOrd(me.rankWin)+'</b>'
+      +(me.rankWin<me.rankModel-1?' \u2014 you win more now than your assets suggest.'
+       :me.rankWin>me.rankModel+1?' \u2014 your assets are worth more than this season\u2019s lineup.'
+       :'.')
+      +'</div>';
+  }
+  const unmatched=rows.reduce(function(a,b){return a+b.unmatched;},0);
+  const nonSkill=rows.reduce(function(a,b){return a+b.nonSkill;},0);
+  const unpriced=rows.reduce(function(a,b){return a+b.picksUnpriced;},0);
+
+  return lede
+    +'<div class="tablewrap"><table class="dtable">'
+    +'<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'
+    +'<div style="font-size:10.5px;color:var(--fog-2);margin-top:10px;line-height:1.7">'
+    +'Every player and every pick from '+(parseInt(SLP.league.season||0,10)+1)+' onward counts, weighted so '
+    +'quality outranks quantity \u2014 an asset contributes value \u00d7 (value \u00f7 '+Math.round(slpPowerRef())+')^0.25, '
+    +'the reference being a startable dynasty asset in this league today. Depth still counts; stacking fringe '
+    +'players does not. These are power scores, not point totals. '
+    +'Picks carry market value on both sides, so they move the ranking but not the Edge. '
+    +'<b>Now</b> is a different calculation: the best legal starting lineup this league\u2019s slots allow, from DELTA\u2019s '
+    +'projections \u2014 no weighting, no bench, because depth is an asset but it does not score on Sunday. '
+    +'K, DEF and IDP slots are not projected and are left out. '
+    +'<b>Not part of the accuracy ledger:</b> this is a derived summary, not a registered prediction. '
+    +(nonSkill?'<br>'+nonSkill+' kicker'+(nonSkill===1?'':'s')+', defense'+(nonSkill===1?'':'s')+' or IDP not counted \u2014 the dynasty market prices none of them, so they carry no asset value. Their lineup slots are left out of Now for the same reason. ':'')
+    +(unmatched?'<br>'+unmatched+' player'+(unmatched===1?'':'s')+' outside DELTA\u2019s tracked universe. ':'')
+    +(unpriced?'<br>'+unpriced+' pick'+(unpriced===1?'':'s')+' beyond round 3 not valued \u2014 no published tier.':'')
+    +'</div>';
+}
+
 function renderSlpSubNav(){
   const mine=SLP.conn?SLP.conn.rosterId:null;
   const pills=(SLP.rosters||[]).slice().sort(function(a,b){
@@ -5747,10 +6040,15 @@ function renderSlpSubNav(){
       +slpTeamLabel(r)+(r.roster_id===mine?' \u2605':'')+'</button>';
   }).join('');
   const boardActive=SLP.view==='board';
+  const powerActive=SLP.view==='power';
+  const powerPill='<button onclick="slpViewPower()" style="font-size:10.5px;font-weight:'+(powerActive?'800':'600')
+    +';padding:4px 10px;border-radius:12px;border:1px solid var(--line);background:'+(powerActive?'var(--ink-2)':'var(--panel)')
+    +';color:'+(powerActive?'var(--teal-br)':'var(--fog)')+';cursor:pointer;white-space:nowrap">Power</button>';
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
     +pills
     +'<span style="flex-basis:100%;height:0"></span>'
     +'<button onclick="slpShowBoard()" style="font-size:10.5px;font-weight:'+(boardActive?'800':'700')+';padding:4px 12px;border-radius:12px;border:1px solid '+(boardActive?'var(--line)':'var(--line)')+';background:'+(boardActive?'var(--ink-2)':'var(--ink-2)')+';color:'+(boardActive?'var(--emerald)':'var(--sky)')+';cursor:pointer">League Board \u2014 buy/sell targets</button>'
+    +powerPill
     +'</div>';
 }
 
@@ -5787,7 +6085,9 @@ function renderMyTeam(){
     +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+slpFmtChips()+'</div>'
     +renderSlpSubNav();
 
-  rosterDiv.innerHTML=header+(SLP.view==='board'?renderSlpBoard():renderSlpRoster(SLP.viewRosterId));
+  rosterDiv.innerHTML=header+(SLP.view==='board'?renderSlpBoard()
+                             :SLP.view==='power'?renderSlpPower()
+                             :renderSlpRoster(SLP.viewRosterId));
 }
 
 function renderSlpRoster(rid){
