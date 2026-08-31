@@ -3163,6 +3163,13 @@ function calcProj(pl){
 // not mvAsset — calibration does not move trade verdicts.
 let MV_CENTER=1;   // 1 = raw basis; computed per render in renderAll()
 
+// ── Price-tapered centering (Aug 2026) ────────────────────────────
+// Set as a side effect of computeMvCenter() so the two render call sites
+// (renderAll in index.html, the player.html bootstrap) need no change.
+// MV_FIT_B===null means "no usable fit" and applyCenter falls back to the
+// flat MV_CENTER divide — i.e. exactly the behaviour before this change.
+let MV_FIT_A=null, MV_FIT_B=null, MV_NORM=1;
+
 // ── ANNUAL MAINTENANCE: bump this every offseason ──────────────────
 // The upcoming NFL season. Used by vTag's thin-sample cap to work out how many
 // games' worth of CHANCES a player has had (seasons since draft x 17). If this
@@ -3184,35 +3191,66 @@ function marketSpread(pl){
   if(pl.kMkt!=null&&(pl.k||0)>0) return pl.kMkt/pl.k;       // observed market spread for this player
   return scarcity(pl.p||pl.pos||'WR', leagueTeams, qbFmt);  // pre-grid / unmatched fallback: theoretical curve
 }
-// Symmetric calibration (Aug 2026). SUPERSEDES the June "Option B" ratchet,
-// which scaled up ONLY players whose raw value sat below market and exempted
-// the rest. That exemption was measured on live data and rejected: it is not
-// order-preserving. Two players either side of the market line got different
-// treatment, so a player at 0.98x market was lifted above one at 1.11x —
-// 3,164 inverted pairs across the graded population. mkt is now unused; the
-// argument is kept so callers and the signature stay unchanged.
+// Symmetric, price-tapered calibration (Aug 2026). SUPERSEDES the June
+// "Option B" ratchet, which scaled up ONLY players below market and exempted
+// the rest. That exemption was measured and rejected: it was not order-
+// preserving (3,164 inverted pairs — a player at 0.98x market was lifted above
+// one at 1.11x).
 //
-// The penalty stack is one-directional by construction (four levers can only
-// subtract), which drags the whole population ~16% below market. MV_CENTER is
-// the measured size of that drag, so every player is divided by it. Dividing
-// everyone by the same constant cannot reorder anyone.
+// The penalty stack is one-directional by construction, which drags the
+// population below market. But the drag is NOT the same size for everyone —
+// it scales with price. Measured on live data, the top 50 players by market
+// value carry essentially no drag (median model/market 1.01) while the cheapest
+// tier carries 23%. Dividing everyone by one constant therefore over-corrects
+// the top: it hands a 19% lift to players who never had the problem, which is
+// what made 96% of the top 25 read buy-or-better.
 //
-// Known and accepted: raising the players who were already at/above market
-// lifts roster totals further above market totals (1.05x -> 1.13x of market).
-// That is a separate question about what DELTA believes regarding depth
-// pricing, not a bug in this function. See /areas/delta.md.
+// So the divisor tapers with price: each player is corrected by the drag that
+// players at HIS price level actually suffer.
+//
+// The taper is CAPPED so that no player is ever lifted MORE than the old flat
+// centering lifted him — every player is either unchanged or corrected less.
+// The clamp is applied AFTER MV_NORM, which is what makes that guarantee exact:
+// clamping first and then normalising re-inflates the cheap end by ~2.7pts and
+// puts 192 players above their old values. Without the cap at all, the bottom of
+// the market gets a ~30% lift and deep bench players start reading as bargains,
+// which is the lottery-ticket behaviour DELTA exists to avoid.
+//
+// MV_NORM re-seats the population toward 1.0 after the taper, since vTag's bands
+// are absolute. Because the clamp is applied last, the median lands at ~0.985
+// rather than exactly 1.0 — a deliberate trade: a 1.5% offset well inside the
+// hold band, in exchange for the bottom of the market being left exactly where
+// flat centering had it.
+//
+// NOT evidence-backed: there is no historical market-value archive to test this
+// against, so it rests on the measured drag gradient plus judgement. The cap in
+// particular is a conservative choice, not a derivation. Revisit after the
+// first frozen season provides a yardstick. See /areas/delta.md.
 function applyCenter(raw, mkt){
   if(MV_CENTER===1) return raw;            // pass 1 / no center yet
-  return raw/MV_CENTER;
+  if(MV_FIT_B===null || !(mkt>0)) return raw/MV_CENTER;   // no fit / no price → flat
+  const fitted=Math.exp(MV_FIT_A + MV_FIT_B*Math.log(mkt));
+  return raw/Math.max(fitted*MV_NORM, MV_CENTER);
 }
 function computeMvCenter(){
   // Call ONLY while MV_CENTER===1 (raw basis) — mvAssetBase must return raw here.
-  const rs=[];
+  // Returns the population median as before (the freeze pre-flight guard and the
+  // provenance block both read it), and ALSO fits the price taper used by
+  // applyCenter — see MV_FIT_A / MV_FIT_B / MV_NORM above.
+  MV_FIT_A=null; MV_FIT_B=null; MV_NORM=1;   // reset every render
+  const rs=[]; const pts=[];
   if(typeof COMP!=='undefined'){
     for(const p of COMP){
       if(((p.g25||0)+(p.g24||0)+(p.g23||0))===0) continue;  // same gate as vTag's "no data"
       const mkt=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
-      rs.push(mvAssetBase(p)/Math.max(mkt,1));
+      const ratio=mvAssetBase(p)/Math.max(mkt,1);
+      rs.push(ratio);
+      // Rookie-override players are EXCLUDED from the taper fit: mvAsset returns
+      // market x age curve for them, so their "ratio" is just the age curve and
+      // would flatten the fitted slope with a value the model never produced.
+      // They stay in rs so the median (and its guard) are unchanged.
+      const rookiePath=(p.g25===0||p.g25===undefined)&&(p.ppg25||0)>0;
+      if(!rookiePath && mkt>0) pts.push({m:mkt, r:ratio});
     }
   }
   if(!rs.length) return 1;
@@ -3220,7 +3258,32 @@ function computeMvCenter(){
   let c=rs[Math.floor(rs.length/2)];
   if(c<0.6||c>1.3){
     console.warn('[DELTA] model-value population center out of range ('+c.toFixed(3)+') — falling back to 1.0 (raw); check market/stats data');
-    c=1;
+    return 1;   // no taper either — applyCenter's MV_CENTER===1 guard passes raw through
+  }
+  // Least-squares fit of log(model/market) against log(market).
+  if(pts.length>=30){
+    let sx=0,sy=0; for(const q of pts){ sx+=Math.log(q.m); sy+=Math.log(q.r); }
+    const mx=sx/pts.length, my=sy/pts.length;
+    let sxy=0,sxx=0;
+    for(const q of pts){ const dx=Math.log(q.m)-mx; sxy+=dx*(Math.log(q.r)-my); sxx+=dx*dx; }
+    if(sxx>0){
+      const B=sxy/sxx, A=my-B*mx;
+      // Slope must be positive (drag shrinks as price rises) and modest. Anything
+      // else means the data changed shape — fall back to flat centering.
+      if(B>0 && B<0.5){
+        MV_FIT_A=A; MV_FIT_B=B;
+        // MV_NORM is measured against the CLAMPED taper (same shape applyCenter
+        // uses), so the population re-seats near 1.0. applyCenter then clamps the
+        // product, which lands the median at ~0.985 rather than exactly 1.0.
+        const cor=pts.map(function(q){
+          return q.r/Math.max(Math.exp(A+B*Math.log(q.m)), c);
+        }).sort(function(a,b){return a-b;});
+        MV_NORM=cor[Math.floor(cor.length/2)];
+        if(!(MV_NORM>0.5&&MV_NORM<2)){ MV_FIT_A=null; MV_FIT_B=null; MV_NORM=1; }
+      } else {
+        console.warn('[DELTA] price-taper slope out of range ('+B.toFixed(3)+') — using flat centering');
+      }
+    }
   }
   return c;
 }
