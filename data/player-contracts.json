@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-08-30T11:31:51.043569+00:00",
+  "fetched": "2026-08-31T13:05:33.823756+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1872,6 +1872,16 @@
       "guaranteed": 4.5,
       "is_active": true
     },
+    "Jonnu Smith": {
+      "team": "Packers",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.0,
+      "total": 0.0,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Charlie Kolar": {
       "team": "Chargers",
       "year_signed": 2026,
@@ -2863,7 +2873,7 @@
       "is_active": true
     },
     "Quinn Ewers": {
-      "team": "Dolphins",
+      "team": "JAX/MIA",
       "year_signed": 2025,
       "years": 4,
       "end_year": 2028,
@@ -2883,7 +2893,7 @@
       "is_active": true
     },
     "Joe Milton": {
-      "team": "NE/DAL",
+      "team": "DAL/NE",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -3303,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "LAC/CLE",
+      "team": "Browns",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
