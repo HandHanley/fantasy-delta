@@ -171,6 +171,11 @@ market grid to `data/freeze-2026-market.json`. Between them:
   `rankMv`, `rankMk`, `style`.
 * `scarcity_curve` — the SCAR_CURVE in force at freeze time.
 * `engine_sha` — the git commit of the engine that produced these numbers.
+* `mv_center`, `mv_taper` and `season_year` — the model-value calibration in
+  force. `mv_center` alone no longer reconstructs a frozen value, because the
+  centering correction varies with price; `mv_taper` carries its three fitted
+  constants. `season_year` is what the thin-sample cap counts seasons from, so a
+  stale value would silently change which verdicts were allowed to be strong.
 * **The two hand-maintained input files**, copied verbatim into the snapshot:
   `data/injury-overrides.json` and `data/qb-starters.json`. Both change frozen
   projections — the first zeroes them, the second re-bases a quarterback onto the
@@ -188,6 +193,60 @@ Without the full grid, the ledger is permanently locked to the 12-SF basis.
 anchor — the same basis the verdict engine uses. Because projections, the
 scarcity curve and the full market grid are all frozen, any other basis can be
 recomputed exactly later. Basis is a *rendering* choice, not a commitment.
+
+### Verdict definitions in force at freeze
+
+Test 3 grades players by the label they carried, so the labels have to be
+recorded. All three definitions below changed on **30 August 2026**, before the
+freeze and before any 2026 outcome was observable. They are written down here for
+the same reason `excluded_out` was: a pre-registered term that changes silently
+is worse than one that never existed.
+
+**Bands.** A verdict is the ratio of model value to market value at the anchor:
+
+| verdict | ratio |
+| --- | --- |
+| strong buy | ≥ 1.25 |
+| buy | ≥ 1.06 |
+| hold | ≥ 0.94 |
+| sell | ≥ 0.75 |
+| strong sell | < 0.75 |
+
+One ladder for every position. Tight ends previously used a lower set
+(1.10 / 1.00 / 0.88 / 0.76) which had no recorded justification and, after the
+centering change below, tagged 18 of 51 tight ends as strong buys. A 25% gap now
+means the same thing everywhere. The 25% figure was chosen on the principle that
+a *strong* verdict tells a reader to act, so it must be rare and demand a large
+gap — not to make the counts land anywhere in particular.
+
+**Thin-sample conviction cap.** A strong verdict is downgraded one level
+(strong buy → buy, strong sell → sell) until a player has had **20 games' worth
+of chances**, defined as seasons since his draft year × 17. A first-year player
+cannot reach 20 games in a 17-game season, so he was never given the opportunity
+to clear the bar; a player several seasons in with few games has produced an
+answer rather than a thin sample. This replaces the previous trigger of 12
+career games, which silenced multi-year backups while missing actual rookies.
+Players with no draft year on file (mostly undrafted) are treated as experienced
+and are not capped.
+
+**Centering.** Model value is market value multiplied by a quality score, and
+that score is penalty-heavy by construction, so raw values run below market and
+are corrected upward. The correction is no longer one number. It **tapers with
+price**: measured on live data, the top 50 players by market value carry
+essentially no drag (median model/market 1.01) while the cheapest tier carries
+23%, so a single constant over-corrected the top and made 96% of the top 25 read
+buy-or-better. The taper is clamped so that no player is lifted more than flat
+centering lifted him, which leaves the bottom of the market exactly where it was.
+
+The exact divisor is recorded in `provenance.mv_taper` and is
+`max(exp(a + b·ln(mkt)) · norm, mv_center)`.
+
+**This change is reasoning, not evidence.** There is no archive of historical
+market values, so it could not be tested against a held-out season the way a
+projection lever can be. It rests on the measured drag gradient plus judgement,
+and the clamp in particular is a conservative choice rather than a derivation.
+It is recorded here as an open question for the first ledger to answer, not as a
+validated improvement.
 
 ---
 
