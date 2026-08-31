@@ -1424,7 +1424,7 @@ if (!PLAYER_NAME) {
       applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
       const p = COMP.find(x => x.n === PLAYER_NAME);
       if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
-      MV_CENTER = computeMvCenter(); // calibrate to population median — same as renderAll() in index.html
+      MV_CENTER = computeMvCenter(); // population median + price-taper fit — same as renderAll() in index.html
       renderPlayerPage(p);
     })
     .catch(e => showError('Failed to load player data. ' + e.message));

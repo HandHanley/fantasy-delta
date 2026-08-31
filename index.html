@@ -2101,8 +2101,11 @@ function renderAll(){
   MV_CENTER=1;
   COMP.length=0;RAW.forEach(r=>COMP.push(calcProj(r)));
   ASSETS.length=0;COMP.forEach(p=>ASSETS.push(p));PICKS.forEach(p=>ASSETS.push(p));
-  // Pass 2: measure the live population center, then patch stored mv/gap onto
-  // the market-calibrated scale (rookie-override players stay market-based).
+  // Pass 2: measure the live population center AND fit the price taper (both done
+  // inside computeMvCenter — see applyCenter in delta-engine.js), then patch stored
+  // mv/gap onto the market-calibrated scale (rookie-override players stay market-based).
+  // The correction is no longer one number: it shrinks as market value rises, so the
+  // elite tier is not handed a lift sized for the median player.
   MV_CENTER=computeMvCenter();
   if(MV_CENTER!==1){
     for(const p of COMP){
@@ -3549,7 +3552,7 @@ document.addEventListener('click', function(e) {
           <li><b style="color:var(--emerald)">DELTA Score (0–100)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
           <li><b style="color:var(--sky)">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
           <li><b style="color:var(--sky)">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
-          <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to the rest of the league. Centered on the population, so "buy" means <i>cheaper than the typical player relative to the model</i>.</li>
+          <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to other players at a similar price. So "buy" means <i>cheaper than comparable assets cost</i>, not simply cheaper than the league average. A <b>Strong</b> verdict needs a 25% gap in either direction, and is withheld from players who have not yet had 20 games' worth of chances (seasons in the league &times; 17) — a first-year player cannot reach that in a 17-game season.</li>
           <li><b>Proj PPG</b> — DELTA's projected points per game for the upcoming season, at your league's scoring.</li>
           <li><b>Start Profile</b> — per-start outcomes across recent seasons: <b>hit</b> (startable week), <b>elite</b> (slate-breaking week), <b>miss</b> (hurt your lineup). Weekly dependability, not season totals.</li>
           <li><b>Alpha / Workhorse Score</b> — role size grade (targets/touches share): how much of the offense actually flows through the player.</li>
