@@ -3162,6 +3162,13 @@ function calcProj(pl){
 // Note: the 2-team trade verdict (calcAdjustedSide) is built on market value,
 // not mvAsset — calibration does not move trade verdicts.
 let MV_CENTER=1;   // 1 = raw basis; computed per render in renderAll()
+
+// ── ANNUAL MAINTENANCE: bump this every offseason ──────────────────
+// The upcoming NFL season. Used by vTag's thin-sample cap to work out how many
+// games' worth of CHANCES a player has had (seasons since draft x 17). If this
+// is left stale, every player looks a year less experienced than he is and the
+// cap silences strong verdicts it should be allowing.
+const SEASON_YEAR = 2026;
 function marketSpread(pl){
   // Format rescale for MODEL VALUES: the market's own observed per-player
   // spread (kMkt/k from the per-format grid), NOT the theoretical scarcity
@@ -3177,14 +3184,25 @@ function marketSpread(pl){
   if(pl.kMkt!=null&&(pl.k||0)>0) return pl.kMkt/pl.k;       // observed market spread for this player
   return scarcity(pl.p||pl.pos||'WR', leagueTeams, qbFmt);  // pre-grid / unmatched fallback: theoretical curve
 }
-// Option B calibration (June 2026): correct the one-directional penalty bias
-// ONLY where it exists — players whose RAW value is below market. A raw value
-// already at/above market earned it despite the penalties, so it is NOT scaled
-// up (a flat multiplier used to stack conviction, e.g. Walker 6.8k→8.0k). raw
-// and mkt are both anchor-basis (pl.k or an OV override).
+// Symmetric calibration (Aug 2026). SUPERSEDES the June "Option B" ratchet,
+// which scaled up ONLY players whose raw value sat below market and exempted
+// the rest. That exemption was measured on live data and rejected: it is not
+// order-preserving. Two players either side of the market line got different
+// treatment, so a player at 0.98x market was lifted above one at 1.11x —
+// 3,164 inverted pairs across the graded population. mkt is now unused; the
+// argument is kept so callers and the signature stay unchanged.
+//
+// The penalty stack is one-directional by construction (four levers can only
+// subtract), which drags the whole population ~16% below market. MV_CENTER is
+// the measured size of that drag, so every player is divided by it. Dividing
+// everyone by the same constant cannot reorder anyone.
+//
+// Known and accepted: raising the players who were already at/above market
+// lifts roster totals further above market totals (1.05x -> 1.13x of market).
+// That is a separate question about what DELTA believes regarding depth
+// pricing, not a bug in this function. See /areas/delta.md.
 function applyCenter(raw, mkt){
   if(MV_CENTER===1) return raw;            // pass 1 / no center yet
-  if(raw>=mkt && mkt>0) return raw;        // already above market — no bias to correct
   return raw/MV_CENTER;
 }
 function computeMvCenter(){
@@ -4416,41 +4434,56 @@ function vTag(p){
   // override wins, since it's the user's stated market value). Format scaling cancels → per-player gap.
   const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
   const r=mvAssetBase(p)/Math.max(mkt12,1);
-  const pos=p.p||p.pos||'';
-  // TEs use tighter thresholds — market value already prices in TE scarcity
-  const sb=pos==='TE'?1.10:1.15, b=pos==='TE'?1.00:1.06,
-        h=pos==='TE'?0.88:0.94, s=pos==='TE'?0.76:0.82;
-  // ── Thin-sample conviction dampener (June 2026) ──
-  // DELTA only gets loud when the facts back it up. A "strong" tag on a tiny
-  // sample (a hot 7-game rookie run) overclaims — those stretches fizzle and the
-  // dynasty market overreacts. Below 12 CAREER games, conviction is capped one
-  // level: strong buy → buy, strong sell → sell. The player keeps a directional
-  // tag (a short elite stretch is still signal, à la Skattebo) — he just can't
-  // carry max conviction until he's shown it across enough games.
+  // ── One ladder for every position (Aug 2026) ──
+  // A "strong" tag is a declarative call urging the user to act, so it has to be
+  // rare and has to demand a big gap. 25% is that gap, and it means the same
+  // thing at every position — so TE no longer gets its own lower ladder. The old
+  // TE bars (1.10/1.00/0.88/0.76) had no stated justification and, after the
+  // symmetric centering fix, flagged 18 of 51 TEs as strong buys.
+  // Both ends moved together so DELTA is no quicker to condemn than to endorse.
+  // Accepted consequence: TEs run ~6% above market as a group, so the position
+  // reads somewhat bullish (49% buy-or-better vs 34% elsewhere). That is a
+  // centering question, not a band question, and is deliberately not patched here.
+  const sb=1.25, b=1.06, h=0.94, s=0.75;
+  // ── Thin-sample conviction dampener (Aug 2026 — counts CHANCES, not games) ──
+  // DELTA only gets loud when the facts back it up, so a "strong" tag is capped
+  // one level on a thin sample: strong buy → buy, strong sell → sell. The player
+  // keeps a directional tag — he just can't carry max conviction yet.
   //
-  // CAREER games come from PLAYER_STATS (real per-season game counts), NOT the
-  // RAW record — RAW only carries g25, so g25+g24+g23 wrongly counted every
-  // player as if their career started in 2025 (e.g. veteran James Conner read as
-  // 3 career games and got dampened; he has 32). Falls back to RAW totals only
-  // if stats are unavailable.
-  const THIN_GAMES = 12;
-  let careerG = 0;
-  const _st = (typeof PLAYER_STATS !== 'undefined') ? PLAYER_STATS[p.n] : null;
-  if(_st){
-    careerG = ((_st['2023']&&_st['2023'].games)||0)
-            + ((_st['2024']&&_st['2024'].games)||0)
-            + ((_st['2025']&&_st['2025'].games)||0);
-  }
-  if(!careerG) careerG = totalG;   // fallback: RAW totals (rare — stats missing)
-  const thin = careerG < THIN_GAMES;
+  // SUPERSEDES the June 2026 trigger of 12 CAREER GAMES, which was wrong in both
+  // directions. It silenced Trey Lance (five seasons, eight games) — that is not
+  // a thin sample, that is the answer — while doing nothing for actual rookies
+  // who scraped past 12 games.
+  //
+  // The test is now whether the player has HAD the chance to build a record, not
+  // whether he took it. A season is 17 games, so a first-year player cannot reach
+  // 20 games however well he plays; he was never given the opportunity to clear
+  // the bar. Someone several seasons in has had 34, 51, 85 chances — a low game
+  // count there is a verdict, not a gap in the data. It also gives a second-year
+  // player about three games of cushion before he can be tagged strongly.
+  //
+  // Chances = seasons since the draft x 17. Unknown draft year (mostly UDFAs)
+  // falls through as experienced, i.e. NOT capped.
+  //
+  // Accepted gap: a rookie who lost year one to injury loses this cover early in
+  // year two despite barely playing. Known season-enders carry a separate manual
+  // injury flag. See /areas/delta.md.
+  const THIN_CHANCES = 20;
+  const GAMES_PER_SEASON = 17;
+  const _di = (typeof dsDraftInfo === 'function') ? dsDraftInfo(p.n) : null;
+  const _dy = (_di && _di.year != null) ? _di.year : null;
+  const chances = (_dy != null)
+    ? Math.max(0, (SEASON_YEAR - _dy)) * GAMES_PER_SEASON
+    : Infinity;                      // no draft year on file → treat as experienced
+  const thin = chances < THIN_CHANCES;
   if(r>=sb) return thin
-    ? '<span class="badge bi" title="Strong signal capped — only '+careerG+' career games (thin sample)">buy</span>'
+    ? '<span class="badge bi" title="Strong signal capped — first NFL season (fewer than '+THIN_CHANCES+' games\' worth of chances)">buy</span>'
     : '<span class="badge bs">strong buy</span>';
   if(r>=b) return'<span class="badge bi">buy</span>';
   if(r>=h) return'<span class="badge bn">hold</span>';
   if(r>=s) return'<span class="badge bw">sell</span>';
   return thin
-    ? '<span class="badge bw" title="Strong signal capped — only '+careerG+' career games (thin sample)">sell</span>'
+    ? '<span class="badge bw" title="Strong signal capped — first NFL season (fewer than '+THIN_CHANCES+' games\' worth of chances)">sell</span>'
     : '<span class="badge bd">strong sell</span>';
 }
 
