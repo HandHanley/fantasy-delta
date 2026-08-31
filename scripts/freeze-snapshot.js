@@ -111,6 +111,10 @@ const src = fs.readFileSync('delta-engine.js', 'utf8') + `
   // Provenance: the constants that decide every league adjustment. Frozen alongside
   // the calls so a 2027 grader can tell WHICH curve produced them.
   get SCAR_CURVE(){ return typeof SCAR_CURVE!=='undefined' ? SCAR_CURVE : null; },
+  /* Price-taper params (Aug 2026). applyCenter no longer divides by one number, so
+     mv_center alone no longer reconstructs a frozen value — these three do. */
+  get MV_FIT(){ return typeof MV_FIT_B!=='undefined' ? {a:MV_FIT_A, b:MV_FIT_B, norm:MV_NORM} : {a:null,b:null,norm:null}; },
+  get SEASON_YEAR(){ return typeof SEASON_YEAR!=='undefined' ? SEASON_YEAR : null; },
   get SCAR_STARTERS(){ return typeof SCAR_STARTERS!=='undefined' ? SCAR_STARTERS : null; },
   scarcity: (p,t,q)=>scarcity(p,t,q),
   setCenter:(v)=>{ MV_CENTER=v; },
@@ -183,6 +187,16 @@ vm.createContext(sb); vm.runInContext(src, sb);
   if (!(centerProbe > 0.6 && centerProbe < 1.3) || centerProbe === 1)
     die(`model-value population center is ${centerProbe} — out of range or on the 1.0 fallback; market/stats data is suspect`);
 
+  /* The price taper falls back to flat centering silently if its fit fails a sanity
+     check — correct for the app, wrong here. A freeze that recorded flat centering
+     while the live site rendered the taper would be a snapshot of a model nobody saw.
+     computeMvCenter() sets these as a side effect, so this must run after the probe. */
+  const fitProbe = H.MV_FIT;
+  if (fitProbe.b === null)
+    die('price taper did not fit — the freeze would record flat centering while the site shows the taper');
+  if (H.SEASON_YEAR !== new Date().getFullYear())
+    die(`SEASON_YEAR is ${H.SEASON_YEAR} but the calendar says ${new Date().getFullYear()} — vTag's thin-sample cap counts seasons from it, so a stale value silences strong verdicts`);
+
   /* The season-ender list is HAND-maintained and small, so "empty" is a legitimate
      state — it cannot be guarded by a count. Guard the MISMATCH instead: read the
      file straight off disk and require that every out_for_season entry in it actually
@@ -236,9 +250,15 @@ vm.createContext(sb); vm.runInContext(src, sb);
        - 76 of 409 players had a recorded gap whose SIGN contradicted their
          recorded verdict (Jalen Hurts: gap -1.6% but verdict "strong buy")
        - 262 of 409 positional ranks moved once centered (max shift 11 places)
-     Ranks move because applyCenter() is SELECTIVE, not a uniform divisor: values
-     already at/above market are left alone and only below-market values are
-     scaled, so the transform does not preserve order. */
+     Ranks move because applyCenter() TAPERS WITH PRICE (Aug 2026): the divisor
+     shrinks as market value rises, so a correction sized for the median player is
+     not handed to the elite tier, which carries almost none of the penalty drag it
+     corrects for. Order is preserved among players at the same price; it is not
+     preserved across price levels, and that is the intent.
+
+     This supersedes the June 2026 ratchet, which scaled ONLY below-market values and
+     exempted the rest. That version was not order-preserving in a way nobody chose:
+     a player at 0.98x market was lifted above one at 1.11x, 3,164 inverted pairs. */
   H.setCenter(H.computeMvCenter());
 
   // positional ranks at the anchor
@@ -334,6 +354,10 @@ vm.createContext(sb); vm.runInContext(src, sb);
     scarcity_starters: H.SCAR_STARTERS,
     scarcity_resolved: scarTable,
     mv_center:         +centerProbe.toFixed(6),
+    mv_taper:          { a: +fitProbe.a.toFixed(6), b: +fitProbe.b.toFixed(6),
+                         norm: +fitProbe.norm.toFixed(6),
+                         note: 'applyCenter divides by max(exp(a + b*ln(mkt)) * norm, mv_center)' },
+    season_year:       H.SEASON_YEAR,
     note: 'Fingerprints, not copies — the input files live in the repo at this commit. '
         + 'scarcity_resolved is the applied 32-cell table; scarcity_curve is its source.',
   };
