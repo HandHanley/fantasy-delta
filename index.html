@@ -241,6 +241,32 @@ tr:hover td{background:var(--panel)}
 .how p{margin:0}
 .how-list{margin:9px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 26px}
 .how-list li{font-size:11px;color:var(--fog-2)}
+/* Multi-team result: net is the answer, so it gets the size and a diverging bar.
+   Gives/receives drop to a subline — they are the working, not the conclusion. */
+.mt-head{font-size:14px;color:var(--fog);margin-bottom:.9rem}
+.mt-head b{font-weight:700}
+.mt-win{font-family:var(--mono);color:var(--emerald)}
+.mt-board{display:flex;flex-direction:column;gap:2px;margin-bottom:.6rem}
+.mt-row{display:grid;grid-template-columns:18px minmax(120px,1.1fr) 2fr minmax(76px,auto);
+  gap:12px;align-items:center;padding:9px 10px;border-radius:4px}
+.mt-lead{background:var(--teal-soft)}
+.mt-rank{font-family:var(--mono);font-size:11px;color:var(--fog-2);text-align:center}
+.mt-team{font-size:13px;font-weight:700;line-height:1.25}
+.mt-team s{display:block;text-decoration:none;font-family:var(--mono);font-size:9.5px;
+  color:var(--fog-2);font-weight:400;margin-top:2px}
+.mt-rail{position:relative;height:16px}
+.mt-rail:before{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--line)}
+.mt-rail b{position:absolute;top:3px;height:10px;border-radius:1px;display:block}
+.mt-pos{background:var(--emerald)}.mt-neg{background:var(--coral)}
+.mt-net{font-family:var(--mono);font-size:15px;font-weight:700;text-align:right}
+.mt-up{color:var(--emerald)}.mt-dn{color:var(--coral)}.mt-flat{color:var(--fog)}
+.mt-note{font-size:10px;color:var(--fog-2);margin-bottom:.9rem}
+@media(max-width:600px){
+  .mt-row{grid-template-columns:16px 1fr minmax(64px,auto);gap:9px;padding:8px}
+  .mt-rail{display:none}
+  .mt-net{font-size:14px}
+  .mt-head{font-size:12.5px}
+}
 @media(max-width:600px){.how-list{flex-direction:column;gap:5px}}
 .edit-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem;max-width:480px}
 .edit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
@@ -1707,23 +1733,31 @@ function recalcTrade(){
       return b.length ? b.join(' · ') : '<span style="color:var(--fog-2)">No adj</span>';
     };
     document.getElementById('verdict-area').innerHTML=`
-      <div style="margin-bottom:1rem">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--fog);margin-bottom:.5rem">
-          ${allEqual?'BALANCED MULTI-TEAM TRADE':winner.label.toUpperCase()+' WINS — receives '+winner.recv.total.toLocaleString()+', gives up '+winner.adjResult.total.toLocaleString()}
-        </div>
-        <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:4px 12px;font-size:11px;margin-bottom:.35rem">
-          <span></span><span style="color:var(--fog-2);font-size:9px">GIVES UP</span><span style="color:var(--fog-2);font-size:9px">RECEIVES</span><span style="color:var(--fog-2);font-size:9px">NET</span>
-          ${sorted.map((t,i)=>{
-            const isWinner=i===0&&!allEqual;
-            const netClr=t.net>0?'var(--emerald)':t.net<0?'var(--coral)':'var(--fog)';
-            return`<span style="color:${t.color};font-weight:${isWinner?700:400}">${t.label}${isWinner?' ▲':''}</span>
-              <span style="color:var(--fog)">${t.adjResult.total.toLocaleString()}</span>
-              <span style="color:var(--fog)">${t.recv.total.toLocaleString()}</span>
-              <span style="color:${netClr};font-weight:600">${t.net>0?'+':''}${t.net.toLocaleString()}</span>`;
-          }).join('')}
-        </div>
-        <div style="font-size:9px;color:var(--fog-2);margin-bottom:.5rem">Route each asset with the → selector on its row · net = receives − gives</div>
+      <div class="mt-head">
+        ${allEqual
+          ? 'Balanced multi-team trade'
+          : `<b style="color:${winner.color}">${winner.label}</b> comes out ahead by <b class="mt-win">${winner.net>0?'+':''}${winner.net.toLocaleString()}</b>`}
       </div>
+      <div class="mt-board">
+        ${(function(){
+          const maxAbs = Math.max(1, ...sorted.map(t=>Math.abs(t.net)));
+          return sorted.map((t,i)=>{
+            const w = Math.abs(t.net)/maxAbs*50;
+            const up = t.net>0, flat = t.net===0;
+            const bar = flat ? ''
+              : up ? `<b class="mt-pos" style="left:50%;width:${w}%"></b>`
+                   : `<b class="mt-neg" style="left:${50-w}%;width:${w}%"></b>`;
+            return `<div class="mt-row${i===0&&!allEqual?' mt-lead':''}">
+              <span class="mt-rank">${i+1}</span>
+              <span class="mt-team" style="color:${t.color}">${t.label}
+                <s>gives ${t.adjResult.total.toLocaleString()} &middot; gets ${t.recv.total.toLocaleString()}</s></span>
+              <span class="mt-rail">${bar}</span>
+              <span class="mt-net ${flat?'mt-flat':up?'mt-up':'mt-dn'}">${up?'+':''}${t.net.toLocaleString()}</span>
+            </div>`;
+          }).join('');
+        })()}
+      </div>
+      <div class="mt-note">Net = what a team receives minus what it gives up. Route each asset with the → selector on its row.</div>
       ${windowFraming()}
       <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
         ${adjResults.map(t=>`
