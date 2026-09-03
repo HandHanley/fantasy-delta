@@ -235,9 +235,13 @@ tr:hover td{background:var(--panel)}
   border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer;white-space:nowrap}
 .howbtn:hover{color:var(--paper);border-color:var(--fog-2)}
 .howbtn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
-.how{font-size:11.5px;color:var(--fog);line-height:1.65;padding:11px 14px;margin:-.6rem 0 1rem;
-  background:var(--ink-2);border:1px solid var(--line);border-radius:4px;max-width:78ch}
+.how{font-size:11.5px;color:var(--fog);line-height:1.65;padding:12px 15px;margin:-.6rem 0 1rem;
+  background:var(--ink-2);border:1px solid var(--line);border-radius:4px}
 .how[hidden]{display:none}
+.how p{margin:0}
+.how-list{margin:9px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 26px}
+.how-list li{font-size:11px;color:var(--fog-2)}
+@media(max-width:600px){.how-list{flex-direction:column;gap:5px}}
 .edit-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem;max-width:480px}
 .edit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .edit-row label{min-width:130px;color:var(--fog);font-size:12px}
@@ -897,10 +901,14 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     </div>
   </div>
   <div class="how" id="tc-how" hidden>
-    Model value is market price adjusted for age, opportunity, efficiency, quarterback quality and
+    <p>Model value is market price adjusted for age, opportunity, efficiency, quarterback quality and
     offence, then corrected for the model&rsquo;s known pessimism &mdash; a correction that shrinks as
-    a player gets more expensive. Picks use raw market value. Sides are then adjusted for elite
-    premium, position and same-team clustering, and concentration.
+    a player gets more expensive. Picks use raw market value.</p>
+    <ul class="how-list">
+      <li><span class="adj-up">★ Elite premium</span> rewards top assets (Mkt Val above 7,500)</li>
+      <li><span class="adj-warn">⚠ Clustering</span> discounts same-position or same-team stacking</li>
+      <li><span class="adj-up">◆ Concentration bonus</span> rewards fewer, higher-value assets</li>
+    </ul>
   </div>
 
   <!-- Team count toggle -->
@@ -1667,13 +1675,6 @@ function recalcTrade(){
         </div>
       </div>
 
-      <div style="margin-top:8px;padding:8px 10px;background:var(--ink-2);border-radius:6px;font-size:10px;color:var(--fog-2);line-height:1.6">
-        <span style="color:var(--fog);font-weight:600">HOW THE CALC WORKS · </span>
-        ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
-        ⚠ Clustering discounts same-position or same-team stacking · 
-        ◆ Concentration bonus rewards fewer, higher-value assets
-      </div>
-
       ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--sky);cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
   } else {
     // Multi-team verdict — per-asset routing makes RECEIVES computable:
@@ -1744,12 +1745,7 @@ function recalcTrade(){
             </div>
           </div>`).join('')}
       </div>
-      <div style="margin-top:8px;padding:8px 10px;background:var(--ink-2);border-radius:6px;font-size:10px;color:var(--fog-2);line-height:1.6">
-        <span style="color:var(--fog);font-weight:600">HOW THE CALC WORKS · </span>
-        ★ Elite premium rewards top assets (Mkt Val &gt;7,500) · 
-        ⚠ Clustering discounts same-position or same-team stacking · 
-        ◆ Concentration bonus rewards fewer, higher-value assets
-      </div>`;
+`;
   }
   if(gapFillerOpen) renderGapFiller();
   // share row: regenerated from LIVE state on every click, so it always reflects the
