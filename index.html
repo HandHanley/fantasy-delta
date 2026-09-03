@@ -720,7 +720,10 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 .dl-rk-colbtn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 .dl-rk-colbtn[aria-expanded="true"]{color:var(--teal-br);border-color:var(--teal-tint);
   background:var(--teal-soft)}
-.dl-rk-colmenu{position:absolute;top:calc(100% + 7px);left:0;z-index:40;width:236px;
+/* Anchored right, not left. The wrapper sits at the end of a flex row whose
+   search field is flex:1, so the button is always near the right edge and a
+   left-anchored panel opens straight off the screen. */
+.dl-rk-colmenu{position:absolute;top:calc(100% + 7px);right:0;left:auto;z-index:40;width:236px;
   background:var(--panel);border:1px solid var(--line);border-radius:8px;
   padding:11px 12px 9px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
 .dl-rk-colmenu[hidden]{display:none}
@@ -737,9 +740,26 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 @media(max-width:600px){
   /* Anchor right on a phone so a 236px panel opened from a button near the
      right edge cannot hang off the screen. */
-  .dl-rk-colmenu{left:auto;right:0;width:214px;max-height:60vh;overflow-y:auto}
+  .dl-rk-colmenu{width:214px;max-height:60vh;overflow-y:auto}
   .dl-rk-colbtn{font-size:11px;padding:5px 10px}
 }
+
+/* ── Board width and alignment ───────────────────────────────────────────
+   The table sizes to its content rather than being forced to 100%. Forcing
+   it meant hiding columns never made the board narrower — the freed width was
+   shared out among whatever was left, so a nine-column board spread across the
+   full window with a hand's width between each value and its neighbour.
+   max-width keeps it inside the wrapper, which still scrolls when every
+   column is switched on. */
+.dl-board{width:auto;max-width:100%}
+/* Figures right, labels left. A right-aligned number ends where the next
+   column begins, which is what closes the gaps; it also lines the decimal
+   points up down the column. Badges centre in their own space. */
+.dl-board th.dl-rk-r,.dl-board td.dl-rk-r{text-align:right}
+.dl-board th.dl-rk-c,.dl-board td.dl-rk-c{text-align:center}
+/* The Player column takes any slack that is left, so the space lands in one
+   place instead of being spread through the figures. */
+.dl-board th.dl-rk-th-name,.dl-board td.dl-rk-name{width:100%}
 
 </style>
 <script>
@@ -1364,49 +1384,49 @@ const RK_COLS=[
  {k:'prk', lbl:'Pos#', full:'Position Rank', mob:false, th:'dl-rk-th-posrank',
   fn:(p,R)=>`<td class="dl-rk-posrank">${p.pos}${R[p.n]||''}</td>`},
 
- {k:'ktc', lbl:'Mkt Val', full:'Market Value', sort:'ktcEff', mob:true,
+ {k:'ktc', al:'r', lbl:'Mkt Val', full:'Market Value', sort:'ktcEff', mob:true,
   tip:"FantasyCalc consensus trade value — what the market currently pays in trades.",
-  fn:(p,R)=>`<td class="dl-rk-mkt${p.mktStale?' dl-rk-stale':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span class="dl-rk-stale-flag" data-tip="Not in the latest market fetch — this market value may be stale.">\u2020</span>':''}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r dl-rk-mkt${p.mktStale?' dl-rk-stale':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span class="dl-rk-stale-flag" data-tip="Not in the latest market fetch — this market value may be stale.">\u2020</span>':''}</td>`},
 
- {k:'n', lbl:'Player', full:'Player', sort:'n', txt:true, mob:true, locked:true,
+ {k:'n', lbl:'Player', full:'Player', sort:'n', txt:true, mob:true, locked:true, th:'dl-rk-th-name',
   fn:(p,R)=>`<td class="pname dl-rk-name">${typeof injBadge==='function'?injBadge(p.n):''}${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt dl-rk-badge-r">R</span>':(p.hasOv?'<span class="badge bn dl-rk-badge">\u270e</span>':''); })()}${p.n}</td>`},
 
- {k:'pos', lbl:'Pos', full:'Position', mob:true,
-  fn:(p,R)=>`<td class="txt">${p.pos}</td>`},
+ {k:'pos', al:'c', lbl:'Pos', full:'Position', mob:true,
+  fn:(p,R)=>`<td class="dl-rk-c txt">${p.pos}</td>`},
 
- {k:'a', lbl:'Age', full:'Age', sort:'a', mob:false,
+ {k:'a', al:'r', lbl:'Age', full:'Age', sort:'a', mob:false,
   tip:"Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.",
-  fn:(p,R)=>`<td>${p.a<90?p.a.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
 
  {k:'team', lbl:'Team', full:'Team', mob:false,
   fn:(p,R)=>`<td class="txt">${p.t}</td>`},
 
- {k:'ppg25', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
+ {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
   tip:"Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.",
-  fn:(p,R)=>`<td>${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r">${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
 
- {k:'ppg24', lbl:"PPG'24", full:"PPG '24", sort:'ppg24', mob:false,
+ {k:'ppg24', al:'r', lbl:"PPG'24", full:"PPG '24", sort:'ppg24', mob:false,
   tip:"Points per game in the 2024 season, adjusted for your current scoring format.",
-  fn:(p,R)=>`<td>${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>`},
 
- {k:'epaSc', lbl:'EPA', full:'EPA Per Play', sort:'epaSc', mob:false,
+ {k:'epaSc', al:'c', lbl:'EPA', full:'EPA Per Play', sort:'epaSc', mob:false,
   tip:"Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value.",
-  fn:(p,R)=>`<td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-c">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>`},
 
  /* Sorts on the same number it prints. It used to sort raw p.proj while
     displaying getAdjProj(p) — identical at the default scoring format and
     quietly wrong at every other one. */
- {k:'proj', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:true,
+ {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:true,
   tip:"DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.",
-  fn:(p,R)=>`<td class="dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
 
- {k:'mv', lbl:'Mod val', full:'Model Value', sort:'mv', mob:true,
+ {k:'mv', al:'r', lbl:'Mod val', full:'Model Value', sort:'mv', mob:true,
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
-  fn:(p,R)=>`<td class="dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
- {k:'sys', lbl:'Sys', full:'System Score', sort:'sys', mob:false,
+ {k:'sys', al:'c', lbl:'Sys', full:'System Score', sort:'sys', mob:false,
   tip:"Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle.",
-  fn:(p,R)=>`<td>${sTag(p.sys)}</td>`},
+  fn:(p,R)=>`<td class="dl-rk-c">${sTag(p.sys)}</td>`},
 
  {k:'oc', lbl:'OC', full:'Offensive Coordinator', mob:false,
   tip:"Offensive coordinator. ⚠ flags a coordinator change this cycle — everything the player demonstrated came under the old scheme. Shown for context; it does not adjust the projection. No flag = stable staff.",
@@ -1526,7 +1546,8 @@ function renderRankings(){
   });
 
   document.getElementById('rk-head').innerHTML=act.map(c=>{
-    const cls=[c.th||'', sortK===c.k&&c.sort?('dl-rk-on '+(sortDir<0?'dl-rk-desc':'dl-rk-asc')):''].filter(Boolean).join(' ');
+    const cls=[c.th||'', c.al==='r'?'dl-rk-r':c.al==='c'?'dl-rk-c':'',
+      sortK===c.k&&c.sort?('dl-rk-on '+(sortDir<0?'dl-rk-desc':'dl-rk-asc')):''].filter(Boolean).join(' ');
     return '<th'+(c.sort?' onclick="setSortR(\''+c.k+'\')"':'')
       +(c.tip?' data-tip="'+c.tip+'"':'')+(cls?' class="'+cls+'"':'')
       +'>'+c.lbl+(sortK===c.k&&c.sort?'<span class="dl-rk-caret"></span>':'')+'</th>';
