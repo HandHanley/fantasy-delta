@@ -4404,11 +4404,14 @@ function calcDynastyScore(p) {
 
 function dsColor(score) {
   // Matches platform color language (oppScoreColor thresholds)
-  if (!score) return '#5C7080';
-  if (score >= 85) return '#10B981'; // teal — elite
-  if (score >= 72) return '#6BB6E0'; // blue — strong
-  if (score >= 55) return '#E0B34D'; // yellow — average
-  return '#E05745';                  // red — weak
+  // Tokens, not hex: every value below is the exact same colour it was, but
+  // resolving through :root is what lets a palette fix or an accent theme
+  // reach the twelve places this result is dropped into a style attribute.
+  if (!score) return 'var(--fog-2)';
+  if (score >= 85) return 'var(--emerald)'; // elite
+  if (score >= 72) return 'var(--sky)';     // strong
+  if (score >= 55) return 'var(--topaz)';   // average
+  return 'var(--coral)';                    // weak
 }
 
 RAW.forEach(r=>COMP.push(calcProj(r)));

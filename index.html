@@ -658,6 +658,48 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
    now rather than an inline style the next stylesheet pass cannot reach. */
 .dtable td.dl-rk-empty{padding:18px;text-align:center;color:var(--fog-2);font-size:12px}
 
+/* ── Rankings board — typography and rhythm (reskin step 2) ───────────────
+   Opt-in through .dl-board on the <table>. .dtable is shared by 16 tables in
+   this file, so restyling it in place would reskin Projections, EPA,
+   Contracts, College and the trade panel at the same time. Projections and
+   the rest adopt this deliberately, by adding the one class, as each is
+   ported. Nothing here changes a handler, a helper call or a sort key. */
+.dl-board thead th{font-family:var(--sans);font-size:10.5px;font-weight:600;
+  letter-spacing:0;text-transform:none;color:var(--fog-2);
+  padding:0 10px 9px;border-bottom:1px solid var(--line2);white-space:nowrap}
+/* Only the ten sortable headers should look and behave clickable. The global
+   th rule at ~line 43 puts cursor:pointer and a hover colour on every header
+   on the site, so Pos, Team, OC and Tag currently invite a click that does
+   nothing. */
+.dl-board thead th{cursor:default}
+.dl-board thead th:hover{color:var(--fog-2)}
+.dl-board thead th[onclick]{cursor:pointer}
+.dl-board thead th[onclick]:hover{color:var(--paper)}
+.dl-board tbody td{height:42px;padding:0 10px;font-size:13px;
+  border-bottom:1px solid var(--line);vertical-align:middle}
+.dl-board tbody tr:hover td{background:var(--row-hi)}
+
+/* Verdict column. Scoped to the cell, because .bs / .bi / .bw / .bd / .bn are
+   also what sTag, eTag, rTag and injBadge emit everywhere else. Strong buy and
+   strong sell take a solid fill: they are 6 and 33 of 328, rare enough that
+   the loudest treatment is proportionate, and hold drops to a bare outline so
+   brightness carries the hierarchy before hue does. */
+.dl-board td.dl-rk-verdict .badge{font-size:10.5px;font-weight:600;
+  letter-spacing:0;padding:2.5px 8px;border-radius:2px;border:1px solid transparent}
+.dl-board td.dl-rk-verdict .badge.bs{background:var(--emerald);color:var(--ink)}
+.dl-board td.dl-rk-verdict .badge.bi{background:var(--emerald-tint);color:var(--emerald-bri)}
+.dl-board td.dl-rk-verdict .badge.bn{background:none;color:var(--fog-2);border-color:var(--line2)}
+.dl-board td.dl-rk-verdict .badge.bw{background:var(--coral-tint);color:var(--coral-bri)}
+.dl-board td.dl-rk-verdict .badge.bd{background:var(--coral);color:var(--ink)}
+
+@media(max-width:600px){
+  /* Back to the live site's mobile scale — a 42px row wastes a phone screen.
+     The new weight, colour and hierarchy stay. */
+  .dl-board tbody td{height:auto;padding:9px 7px;font-size:12px}
+  .dl-board thead th{padding:0 7px 7px;font-size:9.5px}
+  .dl-board td.dl-rk-verdict .badge{font-size:9.5px;padding:2px 6px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -902,7 +944,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     <button class="set-pill" data-rpos="WL" onclick="rkSetPos('WL')">★ Watchlist</button>
   </div>
 
-  <div class="dl-rk-scroll"><table class="dtable">
+  <div class="dl-rk-scroll"><table class="dtable dl-board">
     <thead><tr>
       <th onclick="setSortR('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher scores reflect players who have proven their dynasty value. The verdict badge shows how the market is pricing that profile." class="dl-rk-th-ds">Δ</th>
       <th class="dl-rk-th-posrank col-hide-mobile">Pos#</th>
@@ -1280,7 +1322,7 @@ function renderRankings(){
     <td class="dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>
     <td class="col-hide-mobile">${sTag(p.sys)}</td>
     <td${p.och?' data-tip="New OC this cycle — prior production came under the old scheme. Shown for context; it does not adjust the projection."':''} class="dl-rk-oc${p.och?' dl-rk-oc-chg':''} col-hide-mobile txt">${p.och?'⚠ ':''}${p.oc}</td>
-    <td>${vTag(p)}</td>
+    <td class="dl-rk-verdict">${vTag(p)}</td>
   </tr>`).join('');
 }
 
