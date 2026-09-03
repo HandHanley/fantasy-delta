@@ -67,8 +67,9 @@ tr:hover td{background:var(--panel)}
   .tc-wrap{flex:1;min-width:0}
   .tc-btn{flex:1;padding:5px 8px;font-size:10px;white-space:nowrap}
   /* compare: label on its own line, then [A] vs [B] across one row */
-  .cmp-label{width:100%}
-  .cmp-in{max-width:none;min-width:0}
+  .cmp-row{flex-direction:column;align-items:stretch;gap:8px}
+  .cmp-label{align-self:flex-start;white-space:normal}
+  .cmp-in{max-width:none;min-width:0;font-size:11.5px;padding:6px 9px}
 
   .trade-grid{grid-template-columns:1fr}
   body{padding:.5rem}
@@ -105,11 +106,12 @@ tr:hover td{background:var(--panel)}
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }
-.tc-wrap{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tc-btn{font-size:11px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer;transition:all .15s}
-.tc-btn:last-child{border-right:none}
-.tc-btn:hover{background:var(--line);color:var(--fog)}
-.tc-active{background:var(--ink-2);color:var(--emerald);font-weight:600}
+.tc-wrap{display:flex;gap:4px}
+.tc-btn{font-family:inherit;font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:4px;
+  border:1px solid var(--line);background:transparent;color:var(--fog);cursor:pointer;transition:all .15s}
+.tc-btn:hover{background:var(--teal-soft);color:var(--paper);border-color:var(--fog-2)}
+.tc-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+.tc-active,.tc-active:hover{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
 .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
 .trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -117,34 +119,122 @@ tr:hover td{background:var(--panel)}
    base + three/four-col rules so it actually wins on source order — the earlier
    @media rule was being overridden by these, leaving 3-4 columns as slivers. */
 @media(max-width:600px){
-  .trade-grid,.trade-grid.three-col,.trade-grid.four-col{grid-template-columns:1fr}
+  .trade-grid,.trade-grid.three-col,.trade-grid.four-col{grid-template-columns:1fr;gap:10px}
+  /* Stacked, but tightened so two teams fit a screen instead of one. */
+  .ts-hd{padding:8px 11px;font-size:11.5px}
+  .win-sel{font-size:9px;padding:1px 4px}
+  .search-wrap{padding:7px 11px 4px}
+  .search-wrap input{font-size:11.5px;padding:6px 9px}
+  .dropdown{left:11px;right:11px}
+  .added{padding:6px 11px;gap:6px}
+  .added-name{font-size:11.5px}
+  .added-meta{font-size:9.5px}
+  .added-vals{font-size:9.5px;gap:8px}
+  .total-row{padding:6px 11px;font-size:10.5px}
+  .total-row span:last-child{font-size:11.5px}
+  .total-row.model{padding-bottom:9px}
+  .total-row.model span:last-child{font-size:14px}
+  .info-box{flex-direction:column;align-items:stretch;gap:9px;padding:10px}
+  .selgroup{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .selgroup .sel-sm:first-child{grid-column:1 / -1}
+  .sel-sm{width:100%}
+  .tc-clear{margin-left:0}
 }
-.trade-side{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem}
-.search-wrap{position:relative;margin-bottom:8px}
-.search-wrap input{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper)}
-.dropdown{position:absolute;top:100%;left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:6px;z-index:30;max-height:220px;overflow-y:auto;margin-top:2px}
-.drop-item{padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between}
-.drop-item:hover{background:var(--line)}
-.added{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--ink);border-radius:6px;margin-bottom:6px}
+.trade-side{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0;
+  display:flex;flex-direction:column}
+.ts-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;
+  border-bottom:1px solid var(--line);font-family:var(--geo);font-size:13px;font-weight:700;letter-spacing:.05em}
+.search-wrap{position:relative;margin:0;padding:10px 13px 4px}
+.search-wrap input{width:100%;font-family:inherit;font-size:12px;padding:7px 10px;border-radius:4px;
+  border:1px solid var(--line);background:var(--ink-2);color:var(--paper)}
+.search-wrap input:focus{outline:2px solid var(--teal-br);outline-offset:1px}
+.dropdown{position:absolute;top:calc(100% - 2px);left:13px;right:13px;background:var(--panel);
+  border:1px solid var(--line);border-radius:4px;z-index:30;max-height:230px;overflow-y:auto;
+  box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.drop-item{padding:8px 11px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.drop-item:last-child{border-bottom:none}
+.drop-item:hover{background:var(--row-hi)}
+.added{display:flex;align-items:flex-start;gap:8px;padding:9px 13px;background:transparent;
+  border-radius:0;margin-bottom:0;border-top:1px solid var(--line)}
 .added-main{flex:1;min-width:0}
 .added-top{display:flex;align-items:baseline;gap:8px}
-.added-name{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.added-vals{flex-shrink:0;display:flex;gap:10px;align-items:baseline;font-size:11px;white-space:nowrap}
+.added-name{flex:1;min-width:0;font-size:12.5px;font-weight:700;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.added-vals{flex-shrink:0;display:flex;gap:10px;align-items:baseline;font-family:var(--mono);font-size:10.5px;white-space:nowrap}
 .added-metarow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:3px}
-.added-meta{min-width:0;font-size:10.5px;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.added-meta{min-width:0;font-size:10px;color:var(--fog-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dest-sel{flex-shrink:0}
-.rm{background:none;border:none;cursor:pointer;color:var(--coral);font-size:15px;padding:0;line-height:1;flex-shrink:0}
-.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-top:1px solid var(--line);margin-top:4px}
+.rm{background:none;border:none;cursor:pointer;color:var(--fog-2);font-size:14px;padding:0 0 0 2px;line-height:1;flex-shrink:0}
+.rm:hover{color:var(--coral)}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:8px 13px;font-size:11px;color:var(--fog);border-top:1px solid var(--line);margin-top:0}
+.total-row span:last-child{font-family:var(--mono);font-weight:700;font-size:12.5px;color:var(--paper)}
+.total-row.model{border-top:none;padding-top:0;padding-bottom:11px}
+.total-row.model span:first-child{font-weight:700}
+.total-row.model span:last-child{font-size:17px}
 .vbar-outer{height:12px;background:var(--line);border-radius:6px;overflow:hidden;position:relative;margin:8px 0}
 .vbar-a{position:absolute;left:0;top:0;height:100%;background:var(--emerald);border-radius:6px 0 0 6px;transition:width .3s}
 .vbar-b{position:absolute;right:0;top:0;height:100%;background:var(--sky);border-radius:0 6px 6px 0;transition:width .3s}
 .vmid{position:absolute;left:50%;top:0;width:2px;height:100%;background:var(--ink);transform:translateX(-50%)}
 .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
-.breakdown-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--panel);font-size:11px}
+.breakdown-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;
+  border-bottom:1px solid var(--line);font-size:11.5px}
+.breakdown-row span:last-child{font-family:var(--mono);font-weight:600}
+#verdict-area{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:16px 18px;margin-top:2px}
+.vsplit{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;margin-bottom:6px;font-weight:700}
+.vs-a{color:var(--teal-br)}.vs-b{color:var(--sky)}
+.vcentre{text-align:center;margin-bottom:.85rem}
+.vbadge{font-size:12px;padding:4px 14px}
+.vgap{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:5px}
+.adjline{font-size:10px;margin-bottom:6px;line-height:1.7}
+.adj-up{color:var(--emerald)}.adj-warn{color:var(--topaz)}.adj-none{color:var(--fog-2)}
+.mods{font-family:var(--mono);font-size:9px;color:var(--fog-2);margin-left:4px}
+#gap-filler{margin-top:.6rem}
+.cmp-sec{margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.cmp-row{display:flex;align-items:center;gap:10px}
+/* The two inputs and the "vs" shrink as one unit. Previously each input carried
+   flex:1 AND min-width:150px in the same wrapping row, so the second input wrapped
+   to its own line and "vs" was stranded at the right edge. */
+.cmp-pair{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.cmp-label{font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
+.cmp-in{flex:1 1 0;min-width:0;background:var(--ink-2);border:1px solid var(--line);
+  border-radius:4px;color:var(--paper);font-family:inherit;font-size:12px;padding:7px 10px}
+.cmp-in:focus{outline:2px solid var(--teal-br);outline-offset:1px}
+.cmp-vs{color:var(--fog-2);font-size:11px;flex:0 0 auto}
+#cmp-out{margin-top:.9rem}
 .send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--paper);cursor:pointer;margin-top:.75rem}
 .send-btn:hover{background:#1e2a3a}
 .section-label{font-size:10px;font-weight:600;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
-.info-box{font-size:11px;color:var(--fog);margin-bottom:1rem;padding:8px 12px;background:var(--panel);border-radius:6px;line-height:1.6}
+.info-box{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  font-size:11.5px;color:var(--fog);margin-bottom:1rem;padding:10px 12px;
+  background:var(--ink-2);border:1px solid var(--line);border-radius:4px;line-height:1.5}
+.selgroup{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sel-sm{font-family:inherit;font-size:11px;padding:5px 9px;border-radius:4px;
+  border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer}
+.sel-sm:focus-visible{outline:2px solid var(--teal-br);outline-offset:1px}
+.tc-row{display:flex;align-items:center;gap:9px;margin-bottom:1rem;flex-wrap:wrap}
+.tc-lbl{font-size:10px;color:var(--fog-2);font-weight:700;letter-spacing:.11em;text-transform:uppercase}
+.tc-clear{margin-left:auto;font-family:inherit;font-size:10.5px;padding:5px 11px;border-radius:4px;
+  border:1px solid var(--line);background:transparent;color:var(--fog-2);cursor:pointer;white-space:nowrap}
+.tc-clear:hover{color:var(--coral);border-color:var(--coral)}
+#trade-mode-note{font-size:11px;color:var(--fog);margin-bottom:.85rem;padding:9px 13px;
+  background:var(--sky-tint);border-radius:4px;border-left:2px solid var(--sky)}
+.win-sel{font-family:inherit;font-size:9.5px;font-weight:600;background:var(--ink-2);color:var(--fog);
+  border:1px solid var(--line);border-radius:4px;padding:2px 6px;cursor:pointer}
+#trade-col-a .ts-hd{color:var(--teal-br)}
+#trade-col-b .ts-hd{color:var(--sky)}
+#trade-col-c .ts-hd{color:var(--violet)}
+#trade-col-d .ts-hd{color:var(--topaz)}
+#trade-col-a .total-row.model span{color:var(--teal-br)}
+#trade-col-b .total-row.model span{color:var(--sky)}
+#trade-col-c .total-row.model span{color:var(--violet)}
+#trade-col-d .total-row.model span{color:var(--topaz)}
+.howbtn{font-family:inherit;font-size:11px;color:var(--fog);background:none;
+  border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.howbtn:hover{color:var(--paper);border-color:var(--fog-2)}
+.howbtn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+.how{font-size:11.5px;color:var(--fog);line-height:1.65;padding:11px 14px;margin:-.6rem 0 1rem;
+  background:var(--ink-2);border:1px solid var(--line);border-radius:4px;max-width:78ch}
+.how[hidden]{display:none}
 .edit-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem;max-width:480px}
 .edit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .edit-row label{min-width:130px;color:var(--fog);font-size:12px}
@@ -783,84 +873,94 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
-  <div class="info-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <span>Model = Mkt Val × age × utilization × college × EPA × QB quality × offense style. Picks use raw market value.</span>
-    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
+  <div class="info-box">
+    <button class="howbtn" id="tc-howbtn" aria-expanded="false" aria-controls="tc-how"
+      onclick="var h=document.getElementById('tc-how'),o=h.hasAttribute('hidden');o?h.removeAttribute('hidden'):h.setAttribute('hidden','');this.setAttribute('aria-expanded',o?'true':'false');return false;">How This Is Valued</button>
+    <div class="selgroup">
+    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" class="sel-sm">
       <option value="half_tep">0.5PPR + TE Prem</option>
       <option value="half">0.5 PPR</option>
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
       <option value="std">Standard</option>
     </select>
-      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" title="League size" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
+      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" data-tip="League size" class="sel-sm">
       <option value="8">8-team</option><option value="10">10-team</option>
       <option value="12" selected>12-team</option><option value="14">14-team</option>
     </select>
-      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" title="QB format" style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)">
+      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" data-tip="QB format" class="sel-sm">
       <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
     </select>
+    </div>
+  </div>
+  <div class="how" id="tc-how" hidden>
+    Model value is market price adjusted for age, opportunity, efficiency, quarterback quality and
+    offence, then corrected for the model&rsquo;s known pessimism &mdash; a correction that shrinks as
+    a player gets more expensive. Picks use raw market value. Sides are then adjusted for elite
+    premium, position and same-team clustering, and concentration.
   </div>
 
   <!-- Team count toggle -->
-  <div class="tc-row" style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
-    <span style="font-size:11px;color:var(--fog);font-weight:600;letter-spacing:.5px">TEAMS IN TRADE:</span>
+  <div class="tc-row">
+    <span class="tc-lbl">Teams In Trade:</span>
     <div class="tc-wrap">
       <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2 Teams</button>
       <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3 Teams</button>
       <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4 Teams</button>
     </div>
-    <button class="tc-clear" onclick="clearAllTrade()" style="margin-left:auto;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid var(--fog-2);background:transparent;color:var(--fog);cursor:pointer;white-space:nowrap">Clear all</button>
+    <button class="tc-clear" onclick="clearAllTrade()">Clear all</button>
   </div>
 
-  <div id="trade-mode-note" style="font-size:11px;color:var(--fog-2);margin-bottom:.75rem;display:none;padding:8px 12px;background:var(--ink-2);border-radius:6px;border:1px solid var(--ink-2)">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
+  <div id="trade-mode-note" style="display:none">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--teal-br);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team A<select class="win-sel" onchange="setWindow('a',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="ts-hd">Team A<select class="win-sel" onchange="setWindow('a',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
-      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-a" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--teal-br);font-weight:600">Model value</span><span id="mod-a" style="color:var(--teal-br);font-weight:600">—</span></div>
+      <div class="total-row"><span>Mkt Val</span><span id="ktc-a">—</span></div>
+      <div class="total-row model"><span>Model value</span><span id="mod-a">—</span></div>
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--sky);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team B<select class="win-sel" onchange="setWindow('b',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="ts-hd">Team B<select class="win-sel" onchange="setWindow('b',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
-      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-b" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--sky);font-weight:600">Model value</span><span id="mod-b" style="color:var(--sky);font-weight:600">—</span></div>
+      <div class="total-row"><span>Mkt Val</span><span id="ktc-b">—</span></div>
+      <div class="total-row model"><span>Model value</span><span id="mod-b">—</span></div>
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--violet);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team C<select class="win-sel" onchange="setWindow('c',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="ts-hd">Team C<select class="win-sel" onchange="setWindow('c',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
-      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-c" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--violet);font-weight:600">Model value</span><span id="mod-c" style="color:var(--violet);font-weight:600">—</span></div>
+      <div class="total-row"><span>Mkt Val</span><span id="ktc-c">—</span></div>
+      <div class="total-row model"><span>Model value</span><span id="mod-c">—</span></div>
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
-      <div style="font-size:12px;font-weight:600;margin-bottom:.75rem;color:var(--topaz);padding-bottom:.5rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">Team D<select class="win-sel" onchange="setWindow('d',this.value)" title="Competitive window — context only, does not change values" style="font-size:10px;font-weight:500;background:var(--ink-2);color:var(--fog);border:1px solid var(--line);border-radius:4px;padding:1px 5px;cursor:pointer"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="ts-hd">Team D<select class="win-sel" onchange="setWindow('d',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
-      <div class="total-row"><span style="color:var(--fog);font-size:11px">Mkt Val</span><span id="ktc-d" style="font-size:11px">—</span></div>
-      <div class="total-row" style="border-top:none;padding-top:0"><span style="color:var(--topaz);font-weight:600">Model value</span><span id="mod-d" style="color:var(--topaz);font-weight:600">—</span></div>
+      <div class="total-row"><span>Mkt Val</span><span id="ktc-d">—</span></div>
+      <div class="total-row model"><span>Model value</span><span id="mod-d">—</span></div>
     </div>
   </div>
   <div id="verdict-area"></div>
-  <div id="gap-filler" style="margin-top:.5rem"></div>
+  <div id="gap-filler"></div>
 
-  <div style="margin-top:1.25rem;border-top:1px solid var(--panel);padding-top:1rem">
-    <div class="cmp-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span class="cmp-label" style="font-size:11px;font-weight:700;color:var(--fog);letter-spacing:.06em">⇄ PLAYER COMPARE</span>
-      <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()"
-        style="flex:1;min-width:150px;max-width:230px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-size:12px;padding:6px 10px">
-      <span style="color:var(--fog-2);font-size:11px">vs</span>
-      <input id="cmp-b" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()"
-        style="flex:1;min-width:150px;max-width:230px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-size:12px;padding:6px 10px">
+  <div class="cmp-sec">
+    <div class="cmp-row">
+      <span class="cmp-label">⇄ Player Compare</span>
+      <div class="cmp-pair">
+      <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()">
+      <span class="cmp-vs">vs</span>
+      <input id="cmp-b" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()">
+      </div>
     </div>
     <datalist id="cmp-names"></datalist>
-    <div id="cmp-out" style="margin-top:.85rem"></div>
+    </div>
+    <div id="cmp-out"></div>
   </div>
 </div>
 
@@ -1499,11 +1599,11 @@ function recalcTrade(){
       const hasTeamPenalty = detail.some(d => d.teamM < 1.0);
       const hasConc = concM > 1.001;
       const adjustments = [];
-      if (hasElite) adjustments.push(`<span style="color:var(--emerald)">★ Elite premium</span>`);
-      if (hasPosPenalty) adjustments.push(`<span style="color:var(--topaz)">⚠ Position clustering discount</span>`);
-      if (hasTeamPenalty) adjustments.push(`<span style="color:var(--topaz)">⚠ Same-team discount</span>`);
-      if (hasConc) adjustments.push(`<span style="color:var(--emerald)">◆ Concentration bonus ×${concM.toFixed(2)} applied to side total</span>`);
-      return adjustments.length ? adjustments.join(' · ') : '<span style="color:var(--fog-2)">No adjustments</span>';
+      if (hasElite) adjustments.push(`<span class="adj-up">★ Elite premium</span>`);
+      if (hasPosPenalty) adjustments.push(`<span class="adj-warn">⚠ Position clustering discount</span>`);
+      if (hasTeamPenalty) adjustments.push(`<span class="adj-warn">⚠ Same-team discount</span>`);
+      if (hasConc) adjustments.push(`<span class="adj-up">◆ Concentration bonus ×${concM.toFixed(2)} applied to side total</span>`);
+      return adjustments.length ? adjustments.join(' · ') : '<span class="adj-none">No adjustments</span>';
     };
 
     const breakdownA = buildBreakdown(v4.sideA.detail, v4.sideA.concM, 'A', 'var(--emerald)');
@@ -1516,29 +1616,29 @@ function recalcTrade(){
       if (d.posM < 1.0) mods.push(`pos ×${d.posM.toFixed(2)}`);
       if (d.teamM < 1.0) mods.push(`team ×${d.teamM.toFixed(2)}`);
       // Concentration is a SIDE-level bonus, not per-player — don't show on each row
-      const modStr = mods.length ? `<span style="font-size:9px;color:var(--fog-2);margin-left:4px">(${mods.join(', ')})</span>` : '';
+      const modStr = mods.length ? `<span class="mods">(${mods.join(', ')})</span>` : '';
       return `<div class="breakdown-row">
         <span>${d.name}${modStr}</span>
-        <span style="font-weight:600">${Math.round(d.adj).toLocaleString()}</span>
+        <span>${Math.round(d.adj).toLocaleString()}</span>
       </div>`;
     };
 
     document.getElementById('verdict-area').innerHTML=`
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
-        <span style="color:var(--emerald);font-weight:600">A gives: ${mA.toLocaleString()}</span>
-        <span style="color:var(--sky);font-weight:600">B gives: ${mB.toLocaleString()}</span>
+      <div class="vsplit">
+        <span class="vs-a">A gives: ${mA.toLocaleString()}</span>
+        <span class="vs-b">B gives: ${mB.toLocaleString()}</span>
       </div>
       <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
-      <div style="text-align:center;margin-bottom:.75rem">
-        <span class="badge b${vc}" style="font-size:12px;padding:4px 14px">${verdict}</span>
-        ${pct>8?`<div style="font-size:11px;color:var(--fog);margin-top:4px">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
+      <div class="vcentre">
+        <span class="badge b${vc} vbadge">${verdict}</span>
+        ${pct>8?`<div class="vgap">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
       </div>
       ${windowFraming()}
 
       <div class="breakdown-grid">
         <div>
           <div class="section-label">Team A gives up</div>
-          <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownA}</div>
+          <div class="adjline">${breakdownA}</div>
           ${v4.sideA.detail.map(playerRowA).join('')}
           <div class="breakdown-row" style="border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)">
             <span>Pre-concentration subtotal</span>
