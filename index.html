@@ -711,6 +711,36 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 .dl-board thead th.dl-rk-desc .dl-rk-caret{border-top:4px solid var(--teal-br)}
 .dl-board thead th.dl-rk-asc .dl-rk-caret{border-bottom:4px solid var(--teal-br)}
 
+/* ── Column picker (reskin step 5) ───────────────────────────────────── */
+.dl-rk-colwrap{position:relative}
+.dl-rk-colbtn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;
+  font-size:11.5px;color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
+  border-radius:8px;padding:6px 11px;cursor:pointer}
+.dl-rk-colbtn:hover{color:var(--paper);border-color:var(--fog-2)}
+.dl-rk-colbtn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+.dl-rk-colbtn[aria-expanded="true"]{color:var(--teal-br);border-color:var(--teal-tint);
+  background:var(--teal-soft)}
+.dl-rk-colmenu{position:absolute;top:calc(100% + 7px);left:0;z-index:40;width:236px;
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:11px 12px 9px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.dl-rk-colmenu[hidden]{display:none}
+.dl-rk-colmenu-h{font-family:var(--sans);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--fog-2);margin-bottom:9px}
+.dl-rk-opt{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12.5px;cursor:pointer}
+.dl-rk-opt input{accent-color:var(--teal-br);width:14px;height:14px;cursor:pointer}
+.dl-rk-opt.lk{color:var(--fog-2);cursor:default}
+.dl-rk-opt.lk input{cursor:default}
+.dl-rk-colreset{margin-top:9px;width:100%;font-family:inherit;font-size:11px;color:var(--fog-2);
+  background:none;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:pointer}
+.dl-rk-colreset:hover{color:var(--paper);border-color:var(--fog-2)}
+.dl-rk-colnote{margin-top:8px;font-size:10px;line-height:1.45;color:var(--fog-2)}
+@media(max-width:600px){
+  /* Anchor right on a phone so a 236px panel opened from a button near the
+     right edge cannot hang off the screen. */
+  .dl-rk-colmenu{left:auto;right:0;width:214px;max-height:60vh;overflow-y:auto}
+  .dl-rk-colbtn{font-size:11px;padding:5px 10px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -939,6 +969,20 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   <div class="ctl-row">
     <input type="text" id="s-rank" class="fld-8" placeholder="Search players…" oninput="renderRankings()">
     <select id="sort-rank" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)"></select>
+    <div class="dl-rk-colwrap">
+      <button type="button" class="dl-rk-colbtn" id="rk-col-btn" aria-expanded="false" aria-controls="rk-col-menu" onclick="rkMenuToggle(event)">
+        <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="1" y="2" width="3.4" height="12" rx="1" fill="currentColor" opacity=".9"/>
+          <rect x="6.3" y="2" width="3.4" height="12" rx="1" fill="currentColor" opacity=".55"/>
+          <rect x="11.6" y="2" width="3.4" height="12" rx="1" fill="currentColor" opacity=".3"/>
+        </svg>Columns</button>
+      <div class="dl-rk-colmenu" id="rk-col-menu" hidden>
+        <div class="dl-rk-colmenu-h" id="rk-col-head">Show On The Board</div>
+        <div id="rk-col-opts"></div>
+        <button type="button" class="dl-rk-colreset" onclick="rkColsReset()">Reset To Default</button>
+        <div class="dl-rk-colnote">Saved on this device only. Column choices do not sync.</div>
+      </div>
+    </div>
   </div>
 
   <div class="set-row" id="rk-pos-row" style="margin-bottom:.75rem">
@@ -1376,7 +1420,82 @@ const RK_COLS=[
 /* 600px is the live breakpoint — the same one col-hide-mobile fires at, so a
    phone sees exactly the seven columns it saw before this change. */
 const RK_MQ = window.matchMedia('(max-width:600px)');
-function rkCols(){ return RK_COLS.filter(c=>c.mob||!RK_MQ.matches); }
+function rkCols(){ const set=rkColsGet(rkDev()); return RK_COLS.filter(c=>set.indexOf(c.k)>-1); }
+/* ── Column picker (reskin step 5) ────────────────────────────────────────
+   Desktop and phone keep separate saved sets. Someone who trims their phone
+   view should not find their laptop view rearranged, and a phone that
+   inherited a fifteen-column desktop layout would be unusable.
+
+   Per BRAND section 7 these are per-device and do NOT sync, so there is no
+   DSYNC hook here on purpose, and the menu says so on its face.
+
+   Defaults reproduce today's behaviour exactly: everything on desktop, and on
+   a phone the same eight columns col-hide-mobile used to leave visible. */
+const RK_LS  = { d:'delta_cols_desktop', m:'delta_cols_mobile' };
+const RK_DEF = { d:RK_COLS.map(c=>c.k), m:RK_COLS.filter(c=>c.mob).map(c=>c.k) };
+const rkSel  = { d:null, m:null };
+function rkDev(){ return RK_MQ.matches ? 'm' : 'd'; }
+
+/* A saved set is repaired, never trusted. Keys that no longer exist are
+   dropped, the locked Player column is restored if it went missing, and an
+   empty result falls back to the default — which is also the path the freeze
+   script takes, since it stubs localStorage to return null. */
+function rkColsGet(dev){
+  if(rkSel[dev]) return rkSel[dev];
+  let saved=null;
+  try{ saved=JSON.parse(localStorage.getItem(RK_LS[dev])||'null'); }catch(e){}
+  const clean = Array.isArray(saved) ? saved.filter(k=>RK_COLS.some(c=>c.k===k)) : null;
+  const set = (clean && clean.length) ? clean : RK_DEF[dev].slice();
+  RK_COLS.forEach(c=>{ if(c.locked && set.indexOf(c.k)<0) set.push(c.k); });
+  rkSel[dev]=set;
+  return set;
+}
+function rkColsSave(dev){
+  try{ localStorage.setItem(RK_LS[dev], JSON.stringify(rkSel[dev])); }catch(e){}
+}
+function rkColsToggle(k,on){
+  const dev=rkDev(), set=rkColsGet(dev);
+  const col=RK_COLS.find(c=>c.k===k);
+  if(!col || col.locked) return;
+  const i=set.indexOf(k);
+  if(on && i<0) set.push(k);
+  else if(!on && i>-1) set.splice(i,1);
+  if(!set.length) rkSel[dev]=RK_DEF[dev].slice();
+  rkColsSave(dev); renderRankings(); rkMenuFill();
+}
+function rkColsReset(){
+  const dev=rkDev();
+  rkSel[dev]=RK_DEF[dev].slice();
+  rkColsSave(dev); renderRankings(); rkMenuFill();
+}
+function rkMenuFill(){
+  const dev=rkDev(), set=rkColsGet(dev);
+  const h=document.getElementById('rk-col-head');
+  if(h) h.textContent = dev==='m' ? 'Show On The Board \u2014 Phone' : 'Show On The Board \u2014 Desktop';
+  const box=document.getElementById('rk-col-opts');
+  if(!box) return;
+  box.innerHTML=RK_COLS.map(c=>
+    '<label class="dl-rk-opt'+(c.locked?' lk':'')+'">'
+    +'<input type="checkbox" data-col="'+c.k+'"'+(set.indexOf(c.k)>-1?' checked':'')
+    +(c.locked?' disabled':'')+' onchange="rkColsToggle(this.dataset.col,this.checked)">'
+    +'<span>'+c.full+(c.locked?' (always shown)':'')+'</span></label>').join('');
+}
+function rkMenuOpen(v){
+  const m=document.getElementById('rk-col-menu'), b=document.getElementById('rk-col-btn');
+  if(!m||!b) return;
+  if(v){ rkMenuFill(); m.removeAttribute('hidden'); } else { m.setAttribute('hidden',''); }
+  b.setAttribute('aria-expanded', v?'true':'false');
+}
+function rkMenuToggle(e){
+  if(e) e.stopPropagation();
+  const m=document.getElementById('rk-col-menu');
+  rkMenuOpen(!!(m && m.hasAttribute('hidden')));
+}
+document.addEventListener('click',function(e){
+  const m=document.getElementById('rk-col-menu'), b=document.getElementById('rk-col-btn');
+  if(m && !m.hasAttribute('hidden') && !m.contains(e.target) && b && !b.contains(e.target)) rkMenuOpen(false);
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') rkMenuOpen(false); });
 function rkVal(c,p){ return typeof c.sort==='function' ? c.sort(p) : p[c.sort]; }
 function rkCmp(c,dir){
   // dir -1 is the first click: figures high-to-low, names A-to-Z.
@@ -1421,7 +1540,7 @@ function renderRankings(){
 /* A phone and a laptop show different column sets, so crossing the breakpoint
    has to redraw. Listening to the media query rather than every resize event
    means this fires on the crossing only, not on each pixel of a drag. */
-if(RK_MQ.addEventListener) RK_MQ.addEventListener('change',()=>{ if(typeof COMP!=='undefined'&&COMP.length) renderRankings(); });
+if(RK_MQ.addEventListener) RK_MQ.addEventListener('change',()=>{ if(typeof COMP!=='undefined'&&COMP.length) renderRankings(); rkMenuFill(); });
 
 let projSort='proj', projSortDir=1;
 function setSortP(k){if(projSort===k)projSortDir*=-1;else{projSort=k;projSortDir=1;}renderProj();}
