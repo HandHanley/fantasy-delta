@@ -134,10 +134,10 @@ tr:hover td{background:var(--panel)}
   .total-row span:last-child{font-size:11.5px}
   .total-row.model{padding-bottom:9px}
   .total-row.model span:last-child{font-size:14px}
-  .info-box{gap:8px;padding:0}
+  .tc-settings{gap:6px}
   .selgroup{gap:5px}
   .sel-sm{font-size:10.5px;padding:5px 20px 5px 9px}
-  .howbtn{margin-left:0;font-size:10.5px}
+  .howbtn{font-size:10.5px;padding:5px 9px}
   .tc-clear{margin-left:0}
 }
 .trade-side{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0;
@@ -207,9 +207,7 @@ tr:hover td{background:var(--panel)}
 .send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--paper);cursor:pointer;margin-top:.75rem}
 .send-btn:hover{background:#1e2a3a}
 .section-label{font-size:10px;font-weight:600;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
-.info-box{display:flex;justify-content:space-between;align-items:center;gap:10px;
-  font-size:11.5px;color:var(--fog);margin-bottom:1rem;padding:0;
-  background:none;border:0;line-height:1.5;flex-wrap:wrap}
+.tc-settings{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .selgroup{display:flex;gap:6px;flex-wrap:wrap}
 /* Settings read as chips rather than form controls — they are state, not a form.
    appearance:none strips the platform bezel; the caret is drawn in. */
@@ -240,9 +238,11 @@ tr:hover td{background:var(--panel)}
 #trade-col-b .total-row.model span{color:var(--sky)}
 #trade-col-c .total-row.model span{color:var(--violet)}
 #trade-col-d .total-row.model span{color:var(--topaz)}
-.howbtn{font-family:inherit;font-size:11px;color:var(--fog-2);background:none;
-  border:0;border-bottom:1px solid var(--line2);border-radius:0;padding:2px 0;
-  cursor:pointer;white-space:nowrap;margin-left:auto}
+.howbtn{font-family:inherit;font-size:11px;font-weight:600;color:var(--fog);background:none;
+  border:1px dashed var(--line2);border-radius:4px;padding:5px 10px;
+  cursor:pointer;white-space:nowrap}
+.howbtn:before{content:'ⓘ';margin-right:5px;color:var(--fog-2)}
+.howbtn:hover{color:var(--paper);border-color:var(--fog-2)}
 .howbtn:hover{color:var(--paper);border-color:var(--fog-2)}
 .howbtn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 .how{font-size:11.5px;color:var(--fog);line-height:1.65;padding:12px 15px;margin:-.4rem 0 1rem;
@@ -916,7 +916,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
-  <div class="info-box">
+  <div class="tc-settings">
     <div class="selgroup">
     <select id="trade-scoring-fmt" onchange="applyTradeScoring()" class="sel-sm">
       <option value="half_tep">0.5PPR + TE Prem</option>
