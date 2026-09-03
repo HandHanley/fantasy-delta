@@ -761,6 +761,42 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
    place instead of being spread through the figures. */
 .dl-board th.dl-rk-th-name,.dl-board td.dl-rk-name{width:100%}
 
+/* ── Player cell: name, then position and team ───────────────────────── */
+.dl-rk-pn{font-weight:700}
+.dl-rk-tp{color:var(--fog-2);font-size:11px;margin-left:7px;font-weight:600}
+
+/* ── Undervalued / Overvalued lists ──────────────────────────────────── */
+.dl-rk-lists{margin:.2rem 0 1.1rem}
+.dl-rk-bound{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:.7rem}
+.dl-rk-bound-l{font-size:11px;color:var(--fog-2);letter-spacing:.02em}
+.dl-rk-skip{display:flex;gap:6px}
+.dl-rk-lstgrid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dl-rk-lst h3{font-family:var(--geo);font-size:14px;font-weight:500;margin:0 0 2px;
+  padding-bottom:9px;border-bottom:2px solid var(--paper)}
+.dl-rk-cap{font-size:11px;color:var(--fog-2);margin:9px 0 2px}
+.dl-rk-lrow{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.dl-rk-lrow:last-child{border-bottom:0}
+.dl-rk-lrow:hover{background:var(--row-hi)}
+.dl-rk-lname{font-size:13.5px;font-weight:600;min-width:0}
+.dl-rk-lname s{display:block;text-decoration:none;font-family:var(--mono);font-size:10.5px;
+  color:var(--fog-2);margin-top:2px;font-weight:400}
+.dl-rk-lval{text-align:right;white-space:nowrap}
+.dl-rk-lval b{display:block;font-family:var(--mono);font-size:14.5px;font-weight:700}
+.dl-rk-lval b.u{color:var(--emerald)}
+.dl-rk-lval b.d{color:var(--coral)}
+.dl-rk-lval s{display:block;text-decoration:none;font-family:var(--mono);font-size:10.5px;
+  color:var(--fog-2);margin-top:1px}
+/* JS blanks these containers, so the row that says nothing qualified has to
+   look deliberate rather than collapse to an invisible bordered strip. */
+.dl-rk-lrow.dl-rk-lnone{cursor:default;color:var(--fog-2);font-size:12px;justify-content:flex-start}
+.dl-rk-lrow.dl-rk-lnone:hover{background:none}
+@media(max-width:600px){
+  .dl-rk-lstgrid{grid-template-columns:1fr;gap:20px}
+  .dl-rk-lists{margin-bottom:1.3rem}
+  .dl-rk-tp{font-size:10px;margin-left:5px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -985,6 +1021,29 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     <b style="color:var(--paper)">Model value answers one question</b> — what the profile is worth if the market repriced it on production, age,
     opportunity and contract. The verdict is the gap between the two, not a prediction of next week. Change a setting above and the whole board
     rescores: scarcity is a function of league size and QB format, so a 10-team superflex QB is not worth what a 14-team 1-QB QB is worth.</div></details>
+
+  <div class="dl-rk-lists" id="rk-lists">
+    <div class="dl-rk-bound">
+      <span class="dl-rk-bound-l">Split At Market Rank</span>
+      <div class="dl-rk-skip">
+        <button type="button" class="set-pill on" data-skip="25" onclick="rkSetSkip(25)">#25</button>
+        <button type="button" class="set-pill" data-skip="50" onclick="rkSetSkip(50)">#50</button>
+        <button type="button" class="set-pill" data-skip="100" onclick="rkSetSkip(100)">#100</button>
+      </div>
+    </div>
+    <div class="dl-rk-lstgrid">
+      <div class="dl-rk-lst">
+        <h3>Undervalued</h3>
+        <div class="dl-rk-cap">Priced outside the top <span class="dl-rk-skiplbl">25</span></div>
+        <div id="rk-buys"></div>
+      </div>
+      <div class="dl-rk-lst">
+        <h3>Overvalued</h3>
+        <div class="dl-rk-cap">Priced inside the top <span class="dl-rk-skiplbl">25</span></div>
+        <div id="rk-sells"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="ctl-row">
     <input type="text" id="s-rank" class="fld-8" placeholder="Search players…" oninput="renderRankings()">
@@ -1305,6 +1364,51 @@ function syncSettingsUI(){
   ['scoring-fmt','trade-scoring-fmt'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=scoringFmt;});
 }
 
+/* ── Undervalued / Overvalued (reskin step 6) ─────────────────────────────
+   One boundary drives both lists. Inside it: expensive players DELTA prices
+   below the market. Outside it: cheap players it prices above.
+
+   Ranked by points at stake, never by percentage. A 50% gap on a 300-point
+   backup moves 150 points; a 27% gap on a 6,700-point receiver moves 1,799.
+
+   Deliberately NOT reusing p.gap. That field is only refreshed inside
+   `if(MV_CENTER!==1)` and the loop skips the rookie-override path, so some
+   rows hold a stale value. Recomputing from mvAsset(p) is what guarantees a
+   list agrees with the Model Value cell of the row it points at. */
+let rkSkip=25;
+function rkSetSkip(n){
+  rkSkip=n;
+  document.querySelectorAll('#rk-lists [data-skip]').forEach(b=>
+    b.classList.toggle('on', parseInt(b.getAttribute('data-skip'),10)===rkSkip));
+  document.querySelectorAll('#rk-lists .dl-rk-skiplbl').forEach(e=>{ e.textContent=rkSkip; });
+  renderRkLists();
+}
+function rkListRow(x,cls,sign){
+  return '<div class="dl-rk-lrow" data-name="'+x.n+'" onclick="openDeck(this.dataset.name)"'
+    +' oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+    +'<span class="dl-rk-lname">'+x.n+'<s>'+x.pos+' \u00b7 '+x.mkt.toLocaleString()+' \u00b7 #'+x.mrk+'</s></span>'
+    +'<span class="dl-rk-lval"><b class="'+cls+'">'+sign+Math.abs(x.abs).toLocaleString()+'</b>'
+    +'<s>'+(x.pct>0?'+':'')+x.pct+'% gap</s></span></div>';
+}
+function renderRkLists(){
+  const buys=document.getElementById('rk-buys'), sells=document.getElementById('rk-sells');
+  if(!buys||!sells||typeof COMP==='undefined'||!COMP.length) return;
+  // Same exclusions as the accuracy ledger's graded set: no price, or a price
+  // that did not come from the latest market fetch, means no opinion.
+  const pool=COMP.filter(p=>p.ktcEff>0 && !p.mktStale);
+  const byPrice=[...pool].sort((a,b)=>b.ktcEff-a.ktcEff);
+  const rank={}; byPrice.forEach((p,i)=>{ rank[p.n]=i+1; });
+  const rows=pool.map(p=>{
+    const mv=mvAsset(p);
+    return {n:p.n,pos:p.pos,mkt:p.ktcEff,mrk:rank[p.n],abs:Math.round(mv-p.ktcEff),
+            pct:Math.round((mv/Math.max(p.ktcEff,1)-1)*100)};
+  });
+  const empty='<div class="dl-rk-lrow dl-rk-lnone">Nothing clears the bar here.</div>';
+  const up=rows.filter(x=>x.mrk>rkSkip && x.abs>0).sort((a,b)=>b.abs-a.abs).slice(0,5);
+  const dn=rows.filter(x=>x.mrk<=rkSkip && x.abs<0).sort((a,b)=>a.abs-b.abs).slice(0,5);
+  buys.innerHTML  = up.length ? up.map(x=>rkListRow(x,'u','+')).join('') : empty;
+  sells.innerHTML = dn.length ? dn.map(x=>rkListRow(x,'d','\u2212')).join('') : empty;
+}
 let sortK='ktc',sortDir=-1;
 function setSortR(k){if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderRankings();}
 function setSortRDropdown(k){sortK=k;sortDir=-1;renderRankings();}
@@ -1389,17 +1493,11 @@ const RK_COLS=[
   fn:(p,R)=>`<td class="dl-rk-r dl-rk-mkt${p.mktStale?' dl-rk-stale':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span class="dl-rk-stale-flag" data-tip="Not in the latest market fetch — this market value may be stale.">\u2020</span>':''}</td>`},
 
  {k:'n', lbl:'Player', full:'Player', sort:'n', txt:true, mob:true, locked:true, th:'dl-rk-th-name',
-  fn:(p,R)=>`<td class="pname dl-rk-name">${typeof injBadge==='function'?injBadge(p.n):''}${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt dl-rk-badge-r">R</span>':(p.hasOv?'<span class="badge bn dl-rk-badge">\u270e</span>':''); })()}${p.n}</td>`},
-
- {k:'pos', al:'c', lbl:'Pos', full:'Position', mob:true,
-  fn:(p,R)=>`<td class="dl-rk-c txt">${p.pos}</td>`},
+  fn:(p,R)=>`<td class="pname dl-rk-name">${typeof injBadge==='function'?injBadge(p.n):''}${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt dl-rk-badge-r">R</span>':(p.hasOv?'<span class="badge bn dl-rk-badge">\u270e</span>':''); })()}<span class="dl-rk-pn">${p.n}</span><span class="dl-rk-tp">${p.pos} ${p.t}</span></td>`},
 
  {k:'a', al:'r', lbl:'Age', full:'Age', sort:'a', mob:false,
   tip:"Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.",
   fn:(p,R)=>`<td class="dl-rk-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
-
- {k:'team', lbl:'Team', full:'Team', mob:false,
-  fn:(p,R)=>`<td class="txt">${p.t}</td>`},
 
  {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
   tip:"Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.",
@@ -1532,6 +1630,7 @@ function renderRankings(){
      Age is still available as a sort, which covers the same need without a permanent control. */
   let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&p.n.toLowerCase().includes(q));
   rkFillSortMenu();
+  renderRkLists();
   const act=rkCols();
   const col=RK_COLS.find(c=>c.k===sortK&&c.sort) || RK_COLS.find(c=>c.k==='ktc');
   data.sort(rkCmp(col,sortDir));
