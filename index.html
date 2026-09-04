@@ -715,6 +715,7 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 a.dl-home{text-decoration:none;color:inherit;display:flex}
 a.dl-home:hover .dl-word{color:var(--teal-br)}
 a.dl-home:focus-visible{outline:2px solid var(--teal-br);outline-offset:4px;border-radius:6px}
+.dl-rk-howrow{margin:.9rem 0 0}
 .dl-rk-colwrap{position:relative}
 .dl-rk-colbtn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;
   font-size:11.5px;color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
@@ -1191,6 +1192,38 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     <thead><tr id="rk-head"></tr></thead>
     <tbody id="rank-body"></tbody>
   </table></div>
+
+  <!-- Same affordance as Trade Calc: the .howbtn / .how pair, reused rather
+       than restyled. Collapsed by default so the board carries no permanent
+       explanatory copy, and placed below the table so opening it never pushes
+       the rows the reader is looking at down the page. -->
+  <div class="dl-rk-howrow">
+    <button class="howbtn" id="rk-howbtn" aria-expanded="false" aria-controls="rk-how"
+      onclick="var h=document.getElementById('rk-how'),o=h.hasAttribute('hidden');o?h.removeAttribute('hidden'):h.setAttribute('hidden','');this.setAttribute('aria-expanded',o?'true':'false');return false;">How To Read This</button>
+  </div>
+  <div class="how" id="rk-how" hidden>
+    <p><b>DELTA scores what a player has already done</b>, not what anyone
+    expects him to do. No projections, no hype, no consensus — production,
+    age, opportunity and contract.</p>
+    <p style="margin-top:9px">There are three numbers and they answer different
+    questions. <b>Δ</b> is the player, 0 to 99, ignoring price entirely.
+    <b>Mkt Val</b> is what he currently costs in trades. <b>Mod val</b> is what
+    DELTA thinks he is worth. The gap between the last two is the verdict.</p>
+    <p style="margin-top:9px"><b>Buy</b> and <b>sell</b> mean DELTA and the
+    market disagree. <b>Strong</b> is reserved for a gap of 25% or more, and is
+    withheld until a player has had 20 games’ worth of chances to show what
+    he is — a rookie has not earned a strong call either way yet.</p>
+    <p style="margin-top:9px"><b>Price Against Disagreement</b> is the chart at
+    the top. Each dot is a player: how much he costs across the bottom, how far
+    DELTA sits from that price up the side. Green means DELTA says he is cheap,
+    red means expensive, grey means the market has him about right.</p>
+    <ul class="how-list">
+      <li>Undervalued and overvalued are ranked by <b>points at stake</b>, not percentage — a big percentage on a cheap player moves very little</li>
+      <li>Market Moves shows the last seven days of price change, top 150 only</li>
+      <li>Columns are yours to choose, and are saved per device</li>
+      <li>A dash means DELTA has no data, not a zero</li>
+    </ul>
+  </div>
 </div>
 
 <div id="panel-projections" class="panel">
