@@ -797,6 +797,89 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   .dl-rk-tp{font-size:10px;margin-left:5px}
 }
 
+/* ── Rankings block: map + movers left, lists right ──────────────────── */
+.dl-rk-block{display:grid;grid-template-columns:1.42fr 1fr;gap:26px;align-items:stretch;
+  margin:.2rem 0 1.3rem}
+.dl-rk-mapcol{display:flex;flex-direction:column;min-width:0}
+.dl-rk-surface{border:1px solid var(--line);background:var(--panel);border-radius:8px;
+  overflow:hidden;flex:1;display:flex;flex-direction:column}
+.dl-rk-maphd{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px 10px;flex-wrap:wrap;gap:10px}
+.dl-rk-maphd h2{font-family:var(--geo);font-size:13.5px;font-weight:500;margin:0}
+.dl-rk-filters{display:flex;gap:6px}
+.dl-rk-mapbody{padding:0 14px}
+svg.dl-rk-map{display:block;width:100%;height:auto}
+.dl-rk-dot{cursor:pointer}
+.dl-rk-dot:hover{stroke:var(--paper);stroke-width:1.5}
+.dl-rk-gl{stroke:var(--line);stroke-width:1}
+.dl-rk-zl{stroke:var(--fog-2);stroke-width:1;stroke-dasharray:3 3}
+.dl-rk-al{fill:var(--fog-2);font-size:10.5px;font-family:var(--mono)}
+.dl-rk-band{fill:var(--teal-br);opacity:.05}
+.dl-rk-bandtxt{fill:var(--fog-2);font-size:10.5px;font-family:var(--sans)}
+.dl-rk-readout{border-top:1px solid var(--line);background:var(--ink-2);padding:10px 18px;
+  display:flex;gap:24px;align-items:center;flex-wrap:wrap;min-height:48px}
+.dl-rk-nm{font-size:15.5px;font-weight:700;min-width:130px;color:var(--paper);
+  text-decoration:none;border-bottom:1px solid var(--teal-tint);cursor:pointer}
+.dl-rk-nm:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
+.dl-rk-fx{font-size:10.5px;color:var(--fog-2)}
+.dl-rk-fx b{display:block;font-family:var(--mono);font-size:13px;color:var(--paper);
+  font-weight:500;margin-top:2px}
+.dl-rk-fx b.u{color:var(--emerald)}
+.dl-rk-fx b.d{color:var(--coral)}
+.dl-rk-hint{color:var(--fog-2);font-size:12.5px}
+
+/* Movers continue the same surface rather than opening a second box. */
+.dl-rk-movers{border-top:1px solid var(--line);padding:13px 18px 16px;flex:1;
+  display:flex;flex-direction:column}
+.dl-rk-movers h3{font-family:var(--geo);font-size:12px;font-weight:500;margin:0 0 2px}
+.dl-rk-mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;align-content:center}
+.dl-rk-mgrid2{padding-top:20px;border-top:1px solid var(--line)}
+.dl-rk-mv{border-left:2px solid var(--line);padding-left:10px;cursor:pointer}
+.dl-rk-mv.up{border-left-color:var(--emerald)}
+.dl-rk-mv.dn{border-left-color:var(--coral)}
+.dl-rk-mv:hover .dl-rk-mvp{color:var(--teal-br)}
+.dl-rk-mvp{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-rk-mvd{font-family:var(--mono);font-size:13.5px;font-weight:700;margin-top:3px}
+.dl-rk-mv.up .dl-rk-mvd{color:var(--emerald)}
+.dl-rk-mv.dn .dl-rk-mvd{color:var(--coral)}
+.dl-rk-mvm{font-size:10.5px;color:var(--fog-2);margin-top:3px}
+.dl-rk-mvnone{font-size:11.5px;color:var(--fog-2);grid-column:1/-1}
+
+/* Full-screen chart, phone only. A button rather than a tab: tabs live in two
+   separate registries and adding to one but not the other ships something
+   that works when clicked and is silently unbookmarkable. */
+.dl-rk-padbtn{display:none}
+.dl-rk-padov{position:fixed;inset:0;z-index:100;background:var(--ink);
+  display:flex;flex-direction:column}
+.dl-rk-padov[hidden]{display:none}
+.dl-rk-padbar{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--line);font-family:var(--geo);font-size:14px}
+.dl-rk-padclose{background:none;border:1px solid var(--line);color:var(--fog);
+  border-radius:6px;padding:6px 12px;font-family:inherit;font-size:12px;cursor:pointer}
+.dl-rk-padclose:hover{color:var(--paper)}
+.dl-rk-padscroll{flex:1;overflow:auto;padding:14px 0}
+.dl-rk-padinner{min-width:680px;padding:0 14px}
+.dl-rk-padnote{padding:12px 16px;font-size:11px;color:var(--fog-2);border-top:1px solid var(--line)}
+
+@media(max-width:600px){
+  /* The decision on record: a repeat visitor wants what changed since
+     yesterday, not the buy and sell lists they have already read. So the
+     lists go and Market Moves is what stays. The scatter moves behind its
+     own button — 409 points is unreadable at 360px. */
+  .dl-rk-block{display:block}
+  .dl-rk-lists{display:none}
+  .dl-rk-mapcol{display:block}
+  .dl-rk-surface{border:0;background:none;flex:none;display:block;border-radius:0}
+  .dl-rk-maphd,.dl-rk-mapbody,.dl-rk-readout{display:none}
+  .dl-rk-movers{border-top:0;padding:0 0 4px;flex:none;display:block}
+  .dl-rk-movers h3{font-size:13px}
+  .dl-rk-mgrid{grid-template-columns:1fr 1fr;gap:11px;flex:none;align-content:start}
+  .dl-rk-mgrid2{margin-top:16px;padding-top:16px}
+  .dl-rk-padbtn{display:block;width:100%;margin-top:14px;font-family:inherit;font-size:12px;
+    color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
+    border-radius:8px;padding:9px;cursor:pointer}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -1022,27 +1105,63 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
     opportunity and contract. The verdict is the gap between the two, not a prediction of next week. Change a setting above and the whole board
     rescores: scarcity is a function of league size and QB format, so a 10-team superflex QB is not worth what a 14-team 1-QB QB is worth.</div></details>
 
-  <div class="dl-rk-lists" id="rk-lists">
-    <div class="dl-rk-bound">
-      <span class="dl-rk-bound-l">Split At Market Rank</span>
-      <div class="dl-rk-skip">
-        <button type="button" class="set-pill on" data-skip="25" onclick="rkSetSkip(25)">#25</button>
-        <button type="button" class="set-pill" data-skip="50" onclick="rkSetSkip(50)">#50</button>
-        <button type="button" class="set-pill" data-skip="100" onclick="rkSetSkip(100)">#100</button>
+  <div class="dl-rk-block">
+    <div class="dl-rk-mapcol">
+      <div class="dl-rk-surface">
+        <div class="dl-rk-maphd">
+          <h2>Price Against Disagreement</h2>
+          <div class="dl-rk-filters">
+            <button type="button" class="set-pill on" data-cut="0" onclick="rkSetCut(0)">Everyone</button>
+            <button type="button" class="set-pill" data-cut="100" onclick="rkSetCut(100)">Top 100</button>
+          </div>
+        </div>
+        <div class="dl-rk-mapbody">
+          <svg id="rk-map" class="dl-rk-map" viewBox="0 0 1000 380" role="img"
+               aria-label="Market price plotted against DELTA's gap to it"></svg>
+        </div>
+        <div class="dl-rk-readout" id="rk-readout"><span class="dl-rk-hint">Hover a point.</span></div>
+        <div class="dl-rk-movers">
+          <h3>Market Moves, Last Seven Days</h3>
+          <div class="dl-rk-cap" id="rk-mv-cap">Top 150</div>
+          <div class="dl-rk-mgrid" id="rk-moversUp"></div>
+          <div class="dl-rk-mgrid dl-rk-mgrid2" id="rk-moversDn"></div>
+        </div>
       </div>
+      <button type="button" class="dl-rk-padbtn" onclick="rkPad(true)">Open PAD Chart</button>
     </div>
-    <div class="dl-rk-lstgrid">
-      <div class="dl-rk-lst">
-        <h3>Undervalued</h3>
-        <div class="dl-rk-cap">Priced outside the top <span class="dl-rk-skiplbl">25</span></div>
-        <div id="rk-buys"></div>
+
+    <div class="dl-rk-lists" id="rk-lists">
+      <div class="dl-rk-bound">
+        <span class="dl-rk-bound-l">Split At Market Rank</span>
+        <div class="dl-rk-skip">
+          <button type="button" class="set-pill on" data-skip="25" onclick="rkSetSkip(25)">#25</button>
+          <button type="button" class="set-pill" data-skip="50" onclick="rkSetSkip(50)">#50</button>
+          <button type="button" class="set-pill" data-skip="100" onclick="rkSetSkip(100)">#100</button>
+        </div>
       </div>
       <div class="dl-rk-lst">
         <h3>Overvalued</h3>
         <div class="dl-rk-cap">Priced inside the top <span class="dl-rk-skiplbl">25</span></div>
         <div id="rk-sells"></div>
       </div>
+      <div class="dl-rk-lst">
+        <h3>Undervalued</h3>
+        <div class="dl-rk-cap">Priced outside the top <span class="dl-rk-skiplbl">25</span></div>
+        <div id="rk-buys"></div>
+      </div>
     </div>
+  </div>
+
+  <div class="dl-rk-padov" id="rk-padov" hidden>
+    <div class="dl-rk-padbar">
+      <span>Price Against Disagreement</span>
+      <button type="button" class="dl-rk-padclose" onclick="rkPad(false)" aria-label="Close chart">Close</button>
+    </div>
+    <div class="dl-rk-padscroll"><div class="dl-rk-padinner">
+      <svg id="rk-map2" class="dl-rk-map" viewBox="0 0 1000 380" role="img"
+           aria-label="Market price plotted against DELTA's gap to it"></svg>
+    </div></div>
+    <div class="dl-rk-padnote">Swipe to explore. This view is built for a wide screen.</div>
   </div>
 
   <div class="ctl-row">
@@ -1375,6 +1494,162 @@ function syncSettingsUI(){
    `if(MV_CENTER!==1)` and the loop skips the rookie-override path, so some
    rows hold a stale value. Recomputing from mvAsset(p) is what guarantees a
    list agrees with the Model Value cell of the row it points at. */
+/* ── Shared board data ────────────────────────────────────────────────────
+   The map and both lists read the same rows, so a dot and the list entry it
+   belongs to can never disagree. Recomputed from mvAsset(p) rather than the
+   stored p.gap, which is only refreshed inside `if(MV_CENTER!==1)` and skips
+   the rookie-override path. Same exclusions as the accuracy ledger: a player
+   with no price, or a price that missed the latest fetch, gets no opinion. */
+function rkBoardData(){
+  if(typeof COMP==='undefined'||!COMP.length) return [];
+  const pool=COMP.filter(p=>p.ktcEff>0 && !p.mktStale);
+  const rank={};
+  [...pool].sort((a,b)=>b.ktcEff-a.ktcEff).forEach((p,i)=>{ rank[p.n]=i+1; });
+  return pool.map(p=>{
+    const mv=mvAsset(p);
+    return {n:p.n,pos:p.pos,team:p.t,mkt:p.ktcEff,mv:Math.round(mv),mrk:rank[p.n],
+            abs:Math.round(mv-p.ktcEff),pct:Math.round((mv/Math.max(p.ktcEff,1)-1)*100)};
+  });
+}
+
+/* ── Price Against Disagreement ──────────────────────────────────────────
+   Price on a log scale across, DELTA's gap to it up and down. Price spans two
+   orders of magnitude, so a linear axis would pile the whole league into the
+   left tenth of the chart. */
+let rkCut=0;
+const RK_W=1000, RK_H=380, RK_ML=50, RK_MR=14, RK_MT=14, RK_MB=30;
+function rkSetCut(n){
+  rkCut=n;
+  document.querySelectorAll('.dl-rk-filters [data-cut]').forEach(b=>
+    b.classList.toggle('on', parseInt(b.getAttribute('data-cut'),10)===rkCut));
+  rkDrawMap();
+}
+function rkDrawMap(){
+  const el=document.getElementById('rk-map'); if(!el) return;
+  const all=rkBoardData();
+  const P = rkCut ? all.filter(p=>p.mrk<=rkCut) : all;
+  if(!P.length){ el.innerHTML=''; return; }
+  const xs=P.map(p=>Math.log(Math.max(p.mkt,1)));
+  const x0=Math.min(...xs), x1=Math.max(...xs);
+  // Clamped both ways. One player at +400% would flatten everyone else onto
+  // a single line; the Y helper pins outliers to the edge rather than hiding
+  // them.
+  const y0=Math.max(-60, Math.min(...P.map(p=>p.pct)));
+  const y1=Math.min( 80, Math.max(...P.map(p=>p.pct)));
+  const X=v=>RK_ML+(Math.log(Math.max(v,1))-x0)/Math.max(x1-x0,1e-6)*(RK_W-RK_ML-RK_MR);
+  const Y=v=>RK_MT+(y1-Math.max(y0,Math.min(y1,v)))/Math.max(y1-y0,1e-6)*(RK_H-RK_MT-RK_MB);
+  let s='';
+  s+='<rect class="dl-rk-band" x="'+RK_ML+'" y="'+Y(6)+'" width="'+(RK_W-RK_ML-RK_MR)
+    +'" height="'+Math.max(0,Y(-6)-Y(6))+'"/>';
+  s+='<text class="dl-rk-bandtxt" x="'+(RK_ML+8)+'" y="'+(Y(6)-5)+'">DELTA Calls These Holds</text>';
+  [-50,-40,-30,-20,-10,0,10,20,30,40,50,60,70].forEach(g=>{
+    if(g<y0||g>y1) return;
+    s+='<line class="'+(g===0?'dl-rk-zl':'dl-rk-gl')+'" x1="'+RK_ML+'" y1="'+Y(g)+'" x2="'+(RK_W-RK_MR)+'" y2="'+Y(g)+'"/>';
+    s+='<text class="dl-rk-al" x="6" y="'+(Y(g)+4)+'">'+(g>0?'+':'')+g+'%</text>';
+  });
+  [100,300,1000,3000,10000].forEach(v=>{
+    if(v<Math.exp(x0)||v>Math.exp(x1)) return;
+    s+='<line class="dl-rk-gl" x1="'+X(v)+'" y1="'+RK_MT+'" x2="'+X(v)+'" y2="'+(RK_H-RK_MB)+'" opacity=".45"/>';
+    s+='<text class="dl-rk-al" x="'+X(v)+'" y="'+(RK_H-RK_MB+17)+'" text-anchor="middle">'+v.toLocaleString()+'</text>';
+  });
+  s+='<text class="dl-rk-al" x="'+(RK_W/2)+'" y="'+(RK_H-2)+'" text-anchor="middle">What He Costs On The Market</text>';
+  P.forEach(p=>{
+    const c = p.pct>=15?'var(--emerald)' : p.pct<=-15?'var(--coral)' : 'var(--fog-2)';
+    s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+X(p.mkt).toFixed(1)
+      +'" cy="'+Y(p.pct).toFixed(1)+'" r="4" fill="'+c+'" fill-opacity=".8"/>';
+  });
+  el.innerHTML=s;
+  const el2=document.getElementById('rk-map2'); if(el2) el2.innerHTML=s;
+}
+function rkReadout(name){
+  const ro=document.getElementById('rk-readout'); if(!ro) return;
+  const p=rkBoardData().find(x=>x.n===name); if(!p) return;
+  ro.innerHTML='<a class="dl-rk-nm" href="#" onclick="openDeck(this.dataset.name);return false;" data-name="'+p.n+'">'+p.n+'</a>'
+   +'<span class="dl-rk-fx">Position<b>'+p.pos+' \u00b7 '+p.team+'</b></span>'
+   +'<span class="dl-rk-fx">Costs<b>'+p.mkt.toLocaleString()+'</b></span>'
+   +'<span class="dl-rk-fx">DELTA Says<b>'+p.mv.toLocaleString()+'</b></span>'
+   +'<span class="dl-rk-fx">At Stake<b class="'+(p.abs>=0?'u':'d')+'">'
+   +(p.abs>0?'+':'\u2212')+Math.abs(p.abs).toLocaleString()+'</b></span>';
+}
+function rkPad(v){
+  const o=document.getElementById('rk-padov'); if(!o) return;
+  if(v){ rkDrawMap(); o.removeAttribute('hidden'); } else { o.setAttribute('hidden',''); }
+}
+
+/* ── Market Moves ────────────────────────────────────────────────────────
+   data/market-price-log.jsonl is one complete snapshot per line, about 12.4 KB
+   a night, and append-only — 310 KB at 25 nights and roughly 2.1 MB by
+   February. A seven-day move needs exactly two of those lines, so this reads
+   the last 120 KB rather than the file: about nine nights of cushion, and a
+   fixed cost that does not grow with the log.
+
+   The first line of a byte range is almost always a partial line, so it is
+   dropped rather than parsed. A host that ignores the Range header returns
+   200 with the whole file, which still parses correctly — just at today's
+   full cost. Verified 206 on raw.githubusercontent.com; GitHub Pages is a
+   different host and should be checked once in the network tab.
+
+   DELIBERATELY index.html ONLY. player.html and scripts/freeze-snapshot.js do
+   not render this board, so this loader is not in their boot chains. That is
+   an exclusion on purpose, written down here rather than left silent. */
+let RK_MOVES=null, RK_MOVES_STATE='loading';
+function rkMoversHtml(list,cls){
+  return list.map(m=>'<div class="dl-rk-mv '+cls+'" data-name="'+m.n+'"'
+    +' onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+    +'<div class="dl-rk-mvp">'+m.n+'</div>'
+    +'<div class="dl-rk-mvd">'+(m.chg>0?'+':'')+m.chg+'%</div>'
+    +'<div class="dl-rk-mvm">'+m.pos+' \u00b7 Now '+m.now.toLocaleString()+'</div></div>').join('');
+}
+function renderRkMovers(){
+  const up=document.getElementById('rk-moversUp'), dn=document.getElementById('rk-moversDn');
+  const cap=document.getElementById('rk-mv-cap');
+  if(!up||!dn) return;
+  if(RK_MOVES_STATE!=='ok'){
+    // An honest state. A failed load must never be able to look like a real
+    // one that happened to find no movement.
+    up.innerHTML='<div class="dl-rk-mvnone">'
+      +(RK_MOVES_STATE==='loading'?'Loading price history\u2026':'Price history unavailable.')+'</div>';
+    dn.innerHTML='';
+    if(cap) cap.textContent='Top 150';
+    return;
+  }
+  if(cap) cap.textContent='Top 150 \u00b7 '+RK_MOVES.from+' to '+RK_MOVES.to;
+  up.innerHTML=rkMoversHtml(RK_MOVES.up,'up');
+  dn.innerHTML=rkMoversHtml(RK_MOVES.dn,'dn');
+}
+function rkParseMoves(text){
+  const lines=text.split('\n').filter(l=>l.trim());
+  const rows=[];
+  lines.forEach((l,i)=>{ try{ rows.push(JSON.parse(l)); }catch(e){ /* partial first line */ } });
+  if(rows.length<2) return null;
+  const last=rows[rows.length-1];
+  const want=new Date(last.date); want.setDate(want.getDate()-7);
+  let prev=rows[0];
+  for(const r of rows){ if(new Date(r.date)<=want) prev=r; }
+  if(prev===last) return null;
+  const out=[];
+  for(const name in last.players){
+    const a=last.players[name], b=prev.players[name];
+    if(!a||!b||a[1]>150||!b[0]) continue;
+    const chg=Math.round((a[0]/b[0]-1)*1000)/10;
+    if(!chg) continue;
+    const p=COMP.find(x=>x.n===name);
+    out.push({n:name,pos:p?p.pos:'',now:a[0],chg:chg});
+  }
+  if(!out.length) return null;
+  return { from:prev.date, to:last.date,
+           up:[...out].sort((a,b)=>b.chg-a.chg).slice(0,4),
+           dn:[...out].sort((a,b)=>a.chg-b.chg).slice(0,4) };
+}
+function rkLoadMoves(){
+  if(RK_MOVES_STATE!=='loading') return;
+  RK_MOVES_STATE='pending';
+  const url='data/market-price-log.jsonl';
+  fetch(url,{cache:'no-cache',headers:{Range:'bytes=-120000'}})
+    .then(r=>{ if(!r.ok&&r.status!==206) throw new Error(r.status); return r.text(); })
+    .then(t=>{ const m=rkParseMoves(t); RK_MOVES=m; RK_MOVES_STATE=m?'ok':'fail'; renderRkMovers(); })
+    .catch(()=>{ RK_MOVES_STATE='fail'; renderRkMovers(); });
+}
 let rkSkip=25;
 function rkSetSkip(n){
   rkSkip=n;
@@ -1392,17 +1667,9 @@ function rkListRow(x,cls,sign){
 }
 function renderRkLists(){
   const buys=document.getElementById('rk-buys'), sells=document.getElementById('rk-sells');
-  if(!buys||!sells||typeof COMP==='undefined'||!COMP.length) return;
-  // Same exclusions as the accuracy ledger's graded set: no price, or a price
-  // that did not come from the latest market fetch, means no opinion.
-  const pool=COMP.filter(p=>p.ktcEff>0 && !p.mktStale);
-  const byPrice=[...pool].sort((a,b)=>b.ktcEff-a.ktcEff);
-  const rank={}; byPrice.forEach((p,i)=>{ rank[p.n]=i+1; });
-  const rows=pool.map(p=>{
-    const mv=mvAsset(p);
-    return {n:p.n,pos:p.pos,mkt:p.ktcEff,mrk:rank[p.n],abs:Math.round(mv-p.ktcEff),
-            pct:Math.round((mv/Math.max(p.ktcEff,1)-1)*100)};
-  });
+  if(!buys||!sells) return;
+  const rows=rkBoardData();
+  if(!rows.length) return;
   const empty='<div class="dl-rk-lrow dl-rk-lnone">Nothing clears the bar here.</div>';
   const up=rows.filter(x=>x.mrk>rkSkip && x.abs>0).sort((a,b)=>b.abs-a.abs).slice(0,5);
   const dn=rows.filter(x=>x.mrk<=rkSkip && x.abs<0).sort((a,b)=>a.abs-b.abs).slice(0,5);
@@ -1613,7 +1880,11 @@ document.addEventListener('click',function(e){
   const m=document.getElementById('rk-col-menu'), b=document.getElementById('rk-col-btn');
   if(m && !m.hasAttribute('hidden') && !m.contains(e.target) && b && !b.contains(e.target)) rkMenuOpen(false);
 });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') rkMenuOpen(false); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ rkMenuOpen(false); rkPad(false); } });
+document.addEventListener('mouseover',function(e){
+  const t=e.target && e.target.getAttribute && e.target.getAttribute('data-n');
+  if(t) rkReadout(decodeURIComponent(t));
+});
 function rkVal(c,p){ return typeof c.sort==='function' ? c.sort(p) : p[c.sort]; }
 function rkCmp(c,dir){
   // dir -1 is the first click: figures high-to-low, names A-to-Z.
@@ -1631,6 +1902,11 @@ function renderRankings(){
   let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&p.n.toLowerCase().includes(q));
   rkFillSortMenu();
   renderRkLists();
+  // The scatter is desktop-only chrome; on a phone it is built only when
+  // the reader opens it, so a 409-circle string is not assembled on every
+  // keystroke in the search box.
+  if(!RK_MQ.matches) rkDrawMap();
+  rkLoadMoves(); renderRkMovers();
   const act=rkCols();
   const col=RK_COLS.find(c=>c.k===sortK&&c.sort) || RK_COLS.find(c=>c.k==='ktc');
   data.sort(rkCmp(col,sortDir));
