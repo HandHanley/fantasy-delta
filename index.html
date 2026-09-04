@@ -751,7 +751,12 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
    full window with a hand's width between each value and its neighbour.
    max-width keeps it inside the wrapper, which still scrolls when every
    column is switched on. */
-.dl-board{width:auto;max-width:100%}
+/* Content-sized when the board is wider than the screen, full-width when it
+   is narrower, so seven columns on a phone reach the edge and the spare
+   width falls between the columns. Note this is min-width on the TABLE, not
+   width on a cell — a cell at 100% funnels all the slack into itself, which
+   is what produced the big gap after the player name. */
+.dl-board{width:auto;min-width:100%}
 /* Figures right, labels left. A right-aligned number ends where the next
    column begins, which is what closes the gaps; it also lines the decimal
    points up down the column. Badges centre in their own space. */
@@ -886,6 +891,12 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
     border-radius:8px;padding:9px;cursor:pointer}
 }
+
+/* Selected point on the phone chart. */
+.dl-rk-sel{fill:none;stroke:var(--paper);stroke-width:2}
+.dl-rk-padread{border-top:1px solid var(--line);border-bottom:0;min-height:44px;gap:16px}
+.dl-rk-padread .dl-rk-nm{min-width:0;font-size:14px}
+.dl-rk-padread .dl-rk-fx{font-size:10px}
 
 </style>
 <script>
@@ -1165,9 +1176,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <button type="button" class="set-pill on" data-cut="100" onclick="rkSetCut(100)">Top 100</button>
     </div>
     <div class="dl-rk-padbody">
-      <svg id="rk-map2" class="dl-rk-map" role="img"
+      <svg id="rk-map2" class="dl-rk-map" onclick="rkPadTap(event)" role="img"
            aria-label="Market price plotted against DELTA's gap to it"></svg>
     </div>
+    <div class="dl-rk-readout dl-rk-padread" id="rk-padread"><span class="dl-rk-hint">Tap a point.</span></div>
     <div class="dl-rk-padnote"><span class="dl-rk-key u"></span>DELTA says cheap
       <span class="dl-rk-key d"></span>DELTA says expensive
       <span class="dl-rk-key n"></span>About right</div>
@@ -1509,6 +1521,36 @@ function syncSettingsUI(){
    stored p.gap, which is only refreshed inside `if(MV_CENTER!==1)` and skips
    the rookie-override path. Same exclusions as the accuracy ledger: a player
    with no price, or a price that missed the latest fetch, gets no opinion. */
+/* ── Column helpers ──────────────────────────────────────────────────────
+   Four bands from best to worst, resolved through tokens. `dir` says which
+   way is good: 'hi' when more is better, 'lo' when less is. */
+function rkBand(v,a,b,c,dir){
+  if(v==null||isNaN(v)) return 'var(--fog-2)';
+  const at=(x)=>dir==='lo'?v<=x:v>=x;
+  return at(a)?'var(--emerald)':at(b)?'var(--sky)':at(c)?'var(--topaz)':'var(--coral)';
+}
+function rkNum(v,txt,col){
+  return '<td class="dl-rk-r"'+(col?' style="color:'+col+'"':'')+'>'+(v==null||isNaN(v)?'\u2013':txt)+'</td>';
+}
+/* glOf walks a game log. Three start-profile columns across 170 rows is 510
+   calls a render, so the answer is kept for the life of one render. */
+let RK_GL={};
+function rkGl(p){
+  if(!(p.n in RK_GL)) RK_GL[p.n]= (typeof glOf==='function') ? (glOf(p)||null) : null;
+  return RK_GL[p.n];
+}
+/* Built once per render rather than a CONTRACTS.find per row. */
+let RK_CT=null;
+function rkCt(n){
+  if(!RK_CT){
+    RK_CT={};
+    if(typeof CONTRACTS!=='undefined') CONTRACTS.forEach(c=>{ RK_CT[c.n]=c.end; });
+  }
+  return RK_CT[n];
+}
+function rkChg7(n){
+  return (RK_MOVES && RK_MOVES.all && n in RK_MOVES.all) ? RK_MOVES.all[n] : null;
+}
 function rkBoardData(){
   if(typeof COMP==='undefined'||!COMP.length) return [];
   const pool=COMP.filter(p=>p.ktcEff>0 && !p.mktStale);
@@ -1533,6 +1575,7 @@ function rkSetCut(n){
     b.classList.toggle('on', parseInt(b.getAttribute('data-cut'),10)===rkCut));
   if(RK_MQ.matches) rkDrawPad(); else rkDrawMap();
 }
+let RK_PADPTS=[];
 function rkMapSet(){
   const all=rkBoardData();
   return rkCut ? all.filter(p=>p.mrk<=rkCut) : all;
@@ -1565,10 +1608,13 @@ function rkMapSvg(P,W,H,r,xticks){
     s+='<text class="dl-rk-al" x="'+X(v)+'" y="'+(H-MB+17)+'" text-anchor="middle">'+v.toLocaleString()+'</text>';
   });
   s+='<text class="dl-rk-al" x="'+(W/2)+'" y="'+(H-2)+'" text-anchor="middle">What He Costs On The Market</text>';
+  RK_PADPTS=[];
   P.forEach(p=>{
     const c = p.pct>=15?'var(--emerald)' : p.pct<=-15?'var(--coral)' : 'var(--fog-2)';
-    s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+X(p.mkt).toFixed(1)
-      +'" cy="'+Y(p.pct).toFixed(1)+'" r="'+r+'" fill="'+c+'" fill-opacity=".8"/>';
+    const cx=+X(p.mkt).toFixed(1), cy=+Y(p.pct).toFixed(1);
+    RK_PADPTS.push({n:p.n,x:cx,y:cy});
+    s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+cx
+      +'" cy="'+cy+'" r="'+r+'" fill="'+c+'" fill-opacity=".8"/>';
   });
   return s;
 }
@@ -1590,10 +1636,28 @@ function rkDrawPad(){
   const W=Math.max(320,Math.min((window.innerWidth||360),560));
   const H=Math.max(420,(window.innerHeight||700)-186);
   el.setAttribute('viewBox','0 0 '+W+' '+H);
-  el.innerHTML=rkMapSvg(P,W,H,3.4,[100,1000,10000]);
+  RK_PADVB=[W,H];
+  RK_PADSVG=rkMapSvg(P,W,H,4.2,[100,1000,10000]);
+  el.innerHTML=RK_PADSVG;
 }
-function rkReadout(name){
-  const ro=document.getElementById('rk-readout'); if(!ro) return;
+/* A tap resolves to the NEAREST point rather than needing a direct hit. The
+   dots are about eight pixels across and a fingertip covers nearer forty, so
+   hit-testing the circle itself is why the chart felt dead to touch. */
+let RK_PADSVG='', RK_PADVB=[0,0];
+function rkPadTap(e){
+  const el=document.getElementById('rk-map2'); if(!el||!RK_PADPTS.length) return;
+  const r=el.getBoundingClientRect(); if(!r.width||!r.height) return;
+  const x=(e.clientX-r.left)/r.width*RK_PADVB[0];
+  const y=(e.clientY-r.top)/r.height*RK_PADVB[1];
+  let best=null, bd=Infinity;
+  RK_PADPTS.forEach(p=>{ const d=(p.x-x)*(p.x-x)+(p.y-y)*(p.y-y); if(d<bd){ bd=d; best=p; } });
+  if(!best || bd > 44*44) return;
+  el.innerHTML=RK_PADSVG
+    +'<circle class="dl-rk-sel" cx="'+best.x+'" cy="'+best.y+'" r="10"/>';
+  rkReadout(best.n,'rk-padread');
+}
+function rkReadout(name,into){
+  const ro=document.getElementById(into||'rk-readout'); if(!ro) return;
   const p=rkBoardData().find(x=>x.n===name); if(!p) return;
   ro.innerHTML='<a class="dl-rk-nm" href="#" onclick="openDeck(this.dataset.name);return false;" data-name="'+p.n+'">'+p.n+'</a>'
    +'<span class="dl-rk-fx">Position<b>'+p.pos+' \u00b7 '+p.team+'</b></span>'
@@ -1673,7 +1737,9 @@ function rkParseMoves(text){
     out.push({n:name,pos:p?p.pos:'',now:a[0],chg:chg});
   }
   if(!out.length) return null;
-  return { from:prev.date, to:last.date,
+  // The 7d column needs every player, not just the eight shown as movers.
+  const all={}; out.forEach(o=>{ all[o.n]=o.chg; });
+  return { from:prev.date, to:last.date, all:all,
            up:[...out].sort((a,b)=>b.chg-a.chg).slice(0,4),
            dn:[...out].sort((a,b)=>a.chg-b.chg).slice(0,4) };
 }
@@ -1683,7 +1749,11 @@ function rkLoadMoves(){
   const url='data/market-price-log.jsonl';
   fetch(url,{cache:'no-cache',headers:{Range:'bytes=-120000'}})
     .then(r=>{ if(!r.ok&&r.status!==206) throw new Error(r.status); return r.text(); })
-    .then(t=>{ const m=rkParseMoves(t); RK_MOVES=m; RK_MOVES_STATE=m?'ok':'fail'; renderRkMovers(); })
+    .then(t=>{ const m=rkParseMoves(t); RK_MOVES=m; RK_MOVES_STATE=m?'ok':'fail';
+      renderRkMovers();
+      // The 7d column renders before this resolves. rkLoadMoves returns early
+      // now that the state has moved off 'loading', so this cannot loop.
+      if(m) renderRankings(); })
     .catch(()=>{ RK_MOVES_STATE='fail'; renderRkMovers(); });
 }
 let rkSkip=25;
@@ -1833,6 +1903,53 @@ const RK_COLS=[
   tip:"Offensive coordinator. ⚠ flags a coordinator change this cycle — everything the player demonstrated came under the old scheme. Shown for context; it does not adjust the projection. No flag = stable staff.",
   fn:(p,R)=>`<td${p.och?' data-tip="New OC this cycle — prior production came under the old scheme. Shown for context; it does not adjust the projection."':''} class="dl-rk-oc${p.och?' dl-rk-oc-chg':''} txt">${p.och?'\u26a0 ':''}${p.oc}</td>`},
 
+ {k:'floor', off:true, sort:'floor', lbl:'Floor', full:'Floor', al:'r',
+  tip:'The low end of the projection range \u2014 roughly what he returns if things break badly.',
+  fn:(p,R)=>rkNum(p.floor,(p.floor||0).toFixed(1),'var(--fog)')},
+
+ {k:'ceil', off:true, sort:'ceil', lbl:'Ceiling', full:'Ceiling', al:'r',
+  tip:'The high end of the projection range \u2014 roughly what he returns if things break well.',
+  fn:(p,R)=>rkNum(p.ceil,(p.ceil||0).toFixed(1),'var(--sky)')},
+
+ {k:'ci', off:true, sort:'ci', lbl:'CI', full:'Confidence Interval', al:'r',
+  tip:'The \u00b1 range around the projection. Tight means a stable profile, wide means boom-or-bust. Lower is not better, just more certain.',
+  fn:(p,R)=>{ const v=p.ci!=null?Math.round(p.ci*100):null;
+    return rkNum(v,'\u00b1'+v+'%',rkBand(v,14,20,27,'lo')); }},
+
+ {k:'miss', off:true, sort:p=>{const g=rkGl(p);return g?-g.miss:-999;}, lbl:'Miss %', full:'Start Profile \u2014 Miss %', al:'r',
+  tip:'Share of played games below the startable line. Lower is better.',
+  fn:(p,R)=>{ const g=rkGl(p), v=g?g.miss:null;
+    return rkNum(v,v+'%',rkBand(v,20,32,45,'lo')); }},
+
+ {k:'hit', off:true, sort:p=>{const g=rkGl(p);return g?g.hit:-1;}, lbl:'Hit %', full:'Start Profile \u2014 Hit %', al:'r',
+  tip:'Share of played games at or above the startable line.',
+  fn:(p,R)=>{ const g=rkGl(p), v=g?g.hit:null;
+    return rkNum(v,v+'%',rkBand(v,70,55,40,'hi')); }},
+
+ {k:'elite', off:true, sort:p=>{const g=rkGl(p);return g?g.elite:-1;}, lbl:'Elite %', full:'Start Profile \u2014 Elite %', al:'r',
+  tip:'Share of played games at a league-winning level.',
+  fn:(p,R)=>{ const g=rkGl(p), v=g?g.elite:null;
+    return rkNum(v,v+'%',rkBand(v,25,16,9,'hi')); }},
+
+ {k:'ct', off:true, sort:p=>rkCt(p.n)??0, lbl:'Contract', full:'Contract Ends', al:'r',
+  tip:'Final year under contract. A walk year is the least secure situation a player can be in.',
+  fn:(p,R)=>{ const v=rkCt(p.n); return rkNum(v,String(v),rkBand(v,2029,2028,2027,'hi')); }},
+
+ {k:'chg7', off:true, sort:p=>rkChg7(p.n)??-999, lbl:'7d', full:'Seven-Day Market Move', al:'r',
+  tip:'How far his market price has moved in the last seven days.',
+  fn:(p,R)=>{ const v=rkChg7(p.n);
+    return rkNum(v,(v>0?'+':'')+v+'%', v==null?null:v>0?'var(--emerald)':v<0?'var(--coral)':'var(--fog-2)'); }},
+
+ {k:'pct', off:true, sort:p=>p.ktcEff>0?(mvAsset(p)/p.ktcEff-1):-9, lbl:'Gap', full:'Gap Percent', al:'r',
+  tip:'How far DELTA sits from the market, as a share of the market price.',
+  fn:(p,R)=>{ const m=mvAsset(p), v=p.ktcEff>0?Math.round((m/p.ktcEff-1)*100):null;
+    return rkNum(v,(v>0?'+':'')+v+'%', v==null?null:v>=0?'var(--emerald)':'var(--coral)'); }},
+
+ {k:'abs', off:true, sort:p=>p.ktcEff>0?(mvAsset(p)-p.ktcEff):-1e9, lbl:'At Stake', full:'Value At Stake', al:'r',
+  tip:'How far DELTA sits from the market in points. This is the number worth sorting on \u2014 a big percentage on a cheap player moves very little.',
+  fn:(p,R)=>{ const v=p.ktcEff>0?Math.round(mvAsset(p)-p.ktcEff):null;
+    return rkNum(v,(v>0?'+':'\u2212')+Math.abs(v).toLocaleString(), v==null?null:v>=0?'var(--emerald)':'var(--coral)'); }},
+
  {k:'tag', lbl:'Tag', full:'Verdict', mob:true,
   fn:(p,R)=>`<td class="dl-rk-verdict">${vTag(p)}</td>`}
 ];
@@ -1853,7 +1970,10 @@ function rkCols(){ const set=rkColsGet(rkDev()); return RK_COLS.filter(c=>set.in
    Defaults reproduce today's behaviour exactly: everything on desktop, and on
    a phone the same eight columns col-hide-mobile used to leave visible. */
 const RK_LS  = { d:'delta_cols_desktop', m:'delta_cols_mobile' };
-const RK_DEF = { d:RK_COLS.map(c=>c.k), m:RK_COLS.filter(c=>c.mob).map(c=>c.k) };
+/* Desktop default is every column NOT marked off:true — which is exactly the
+   thirteen that shipped before the extra ten were added, so nobody's board
+   changes shape until they open the picker and ask for more. */
+const RK_DEF = { d:RK_COLS.filter(c=>!c.off).map(c=>c.k), m:RK_COLS.filter(c=>c.mob).map(c=>c.k) };
 const rkSel  = { d:null, m:null };
 function rkDev(){ return RK_MQ.matches ? 'm' : 'd'; }
 
@@ -1936,6 +2056,7 @@ function renderRankings(){
   /* Age filter removed with the Option C header — it was the only panel carrying one, and
      Age is still available as a sort, which covers the same need without a permanent control. */
   let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&p.n.toLowerCase().includes(q));
+  RK_GL={};
   rkFillSortMenu();
   renderRkLists();
   // The scatter is desktop-only chrome; on a phone it is built only when
