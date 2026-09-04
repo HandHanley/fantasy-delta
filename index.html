@@ -712,6 +712,9 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 .dl-board thead th.dl-rk-asc .dl-rk-caret{border-bottom:4px solid var(--teal-br)}
 
 /* ── Column picker (reskin step 5) ───────────────────────────────────── */
+a.dl-home{text-decoration:none;color:inherit;display:flex}
+a.dl-home:hover .dl-word{color:var(--teal-br)}
+a.dl-home:focus-visible{outline:2px solid var(--teal-br);outline-offset:4px;border-radius:6px}
 .dl-rk-colwrap{position:relative}
 .dl-rk-colbtn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;
   font-size:11.5px;color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
@@ -728,7 +731,11 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
   padding:11px 12px 9px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
 .dl-rk-colmenu[hidden]{display:none}
 .dl-rk-colmenu-h{font-family:var(--sans);font-size:10px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--fog-2);margin-bottom:9px}
+  text-transform:uppercase;color:var(--fog-2);margin-bottom:9px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dl-rk-colx{background:none;border:0;color:var(--fog-2);font-size:15px;line-height:1;
+  cursor:pointer;padding:2px 4px;margin:-2px -4px}
+.dl-rk-colx:hover{color:var(--paper)}
 .dl-rk-opt{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12.5px;cursor:pointer}
 .dl-rk-opt input{accent-color:var(--teal-br);width:14px;height:14px;cursor:pointer}
 .dl-rk-opt.lk{color:var(--fog-2);cursor:default}
@@ -849,14 +856,18 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-rk-movers h3{font-family:var(--geo);font-size:12px;font-weight:500;margin:0 0 2px}
 .dl-rk-mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;align-content:center}
 .dl-rk-mgrid2{padding-top:20px;border-top:1px solid var(--line)}
-.dl-rk-mv{border-left:2px solid var(--line);padding-left:10px;cursor:pointer}
-.dl-rk-mv.up{border-left-color:var(--emerald)}
-.dl-rk-mv.dn{border-left-color:var(--coral)}
-.dl-rk-mv:hover .dl-rk-mvp{color:var(--teal-br)}
+/* .dl-rk-move, not .dl-rk-mv — .dl-rk-mv is already the Model Value table
+   cell, and this border-left plus padding was landing on it, which is the
+   stray line and the uneven gap beside that column. A prefix is not a
+   namespace. */
+.dl-rk-move{border-left:2px solid var(--line);padding-left:10px;cursor:pointer}
+.dl-rk-move.up{border-left-color:var(--emerald)}
+.dl-rk-move.dn{border-left-color:var(--coral)}
+.dl-rk-move:hover .dl-rk-mvp{color:var(--teal-br)}
 .dl-rk-mvp{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dl-rk-mvd{font-family:var(--mono);font-size:13.5px;font-weight:700;margin-top:3px}
-.dl-rk-mv.up .dl-rk-mvd{color:var(--emerald)}
-.dl-rk-mv.dn .dl-rk-mvd{color:var(--coral)}
+.dl-rk-move.up .dl-rk-mvd{color:var(--emerald)}
+.dl-rk-move.dn .dl-rk-mvd{color:var(--coral)}
 .dl-rk-mvm{font-size:10.5px;color:var(--fog-2);margin-top:3px}
 .dl-rk-mvnone{font-size:11.5px;color:var(--fog-2);grid-column:1/-1}
 
@@ -900,8 +911,9 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 </head>
 <body>
 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
-  <div class="dl-head">
-    <svg class="dl-mark" viewBox="0 0 128 128" aria-label="DELTA">
+  <a class="dl-head dl-home" href="?tab=rankings" onclick="return dlHome(event)"
+     aria-label="DELTA home — NFL Rankings">
+    <svg class="dl-mark" viewBox="0 0 128 128" aria-hidden="true">
       <defs>
         <linearGradient id="hgL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
         <linearGradient id="hgR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
@@ -919,7 +931,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       </div>
       <div class="dl-sub">Dynasty Efficiency + Long-Term Analysis</div>
     </div>
-  </div>
+  </a>
 </div>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
   <div style="position:relative;flex:1;max-width:280px">
@@ -1156,7 +1168,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
           <rect x="11.6" y="2" width="3.4" height="12" rx="1" fill="currentColor" opacity=".3"/>
         </svg>Columns</button>
       <div class="dl-rk-colmenu" id="rk-col-menu" hidden>
-        <div class="dl-rk-colmenu-h" id="rk-col-head">Show On The Board</div>
+        <div class="dl-rk-colmenu-h">
+          <span id="rk-col-head">Show On The Board</span>
+          <button type="button" class="dl-rk-colx" onclick="rkMenuOpen(false)" aria-label="Close column chooser">✕</button>
+        </div>
         <div id="rk-col-opts"></div>
         <button type="button" class="dl-rk-colreset" onclick="rkColsReset()">Reset To Default</button>
         <div class="dl-rk-colnote">Saved on this device only. Column choices do not sync.</div>
@@ -1613,7 +1628,7 @@ function rkReadout(name,into){
    an exclusion on purpose, written down here rather than left silent. */
 let RK_MOVES=null, RK_MOVES_STATE='loading';
 function rkMoversHtml(list,cls){
-  return list.map(m=>'<div class="dl-rk-mv '+cls+'" data-name="'+m.n+'"'
+  return list.map(m=>'<div class="dl-rk-move '+cls+'" data-name="'+m.n+'"'
     +' onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
     +'<div class="dl-rk-mvp">'+m.n+'</div>'
     +'<div class="dl-rk-mvd">'+(m.chg>0?'+':'')+m.chg+'%</div>'
@@ -3277,6 +3292,15 @@ const DL_LOCKED=new Set(['audit']);
 let DL_SECTION='nfl';
 
 function dlTabBtn(id){ return document.querySelector('.tab[data-tab="'+id+'"]'); }
+/* The logo goes home. It keeps a real href so middle-click and open-in-new-tab
+   behave, but a plain click switches in place rather than reloading the app. */
+function dlHome(e){
+  if(e && (e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)) return true;
+  if(e) e.preventDefault();
+  try{ setSection('nfl','rankings'); }catch(err){ return true; }
+  try{ window.scrollTo(0,0); }catch(err){}
+  return false;
+}
 function setSection(s, wantTab){
   if(!SEC_TABS[s]) s='nfl';
   DL_SECTION=s;
@@ -3321,7 +3345,18 @@ function applyLanding(){
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
   }
   if(target&&DL_TABS.indexOf(target)>=0){
-    const b=dlTabBtn(target); if(b){ showTab(target,b); return; }
+    const b=dlTabBtn(target);
+    if(b){
+      // Through setSection, not showTab. showTab only calls setSection when the
+      // target sits in a DIFFERENT section from DL_SECTION — and DL_SECTION
+      // starts at 'nfl', so landing on an nfl tab matched, skipped it, and
+      // returned before the setSection('nfl') below. setSection is the only
+      // thing that hides the other sections' pills, so every pill on the site
+      // stayed visible. It showed up coming back from a player page because
+      // that is the case that arrives carrying ?tab=.
+      setSection(SEC_OF[target]||'nfl', target);
+      return;
+    }
   }
   // Fresh loads always land on NFL — it's the primary surface. Explicit deep links
   // (?tab=) above still win, and the section still persists within a session as you navigate.
@@ -3395,6 +3430,12 @@ function showTab(id,el,skipSection){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pnl=document.getElementById('panel-'+id); if(pnl) pnl.classList.add('active');
   if(el) el.classList.add('active');
+  // Landing on the board has to draw it, the same as contracts and rookies
+  // below. Without this, arriving on the tab from a deep link or the back
+  // button shows whatever happened to be rendered last — which is nothing,
+  // if the tab was never opened in this page's lifetime.
+  if(id==='rankings' && typeof renderRankings==='function'
+     && typeof COMP!=='undefined' && COMP.length){ try{ renderRankings(); }catch(e){ console.warn('rankings',e); } }
   if(id==='contracts')renderContracts();
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
@@ -6468,8 +6509,19 @@ function slpDetectAndApplyFormat(){
   const teams=[8,10,12,14].reduce(function(a,b){ return Math.abs(b-tr)<Math.abs(a-tr)?b:a; });
   const sc=lg.scoring_settings||{};
   const rec=+sc.rec||0, tep=+sc.bonus_rec_te||0;
+  // A league whose scoring_settings did not come back used to be
+  // indistinguishable from a genuine standard-scoring league: both ended at
+  // rec=0 and both were asserted as 'std'. An absent rec is not evidence of
+  // standard scoring, so it now leaves the current format alone and says so.
+  // An explicit rec of 0 still means standard, because that is a real answer.
+  const hasRec = sc && Object.prototype.hasOwnProperty.call(sc,'rec');
   let fmt;
-  if(rec>=0.75)      fmt=(tep>=0.25)?'full_tep':'full';
+  if(!hasRec){
+    fmt = (typeof scoringFmt!=='undefined' && scoringFmt) ? scoringFmt : 'half_tep';
+    slpLog('format detect: scoring_settings has no rec value \u2014 scoring left at '+fmt
+           +' rather than assumed Standard. Team count and superflex still applied.');
+  }
+  else if(rec>=0.75) fmt=(tep>=0.25)?'full_tep':'full';
   else if(rec>=0.25) fmt=(tep>=0.25)?'half_tep':'half';
   else               fmt='std';
   slpLog('format detect: total_rosters='+tr+' \u2192 '+teams+'-team \u00b7 QBslots='+qbSlots+' SFslots='+sfSlots+
