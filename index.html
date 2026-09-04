@@ -757,9 +757,10 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
    points up down the column. Badges centre in their own space. */
 .dl-board th.dl-rk-r,.dl-board td.dl-rk-r{text-align:right}
 .dl-board th.dl-rk-c,.dl-board td.dl-rk-c{text-align:center}
-/* The Player column takes any slack that is left, so the space lands in one
-   place instead of being spread through the figures. */
-.dl-board th.dl-rk-th-name,.dl-board td.dl-rk-name{width:100%}
+/* No width rule on the Player column. Asking a cell for 100% forces the
+   table back out to the full container width and then dumps every bit of
+   freed space into that one column, which is the opposite of sizing to
+   content. The table is width:auto; that is enough. */
 
 /* ── Player cell: name, then position and team ───────────────────────── */
 .dl-rk-pn{font-weight:700}
@@ -857,9 +858,15 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-rk-padclose{background:none;border:1px solid var(--line);color:var(--fog);
   border-radius:6px;padding:6px 12px;font-family:inherit;font-size:12px;cursor:pointer}
 .dl-rk-padclose:hover{color:var(--paper)}
-.dl-rk-padscroll{flex:1;overflow:auto;padding:14px 0}
-.dl-rk-padinner{min-width:680px;padding:0 14px}
-.dl-rk-padnote{padding:12px 16px;font-size:11px;color:var(--fog-2);border-top:1px solid var(--line)}
+.dl-rk-padfilters{padding:12px 16px 0}
+.dl-rk-padbody{flex:1;padding:8px 10px 0;min-height:0}
+.dl-rk-padbody svg{width:100%;height:auto;display:block}
+.dl-rk-padnote{padding:12px 16px;font-size:11px;color:var(--fog-2);
+  border-top:1px solid var(--line);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.dl-rk-key{width:9px;height:9px;border-radius:50%;display:inline-block;margin-left:5px}
+.dl-rk-key.u{background:var(--emerald);margin-left:0}
+.dl-rk-key.d{background:var(--coral)}
+.dl-rk-key.n{background:var(--fog-2)}
 
 @media(max-width:600px){
   /* The decision on record: a repeat visitor wants what changed since
@@ -1100,10 +1107,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     </div>
   </div>
 
-  <details class="cfb-about" style="margin:.75rem 0 .7rem"><summary>About</summary><div class="cfb-about-body">Every number here is anchored to the market price, not a replacement for it.
-    <b style="color:var(--paper)">Model value answers one question</b> — what the profile is worth if the market repriced it on production, age,
-    opportunity and contract. The verdict is the gap between the two, not a prediction of next week. Change a setting above and the whole board
-    rescores: scarcity is a function of league size and QB format, so a 10-team superflex QB is not worth what a 14-team 1-QB QB is worth.</div></details>
 
   <div class="dl-rk-block">
     <div class="dl-rk-mapcol">
@@ -1140,14 +1143,14 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
         </div>
       </div>
       <div class="dl-rk-lst">
-        <h3>Overvalued</h3>
-        <div class="dl-rk-cap">Priced inside the top <span class="dl-rk-skiplbl">25</span></div>
-        <div id="rk-sells"></div>
-      </div>
-      <div class="dl-rk-lst">
         <h3>Undervalued</h3>
         <div class="dl-rk-cap">Priced outside the top <span class="dl-rk-skiplbl">25</span></div>
         <div id="rk-buys"></div>
+      </div>
+      <div class="dl-rk-lst">
+        <h3>Overvalued</h3>
+        <div class="dl-rk-cap">Priced inside the top <span class="dl-rk-skiplbl">25</span></div>
+        <div id="rk-sells"></div>
       </div>
     </div>
   </div>
@@ -1157,11 +1160,17 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <span>Price Against Disagreement</span>
       <button type="button" class="dl-rk-padclose" onclick="rkPad(false)" aria-label="Close chart">Close</button>
     </div>
-    <div class="dl-rk-padscroll"><div class="dl-rk-padinner">
-      <svg id="rk-map2" class="dl-rk-map" viewBox="0 0 1000 380" role="img"
+    <div class="dl-rk-padfilters dl-rk-filters">
+      <button type="button" class="set-pill" data-cut="0" onclick="rkSetCut(0)">Everyone</button>
+      <button type="button" class="set-pill on" data-cut="100" onclick="rkSetCut(100)">Top 100</button>
+    </div>
+    <div class="dl-rk-padbody">
+      <svg id="rk-map2" class="dl-rk-map" role="img"
            aria-label="Market price plotted against DELTA's gap to it"></svg>
-    </div></div>
-    <div class="dl-rk-padnote">Swipe to explore. This view is built for a wide screen.</div>
+    </div>
+    <div class="dl-rk-padnote"><span class="dl-rk-key u"></span>DELTA says cheap
+      <span class="dl-rk-key d"></span>DELTA says expensive
+      <span class="dl-rk-key n"></span>About right</div>
   </div>
 
   <div class="ctl-row">
@@ -1522,44 +1531,66 @@ function rkSetCut(n){
   rkCut=n;
   document.querySelectorAll('.dl-rk-filters [data-cut]').forEach(b=>
     b.classList.toggle('on', parseInt(b.getAttribute('data-cut'),10)===rkCut));
-  rkDrawMap();
+  if(RK_MQ.matches) rkDrawPad(); else rkDrawMap();
 }
-function rkDrawMap(){
-  const el=document.getElementById('rk-map'); if(!el) return;
+function rkMapSet(){
   const all=rkBoardData();
-  const P = rkCut ? all.filter(p=>p.mrk<=rkCut) : all;
-  if(!P.length){ el.innerHTML=''; return; }
+  return rkCut ? all.filter(p=>p.mrk<=rkCut) : all;
+}
+/* One drawing routine, two shapes. Desktop gets a wide landscape panel;
+   a phone gets a portrait one sized to the screen it is about to fill. */
+function rkMapSvg(P,W,H,r,xticks){
+  const ML=46, MR=12, MT=14, MB=30;
   const xs=P.map(p=>Math.log(Math.max(p.mkt,1)));
   const x0=Math.min(...xs), x1=Math.max(...xs);
-  // Clamped both ways. One player at +400% would flatten everyone else onto
-  // a single line; the Y helper pins outliers to the edge rather than hiding
-  // them.
+  // Clamped both ways. One player at +400% would flatten everyone else onto a
+  // single line; the Y helper pins outliers to the edge rather than dropping
+  // them off the chart.
   const y0=Math.max(-60, Math.min(...P.map(p=>p.pct)));
   const y1=Math.min( 80, Math.max(...P.map(p=>p.pct)));
-  const X=v=>RK_ML+(Math.log(Math.max(v,1))-x0)/Math.max(x1-x0,1e-6)*(RK_W-RK_ML-RK_MR);
-  const Y=v=>RK_MT+(y1-Math.max(y0,Math.min(y1,v)))/Math.max(y1-y0,1e-6)*(RK_H-RK_MT-RK_MB);
+  const X=v=>ML+(Math.log(Math.max(v,1))-x0)/Math.max(x1-x0,1e-6)*(W-ML-MR);
+  const Y=v=>MT+(y1-Math.max(y0,Math.min(y1,v)))/Math.max(y1-y0,1e-6)*(H-MT-MB);
   let s='';
-  s+='<rect class="dl-rk-band" x="'+RK_ML+'" y="'+Y(6)+'" width="'+(RK_W-RK_ML-RK_MR)
+  s+='<rect class="dl-rk-band" x="'+ML+'" y="'+Y(6)+'" width="'+(W-ML-MR)
     +'" height="'+Math.max(0,Y(-6)-Y(6))+'"/>';
-  s+='<text class="dl-rk-bandtxt" x="'+(RK_ML+8)+'" y="'+(Y(6)-5)+'">DELTA Calls These Holds</text>';
+  s+='<text class="dl-rk-bandtxt" x="'+(ML+8)+'" y="'+(Y(6)-5)+'">DELTA Calls These Holds</text>';
   [-50,-40,-30,-20,-10,0,10,20,30,40,50,60,70].forEach(g=>{
     if(g<y0||g>y1) return;
-    s+='<line class="'+(g===0?'dl-rk-zl':'dl-rk-gl')+'" x1="'+RK_ML+'" y1="'+Y(g)+'" x2="'+(RK_W-RK_MR)+'" y2="'+Y(g)+'"/>';
+    s+='<line class="'+(g===0?'dl-rk-zl':'dl-rk-gl')+'" x1="'+ML+'" y1="'+Y(g)+'" x2="'+(W-MR)+'" y2="'+Y(g)+'"/>';
     s+='<text class="dl-rk-al" x="6" y="'+(Y(g)+4)+'">'+(g>0?'+':'')+g+'%</text>';
   });
-  [100,300,1000,3000,10000].forEach(v=>{
+  xticks.forEach(v=>{
     if(v<Math.exp(x0)||v>Math.exp(x1)) return;
-    s+='<line class="dl-rk-gl" x1="'+X(v)+'" y1="'+RK_MT+'" x2="'+X(v)+'" y2="'+(RK_H-RK_MB)+'" opacity=".45"/>';
-    s+='<text class="dl-rk-al" x="'+X(v)+'" y="'+(RK_H-RK_MB+17)+'" text-anchor="middle">'+v.toLocaleString()+'</text>';
+    s+='<line class="dl-rk-gl" x1="'+X(v)+'" y1="'+MT+'" x2="'+X(v)+'" y2="'+(H-MB)+'" opacity=".45"/>';
+    s+='<text class="dl-rk-al" x="'+X(v)+'" y="'+(H-MB+17)+'" text-anchor="middle">'+v.toLocaleString()+'</text>';
   });
-  s+='<text class="dl-rk-al" x="'+(RK_W/2)+'" y="'+(RK_H-2)+'" text-anchor="middle">What He Costs On The Market</text>';
+  s+='<text class="dl-rk-al" x="'+(W/2)+'" y="'+(H-2)+'" text-anchor="middle">What He Costs On The Market</text>';
   P.forEach(p=>{
     const c = p.pct>=15?'var(--emerald)' : p.pct<=-15?'var(--coral)' : 'var(--fog-2)';
     s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+X(p.mkt).toFixed(1)
-      +'" cy="'+Y(p.pct).toFixed(1)+'" r="4" fill="'+c+'" fill-opacity=".8"/>';
+      +'" cy="'+Y(p.pct).toFixed(1)+'" r="'+r+'" fill="'+c+'" fill-opacity=".8"/>';
   });
-  el.innerHTML=s;
-  const el2=document.getElementById('rk-map2'); if(el2) el2.innerHTML=s;
+  return s;
+}
+function rkDrawMap(){
+  const el=document.getElementById('rk-map'); if(!el) return;
+  const P=rkMapSet();
+  if(!P.length){ el.innerHTML=''; return; }
+  el.setAttribute('viewBox','0 0 1000 380');
+  el.innerHTML=rkMapSvg(P,1000,380,4,[100,300,1000,3000,10000]);
+}
+/* Portrait, and measured rather than fixed. Sizing the viewBox to the space
+   the chart is about to occupy is what makes it fill a tall screen in one
+   go — the old fixed 1000x380 inside a 680px scroller opened needing a
+   sideways swipe and left the bottom two thirds of the phone blank. */
+function rkDrawPad(){
+  const el=document.getElementById('rk-map2'); if(!el) return;
+  const P=rkMapSet();
+  if(!P.length){ el.innerHTML=''; return; }
+  const W=Math.max(320,Math.min((window.innerWidth||360),560));
+  const H=Math.max(420,(window.innerHeight||700)-186);
+  el.setAttribute('viewBox','0 0 '+W+' '+H);
+  el.innerHTML=rkMapSvg(P,W,H,3.4,[100,1000,10000]);
 }
 function rkReadout(name){
   const ro=document.getElementById('rk-readout'); if(!ro) return;
@@ -1573,7 +1604,12 @@ function rkReadout(name){
 }
 function rkPad(v){
   const o=document.getElementById('rk-padov'); if(!o) return;
-  if(v){ rkDrawMap(); o.removeAttribute('hidden'); } else { o.setAttribute('hidden',''); }
+  if(v){
+    // 409 points inside a 340px-wide plot is a smear. Open on the top 100.
+    if(RK_MQ.matches && !rkCut) rkSetCut(100);
+    rkDrawPad();
+    o.removeAttribute('hidden');
+  } else { o.setAttribute('hidden',''); }
 }
 
 /* ── Market Moves ────────────────────────────────────────────────────────
@@ -1906,6 +1942,7 @@ function renderRankings(){
   // the reader opens it, so a 409-circle string is not assembled on every
   // keystroke in the search box.
   if(!RK_MQ.matches) rkDrawMap();
+  else if(!document.getElementById('rk-padov').hasAttribute('hidden')) rkDrawPad();
   rkLoadMoves(); renderRkMovers();
   const act=rkCols();
   const col=RK_COLS.find(c=>c.k===sortK&&c.sort) || RK_COLS.find(c=>c.k==='ktc');
