@@ -738,9 +738,18 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
 .dl-rk-colreset:hover{color:var(--paper);border-color:var(--fog-2)}
 .dl-rk-colnote{margin-top:8px;font-size:10px;line-height:1.45;color:var(--fog-2)}
 @media(max-width:600px){
-  /* Anchor right on a phone so a 236px panel opened from a button near the
-     right edge cannot hang off the screen. */
-  .dl-rk-colmenu{width:214px;max-height:60vh;overflow-y:auto}
+  /* Not a dropdown on a phone. The control row wraps, so the button can end
+     up anywhere along it, and a panel positioned against the button then opens
+     off whichever edge the button is nearest. Pinning the sheet to the
+     viewport instead makes that impossible. */
+  .dl-rk-colmenu{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;
+    max-height:72vh;overflow-y:auto;border-radius:12px 12px 0 0;border-left:0;border-right:0;
+    border-bottom:0;padding:14px 18px calc(18px + env(safe-area-inset-bottom));
+    box-shadow:0 -14px 34px rgba(0,0,0,.6)}
+  .dl-rk-colmenu-h{font-size:11px;margin-bottom:11px}
+  .dl-rk-opt{padding:9px 0;font-size:14px}
+  .dl-rk-opt input{width:17px;height:17px}
+  .dl-rk-colreset{padding:10px;font-size:12.5px}
   .dl-rk-colbtn{font-size:11px;padding:5px 10px}
 }
 
@@ -851,27 +860,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-rk-mvm{font-size:10.5px;color:var(--fog-2);margin-top:3px}
 .dl-rk-mvnone{font-size:11.5px;color:var(--fog-2);grid-column:1/-1}
 
-/* Full-screen chart, phone only. A button rather than a tab: tabs live in two
-   separate registries and adding to one but not the other ships something
-   that works when clicked and is silently unbookmarkable. */
-.dl-rk-padbtn{display:none}
-.dl-rk-padov{position:fixed;inset:0;z-index:100;background:var(--ink);
-  display:flex;flex-direction:column}
-.dl-rk-padov[hidden]{display:none}
-.dl-rk-padbar{display:flex;align-items:center;justify-content:space-between;
-  padding:14px 16px;border-bottom:1px solid var(--line);font-family:var(--geo);font-size:14px}
-.dl-rk-padclose{background:none;border:1px solid var(--line);color:var(--fog);
-  border-radius:6px;padding:6px 12px;font-family:inherit;font-size:12px;cursor:pointer}
-.dl-rk-padclose:hover{color:var(--paper)}
-.dl-rk-padfilters{padding:12px 16px 0}
-.dl-rk-padbody{flex:1;padding:8px 10px 0;min-height:0}
-.dl-rk-padbody svg{width:100%;height:auto;display:block}
-.dl-rk-padnote{padding:12px 16px;font-size:11px;color:var(--fog-2);
-  border-top:1px solid var(--line);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.dl-rk-key{width:9px;height:9px;border-radius:50%;display:inline-block;margin-left:5px}
-.dl-rk-key.u{background:var(--emerald);margin-left:0}
-.dl-rk-key.d{background:var(--coral)}
-.dl-rk-key.n{background:var(--fog-2)}
 
 @media(max-width:600px){
   /* The decision on record: a repeat visitor wants what changed since
@@ -887,16 +875,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-rk-movers h3{font-size:13px}
   .dl-rk-mgrid{grid-template-columns:1fr 1fr;gap:11px;flex:none;align-content:start}
   .dl-rk-mgrid2{margin-top:16px;padding-top:16px}
-  .dl-rk-padbtn{display:block;width:100%;margin-top:14px;font-family:inherit;font-size:12px;
-    color:var(--fog);background:var(--ink-2);border:1px solid var(--line);
-    border-radius:8px;padding:9px;cursor:pointer}
 }
 
-/* Selected point on the phone chart. */
-.dl-rk-sel{fill:none;stroke:var(--paper);stroke-width:2}
-.dl-rk-padread{border-top:1px solid var(--line);border-bottom:0;min-height:44px;gap:16px}
-.dl-rk-padread .dl-rk-nm{min-width:0;font-size:14px}
-.dl-rk-padread .dl-rk-fx{font-size:10px}
 
 </style>
 <script>
@@ -1141,7 +1121,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
           <div class="dl-rk-mgrid dl-rk-mgrid2" id="rk-moversDn"></div>
         </div>
       </div>
-      <button type="button" class="dl-rk-padbtn" onclick="rkPad(true)">Open PAD Chart</button>
     </div>
 
     <div class="dl-rk-lists" id="rk-lists">
@@ -1164,25 +1143,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
         <div id="rk-sells"></div>
       </div>
     </div>
-  </div>
-
-  <div class="dl-rk-padov" id="rk-padov" hidden>
-    <div class="dl-rk-padbar">
-      <span>Price Against Disagreement</span>
-      <button type="button" class="dl-rk-padclose" onclick="rkPad(false)" aria-label="Close chart">Close</button>
-    </div>
-    <div class="dl-rk-padfilters dl-rk-filters">
-      <button type="button" class="set-pill" data-cut="0" onclick="rkSetCut(0)">Everyone</button>
-      <button type="button" class="set-pill on" data-cut="100" onclick="rkSetCut(100)">Top 100</button>
-    </div>
-    <div class="dl-rk-padbody">
-      <svg id="rk-map2" class="dl-rk-map" onclick="rkPadTap(event)" role="img"
-           aria-label="Market price plotted against DELTA's gap to it"></svg>
-    </div>
-    <div class="dl-rk-readout dl-rk-padread" id="rk-padread"><span class="dl-rk-hint">Tap a point.</span></div>
-    <div class="dl-rk-padnote"><span class="dl-rk-key u"></span>DELTA says cheap
-      <span class="dl-rk-key d"></span>DELTA says expensive
-      <span class="dl-rk-key n"></span>About right</div>
   </div>
 
   <div class="ctl-row">
@@ -1573,9 +1533,8 @@ function rkSetCut(n){
   rkCut=n;
   document.querySelectorAll('.dl-rk-filters [data-cut]').forEach(b=>
     b.classList.toggle('on', parseInt(b.getAttribute('data-cut'),10)===rkCut));
-  if(RK_MQ.matches) rkDrawPad(); else rkDrawMap();
+  rkDrawMap();
 }
-let RK_PADPTS=[];
 function rkMapSet(){
   const all=rkBoardData();
   return rkCut ? all.filter(p=>p.mrk<=rkCut) : all;
@@ -1608,53 +1567,22 @@ function rkMapSvg(P,W,H,r,xticks){
     s+='<text class="dl-rk-al" x="'+X(v)+'" y="'+(H-MB+17)+'" text-anchor="middle">'+v.toLocaleString()+'</text>';
   });
   s+='<text class="dl-rk-al" x="'+(W/2)+'" y="'+(H-2)+'" text-anchor="middle">What He Costs On The Market</text>';
-  RK_PADPTS=[];
   P.forEach(p=>{
     const c = p.pct>=15?'var(--emerald)' : p.pct<=-15?'var(--coral)' : 'var(--fog-2)';
-    const cx=+X(p.mkt).toFixed(1), cy=+Y(p.pct).toFixed(1);
-    RK_PADPTS.push({n:p.n,x:cx,y:cy});
-    s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+cx
-      +'" cy="'+cy+'" r="'+r+'" fill="'+c+'" fill-opacity=".8"/>';
+    s+='<circle class="dl-rk-dot" data-n="'+encodeURIComponent(p.n)+'" cx="'+X(p.mkt).toFixed(1)
+      +'" cy="'+Y(p.pct).toFixed(1)+'" r="'+r+'" fill="'+c+'" fill-opacity=".8"/>';
   });
   return s;
 }
 function rkDrawMap(){
   const el=document.getElementById('rk-map'); if(!el) return;
+  // The chart is desktop-only now. Guard here rather than at each caller, so
+  // no path can quietly assemble a 409-circle string into a hidden element.
+  if(RK_MQ.matches){ el.innerHTML=''; return; }
   const P=rkMapSet();
   if(!P.length){ el.innerHTML=''; return; }
   el.setAttribute('viewBox','0 0 1000 380');
   el.innerHTML=rkMapSvg(P,1000,380,4,[100,300,1000,3000,10000]);
-}
-/* Portrait, and measured rather than fixed. Sizing the viewBox to the space
-   the chart is about to occupy is what makes it fill a tall screen in one
-   go — the old fixed 1000x380 inside a 680px scroller opened needing a
-   sideways swipe and left the bottom two thirds of the phone blank. */
-function rkDrawPad(){
-  const el=document.getElementById('rk-map2'); if(!el) return;
-  const P=rkMapSet();
-  if(!P.length){ el.innerHTML=''; return; }
-  const W=Math.max(320,Math.min((window.innerWidth||360),560));
-  const H=Math.max(420,(window.innerHeight||700)-186);
-  el.setAttribute('viewBox','0 0 '+W+' '+H);
-  RK_PADVB=[W,H];
-  RK_PADSVG=rkMapSvg(P,W,H,4.2,[100,1000,10000]);
-  el.innerHTML=RK_PADSVG;
-}
-/* A tap resolves to the NEAREST point rather than needing a direct hit. The
-   dots are about eight pixels across and a fingertip covers nearer forty, so
-   hit-testing the circle itself is why the chart felt dead to touch. */
-let RK_PADSVG='', RK_PADVB=[0,0];
-function rkPadTap(e){
-  const el=document.getElementById('rk-map2'); if(!el||!RK_PADPTS.length) return;
-  const r=el.getBoundingClientRect(); if(!r.width||!r.height) return;
-  const x=(e.clientX-r.left)/r.width*RK_PADVB[0];
-  const y=(e.clientY-r.top)/r.height*RK_PADVB[1];
-  let best=null, bd=Infinity;
-  RK_PADPTS.forEach(p=>{ const d=(p.x-x)*(p.x-x)+(p.y-y)*(p.y-y); if(d<bd){ bd=d; best=p; } });
-  if(!best || bd > 44*44) return;
-  el.innerHTML=RK_PADSVG
-    +'<circle class="dl-rk-sel" cx="'+best.x+'" cy="'+best.y+'" r="10"/>';
-  rkReadout(best.n,'rk-padread');
 }
 function rkReadout(name,into){
   const ro=document.getElementById(into||'rk-readout'); if(!ro) return;
@@ -1665,15 +1593,6 @@ function rkReadout(name,into){
    +'<span class="dl-rk-fx">DELTA Says<b>'+p.mv.toLocaleString()+'</b></span>'
    +'<span class="dl-rk-fx">At Stake<b class="'+(p.abs>=0?'u':'d')+'">'
    +(p.abs>0?'+':'\u2212')+Math.abs(p.abs).toLocaleString()+'</b></span>';
-}
-function rkPad(v){
-  const o=document.getElementById('rk-padov'); if(!o) return;
-  if(v){
-    // 409 points inside a 340px-wide plot is a smear. Open on the top 100.
-    if(RK_MQ.matches && !rkCut) rkSetCut(100);
-    rkDrawPad();
-    o.removeAttribute('hidden');
-  } else { o.setAttribute('hidden',''); }
 }
 
 /* ── Market Moves ────────────────────────────────────────────────────────
@@ -2036,7 +1955,7 @@ document.addEventListener('click',function(e){
   const m=document.getElementById('rk-col-menu'), b=document.getElementById('rk-col-btn');
   if(m && !m.hasAttribute('hidden') && !m.contains(e.target) && b && !b.contains(e.target)) rkMenuOpen(false);
 });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ rkMenuOpen(false); rkPad(false); } });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') rkMenuOpen(false); });
 document.addEventListener('mouseover',function(e){
   const t=e.target && e.target.getAttribute && e.target.getAttribute('data-n');
   if(t) rkReadout(decodeURIComponent(t));
@@ -2063,7 +1982,6 @@ function renderRankings(){
   // the reader opens it, so a 409-circle string is not assembled on every
   // keystroke in the search box.
   if(!RK_MQ.matches) rkDrawMap();
-  else if(!document.getElementById('rk-padov').hasAttribute('hidden')) rkDrawPad();
   rkLoadMoves(); renderRkMovers();
   const act=rkCols();
   const col=RK_COLS.find(c=>c.k===sortK&&c.sort) || RK_COLS.find(c=>c.k==='ktc');
