@@ -776,9 +776,11 @@ a.dl-home:focus-visible{outline:2px solid var(--teal-br);outline-offset:4px;bord
 .dl-board{width:auto;min-width:100%}
 /* Figures right, labels left. A right-aligned number ends where the next
    column begins, which is what closes the gaps; it also lines the decimal
-   points up down the column. Badges centre in their own space. */
-.dl-board th.dl-rk-r,.dl-board td.dl-rk-r{text-align:right}
-.dl-board th.dl-rk-c,.dl-board td.dl-rk-c{text-align:center}
+   points up down the column. Badges centre in their own space.
+   Named .dl-b- rather than .dl-rk- because these hang off .dl-board and
+   belong to every table that opts in, not just rankings. */
+.dl-board th.dl-b-r,.dl-board td.dl-b-r{text-align:right}
+.dl-board th.dl-b-c,.dl-board td.dl-b-c{text-align:center}
 /* No width rule on the Player column. Asking a cell for 100% forces the
    table back out to the full container width and then dumps every bit of
    freed space into that one column, which is the opposite of sizing to
@@ -889,6 +891,22 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-rk-mgrid2{margin-top:16px;padding-top:16px}
 }
 
+
+/* ── Projections and EPA Insights, ported from the rankings board ─────── */
+.dtable th.dl-pj-ds{font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)}
+.dtable td.dl-pj-ds{font-weight:800;font-size:14px}
+.dtable td.dl-pj-name,.dtable td.dl-ep-name{font-weight:600;white-space:nowrap}
+/* Header colours that carry meaning, lifted out of the markup rather than lost. */
+.dtable th.dl-pj-floor,.dtable td.dl-pj-floor{color:var(--coral)}
+.dtable th.dl-pj-ceil,.dtable td.dl-pj-ceil{color:var(--emerald)}
+.dtable th.dl-pj-miss{color:var(--coral)}
+.dtable th.dl-pj-hit{color:var(--sky)}
+.dtable th.dl-pj-elite{color:var(--emerald)}
+.dtable td.dl-pj-proj,.dtable td.dl-pj-gap,.dtable td.dl-pj-sp{font-weight:600}
+.dtable td.dl-pj-badge{font-size:10px}
+.dtable td.dl-pj-ci{font-size:10px;color:var(--fog)}
+.dtable td.dl-ep-raw{font-size:10px;color:var(--fog-2)}
+.dtable td.dl-ep-eff{font-size:10px}
 
 </style>
 <script>
@@ -1238,15 +1256,15 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <option value="floor">Floor</option><option value="gap">Model gap</option>
     </select>
   </div>
-  <div style="overflow-x:auto"><table class="dtable">
+  <div class="dl-rk-scroll"><table class="dtable dl-board">
     <thead><tr>
-      <th onclick="setSortP('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile." style="cursor:pointer;font-family:var(--geo);font-weight:700;font-size:16px;color:var(--teal-br)">Δ</th>
-      <th onclick="setSortP('name')" style="cursor:pointer">Player</th><th onclick="setSortP('pos')" style="cursor:pointer">Pos</th><th onclick="setSortP('age')" style="cursor:pointer">Age</th><th onclick="setSortP('team')" style="cursor:pointer">Team</th>
-      <th onclick="setSortP('floor')" data-tip="Conservative-case projection — roughly the low end of the player's likely PPG range for the season." style="cursor:pointer;color:var(--coral)">Floor</th><th onclick="setSortP('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and opportunity." style="cursor:pointer">Proj PPG</th><th onclick="setSortP('ceil')" data-tip="Upside-case projection — roughly the high end of the player's likely PPG range if things break their way." style="cursor:pointer;color:var(--emerald)">Ceiling</th>
-      <th onclick="setSortP('epa')" data-tip="Per-play efficiency grade. Positive = above average on each touch or route; negative = below." style="cursor:pointer">EPA</th><th data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th onclick="setSortP('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades." style="cursor:pointer">Mkt Val</th><th onclick="setSortP('mv')" data-tip="DELTA's internal valuation. Higher than Mkt Val = underpriced; lower = overpriced." style="cursor:pointer">Mod val</th><th onclick="setSortP('gap')" data-tip="Mod val minus Mkt Val. Positive (green) = DELTA sees the player as underpriced vs the market; negative (coral) = overpriced." style="cursor:pointer">Gap</th><th data-tip="Confidence interval — the ± range around the projection. Tight (±10%) = a stable, predictable profile; wide (±32%) = volatile, boom-or-bust. Lower isn't 'better,' just more certain.">CI</th>
-      <th onclick="setSortP('miss')" data-tip="Share of started games where the player finished as a bust for the position. Lower is better." style="cursor:pointer;color:var(--coral)">Miss%</th>
-      <th onclick="setSortP('hit')" data-tip="Share of started games where the player returned a startable weekly finish. Higher is better." style="cursor:pointer;color:var(--sky)">Hit%</th>
-      <th onclick="setSortP('elite')" data-tip="Share of started games with a top-tier weekly finish at the position. Higher is better." style="cursor:pointer;color:var(--emerald)">Elite%</th>
+      <th class="dl-pj-ds" onclick="setSortP('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile.">Δ</th>
+      <th onclick="setSortP('name')">Player</th><th class="dl-b-c" onclick="setSortP('pos')">Pos</th><th class="dl-b-r" onclick="setSortP('age')">Age</th><th onclick="setSortP('team')">Team</th>
+      <th class="dl-b-r dl-pj-floor" onclick="setSortP('floor')" data-tip="Conservative-case projection — roughly the low end of the player's likely PPG range for the season.">Floor</th><th class="dl-b-r" onclick="setSortP('proj')" data-tip="DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and opportunity.">Proj PPG</th><th class="dl-b-r dl-pj-ceil" onclick="setSortP('ceil')" data-tip="Upside-case projection — roughly the high end of the player's likely PPG range if things break their way.">Ceiling</th>
+      <th class="dl-b-c" onclick="setSortP('epa')" data-tip="Per-play efficiency grade. Positive = above average on each touch or route; negative = below.">EPA</th><th class="dl-b-c" data-tip="For RBs: snap share %. For WRs/TEs: yards per route run (YPRR). A key input to the model's role and opportunity assessment.">Usage</th><th class="dl-b-r" onclick="setSortP('ktc')" data-tip="FantasyCalc consensus trade value — what the market currently pays in trades.">Mkt Val</th><th class="dl-b-r" onclick="setSortP('mv')" data-tip="DELTA's internal valuation. Higher than Mkt Val = underpriced; lower = overpriced.">Mod val</th><th class="dl-b-r" onclick="setSortP('gap')" data-tip="Mod val minus Mkt Val. Positive (green) = DELTA sees the player as underpriced vs the market; negative (coral) = overpriced.">Gap</th><th class="dl-b-r" data-tip="Confidence interval — the ± range around the projection. Tight (±10%) = a stable, predictable profile; wide (±32%) = volatile, boom-or-bust. Lower isn't 'better,' just more certain.">CI</th>
+      <th class="dl-b-r dl-pj-miss" onclick="setSortP('miss')" data-tip="Share of started games where the player finished as a bust for the position. Lower is better.">Miss%</th>
+      <th class="dl-b-r dl-pj-hit" onclick="setSortP('hit')" data-tip="Share of started games where the player returned a startable weekly finish. Higher is better.">Hit%</th>
+      <th class="dl-b-r dl-pj-elite" onclick="setSortP('elite')" data-tip="Share of started games with a top-tier weekly finish at the position. Higher is better.">Elite%</th>
     </tr></thead>
     <tbody id="proj-body"></tbody>
   </table></div>
@@ -1376,11 +1394,11 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     </select>
     <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
   </div>
-  <div style="overflow-x:auto"><table class="dtable">
+  <div class="dl-rk-scroll"><table class="dtable dl-board">
     <thead><tr>
-      <th onclick="setSortEPA('name')" style="cursor:pointer">Player</th><th>Pos</th><th onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th><th>Team</th>
-      <th onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there." style="cursor:pointer">EPA'25</th><th onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'24</th><th onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'23</th><th onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production." style="cursor:pointer">EPA'22</th>
-      <th data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — for very heavy-workload players who dip slightly below average, a floor rule keeps the model from over-penalizing them." style="cursor:pointer">Applied</th><th onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers." style="cursor:pointer">Eff</th><th onclick="setSortEPA('ktc')" style="cursor:pointer">Mkt Val</th><th>Tag</th>
+      <th onclick="setSortEPA('name')">Player</th><th class="dl-b-c">Pos</th><th class="dl-b-r" onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.">Age</th><th>Team</th>
+      <th class="dl-b-r" onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there.">EPA'25</th><th class="dl-b-r" onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'24</th><th class="dl-b-r" onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'23</th><th class="dl-b-r" onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'22</th>
+      <th class="dl-b-r" data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th class="dl-b-r" onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — for very heavy-workload players who dip slightly below average, a floor rule keeps the model from over-penalizing them.">Applied</th><th class="dl-b-r" onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers.">Eff</th><th class="dl-b-r" onclick="setSortEPA('ktc')">Mkt Val</th><th>Tag</th>
     </tr></thead>
     <tbody id="epa-body"></tbody>
   </table></div>
@@ -1537,7 +1555,7 @@ function rkBand(v,a,b,c,dir){
   return at(a)?'var(--emerald)':at(b)?'var(--sky)':at(c)?'var(--topaz)':'var(--coral)';
 }
 function rkNum(v,txt,col){
-  return '<td class="dl-rk-r"'+(col?' style="color:'+col+'"':'')+'>'+(v==null||isNaN(v)?'\u2013':txt)+'</td>';
+  return '<td class="dl-b-r"'+(col?' style="color:'+col+'"':'')+'>'+(v==null||isNaN(v)?'\u2013':txt)+'</td>';
 }
 /* glOf walks a game log. Three start-profile columns across 170 rows is 510
    calls a render, so the answer is kept for the life of one render. */
@@ -1829,41 +1847,41 @@ const RK_COLS=[
 
  {k:'ktc', al:'r', lbl:'Mkt Val', full:'Market Value', sort:'ktcEff', mob:true,
   tip:"FantasyCalc consensus trade value — what the market currently pays in trades.",
-  fn:(p,R)=>`<td class="dl-rk-r dl-rk-mkt${p.mktStale?' dl-rk-stale':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span class="dl-rk-stale-flag" data-tip="Not in the latest market fetch — this market value may be stale.">\u2020</span>':''}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r dl-rk-mkt${p.mktStale?' dl-rk-stale':''}">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}${p.mktStale?' <span class="dl-rk-stale-flag" data-tip="Not in the latest market fetch — this market value may be stale.">\u2020</span>':''}</td>`},
 
  {k:'n', lbl:'Player', full:'Player', sort:'n', txt:true, mob:true, locked:true, th:'dl-rk-th-name',
   fn:(p,R)=>`<td class="pname dl-rk-name">${typeof injBadge==='function'?injBadge(p.n):''}${(()=>{ const di=dsDraftInfo(p.n); const isRook = p.g25===0 && p.ppg24===0 && p.ppg23===0 && di && di.year===2026; return isRook?'<span class="badge bt dl-rk-badge-r">R</span>':(p.hasOv?'<span class="badge bn dl-rk-badge">\u270e</span>':''); })()}<span class="dl-rk-pn">${p.n}</span><span class="dl-rk-tp">${p.pos} ${p.t}</span></td>`},
 
  {k:'a', al:'r', lbl:'Age', full:'Age', sort:'a', mob:false,
   tip:"Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.",
-  fn:(p,R)=>`<td class="dl-rk-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
 
  {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
   tip:"Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.",
-  fn:(p,R)=>`<td class="dl-rk-r">${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r">${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
 
  {k:'ppg24', al:'r', lbl:"PPG'24", full:"PPG '24", sort:'ppg24', mob:false,
   tip:"Points per game in the 2024 season, adjusted for your current scoring format.",
-  fn:(p,R)=>`<td class="dl-rk-r">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>`},
 
  {k:'epaSc', al:'c', lbl:'EPA', full:'EPA Per Play', sort:'epaSc', mob:false,
   tip:"Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value.",
-  fn:(p,R)=>`<td class="dl-rk-c">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>`},
+  fn:(p,R)=>`<td class="dl-b-c">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>`},
 
  /* Sorts on the same number it prints. It used to sort raw p.proj while
     displaying getAdjProj(p) — identical at the default scoring format and
     quietly wrong at every other one. */
  {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:true,
   tip:"DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.",
-  fn:(p,R)=>`<td class="dl-rk-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
 
  {k:'mv', al:'r', lbl:'Mod val', full:'Model Value', sort:'mv', mob:true,
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
-  fn:(p,R)=>`<td class="dl-rk-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
+  fn:(p,R)=>`<td class="dl-b-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
  {k:'sys', al:'c', lbl:'Sys', full:'System Score', sort:'sys', mob:false,
   tip:"Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle.",
-  fn:(p,R)=>`<td class="dl-rk-c">${sTag(p.sys)}</td>`},
+  fn:(p,R)=>`<td class="dl-b-c">${sTag(p.sys)}</td>`},
 
  {k:'oc', lbl:'OC', full:'Offensive Coordinator', mob:false,
   tip:"Offensive coordinator. ⚠ flags a coordinator change this cycle — everything the player demonstrated came under the old scheme. Shown for context; it does not adjust the projection. No flag = stable staff.",
@@ -2044,7 +2062,7 @@ function renderRankings(){
   });
 
   document.getElementById('rk-head').innerHTML=act.map(c=>{
-    const cls=[c.th||'', c.al==='r'?'dl-rk-r':c.al==='c'?'dl-rk-c':'',
+    const cls=[c.th||'', c.al==='r'?'dl-b-r':c.al==='c'?'dl-b-c':'',
       sortK===c.k&&c.sort?('dl-rk-on '+(sortDir<0?'dl-rk-desc':'dl-rk-asc')):''].filter(Boolean).join(' ');
     return '<th'+(c.sort?' onclick="setSortR(\''+c.k+'\')"':'')
       +(c.tip?' data-tip="'+c.tip+'"':'')+(cls?' class="'+cls+'"':'')
@@ -2094,22 +2112,22 @@ function renderProj(){
     const mc=gl?(gl.miss<=35?'var(--emerald)':gl.miss<=50?'var(--topaz)':'var(--coral)'):'var(--line)';
     const hc=gl?(gl.hit>=65?'var(--emerald)':gl.hit>=50?'var(--sky)':'var(--fog)'):'var(--line)';
     const ec=gl?(gl.elite>=25?'var(--emerald)':gl.elite>=15?'var(--sky)':'var(--fog)'):'var(--line)';
-    return`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-      <td style="font-weight:800;font-size:14px;color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
-      <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
-      <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
-      <td style="color:var(--coral)">${p.floor.toFixed(1)}</td>
-      <td style="font-weight:600">${getAdjProj(p).toFixed(1)}</td>
-      <td style="color:var(--emerald)">${p.ceil.toFixed(1)}</td>
-      <td>${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
-      <td style="font-size:10px">${rTag(p.role,p.roleLabel,p.pos)}</td>
-      <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
-      <td style="color:${p.mv>p.ktcEff?'var(--emerald)':p.mv<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${p.mv.toLocaleString()}</td>
-      <td style="color:${gc};font-weight:600">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
-      <td style="font-size:10px;color:var(--fog)">±${Math.round(p.ci*100)}%</td>
-      <td style="font-weight:600;color:${mc}">${gl?gl.miss+'%':'—'}</td>
-      <td style="font-weight:600;color:${hc}">${gl?gl.hit+'%':'—'}</td>
-      <td style="font-weight:600;color:${ec}">${gl?gl.elite+'%':'—'}</td>
+    return`<tr class="dl-rk-row" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
+      <td class="dl-pj-ds" style="color:${dsColor(p.dsScore)}">${p.dsScore!=null?p.dsScore:'—'}</td>
+      <td class="pname dl-pj-name">${p.n}</td>
+      <td class="dl-b-c txt">${p.pos}</td><td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
+      <td class="dl-b-r dl-pj-floor">${p.floor.toFixed(1)}</td>
+      <td class="dl-b-r dl-pj-proj">${getAdjProj(p).toFixed(1)}</td>
+      <td class="dl-b-r dl-pj-ceil">${p.ceil.toFixed(1)}</td>
+      <td class="dl-b-c">${eTag(p.epaSc,p.epaFl,p.epaFr)} ${tH(p.epaTr)}</td>
+      <td class="dl-b-c dl-pj-badge">${rTag(p.role,p.roleLabel,p.pos)}</td>
+      <td class="dl-b-r">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+      <td class="dl-b-r" style="color:${p.mv>p.ktcEff?'var(--emerald)':p.mv<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${p.mv.toLocaleString()}</td>
+      <td class="dl-b-r dl-pj-gap" style="color:${gc}">${(p.gap>0?'+':'')+p.gap.toLocaleString()}</td>
+      <td class="dl-b-r dl-pj-ci">±${Math.round(p.ci*100)}%</td>
+      <td class="dl-b-r dl-pj-sp" style="color:${mc}">${gl?gl.miss+'%':'—'}</td>
+      <td class="dl-b-r dl-pj-sp" style="color:${hc}">${gl?gl.hit+'%':'—'}</td>
+      <td class="dl-b-r dl-pj-sp" style="color:${ec}">${gl?gl.elite+'%':'—'}</td>
     </tr>`;
   }).join('');
 }
@@ -2132,17 +2150,17 @@ function renderEPA(){
   else data.sort((a,b)=>d*(b.epaSc-a.epaSc)); // default: epaSc descending
   const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
   const fc=(v,pos)=>{if(!v||v===0)return'var(--fog-2)';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'var(--emerald)':v<-t?'var(--coral)':'var(--paper)';};
-  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr style="cursor:pointer" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-    <td class="pname" style="font-weight:600;white-space:nowrap">${p.n}</td>
-    <td class="txt">${p.pos}</td><td>${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
-    <td style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
-    <td style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
-    <td style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
-    <td style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
-    <td style="font-size:10px;color:var(--fog-2)">${p.epaRaw.toFixed(3)}</td>
-    <td>${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
-    <td style="font-size:10px">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
-    <td>${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
+  document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr class="dl-rk-row" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
+    <td class="pname dl-ep-name">${p.n}</td>
+    <td class="dl-b-c txt">${p.pos}</td><td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
+    <td class="dl-b-r" style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
+    <td class="dl-b-r" style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
+    <td class="dl-b-r" style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
+    <td class="dl-b-r" style="color:${fc(p.e22,p.pos)}">${fmt(p.e22)}</td>
+    <td class="dl-b-r dl-ep-raw">${p.epaRaw.toFixed(3)}</td>
+    <td class="dl-b-r">${eTag(p.epaSc,p.epaFl,p.epaFr)}</td>
+    <td class="dl-b-r dl-ep-eff">${p.ef25>0?p.ef25.toFixed(2):p.ef24>0?p.ef24.toFixed(2):'-'}</td>
+    <td class="dl-b-r">${p.ktcEff>0?p.ktcEff.toLocaleString():'-'}</td>
     <td>${vTag(p)}</td>
   </tr>`).join('');
 }
