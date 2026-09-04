@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-03T10:53:56.965364+00:00",
+  "fetched": "2026-09-04T10:53:18.426294+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1972,6 +1972,16 @@
       "guaranteed": 44.0,
       "is_active": true
     },
+    "Cedric Tillman": {
+      "team": "Saints",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Pat Bryant": {
       "team": "Broncos",
       "year_signed": 2025,
@@ -2147,9 +2157,9 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 3.52,
-      "total": 3.52,
-      "guaranteed": 0.0,
+      "aav": 2.5,
+      "total": 2.5,
+      "guaranteed": 2.5,
       "is_active": true
     },
     "Ray Davis": {
@@ -2793,7 +2803,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -3010,6 +3020,16 @@
       "aav": 1.13,
       "total": 4.54,
       "guaranteed": 0.16,
+      "is_active": true
+    },
+    "Jaydon Blue": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Seth McGowan": {
