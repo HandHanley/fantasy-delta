@@ -935,7 +935,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 </div>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
   <div style="position:relative;flex:1;max-width:280px">
-    <input id="deck-search" type="text" placeholder="Search players…"
+    <input id="deck-search" type="text" placeholder="Find any player, NFL or college"
       oninput="deckSearchInput()"
       onkeydown="deckSearchKey(event)"
       class="dl-search"
@@ -946,7 +946,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 10px 28px rgba(0,0,0,.55)">
     </div>
   </div>
-  <span class="dl-hint">Click any row to open player card</span>
 </div>
 
 <!-- Section switcher. NFL and College are peers; My Team is where you act on your own
@@ -1158,7 +1157,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   </div>
 
   <div class="ctl-row">
-    <input type="text" id="s-rank" class="fld-8" placeholder="Search players…" oninput="renderRankings()">
+    <input type="text" id="s-rank" class="fld-8" placeholder="Filter these rankings" oninput="renderRankings()">
     <select id="sort-rank" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)"></select>
     <div class="dl-rk-colwrap">
       <button type="button" class="dl-rk-colbtn" id="rk-col-btn" aria-expanded="false" aria-controls="rk-col-menu" onclick="rkMenuToggle(event)">
