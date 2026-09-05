@@ -4360,7 +4360,8 @@ function renderRookieBoard(posFilter) {
     </div>`;
   });
 
-  board.innerHTML = html;
+  board.innerHTML = html
+    + '<div class="dl-bb-foot">2026 class \u00b7 pre-landing scores, graded once the season resolves</div>';
 }
 function closeRookieModal() {
   const m = document.getElementById('rookie-modal');
@@ -4645,7 +4646,7 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div id="panel-rookies" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">2026 Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
 
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body"><div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
@@ -5243,11 +5244,14 @@ function renderDevy(){
           +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span class="dl-bb-pctlbl" data-tip="Predicted points added per play, as a percentile at his position. Shown because it is interesting, not because it predicts the draft — on its own it barely does.">PPA</span></span>'
       +'</span></div>';
   }
-  const meta=DEVY.generated?('Board compiled '+DEVY.generated+(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'';
+  // The class label lives here now rather than in the title. It is provenance,
+  // not navigation — and when a second class exists it becomes a pill instead,
+  // without the title having to change again.
+  const meta=(DEVY.class?DEVY.class+' class':'')
+    +(DEVY.generated?((DEVY.class?' · ':'')+'board compiled '+DEVY.generated
+      +(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'');
   host.innerHTML=(rows.length?html:'<div class="dl-bb-empty">No players at this position on the current board.</div>')
     +(meta?'<div class="dl-bb-foot">'+meta+'</div>':'');
-  const t=document.getElementById('devy-title');
-  if(t&&DEVY.class) t.textContent='Consensus Big Board · '+DEVY.class+' Class';
 }
 function devySetPos(p,el){ _devyPos=p; renderDevy(); }
 
