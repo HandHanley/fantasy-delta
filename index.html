@@ -1062,6 +1062,19 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-pr-sheet{border-radius:16px 16px 0 0;max-height:88vh}
 }
 
+/* ── My Team roster ──────────────────────────────────────────────────── */
+.dtable th.dl-mt-ds{font-family:var(--geo);font-size:15px;color:var(--teal-br)}
+.dtable td.dl-mt-ds{font-weight:800;font-size:14px}
+.dtable td.dl-mt-name{font-weight:600;white-space:nowrap}
+.dtable td.dl-mt-sp{font-size:11px;font-weight:700;white-space:nowrap}
+.dtable td.dl-mt-num{font-weight:600}
+/* Rows for players outside the modeled universe. Dimmed as a set rather than
+   cell by cell, so "we have no opinion here" reads as one state. */
+.dtable tr.dl-mt-un{opacity:.72}
+.dtable tr.dl-mt-un td{color:var(--fog)}
+.dtable tr.dl-mt-un td.dl-mt-ds,.dtable tr.dl-mt-un td.dl-mt-sp,
+.dtable tr.dl-mt-un td.dl-mt-dim{color:var(--fog-2)}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -7332,38 +7345,38 @@ function renderSlpRoster(rid){
         :'<span style="color:var(--fog-2)">\u2014</span>';
       const mv=(typeof mvAsset==='function')?mvAsset(p):0;
       const mvCol=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
-      return '<tr style="cursor:pointer" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
-        +'<td style="font-weight:800;font-size:14px;color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
-        +'<td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
-        +'<td class="col-hide-mobile">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
+      return '<tr class="dl-rk-row" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+        +'<td class="dl-mt-ds" style="color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'\u2014')+'</td>'
+        +'<td class="dl-mt-name">'+p.n+'</td>'
+        +'<td class="col-hide-mobile dl-b-r">'+(p.a<90?p.a.toFixed(1):'-')+'</td>'
         +'<td class="col-hide-mobile">'+p.t+'</td>'
-        +'<td class="col-hide-mobile">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
-        +'<td style="font-size:11px;font-weight:700;white-space:nowrap" title="Start Profile: Miss / Hit / Elite %">'+spCell+'</td>'
-        +'<td style="font-weight:600">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
-        +'<td style="font-weight:600;color:'+mvCol+'" class="col-hide-mobile">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
+        +'<td class="col-hide-mobile dl-b-r">'+(p.ppg25>0?p.ppg25.toFixed(1):'-')+'</td>'
+        +'<td class="dl-b-c dl-mt-sp" title="Start Profile: Miss / Hit / Elite %">'+spCell+'</td>'
+        +'<td class="dl-b-r dl-mt-num">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
+        +'<td class="col-hide-mobile dl-b-r dl-mt-num" style="color:'+mvCol+'">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
         +'<td>'+vTag(p)+'</td></tr>';
     }).join('');
     const uRows=g.u.map(function(x){
-      return '<tr style="opacity:.72">'
-        +'<td style="font-weight:800;font-size:14px;color:var(--fog-2)">\u2014</td>'
-        +'<td style="font-weight:600;white-space:nowrap;color:var(--fog)">'+x.u.n+'</td>'
-        +'<td class="col-hide-mobile">'+(x.u.a!=null?x.u.a:'-')+'</td>'
+      return '<tr class="dl-mt-un">'
+        +'<td class="dl-mt-ds">\u2014</td>'
+        +'<td class="dl-mt-name">'+x.u.n+'</td>'
+        +'<td class="col-hide-mobile dl-b-r">'+(x.u.a!=null?x.u.a:'-')+'</td>'
         +'<td class="col-hide-mobile">'+(x.u.t||'FA')+'</td>'
-        +'<td class="col-hide-mobile">-</td>'
-        +'<td style="font-size:11px;color:var(--fog-2)">\u2014</td>'
-        +'<td style="font-weight:600;color:var(--fog)">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'
-        +'<td class="col-hide-mobile" style="color:var(--fog-2)">-</td>'
+        +'<td class="col-hide-mobile dl-b-r">-</td>'
+        +'<td class="dl-b-c dl-mt-sp">\u2014</td>'
+        +'<td class="dl-b-r dl-mt-num">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'
+        +'<td class="col-hide-mobile dl-b-r dl-mt-dim">-</td>'
         +'<td><span class="badge bn" title="Outside DELTA modeled universe \u2014 market value shown when FantasyCalc tracks the player">not modeled</span></td></tr>';
     }).join('');
     return head+mRows+uRows;
   };
 
-  const table='<div style="overflow-x:auto"><table class="dtable">'
+  const table='<div class="dl-b-scroll"><table class="dtable dl-board">'
     +'<thead><tr>'
-    +'<th title="DELTA Score \u2014 proprietary 0-100 dynasty rating" style="font-family:var(--geo);font-size:15px;color:var(--teal-br)">\u0394</th>'
-    +'<th>Player</th><th class="col-hide-mobile">Age</th><th class="col-hide-mobile">Team</th>'
-    +'<th class="col-hide-mobile">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %">M/H/E</th>'
-    +'<th>Mkt Val</th><th>Mod val</th><th>Tag</th>'
+    +'<th title="DELTA Score \u2014 proprietary 0-100 dynasty rating" class="dl-mt-ds">\u0394</th>'
+    +'<th>Player</th><th class="col-hide-mobile dl-b-r">Age</th><th class="col-hide-mobile">Team</th>'
+    +'<th class="col-hide-mobile dl-b-r">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %" class="dl-b-c">M/H/E</th>'
+    +'<th class="dl-b-r">Mkt Val</th><th class="dl-b-r">Mod val</th><th>Tag</th>'
     +'</tr></thead><tbody>'+order.map(rows).join('')+'</tbody></table></div>';
 
   // Draft-pick inventory
