@@ -1133,6 +1133,24 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-mt-analysis{margin:8px 0 12px}
 }
 
+/* ── Watchlist, both tables ──────────────────────────────────────────── */
+.dtable td.dl-wl-ds{font-weight:800;font-size:14px}
+.dtable td.dl-wl-name{font-weight:600;white-space:nowrap}
+.dtable td.dl-wl-nowrap{white-space:nowrap}
+.dtable td.dl-wl-num{font-weight:700}
+.dl-wl-g5{font-size:8.5px;font-weight:700;padding:1px 4px;border-radius:3px;
+  background:var(--coral-tint);color:var(--coral)}
+.dl-wl-cls{font-weight:500;color:var(--fog-2)}
+.dl-wl-cls.el{font-weight:700;color:var(--sky)}
+/* The remove control sits quiet until you are on its row — it is an escape
+   hatch, not a thing to draw the eye down a list of forty players. */
+.dl-wl-x{background:none;border:0;color:transparent;cursor:pointer;font-size:12px;
+  padding:2px 4px;line-height:1}
+.dtable tr:hover .dl-wl-x,.dl-wl-x:focus-visible{color:var(--fog-2)}
+.dl-wl-x:hover{color:var(--coral)}
+@media(hover:none){ .dl-wl-x{color:var(--fog-2)} }
+.dl-wl-miss{font-size:10.5px;color:var(--topaz);margin-top:9px}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -3385,19 +3403,19 @@ function renderWatchlist(){
     html+=wlEmpty('No NFL players yet \u2014 open any player card and tap the <span style="color:var(--topaz)">\u2606</span> beside their name.');
   } else {
     found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
-    html+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-      +'<th>\u0394</th><th>Player</th><th>Pos</th><th>Team</th>'
-      +'<th>Proj PPG</th><th>Mkt Val</th><th>Tag</th><th></th></tr></thead><tbody>'
-      +found.map(pl=>'<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openDeck(this.dataset.name)">'
-        +'<td style="font-weight:800;font-size:14px;color:'+dsColor(pl.dsScore)+'">'+(pl.dsScore!=null?pl.dsScore:'\u2014')+'</td>'
-        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
-        +'<td class="txt">'+pl.pos+'</td>'
-        +'<td class="txt" style="white-space:nowrap">'+pl.t+'</td>'
-        +'<td style="font-weight:700">'+getAdjProj(pl).toFixed(1)+'</td>'
-        +'<td>'+(pl.ktcEff>0?pl.ktcEff.toLocaleString():'-')+'</td>'
+    html+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
+      +'<th>\u0394</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
+      +'<th class="dl-b-r">Proj PPG</th><th class="dl-b-r">Mkt Val</th><th>Tag</th><th></th></tr></thead><tbody>'
+      +found.map(pl=>'<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openDeck(this.dataset.name)">'
+        +'<td class="dl-wl-ds" style="color:'+dsColor(pl.dsScore)+'">'+(pl.dsScore!=null?pl.dsScore:'\u2014')+'</td>'
+        +'<td class="pname dl-wl-name">'+pl.n+'</td>'
+        +'<td class="txt dl-b-c">'+pl.pos+'</td>'
+        +'<td class="txt dl-wl-nowrap">'+pl.t+'</td>'
+        +'<td class="dl-b-r dl-wl-num">'+getAdjProj(pl).toFixed(1)+'</td>'
+        +'<td class="dl-b-r">'+(pl.ktcEff>0?pl.ktcEff.toLocaleString():'-')+'</td>'
         +'<td>'+vTag(pl)+'</td>'
-        +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();" '
-        +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>').join('')
+        +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();"'
+        +'>\u2715</button></td></tr>').join('')
       +'</tbody></table></div>';
     if(missing.length) html+='<div style="font-size:10.5px;color:var(--topaz);margin-top:9px">\u26a0 '+missing.length
       +' saved name'+(missing.length>1?'s':'')+' no longer in the player universe: '+missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
@@ -3415,26 +3433,26 @@ function renderWatchlist(){
     const cf=[], cmiss=[];
     cn.forEach(n=>{ const pl=CFB.players.find(x=>x.n===n); pl?cf.push(pl):cmiss.push(n); });
     cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
-    ch+='<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-      +'<th>\u2605</th><th>Player</th><th>Pos</th><th>Team</th>'
-      +'<th>Yds</th><th>RecSh</th><th>Cls</th><th></th></tr></thead><tbody>'
+    ch+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
+      +'<th>\u2605</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
+      +'<th class="dl-b-r">Yds</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
       +cf.map(pl=>{
         const yds=pl.pos==='QB'?(pl.py||0):(pl.rey||0)+(pl.ry||0);
         const td=(pl.ret||0)+(pl.rt||0)+(pl.pt||0), comp=cfbComp(pl);
-        return '<tr style="cursor:pointer" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
-        +'<td style="font-weight:800;font-size:14px;color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
+        return '<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
+        +'<td class="dl-wl-ds" style="color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
           +(pl.stars?pl.stars+'\u2605':'\u2014')+'</td>'
-        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+pl.n+'</td>'
-        +'<td class="txt" style="font-weight:600">'+pl.pos+'</td>'
-        +'<td class="txt" style="white-space:nowrap">'+(pl.tm||'-')
-          +(comp<1?' <span style="font-size:8.5px;font-weight:700;padding:1px 4px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
-        +'<td style="font-weight:700">'+(yds||'-')+'</td>'
-        +'<td>'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
-        +'<td class="txt"><span style="font-weight:'+((pl.cls>=3)?'700':'500')+';color:'+((pl.cls>=3)?'var(--sky)':'var(--fog-2)')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
-        +'<td><button title="Remove" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();" '
-        +'style="background:none;border:none;color:var(--fog-2);cursor:pointer;font-size:12px;padding:2px 4px">\u2715</button></td></tr>';
+        +'<td class="pname dl-wl-name">'+pl.n+'</td>'
+        +'<td class="txt dl-b-c dl-wl-name">'+pl.pos+'</td>'
+        +'<td class="txt dl-wl-nowrap">'+(pl.tm||'-')
+          +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
+        +'<td class="dl-b-r dl-wl-num">'+(yds||'-')+'</td>'
+        +'<td class="dl-b-r">'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
+        +'<td class="txt dl-b-c"><span class="dl-wl-cls'+((pl.cls>=3)?' el':'')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
+        +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
+        +'>\u2715</button></td></tr>';
       }).join('')+'</tbody></table></div>';
-    if(cmiss.length) ch+='<div style="font-size:10.5px;color:var(--topaz);margin-top:9px">\u26a0 '+cmiss.length
+    if(cmiss.length) ch+='<div class="dl-wl-miss">\u26a0 '+cmiss.length
       +' saved college name'+(cmiss.length>1?'s':'')+' not in the current season file: '+cmiss.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
   }
   cfbHost.innerHTML=ch;
