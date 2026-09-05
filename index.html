@@ -1149,6 +1149,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable tr:hover .dl-wl-x,.dl-wl-x:focus-visible{color:var(--fog-2)}
 .dl-wl-x:hover{color:var(--coral)}
 @media(hover:none){ .dl-wl-x{color:var(--fog-2)} }
+.dl-wl-td{font-size:9.5px;font-weight:600;color:var(--fog-2);margin-left:5px}
 .dl-wl-miss{font-size:10.5px;color:var(--topaz);margin-top:9px}
 
 </style>
@@ -3435,18 +3436,24 @@ function renderWatchlist(){
     cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
     ch+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
       +'<th>\u2605</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
-      +'<th class="dl-b-r">Yds</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
+      +'<th class="dl-b-r">Yds / TD</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
       +cf.map(pl=>{
-        const yds=pl.pos==='QB'?(pl.py||0):(pl.rey||0)+(pl.ry||0);
+        // All-purpose, including passing. A quarterback used to show passing only,
+        // so his rushing vanished — which is the half of a modern QB's profile
+        // that dynasty actually cares about. College rushing is net of sacks, so
+        // a pocket passer's total comes in slightly under his passing yards.
+        const yds=(pl.py||0)+(pl.rey||0)+(pl.ry||0);
+        // td was already being computed here and thrown away.
         const td=(pl.ret||0)+(pl.rt||0)+(pl.pt||0), comp=cfbComp(pl);
         return '<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
         +'<td class="dl-wl-ds" style="color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
           +(pl.stars?pl.stars+'\u2605':'\u2014')+'</td>'
         +'<td class="pname dl-wl-name">'+pl.n+'</td>'
         +'<td class="txt dl-b-c dl-wl-name">'+pl.pos+'</td>'
-        +'<td class="txt dl-wl-nowrap">'+(pl.tm||'-')
+        +'<td class="txt dl-wl-nowrap">'+cfbShortTeam(pl.tm)
           +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
-        +'<td class="dl-b-r dl-wl-num">'+(yds||'-')+'</td>'
+        +'<td class="dl-b-r dl-wl-num">'+(yds?yds.toLocaleString():'-')
+          +(td?'<span class="dl-wl-td">'+td+'TD</span>':'')+'</td>'
         +'<td class="dl-b-r">'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
         +'<td class="txt dl-b-c"><span class="dl-wl-cls'+((pl.cls>=3)?' el':'')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
         +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
@@ -6568,6 +6575,22 @@ function slpRemoveLeague(leagueId){
 }
 
 // ── League switcher (header) ─────────────────────────────────
+/* Team cells are the widest text on a narrow board and school names are the
+   longest of them. Only the endings that are unambiguous — every FBS "State"
+   is written St. and no school loses its identity. Left alone otherwise.
+   Mississippi is deliberately NOT mapped to Ole Miss: "State" is replaced
+   first, so Mississippi State would come out as "Ole Miss St." */
+function cfbShortTeam(t){
+  if(!t) return '-';
+  return String(t)
+    .replace(/\bState\b/g,'St.')
+    .replace(/\bUniversity\b/g,'')
+    .replace(/\bSouthern California\b/g,'USC')
+    .replace(/\bInternational\b/g,'Intl.')
+    .replace(/\bNorthern\b/g,'N.').replace(/\bSouthern\b/g,'S.')
+    .replace(/\bEastern\b/g,'E.').replace(/\bWestern\b/g,'W.')
+    .replace(/\s{2,}/g,' ').trim();
+}
 function slpFmtLabel(f){
   return {std:'Standard', half:'0.5PPR', half_tep:'0.5PPR+TEP',
           full:'Full PPR', full_tep:'Full PPR+TEP'}[f] || String(f||'');
