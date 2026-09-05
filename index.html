@@ -1075,6 +1075,27 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable tr.dl-mt-un td.dl-mt-ds,.dtable tr.dl-mt-un td.dl-mt-sp,
 .dtable tr.dl-mt-un td.dl-mt-dim{color:var(--fog-2)}
 
+/* Position break between groups. Scoped through .dl-board and the row class so
+   it out-specifies the board's own cell rule, and sized here rather than on a
+   span, which no media query could reach. The cell also carried a 14px top
+   padding on top of the board's 9px — 23px above every position break. */
+.dl-board tbody tr.dl-mt-grp td{font-family:var(--sans);font-size:10px;font-weight:700;
+  color:var(--fog);letter-spacing:.06em;text-transform:uppercase;
+  height:auto;padding:16px 10px 5px;border-bottom:0}
+.dl-board tbody tr.dl-mt-grp:first-child td{padding-top:4px}
+.dl-board tbody tr.dl-mt-grp:hover td{background:none}
+
+@media(max-width:600px){
+  /* A 23-player roster is the longest table on the site. Tighter than the other
+     boards on purpose — it is a list you scroll, not one you scan across. */
+  .dl-mt-tbl tbody td{font-size:11px;padding:7px 5px}
+  .dl-mt-tbl thead th{font-size:9px;padding:0 5px 6px}
+  .dl-mt-tbl td.dl-mt-ds{font-size:12.5px}
+  .dl-mt-tbl td.dl-mt-sp{font-size:10px}
+  .dl-mt-tbl .badge{font-size:9px;padding:2px 5px}
+  .dl-board tbody tr.dl-mt-grp td{font-size:9.5px;padding:12px 5px 4px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -7336,7 +7357,7 @@ function renderSlpRoster(rid){
   const rows=function(pos){
     const g=groups[pos];
     if(!g.m.length&&!g.u.length) return '';
-    const head='<tr><td colspan="9" style="padding-top:14px"><span style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</span></td></tr>';
+    const head='<tr class="dl-mt-grp"><td colspan="9">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</td></tr>';
     const mRows=g.m.map(function(x){
       const p=x.p;
       const gl=(typeof glOf==='function')?glOf(p):null;
@@ -7371,7 +7392,7 @@ function renderSlpRoster(rid){
     return head+mRows+uRows;
   };
 
-  const table='<div class="dl-b-scroll"><table class="dtable dl-board">'
+  const table='<div class="dl-b-scroll"><table class="dtable dl-board dl-mt-tbl">'
     +'<thead><tr>'
     +'<th title="DELTA Score \u2014 proprietary 0-100 dynasty rating" class="dl-mt-ds">\u0394</th>'
     +'<th>Player</th><th class="col-hide-mobile dl-b-r">Age</th><th class="col-hide-mobile">Team</th>'
