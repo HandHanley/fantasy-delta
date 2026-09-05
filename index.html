@@ -964,6 +964,34 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-pt-to{font-weight:600;color:var(--paper);white-space:nowrap}
 .dl-pt-lvl{font-size:9px;font-weight:700}
 
+/* ── Big Board cards ─────────────────────────────────────────────────────
+   Lifted out of renderDevy. The filter buttons are NOT touched here: that
+   .pos-filter-btn class is shared with the Prospects tab and is driven by JS
+   writing element.style directly, so it moves when both tabs move. */
+.bb-who{flex:1;min-width:0}
+.dl-bb-tier{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--teal);padding:13px 0 5px;border-top:1px solid var(--line)}
+.dl-bb-mv{font-size:10px;font-weight:700;margin-left:6px}
+.dl-bb-mv.up{color:var(--emerald-bri)}
+.dl-bb-mv.dn{color:var(--coral)}
+.dl-bb-new{font-size:9.5px;font-weight:700;margin-left:6px;color:var(--violet)}
+.dl-bb-rank{flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);
+  font-size:13px;font-weight:800;color:var(--fog-2)}
+.dl-bb-name{font-weight:700;font-size:13px;line-height:1.25}
+.dl-bb-meta{display:block;font-size:10.5px;color:var(--fog-2);margin-top:4px}
+.dl-bb-note{display:block;font-size:9.5px;color:var(--fog-2);margin-top:3px}
+.dl-bb-warn{display:block;font-size:9.5px;color:var(--topaz);margin-top:3px}
+.dl-bb-pcts{flex-shrink:0;display:flex;gap:5px}
+.dl-bb-col{width:54px}
+.dl-bb-col.nar{width:46px}
+.dl-bb-pct{font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;
+  border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px}
+.dl-bb-pctlbl{display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);
+  margin-top:1px;font-family:var(--sans,inherit)}
+.dl-bb-empty{color:var(--fog-2);font-size:12px;padding:12px 0}
+.dl-bb-foot{font-size:10px;color:var(--fog-2);margin-top:14px;padding-top:11px;
+  border-top:1px solid var(--line)}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -5106,12 +5134,11 @@ function renderDevy(){
         +';background:'+(on?'rgba(107,182,224,.12)':'transparent')+';color:'+(on?'var(--sky)':'var(--fog)')
         +';font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit">'
         +f[1]+' '+(counts[f[0]]||0)+'</button>';}).join('');
-  const col=v=>v==null?'var(--fog-2)':v>=90?'#34D399':v>=80?'var(--emerald)':v>=68?'var(--sky)':v>=45?'var(--topaz)':'var(--coral)';
+  const col=v=>v==null?'var(--fog-2)':v>=90?'var(--emerald-bri)':v>=80?'var(--emerald)':v>=68?'var(--sky)':v>=45?'var(--topaz)':'var(--coral)';
   let html='', lastTier=null;
   for(const r of rows){
     if(r.tier!==lastTier){
-      html+='<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;'
-           +'color:var(--teal);padding:13px 0 5px;border-top:1px solid var(--line)">'
+      html+='<div class="dl-bb-tier">'
            +(DEVY_TIER[r.tier]||r.tier)+'</div>';
       lastTier=r.tier;
     }
@@ -5122,42 +5149,42 @@ function renderDevy(){
     let mv='';
     if(r.move!=null && r.move!==0){
       const up=r.move>0;
-      mv='<span style="font-size:10px;font-weight:700;margin-left:6px;color:'+(up?'#34D399':'var(--coral)')+'">'
+      mv='<span class="dl-bb-mv '+(up?'up':'dn')+'">'
         +(up?'▲':'▼')+Math.abs(r.move)+'</span>';
     }else if(r.prevRank==null && DEVY.coverage && DEVY.coverage.hasPrevious){
-      mv='<span style="font-size:9.5px;font-weight:700;margin-left:6px;color:var(--violet)">NEW</span>';
+      mv='<span class="dl-bb-new">NEW</span>';
     }
     html+='<div class="bb-row">'
-      +'<span data-tip="His position on the consensus big board, compiled by hand from publicly published boards. Where the draft community ranks him — not a DELTA rating." style="flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:800;color:var(--fog-2)">'+r.rank+'</span>'
-      +'<span class="bb-who" style="flex:1;min-width:0">'
-        +'<span style="font-weight:700;font-size:13px;line-height:1.25">'+r.n+mv+'</span>'
-        +'<span style="display:block;font-size:10.5px;color:var(--fog-2);margin-top:4px">'
-          +(pr&&pr.stars?'<span class="bb-stars" style="color:var(--topaz);letter-spacing:1px;margin-right:6px">'+'★'.repeat(pr.stars)+'</span>':'')
+      +'<span data-tip="His position on the consensus big board, compiled by hand from publicly published boards. Where the draft community ranks him — not a DELTA rating." class="dl-bb-rank">'+r.rank+'</span>'
+      +'<span class="bb-who">'
+        +'<span class="dl-bb-name">'+r.n+mv+'</span>'
+        +'<span class="dl-bb-meta">'
+          +(pr&&pr.stars?'<span class="bb-stars">'+'★'.repeat(pr.stars)+'</span>':'')
           +r.pos+' · '+((pr&&pr.tm)||r.school||'')
           +(pr&&pr.line?' · '+pr.line:'')+(pr&&pr.gms?' · '+pr.gms+'g':'')+'</span>'
-        +(!pr?'<span style="display:block;font-size:9.5px;color:var(--fog-2);margin-top:3px">no '
+        +(!pr?'<span class="dl-bb-note">no '
               +((DEVY_PROD&&DEVY_PROD.year)||'')+' production on file — transfer, or outside the tracking cut</span>':'')
-        +(weak?'<span class="bb-stars" style="display:block;font-size:9.5px;color:var(--topaz);margin-top:3px">⚠ soft schedule — opponent quality '+(pr.tpct*100).toFixed(0)+'%</span>':'')
-        +(thin?'<span style="display:block;font-size:9.5px;color:var(--topaz);margin-top:3px">⚠ small sample</span>':'')
+        +(weak?'<span class="dl-bb-warn">⚠ soft schedule — opponent quality '+(pr.tpct*100).toFixed(0)+'%</span>':'')
+        +(thin?'<span class="dl-bb-warn">⚠ small sample</span>':'')
       +'</span>'
       // Desktop-only columns. Each is real data already on the row's warning lines or in
       // the record, surfaced here so the space between name and percentiles carries weight.
       +'<span class="bb-mid">'
-        +'<span style="width:54px">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl" data-tip="Games played in the season shown. Early in a year this is the number to watch — three or four games is almost no sample, and one big afternoon can move a percentile fifty places.">GAMES</span></span>'
-        +'<span style="width:54px;color:'+((pr&&pr.tpct!=null&&pr.tpct<0.72)?'var(--topaz)':'var(--fog)')+'">'
+        +'<span class="dl-bb-col">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl" data-tip="Games played in the season shown. Early in a year this is the number to watch — three or four games is almost no sample, and one big afternoon can move a percentile fifty places.">GAMES</span></span>'
+        +'<span class="dl-bb-col" style="color:'+((pr&&pr.tpct!=null&&pr.tpct<0.72)?'var(--topaz)':'var(--fog)')+'">'
           +((pr&&pr.tpct!=null)?(pr.tpct*100).toFixed(0)+'%':'–')+'<span class="lbl" data-tip="Average quality of the opponents he faced. A big production share against a soft schedule is the most common false positive on this page.">OPP QUAL</span></span>'
-        +'<span style="width:46px">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl" data-tip="His high-school recruiting star rating. Independent of production, and it still carries real signal about where a player gets drafted.">RECRUIT</span></span>'
+        +'<span class="dl-bb-col nar">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl" data-tip="His high-school recruiting star rating. Independent of production, and it still carries real signal about where a player gets drafted.">RECRUIT</span></span>'
       +'</span>'
-      +'<span style="flex-shrink:0;display:flex;gap:5px">'
-        +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.dd)+'">'
-          +((pr&&pr.dd!=null)?pr.dd:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)" data-tip="His share of his team\'s production, adjusted for who he played, as a percentile against others at his position. Players drafted in round 1 sat near the 90th percentile in their final college season; day-2 picks near the 80th; undrafted near the 41st.">dDOM</span></span>'
-        +'<span style="font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 7px;border-radius:5px;background:var(--ink-2);text-align:center;min-width:46px;color:'+col(pr&&pr.ppa)+'">'
-          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span style="display:block;font-size:7.5px;font-weight:600;color:var(--fog-2);margin-top:1px;font-family:var(--sans,inherit)" data-tip="Predicted points added per play, as a percentile at his position. Shown because it is interesting, not because it predicts the draft — on its own it barely does.">PPA</span></span>'
+      +'<span class="dl-bb-pcts">'
+        +'<span class="dl-bb-pct" style="color:'+col(pr&&pr.dd)+'">'
+          +((pr&&pr.dd!=null)?pr.dd:'–')+'<span class="dl-bb-pctlbl" data-tip="His share of his team\'s production, adjusted for who he played, as a percentile against others at his position. Players drafted in round 1 sat near the 90th percentile in their final college season; day-2 picks near the 80th; undrafted near the 41st.">dDOM</span></span>'
+        +'<span class="dl-bb-pct" style="color:'+col(pr&&pr.ppa)+'">'
+          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span class="dl-bb-pctlbl" data-tip="Predicted points added per play, as a percentile at his position. Shown because it is interesting, not because it predicts the draft — on its own it barely does.">PPA</span></span>'
       +'</span></div>';
   }
   const meta=DEVY.generated?('Board compiled '+DEVY.generated+(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'';
-  host.innerHTML=(rows.length?html:'<div style="color:var(--fog-2);font-size:12px;padding:12px 0">No players at this position on the current board.</div>')
-    +(meta?'<div style="font-size:10px;color:var(--fog-2);margin-top:14px;padding-top:11px;border-top:1px solid var(--line)">'+meta+'</div>':'');
+  host.innerHTML=(rows.length?html:'<div class="dl-bb-empty">No players at this position on the current board.</div>')
+    +(meta?'<div class="dl-bb-foot">'+meta+'</div>':'');
   const t=document.getElementById('devy-title');
   if(t&&DEVY.class) t.textContent='Consensus Big Board · '+DEVY.class+' class';
 }
