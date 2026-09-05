@@ -1118,12 +1118,17 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-mt-disc[open]>.dl-mt-row,.dl-mt-disc[open]>div{
   border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;background:var(--ink-2)}
 /* What the numbers are scored on has to stay in view; the rest can fold. */
-.dl-mt-fmt{font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--teal-br)}
+.dl-mt-fmt{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--teal-br);white-space:nowrap}
 .dl-mt-count{font-size:10.5px;font-weight:500;color:var(--fog-2)}
-.dl-mt-set>summary{font-size:15px;font-weight:800}
+/* Smaller than it was. The league name is a label here, not a page heading —
+   the page heading is your team name, further down. */
+.dl-mt-set>summary{font-size:13.5px;font-weight:800;padding:8px 11px}
+.dl-mt-switch{padding-bottom:2px}
+.dl-mt-meta{margin-bottom:6px}
 @media(max-width:600px){
   .dl-mt-disc>summary{font-size:12.5px;padding:8px 10px}
-  .dl-mt-set>summary{font-size:14px}
+  .dl-mt-set>summary{font-size:12.5px;padding:7px 10px}
+  .dl-mt-fmt{font-size:9.5px}
   .dl-mt-fmt{font-size:10px}
   .dl-mt-analysis{margin:8px 0 12px}
 }
@@ -6571,14 +6576,10 @@ function renderSlpLeagueSwitcher(){
       +'<a href="#" onclick="if(typeof openSettingsAtAccount===\'function\'){openSettingsAtAccount(event);}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
       +' and they follow you to every device.</div>'
     : '';
-  // One league is the answer; the others are a choice you make rarely. Only
-  // collapse when there is actually something to collapse.
-  if(list.length<2) return '<div class="dl-mt-row">'+chips+add+'</div>'+cta;
-  const act=list.filter(function(l){ return SLP.conn&&String(l.leagueId)===String(SLP.conn.leagueId); })[0];
-  const label=act?slpEsc(act.leagueName):'Choose a league';
-  return '<details class="dl-mt-disc dl-mt-lg"><summary>'+label
-    +'<span class="dl-mt-count">'+list.length+' leagues</span></summary>'
-    +'<div class="dl-mt-row">'+chips+add+'</div>'+cta+'</details>';
+  // A flat row. renderMyTeam folds it inside the league disclosure, so it does
+  // not carry one of its own — two controls stacked under the same league name
+  // read as a duplicate, not a hierarchy.
+  return '<div class="dl-mt-row dl-mt-switch">'+chips+add+'</div>'+cta;
 }
 
 // Shown in the connect state when leagues are already stored, so "Add league"
@@ -7364,14 +7365,15 @@ function renderMyTeam(){
   connectDiv.style.display='none'; rosterDiv.style.display='block';
 
   const multi=((slpStoreRead().leagues)||[]).length>1;
-  const header=renderSlpLeagueSwitcher()
-    // Season, connection, Refresh, Remove and the format chips are all setup.
-    // The one thing that has to stay in view is what the numbers are scored on,
-    // so that rides in the summary line and the rest folds away.
-    +'<details class="dl-mt-disc dl-mt-set"><summary>'+slpEsc(SLP.conn.leagueName)
+  // Season, connection, Refresh, Remove, the format chips and the league
+  // switcher are all setup. The one thing that has to stay in view is what the
+  // numbers are scored on, so that rides in the summary line and the rest
+  // folds away behind a single control.
+  const header='<details class="dl-mt-disc dl-mt-set"><summary>'+slpEsc(SLP.conn.leagueName)
     +'<span class="dl-mt-fmt">'+slpEsc(String(leagueTeams))+'-team \u00b7 '
     +(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+slpEsc(slpFmtLabel(scoringFmt))+'</span></summary>'
-    +'<div class="dl-mt-row" style="margin-bottom:6px">'
+    +renderSlpLeagueSwitcher()
+    +'<div class="dl-mt-row dl-mt-meta">'
     +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
