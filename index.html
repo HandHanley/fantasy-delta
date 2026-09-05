@@ -1152,6 +1152,23 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 
 .dl-wl-miss{font-size:10.5px;color:var(--topaz);margin-top:9px}
 
+/* ── Power rankings ──────────────────────────────────────────────────── */
+.dtable td.dl-pw-rank{font-weight:700;color:var(--fog-2)}
+.dtable td.dl-pw-team{white-space:nowrap;font-weight:600;color:var(--paper)}
+.dtable tr.dl-pw-me td.dl-pw-team{font-weight:800;color:var(--teal-br)}
+.dtable tr.dl-pw-me td{background:var(--ink-2)}
+.dtable td.dl-pw-model{font-weight:700;color:var(--paper)}
+.dtable td.dl-pw-dim{color:var(--fog)}
+.dl-pw-move{font-size:9px;color:var(--fog-2)}
+.dl-pw-up{color:var(--emerald)} .dl-pw-dn{color:var(--coral)} .dl-pw-flat{color:var(--fog)}
+.dl-pw-now{font-weight:700;color:var(--paper)}
+.dl-pw-sub{font-size:9px;color:var(--fog-2)}
+.dl-pw-open{font-size:9px;color:var(--coral)}
+/* Picks. A bare count would let four late thirds read like one early first, so
+   the value carries the weight and the count rides small beside it. */
+.dtable td.dl-pw-nw{white-space:nowrap}
+.dl-pw-none{color:var(--coral)}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -7280,29 +7297,35 @@ function renderSlpPower(){
   const POS=['QB','RB','WR','TE'];
 
   const head='<tr>'
-    +'<th style="text-align:left">#</th><th style="text-align:left">Team</th>'
-    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25.">DELTA</th>'
-    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster.">MKT</th>'
-    +POS.map(p=>'<th class="col-hide-mobile" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
-    +'<th data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
-    +'<th class="col-hide-mobile" data-tip="Average age of the roster, weighted by each player\u2019s DELTA value \u2014 so age reflects the players a team is actually built around, not deep-bench filler. Picks are not aged.">Avg Age</th>'
+    +'<th>#</th><th>Team</th>'
+    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">DELTA</th>'
+    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster." class="dl-b-c">MKT</th>'
+    +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
+    +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. Rounds beyond the third have no published tier and are not counted.">Picks</th>'
+    +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
+    +'<th class="col-hide-mobile dl-b-r" data-tip="Average age of the roster, weighted by each player\u2019s DELTA value \u2014 so age reflects the players a team is actually built around, not deep-bench filler. Picks are not aged.">Avg Age</th>'
     +'</tr>';
 
   const body=rows.map(function(r){
     const me=String(r.rosterId)===String(mine);
     const move=r.rankMarket-r.rankModel;   // positive: DELTA ranks them higher
-    return '<tr'+(me?' style="background:var(--ink-2)"':'')+'>'
-      +'<td style="font-weight:700;color:var(--fog-2)">'+r.rankModel+'</td>'
-      +'<td style="white-space:nowrap;font-weight:'+(me?'800':'600')+';color:'+(me?'var(--teal-br)':'var(--paper)')+'">'
-        +slpEsc(r.team)+(me?' \u2605':'')+'</td>'
-      +'<td style="font-weight:700;color:var(--paper)">'+r.rankModel+'</td>'
-      +'<td style="white-space:nowrap"><span style="color:'+(move?(move>0?'var(--emerald)':'var(--coral)'):'var(--fog)')+'">'+r.rankMarket+'</span>'
-        +(move?'<span style="font-size:9px;color:var(--fog-2)"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
-      +POS.map(p=>'<td class="col-hide-mobile" style="color:var(--fog)">'+r.pos[p].rank+'</td>').join('')
-      +'<td style="white-space:nowrap"><span style="font-weight:700;color:var(--paper)">'+r.winNow.toFixed(1)+'</span>'
-        +'<span style="font-size:9px;color:var(--fog-2)"> ('+r.rankWin+')</span>'
-        +(r.lineupOpen?'<span style="font-size:9px;color:var(--coral)"> '+r.lineupOpen+' open</span>':'')+'</td>'
-      +'<td class="col-hide-mobile" style="color:var(--fog)">'+(r.avgAge!=null?r.avgAge.toFixed(1):'\u2013')+'</td>'
+    return '<tr'+(me?' class="dl-pw-me"':'')+'>'
+      +'<td class="dl-pw-rank">'+r.rankModel+'</td>'
+      +'<td class="dl-pw-team">'+slpEsc(r.team)+(me?' \u2605':'')+'</td>'
+      +'<td class="dl-b-c dl-pw-model">'+r.rankModel+'</td>'
+      +'<td class="dl-b-c dl-pw-nw"><span class="'+(move?(move>0?'dl-pw-up':'dl-pw-dn'):'dl-pw-flat')+'">'+r.rankMarket+'</span>'
+        +(move?'<span class="dl-pw-move"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
+      +POS.map(p=>'<td class="col-hide-mobile dl-b-c dl-pw-dim">'+r.pos[p].rank+'</td>').join('')
+      +'<td class="dl-b-r dl-pw-nw">'
+        +(r.picks
+          ? '<span class="dl-pw-now">'+Math.round(r.pickMarket).toLocaleString()+'</span>'
+            +'<span class="dl-pw-sub"> '+r.picks+'</span>'
+          : '<span class="dl-pw-none">none</span>')
+        +'</td>'
+      +'<td class="dl-b-r dl-pw-nw"><span class="dl-pw-now">'+r.winNow.toFixed(1)+'</span>'
+        +'<span class="dl-pw-sub"> ('+r.rankWin+')</span>'
+        +(r.lineupOpen?'<span class="dl-pw-open"> '+r.lineupOpen+' open</span>':'')+'</td>'
+      +'<td class="col-hide-mobile dl-b-r dl-pw-dim">'+(r.avgAge!=null?r.avgAge.toFixed(1):'\u2013')+'</td>'
       +'</tr>';
   }).join('');
 
@@ -7330,7 +7353,7 @@ function renderSlpPower(){
   const unpriced=rows.reduce(function(a,b){return a+b.picksUnpriced;},0);
 
   return lede
-    +'<div class="tablewrap"><table class="dtable">'
+    +'<div class="tablewrap dl-b-scroll"><table class="dtable dl-board">'
     +'<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'
     +'<div style="font-size:10.5px;color:var(--fog-2);margin-top:10px;line-height:1.7">'
     +'Every player and every pick from '+(parseInt(SLP.league.season||0,10)+1)+' onward counts, weighted so '
