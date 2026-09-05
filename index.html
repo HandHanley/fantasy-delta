@@ -992,6 +992,64 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-bb-foot{font-size:10px;color:var(--fog-2);margin-top:14px;padding-top:11px;
   border-top:1px solid var(--line)}
 
+/* ── Prospects cards ─────────────────────────────────────────────────────
+   Colour is chosen in CSS, not built in JS. The old code produced a hex and
+   glued an alpha suffix onto it ('#10B981' + '22'), which is why four raw hex
+   values lived in that function — a token cannot be concatenated that way.
+   JS now picks a band name and the tints are mixed here against the existing
+   tokens, so an accent theme or a palette fix carries through on its own and
+   no new tint tokens have to be added to a table that exists in triplicate. */
+.dl-pr-card{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;
+  padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.dl-pr-card:hover{border-color:var(--sky)}
+.dl-pr-top{display:flex;align-items:center;gap:10px}
+.dl-pr-poshd{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--sky);
+  text-transform:uppercase;margin:16px 0 8px;padding-left:4px}
+.dl-pr-poshd.first{margin-top:0}
+
+.dl-pr-score{min-width:44px;height:44px;border-radius:8px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:color-mix(in srgb, var(--band) 13%, transparent);
+  border:1px solid color-mix(in srgb, var(--band) 33%, transparent)}
+.dl-pr-ds{font-size:16px;font-weight:800;line-height:1;color:var(--band)}
+.dl-pr-cap{font-size:6.5px;font-weight:600;letter-spacing:.02em;
+  color:color-mix(in srgb, var(--band) 60%, transparent)}
+.dl-pr-lbl{font-size:9px;font-weight:700;letter-spacing:1px;white-space:nowrap;color:var(--band)}
+/* One custom property per band; every tint above derives from it. */
+.s-elite{--band:var(--emerald)}
+.s-mid  {--band:var(--topaz)}
+.s-depth{--band:var(--coral)}
+.s-none {--band:var(--fog-2)}
+
+.dl-pr-who{flex:1 1 190px;min-width:0}
+.dl-pr-line{display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap}
+.dl-pr-name{font-size:14px;font-weight:700;color:var(--paper);overflow-wrap:anywhere}
+.dl-pr-star{cursor:pointer;font-size:16px;padding:0 4px;color:var(--fog-2)}
+.dl-pr-star.on{color:var(--topaz)}
+.dl-pr-pos{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;
+  color:var(--band);background:color-mix(in srgb, var(--band) 13%, transparent)}
+.p-qb{--band:var(--violet)} .p-wr{--band:var(--sky)}
+.p-rb{--band:var(--emerald)} .p-te{--band:var(--topaz)}
+.dl-pr-team{margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;
+  background:var(--ink-2);color:var(--sky)}
+.dl-pr-rd{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;
+  color:var(--band);background:color-mix(in srgb, var(--band) 13%, transparent)}
+.r1{--band:var(--emerald)} .r2{--band:var(--sky)}
+.r3{--band:var(--topaz)} .r4{--band:var(--fog-2)}
+.dl-pr-sub{font-size:11px;color:var(--fog)}
+
+.dl-pr-right{text-align:right;flex:0 0 auto;min-width:0}
+.dl-pr-stats{display:flex;gap:4px;margin-top:4px;justify-content:flex-end}
+.dl-pr-stat{text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px}
+.dl-pr-statv{font-size:10px;font-weight:700}
+.dl-pr-statv.cap{color:var(--sky)} .dl-pr-statv.bb{color:var(--violet)}
+.dl-pr-statv.ag{color:var(--teal)} .dl-pr-statv.ath{color:var(--topaz)}
+.dl-pr-statl{font-size:7px;color:var(--fog-2)}
+.dl-pr-note{margin-top:8px;font-size:11px;color:var(--fog-2);border-top:1px solid var(--line);
+  padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.dl-pr-comp{white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;
+  background:var(--coral-tint);color:var(--coral);flex-shrink:0}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -4236,75 +4294,62 @@ function filterRookies(pos, btn) {
   renderRookieBoard(pos);
 }
 
+function prBand(ds){ return ds>=70?'s-elite' : ds>=55?'s-mid' : ds>=40?'s-depth' : 's-none'; }
 function renderRookieBoard(posFilter) {
   const board = document.getElementById('rookie-board');
   if (!board) return;
   const filtered = posFilter === 'ALL' ? PROSPECTS_2026 : PROSPECTS_2026.filter(p=>p.pos===posFilter);
   const sorted = [...filtered].sort((a,b)=>b.ds-a.ds);
-  
+
   let html = '';
   let lastPos = '';
-  
+
   sorted.forEach((p, i) => {
-    const sc = getScoreColor(p.ds);
+    const band = prBand(p.ds);
     const sl = getScoreLabel(p.ds);
-    const pc = getPosColor(p.pos);
-    
+    const pos = 'p-' + p.pos.toLowerCase();
+    const rd  = 'r' + (p.pr>=1 && p.pr<=3 ? p.pr : 4);
+
     if (posFilter === 'ALL' && p.pos !== lastPos) {
       lastPos = p.pos;
-      html += `<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--sky);text-transform:uppercase;margin:${i===0?'0':'16px'} 0 8px;padding-left:4px">${p.pos}</div>`;
+      html += `<div class="dl-pr-poshd${i===0?' first':''}">${p.pos}</div>`;
     }
-    
-    const rdColor = p.pr===1?'#10B981':p.pr===2?'#6BB6E0':p.pr===3?'#E0B34D':'#8CA0B3';
-    
+
     html += `
-    <div onclick="showRookieCard(${i},${JSON.stringify(posFilter).replace(/"/g,"'")})" style="background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--sky)'" onmouseout="this.style.borderColor='var(--line)'">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="min-width:44px;height:44px;border-radius:8px;background:${sc}22;border:1px solid ${sc}55;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div style="font-size:16px;font-weight:800;color:${sc};line-height:1">${p.ds}</div>
-          <div style="font-size:6.5px;color:${sc}99;font-weight:600;letter-spacing:.02em">PROSPECT</div>
+    <div class="dl-pr-card" onclick="showRookieCard(${i},${JSON.stringify(posFilter).replace(/"/g,"'")})">
+      <div class="dl-pr-top">
+        <div class="dl-pr-score ${band}">
+          <div class="dl-pr-ds">${p.ds}</div>
+          <div class="dl-pr-cap">PROSPECT</div>
         </div>
-        <div style="flex:1 1 190px;min-width:0">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap">
-            <span style="font-size:14px;font-weight:700;color:var(--paper);overflow-wrap:anywhere">${p.n}</span>
-            <span class="watch-star" data-name="${p.n}" style="cursor:pointer;font-size:16px;padding:0 4px;color:${isWatched(p.n)?'var(--topaz)':'var(--fog-2)'}">${isWatched(p.n)?'★':'☆'}</span>
-            <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}22;padding:1px 6px;border-radius:4px">${p.pos}</span>${p.drafted?`<span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--ink-2);color:var(--sky)">${p.team}</span>`:''}
-            <span style="font-size:10px;color:${rdColor};background:${rdColor}22;padding:1px 6px;border-radius:4px;font-weight:600">Rd${p.pr} #${p.pp}</span>
+        <div class="dl-pr-who">
+          <div class="dl-pr-line">
+            <span class="dl-pr-name">${p.n}</span>
+            <span class="watch-star dl-pr-star${isWatched(p.n)?' on':''}" data-name="${p.n}">${isWatched(p.n)?'★':'☆'}</span>
+            <span class="dl-pr-pos ${pos}">${p.pos}</span>${p.drafted?`<span class="dl-pr-team">${p.team}</span>`:''}
+            <span class="dl-pr-rd ${rd}">Rd${p.pr} #${p.pp}</span>
           </div>
-          <div style="font-size:11px;color:var(--fog)">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
+          <div class="dl-pr-sub">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
         </div>
-        <div style="text-align:right;flex:0 0 auto;min-width:0">
-          <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${sc};white-space:nowrap">${sl}</div>
-          <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
-            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:var(--sky)">${p.cap}</div>
-              <div style="font-size:7px;color:var(--fog-2)">CAP</div>
-            </div>
-            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:var(--violet)">${p.bb}</div>
-              <div style="font-size:7px;color:var(--fog-2)">BOARD</div>
-            </div>
-            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:var(--teal)">${p.ag}</div>
-              <div style="font-size:7px;color:var(--fog-2)">AGE</div>
-            </div>
-            <div style="text-align:center;padding:3px 6px;background:var(--ink-2);border-radius:4px">
-              <div style="font-size:10px;font-weight:700;color:var(--topaz)">${p.ath}</div>
-              <div style="font-size:7px;color:var(--fog-2)">ATH</div>
-            </div>
+        <div class="dl-pr-right">
+          <div class="dl-pr-lbl ${band}">${sl}</div>
+          <div class="dl-pr-stats">
+            <div class="dl-pr-stat"><div class="dl-pr-statv cap">${p.cap}</div><div class="dl-pr-statl">CAP</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv bb">${p.bb}</div><div class="dl-pr-statl">BOARD</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv ag">${p.ag}</div><div class="dl-pr-statl">AGE</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv ath">${p.ath}</div><div class="dl-pr-statl">ATH</div></div>
           </div>
         </div>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--fog-2);border-top:1px solid var(--line);padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div class="dl-pr-note">
         <span>${p.note}</span>
-        ${p.comp<1.0?`<span style="white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--coral-tint);color:var(--coral);flex-shrink:0">COMP ×${p.comp.toFixed(2)}</span>`:''}
+        ${p.comp<1.0?`<span class="dl-pr-comp">COMP \u00d7${p.comp.toFixed(2)}</span>`:''}
       </div>
     </div>`;
   });
-  
+
   board.innerHTML = html;
 }
-
 function closeRookieModal() {
   const m = document.getElementById('rookie-modal');
   if (m) m.remove();
