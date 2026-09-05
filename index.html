@@ -1396,7 +1396,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   </div>
   <div class="dl-rk-scroll"><table class="dtable dl-board">
     <thead><tr>
-      <th onclick="setSortEPA('name')">Player</th><th class="dl-b-c">Pos</th><th class="dl-b-r" onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.">Age</th><th>Team</th>
+      <th onclick="setSortEPA('name')">Player</th><th class="dl-b-r" onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.">Age</th>
       <th class="dl-b-r" onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there.">EPA'25</th><th class="dl-b-r" onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'24</th><th class="dl-b-r" onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'23</th><th class="dl-b-r" onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'22</th>
       <th class="dl-b-r" data-tip="The basic per-play value number straight from the data, before the model applies any adjustments.">Raw</th><th class="dl-b-r" onclick="setSortEPA('epaSc')" data-tip="The per-play value the model actually uses. Usually matches Raw — for very heavy-workload players who dip slightly below average, a floor rule keeps the model from over-penalizing them.">Applied</th><th class="dl-b-r" onclick="setSortEPA('ef')" data-tip="How productive is this player on each play right now? Uses their most recent season with data. Helps separate players who are genuinely efficient with their touches from those who rely on volume to put up numbers.">Eff</th><th class="dl-b-r" onclick="setSortEPA('ktc')">Mkt Val</th><th>Tag</th>
     </tr></thead>
@@ -2151,8 +2151,8 @@ function renderEPA(){
   const fmt=v=>!v||v===0?'-':(v>0?'+':'')+v.toFixed(2);
   const fc=(v,pos)=>{if(!v||v===0)return'var(--fog-2)';const t=pos==='QB'?.08:pos==='RB'?0:1.8;return v>t?'var(--emerald)':v<-t?'var(--coral)':'var(--paper)';};
   document.getElementById('epa-body').innerHTML=data.slice(0,130).map(p=>`<tr class="dl-rk-row" data-name="${p.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-    <td class="pname dl-ep-name">${p.n}</td>
-    <td class="dl-b-c txt">${p.pos}</td><td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td><td class="txt">${p.t}</td>
+    <td class="pname dl-ep-name"><span class="dl-b-pn">${p.n}</span><span class="dl-b-tp">${p.pos} ${p.t}</span></td>
+    <td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td>
     <td class="dl-b-r" style="color:${fc(p.e25,p.pos)}">${fmt(p.e25)}</td>
     <td class="dl-b-r" style="color:${fc(p.e24,p.pos)}">${fmt(p.e24)}</td>
     <td class="dl-b-r" style="color:${fc(p.e23,p.pos)}">${fmt(p.e23)}</td>
