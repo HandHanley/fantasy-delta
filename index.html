@@ -1149,15 +1149,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable tr:hover .dl-wl-x,.dl-wl-x:focus-visible{color:var(--fog-2)}
 .dl-wl-x:hover{color:var(--coral)}
 @media(hover:none){ .dl-wl-x{color:var(--fog-2)} }
-/* A fixed slot, not a floating suffix. Right-aligned figures with a variable
-   suffix after them stop lining up — each row's yardage gets pushed a
-   different distance by however wide its TD count is, and a column of numbers
-   that does not line up is the one thing a monospace table is for. */
-.dl-wl-td{display:inline-block;width:30px;margin-left:7px;text-align:left;
-  font-size:9.5px;font-weight:600;color:var(--fog-2)}
-/* Keep the gutter even on rows with no touchdowns, so a blank does not pull
-   its yardage out of line either. */
-.dl-wl-num.dl-b-r{padding-right:10px}
+
 .dl-wl-miss{font-size:10.5px;color:var(--topaz);margin-top:9px}
 
 </style>
@@ -3444,15 +3436,14 @@ function renderWatchlist(){
     cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
     ch+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
       +'<th>\u2605</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
-      +'<th class="dl-b-r">Yds / TD</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
+      +'<th class="dl-b-r">Yds</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
       +cf.map(pl=>{
         // All-purpose, including passing. A quarterback used to show passing only,
         // so his rushing vanished — which is the half of a modern QB's profile
         // that dynasty actually cares about. College rushing is net of sacks, so
         // a pocket passer's total comes in slightly under his passing yards.
         const yds=(pl.py||0)+(pl.rey||0)+(pl.ry||0);
-        // td was already being computed here and thrown away.
-        const td=(pl.ret||0)+(pl.rt||0)+(pl.pt||0), comp=cfbComp(pl);
+        const comp=cfbComp(pl);
         return '<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
         +'<td class="dl-wl-ds" style="color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
           +(pl.stars?pl.stars+'\u2605':'\u2014')+'</td>'
@@ -3460,8 +3451,7 @@ function renderWatchlist(){
         +'<td class="txt dl-b-c dl-wl-name">'+pl.pos+'</td>'
         +'<td class="txt dl-wl-nowrap">'+cfbShortTeam(pl.tm)
           +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
-        +'<td class="dl-b-r dl-wl-num">'+(yds?yds.toLocaleString():'-')
-          +'<span class="dl-wl-td">'+(td?td+'TD':'')+'</span></td>'
+        +'<td class="dl-b-r dl-wl-num">'+(yds?yds.toLocaleString():'-')+'</td>'
         +'<td class="dl-b-r">'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
         +'<td class="txt dl-b-c"><span class="dl-wl-cls'+((pl.cls>=3)?' el':'')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
         +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
