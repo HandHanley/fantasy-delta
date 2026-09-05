@@ -5143,7 +5143,11 @@ function renderDevy(){
       lastTier=r.tier;
     }
     const pr=devyProdFor(r.cfbName||r.n);
-    const weak=pr&&pr.tpct!=null&&pr.tpct<0.72, thin=pr&&pr.gms!=null&&pr.gms<6;
+    // The small-sample warning is gone. It fired on every player in September,
+    // and a flag that never discriminates carries no information. The GAMES
+    // column on the same row already shows the count, so nothing is lost —
+    // three games still reads as "3g" in November, where it does mean something.
+    const weak=pr&&pr.tpct!=null&&pr.tpct<0.72;
     // Movement against the previous pasted board. Absent on the first board of a season,
     // which is correct — there is nothing to have moved from.
     let mv='';
@@ -5165,7 +5169,7 @@ function renderDevy(){
         +(!pr?'<span class="dl-bb-note">no '
               +((DEVY_PROD&&DEVY_PROD.year)||'')+' production on file — transfer, or outside the tracking cut</span>':'')
         +(weak?'<span class="dl-bb-warn">⚠ soft schedule — opponent quality '+(pr.tpct*100).toFixed(0)+'%</span>':'')
-        +(thin?'<span class="dl-bb-warn">⚠ small sample</span>':'')
+        
       +'</span>'
       // Desktop-only columns. Each is real data already on the row's warning lines or in
       // the record, surfaced here so the space between name and percentiles carries weight.
