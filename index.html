@@ -959,10 +959,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 /* ── Transfer Portal ─────────────────────────────────────────────────── */
 .dtable td.dl-pt-name{font-weight:600;white-space:nowrap}
 .dtable td.dl-pt-move{line-height:1.35;min-width:104px}
-.dl-pt-from{font-size:10.5px;color:var(--fog-2);white-space:nowrap}
-.dl-pt-fcs{font-size:8px}
+.dl-pt-from{font-size:11.5px;color:var(--fog-2);white-space:nowrap}
+.dl-pt-fcs{font-size:9.5px}
 .dl-pt-to{font-weight:600;color:var(--paper);white-space:nowrap}
-.dl-pt-lvl{font-size:9px;font-weight:700}
+.dl-pt-lvl{font-size:10.5px;font-weight:700}
 
 /* ── Big Board cards ─────────────────────────────────────────────────────
    Lifted out of renderDevy. The filter buttons are NOT touched here: that
@@ -1049,6 +1049,18 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   padding-top:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .dl-pr-comp{white-space:nowrap;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;
   background:var(--coral-tint);color:var(--coral);flex-shrink:0}
+
+/* Prospects card. Was inline align-items:flex-end at every width, so on a
+   desktop screen it sat on the bottom edge. Centred here, and a bottom sheet
+   only where that makes sense — the same shape .dd-overlay already uses. */
+.dl-pr-modal{position:fixed;inset:0;background:rgba(0,0,0,.67);z-index:9999;
+  display:flex;align-items:center;justify-content:center;padding:1rem}
+.dl-pr-sheet{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;
+  padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+@media(max-width:600px){
+  .dl-pr-modal{align-items:flex-end;padding:0}
+  .dl-pr-sheet{border-radius:16px 16px 0 0;max-height:88vh}
+}
 
 </style>
 <script>
@@ -4385,9 +4397,9 @@ function showRookieCard(idx, posFilter) {
   
   const modal = document.createElement('div');
   modal.id='rookie-modal';
-  modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#000a;z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+  modal.className='dl-pr-modal';
   modal.innerHTML=`
-  <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
+  <div class="dl-pr-sheet">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
@@ -4561,15 +4573,17 @@ document.addEventListener('click', function(e) {
 <div id="panel-bigboard" class="panel">
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem">
     <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block">
-      <circle cx="64" cy="64" r="40" fill="none" stroke="url(#cfbOStroke)" stroke-width="7"/>
-      <circle cx="64" cy="64" r="15" fill="none" stroke="#CCFBF1" stroke-width="2.4" stroke-opacity=".9"/>
-      <line x1="64" y1="14" x2="64" y2="30" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
-      <line x1="64" y1="98" x2="64" y2="114" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
-      <line x1="14" y1="64" x2="30" y2="64" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
-      <line x1="98" y1="64" x2="114" y2="64" stroke="#CCFBF1" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+      <g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/>
+        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/>
+      </g>
+      <line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/>
+      <g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
     </svg>
     <div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)" id="devy-title">Consensus Big Board</div>
-    <div style="font-size:11px;color:var(--fog-2);margin-top:2px">Where consensus has them, and what they actually produced</div></div>
+    </div>
   </div>
 
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">
@@ -5192,7 +5206,6 @@ function renderDevy(){
     // and a flag that never discriminates carries no information. The GAMES
     // column on the same row already shows the count, so nothing is lost —
     // three games still reads as "3g" in November, where it does mean something.
-    const weak=pr&&pr.tpct!=null&&pr.tpct<0.72;
     // Movement against the previous pasted board. Absent on the first board of a season,
     // which is correct — there is nothing to have moved from.
     let mv='';
@@ -5213,7 +5226,6 @@ function renderDevy(){
           +(pr&&pr.line?' · '+pr.line:'')+(pr&&pr.gms?' · '+pr.gms+'g':'')+'</span>'
         +(!pr?'<span class="dl-bb-note">no '
               +((DEVY_PROD&&DEVY_PROD.year)||'')+' production on file — transfer, or outside the tracking cut</span>':'')
-        +(weak?'<span class="dl-bb-warn">⚠ soft schedule — opponent quality '+(pr.tpct*100).toFixed(0)+'%</span>':'')
         
       +'</span>'
       // Desktop-only columns. Each is real data already on the row's warning lines or in
@@ -5235,7 +5247,7 @@ function renderDevy(){
   host.innerHTML=(rows.length?html:'<div class="dl-bb-empty">No players at this position on the current board.</div>')
     +(meta?'<div class="dl-bb-foot">'+meta+'</div>':'');
   const t=document.getElementById('devy-title');
-  if(t&&DEVY.class) t.textContent='Consensus Big Board · '+DEVY.class+' class';
+  if(t&&DEVY.class) t.textContent='Consensus Big Board · '+DEVY.class+' Class';
 }
 function devySetPos(p,el){ _devyPos=p; renderDevy(); }
 
