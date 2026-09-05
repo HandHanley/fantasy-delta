@@ -362,8 +362,11 @@ tr:hover td{background:var(--panel)}
 /* Footer: the four links travel as one group so they wrap together instead of
    leaving a single orphaned link on its own line. */
 .foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
-.dtable th:first-child[data-tip]::after{left:0;right:auto;transform:none}
-.dtable th:last-child[data-tip]::after{left:auto;right:0;transform:none}
+/* First two and last two, not just first and last: a table whose leading
+   column is a narrow star or checkbox pushes the real first column into
+   second place, and its tooltip then hangs off the left edge. */
+.dtable th:nth-child(-n+2)[data-tip]::after{left:0;right:auto;transform:none}
+.dtable th:nth-last-child(-n+2)[data-tip]::after{left:auto;right:0;transform:none}
 
 /* TOUCH devices (any viewport width): the 230px absolute bubble overflows and text spills
    onto the rows. Pin a SOLID, auto-height bottom sheet with a full-screen dim behind it. */
@@ -376,7 +379,7 @@ tr:hover td{background:var(--panel)}
     box-shadow:0 12px 48px rgba(0,0,0,.95);
     z-index:99999;
   }
-  .dtable th:first-child[data-tip]::after,.dtable th:last-child[data-tip]::after{left:12px;right:12px;transform:none}
+  .dtable th:nth-child(-n+2)[data-tip]::after,.dtable th:nth-last-child(-n+2)[data-tip]::after{left:12px;right:12px;transform:none}
 }
 /* ── About DELTA modal ──────────────────────────────────────────────────── */
 .about-tab{margin-left:auto;padding:7px 12px;border:none;background:transparent;
@@ -938,6 +941,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 
 /* ── College Tracking ────────────────────────────────────────────────── */
 .dl-cf-scroll{overflow-y:hidden}
+.dl-cf-count{font-size:11px;color:var(--fog-2);margin-bottom:7px}
 .dtable td.dl-cf-star{cursor:pointer}
 .dtable td.dl-cf-rank{font-size:11px;font-weight:700;color:var(--fog-2)}
 .dtable td.dl-cf-prod{font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap}
@@ -5405,7 +5409,7 @@ function renderCollege(){
     if(foot) foot.textContent=''; return;
   }
   const COLS=cfbCols(CFB_POS);
-  const body=rows.map((p,i)=>{
+  const body=shown.map((p,i)=>{
     const on=watch.has(p.n);
     return '<tr class="dl-rk-row" onclick="openCfbCard(this.dataset.name)" data-name="'+p.n.replace(/"/g,'&quot;')+'">'
       +'<td><span onclick="event.stopPropagation();cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
@@ -5428,8 +5432,16 @@ function renderCollege(){
   // .dl-board gives a pointer only to headers that actually sort, and carries
   // user-select:none for the whole board, so this has nothing left to say.
   const SC='';
-  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' player'
-    +(rows.length===1?'':'s')+'</div>'
+  // Capped. The full list is long enough that nobody scrolls it, and every row
+  // costs layout on a phone. Searching or filtering lifts the cap, because at
+  // that point the reader has told us what they are looking for and a hidden
+  // match would look like a missing player.
+  const CFB_CAP=150;
+  const capped = (!cfbQ && rows.length>CFB_CAP);
+  const shown = capped ? rows.slice(0,CFB_CAP) : rows;
+  host.innerHTML='<div class="dl-cf-count">'
+    +(capped ? 'Top '+CFB_CAP+' of '+rows.length+' \u00b7 search to reach the rest'
+             : rows.length+' player'+(rows.length===1?'':'s'))+'</div>'
     +'<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
     +'<th></th>'
     +'<th onclick="cfbSetSort(\'scout\')"'+SC+' data-tip="Position in this list, under the sort you have chosen.">#'+sar('scout')+'</th>'
