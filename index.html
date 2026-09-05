@@ -6335,7 +6335,11 @@ function slpNoteSettings(){
   const st=slpStoreRead();
   const act=slpStoreActive(st);
   if(!act) return;
-  act.settings={teams:leagueTeams,qb:qbFmt,fmt:scoringFmt};
+  // manual:false means "this is what we detected", and detection is free to
+  // replace it next time. Only a hand change earns manual:true and the right
+  // to outrank the league object.
+  act.settings={teams:leagueTeams,qb:qbFmt,fmt:scoringFmt,manual:!SLP_AUTOFMT};
+  SLP_AUTOFMT=false;
   slpStoreWrite(st);
 }
 
@@ -6459,8 +6463,18 @@ async function slpSwitchLeague(leagueId){
     SLP.loaded=true;
     // Re-score the whole platform to this league. Stored format wins when we have
     // it (it carries any hand changes); otherwise detect it from the league object.
-    if(rec.settings&&rec.settings.teams) slpApplyFormat(rec.settings.teams,rec.settings.qb,rec.settings.fmt);
-    else slpDetectAndApplyFormat();
+    // Stored settings win ONLY if a person set them. Anything else — including
+    // a value written by an earlier detection, and every record saved before
+    // this flag existed — re-detects from the league object we just fetched,
+    // which is the authoritative answer. Existing leagues therefore repair
+    // themselves on the next switch.
+    if(rec.settings&&rec.settings.teams&&rec.settings.manual){
+      slpLog('using hand-set format for this league:',rec.settings);
+      slpApplyFormat(rec.settings.teams,rec.settings.qb,rec.settings.fmt);
+    } else {
+      if(rec.settings&&rec.settings.teams) slpLog('stored format was auto-detected, re-detecting:',rec.settings);
+      slpDetectAndApplyFormat();
+    }
     slpLog('switch complete');
   }catch(e){
     slpLog('switch FAILED:',e);
@@ -6774,10 +6788,16 @@ function slpDetectAndApplyFormat(){
   slpLog('format detect: total_rosters='+tr+' \u2192 '+teams+'-team \u00b7 QBslots='+qbSlots+' SFslots='+sfSlots+
          ' \u2192 '+qb+' \u00b7 rec='+rec+' bonus_rec_te='+tep+' \u2192 '+fmt);
   SLP.detected={teams:teams,qb:qb,fmt:fmt};
-  slpApplyFormat(teams,qb,fmt);
+  slpApplyFormat(teams,qb,fmt,true);
 }
 
-function slpApplyFormat(teams,qb,fmt){
+// True only while a DETECTED format is being applied. slpNoteSettings fires on
+// any settings write, including this one, so without the flag an auto-detected
+// value gets recorded as though the user had chosen it by hand — and then wins
+// over detection forever after. That is how one bad detect became permanent.
+let SLP_AUTOFMT=false;
+function slpApplyFormat(teams,qb,fmt,auto){
+  SLP_AUTOFMT=!!auto;
   leagueTeams=teams; qbFmt=qb; scoringFmt=fmt;
   syncSettingsUI();
   applyMarketForSetting();   // re-point kMkt to the detected slice, rebuild COMP/ASSETS
@@ -7397,7 +7417,7 @@ function renderSlpRoster(rid){
     +'<th title="DELTA Score \u2014 proprietary 0-100 dynasty rating" class="dl-mt-ds">\u0394</th>'
     +'<th>Player</th><th class="col-hide-mobile dl-b-r">Age</th><th class="col-hide-mobile">Team</th>'
     +'<th class="col-hide-mobile dl-b-r">PPG\u201925</th><th title="Start Profile: Miss / Hit / Elite %" class="dl-b-c">M/H/E</th>'
-    +'<th class="dl-b-r">Mkt Val</th><th class="dl-b-r">Mod val</th><th>Tag</th>'
+    +'<th class="dl-b-r">Mkt Val</th><th class="col-hide-mobile dl-b-r">Mod val</th><th>Tag</th>'
     +'</tr></thead><tbody>'+order.map(rows).join('')+'</tbody></table></div>';
 
   // Draft-pick inventory
