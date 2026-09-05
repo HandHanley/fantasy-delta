@@ -932,6 +932,34 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-rp-meta{font-family:var(--mono);font-size:10.5px;color:var(--fog-2)}
 .dl-rp-why{font-size:11.5px;color:var(--fog);margin-top:5px;line-height:1.5}
 
+/* Header text should not select when a reader double-clicks to sort. Was
+   pasted inline onto nine College headers; it belongs to every board. */
+.dl-board thead th{user-select:none}
+
+/* ── College Tracking ────────────────────────────────────────────────── */
+.dl-cf-scroll{overflow-y:hidden}
+.dtable td.dl-cf-star{cursor:pointer}
+.dtable td.dl-cf-rank{font-size:11px;font-weight:700;color:var(--fog-2)}
+.dtable td.dl-cf-prod{font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap}
+.dtable td.dl-cf-name{white-space:nowrap}
+.dtable td.dl-cf-pos{font-weight:600}
+.dtable td.dl-cf-nowrap{white-space:nowrap}
+.dl-cf-tag{font-size:9px;font-weight:700;color:var(--fog-2)}
+.dl-cf-g5{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;
+  background:var(--coral-tint);color:var(--coral)}
+.dl-cf-cls{font-weight:500;color:var(--fog-2)}
+.dl-cf-cls.el{font-weight:700;color:var(--sky)}
+.dl-cf-arrow{color:var(--teal-br);font-size:9px}
+.dtable td.dl-cf-bold{font-weight:700}
+
+/* ── Transfer Portal ─────────────────────────────────────────────────── */
+.dtable td.dl-pt-name{font-weight:600;white-space:nowrap}
+.dtable td.dl-pt-move{line-height:1.35;min-width:104px}
+.dl-pt-from{font-size:10.5px;color:var(--fog-2);white-space:nowrap}
+.dl-pt-fcs{font-size:8px}
+.dl-pt-to{font-weight:600;color:var(--paper);white-space:nowrap}
+.dl-pt-lvl{font-size:9px;font-weight:700}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -5379,27 +5407,30 @@ function renderCollege(){
   const COLS=cfbCols(CFB_POS);
   const body=rows.map((p,i)=>{
     const on=watch.has(p.n);
-    return '<tr style="cursor:pointer" onclick="openCfbCard(this.dataset.name)" data-name="'+p.n.replace(/"/g,'&quot;')+'">'
+    return '<tr class="dl-rk-row" onclick="openCfbCard(this.dataset.name)" data-name="'+p.n.replace(/"/g,'&quot;')+'">'
       +'<td><span onclick="event.stopPropagation();cfbStar(this)" data-name="'+p.n.replace(/"/g,'&quot;')+'" '
-        +'style="cursor:pointer;color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
-      +'<td style="font-size:11px;font-weight:700;color:var(--fog-2)">'+(i+1)+'</td>'
-      +'<td class="col-hide-mobile" style="font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap">'+p.pos+(p._rk||'')+'</td>'
-      +'<td class="pname" style="white-space:nowrap">'+p.n+cfbRookieTag(p.n)+'</td>'
-      +'<td class="txt" style="font-weight:600">'+p.pos+'</td>'
-      +'<td class="txt" style="white-space:nowrap">'+(p.tm||'-')+'</td>'
-      +'<td style="white-space:nowrap">'+(cfbComp(p)>=1?'<span style="font-size:9px;font-weight:700;color:var(--fog-2)">P4</span>':'<span style="font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--coral-tint);color:var(--coral)">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
-      +'<td class="txt">'+(p.cls?'<span style="font-weight:'+((p.cls>=3)?'700':'500')+';color:'+((p.cls>=3)?'var(--sky)':'var(--fog-2)')+'">Y'+p.cls+'</span>':'-')+'</td>'
-      +'<td class="col-hide-mobile">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
-      +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
-      +'<td class="col-hide-mobile">'+((p.gms||p.gms===0)?p.gms:'-')+'</td>'
-      +COLS.map(c=>'<td'+(c.only?' class="col-mobile-only"':(c.mob?'':' class="col-hide-mobile"'))+(c.bold?' style="font-weight:700;white-space:nowrap"':' style="white-space:nowrap"')+'>'+c.cell(p)+'</td>').join('')
+        +'class="dl-cf-star" style="color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
+      +'<td class="dl-b-r dl-cf-rank">'+(i+1)+'</td>'
+      +'<td class="col-hide-mobile dl-b-r dl-cf-prod">'+p.pos+(p._rk||'')+'</td>'
+      +'<td class="pname dl-cf-name">'+p.n+cfbRookieTag(p.n)+'</td>'
+      +'<td class="txt dl-b-c dl-cf-pos">'+p.pos+'</td>'
+      +'<td class="txt dl-cf-nowrap">'+(p.tm||'-')+'</td>'
+      +'<td class="dl-b-c dl-cf-nowrap">'+(cfbComp(p)>=1?'<span class="dl-cf-tag">P4</span>':'<span class="dl-cf-g5">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
+      +'<td class="txt dl-b-c">'+(p.cls?'<span class="dl-cf-cls'+((p.cls>=3)?' el':'')+'">Y'+p.cls+'</span>':'-')+'</td>'
+      +'<td class="col-hide-mobile dl-b-r">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
+      +'<td class="txt dl-b-c">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
+      +'<td class="col-hide-mobile dl-b-r">'+((p.gms||p.gms===0)?p.gms:'-')+'</td>'
+      +COLS.map(c=>'<td class="dl-b-r dl-cf-nowrap'+(c.only?' col-mobile-only':(c.mob?'':' col-hide-mobile'))+(c.bold?' dl-cf-bold':'')+'">'+c.cell(p)+'</td>').join('')
       +'</tr>';
   }).join('');
-  const sar=k=>cfbSortKey===k?' <span style="color:var(--teal-br);font-size:9px">'+(cfbSortDir>0?'\u25be':'\u25b4')+'</span>':'';
-  const SC=' style="cursor:pointer;user-select:none"';
+  const sar=k=>cfbSortKey===k?' <span class="dl-cf-arrow">'+(cfbSortDir>0?'\u25be':'\u25b4')+'</span>':'';
+  // Was ' style="cursor:pointer;user-select:none"' pasted onto nine headers.
+  // .dl-board gives a pointer only to headers that actually sort, and carries
+  // user-select:none for the whole board, so this has nothing left to say.
+  const SC='';
   host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' player'
     +(rows.length===1?'':'s')+'</div>'
-    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
+    +'<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
     +'<th></th>'
     +'<th onclick="cfbSetSort(\'scout\')"'+SC+' data-tip="Position in this list, under the sort you have chosen.">#'+sar('scout')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'pr\')"'+SC+' data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#'+sar('pr')+'</th>'
@@ -5411,7 +5442,7 @@ function renderCollege(){
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'age\')"'+SC+' data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age'+sar('age')+'</th>'
     +'<th onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'gms\')"'+SC+' data-tip="Games with at least one recorded offensive stat.">G'+sar('gms')+'</th>'
-    +COLS.map(c=>'<th'+(c.only?' class="col-mobile-only"':(c.mob?'':' class="col-hide-mobile"'))+' onclick="cfbSetSort(\''+c.k+'\')"'+SC
+    +COLS.map(c=>'<th class="dl-b-r'+(c.only?' col-mobile-only':(c.mob?'':' col-hide-mobile'))+'" onclick="cfbSetSort(\''+c.k+'\')"'+SC
         +' data-tip="'+String(c.tip||'').replace(/"/g,'&quot;')+'">'+c.label+sar(c.k)+'</th>').join('')
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
   if(foot) foot.innerHTML='Universe '+CFB.players.length
@@ -5908,24 +5939,23 @@ function renderPortal(){
   const MOVE={ up:['\u2191 to P4','var(--sky)'], down:['\u2193 from P4','var(--coral)'],
                fcs:['\u2191 from FCS','var(--sky)'], lateral:['\u2192 lateral','var(--fog-2)'] };
   host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
-    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable"><thead><tr>'
-    +'<th>Player</th><th>Pos</th><th data-tip="Origin school above, destination below.">Transfer</th>'
+    +'<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
+    +'<th>Player</th><th data-tip="Origin school above, destination below.">Transfer</th>'
     +'<th data-tip="Level change. Power 4 = SEC, Big Ten, Big 12, ACC. Measured on the 2025 season, P4 players reached the NFL at roughly twice the rate of Group of 5 players.">Move</th>'
-    +'<th>Stars</th><th class="col-hide-mobile">Elig</th><th class="col-hide-mobile">Date</th>'
+    +'<th class="dl-b-c">Stars</th><th class="col-hide-mobile dl-b-c">Elig</th><th class="col-hide-mobile">Date</th>'
     +'</tr></thead><tbody>'
     +rows.map(p=>{
       const m=ptMove(p), md=MOVE[m];
       return '<tr>'
-        +'<td class="pname" style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
-        +'<td class="txt" style="font-weight:600">'+p.pos+'</td>'
-        +'<td class="txt" style="line-height:1.35;min-width:104px">'
-          +'<div style="font-size:10.5px;color:var(--fog-2);white-space:nowrap">'+(p.from||'-')
-          +(p.fbs_from?'':' <span style="font-size:8px">FCS</span>')+'</div>'
-          +'<div style="font-weight:600;color:var(--paper);white-space:nowrap">\u2192 '+(p.to||'-')+'</div></td>'
-        +'<td style="white-space:nowrap"><span style="font-size:9px;font-weight:700;color:'+md[1]+'">'+md[0]+'</span></td>'
-        +'<td class="txt">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
-        +'<td class="col-hide-mobile txt">'+(p.elig||'-')+'</td>'
-        +'<td class="col-hide-mobile txt" style="white-space:nowrap">'+(p.date||'-')+'</td>'
+        +'<td class="pname dl-pt-name"><span class="dl-b-pn">'+p.n+'</span><span class="dl-b-tp">'+p.pos+'</span></td>'
+        +'<td class="txt dl-pt-move">'
+          +'<div class="dl-pt-from">'+(p.from||'-')
+          +(p.fbs_from?'':' <span class="dl-pt-fcs">FCS</span>')+'</div>'
+          +'<div class="dl-pt-to">\u2192 '+(p.to||'-')+'</div></td>'
+        +'<td class="dl-cf-nowrap"><span class="dl-pt-lvl" style="color:'+md[1]+'">'+md[0]+'</span></td>'
+        +'<td class="txt dl-b-c">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
+        +'<td class="col-hide-mobile txt dl-b-c">'+(p.elig||'-')+'</td>'
+        +'<td class="col-hide-mobile txt dl-cf-nowrap">'+(p.date||'-')+'</td>'
         +'</tr>';
     }).join('')+'</tbody></table></div>';
 }
