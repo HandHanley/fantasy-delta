@@ -635,7 +635,10 @@ input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size
    last two collisions happened. Each td / th rule is scoped through .dtable so
    it out-specifies the block at ~line 484 — that is what the inline style it
    replaces was doing. Nothing here is intended to change appearance. */
-.dl-rk-scroll{overflow-x:auto}
+/* Shared by every board. -webkit-overflow-scrolling came off the Contracts
+   wrapper, which was the only one carrying it; keeping it here means the
+   others gain it rather than Contracts losing it. */
+.dl-b-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dtable th.dl-rk-sort{cursor:pointer}
 .dtable th.dl-rk-th-ds{cursor:pointer;font-family:var(--geo);font-weight:700;
   font-size:16px;color:var(--teal-br)}
@@ -907,6 +910,27 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable td.dl-pj-ci{font-size:10px;color:var(--fog)}
 .dtable td.dl-ep-raw{font-size:11.5px;color:var(--fog-2)}
 .dtable td.dl-ep-eff{font-size:10px}
+
+/* ── Contracts board ─────────────────────────────────────────────────── */
+.dtable td.dl-ct-name{font-weight:600;white-space:nowrap}
+.dtable td.dl-ct-dim{color:var(--fog)}
+.dtable td.dl-ct-aav{font-weight:600}
+.dtable td.dl-ct-yrs{font-weight:600}
+
+/* ── Ripple Effects ──────────────────────────────────────────────────────
+   A card list, not a table, so .dl-board does not reach it. Typography is
+   matched to the boards by hand instead. */
+.ripple-card{border:1px solid var(--line);cursor:pointer}
+.ripple-card:hover{border-color:var(--fog-2)}
+.ripple-card:hover .dl-rp-name{color:var(--teal-br)}
+.dl-rp-top{display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:8px}
+.dl-rp-name{font-family:var(--sans);font-weight:700;font-size:13.5px;color:var(--paper)}
+/* Same grey position-and-team treatment the three boards use beside a name,
+   rather than the filled badge this panel had on its own. */
+.dl-rp-right{display:flex;gap:8px;align-items:center}
+.dl-rp-meta{font-family:var(--mono);font-size:10.5px;color:var(--fog-2)}
+.dl-rp-why{font-size:11.5px;color:var(--fog);margin-top:5px;line-height:1.5}
 
 </style>
 <script>
@@ -1206,7 +1230,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     <button class="set-pill" data-rpos="WL" onclick="rkSetPos('WL')">★ Watchlist</button>
   </div>
 
-  <div class="dl-rk-scroll"><table class="dtable dl-board">
+  <div class="dl-b-scroll"><table class="dtable dl-board">
     <thead><tr id="rk-head"></tr></thead>
     <tbody id="rank-body"></tbody>
   </table></div>
@@ -1256,7 +1280,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <option value="floor">Floor</option><option value="gap">Model gap</option>
     </select>
   </div>
-  <div class="dl-rk-scroll"><table class="dtable dl-board">
+  <div class="dl-b-scroll"><table class="dtable dl-board">
     <thead><tr>
       <th class="dl-pj-ds" onclick="setSortP('ds')" data-tip="DELTA Score (0-100): grades demonstrated dynasty value across production, age, opportunity, and contract. Higher = a stronger proven profile.">Δ</th>
       <th onclick="setSortP('name')">Player</th><th class="dl-b-r" onclick="setSortP('age')">Age</th>
@@ -1394,7 +1418,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     </select>
     <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
   </div>
-  <div class="dl-rk-scroll"><table class="dtable dl-board">
+  <div class="dl-b-scroll"><table class="dtable dl-board">
     <thead><tr>
       <th onclick="setSortEPA('name')">Player</th><th class="dl-b-r" onclick="setSortEPA('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.">Age</th>
       <th class="dl-b-r" onclick="setSortEPA('e25')" data-tip="How much scoring value this player added on each play in 2025 — not just total stats, but how much each individual touch or route was worth. Positive = better than average on each play; negative = worse. Useful for separating players who earned their stats from those who needed a lot of volume to get there.">EPA'25</th><th class="dl-b-r" onclick="setSortEPA('e24')" data-tip="How much scoring value this player added on each play in 2024. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'24</th><th class="dl-b-r" onclick="setSortEPA('e23')" data-tip="How much scoring value this player added on each play in 2023. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'23</th><th class="dl-b-r" onclick="setSortEPA('e22')" data-tip="How much scoring value this player added on each play in 2022. Positive = above average per play; negative = below. Compare across years to spot players improving or declining in quality — not just raw production.">EPA'22</th>
@@ -1434,10 +1458,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <option value="name">Sort: Name</option>
     </select>
   </div>
-  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dtable">
+  <div class="dl-b-scroll"><table class="dtable dl-board">
     <thead><tr>
-      <th onclick="setSortContracts('name')" style="cursor:pointer">Player</th><th onclick="setSortContracts('pos')" style="cursor:pointer">Pos</th><th>Team</th><th onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32." style="cursor:pointer">Age</th>
-      <th onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length." style="cursor:pointer">AAV</th><th onclick="setSortContracts('total')" data-tip="Total contract value across all years." style="cursor:pointer">Total</th><th onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season." style="cursor:pointer">Ends</th><th onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year." style="cursor:pointer;text-align:center">Yrs Left</th>
+      <th onclick="setSortContracts('name')">Player</th><th class="dl-b-r" onclick="setSortContracts('age')" data-tip="Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.">Age</th>
+      <th class="dl-b-r" onclick="setSortContracts('aav')" data-tip="Average Annual Value — total contract value divided by contract length.">AAV</th><th class="dl-b-r" onclick="setSortContracts('total')" data-tip="Total contract value across all years.">Total</th><th class="dl-b-r" onclick="setSortContracts('end')" data-tip="Contract expiry year. Walk year (⚠) = expires this season.">Ends</th><th class="dl-b-c" onclick="setSortContracts('yrs')" data-tip="Years remaining. 4+ = Locked Up · 3 = Stable · 2 = Expiring · 1 = Walk Year.">Yrs Left</th>
       <th>Status</th><th data-tip="DELTA's read on dynasty contract outlook. Long-term deals for ascending players score well; expensive contracts near expiry score lower.">Dynasty Signal</th>
     </tr></thead>
     <tbody id="contracts-body"></tbody>
@@ -2924,15 +2948,15 @@ function renderRipple(){
     .sort((a,b)=>Math.abs(parseFloat(b.delta))-Math.abs(parseFloat(a.delta)));
   document.getElementById('ripple-body').innerHTML=sorted.map(r=>{
     const p=COMP.find(x=>x.n===r.n);
-    return`<div class="ripple-card" style="cursor:pointer" data-name="${r.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
-        <div><span style="font-weight:600">${r.n}</span>${p?`<span class="badge bn" style="margin-left:5px">${p.pos} · ${p.t}</span>`:''}</div>
-        <div style="display:flex;gap:6px;align-items:center">
+    return`<div class="ripple-card" data-name="${r.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
+      <div class="dl-rp-top">
+        <div><span class="dl-rp-name">${r.n}</span>${p?`<span class="dl-b-tp">${p.pos} ${p.t}</span>`:''}</div>
+        <div class="dl-rp-right">
           <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
-          ${p?`<span style="font-size:10px;color:var(--fog)">Mkt ${p.ktcEff.toLocaleString()} · Proj ${getAdjProj(p).toFixed(1)}</span>`:''}
+          ${p?`<span class="dl-rp-meta">Mkt ${p.ktcEff.toLocaleString()} · Proj ${getAdjProj(p).toFixed(1)}</span>`:''}
         </div>
       </div>
-      <div style="font-size:11px;color:var(--fog);margin-top:4px">${r.reason}</div>
+      <div class="dl-rp-why">${r.reason}</div>
     </div>`;
   }).join('');
 }
@@ -2979,15 +3003,13 @@ function renderContracts(){
     const yrsLeft=c.end-2025; // inclusive of current 2026 season
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:var(--fog)">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
-    return`<tr style="cursor:pointer" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
-      <td class="pname" style="font-weight:600;white-space:nowrap">${c.n}</td>
-      <td><span class="badge bn">${c.pos}</span></td>
-      <td style="color:var(--fog)">${c.team}</td>
-      <td>${pl&&pl.a<90?pl.a.toFixed(1):'-'}</td>
-      <td style="font-weight:600">${fmt(c.aav)}</td>
-      <td style="color:var(--fog)">${fmt(c.total)}</td>
-      <td>${c.end}</td>
-      <td style="font-weight:600;text-align:center;color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
+    return`<tr class="dl-rk-row" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
+      <td class="pname dl-ct-name"><span class="dl-b-pn">${c.n}</span><span class="dl-b-tp">${c.pos} ${c.team}</span></td>
+      <td class="dl-b-r">${pl&&pl.a<90?pl.a.toFixed(1):'-'}</td>
+      <td class="dl-b-r dl-ct-aav">${fmt(c.aav)}</td>
+      <td class="dl-b-r dl-ct-dim">${fmt(c.total)}</td>
+      <td class="dl-b-r">${c.end}</td>
+      <td class="dl-b-c dl-ct-yrs" style="color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
       <td><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
       <td>${dynastySignal(c)} ${ktcStr}</td>
     </tr>`;
