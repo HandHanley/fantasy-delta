@@ -1149,7 +1149,15 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable tr:hover .dl-wl-x,.dl-wl-x:focus-visible{color:var(--fog-2)}
 .dl-wl-x:hover{color:var(--coral)}
 @media(hover:none){ .dl-wl-x{color:var(--fog-2)} }
-.dl-wl-td{font-size:9.5px;font-weight:600;color:var(--fog-2);margin-left:5px}
+/* A fixed slot, not a floating suffix. Right-aligned figures with a variable
+   suffix after them stop lining up — each row's yardage gets pushed a
+   different distance by however wide its TD count is, and a column of numbers
+   that does not line up is the one thing a monospace table is for. */
+.dl-wl-td{display:inline-block;width:30px;margin-left:7px;text-align:left;
+  font-size:9.5px;font-weight:600;color:var(--fog-2)}
+/* Keep the gutter even on rows with no touchdowns, so a blank does not pull
+   its yardage out of line either. */
+.dl-wl-num.dl-b-r{padding-right:10px}
 .dl-wl-miss{font-size:10.5px;color:var(--topaz);margin-top:9px}
 
 </style>
@@ -3453,7 +3461,7 @@ function renderWatchlist(){
         +'<td class="txt dl-wl-nowrap">'+cfbShortTeam(pl.tm)
           +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
         +'<td class="dl-b-r dl-wl-num">'+(yds?yds.toLocaleString():'-')
-          +(td?'<span class="dl-wl-td">'+td+'TD</span>':'')+'</td>'
+          +'<span class="dl-wl-td">'+(td?td+'TD':'')+'</span></td>'
         +'<td class="dl-b-r">'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
         +'<td class="txt dl-b-c"><span class="dl-wl-cls'+((pl.cls>=3)?' el':'')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
         +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
