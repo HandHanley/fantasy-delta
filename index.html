@@ -5408,6 +5408,16 @@ function renderCollege(){
         : 'No players match these filters.')+'</div>';
     if(foot) foot.textContent=''; return;
   }
+  // Capped, and computed here — after the sort, before the body is built.
+  // The full list is long enough that nobody scrolls it and every row costs
+  // layout on a phone. ANY narrowing lifts the cap: a search, a position, a
+  // class, a conference, the blue-chip toggle. Once the reader has said what
+  // they want, a match hidden behind a cap reads as a missing player.
+  const CFB_CAP=150;
+  const narrowed = !!(q || cls || cf || CFB_BLUE || CFB_POS!=='ALL');
+  const capped = (!narrowed && rows.length>CFB_CAP);
+  const shown = capped ? rows.slice(0,CFB_CAP) : rows;
+
   const COLS=cfbCols(CFB_POS);
   const body=shown.map((p,i)=>{
     const on=watch.has(p.n);
@@ -5436,9 +5446,6 @@ function renderCollege(){
   // costs layout on a phone. Searching or filtering lifts the cap, because at
   // that point the reader has told us what they are looking for and a hidden
   // match would look like a missing player.
-  const CFB_CAP=150;
-  const capped = (!cfbQ && rows.length>CFB_CAP);
-  const shown = capped ? rows.slice(0,CFB_CAP) : rows;
   host.innerHTML='<div class="dl-cf-count">'
     +(capped ? 'Top '+CFB_CAP+' of '+rows.length+' \u00b7 search to reach the rest'
              : rows.length+' player'+(rows.length===1?'':'s'))+'</div>'
