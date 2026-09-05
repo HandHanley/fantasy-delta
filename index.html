@@ -1096,6 +1096,38 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-board tbody tr.dl-mt-grp td{font-size:9.5px;padding:12px 5px 4px}
 }
 
+/* ── My Team header ──────────────────────────────────────────────────────
+   A phone showed ten blocks before the first player: three leagues, the
+   season line, Refresh, Remove, three format chips, twelve team pills and two
+   analysis pills. These fold the parts you set once and then stop reading.
+   Plain <details>, so they work with no JS and stay keyboard-reachable. */
+.dl-mt-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dl-mt-analysis{margin:10px 0 14px}
+.dl-mt-disc{margin-bottom:8px}
+.dl-mt-disc>summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;
+  list-style:none;font-size:13px;font-weight:700;color:var(--paper);
+  padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.dl-mt-disc>summary::-webkit-details-marker{display:none}
+.dl-mt-disc>summary::after{content:'';margin-left:auto;flex-shrink:0;
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--fog-2);transition:transform .15s}
+.dl-mt-disc[open]>summary::after{transform:rotate(180deg)}
+.dl-mt-disc>summary:hover{border-color:var(--fog-2)}
+.dl-mt-disc[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.dl-mt-disc>.dl-mt-row,.dl-mt-disc>div{padding:10px 11px}
+.dl-mt-disc[open]>.dl-mt-row,.dl-mt-disc[open]>div{
+  border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;background:var(--ink-2)}
+/* What the numbers are scored on has to stay in view; the rest can fold. */
+.dl-mt-fmt{font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--teal-br)}
+.dl-mt-count{font-size:10.5px;font-weight:500;color:var(--fog-2)}
+.dl-mt-set>summary{font-size:15px;font-weight:800}
+@media(max-width:600px){
+  .dl-mt-disc>summary{font-size:12.5px;padding:8px 10px}
+  .dl-mt-set>summary{font-size:14px}
+  .dl-mt-fmt{font-size:10px}
+  .dl-mt-analysis{margin:8px 0 12px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -6513,6 +6545,10 @@ function slpRemoveLeague(leagueId){
 }
 
 // ── League switcher (header) ─────────────────────────────────
+function slpFmtLabel(f){
+  return {std:'Standard', half:'0.5PPR', half_tep:'0.5PPR+TEP',
+          full:'Full PPR', full_tep:'Full PPR+TEP'}[f] || String(f||'');
+}
 function renderSlpLeagueSwitcher(){
   const st=slpStoreRead();
   const list=st.leagues||[];
@@ -6535,7 +6571,14 @@ function renderSlpLeagueSwitcher(){
       +'<a href="#" onclick="if(typeof openSettingsAtAccount===\'function\'){openSettingsAtAccount(event);}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
       +' and they follow you to every device.</div>'
     : '';
-  return '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+chips+add+'</div>'+cta;
+  // One league is the answer; the others are a choice you make rarely. Only
+  // collapse when there is actually something to collapse.
+  if(list.length<2) return '<div class="dl-mt-row">'+chips+add+'</div>'+cta;
+  const act=list.filter(function(l){ return SLP.conn&&String(l.leagueId)===String(SLP.conn.leagueId); })[0];
+  const label=act?slpEsc(act.leagueName):'Choose a league';
+  return '<details class="dl-mt-disc dl-mt-lg"><summary>'+label
+    +'<span class="dl-mt-count">'+list.length+' leagues</span></summary>'
+    +'<div class="dl-mt-row">'+chips+add+'</div>'+cta+'</details>';
 }
 
 // Shown in the connect state when leagues are already stored, so "Add league"
@@ -7275,6 +7318,13 @@ function renderSlpSubNav(){
     return '<button onclick="slpViewRoster('+r.roster_id+')" style="font-size:10.5px;font-weight:'+(active?'800':'600')+';padding:4px 10px;border-radius:12px;border:1px solid '+(active?'var(--line)':'var(--line)')+';background:'+(active?'var(--ink-2)':'var(--panel)')+';color:'+(active?'var(--emerald)':'var(--fog)')+';cursor:pointer;white-space:nowrap">'
       +slpTeamLabel(r)+(r.roster_id===mine?' \u2605':'')+'</button>';
   }).join('');
+  // Twelve team pills is four rows on a phone, and you are looking at your own
+  // roster nearly every time. Fold them; the analysis pills stay out.
+  const teamsBlock=(SLP.rosters||[]).length>2
+    ? '<details class="dl-mt-disc dl-mt-teams"><summary>Compare another team'
+      +'<span class="dl-mt-count">'+(SLP.rosters||[]).length+' teams</span></summary>'
+      +'<div class="dl-mt-row">'+pills+'</div></details>'
+    : '<div class="dl-mt-row">'+pills+'</div>';
   const boardActive=SLP.view==='board';
   const powerActive=SLP.view==='power';
   /* Trade Targets and Power Rankings are LEAGUE-WIDE analysis, not a team to look
@@ -7286,9 +7336,9 @@ function renderSlpSubNav(){
       +';padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2)'
       +';color:'+(on?'var(--emerald)':'var(--sky)')+';cursor:pointer;white-space:nowrap">'+label+'</button>';
   };
-  return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 14px">'
-    +pills
-    +'<span style="flex-basis:100%;height:0"></span>'
+  return teamsBlock
+    // the line-break spacer went with the pills it used to separate
+    +'<div class="dl-mt-row dl-mt-analysis">'
     +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +'</div>';
@@ -7315,16 +7365,21 @@ function renderMyTeam(){
 
   const multi=((slpStoreRead().leagues)||[]).length>1;
   const header=renderSlpLeagueSwitcher()
-    +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">'
-    +'<div><div style="font-size:15px;font-weight:800;color:var(--paper)">'+slpEsc(SLP.conn.leagueName)+'</div>'
-    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div></div>'
+    // Season, connection, Refresh, Remove and the format chips are all setup.
+    // The one thing that has to stay in view is what the numbers are scored on,
+    // so that rides in the summary line and the rest folds away.
+    +'<details class="dl-mt-disc dl-mt-set"><summary>'+slpEsc(SLP.conn.leagueName)
+    +'<span class="dl-mt-fmt">'+slpEsc(String(leagueTeams))+'-team \u00b7 '
+    +(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+slpEsc(slpFmtLabel(scoringFmt))+'</span></summary>'
+    +'<div class="dl-mt-row" style="margin-bottom:6px">'
+    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
     +(multi
       ? '<button onclick="slpRemoveLeague(\''+slpEscJs(SLP.conn.leagueId)+'\')" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Remove</button>'
       : '<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Disconnect</button>')
     +'</div>'
-    +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+slpFmtChips()+'</div>'
+    +'<div class="dl-mt-row">'+slpFmtChips()+'</div></details>'
     +renderSlpSubNav();
 
   rosterDiv.innerHTML=header+(SLP.view==='board'?renderSlpBoard()
