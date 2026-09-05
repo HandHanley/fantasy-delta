@@ -4810,7 +4810,12 @@ document.addEventListener('click', function(e) {
   </div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
     college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
-    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.</div></details>
+    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.
+      <p style="margin-top:9px">The universe is players clearing a production quota, plus four- and
+      five-star underclassmen. Age is estimated from recruiting class and is absent for players who
+      were not recruited. RecSh is receptions divided by team receptions, standing in for target
+      share because CFBD publishes no target counts. QB rushing is net of sacks, per college
+      convention.</p></div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="cfb-pos-row">
     <button class="set-pill on" data-cpos="ALL" onclick="cfbSetPos('ALL')">All</button>
     <button class="set-pill" data-cpos="QB" onclick="cfbSetPos('QB')">QB</button>
@@ -5464,99 +5469,10 @@ function renderCollege(){
     +COLS.map(c=>'<th class="dl-b-r'+(c.only?' col-mobile-only':(c.mob?'':' col-hide-mobile'))+'" onclick="cfbSetSort(\''+c.k+'\')"'+SC
         +' data-tip="'+String(c.tip||'').replace(/"/g,'&quot;')+'">'+c.label+sar(c.k)+'</th>').join('')
     +'</tr></thead><tbody>'+body+'</tbody></table></div>';
-  if(foot) foot.innerHTML='Universe '+CFB.players.length
-    +' (production quota + 4\u20135\u2605 underclassmen) \u00b7 <b>Age is an estimate</b> from recruiting class, '
-    +'absent for unrecruited players \u00b7 RecSh = receptions / team receptions, a stand-in for target share '
-    +'(CFBD publishes no target counts) \u00b7 <b>dDOM</b> = 0\u2013100 percentile of competition-adjusted production within position, '
-    +'ranked among qualified players (6+ games + a volume floor); low-volume players show \u2018-\u2019 \u00b7 '
-    +'QB rushing is net of sacks, per college convention \u00b7 '
+  if(foot) foot.innerHTML=CFB.players.length.toLocaleString()+' players \u00b7 '
     +(CFB_POS==='ALL'||CFB_POS==='WATCH'
-      ? 'Full box score \u2014 each position fills its own columns, so blanks are expected. <b>Filter to a position</b> for that position\u2019s own view, with rates like yards per carry and ANY/A. On a phone these collapse to combined Yds and TD.'
-      : 'Stat columns are '+CFB_POS+'-specific; choose <b>All</b> for the shared set.');
-}
-
-
-// ── College player card: season line + weekly game log ─────────────────────
-// Read-only view over data already loaded for the table. No score, no projection —
-// a game log is what you actually watch during a season.
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCfbCard(); });
-function closeCfbCard(){
-  const o=document.getElementById('cfb-overlay'); if(o) o.classList.remove('open');
-}
-// ── dDOM: DELTA's competition-adjusted production, as a 0-100 WITHIN-POSITION percentile ──
-// The raw base differs by position (WR/TE dominator, RB rush dominator, QB ANY/A) and lives
-// on different scales, so we rank each player's competition-adjusted value against his own
-// position and express dDOM as that percentile. 90 means "top 10% at his position" identically
-// for every position — the only way 90=90 holds across metrics that measure different things.
-// WR and TE are SEPARATE pools (TEs post lower dominators by nature). The raw value is still
-// shown beside it as the fact. Analytical signal, not a ranking input.
-const DDOM_SWING = 0.50;
-function cfbMult(tpct){
-  if(tpct==null) return 1.0;
-  return Math.max(1-DDOM_SWING, Math.min(1+DDOM_SWING, 1 + DDOM_SWING*(tpct-0.5)*2));
-}
-const RB_RUSH_W = 0.50;                                  // rushing share of RB dominator
-// RB dominator is ALL-PURPOSE: an equal blend of rushing and receiving share.
-// Rushing-only was the original definition and it systematically undersold pass-catching
-// backs — Jahmyr Gibbs took ~35% of his college scrimmage yards through the air and read
-// as a 47th-percentile back. Validated 22 Aug 2026 against draft capital on 306 backs
-// (91 drafted, 215 undrafted): 0.50 was the empirical peak of the CV curve AND the
-// pre-registered default, beating rushing-only on 92% of held-out splits, and agreeing
-// on a second outcome (NFL PPG, n=54: 0.249 vs 0.199). See docs/PREREG-rb-dominator-weight.md.
-// The 0.50 is deliberately un-tuned — the curve is flat between 0.3 and 0.8, so do NOT
-// "improve" it to a second decimal without a study that clears the same gates.
-function cfbRBDom(p){
-  if(p.rdom==null && p.dom==null) return null;
-  return RB_RUSH_W*(p.rdom||0) + (1-RB_RUSH_W)*(p.dom||0);
-}
-function cfbAdjVal(p){                                   // competition-adjusted value we rank
-  const m=cfbMult(p.tpct);
-  if(p.pos==='QB') return p.anya==null?null:p.anya*m;
-  if(p.pos==='RB'){ const d=cfbRBDom(p); return d==null?null:d*m; }
-  if(p.pos==='WR'||p.pos==='TE') return p.dom==null?null:p.dom*m;
-  return null;
-}
-// dDOM is percentiled over a QUALIFIED pool — real contributors only — so "top 10%"
-// means top 10% of players who actually competed, not padding from depth guys. Players
-// below the floor get NO dDOM (shown as "-"). Floors are position-appropriate + tunable.
-function cfbQualifies(p){
-  if((p.gms||0) < 6) return false;
-  if(p.pos==='WR'||p.pos==='TE') return (p.rec||0) >= 20;
-  if(p.pos==='RB') return (p.car||0) >= 60;
-  if(p.pos==='QB') return (p.att||0) >= 120;
-  return false;
-}
-let CFB_PCT=null, CFB_PCT_POOL=null;
-function cfbBuildPct(pool){
-  const groups={};
-  pool.forEach(p=>{ if(!cfbQualifies(p)) return; const v=cfbAdjVal(p); if(v==null) return; (groups[p.pos]=groups[p.pos]||[]).push({p,v}); });
-  const map=new Map();
-  Object.keys(groups).forEach(k=>{ const arr=groups[k].sort((a,b)=>a.v-b.v); const nn=arr.length;
-    arr.forEach((o,i)=>map.set(o.p, nn>1?Math.round(100*i/(nn-1)):50)); });
-  return map;
-}
-function cfbPct(p, pool){
-  pool=pool||((CFB&&CFB.players)||[]);
-  if(pool!==CFB_PCT_POOL||!CFB_PCT){ CFB_PCT=cfbBuildPct(pool); CFB_PCT_POOL=pool; }
-  if(CFB_PCT.has(p)) return CFB_PCT.get(p);
-  const av=cfbAdjVal(p); if(av==null) return null;      // cross-season object: rank vs qualified peers
-  const peers=pool.filter(x=>x.pos===p.pos && cfbQualifies(x)).map(cfbAdjVal).filter(x=>x!=null).sort((a,b)=>a-b);
-  if(peers.length<2) return 50;
-  let below=0; for(const x of peers){ if(x<av) below++; }
-  return Math.round(100*below/(peers.length-1));
-}
-function cfbDDOM(p, pool){
-  if(!cfbQualifies(p)) return null;                     // below the volume floor -> no dDOM
-  const raw = p.pos==='QB'?p.anya : p.pos==='RB'?cfbRBDom(p) : (p.pos==='WR'||p.pos==='TE')?p.dom : null;
-  if(raw==null) return null;
-  const pct=cfbPct(p, pool); if(pct==null) return null;
-  return { pct,
-    raw: p.pos==='QB'? Math.round(raw*10)/10 : Math.round(raw*1000)/10,
-    rawUnit: p.pos==='QB'? '' : '%',
-    rawLabel: p.pos==='QB'?'ANY/A' : p.pos==='RB'?'all-purpose dom' : 'dominator',
-    label: p.pos==='QB'?'competition-adjusted efficiency' : p.pos==='RB'?'competition-adjusted all-purpose production' : 'competition-adjusted dominance' };
-}
-function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senior',5:'Senior (5th)'}[c]||'class n/a'; }
+      ? 'each position fills its own columns, so blanks are expected. <b>Filter to a position</b> for its own view.'
+      : 'Stat columns are '+CFB_POS+'-specific. Choose <b>All</b> for the shared set.'); }
 
 // A player who has reached an NFL roster should have ONE page, and it should be the NFL
 // one — that card carries his market value, verdict, projection and the whole College tab
