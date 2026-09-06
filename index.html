@@ -7427,7 +7427,8 @@ function renderSlpPower(){
   const unpriced=rows.reduce(function(a,b){return a+b.picksUnpriced;},0);
 
   return lede
-    +head+body
+    +'<div class="tablewrap dl-b-scroll"><table class="dtable dl-board dl-pw-tbl">'
+    +'<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'
     +(nonSkill||unmatched||unpriced
       ? '<div class="dl-pw-caveat">'
         +// Abbreviations, not words: "2 kicker" is wrong and "2 kickers, defenses or
