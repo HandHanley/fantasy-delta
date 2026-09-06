@@ -7074,13 +7074,47 @@ function slpShowBoard(){ SLP.view='board'; renderMyTeam(); }
 // the MARKET value for a pick (DELTA does not model picks independently), so a
 // pick adds the same amount to both columns. Picks move the ranking; they cannot
 // move the gap.
-function slpPickValue(season, round){
+function slpPickAsset(season, round){
   const nm = season+' Mid '+slpOrd(round)+' Round Pick';
   let a = (typeof ASSETS!=='undefined'&&ASSETS) ? ASSETS.find(function(x){return x.n===nm;}) : null;
   if(!a && typeof PICKS!=='undefined') a = PICKS.find(function(x){return x.n===nm;});
+  return a||null;
+}
+/* How much a pick loses per year of distance, MEASURED rather than assumed.
+   The market file carries three seasons; the two furthest out are the clean
+   pair, because the nearest season is the imminent draft and prices
+   differently once slots are nearly known. Comes out around 0.80 for a first
+   and 0.88 for a third — later rounds decay more slowly, which is what you
+   would expect when there is less certainty to lose. Clamped, so a strange
+   pair cannot produce a wild number. */
+function slpPickDecay(round){
+  const yrs=[];
+  for(let y=new Date().getFullYear()-2; y<=new Date().getFullYear()+8; y++){
+    if(slpPickAsset(y, round)) yrs.push(y);
+  }
+  if(yrs.length<3) return 0.85;
+  const a=slpPickAsset(yrs[yrs.length-2], round), b=slpPickAsset(yrs[yrs.length-1], round);
+  const va=(a.kMkt!=null?a.kMkt:a.k)||0, vb=(b.kMkt!=null?b.kMkt:b.k)||0;
+  if(!va||!vb) return 0.85;
+  return Math.min(0.98, Math.max(0.6, vb/va));
+}
+/* A pick past the end of the file is not worth nothing — it is worth the last
+   priced season discounted forward by that measured rate. Returning null there
+   told a team holding a full set of 2029s that it had no draft capital at all.
+   `est` carries how many years were extrapolated so the UI can say so. */
+function slpPickValue(season, round){
+  let a=slpPickAsset(season, round), est=0;
+  if(!a){
+    for(let back=1; back<=6; back++){
+      const prev=slpPickAsset(season-back, round);
+      if(prev){ a=prev; est=back; break; }
+    }
+  }
   if(!a) return null;                        // rounds 4+ have no published tier
-  const mkt=(a.kMkt!=null?a.kMkt:a.k)||0;
-  return {model: (typeof mvAsset==='function'?mvAsset(a):mkt), market: mkt};
+  const f = est ? Math.pow(slpPickDecay(round), est) : 1;
+  const mkt=((a.kMkt!=null?a.kMkt:a.k)||0)*f;
+  const model=(typeof mvAsset==='function'?mvAsset(a):((a.kMkt!=null?a.kMkt:a.k)||0))*f;
+  return {model: model, market: mkt, est: est};
 }
 
 /* Convexity: an asset counts for value x (value/reference)^POWER_K, so quality
@@ -7192,7 +7226,7 @@ function slpTeamValues(){
   const rows=(SLP.rosters||[]).map(function(r){
     const row={rosterId:r.roster_id, team:slpTeamLabel(r), _ref:REF,
                model:0, market:0, players:0, unmatched:0, nonSkill:0,
-               pickModel:0, pickMarket:0, picks:0, picksUnpriced:0,
+               pickModel:0, pickMarket:0, picks:0, picksUnpriced:0, picksEst:0,
                ageW:0, ageWA:0, pos:{}};
     POS.forEach(function(p){ row.pos[p]={model:0,n:0}; });
     const squad=[];
@@ -7246,7 +7280,13 @@ function slpTeamValues(){
       if(!v){ row.picksUnpriced++; continue; }
       const pw=slpPowerWeight(v.market,row._ref);
       row.pickModel+=v.model*pw; row.pickMarket+=v.market*pw; row.picks++;
+      if(v.est) row.picksEst++;
     }
+    // Roster-only, captured before picks are added. The gap between this and
+    // the total IS the win-now-versus-future question: a team can be first on
+    // the field and last in future capital, and one blended rank hides exactly
+    // that.
+    row.modelRoster=row.model;
     row.model+=row.pickModel; row.market+=row.pickMarket;
     const wn=slpWinNow(squad);
     row.winNow=wn.pts; row.lineupOpen=wn.open;
@@ -7278,6 +7318,8 @@ function slpTeamValues(){
   const byModel=rows.slice().sort(function(a,b){return b.model-a.model;});
   const byMarket=rows.slice().sort(function(a,b){return b.market-a.market;});
   byModel.forEach(function(r,i){ r.rankModel=i+1; });
+  rows.slice().sort(function(a,b){ return b.modelRoster-a.modelRoster; })
+      .forEach(function(r,i){ r.rankRoster=i+1; });
   byMarket.forEach(function(r,i){ r.rankMarket=i+1; });
   ['QB','RB','WR','TE'].forEach(function(p){
     rows.slice().sort(function(a,b){return b.pos[p].model-a.pos[p].model;})
@@ -7298,10 +7340,11 @@ function renderSlpPower(){
 
   const head='<tr>'
     +'<th>#</th><th>Team</th>'
-    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">DELTA</th>'
+    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
+    +'<th class="dl-b-c" data-tip="Rank by DELTA model value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
     +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster." class="dl-b-c">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
-    +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. Rounds beyond the third have no published tier and are not counted.">Picks</th>'
+    +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted.">Picks</th>'
     +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
     +'<th class="col-hide-mobile dl-b-r" data-tip="Average age of the roster, weighted by each player\u2019s DELTA value \u2014 so age reflects the players a team is actually built around, not deep-bench filler. Picks are not aged.">Avg Age</th>'
     +'</tr>';
@@ -7313,14 +7356,24 @@ function renderSlpPower(){
       +'<td class="dl-pw-rank">'+r.rankModel+'</td>'
       +'<td class="dl-pw-team">'+slpEsc(r.team)+(me?' \u2605':'')+'</td>'
       +'<td class="dl-b-c dl-pw-model">'+r.rankModel+'</td>'
+      +'<td class="dl-b-c dl-pw-dim">'+r.rankRoster+'</td>'
       +'<td class="dl-b-c dl-pw-nw"><span class="'+(move?(move>0?'dl-pw-up':'dl-pw-dn'):'dl-pw-flat')+'">'+r.rankMarket+'</span>'
         +(move?'<span class="dl-pw-move"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
       +POS.map(p=>'<td class="col-hide-mobile dl-b-c dl-pw-dim">'+r.pos[p].rank+'</td>').join('')
+      // "none" has to mean none. The market file only carries pick tiers three
+      // seasons out, so picks beyond that come back unpriced — a team whose only
+      // picks are further out held real capital and was being told it had
+      // nothing. Unpriced picks are now counted and labelled as unpriced.
       +'<td class="dl-b-r dl-pw-nw">'
         +(r.picks
           ? '<span class="dl-pw-now">'+Math.round(r.pickMarket).toLocaleString()+'</span>'
-            +'<span class="dl-pw-sub"> '+r.picks+'</span>'
-          : '<span class="dl-pw-none">none</span>')
+            +'<span class="dl-pw-sub"> '+r.picks
+              +(r.picksEst?' \u00b7 '+r.picksEst+' est':'')
+              +(r.picksUnpriced?' +'+r.picksUnpriced+' unpriced':'')+'</span>'
+          : r.picksUnpriced
+            ? '<span class="dl-pw-sub">'+r.picksUnpriced+' pick'
+              +(r.picksUnpriced===1?'':'s')+', unpriced</span>'
+            : '<span class="dl-pw-none">none</span>')
         +'</td>'
       +'<td class="dl-b-r dl-pw-nw"><span class="dl-pw-now">'+r.winNow.toFixed(1)+'</span>'
         +'<span class="dl-pw-sub"> ('+r.rankWin+')</span>'
