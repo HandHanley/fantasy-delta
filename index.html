@@ -1159,7 +1159,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable tr.dl-pw-me td{background:var(--ink-2)}
 .dtable td.dl-pw-model{font-weight:700;color:var(--paper)}
 .dtable td.dl-pw-dim{color:var(--fog)}
-.dl-pw-move{font-size:9px;color:var(--fog-2)}
 .dl-pw-up{color:var(--emerald)} .dl-pw-dn{color:var(--coral)} .dl-pw-flat{color:var(--fog)}
 .dl-pw-now{font-weight:700;color:var(--paper)}
 .dl-pw-sub{font-size:9px;color:var(--fog-2)}
@@ -7364,7 +7363,7 @@ function renderSlpPower(){
     +'<th>Team</th>'
     +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
     +'<th class="dl-b-c" data-tip="Rank by DELTA model value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
-    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster." class="dl-b-c">MKT</th>'
+    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 green means DELTA ranks them higher than the market does, red means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
     +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted.">Picks</th>'
     +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
@@ -7378,8 +7377,7 @@ function renderSlpPower(){
       +'<td class="dl-pw-team">'+slpEsc(r.team)+(me?' \u2605':'')+'</td>'
       +'<td class="dl-b-c dl-pw-model">'+r.rankModel+'</td>'
       +'<td class="dl-b-c dl-pw-dim">'+r.rankRoster+'</td>'
-      +'<td class="dl-b-c dl-pw-nw"><span class="'+(move?(move>0?'dl-pw-up':'dl-pw-dn'):'dl-pw-flat')+'">'+r.rankMarket+'</span>'
-        +(move?'<span class="dl-pw-move"> '+(move>0?'\u25b2':'\u25bc')+Math.abs(move)+'</span>':'')+'</td>'
+      +'<td class="dl-b-c '+(move?(move>0?'dl-pw-up':'dl-pw-dn'):'dl-pw-flat')+'">'+r.rankMarket+'</td>'
       +POS.map(p=>'<td class="col-hide-mobile dl-b-c dl-pw-dim">'+r.pos[p].rank+'</td>').join('')
       // "none" has to mean none. The market file only carries pick tiers three
       // seasons out, so picks beyond that come back unpriced — a team whose only
