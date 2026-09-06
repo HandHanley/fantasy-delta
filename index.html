@@ -1169,6 +1169,28 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable td.dl-pw-nw{white-space:nowrap}
 .dl-pw-none{color:var(--coral)}
 
+/* ── Power rankings on a phone ───────────────────────────────────────────
+   Even with the position columns hidden this is six columns of figures, so it
+   scrolls sideways — and the team name was scrolling out of view with it,
+   which leaves you reading a row of numbers belonging to nobody. The name
+   column is pinned instead. */
+.dl-board td.dl-pw-team,.dl-board thead th:first-child{position:sticky;left:0;z-index:1;
+  background:var(--panel)}
+.dl-board tr.dl-pw-me td.dl-pw-team{background:var(--ink-2)}
+.dl-board tbody tr:hover td.dl-pw-team{background:var(--row-hi)}
+@media(max-width:600px){
+  /* The pick count and the estimate marker are detail; the value is the point.
+     Same for the rank in brackets after the projection. */
+  .dl-pw-sub{display:none}
+  .dl-pw-team{max-width:104px;overflow:hidden;text-overflow:ellipsis}
+  .dl-board td.dl-pw-team,.dl-board thead th:first-child{padding-right:9px;
+    box-shadow:1px 0 0 var(--line)}
+  /* Same treatment the roster got: this is a wide table on a narrow screen,
+     so it earns a tighter scale than the reading boards. */
+  .dl-pw-tbl tbody td{font-size:11px;padding:7px 5px}
+  .dl-pw-tbl thead th{font-size:9px;padding:0 5px 6px}
+}
+
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -7339,7 +7361,7 @@ function renderSlpPower(){
   const POS=['QB','RB','WR','TE'];
 
   const head='<tr>'
-    +'<th>#</th><th>Team</th>'
+    +'<th>Team</th>'
     +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
     +'<th class="dl-b-c" data-tip="Rank by DELTA model value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
     +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster." class="dl-b-c">MKT</th>'
@@ -7353,7 +7375,6 @@ function renderSlpPower(){
     const me=String(r.rosterId)===String(mine);
     const move=r.rankMarket-r.rankModel;   // positive: DELTA ranks them higher
     return '<tr'+(me?' class="dl-pw-me"':'')+'>'
-      +'<td class="dl-pw-rank">'+r.rankModel+'</td>'
       +'<td class="dl-pw-team">'+slpEsc(r.team)+(me?' \u2605':'')+'</td>'
       +'<td class="dl-b-c dl-pw-model">'+r.rankModel+'</td>'
       +'<td class="dl-b-c dl-pw-dim">'+r.rankRoster+'</td>'
@@ -7406,7 +7427,7 @@ function renderSlpPower(){
   const unpriced=rows.reduce(function(a,b){return a+b.picksUnpriced;},0);
 
   return lede
-    +'<div class="tablewrap dl-b-scroll"><table class="dtable dl-board">'
+    +'<div class="tablewrap dl-b-scroll"><table class="dtable dl-board dl-pw-tbl">'
     +'<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'
     +'<div style="font-size:10.5px;color:var(--fog-2);margin-top:10px;line-height:1.7">'
     +'Every player and every pick from '+(parseInt(SLP.league.season||0,10)+1)+' onward counts, weighted so '
