@@ -1173,8 +1173,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
    scrolls sideways — and the team name was scrolling out of view with it,
    which leaves you reading a row of numbers belonging to nobody. The name
    column is pinned instead. */
-.dl-board td.dl-pw-team,.dl-board thead th:first-child{position:sticky;left:0;z-index:1;
-  background:var(--panel)}
+.dl-board td.dl-pw-team,.dl-pw-tbl thead th:first-child{position:sticky;left:0;z-index:1;
+  background:var(--ink)}
 .dl-board tr.dl-pw-me td.dl-pw-team{background:var(--ink-2)}
 .dl-board tbody tr:hover td.dl-pw-team{background:var(--row-hi)}
 @media(max-width:600px){
@@ -1182,7 +1182,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
      Same for the rank in brackets after the projection. */
   .dl-pw-sub{display:none}
   .dl-pw-team{max-width:104px;overflow:hidden;text-overflow:ellipsis}
-  .dl-board td.dl-pw-team,.dl-board thead th:first-child{padding-right:9px;
+  .dl-board td.dl-pw-team,.dl-pw-tbl thead th:first-child{padding-right:9px;
     box-shadow:1px 0 0 var(--line)}
   /* Same treatment the roster got: this is a wide table on a narrow screen,
      so it earns a tighter scale than the reading boards. */
@@ -1190,10 +1190,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-pw-tbl thead th{font-size:9px;padding:0 5px 6px}
 }
 
-.dl-pw-lede{font-size:12px;color:var(--fog);margin-bottom:10px;line-height:1.65}
 .dl-pw-caveat{font-size:10.5px;color:var(--fog-2);margin-top:9px}
 .dl-pw-howrow{margin-top:11px}
-@media(max-width:600px){ .dl-pw-lede{font-size:11.5px} }
 
 /* ── League Board ────────────────────────────────────────────────────────
    Two tables, same shape: buy-tagged players on other rosters, then
@@ -1201,7 +1199,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
    reading boards — it sits in the same panel and is read the same way. */
 .dl-lb-hd{margin-bottom:6px}
 .dl-lb-title{font-size:13px;font-weight:800;color:var(--paper)}
-.dl-lb-sub{font-size:10.5px;color:var(--fog);margin-left:8px}
 /* Section labels carry the signal colour because the section IS the signal:
    the whole table under a green label is a buy list. */
 .dl-lb-sec{font-size:10px;font-weight:700;letter-spacing:.06em;
@@ -1227,8 +1224,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-lb-tbl tbody td{font-size:11px;padding:7px 5px}
   .dl-lb-tbl thead th{font-size:9px;padding:0 5px 6px}
   .dl-lb-tbl td.dl-lb-ds{font-size:12.5px}
+  /* The owner is context, not the point of the row. Truncating it is what
+     keeps Trade Targets inside a 360px screen without a sideways scroll. */
+  .dl-lb-tbl td.dl-lb-own{max-width:58px;overflow:hidden;text-overflow:ellipsis}
   .dl-lb-tbl .badge{font-size:9px;padding:2px 5px}
-  .dl-lb-sub{display:block;margin-left:0;margin-top:3px}
 }
 
 </style>
@@ -7442,36 +7441,22 @@ function renderSlpPower(){
       +'</tr>';
   }).join('');
 
-  const me=rows.find(function(r){ return String(r.rosterId)===String(mine); });
-  let lede='';
-  if(me){
-    const move=me.rankMarket-me.rankModel;
-    const best=POS.slice().sort((a,b)=>me.pos[a].rank-me.pos[b].rank)[0];
-    const worst=POS.slice().sort((a,b)=>me.pos[b].rank-me.pos[a].rank)[0];
-    lede='<div class="dl-pw-lede">'
-      +'DELTA has you <b style="color:var(--paper)">'+slpOrd(me.rankModel)+'</b> of '+rows.length
-      +'; the market has you '+slpOrd(me.rankMarket)+'.'
-      +' Strongest at <b style="color:var(--paper)">'+best+'</b> ('+slpOrd(me.pos[best].rank)+'), thinnest at <b style="color:var(--paper)">'+worst+'</b> ('+slpOrd(me.pos[worst].rank)+').'
-      +' On projected starting lineup you are <b style="color:var(--paper)">'+slpOrd(me.rankWin)+'</b>'
-      +(me.rankWin<me.rankModel-1?' \u2014 you win more now than your assets suggest.'
-       :me.rankWin>me.rankModel+1?' \u2014 your assets are worth more than this season\u2019s lineup.'
-       :'.')
-      +'</div>';
-  }
-  const unmatched=rows.reduce(function(a,b){return a+b.unmatched;},0);
+  // No lede. Every fact it stated is a column in the table directly beneath
+  // it: Total is your DELTA rank, MKT is the market's, the position columns
+  // carry strongest and thinnest, and the bracketed figure beside Proj PPG is
+  // the starting-lineup rank. A sentence that reads the table back is noise.
   const nonSkill=rows.reduce(function(a,b){return a+b.nonSkill;},0);
   const unpriced=rows.reduce(function(a,b){return a+b.picksUnpriced;},0);
 
-  return lede
-    +'<div class="tablewrap dl-b-scroll"><table class="dtable dl-board dl-pw-tbl">'
+  return '<div class="tablewrap dl-b-scroll"><table class="dtable dl-board dl-pw-tbl">'
     +'<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'
-    +(nonSkill||unmatched||unpriced
-      ? '<div class="dl-pw-caveat">'
-        +// Abbreviations, not words: "2 kicker" is wrong and "2 kickers, defenses or
-      // IDP" is the long form this line exists to replace. K and DEF need no
-      // plural and are what a fantasy manager calls them anyway.
-      [ nonSkill?nonSkill+' K/DEF/IDP not valued':'' ,
-           unmatched?unmatched+' player'+(unmatched===1?'':'s')+' outside DELTA\u2019s universe':'' ,
+    +(nonSkill||unpriced
+      ?  '<div class="dl-pw-caveat">'
+        +// No count and no plural: the reader does not act on how many kickers
+      // were skipped, only on the fact that they were. Deep-bench players outside
+      // DELTA's universe are dropped from this line entirely \u2014 that is
+      // DELTA's business, not the reader's.
+      [ nonSkill?'K/DST/IDP Not Valued':'' ,
            unpriced?unpriced+' pick'+(unpriced===1?'':'s')+' past round 3 unvalued':'' ]
           .filter(Boolean).join(' \u00b7 ')
         +'</div>'
@@ -7739,7 +7724,6 @@ function renderSlpBoard(){
     :'<div class="dl-lb-none">Nothing on your roster is sell-tagged. Clean sheet.</div>';
 
   return '<div class="dl-lb-hd"><span class="dl-lb-title">League Board</span>'
-    +'<span class="dl-lb-sub">every rostered player in the league, crossed with DELTA\u2019s verdicts</span></div>'
     +'<div class="dl-lb-sec dl-lb-buy">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
     +targetsTbl
     +'<div class="dl-lb-sec dl-lb-sell dl-lb-ship">Your ship list \u2014 sell-tagged on your roster \u00b7 '+ship.length+'</div>'
