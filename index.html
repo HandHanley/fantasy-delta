@@ -86,10 +86,6 @@ tr:hover td{background:var(--panel)}
   th,td{padding:4px 5px}
   /* Hide lower-priority columns on mobile */
   .col-hide-mobile{display:none}
-  /* ...and its mirror: columns that exist ONLY on mobile. The All view shows a
-     full box score on desktop (pass/rush/rec split out), which cannot fit on a
-     phone. There it collapses to combined totals instead. */
-  .col-mobile-only{display:table-cell}
   /* Phone: disclaimer on its own line, links on the next, rather than the links
      spilling one at a time. */
   footer{gap:8px!important}
@@ -355,10 +351,15 @@ tr:hover td{background:var(--panel)}
 }
 [data-tip]:hover::after{ display:block; }
 @media (hover:none){ [data-tip].tip-show::after{ display:none !important; } }
-/* Wide-screen default for the mobile-only mirror; the mobile media query above
-   flips this to table-cell. Used by the All view, which shows a full box score
-   on desktop and combined totals on a phone. */
+/* Wide-screen default for the mobile-only mirror: the All view shows a full box
+   score on desktop and combined totals on a phone.
+   THE FLIP MUST COME AFTER THIS LINE. Both selectors are a single class, so they
+   tie on specificity and the later one wins — a media query adds none of its own.
+   The flip used to live in the main mobile block ~270 lines ABOVE this rule, so
+   it lost every time and the phone-only Yds/TD columns were hidden on every
+   screen. */
 .col-mobile-only{display:none}
+@media(max-width:600px){ .col-mobile-only{display:table-cell} }
 /* Footer: the four links travel as one group so they wrap together instead of
    leaving a single orphaned link on its own line. */
 .foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
@@ -948,6 +949,11 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable td.dl-cf-name{white-space:nowrap}
 .dtable td.dl-cf-pos{font-weight:600}
 .dtable td.dl-cf-nowrap{white-space:nowrap}
+/* Pos and Team fold into the name cell on a phone only; the desktop board keeps
+   them as their own sortable columns. Base rule first, flip second — same
+   ordering the col-mobile-only bug was caused by getting wrong. */
+.dl-cf-tp{display:none}
+@media(max-width:600px){ .dl-cf-tp{display:inline} }
 .dl-cf-tag{font-size:9px;font-weight:700;color:var(--fog-2)}
 .dl-cf-g5{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;
   background:var(--coral-tint);color:var(--coral)}
@@ -5535,9 +5541,9 @@ function cfbCols(pos){
       +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; };
   const DDOM={k:'ddom',label:'dDOM',mob:1,bold:1,cell:ddomCell,
     tip:'dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.'};
-  const TREND={k:'trend',label:'Trend',mob:1,cell:trendCell,
+  const TREND={k:'trend',label:'Trend',mob:0,cell:trendCell,
     tip:'Form: average scrimmage yards over his last 3 games minus the 3 before (passing yards for QBs). Blank until he has 6 games.'};
-  const RECSH={k:'rsh',label:'RecSh',mob:1,cell:p=>(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-'),
+  const RECSH={k:'rsh',label:'RecSh',mob:0,cell:p=>(p.rsh!=null&&p.pos!=='QB'?Math.round(p.rsh*100)+'%':'-'),
     tip:'Reception share \u2014 his receptions as a share of his team\u2019s. A stand-in for target share, which CFBD does not publish. Hidden for QBs.'};
 
   if(pos==='QB') return [
@@ -5695,13 +5701,13 @@ function renderCollege(){
         +'class="dl-cf-star" style="color:'+(on?'var(--topaz)':'var(--fog-2)')+'">'+(on?'\u2605':'\u2606')+'</span></td>'
       +'<td class="dl-b-r dl-cf-rank">'+(i+1)+'</td>'
       +'<td class="col-hide-mobile dl-b-r dl-cf-prod">'+p.pos+(p._rk||'')+'</td>'
-      +'<td class="pname dl-cf-name">'+p.n+cfbRookieTag(p.n)+'</td>'
-      +'<td class="txt dl-b-c dl-cf-pos">'+p.pos+'</td>'
-      +'<td class="txt dl-cf-nowrap">'+(p.tm||'-')+'</td>'
-      +'<td class="dl-b-c dl-cf-nowrap">'+(cfbComp(p)>=1?'<span class="dl-cf-tag">P4</span>':'<span class="dl-cf-g5">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
+      +'<td class="pname dl-cf-name"><span class="dl-b-pn">'+p.n+'</span>'+cfbRookieTag(p.n)+'<span class="dl-b-tp dl-cf-tp">'+p.pos+(p.tm?' '+p.tm:'')+'</span></td>'
+      +'<td class="txt dl-b-c dl-cf-pos col-hide-mobile">'+p.pos+'</td>'
+      +'<td class="txt dl-cf-nowrap col-hide-mobile">'+(p.tm||'-')+'</td>'
+      +'<td class="dl-b-c dl-cf-nowrap col-hide-mobile">'+(cfbComp(p)>=1?'<span class="dl-cf-tag">P4</span>':'<span class="dl-cf-g5">\u00d7'+cfbComp(p).toFixed(2)+'</span>')+'</td>'
       +'<td class="txt dl-b-c">'+(p.cls?'<span class="dl-cf-cls'+((p.cls>=3)?' el':'')+'">Y'+p.cls+'</span>':'-')+'</td>'
       +'<td class="col-hide-mobile dl-b-r">'+(p.ageEst?'~'+p.ageEst:'-')+'</td>'
-      +'<td class="txt dl-b-c">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
+      +'<td class="txt dl-b-c col-hide-mobile">'+(p.stars?p.stars+'\u2605':'-')+'</td>'
       +'<td class="col-hide-mobile dl-b-r">'+((p.gms||p.gms===0)?p.gms:'-')+'</td>'
       +COLS.map(c=>'<td class="dl-b-r dl-cf-nowrap'+(c.only?' col-mobile-only':(c.mob?'':' col-hide-mobile'))+(c.bold?' dl-cf-bold':'')+'">'+c.cell(p)+'</td>').join('')
       +'</tr>';
@@ -5723,12 +5729,12 @@ function renderCollege(){
     +'<th onclick="cfbSetSort(\'scout\')"'+SC+' data-tip="Position in this list, under the sort you have chosen.">#'+sar('scout')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'pr\')"'+SC+' data-tip="Rank at his position by PRODUCTION alone \u2014 deliberately not the list order. Scout order also weighs competition level and recruiting pedigree, so a QB11 by yardage can sit above a QB7 who faced weaker opponents or arrived unrecruited. Choose \u2018Production (position rank)\u2019 to sort by this column.">Prod#'+sar('pr')+'</th>'
     +'<th onclick="cfbSetSort(\'name\')"'+SC+'>Player'+sar('name')+'</th>'
-    +'<th onclick="cfbSetSort(\'pos\')"'+SC+' data-tip="Position.">Pos'+sar('pos')+'</th>'
-    +'<th onclick="cfbSetSort(\'team\')"'+SC+'>Team'+sar('team')+'</th>'
-    +'<th onclick="cfbSetSort(\'comp\')"'+SC+' data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp'+sar('comp')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'pos\')"'+SC+' data-tip="Position.">Pos'+sar('pos')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'team\')"'+SC+'>Team'+sar('team')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'comp\')"'+SC+' data-tip="Competition level, same idiom as the prospect cards. P4 = Power 4 (SEC, Big Ten, Big 12, ACC) plus Notre Dame; a \u00d70.85 badge marks Group of 5. Derived mechanically from conference here \u2014 the prospect board\u2019s hand-assigned COMP is per-player and more precise, and that is where scouting judgement belongs.">Comp'+sar('comp')+'</th>'
     +'<th onclick="cfbSetSort(\'cls\')"'+SC+' data-tip="Class standing. Highlighted in blue once he is DRAFT-ELIGIBLE \u2014 the NFL requires three years removed from high school, so Y3 may declare early and Y4 must. Dimmed years are future classes you are scouting early.">Cls'+sar('cls')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'age\')"'+SC+' data-tip="ESTIMATED age: 18 + (season minus recruiting class). CFBD publishes no birth dates, so this is a proxy, blank for unrecruited players, and never scored.">Age'+sar('age')+'</th>'
-    +'<th onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
+    +'<th class="col-hide-mobile" onclick="cfbSetSort(\'stars\')"'+SC+' data-tip="Recruiting stars out of 5. Blank means no recruiting record matched \u2014 common for walk-ons and late risers.">Stars'+sar('stars')+'</th>'
     +'<th class="col-hide-mobile" onclick="cfbSetSort(\'gms\')"'+SC+' data-tip="Games with at least one recorded offensive stat.">G'+sar('gms')+'</th>'
     +COLS.map(c=>'<th class="dl-b-r'+(c.only?' col-mobile-only':(c.mob?'':' col-hide-mobile'))+'" onclick="cfbSetSort(\''+c.k+'\')"'+SC
         +' data-tip="'+String(c.tip||'').replace(/"/g,'&quot;')+'">'+c.label+sar(c.k)+'</th>').join('')
