@@ -5602,9 +5602,17 @@ function cfbCols(pos){
     {k:'rec', label:'Rec',    mob:0, cell:p=>num(p.rec), tip:'Receptions.'},
     {k:'rey', label:'RecYd',  mob:0, bold:1, cell:p=>num(p.rey), tip:'Receiving yards.'},
     {k:'ret', label:'RecTD',  mob:0, cell:p=>num(p.ret), tip:'Receiving touchdowns.'},
-    /* phone-only summary of the ten above */
-    {k:'prod',label:'Yds',    mob:1, only:1, bold:1, cell:p=>num(p.pos==='QB'?(p.py||0):(p.rey||0)+(p.ry||0)),
-      tip:'Primary production: passing yards for QBs, scrimmage yards for everyone else.'},
+    /* Phone-only summary of the ten above. TWO yardage columns, not one: a
+       single shared Yds column made a 300-yard passer and a 300-yard receiver
+       look identical once Pos folded into the name cell. Split, each position
+       shows a dash under Pass unless he is a quarterback, so the column a number
+       sits in tells you what you are looking at. Quarterbacks fill both: their
+       rushing is dynasty-relevant and Scrim is where it lives. Same principle the
+       desktop box score uses. */
+    {k:'py',  label:'Pass',   mob:1, only:1, bold:1, cell:p=>p.pos==='QB'?num(p.py):'-',
+      tip:'Passing yards. Quarterbacks only \u2014 a dash here means the player is not a quarterback.'},
+    {k:'scrim',label:'Scrim', mob:1, only:1, bold:1, cell:p=>num((p.rey||0)+(p.ry||0)),
+      tip:'Scrimmage yards: rushing plus receiving, every position including quarterbacks. College charges sack yardage against rushing, so a pocket passer who was sacked often can read negative \u2014 about one QB in nine finished 2025 below zero. That is the real figure, not an error.'},
     {k:'td',  label:'TD',     mob:1, only:1, cell:p=>num(T(p)), tip:'All touchdowns: passing + rushing + receiving.'},
     DDOM, RECSH, TREND ];
 }
