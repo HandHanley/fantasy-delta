@@ -90,6 +90,8 @@ tr:hover td{background:var(--panel)}
      spilling one at a time. */
   footer{gap:8px!important}
   .foot-note{flex-basis:100%}
+  /* Marker sits with the disclaimer on a phone rather than earning its own row. */
+  .foot-build{margin-left:0}
   .foot-links{gap:14px;width:100%}
   /* Modal mobile */
   .dd-card{border-radius:10px 10px 0 0;max-height:85vh;margin-top:auto}
@@ -1221,6 +1223,10 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
    has to read as a deliberate line rather than a collapsed strip. */
 .dl-lb-none{color:var(--fog-2);font-size:11.5px;padding:6px 0}
 .dl-lb-howrow{margin-top:11px}
+/* Build marker. --fog-2 is the dimmest text token and --mono makes it read as an
+   identifier rather than a sentence, so the eye skips it until it is being looked for.
+   No signal colour: this is not a state, it is a label. */
+.foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
 /* .how p is margin:0; the paragraph gap lives here instead of on a style
    attribute, and scoped so the Trade Calc and Power disclosures are untouched. */
 .dl-lb-how p+p{margin-top:9px}
@@ -5152,6 +5158,14 @@ document.addEventListener('click', function(e) {
   <a href="https://ko-fi.com/fantasydelta" target="_blank" rel="noopener noreferrer"
      style="color:var(--teal-br);font-weight:700;text-decoration:none;border-bottom:1px solid var(--teal-br)">Support DELTA</a>
   </span>
+  <!-- BUILD MARKER. Bump this string every time index.html is uploaded. It exists so a
+       screenshot says which deploy it came from: on 6 Sep 2026 five rounds were spent on a
+       bug that could not be reproduced because the checks ran against a fixed copy while a
+       broken one was live. It also tells you whether GitHub Pages has picked up a deploy —
+       refresh, and if the marker has not moved, it has not redeployed yet.
+       Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
+       against the screen edge as soon as the row wraps. -->
+  <span class="foot-build">2026-09-07a</span>
 </footer>
 
 
