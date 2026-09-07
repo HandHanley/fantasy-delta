@@ -2,6 +2,11 @@
 
 **Status:** pre-registered, written August 2026, before any 2026 outcomes were observed.
 **Freeze target:** Sunday 6 September 2026 — before any Week 1 game is played.
+**Freeze executed:** Monday **7 September 2026, 22:03 UTC**, still before any Week 1
+game (kickoff Wednesday 9 September). The date moved by one day for scheduling
+reasons only. Recorded here rather than changed silently, because the condition
+that matters — *before any 2026 outcome exists* — was met, and a pre-registered
+term that drifts without a note is exactly what erodes a ledger.
 **Two resolution dates, because the three tests resolve on different clocks:**
 February 2027 (projections and rankings, against actual 2026 production) and
 the Sunday before Week 1 2027 (pricing calls, against the 2027 market).
@@ -164,35 +169,90 @@ the *frozen* market values are fixed and the future market is not yet observed.
 
 ## 3. What gets frozen
 
-`scripts/freeze-snapshot.js` writes `data/freeze-2026.json`, and copies the
-market grid to `data/freeze-2026-market.json`. Between them:
+`scripts/freeze-snapshot.js` writes a single file, `data/freeze-2026.json`
+(81,981 bytes). It contains:
 
 * Per player: `pos`, `t`, `mv`, `mkt`, `gap`, `verdict`, `ds`, `proj`,
   `rankMv`, `rankMk`, `style`.
-* `scarcity_curve` — the SCAR_CURVE in force at freeze time.
-* `engine_sha` — the git commit of the engine that produced these numbers.
+* `scarcity_curve` — the SCAR_CURVE in force at freeze time — plus
+  `scarcity_starters` and `scarcity_resolved`, the applied 32-cell table.
+* `engine_sha` and `freeze_script_sha` — SHA-256 of the engine and the freeze
+  script as executed, first 16 hex characters. Note these are **content
+  hashes, not git commits**; an earlier draft of this section said commit.
+* `node_version` — the runtime the numbers were produced under.
 * `mv_center`, `mv_taper` and `season_year` — the model-value calibration in
   force. `mv_center` alone no longer reconstructs a frozen value, because the
-  centering correction varies with price; `mv_taper` carries its three fitted
+  centering correction varies with price; `mv_taper` carries its fitted
   constants. `season_year` is what the thin-sample cap counts seasons from, so a
   stale value would silently change which verdicts were allowed to be strong.
-* **The two hand-maintained input files**, copied verbatim into the snapshot:
-  `data/injury-overrides.json` and `data/qb-starters.json`. Both change frozen
-  projections — the first zeroes them, the second re-bases a quarterback onto the
-  starter baseline — and both are human judgements rather than derived data. A
-  number that depended on a judgement call is not reconstructable unless the call
-  is stored next to it.
-* The **full market grid** (all 8 league-size × QB-format settings), copied from
-  `data/market-values.json`, which is otherwise overwritten nightly and lost.
+* **SHA fingerprints of five input files**, under `provenance.inputs`:
+  `market-values.json` (with FantasyCalc's own poll timestamp),
+  `player-stats.json`, `player-contracts.json`, `injury-overrides.json` and
+  `game-logs.json`.
 
-The last three exist so the snapshot is **reconstructable**. Without the curve
-and the commit, a number in the ledger cannot be explained later, only reported.
-Without the full grid, the ledger is permanently locked to the 12-SF basis.
+These exist so the snapshot is **reconstructable**. Without the curve and the
+engine hash, a number in the ledger cannot be explained later, only reported.
+
+### ⚠️ Correction, 7 September 2026 — recorded before any 2026 outcome existed
+
+This section previously stated that the script also copied the market grid to
+`data/freeze-2026-market.json` and copied `injury-overrides.json` and
+`qb-starters.json` verbatim into the snapshot. **It does none of those things,
+and did not on the day.** The doc has been aligned to the code and to the
+artifact that was actually written, for the same reason `excluded_out` was:
+a pre-registered description that does not match the artifact is worse than
+one that never made the promise.
+
+Three consequences, stated plainly rather than buried:
+
+1. **The market grid is fingerprinted, not copied.** `data/market-values.json`
+   is overwritten nightly, so recomputing the ledger at a basis other than
+   12-team superflex depends on recovering that file from git history at the
+   freeze commit. The fingerprint proves which bytes were used; git is what
+   holds them. That is a weaker guarantee than a copy, and it makes git
+   history a single point of failure for one input.
+2. **`qb-starters.json` is not fingerprinted at all.** Three quarterbacks were
+   re-based onto the starter baseline at freeze time — Jayden Daniels, Kyler
+   Murray and Malik Willis — and the snapshot records that the rule ran but not
+   which names it ran on. The file is in git at the freeze commit and the run
+   log names all three, so it is recoverable, just not self-contained.
+3. **Neither is fixable for 2026.** Rule 1 below makes the frozen file
+   immutable. Both belong in the 2027 freeze: add `qb-starters.json` to the
+   fingerprint list, and either copy the grid or record the git commit SHA
+   alongside the content hashes.
 
 **Basis:** computed and displayed at the 12-team superflex, half-PPR TE-premium
-anchor — the same basis the verdict engine uses. Because projections, the
-scarcity curve and the full market grid are all frozen, any other basis can be
-recomputed exactly later. Basis is a *rendering* choice, not a commitment.
+anchor — the same basis the verdict engine uses. Because projections and the
+scarcity curve are frozen, and the market grid is recoverable from git at the
+freeze commit, another basis can still be recomputed later. Basis is a
+*rendering* choice, not a commitment.
+
+### The frozen artifact — fingerprints
+
+Recorded here so the file's identity lives in the document that explains it,
+not only in a CI log.
+
+| | |
+|---|---|
+| File | `data/freeze-2026.json` |
+| Size | 81,981 bytes |
+| Frozen at | 2026-09-07T22:03:17.815Z |
+| SHA-256 | `ffed0a44877413945e076c63cb66e3d7141f760986c51c8369256d48fb4ff28d` |
+| `engine_sha` | `c6b472d0c7b61a40` |
+| `freeze_script_sha` | `ca6c1568ada08fba` |
+| Node | v24.20.0 |
+| Graded / stale / out | 376 / 31 / 2 |
+
+**Blockchain timestamp.** The snapshot's hash is anchored to the Bitcoin
+blockchain via OpenTimestamps. The proof is committed alongside it at
+`data/freeze-2026.json.ots`. To verify: download both files and drop them on
+opentimestamps.org, or run `ots verify data/freeze-2026.json.ots`.
+
+This is the part that makes the freeze date *provable* rather than asserted.
+Nobody has to trust this repository, this account, or its owner: the timestamp
+is anchored in a chain that cannot be rewritten, and anyone can re-hash the file
+and check it themselves. A ledger whose start date rests on the author's word is
+not a ledger.
 
 ### Verdict definitions in force at freeze
 
@@ -364,7 +424,7 @@ season behind it.
 
 | When | What |
 |---|---|
-| Sun 6 Sep 2026 | Run the freeze, before any Week 1 game. Verify, then never touch again. |
+| ~~Sun 6 Sep 2026~~ **Mon 7 Sep 2026** | Freeze run and committed at 22:03 UTC, before any Week 1 game (kickoff Wed 9 Sep). Verified, timestamped, never touched again. |
 | February 2027 | **Tests 1 and 2 resolve here.** Actual 2026 production now exists, so MAE, RMSE and ranking accuracy are final — not a preview. |
 | Sunday before Week 1, 2027 | **Test 3 resolves here.** Second market snapshot; the pricing calls are graded. |
 | Sunday before Week 1, 2028 / 2029 | Repeat the pricing test. The dynasty window is 2–3 years; a thesis can be right and take that long to pay. |
