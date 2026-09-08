@@ -5169,7 +5169,7 @@ document.addEventListener('click', function(e) {
        refresh, and if the marker has not moved, it has not redeployed yet.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-07b</span>
+  <span class="foot-build">2026-09-07c</span>
 </footer>
 
 
@@ -5936,14 +5936,14 @@ function openCfbCard(name){
   host.innerHTML='<div style="padding:18px 20px 20px">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
       +'<div style="min-width:0">'
-        +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.15">'
+        +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.35">'
           +'<a href="'+cfbNflHref(p.n)+'" '
           +'title="Open '+p.n.replace(/"/g,'&quot;')+'\u2019s full page" '
           +'style="color:var(--paper);text-decoration:none;border-bottom:1px dotted var(--fog-2)">'+p.n+'</a>'
           +' <span id="cfb-card-star" data-name="'+p.n.replace(/"/g,'&quot;')+'" onclick="cfbCardStar(this)" '
           +'style="cursor:pointer;font-size:16px;vertical-align:2px;color:'+(watched?'var(--topaz)':'var(--fog-2)')+'">'
           +(watched?'\u2605':'\u2606')+'</span></div>'
-        +'<div style="font-size:11.5px;color:var(--fog);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">'
+        +'<div style="font-size:11.5px;color:var(--fog);margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">'
           +'<span style="font-size:11px;font-weight:800;color:var(--ink);background:'+(p.pos==='QB'?'var(--violet)':p.pos==='RB'?'var(--topaz)':'var(--sky)')+';border-radius:6px;padding:2px 7px">'+p.pos+'</span>'
           +(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
           +(comp>=1?'<span style="font-size:10px;font-weight:700;color:var(--emerald);border:1px solid #1c3a30;background:#0e1c17;border-radius:20px;padding:2px 7px">P4</span>':'<span style="font-size:10px;font-weight:700;color:var(--coral);border:1px solid var(--line);border-radius:20px;padding:2px 7px">G5 \u00d7'+comp.toFixed(2)+'</span>')
