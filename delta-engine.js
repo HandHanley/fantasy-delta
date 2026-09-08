@@ -5301,36 +5301,36 @@ function buildDSBreakdownHTML(p){
   const multLbl=(mult>1.00 && hasNFLProd)?' ×'+mult.toFixed(2):'';
   const multTipContent=(mult>1.00 && hasNFLProd)
     ?'Earlier production is a stronger dynasty signal — the same output at age '+Math.floor(age)+' predicts more value over the 2–3yr window than at 30+.'
-     +'<br><span style="color:#5C7080">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
+     +'<br><span style="color:var(--fog-2)">≤24: ×1.25 &nbsp;·&nbsp; ≤26: ×1.12 &nbsp;·&nbsp; ≤28: ×1.04 &nbsp;·&nbsp; 28+: no adjustment</span>'
     :'';
   // Each axis gets its own color based on that axis's individual score ratio
-  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'#10B981':r>=0.6?'#6BB6E0':r>=0.4?'#E0B34D':'#E05745';};
+  const axisClr=(val,max)=>{const r=val/max;return r>=0.8?'var(--emerald)':r>=0.6?'var(--sky)':r>=0.4?'var(--topaz)':'var(--coral)';};
   const bar=(label,val,max,tip)=>{
     const pct=Math.round((val/max)*100);
     const c=axisClr(val,max);
     // ⓘ button navigates: span → label span → header div → bar container → last child (tooltip)
     const iBtn=tip
       ?' <span onclick="var t=this.parentNode.parentNode.parentNode.lastElementChild;t.style.display=t.style.display===\'block\'?\'none\':\'block\'" '
-       +'style="cursor:pointer;color:#5C7080;font-size:8px;border:1px solid #1E2A3A;border-radius:50%;padding:0 2.5px;vertical-align:middle;line-height:1.4">ⓘ</span>'
+       +'style="cursor:pointer;color:var(--fog-2);font-size:8px;border:1px solid var(--line);border-radius:50%;padding:0 2.5px;vertical-align:middle;line-height:1.4">ⓘ</span>'
       :'';
     return'<div style="margin-bottom:6px">'
-      +'<div style="display:flex;justify-content:space-between;font-size:9px;color:#8CA0B3;margin-bottom:2px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--fog);margin-bottom:2px">'
       +'<span>'+label+iBtn+'</span><span style="color:'+c+';font-weight:600">'+val+'/'+max+'</span></div>'
-      +'<div style="height:5px;background:#111A28;border-radius:3px;overflow:hidden">'
+      +'<div style="height:5px;background:var(--panel);border-radius:3px;overflow:hidden">'
       +'<div style="height:100%;width:'+pct+'%;background:'+c+';border-radius:3px"></div></div>'
-      +(tip?'<div style="display:none;font-size:9px;color:#8CA0B3;margin-top:4px;padding:5px 7px;background:#0a0f1a;border-radius:4px;border:1px solid #1E2A3A;line-height:1.5">'+tip+'</div>':'')
+      +(tip?'<div style="display:none;font-size:9px;color:var(--fog);margin-top:4px;padding:5px 7px;background:var(--ink);border-radius:4px;border:1px solid var(--line);line-height:1.5">'+tip+'</div>':'')
       +'</div>';
   };
-  return'<div class="dd-section" style="background:linear-gradient(135deg,#0D1420,#0D1420);border:1px solid #1E2A3A;border-radius:10px;padding:14px;margin-bottom:10px">'
+  return'<div class="dd-section" style="background:linear-gradient(135deg,var(--ink-2),var(--ink-2));border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
     +'<div style="display:flex;align-items:baseline;gap:7px">'
     +'<span style="font-family:Georgia,serif;font-size:20px;color:'+col+'">Δ</span>'
-    +'<span style="font-size:13px;font-weight:600;color:#EAF0F4;letter-spacing:.02em">DELTA Score</span>'
-    +(noNFL?'<span style="font-size:9px;color:#8CA0B3;margin-left:2px">rookie · capped</span>':'')
+    +'<span style="font-size:13px;font-weight:600;color:var(--paper);letter-spacing:.02em">DELTA Score</span>'
+    +(noNFL?'<span style="font-size:9px;color:var(--fog);margin-left:2px">rookie · capped</span>':'')
     +'</div>'
     +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
     +'</div>'
-    +'<div style="font-size:9px;color:#5C7080;margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
+    +'<div style="font-size:9px;color:var(--fog-2);margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
     +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
