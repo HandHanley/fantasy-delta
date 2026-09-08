@@ -10,6 +10,12 @@
 // 4. All PPG from exact user scoring format (unchanged)
 // ============================================================
 
+/* BUILD MARKER for this file. index.html carries its own in .foot-build and shows both
+   in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
+   and leave index.html's alone unless index.html changed too — they move independently
+   on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
+const DL_BUILD='2026-09-07g';
+
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
 const REC_PG_POS_AVG={WR:3.21,RB:1.76,TE:3.06};

@@ -5168,9 +5168,11 @@ document.addEventListener('click', function(e) {
        bug that could not be reproduced because the checks ran against a fixed copy while a
        broken one was live. It also tells you whether GitHub Pages has picked up a deploy —
        refresh, and if the marker has not moved, it has not redeployed yet.
+       There is a SECOND marker, DL_BUILD in delta-engine.js. Bump only the file you
+       changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-07f</span>
+  <span class="foot-build">2026-09-07g</span>
 </footer>
 
 
@@ -7867,7 +7869,26 @@ function renderSlpTradeAssist(){
 
    If the boot sequence needs to change, edit bootDelta() and ONLY bootDelta().
    Never inline a second copy of these steps. */
+/* Two build markers, reported not policed. The footer string tracks index.html;
+   DL_BUILD in delta-engine.js tracks the engine. They are bumped INDEPENDENTLY —
+   only the file that actually changed gets a new one — so the two differing is a
+   normal state, not an error, and is never coloured as one.
+   An earlier version treated a difference as a fault and turned the marker coral.
+   That was wrong: most sessions touch only one core file, so it would have cried
+   wolf on every correct deploy and forced a pointless upload of the other file to
+   silence it. What the footer owes you is what is actually live, and you compare
+   that against the two strings named in the handover.
+   Identical strings collapse to one, so the common case stays short. */
+function dlBuildStamp(){
+  const el=document.querySelector('.foot-build');
+  if(!el) return;
+  const page=el.textContent.trim();
+  const eng=(typeof DL_BUILD==='string')?DL_BUILD:'unknown';
+  if(eng===page) return;                 // same string twice reads as noise
+  el.textContent=page+' \u00b7 eng '+eng;
+}
 async function bootDelta(){
+  dlBuildStamp();   // first, so the stamp is right even if a loader throws
   syncSettingsUI();
   // Normalise any legacy bare watchlist entries BEFORE the first render, so the
   // rookie board and the Watchlist tab agree on day one rather than after a toggle.
