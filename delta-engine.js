@@ -5544,7 +5544,7 @@ function buildReadHTML(p){
   const rankDs=peers.slice().sort((a,b)=>b.dsScore-a.dsScore).findIndex(x=>x.n===p.n)+1;
   const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
   const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
-  const proofClr=ds>=72?'#10B981':ds>=62?'#10B981':ds>=52?'#6BB6E0':ds>=42?'#E0B34D':'#E05745';
+  const proofClr=ds>=72?'var(--emerald)':ds>=62?'var(--emerald)':ds>=52?'var(--sky)':ds>=42?'var(--topaz)':'var(--coral)';
   const worthOutrunsProof=(rankDs-rankMv)>=6;
   const ranksAgree=Math.abs(rankMv-rankMk)<=1;
   const absPct=Math.abs(pct);
@@ -5631,9 +5631,9 @@ function buildReadHTML(p){
     math=cap
       ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but the price is a bet on that capital converting — there's no résumé behind it yet.`
       : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
-    clr='#8CA0B3';
+    clr='var(--fog)';
   } else if(verdict==='strong buy'||verdict==='buy'){
-    clr=verdict==='strong buy'?'#10B981':'#10B981';
+    clr=verdict==='strong buy'?'var(--emerald)':'var(--emerald)';
     if(worthOutrunsProof){
       math=pick(seed,[
         `The model prices the role, not the résumé: ${pos}${rankMv} against a ${pos}${rankDs} track record — ${absPct}% over the market if the situation holds. ${verdict==='strong buy'?'Strong buy':'Buy'}, eyes open.`,
@@ -5657,13 +5657,13 @@ function buildReadHTML(p){
       ]);
     }
   } else if(verdict==='sell'||verdict==='strong sell'){
-    clr=verdict==='strong sell'?'#E05745':'#E05745';
+    clr=verdict==='strong sell'?'var(--coral)':'var(--coral)';
     if(Math.abs(rankMv-rankMk)<=1){
       const rkTxt=rankMv===rankMk?`${pos}${rankMv}`:`${pos}${rankMk} and ${pos}${rankMv} — essentially the same rank`;
       math=absPct>=15
         ? `Market and model land on ${rkTxt}, but the market pays ${absPct}% more for it than the model would. Sell only into an overpay.`
         : `Market and model land on ${rkTxt}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
-      clr='#EAF0F4';
+      clr='var(--paper)';
     } else {
       math=pick(seed,[
         `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value':'Lean sell — the price is ahead of the production'}.`,
@@ -5678,7 +5678,7 @@ function buildReadHTML(p){
       `Model ${pos}${rankMv} and price ${pos}${rankMk} align — ${dir} market, not enough to act on.${dsNote} Hold.`,
       `Fair value: modeled ${pos}${rankMv}, priced ${pos}${rankMk} — ${dir} market.${dsNote} Hold unless a clear overpay comes.`,
     ]);
-    clr='#EAF0F4';
+    clr='var(--paper)';
   }
   const read=(verdict==='no data')?core+' '+math:core+' '+math;
   const N=peers.length||1;
@@ -5686,20 +5686,20 @@ function buildReadHTML(p){
     const w=Math.max(4,Math.round((1-(rank-1)/N)*100));
     return'<div style="margin-bottom:5px">'
       +'<div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px">'
-      +'<span style="color:#8CA0B3">'+lbl+'</span>'
-      +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:#5C7080;font-weight:400"> · '+sub+'</span></span></div>'
-      +'<div style="height:5px;background:#111A28;border-radius:3px;overflow:hidden">'
+      +'<span style="color:var(--fog)">'+lbl+'</span>'
+      +'<span style="color:'+c+';font-weight:700">'+pos+rank+'<span style="color:var(--fog-2);font-weight:400"> · '+sub+'</span></span></div>'
+      +'<div style="height:5px;background:var(--panel);border-radius:3px;overflow:hidden">'
       +'<div style="height:100%;width:'+w+'%;background:'+c+';border-radius:3px"></div></div></div>';
   };
-  return'<div class="dd-section" style="border:1px solid #1E2A3A;border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,#0D1420,#0D1420)">'
+  return'<div class="dd-section" style="border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-bottom:10px;background:linear-gradient(135deg,var(--ink-2),var(--ink-2))">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
-    +'<div style="font-size:12px;color:#EAF0F4;line-height:1.55;margin-bottom:'
+    +'<div style="font-size:12px;color:var(--paper);line-height:1.55;margin-bottom:'
     +(readStamp(p)?'6px':'11px')+'">'+read+'</div>'
     +readStamp(p)
     +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
-    +barFor(rankMv,'#9B8AF0','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
-    +barFor(rankMk,'#6BB6E0','MARKET PRICE',mk.toLocaleString())
+    +barFor(rankMv,'var(--violet)','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
+    +barFor(rankMk,'var(--sky)','MARKET PRICE',mk.toLocaleString())
     +'</div>';
 }
