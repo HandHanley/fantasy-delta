@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08c';
+const DL_BUILD='2026-09-08d';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -172,19 +172,19 @@ function startProfileHTML(p){
   const pos=p.pos||p.p||'WR';
   const sp=computeStartProfile(p.n,pos);
   if(!sp) return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
-    +'<div style="font-size:11px;color:#8CA0B3">No recent game data for this player/format.</div></div>';
+    +'<div style="font-size:11px;color:var(--fog)">No recent game data for this player/format.</div></div>';
   const seg=(pct,col)=> pct>0?'<div style="width:'+pct+'%;background:'+col+'"></div>':'';
   const cell=(lbl,pct,cnt,col)=>'<div style="text-align:center;flex:1">'
     +'<div style="font-size:18px;font-weight:800;color:'+col+';line-height:1">'+pct+'%</div>'
-    +'<div style="font-size:9px;color:#8CA0B3;letter-spacing:.05em;margin-top:2px">'+lbl+'</div>'
-    +'<div style="font-size:9px;color:#5C7080">'+cnt+' g</div></div>';
+    +'<div style="font-size:9px;color:var(--fog);letter-spacing:.05em;margin-top:2px">'+lbl+'</div>'
+    +'<div style="font-size:9px;color:var(--fog-2)">'+cnt+' g</div></div>';
   return '<div class="dd-section"><div class="dd-section-label">Start Profile</div>'
-    +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:#111A28;margin-bottom:9px">'
-    + seg(sp.missPct,'#E05745')+seg(sp.hitOnlyPct,'#6BB6E0')+seg(sp.elitePct,'#10B981')+'</div>'
+    +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--panel);margin-bottom:9px">'
+    + seg(sp.missPct,'var(--coral)')+seg(sp.hitOnlyPct,'var(--sky)')+seg(sp.elitePct,'var(--emerald)')+'</div>'
     +'<div style="display:flex;gap:4px">'
-    + cell('MISS',sp.missPct,sp.miss,'#E05745')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'#6BB6E0')+cell('ELITE',sp.elitePct,sp.elite,'#10B981')
+    + cell('MISS',sp.missPct,sp.miss,'var(--coral)')+cell('HIT',sp.hitPct,sp.hitOnly+sp.elite,'var(--sky)')+cell('ELITE',sp.elitePct,sp.elite,'var(--emerald)')
     +'</div>'
-    +'<div style="font-size:9px;color:#5C7080;text-align:center;margin-top:8px">'
+    +'<div style="font-size:9px;color:var(--fog-2);text-align:center;margin-top:8px">'
     + sp.n+' starts · '+sp.lo+'\u2013'+String(sp.hi).slice(2)+' · hit \u2265'+sp.hitLine+' · elite \u2265'+sp.eliteLine+' pts</div></div>';
 }
 
@@ -245,11 +245,11 @@ function gameLogInner(p){
   const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
   const vsw=views.map(v=>
     '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;white-space:nowrap;'
-    +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:#04231a':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
+    +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
   ).join('');
   const chips=seasons.map(s=>
     '<span onclick="glSetSeason('+s+')" style="cursor:pointer;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-right:5px;'
-    +(s===_glSeason?'background:var(--emerald);color:#04110c':'background:var(--line);color:var(--fog)')+'">'+s+'</span>'
+    +(s===_glSeason?'background:var(--emerald);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+s+'</span>'
   ).join('');
   const content = _glView==='table'
     ? '<div style="overflow-x:auto">'+gameLogTable(p,_glSeason)+'</div>'
@@ -5459,10 +5459,10 @@ function buildSchemeHTML(p){
           + 'Tendencies will populate once the offense has games on tape.';
     }
     return '<div>'
-      +'<div style="font-size:11px;color:#CDD9E5;font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>'
-      +'<div style="font-size:10px;color:#8CA0B3;line-height:1.5">'+msg+'</div></div>';
+      +'<div style="font-size:11px;color:var(--paper);font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>'
+      +'<div style="font-size:10px;color:var(--fog);line-height:1.5">'+msg+'</div></div>';
   }
-  var d = fp.d, coach = fp.pc, color = '#2DD4BF';
+  var d = fp.d, coach = fp.pc, color = 'var(--teal-br)';
 
   // ---- radar: 6 axes ----
   var AX = [['Motion','moti'],['Play-action','pa_p'],['PROE','proe'],
@@ -5470,21 +5470,21 @@ function buildSchemeHTML(p){
   var n = AX.length, cx = 150, cy = 158, R = 92;
   function xy(i, r){ var a = -Math.PI/2 + 2*Math.PI*i/n; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
   var rings = '', spokes = '', poly = '', dots = '', labels = '';
-  [33,66,100].forEach(function(g){ rings += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R*g/100)+'" fill="none" stroke="#1E2A3A"/>'; });
+  [33,66,100].forEach(function(g){ rings += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R*g/100)+'" fill="none" style="stroke:var(--line)"/>'; });
   var pts = [];
   for(var i=0;i<n;i++){
     var lab = AX[i][0], cell = d[AX[i][1]], pc = cell?cell.p:0;
-    var e = xy(i, R); spokes += '<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(0)+'" y2="'+e[1].toFixed(0)+'" stroke="#1E2A3A"/>';
+    var e = xy(i, R); spokes += '<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(0)+'" y2="'+e[1].toFixed(0)+'" style="stroke:var(--line)"/>';
     var v = xy(i, R*pc/100); pts.push(v[0].toFixed(1)+','+v[1].toFixed(1));
-    dots += '<circle cx="'+v[0].toFixed(1)+'" cy="'+v[1].toFixed(1)+'" r="2.5" fill="'+color+'"/>';
+    dots += '<circle cx="'+v[0].toFixed(1)+'" cy="'+v[1].toFixed(1)+'" r="2.5" style="fill:'+color+'"/>';
     var gap = (i===0)?24:15, lp = xy(i, R+gap);
     var anc = Math.abs(lp[0]-cx)<15?'middle':(lp[0]>cx?'start':'end');
-    labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" fill="#8CA0B3" font-size="9" text-anchor="'+anc+'" font-family="var(--sans,sans-serif)">'+lab+'</text>';
+    labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" font-size="9" text-anchor="'+anc+'" style="fill:var(--fog);font-family:var(--sans,sans-serif)">'+lab+'</text>';
   }
-  poly = '<polygon points="'+pts.join(' ')+'" fill="'+color+'" fill-opacity="0.18" stroke="'+color+'" stroke-width="2"/>';
+  poly = '<polygon points="'+pts.join(' ')+'" fill-opacity="0.18" stroke-width="2" style="fill:'+color+';stroke:'+color+'"/>';
   var radar = '<svg viewBox="0 0 300 300" style="width:100%;max-width:300px;display:block;margin:0 auto">'
-    +'<text x="150" y="18" fill="#CDD9E5" font-size="12.5" font-weight="700" text-anchor="middle" font-family="var(--sans,sans-serif)">Playcaller Tendencies</text>'
-    +'<text x="150" y="33" fill="'+color+'" font-size="10.5" font-weight="600" text-anchor="middle" font-family="var(--sans,sans-serif)">'+coach+'</text>'
+    +'<text x="150" y="18" font-size="12.5" font-weight="700" text-anchor="middle" style="fill:var(--paper);font-family:var(--sans,sans-serif)">Playcaller Tendencies</text>'
+    +'<text x="150" y="33" font-size="10.5" font-weight="600" text-anchor="middle" style="fill:'+color+';font-family:var(--sans,sans-serif)">'+coach+'</text>'
     +rings+spokes+poly+dots+labels+'</svg>';
 
   // ---- bars: all 8 ----
@@ -5500,20 +5500,20 @@ function buildSchemeHTML(p){
   ];
   function bar(label, cell, hint){
     if(!cell) return '';
-    var pc = cell.p, v = cell.v, clr = pc>=67?'#2DD4BF':pc>=34?'#6BB6E0':'#5C7080';
+    var pc = cell.p, v = cell.v, clr = pc>=67?'var(--teal-br)':pc>=34?'var(--sky)':'var(--fog-2)';
     var tier = pc>=80?'elite':pc>=60?'high':pc>=40?'average':pc>=20?'low':'rare';
     return '<div style="margin:8px 0">'
       +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
-      +'<span style="font-size:10px;color:#8CA0B3">'+label+'</span>'
-      +'<span style="font-size:10px;color:'+clr+';font-family:var(--mono,monospace);font-weight:600">'+v+'<span style="color:#5C7080;font-weight:400"> · '+tier+'</span></span></div>'
-      +'<div style="height:4px;border-radius:3px;background:#1E2A3A"><div style="height:100%;width:'+pc+'%;background:'+clr+';border-radius:3px"></div></div>'
-      +(hint?'<div style="font-size:8.5px;color:#5C7080;margin-top:2px">'+hint+'</div>':'')+'</div>';
+      +'<span style="font-size:10px;color:var(--fog)">'+label+'</span>'
+      +'<span style="font-size:10px;color:'+clr+';font-family:var(--mono,monospace);font-weight:600">'+v+'<span style="color:var(--fog-2);font-weight:400"> · '+tier+'</span></span></div>'
+      +'<div style="height:4px;border-radius:3px;background:var(--line)"><div style="height:100%;width:'+pc+'%;background:'+clr+';border-radius:3px"></div></div>'
+      +(hint?'<div style="font-size:8.5px;color:var(--fog-2);margin-top:2px">'+hint+'</div>':'')+'</div>';
   }
   var bars = BARS.map(function(b){ return bar(b[0], d[b[1]], b[2]); }).join('');
 
   return '<div>'+radar
     +'<div style="margin-top:6px">'+bars+'</div>'
-    +'<div style="font-size:8.5px;color:#5C7080;text-align:center;margin-top:8px">'
+    +'<div style="font-size:8.5px;color:var(--fog-2);text-align:center;margin-top:8px">'
     + fp.yrs + '-year fingerprint · ' + coach + ' · ranked vs league · descriptive, not a projection input</div>'
     +'</div>';
 }
@@ -5538,7 +5538,7 @@ function readStamp(p){
   const d=new Date(e.authored+'T00:00:00Z');
   if(isNaN(d)) return '';
   const when=d.toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
-  return '<div style="font-size:9.5px;color:#5C7080;margin-bottom:11px">Written '+when+'</div>';
+  return '<div style="font-size:9.5px;color:var(--fog-2);margin-bottom:11px">Written '+when+'</div>';
 }
 function buildReadHTML(p){
   const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
