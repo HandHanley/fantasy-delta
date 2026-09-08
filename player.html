@@ -67,22 +67,47 @@ a:hover{text-decoration:underline}
 .dd-prog-bar{flex:1;height:5px;background:#111A28;border-radius:3px;overflow:hidden}
 .dd-prog-fill{height:100%;border-radius:3px}
 .dd-prog-val{font-size:10px;font-weight:600;width:32px;text-align:right;flex-shrink:0}
-.prod-table{width:100%;border-collapse:collapse;font-size:11px}
-.prod-table th{font-size:9px;font-weight:600;color:#5C7080;letter-spacing:.04em;text-align:right;padding:0 8px 6px}
-.prod-table th:first-child{text-align:left}
-.prod-table td{text-align:right;padding:5px 8px;border-top:1px solid #111A28}
-.prod-table td:first-child{text-align:left;color:#8CA0B3;font-weight:600}
-/* College game log: up to nine columns, so it gets tighter padding than the season
-   tables and the opponent column — the least valuable field — gives up space first. */
-.cgl th,.cgl td{padding:4px 5px}
+/* ── Shared board styling ─────────────────────────────────────────────────
+   Lifted from index.html so this page reads as the same product. Opt in with
+   .dl-board. .dl-pp- is this page's density modifier — the same pattern Roster
+   (.dl-mt-) and Power Rankings (.dl-pw-) use, because a stat table inside a
+   card cannot carry the reading-board 42px row. */
+.dl-b-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.dl-board{width:auto;min-width:100%;border-collapse:collapse}
+.dl-board thead th{font-family:var(--sans);font-size:10.5px;font-weight:600;
+  letter-spacing:0;text-transform:none;color:var(--fog-2);
+  padding:0 10px 9px;border-bottom:none;white-space:nowrap;cursor:default}
+.dl-board thead th:hover{color:var(--fog-2)}
+.dl-board tbody td{height:42px;padding:0 10px;font-size:13px;
+  border-bottom:1px solid var(--line);vertical-align:middle}
+.dl-board tbody tr:hover td{background:var(--row-hi)}
+.dl-board th.dl-b-r,.dl-board td.dl-b-r{text-align:right}
+.dl-board th.dl-b-c,.dl-board td.dl-b-c{text-align:center}
+
+/* Figures right, first column left. These tables were built that way and every
+   generated cell depends on it, so it stays a default here rather than being
+   rewritten as per-cell .dl-b-r on four tables' worth of markup. */
+.dl-pp-tbl{font-family:var(--mono);font-size:12px}
+.dl-pp-tbl thead th{font-size:9.5px;letter-spacing:.04em;text-align:right;padding:0 8px 7px}
+.dl-pp-tbl thead th:first-child{text-align:left}
+.dl-pp-tbl tbody td{height:30px;text-align:right;padding:0 8px;font-size:inherit;
+  border-bottom:1px solid var(--line)}
+.dl-pp-tbl tbody td:first-child{text-align:left;color:var(--fog);font-weight:600;font-family:var(--sans)}
+/* College game log: up to nine columns, so it stays tighter than the season tables
+   and the opponent column — the least valuable field — gives up space first.
+   Scoped through .dl-pp-tbl so it outranks the density rules above; a bare .cgl td
+   loses to .dl-pp-tbl tbody td on specificity and the tightening silently stops. */
+.dl-pp-tbl.cgl{font-size:11px}
+.dl-pp-tbl.cgl thead th,.dl-pp-tbl.cgl tbody td{padding:4px 5px}
+.dl-pp-tbl.cgl tbody td{height:auto}
 .cgl .opp{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:600px){
-  .cgl{font-size:9.5px!important}
-  .cgl th,.cgl td{padding:3px 3px!important}
+  .dl-pp-tbl.cgl{font-size:9.5px}
+  .dl-pp-tbl.cgl thead th,.dl-pp-tbl.cgl tbody td{padding:3px 3px}
   .cgl .opp{max-width:56px;font-size:9px}
 }
 @media(max-width:400px){
-  .cgl{font-size:9px!important}
+  .dl-pp-tbl.cgl{font-size:9px}
   .cgl .opp{max-width:46px;font-size:8.5px}
 }
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -134,11 +159,6 @@ a{color:#2DD4BF}
 .card{background:#111A28;border:1px solid #1E2A3A}
 .card-label,.dd-section-label{font-family:var(--sans);color:#5C7080}
 .card-sub,.freshness{color:#5C7080}
-/* figures in mono, labels in sans */
-.prod-table{font-family:var(--mono)}
-.prod-table th{font-family:var(--sans);color:#5C7080}
-.prod-table td{border-top:1px solid #1E2A3A}
-.prod-table td:first-child{font-family:var(--sans);color:#8CA0B3}
 .stat-box{background:#0D1420}
 .stat-val{font-family:var(--mono)}
 .stat-lbl{font-family:var(--sans);color:#5C7080}
@@ -468,7 +488,7 @@ function buildProductionHTML(p) {
     <div style="display:flex;gap:4px;margin-bottom:2px">${vals}</div>
     <div style="display:flex;gap:4px;height:${barH}px">${bars}</div>
     <div style="display:flex;gap:4px;margin-top:3px;margin-bottom:10px">${lbls}</div>
-    <table class="prod-table">
+    <table class="dl-board dl-pp-tbl">
       <thead><tr>
         <th>Season</th><th>PPG</th><th>Games</th>
         <th title="PPG vs current-season positional average — same value used across all years">vs pos avg *</th>
@@ -1238,8 +1258,8 @@ function buildCollegeHTML(p) {
   if (room && room.length >= 2) {
     matesCard = '<div class="card"><div class="card-label">Team construction \u00b7 ' + yr
       + '<div class="card-sub">who else was catching the ball at ' + r.tm + ' that season</div></div>'
-      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
-      + '<table class="prod-table cgl"><thead><tr>'
+      + '<div class="dl-b-scroll">'
+      + '<table class="dl-board dl-pp-tbl cgl"><thead><tr>'
       + '<th style="text-align:left">Player</th><th>Pos</th><th>Rec</th><th>Yds</th><th>Share</th>'
       + '</tr></thead><tbody>'
       + room.map(m => {
@@ -1270,8 +1290,8 @@ function buildCollegeHTML(p) {
       : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
     const rows2 = g.slice().sort((a, b) => (a.w || 0) - (b.w || 0));
     glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div>'
-      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
-      + '<table class="prod-table cgl" style="font-size:10.5px"><thead><tr>'
+      + '<div class="dl-b-scroll">'
+      + '<table class="dl-board dl-pp-tbl cgl"><thead><tr>'
       + '<th>Wk</th><th style="text-align:left">Opp</th>'
       + cols.map(c => '<th>' + c[0] + '</th>').join('')
       + '</tr></thead><tbody>'
@@ -1297,8 +1317,8 @@ function buildCollegeHTML(p) {
       + '<div class="card-sub" style="color:#5C7080">Bowl and playoff games. Shown separately and '
       + 'NOT counted in any number above \u2014 participation is not uniform, so folding these in '
       + 'would rank players on different amounts of football.</div></div>'
-      + '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch">'
-      + '<table class="prod-table cgl"><thead><tr><th style="text-align:left">Opponent</th>'
+      + '<div class="dl-b-scroll">'
+      + '<table class="dl-board dl-pp-tbl cgl"><thead><tr><th style="text-align:left">Opponent</th>'
       + pcols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr></thead><tbody>'
       + post.map(x => '<tr><td class="opp" style="text-align:left;color:var(--paper);font-weight:600" title="'
           + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
