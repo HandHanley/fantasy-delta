@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08b';
+const DL_BUILD='2026-09-08c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5277,12 +5277,12 @@ function contractStatus(c){
 }
 
 function dynastySignal(c){
-  if(c.end===2026)return'<span style="color:#E05745;font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  if(c.end===2026)return'<span style="color:var(--coral);font-size:10px">Sell before walk year · Contract leverage gone</span>';
   const yrsLeft=c.end-2025; // inclusive of current 2026 season
-  if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:#10B981;font-size:10px">Elite commitment — long-term hold</span>';
-  if(yrsLeft>=3)return'<span style="color:#6BB6E0;font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
-  if(yrsLeft<=2)return'<span style="color:#E0B34D;font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
-  return'<span style="color:#8CA0B3;font-size:10px">'+c.note+'</span>';
+  if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:var(--emerald);font-size:10px">Elite commitment — long-term hold</span>';
+  if(yrsLeft>=3)return'<span style="color:var(--sky);font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
+  if(yrsLeft<=2)return'<span style="color:var(--topaz);font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
+  return'<span style="color:var(--fog);font-size:10px">'+c.note+'</span>';
 }
 
 function buildDSBreakdownHTML(p){
