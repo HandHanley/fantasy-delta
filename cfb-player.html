@@ -174,10 +174,10 @@ async function boot(){
   const pool=data.players;
   const p=pool.find(x=>x.n===name) || pool.find(x=>x.n.toLowerCase()===name.toLowerCase());
   if(!p){ app.innerHTML='<div id="err">Player not found: '+name.replace(/[<>]/g,'')+'</div>'; return; }
-  render(p, pool, data.seasons||[data.season]);
+  render(p, pool, data.seasons||[data.season], data.season);
 }
 
-function render(p, pool, seasons){
+function render(p, pool, seasons, season){
   const dd=cfbDDOM(p, pool);
   const clsNum=p.ageEst?p.ageEst-17:p.cls;
   const posCol=p.pos==='QB'?'var(--violet)':p.pos==='RB'?'var(--topaz)':'var(--sky)';
@@ -237,7 +237,7 @@ function render(p, pool, seasons){
     +'<div class="sub"><span class="posdot" style="background:'+posCol+'">'+p.pos+'</span>'+(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
       +compHtml+starsHtml+'<span>'+cfbClassName(clsNum)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span></div>'
     +'<div class="cols">'+heroCard+ppaCard+'</div>'
-    +'<div class="sec-h">PRODUCTION &amp; EFFICIENCY</div>'+gridHtml
+    +'<div class="sec-h">PRODUCTION &amp; EFFICIENCY \u00b7 '+season+'</div>'+gridHtml
     +'<div class="sec-h">TRAJECTORY \u00b7 dDOM BY SEASON</div><div id="traj" class="muted">loading…</div>'
     +'<div class="sec-h">GAME LOG</div><div id="gamelog" class="muted">loading…</div>'
     +'<div id="teammates"></div>'
@@ -306,6 +306,15 @@ function teammatesTable(p, pool){
     +'</tbody></table><div class="muted">Only tracked players appear \u2014 shares will not sum to 100%.</div>';
 }
 function glSeason(y){ if(y==='all'){ GL.sel='all'; renderGL(); return; } if(GL.data&&GL.data[y]){ GL.sel=y; renderGL(); } }
+// Season totals for the game-log caption. Lifted out of the all-seasons branch below
+// so the single-season and all-seasons views can never disagree on the same numbers.
+function glTotals(pos, games){
+  const tot=(games||[]).reduce((a,g)=>{['rec','rey','ret','car','ry','rt','py','pt','pi'].forEach(k=>a[k]=(a[k]||0)+(+g[k]||0));return a;},{});
+  return pos==='QB'?`${tot.py||0} pass yds \u00b7 ${tot.pt||0} TD \u00b7 ${tot.pi||0} INT`
+        :pos==='RB'?`${tot.ry||0} rush yds \u00b7 ${tot.rt||0} TD \u00b7 ${tot.rec||0} rec`
+        :`${tot.rey||0} rec yds \u00b7 ${tot.ret||0} TD \u00b7 ${tot.rec||0} rec`;
+}
+
 function renderGL(){
   const yrs=Object.keys(GL.data).map(Number).sort((a,b)=>a-b);
   const opts=yrs.length>1?yrs.concat(['all']):yrs;
@@ -316,10 +325,7 @@ function renderGL(){
   if(GL.sel==='all'){
     // Stacked multi-season log — the full career view the quick-look modal can't show.
     body=yrs.map(y=>{ const d=GL.data[y];
-      const tot=(d.games||[]).reduce((a,g)=>{['rec','rey','ret','car','ry','rt','py','pt','pi'].forEach(k=>a[k]=(a[k]||0)+(+g[k]||0));return a;},{});
-      const sum=d.pos==='QB'?`${tot.py||0} pass yds \u00b7 ${tot.pt||0} TD \u00b7 ${tot.pi||0} INT`
-        :d.pos==='RB'?`${tot.ry||0} rush yds \u00b7 ${tot.rt||0} TD \u00b7 ${tot.rec||0} rec`
-        :`${tot.rey||0} rec yds \u00b7 ${tot.ret||0} TD \u00b7 ${tot.rec||0} rec`;
+      const sum=glTotals(d.pos,d.games);
       return '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
         +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+y+'</div>'
         +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+sum+' \u00b7 '+(d.games||[]).length+' g</div></div>'
@@ -327,7 +333,10 @@ function renderGL(){
         +postseasonTable(d.pos, cfbPostFor(d.rec&&d.rec.n||GL.name, y), y)+'</div>'; }).join('');
     teamHost=GL.data[yrs[yrs.length-1]];
   } else { const cur=GL.data[GL.sel];
-    body=gameLogTable(cur.pos,cur.games)
+    body='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
+        +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+GL.sel+'</div>'
+        +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+glTotals(cur.pos,cur.games)+' \u00b7 '+(cur.games||[]).length+' g</div></div>'
+        +gameLogTable(cur.pos,cur.games)
         +postseasonTable(cur.pos, cfbPostFor(cur.rec&&cur.rec.n||GL.name, GL.sel), GL.sel);
     teamHost=cur; }
   document.getElementById('gamelog').innerHTML=pills+body;

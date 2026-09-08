@@ -1328,8 +1328,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
-  <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
+  <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
@@ -1392,6 +1392,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
       <optgroup label="College">
         <option value="college">College Rankings</option>
         <option value="portal">Transfer Portal</option>
+        <option value="bigboard">Big Board</option>
         <option value="rookies">Prospects</option>
       </optgroup>
       <optgroup label="My Team">
@@ -3672,7 +3673,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','projections','trade','epa','ripple','contracts','audit'],
-                 cfb:['college','portal','rookies','bigboard'],
+                 cfb:['college','portal','bigboard','rookies'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
@@ -5077,7 +5078,7 @@ document.addEventListener('click', function(e) {
     <div>
       <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">College Tracking</div>
       <div style="font-size:11px;color:var(--fog-2);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-        <span id="cfb-season-label"></span><span>Know them before the draft</span>
+        <span id="cfb-season-label"></span>
         <select id="cfb-season" onchange="cfbSetSeason(this.value)" style="display:none;font-family:var(--mono);
           font-size:10.5px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
           border-radius:6px;padding:2px 5px"></select>
@@ -5169,7 +5170,7 @@ document.addEventListener('click', function(e) {
        refresh, and if the marker has not moved, it has not redeployed yet.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-07e</span>
+  <span class="foot-build">2026-09-07f</span>
 </footer>
 
 
@@ -5497,8 +5498,10 @@ function cfbRookieTag(name){
 function cfbSeasonUI(){
   const lab=document.getElementById('cfb-season-label'), sel=document.getElementById('cfb-season');
   if(!CFB) return;
-  if(lab) lab.innerHTML='<b style="color:var(--paper)">'+CFB.season+' season</b> \u00b7';
   const seasons=(CFB.seasons||[]).slice().sort((a,b)=>b-a);
+  // The picker already shows the year, so the text label only appears when there is no
+  // picker (a single season file). Without this the whole row goes blank in that case.
+  if(lab) lab.innerHTML=seasons.length>1?'':'<b style="color:var(--paper)">'+CFB.season+' season</b>';
   if(sel){
     // A picker for one season is just clutter; it appears the year a second file exists.
     if(seasons.length>1){
