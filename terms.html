@@ -89,11 +89,20 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
 /* Apply the saved accent theme BEFORE first paint (no flash of the default).
    Self-contained on purpose — this page loads no app code. */
 (function(){try{
-  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],slate:['#94A3B8','#64748B']};
+  /* MUST match DL_THEMES in index.html. SIX copies of this table exist and all must move
+     together: DL_THEMES itself, and this pre-paint block in index.html, player.html,
+     cfb-player.html, privacy.html and terms.html. Each one runs before any app code exists,
+     so none of them can read the real table. A theme missing from a copy silently renders
+     that whole page in teal — cobalt and orchid were absent from this file until 7 Sep 2026
+     for exactly that reason. The six Settings swatch dots in index.html hardcode the same
+     values a seventh time. */
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
+         cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
   var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
   function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
   s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
+  s.setProperty('--row-hi',rgba(t[0],.055));
 }catch(e){}})();
 </script>
 

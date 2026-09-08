@@ -142,9 +142,13 @@ a{color:#2DD4BF}
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
    on purpose: this runs before delta-engine.js exists. */
 (function(){try{
-  /* MUST match DL_THEMES in index.html. This table is duplicated in three places on purpose —
-     it runs before delta-engine.js exists, so it cannot read the real one — and player.html
-     has NO other copy, so a theme missing here renders that whole page in teal. */
+  /* MUST match DL_THEMES in index.html. SIX copies of this table exist and all must move
+     together: DL_THEMES itself, and this pre-paint block in index.html, player.html,
+     cfb-player.html, privacy.html and terms.html. Each one runs before any app code exists,
+     so none of them can read the real table. A theme missing from a copy silently renders
+     that whole page in teal — cobalt and orchid were absent from privacy.html and terms.html
+     for months for exactly this reason. The six Settings swatch dots in index.html hardcode
+     the same values a seventh time. */
   var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
          cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
   var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
