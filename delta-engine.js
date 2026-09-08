@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08a';
+const DL_BUILD='2026-09-08b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4011,11 +4011,13 @@ function getOppScore(name, pos) {
 }
 
 function oppScoreColor(score) {
-  if (!score) return '#5C7080';
-  if (score >= 88) return '#10B981';
-  if (score >= 75) return '#6BB6E0';
-  if (score >= 60) return '#E0B34D';
-  return '#E05745';
+  // Tokens, not hex — same colours, but resolving through :root is what lets a palette
+  // change reach the style attributes these land in. Matches dsColor's treatment.
+  if (!score) return 'var(--fog-2)';
+  if (score >= 88) return 'var(--emerald)';
+  if (score >= 75) return 'var(--sky)';
+  if (score >= 60) return 'var(--topaz)';
+  return 'var(--coral)';
 }
 
 function oppScoreLabel(pos) {
@@ -4422,8 +4424,8 @@ function dsColor(score) {
 
 RAW.forEach(r=>COMP.push(calcProj(r)));
 const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
-function bc(s){return s>=70?'#10B981':s>=55?'#6BB6E0':s>=40?'#E0B34D':'#E05745';}
-function tH(t){return t==='up'?'<span style="color:#10B981">▲</span>':t==='down'?'<span style="color:#E05745">▼</span>':'<span style="color:#5C7080">—</span>';}
+function bc(s){return s>=70?'var(--emerald)':s>=55?'var(--sky)':s>=40?'var(--topaz)':'var(--coral)';}
+function tH(t){return t==='up'?'<span style="color:var(--emerald)">▲</span>':t==='down'?'<span style="color:var(--coral)">▼</span>':'<span style="color:var(--fog-2)">—</span>';}
 /* Visible marker so a zeroed projection reads as a known absence rather than
    stale data — which was the reason for surfacing this at all. */
 function injBadge(n){
