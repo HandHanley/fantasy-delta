@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-07g';
+const DL_BUILD='2026-09-08a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2678,13 +2678,13 @@ let RIPPLE=[];
 // (legacy hardcoded GAME_LOG removed — game logs live in data/game-logs.json via glOf())
 function glTag(n){
   const p=COMP.find(x=>x.n===n); const d=glOf(p);if(!d)return'';
-  const mc=d.miss<=35?'#10B981':d.miss<=50?'#E0B34D':'#E05745';
-  const hc=d.hit>=65?'#10B981':d.hit>=50?'#6BB6E0':'#8CA0B3';
-  const ec=d.elite>=25?'#10B981':d.elite>=15?'#6BB6E0':'#8CA0B3';
+  const mc=d.miss<=35?'var(--emerald)':d.miss<=50?'var(--topaz)':'var(--coral)';
+  const hc=d.hit>=65?'var(--emerald)':d.hit>=50?'var(--sky)':'var(--fog)';
+  const ec=d.elite>=25?'var(--emerald)':d.elite>=15?'var(--sky)':'var(--fog)';
   return`<span style="font-size:9px;display:inline-flex;gap:3px;margin-left:4px">` +
-    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${mc}">M${d.miss}%</span>` +
-    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${hc}">H${d.hit}%</span>` +
-    `<span style="background:#111A28;border:1px solid #1E2A3A;border-radius:3px;padding:1px 4px;color:${ec}">E${d.elite}%</span>` +
+    `<span style="background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1px 4px;color:${mc}">M${d.miss}%</span>` +
+    `<span style="background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1px 4px;color:${hc}">H${d.hit}%</span>` +
+    `<span style="background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1px 4px;color:${ec}">E${d.elite}%</span>` +
     `</span>`;
 }
 
