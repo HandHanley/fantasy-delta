@@ -262,7 +262,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-08c</span>
+    <span class="foot-build">2026-09-08e</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1457,16 +1457,15 @@ function _renderPlayerPage(p) {
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
     <div class="pp-span">${buildGameLogCard(p)}</div>
+    ${buildOpportunityHTML(p)}
     ${buildDSTrajectoryHTML(p)}
     ${buildAgeCurveHTML(p)}
     ${buildProductionHTML(p)}
     ${buildTDPctHTML(p)}
     ${buildEPAHTML(p)}
-    ${buildOpportunityHTML(p)}
     ${buildContractHTML(p)}
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
-    ${buildScoutHTML()}
     ${(!hasCollege(p) && isRookie(p)) ? '<div id="combine-slot"></div>' : ''}
     ${buildDepthHTML(p)}
     </div>
