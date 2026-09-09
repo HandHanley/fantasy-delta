@@ -32,6 +32,22 @@ body{background:var(--ink);color:var(--paper);font-family:-apple-system,BlinkMac
 a{color:var(--emerald);text-decoration:none}
 a:hover{text-decoration:underline}
 .page{max-width:680px;margin:0 auto;padding:16px 14px 48px}
+/* ── Desktop: two columns ────────────────────────────────────────────────
+   Below 1000px nothing changes — one column, exactly as before. Above it the
+   page widens and the NFL cards flow into two columns.
+   CSS columns rather than a grid, deliberately. A grid makes every row as tall
+   as its tallest cell, and these cards range from 73px (Scouting Report) to
+   787px (Opportunity), so a grid would leave a 700px hole beside the tall ones.
+   Columns pack vertically instead, which is what you actually want here.
+   break-inside:avoid keeps a card whole; the inline-block/width:100% pair is
+   what makes that reliable — on its own, break-inside is widely ignored.
+   .pp-span lets one card opt back out to the full width. */
+@media(min-width:1000px){
+  .page{max-width:1080px}
+  #tab-nfl,#tab-cfb{column-count:2;column-gap:16px}
+  #tab-nfl > *,#tab-cfb > *{break-inside:avoid;display:inline-block;width:100%;margin-bottom:16px}
+  #tab-nfl > .pp-span,#tab-cfb > .pp-span{column-span:all;display:block}
+}
 .foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
 .foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -246,7 +262,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-08b</span>
+    <span class="foot-build">2026-09-08c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1440,7 +1456,7 @@ function _renderPlayerPage(p) {
     ${buildStatLineHTML(p)}
     ${buildReadHTML(p)}
     ${buildStartProfileCard(p)}
-    ${buildGameLogCard(p)}
+    <div class="pp-span">${buildGameLogCard(p)}</div>
     ${buildDSTrajectoryHTML(p)}
     ${buildAgeCurveHTML(p)}
     ${buildProductionHTML(p)}
