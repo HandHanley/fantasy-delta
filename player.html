@@ -95,6 +95,15 @@ a:hover{text-decoration:underline}
 .dl-pp-tbl tbody td{height:30px;text-align:right;padding:0 8px;font-size:inherit;
   border-bottom:1px solid var(--line)}
 .dl-pp-tbl tbody td:first-child{text-align:left;color:var(--fog);font-weight:600;font-family:var(--sans)}
+/* Left is the board default but the RIGHT default on this page, so a left-aligned cell
+   that is not the first one needs saying. Named to sit beside .dl-b-r / .dl-b-c. */
+.dl-board th.dl-b-l,.dl-board td.dl-b-l{text-align:left}
+/* The row for the player whose page you are on. This was tinted with an emerald wash,
+   which quietly invents a signal: --emerald means BUY everywhere else in the product, so
+   a green row here reads as a verdict rather than "you are here". --row-hi is the token
+   that already means highlighted row, and it follows the accent theme. */
+.dl-pp-tbl tbody tr.dl-pp-me td{background:var(--row-hi)}
+.dl-pp-tbl tbody tr.dl-pp-me td:first-child{color:var(--paper)}
 /* College game log: up to nine columns, so it stays tighter than the season tables
    and the opponent column — the least valuable field — gives up space first.
    Scoped through .dl-pp-tbl so it outranks the density rules above; a bare .cgl td
@@ -237,7 +246,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-08a</span>
+    <span class="foot-build">2026-09-08b</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1299,11 +1308,11 @@ function buildCollegeHTML(p) {
       + '<div class="card-sub">who else was catching the ball at ' + r.tm + ' that season</div></div>'
       + '<div class="dl-b-scroll">'
       + '<table class="dl-board dl-pp-tbl cgl"><thead><tr>'
-      + '<th style="text-align:left">Player</th><th>Pos</th><th>Rec</th><th>Yds</th><th>Share</th>'
+      + '<th>Player</th><th>Pos</th><th>Rec</th><th>Yds</th><th>Share</th>'
       + '</tr></thead><tbody>'
       + room.map(m => {
           const me = m.n === (r._cfbName || p.n);
-          return '<tr' + (me ? ' style="background:rgba(16,185,129,.07)"' : '') + '>'
+          return '<tr' + (me ? ' class="dl-pp-me"' : '') + '>'
             + '<td class="opp" style="text-align:left;color:' + (me ? 'var(--paper)' : 'var(--fog)')
             + ';font-weight:' + (me ? '700' : '400') + '" title="' + String(m.n).replace(/"/g,'&quot;') + '">'
             + m.n + (me ? ' \u2190' : '') + '</td>'
@@ -1331,11 +1340,11 @@ function buildCollegeHTML(p) {
     glCard = '<div class="card"><div class="card-label">' + yr + ' game log</div>'
       + '<div class="dl-b-scroll">'
       + '<table class="dl-board dl-pp-tbl cgl"><thead><tr>'
-      + '<th>Wk</th><th style="text-align:left">Opp</th>'
+      + '<th>Wk</th><th class="dl-b-l">Opp</th>'
       + cols.map(c => '<th>' + c[0] + '</th>').join('')
       + '</tr></thead><tbody>'
       + rows2.map(x => '<tr><td>' + (x.w || '-') + '</td>'
-          + '<td class="opp" style="text-align:left;color:var(--fog)" title="'
+          + '<td class="opp dl-b-l" style="color:var(--fog)" title="'
           + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
           + cols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
       + '</tbody></table></div></div>';
@@ -1357,9 +1366,9 @@ function buildCollegeHTML(p) {
       + 'NOT counted in any number above \u2014 participation is not uniform, so folding these in '
       + 'would rank players on different amounts of football.</div></div>'
       + '<div class="dl-b-scroll">'
-      + '<table class="dl-board dl-pp-tbl cgl"><thead><tr><th style="text-align:left">Opponent</th>'
+      + '<table class="dl-board dl-pp-tbl cgl"><thead><tr><th>Opponent</th>'
       + pcols.map(c => '<th>' + c[0] + '</th>').join('') + '</tr></thead><tbody>'
-      + post.map(x => '<tr><td class="opp" style="text-align:left;color:var(--paper);font-weight:600" title="'
+      + post.map(x => '<tr><td class="opp dl-b-l" style="color:var(--paper);font-weight:600" title="'
           + String(x.opp || '').replace(/"/g, '&quot;') + '">' + _opp(x.opp) + '</td>'
           + pcols.map(c => '<td>' + _cN(x[c[1]]) + '</td>').join('') + '</tr>').join('')
       + '</tbody></table></div>'

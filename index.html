@@ -922,6 +922,14 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dtable td.dl-ct-dim{color:var(--fog)}
 .dtable td.dl-ct-aav{font-weight:600}
 .dtable td.dl-ct-yrs{font-weight:600}
+/* The signal cell holds a full sentence plus the market value. Left to wrap it squeezed
+   into ~109px on a phone and pushed every row to 75px — five lines of text in a column
+   nobody reads first, making the whole board look bunched. The table already sits in a
+   .dl-b-scroll wrapper and already scrolls sideways at that width, so letting this cell
+   take the width it needs costs nothing and buys back the row rhythm. Status gets the
+   same treatment: a two-word badge on two lines is the same failure in miniature. */
+.dtable td.dl-ct-sig{white-space:nowrap}
+.dtable td.dl-ct-status{white-space:nowrap}
 
 /* ── Ripple Effects ──────────────────────────────────────────────────────
    A card list, not a table, so .dl-board does not reach it. Typography is
@@ -3325,8 +3333,8 @@ function renderContracts(){
       <td class="dl-b-r dl-ct-dim">${fmt(c.total)}</td>
       <td class="dl-b-r">${c.end}</td>
       <td class="dl-b-c dl-ct-yrs" style="color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
-      <td><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
-      <td>${dynastySignal(c)} ${ktcStr}</td>
+      <td class="dl-ct-status"><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
+      <td class="dl-ct-sig">${dynastySignal(c)} ${ktcStr}</td>
     </tr>`;
   }).join('');
 }
@@ -5172,7 +5180,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-07g</span>
+  <span class="foot-build">2026-09-08a</span>
 </footer>
 
 
