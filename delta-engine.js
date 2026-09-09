@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08d';
+const DL_BUILD='2026-09-08e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4466,6 +4466,19 @@ function injBadge(n){
              a harder state than "currently unavailable". */
   if(lbl==='DNR')
     return '<span class="badge bd" style="margin-right:3px;font-size:9px" title="Sleeper status: DNR — reserve/did not report. Not with the team.">DNR</span>';
+  /* NA — not on the active roster. Exempt list, non-football absence, or a
+     designation with no return date. Same test as DNR: structural, open-ended,
+     and a longer-horizon fact than any weekly tag. Its absence was the live
+     Pearsall failure shape — Josh Jacobs sat on the Commissioner's Exempt List
+     through Week 1 rendering as a perfectly healthy RB1 with no tag at all.
+     Labelled INACTIVE, not "NA", because the label has to explain itself
+     without a click and two letters do not.
+     Note the tooltip never names a body part. Sleeper carries one for these
+     players and it is often stale — Jacobs reads "Groin" from a camp injury
+     that has nothing to do with why he is unavailable. injBadge has never read
+     body_part and must not start. */
+  if(lbl==='NA')
+    return '<span class="badge bd" style="margin-right:3px;font-size:9px" title="Sleeper status: NA — not on the active roster. Not necessarily an injury, and not necessarily out for the season.">INACTIVE</span>';
   if(lbl==='IR'||lbl==='PUP'||lbl==='NFI'||lbl==='SUS')
     return '<span class="badge bw" style="margin-right:3px;font-size:9px" title="Sleeper status: '+lbl+' — currently unavailable. Not necessarily out for the season.">'+lbl+'</span>';
   return '';
