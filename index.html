@@ -953,6 +953,19 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 /* ── College Tracking ────────────────────────────────────────────────── */
 .dl-cf-scroll{overflow-y:hidden}
 .dl-cf-count{font-size:11px;color:var(--fog-2);margin-bottom:7px}
+/* ── College quick-look card tables ──────────────────────────────────────
+   Teammates, game log and postseason inside the college card. Dense tables in
+   a modal, so they get .dl-board for the shared header and hover plus a density
+   modifier — a 42px reading-board row would double the height of a nine-column
+   log. Same pattern as .dl-mt- on Roster and .dl-pw- on Power Rankings.
+   Scoped .dl-board.dl-cc-tbl so it outranks .dl-board tbody td; a bare
+   .dl-cc-tbl td loses on specificity and the density silently vanishes. */
+.dl-board.dl-cc-tbl{font-size:11px}
+.dl-board.dl-cc-tbl thead th{font-size:10px;font-weight:700;letter-spacing:.045em;
+  text-transform:uppercase;padding:0 8px 6px}
+.dl-board.dl-cc-tbl tbody td{height:auto;padding:5px 8px;font-size:inherit;
+  border-bottom:1px solid var(--line)}
+
 .dtable td.dl-cf-star{cursor:pointer}
 .dtable td.dl-cf-rank{font-size:11px;font-weight:700;color:var(--fog-2)}
 .dtable td.dl-cf-prod{font-size:11px;font-weight:600;color:var(--fog-2);white-space:nowrap}
@@ -980,10 +993,21 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-pt-to{font-weight:600;color:var(--paper);white-space:nowrap}
 .dl-pt-lvl{font-size:10.5px;font-weight:700}
 
-/* ── Big Board cards ─────────────────────────────────────────────────────
-   Lifted out of renderDevy. The filter buttons are NOT touched here: that
-   .pos-filter-btn class is shared with the Prospects tab and is driven by JS
-   writing element.style directly, so it moves when both tabs move. */
+/* ── Position filter buttons ─────────────────────────────────────────────
+   Shared by Prospects and Big Board. Until now it had NO css at all: both
+   panels wrote element.style directly and they disagreed — Prospects painted
+   the active pill a solid --sky with #fff text, Big Board used a sky tint with
+   sky text. One control, two looks. The tint version wins because it is how
+   every other chip and badge in the product reads, and #fff is not a palette
+   colour. Both panels now toggle .active and set no inline style, which is
+   what lets this rule apply at all: an inline style beats a stylesheet. */
+.pos-filter-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--line);
+  background:transparent;color:var(--fog);font-size:12px;font-weight:600;
+  cursor:pointer;font-family:inherit}
+.pos-filter-btn:hover{color:var(--paper)}
+.pos-filter-btn.active{border-color:var(--sky);background:var(--sky-tint);color:var(--sky)}
+
+/* ── Big Board cards ───────────────────────────────────────────────────── */
 .bb-who{flex:1;min-width:0}
 .dl-bb-tier{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
   color:var(--teal);padding:13px 0 5px;border-top:1px solid var(--line)}
@@ -4492,14 +4516,8 @@ function getPosColor(pos) {
 }
 
 function filterRookies(pos, btn) {
-  document.querySelectorAll('.pos-filter-btn').forEach(b=>{
-    b.style.background = 'transparent';
-    b.style.color = 'var(--fog)';
-    b.style.borderColor = 'var(--line)';
-  });
-  btn.style.background = 'var(--sky)';
-  btn.style.color = '#fff';
-  btn.style.borderColor = 'var(--sky)';
+  document.querySelectorAll('.pos-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
   renderRookieBoard(pos);
 }
 
@@ -4849,11 +4867,11 @@ document.addEventListener('click', function(e) {
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
   </div></div></details>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--sky);background:var(--sky);color:#fff;font-size:12px;cursor:pointer;font-weight:600">All</button>
-    <button class="pos-filter-btn" onclick="filterRookies('QB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">QB</button>
-    <button class="pos-filter-btn" onclick="filterRookies('WR',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">WR</button>
-    <button class="pos-filter-btn" onclick="filterRookies('RB',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">RB</button>
-    <button class="pos-filter-btn" onclick="filterRookies('TE',this)" style="padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--fog);font-size:12px;cursor:pointer">TE</button>
+    <button class="pos-filter-btn active" onclick="filterRookies('ALL',this)">All</button>
+    <button class="pos-filter-btn" onclick="filterRookies('QB',this)">QB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('WR',this)">WR</button>
+    <button class="pos-filter-btn" onclick="filterRookies('RB',this)">RB</button>
+    <button class="pos-filter-btn" onclick="filterRookies('TE',this)">TE</button>
   </div>
   <div id="rookie-board"></div>
 </div>
@@ -5180,7 +5198,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-08a</span>
+  <span class="foot-build">2026-09-08b</span>
 </footer>
 
 
@@ -5396,10 +5414,7 @@ function renderDevy(){
   document.getElementById('devy-filters').innerHTML=
     [['all','All'],['QB','QB'],['RB','RB'],['WR','WR'],['TE','TE']].map(f=>{
       const on=_devyPos===f[0];
-      return '<button class="pos-filter-btn'+(on?' active':'')+'" onclick="devySetPos(\''+f[0]+'\',this)" '
-        +'style="padding:6px 14px;border-radius:20px;border:1px solid '+(on?'var(--sky)':'var(--line)')
-        +';background:'+(on?'rgba(107,182,224,.12)':'transparent')+';color:'+(on?'var(--sky)':'var(--fog)')
-        +';font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit">'
+      return '<button class="pos-filter-btn'+(on?' active':'')+'" onclick="devySetPos(\''+f[0]+'\',this)">'
         +f[1]+' '+(counts[f[0]]||0)+'</button>';}).join('');
   const col=v=>v==null?'var(--fog-2)':v>=90?'var(--emerald-bri)':v>=80?'var(--emerald)':v>=68?'var(--sky)':v>=45?'var(--topaz)':'var(--coral)';
   let html='', lastTier=null;
@@ -6004,7 +6019,7 @@ function cfbTeammates(p, pool){
   }).join('');
   return '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:12px">'
     +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">TEAM CONSTRUCTION</div>'
-    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
+    +'<div class="dl-b-scroll"><table class="dtable dl-board dl-cc-tbl"><thead><tr>'
     +'<th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>'
     +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:7px;line-height:1.5">'
@@ -6121,7 +6136,7 @@ function cfbGameLogTable(pos, games){
     : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
   const g=(games||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
   if(!g.length) return '<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No game rows for this season.</div>';
-  return '<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr>'
+  return '<div class="dl-b-scroll"><table class="dtable dl-board dl-cc-tbl"><thead><tr>'
     +'<th>Wk</th><th>Opp</th>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
     +g.map(gm=>'<tr><td style="font-weight:600">'+(gm.w||'-')+'</td>'
       +'<td class="txt" style="white-space:nowrap">'+(gm.opp||'-')+'</td>'
@@ -6157,7 +6172,7 @@ function cfbPostTable(pos, games, yr){
   return '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'
     +'<div style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--topaz);margin-bottom:4px">Postseason'+(yr?' \u00b7 '+yr:'')+'</div>'
     +'<div style="font-size:10.5px;color:var(--fog-2);line-height:1.6;margin-bottom:8px">Bowl and playoff games. Not counted in any number above \u2014 participation is not uniform, so these are shown separately.</div>'
-    +'<div style="overflow-x:auto;overflow-y:hidden"><table class="dtable" style="font-size:11px"><thead><tr><th>Opp</th>'
+    +'<div class="dl-b-scroll"><table class="dtable dl-board dl-cc-tbl"><thead><tr><th>Opp</th>'
     +cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'
     +games.map(gm=>'<tr><td class="txt" style="white-space:nowrap;font-weight:600">'+(gm.opp||'-')+'</td>'
       +cols.map(c=>'<td>'+n(gm[c[1]])+'</td>').join('')+'</tr>').join('')
@@ -6359,7 +6374,7 @@ function renderScarcityAudit(){
   let agree=0, total=0, bad=0, tables='';
   for(const pos of POS){
     tables += '<div style="font-weight:700;color:var(--sky);font-size:13px;margin:18px 0 6px">'+pos+'</div>'
-      + '<table class="dtable" style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<table class="dtable dl-board dl-cc-tbl" style="font-size:12px">'
       + '<tr style="color:var(--fog);text-align:left">'
       + '<th style="padding:4px 8px;font-weight:600">Setting</th>'
       + '<th style="padding:4px 8px;font-weight:600">Repl rank</th>'
