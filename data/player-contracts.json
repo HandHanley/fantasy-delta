@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-08T10:52:55.546882+00:00",
+  "fetched": "2026-09-09T10:57:55.026263+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -2082,16 +2082,6 @@
       "guaranteed": 35.0,
       "is_active": true
     },
-    "Darius Slayton": {
-      "team": "Giants",
-      "year_signed": 2025,
-      "years": 3,
-      "end_year": 2027,
-      "aav": 12.0,
-      "total": 36.0,
-      "guaranteed": 22.0,
-      "is_active": true
-    },
     "Marquise Brown": {
       "team": "Eagles",
       "year_signed": 2026,
@@ -2803,7 +2793,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -2883,7 +2873,7 @@
       "is_active": true
     },
     "Quinn Ewers": {
-      "team": "JAX/MIA",
+      "team": "MIA/JAX",
       "year_signed": 2025,
       "years": 4,
       "end_year": 2028,
@@ -2900,6 +2890,16 @@
       "aav": 4.0,
       "total": 8.0,
       "guaranteed": 5.25,
+      "is_active": true
+    },
+    "Joe Milton": {
+      "team": "Cowboys",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Dillon Gabriel": {
@@ -3062,16 +3062,6 @@
       "guaranteed": 0.55,
       "is_active": true
     },
-    "Devin Neal": {
-      "team": "Saints",
-      "year_signed": 2025,
-      "years": 4,
-      "end_year": 2028,
-      "aav": 1.11,
-      "total": 4.45,
-      "guaranteed": 0.25,
-      "is_active": true
-    },
     "LeQuint Allen": {
       "team": "Jaguars",
       "year_signed": 2025,
@@ -3190,6 +3180,16 @@
       "aav": 3.0,
       "total": 6.0,
       "guaranteed": 4.44,
+      "is_active": true
+    },
+    "Emari Demercado": {
+      "team": "DAL/KC",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 1.25,
+      "total": 1.25,
+      "guaranteed": 0.55,
       "is_active": true
     },
     "Ty Johnson": {
