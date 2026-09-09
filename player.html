@@ -267,7 +267,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-08f</span>
+    <span class="foot-build">2026-09-08g</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -356,7 +356,7 @@ function buildHeroHTML(p) {
         <span class="badge bn">${p.pos}</span>
         <span>${team}</span>
         <span>Age ${p.a.toFixed(1)}</span>
-        ${ct ? `<span style="color:var(--fog)">Thru ${ct.end}${ct.end<=2026?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
+        ${ct ? `<span style="color:var(--fog)">Thru ${ct.end}${ct.end<=SEASON_YEAR?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
       </div>
       ${bgLine}
       <div class="hero-verdict">
@@ -796,7 +796,7 @@ function buildContractHTML(p) {
   if (!ct) return '';
   const fmt = n => n >= 1000000 ? '$' + (n/1000000).toFixed(1) + 'M' : '$' + n.toLocaleString();
   const st = contractStatus(ct);
-  const yrsLeft = ct.end - 2025; // inclusive of current 2026 season
+  const yrsLeft = ct.end - (SEASON_YEAR - 1); // inclusive of the current season
   const yrsClr = yrsLeft<=2?'var(--coral-bri)':yrsLeft<=3?'var(--topaz)':yrsLeft>=5?'var(--emerald)':'var(--sky)';
   return `<div class="card">
     <div class="card-label">Contract</div>
@@ -806,7 +806,7 @@ function buildContractHTML(p) {
       <div class="stat-box"><div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div><div class="stat-lbl">Yrs Left</div></div>
     </div>
     <div class="bdr-row"><span style="color:var(--fog)">Status</span><span class="badge ${st.cls}">${st.label}</span></div>
-    <div class="bdr-row"><span style="color:var(--fog)">Expires</span><span>${ct.end}${ct.end<=2026?' ⚠':''}</span></div>
+    <div class="bdr-row"><span style="color:var(--fog)">Expires</span><span>${ct.end}${ct.end<=SEASON_YEAR?' ⚠':''}</span></div>
     ${fifthYearNote(p,ct) ? `<div class="bdr-row"><span style="color:var(--fog)">Option</span><span style="color:var(--sky);font-size:11px">${fifthYearNote(p,ct)}</span></div>` : ''}
     <div style="margin-top:8px">${dynastySignal(ct)}</div>
     ${ct.note ? `<div style="font-size:10px;color:var(--fog-2);margin-top:6px;font-style:italic">${ct.note}</div>` : ''}

@@ -3347,7 +3347,7 @@ function renderContracts(){
 
   document.getElementById('contracts-body').innerHTML=data.map(c=>{
     const st=contractStatus(c);
-    const yrsLeft=c.end-2025; // inclusive of current 2026 season
+    const yrsLeft=c.end-(SEASON_YEAR-1); // inclusive of the current season
     const pl=COMP.find(x=>x.n===c.n);
     const ktcStr=pl?`<span style="font-size:10px;color:var(--fog)">Mkt ${pl.ktcEff.toLocaleString()}</span>`:'';
     return`<tr class="dl-rk-row" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
@@ -3960,7 +3960,7 @@ function renderDeck(p){
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
   const fy=ct?fifthYearNote(p,ct):'';
-  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=2026?' <span style="color:var(--topaz)">⚠ walk year</span>':''}${fy?` <span style="color:var(--sky)" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:var(--fog-2)">No contract data</span>';
+  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=SEASON_YEAR?' <span style="color:var(--topaz)">⚠ walk year</span>':''}${fy?` <span style="color:var(--sky)" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:var(--fog-2)">No contract data</span>';
   const dp=DRAFT_PICKS[p.n];
   const dpClr=dp?(dp.r===1?'var(--emerald)':dp.r===2?'var(--sky)':dp.r===3?'var(--topaz)':'var(--fog)'):'var(--fog)';
   // Row 1: position · team · age · contract.  Row 2: college · draft capital.
@@ -5198,7 +5198,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-08b</span>
+  <span class="foot-build">2026-09-08c</span>
 </footer>
 
 

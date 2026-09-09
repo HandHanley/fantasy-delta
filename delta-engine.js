@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08e';
+const DL_BUILD='2026-09-08f';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3373,7 +3373,7 @@ function mvAssetRaw(pl){
   if(!ctEntry){
     d_contract_mv=-0.02; // no contract = uncertainty
   } else {
-    const expiresIn=ctEntry.end-2026;
+    const expiresIn=ctEntry.end-SEASON_YEAR;
     if(expiresIn<=0){ // walk year or expired
       const isProductive=(pl.ppg25||0)>=12;
       const isYoung=(pl.a||30)<29;
@@ -4231,7 +4231,7 @@ function dsCapitalScore(overallPick) {
 function dsExpWeight(draftYear) {
   // Years of NFL experience entering 2026 season. Capital influence decays as evidence accrues.
   if (draftYear == null) return 0;
-  const yrs = 2026 - draftYear;
+  const yrs = SEASON_YEAR - draftYear;
   if (yrs <= 0) return 1.00;  // incoming rookie
   if (yrs === 1) return 0.55; // after rookie season
   if (yrs === 2) return 0.30; // after 2 seasons
@@ -4336,7 +4336,7 @@ function dsCont(p) {
   // Base 2025 (last completed season) so yrs counts remaining seasons
   // including the current 2026 season. Thresholds shifted +1 vs old base 2026
   // so all contract scores remain identical — only display changes.
-  const yrs = c.end - 2025;
+  const yrs = c.end - (SEASON_YEAR - 1);
   return yrs>=5?10:yrs===4?9:yrs===3?7:yrs===2?6:5;
 }
 
@@ -5282,16 +5282,16 @@ const DELTA_CFB = new URLSearchParams(location.search).has('college');
 // ─────────────────────────────────────────────────────────────────────────────
 
 function contractStatus(c){
-  if(c.end===2026)return{label:'Walk Year',cls:'bd',icon:'⚠'};
-  const yrsLeft=c.end-2025; // inclusive of current 2026 season
+  if(c.end===SEASON_YEAR)return{label:'Walk Year',cls:'bd',icon:'⚠'};
+  const yrsLeft=c.end-(SEASON_YEAR-1); // inclusive of the current season
   if(yrsLeft>=5)return{label:'Locked Up',cls:'bs',icon:'■'};
   if(yrsLeft<=2)return{label:'Expiring',cls:'bw',icon:'◷'};
   return{label:'Stable',cls:'bi',icon:'✓'};
 }
 
 function dynastySignal(c){
-  if(c.end===2026)return'<span style="color:var(--coral);font-size:10px">Sell before walk year · Contract leverage gone</span>';
-  const yrsLeft=c.end-2025; // inclusive of current 2026 season
+  if(c.end===SEASON_YEAR)return'<span style="color:var(--coral);font-size:10px">Sell before walk year · Contract leverage gone</span>';
+  const yrsLeft=c.end-(SEASON_YEAR-1); // inclusive of the current season
   if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:var(--emerald);font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:var(--sky);font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
   if(yrsLeft<=2)return'<span style="color:var(--topaz);font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
