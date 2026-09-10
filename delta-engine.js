@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-08f';
+const DL_BUILD='2026-09-10a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4424,7 +4424,6 @@ function dsColor(score) {
 
 RAW.forEach(r=>COMP.push(calcProj(r)));
 const ASSETS=[...COMP,...PICKS.filter(p=>!p.hidden)];
-function bc(s){return s>=70?'var(--emerald)':s>=55?'var(--sky)':s>=40?'var(--topaz)':'var(--coral)';}
 function tH(t){return t==='up'?'<span style="color:var(--emerald)">▲</span>':t==='down'?'<span style="color:var(--coral)">▼</span>':'<span style="color:var(--fog-2)">—</span>';}
 /* Visible marker so a zeroed projection reads as a known absence rather than
    stale data — which was the reason for surfacing this at all. */

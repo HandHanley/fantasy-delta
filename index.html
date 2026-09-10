@@ -5203,7 +5203,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-10a</span>
+  <span class="foot-build">2026-09-10b</span>
 </footer>
 
 
@@ -5979,7 +5979,7 @@ function openCfbCard(name){
         +'<div style="font-size:11.5px;color:var(--fog);margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">'
           +'<span style="font-size:11px;font-weight:800;color:var(--ink);background:'+(p.pos==='QB'?'var(--violet)':p.pos==='RB'?'var(--topaz)':'var(--sky)')+';border-radius:6px;padding:2px 7px">'+p.pos+'</span>'
           +(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
-          +(comp>=1?'<span style="font-size:10px;font-weight:700;color:var(--emerald);border:1px solid transparent;background:var(--emerald-tint);border-radius:20px;padding:2px 7px">P4</span>':'<span style="font-size:10px;font-weight:700;color:var(--coral);border:1px solid var(--line);border-radius:20px;padding:2px 7px">G5 \u00d7'+comp.toFixed(2)+'</span>')
+          +(comp>=1?'<span style="font-size:10px;font-weight:700;color:var(--emerald-bri);border:1px solid transparent;background:var(--emerald-tint);border-radius:20px;padding:2px 7px">P4</span>':'<span style="font-size:10px;font-weight:700;color:var(--coral);border:1px solid var(--line);border-radius:20px;padding:2px 7px">G5 \u00d7'+comp.toFixed(2)+'</span>')
           +(p.stars?'<span title="'+p.stars+'-star recruit" style="font-size:10px;font-weight:700;color:var(--topaz);border:1px solid transparent;background:var(--topaz-tint);border-radius:20px;padding:2px 7px">'+'\u2605'.repeat(p.stars)+' recruit</span>':'')
           +'<span>'+cfbClassName(p.ageEst?p.ageEst-17:p.cls)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span>'
           +'<span id="cfb-breakout"></span>'
