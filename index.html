@@ -1434,12 +1434,12 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     </select>
     <div class="set-sec">THEME</div>
     <div class="set-row" id="theme-row">
-      <button class="set-pill" data-theme="teal"   onclick="setTheme('teal')"><span class="set-dot" style="background:#2DD4BF"></span>Teal</button>
-      <button class="set-pill" data-theme="violet" onclick="setTheme('violet')"><span class="set-dot" style="background:#9B8AF0"></span>Violet</button>
-      <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot" style="background:#6BB6E0"></span>Sky</button>
-      <button class="set-pill" data-theme="cobalt" onclick="setTheme('cobalt')"><span class="set-dot" style="background:#5B8DEF"></span>Cobalt</button>
-      <button class="set-pill" data-theme="orchid" onclick="setTheme('orchid')"><span class="set-dot" style="background:#D96BC4"></span>Orchid</button>
-      <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot" style="background:#94A3B8"></span>Slate</button>
+      <button class="set-pill" data-theme="teal"   onclick="setTheme('teal')"><span class="set-dot"></span>Teal</button>
+      <button class="set-pill" data-theme="violet" onclick="setTheme('violet')"><span class="set-dot"></span>Violet</button>
+      <button class="set-pill" data-theme="sky"    onclick="setTheme('sky')"><span class="set-dot"></span>Sky</button>
+      <button class="set-pill" data-theme="cobalt" onclick="setTheme('cobalt')"><span class="set-dot"></span>Cobalt</button>
+      <button class="set-pill" data-theme="orchid" onclick="setTheme('orchid')"><span class="set-dot"></span>Orchid</button>
+      <button class="set-pill" data-theme="slate"  onclick="setTheme('slate')"><span class="set-dot"></span>Slate</button>
     </div>
     <div class="set-sec">ACCOUNT</div>
     <div id="dsync-box" style="margin-bottom:14px">
@@ -3493,8 +3493,14 @@ function dlThemeApply(name){
   s.setProperty('--teal-br',th[0]); s.setProperty('--teal',th[1]);
   s.setProperty('--teal-tint',rgba(th[0],.12)); s.setProperty('--teal-soft',rgba(th[0],.07));
   s.setProperty('--row-hi',rgba(th[0],.055));
-  document.querySelectorAll('#theme-row .set-pill').forEach(b=>
-    b.classList.toggle('on', b.dataset.theme===name));
+  document.querySelectorAll('#theme-row .set-pill').forEach(b=>{
+    b.classList.toggle('on', b.dataset.theme===name);
+    /* Dots are painted from DL_THEMES rather than hardcoded in the markup, which is
+       what made them a seventh copy of the theme table and the one guaranteed to go
+       stale — nothing renders them, so a retuned hex would never show up as wrong. */
+    const dot=b.querySelector('.set-dot'), th=DL_THEMES[b.dataset.theme];
+    if(dot&&th) dot.style.background=th[0];
+  });
 }
 
 // ── My Team sub-views: Roster (Sleeper) | Watchlist (local, no connection needed) ──
@@ -3756,7 +3762,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard'];
+const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -4496,7 +4502,6 @@ const PROSPECTS_2026=[
 ];
 
 function getScoreColor(s) {
-  if (s >= 85) return 'var(--emerald)';
   if (s >= 70) return 'var(--emerald)';
   if (s >= 55) return 'var(--topaz)';
   if (s >= 40) return 'var(--coral)';
@@ -5198,7 +5203,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-08e</span>
+  <span class="foot-build">2026-09-10a</span>
 </footer>
 
 
