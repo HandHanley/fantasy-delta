@@ -1,11 +1,17 @@
 {
- "note": "External preseason comparators for the 2026 accuracy ledger. Captured 11 Sep 2026 from third-party public git archives; every file was COMMITTED UPSTREAM BEFORE WEEK 1 KICKED OFF, and the upstream commit date is the timestamp. Names are verbatim from each source and are NOT joined to DELTA's universe here — join at grading time with the engine's own normaliser. See docs/ACCURACY-LEDGER.md section 8.",
+ "note": "External preseason comparators for the 2026 accuracy ledger. Captured 11 Sep 2026 from public git archives; every file was COMMITTED UPSTREAM BEFORE WEEK 1 KICKED OFF, and the upstream commit date is the timestamp. Names are verbatim from each source and are NOT joined to DELTA's universe here — join at grading time with the engine's own normaliser. See docs/ACCURACY-LEDGER.md section 8.",
  "captured_at": "2026-09-11T00:00:00Z",
  "delta_freeze": {
   "file": "data/freeze-2026.json",
   "frozen_at": "2026-09-07T22:03:17.815Z"
  },
  "kickoff": "2026-09-09",
+ "attribution": {
+  "FantasyPros": "Expert consensus rankings. https://www.fantasypros.com — redistributed openly by DynastyProcess.",
+  "DynastyProcess": "https://github.com/dynastyprocess/data — open data, attribution required.",
+  "KeepTradeCut": "Community dynasty values. https://keeptradecut.com — values reproduced here with attribution for accuracy-ledger use.",
+  "StatHead": "https://github.com/dachhack/stathead — the publisher's own projection model."
+ },
  "sources": {
   "fantasypros_dynasty_ecr": {
    "publisher": "FantasyPros, via the DynastyProcess data archive",
@@ -39,6 +45,19 @@
    "what_it_is": "Crowdsourced dynasty trade values from user head-to-head votes. val_sf is the superflex basis. Higher is better.",
    "note": "Committed ten hours before the DELTA freeze and two days before kickoff. A genuinely different crowd from FantasyPros — this is the second opinion.",
    "rows": 500
+  },
+  "stathead_projections": {
+   "publisher": "StatHead (github.com/dachhack/stathead) — the publisher's own model, not an industry projection service",
+   "repo": "github.com/dachhack/stathead",
+   "path": "public/data/projection-history/projection-base-2026-2026-09-08.json.gz",
+   "commit_date": "2026-09-08",
+   "generated_at_in_file": "2026-09-08T23:55:57.155Z",
+   "blob_sha256_16": "d5045105dff2f749",
+   "what_it_is": "Season stat-line projections for 448 skill players, WITH a projected games column. Built by the publisher from public inputs (prior-season stats, ADP, rosters, draft picks, betting lines) plus an anonymised consensus blend.",
+   "scoring": "ppg_half_tep was computed HERE by running each projected stat line through DELTA's own gamefp() at half PPR with TE premium (engine lines 143-148, read from the deployed file), then dividing by the source's projected games. The source's own pprPts is kept as src_pprPts for audit. Fumbles lost, two-point conversions and return touchdowns are absent from the source and are therefore scored as zero — a small net bias in the source's favour, since the omitted fumble penalty is larger than the omitted bonuses.",
+   "graded_subset": "Restrict the head-to-head to players this file projects for >= 10 games. Below that its per-game rate is conditional on appearing at all — Trey Lance is projected 1 game at a starter's rate, reading 18.8 ppg against DELTA's 1.6. That is two different questions, not a disagreement. The floor is fixed here, before grading: n=298 of the 376 frozen players.",
+   "status": "SECONDARY. See ledger section 8 — this cannot support a claim about industry accuracy.",
+   "rows": 448
   }
  },
  "fantasypros_dynasty_ecr": [
@@ -20269,6 +20288,8584 @@
    "val_1qb": 200,
    "val_sf": 1639,
    "rookie": true
+  }
+ ],
+ "stathead_projections": [
+  {
+   "n": "Josh Allen",
+   "pos": "QB",
+   "tm": "BUF",
+   "games": 16,
+   "ppg_half_tep": 21.61,
+   "season_pts_half_tep": 345.8,
+   "src_pprPts": 346,
+   "line": {
+    "games": 16,
+    "passAtt": 510,
+    "passComp": 354,
+    "passYds": 3942,
+    "passTD": 25,
+    "int": 11,
+    "rushAtt": 79,
+    "rushYds": 441,
+    "rushTD": 11
+   }
+  },
+  {
+   "n": "Jalen Hurts",
+   "pos": "QB",
+   "tm": "PHI",
+   "games": 16,
+   "ppg_half_tep": 19.89,
+   "season_pts_half_tep": 318.3,
+   "src_pprPts": 318,
+   "line": {
+    "games": 16,
+    "passAtt": 497,
+    "passComp": 322,
+    "passYds": 3664,
+    "passTD": 24,
+    "int": 7,
+    "rushAtt": 83,
+    "rushYds": 357,
+    "rushTD": 9
+   }
+  },
+  {
+   "n": "Drake Maye",
+   "pos": "QB",
+   "tm": "NE",
+   "games": 16,
+   "ppg_half_tep": 19.76,
+   "season_pts_half_tep": 316.2,
+   "src_pprPts": 316,
+   "line": {
+    "games": 16,
+    "passAtt": 525,
+    "passComp": 378,
+    "passYds": 4144,
+    "passTD": 25,
+    "int": 9,
+    "rushAtt": 86,
+    "rushYds": 384,
+    "rushTD": 5
+   }
+  },
+  {
+   "n": "Trevor Lawrence",
+   "pos": "QB",
+   "tm": "JAX",
+   "games": 16,
+   "ppg_half_tep": 19.15,
+   "season_pts_half_tep": 306.4,
+   "src_pprPts": 306,
+   "line": {
+    "games": 16,
+    "passAtt": 514,
+    "passComp": 313,
+    "passYds": 3875,
+    "passTD": 24,
+    "int": 11,
+    "rushAtt": 66,
+    "rushYds": 294,
+    "rushTD": 8
+   }
+  },
+  {
+   "n": "Bo Nix",
+   "pos": "QB",
+   "tm": "DEN",
+   "games": 16,
+   "ppg_half_tep": 18.41,
+   "season_pts_half_tep": 294.6,
+   "src_pprPts": 295,
+   "line": {
+    "games": 16,
+    "passAtt": 512,
+    "passComp": 325,
+    "passYds": 3741,
+    "passTD": 24,
+    "int": 9,
+    "rushAtt": 70,
+    "rushYds": 310,
+    "rushTD": 6
+   }
+  },
+  {
+   "n": "Caleb Williams",
+   "pos": "QB",
+   "tm": "CHI",
+   "games": 16,
+   "ppg_half_tep": 18.32,
+   "season_pts_half_tep": 293.1,
+   "src_pprPts": 293,
+   "line": {
+    "games": 16,
+    "passAtt": 516,
+    "passComp": 300,
+    "passYds": 3846,
+    "passTD": 24,
+    "int": 6,
+    "rushAtt": 61,
+    "rushYds": 313,
+    "rushTD": 4
+   }
+  },
+  {
+   "n": "Justin Herbert",
+   "pos": "QB",
+   "tm": "LAC",
+   "games": 16,
+   "ppg_half_tep": 17.77,
+   "season_pts_half_tep": 284.3,
+   "src_pprPts": 284,
+   "line": {
+    "games": 16,
+    "passAtt": 524,
+    "passComp": 348,
+    "passYds": 3878,
+    "passTD": 24,
+    "int": 13,
+    "rushAtt": 66,
+    "rushYds": 412,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Matthew Stafford",
+   "pos": "QB",
+   "tm": "LA",
+   "games": 16,
+   "ppg_half_tep": 17.63,
+   "season_pts_half_tep": 282.0,
+   "src_pprPts": 282,
+   "line": {
+    "games": 16,
+    "passAtt": 539,
+    "passComp": 350,
+    "passYds": 4148,
+    "passTD": 31,
+    "int": 7,
+    "rushAtt": 39,
+    "rushYds": 1,
+    "rushTD": 1
+   }
+  },
+  {
+   "n": "Dak Prescott",
+   "pos": "QB",
+   "tm": "DAL",
+   "games": 16,
+   "ppg_half_tep": 17.62,
+   "season_pts_half_tep": 281.9,
+   "src_pprPts": 282,
+   "line": {
+    "games": 16,
+    "passAtt": 537,
+    "passComp": 362,
+    "passYds": 4141,
+    "passTD": 25,
+    "int": 9,
+    "rushAtt": 47,
+    "rushYds": 163,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Jacoby Brissett",
+   "pos": "QB",
+   "tm": "ARI",
+   "games": 15,
+   "ppg_half_tep": 18.66,
+   "season_pts_half_tep": 280.0,
+   "src_pprPts": 280,
+   "line": {
+    "games": 15,
+    "passAtt": 509,
+    "passComp": 331,
+    "passYds": 3669,
+    "passTD": 24,
+    "int": 8,
+    "rushAtt": 62,
+    "rushYds": 292,
+    "rushTD": 4
+   }
+  },
+  {
+   "n": "Jaxson Dart",
+   "pos": "QB",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 18.32,
+   "season_pts_half_tep": 274.7,
+   "src_pprPts": 275,
+   "line": {
+    "games": 15,
+    "passAtt": 482,
+    "passComp": 307,
+    "passYds": 3471,
+    "passTD": 20,
+    "int": 7,
+    "rushAtt": 70,
+    "rushYds": 399,
+    "rushTD": 5
+   }
+  },
+  {
+   "n": "Baker Mayfield",
+   "pos": "QB",
+   "tm": "TB",
+   "games": 16,
+   "ppg_half_tep": 17.13,
+   "season_pts_half_tep": 274.2,
+   "src_pprPts": 274,
+   "line": {
+    "games": 16,
+    "passAtt": 528,
+    "passComp": 334,
+    "passYds": 3804,
+    "passTD": 24,
+    "int": 11,
+    "rushAtt": 51,
+    "rushYds": 360,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Jared Goff",
+   "pos": "QB",
+   "tm": "DET",
+   "games": 16,
+   "ppg_half_tep": 17.03,
+   "season_pts_half_tep": 272.5,
+   "src_pprPts": 273,
+   "line": {
+    "games": 16,
+    "passAtt": 528,
+    "passComp": 359,
+    "passYds": 4156,
+    "passTD": 27,
+    "int": 7,
+    "rushAtt": 26,
+    "rushYds": 63,
+    "rushTD": 1
+   }
+  },
+  {
+   "n": "Bryce Young",
+   "pos": "QB",
+   "tm": "CAR",
+   "games": 16,
+   "ppg_half_tep": 16.4,
+   "season_pts_half_tep": 262.3,
+   "src_pprPts": 262,
+   "line": {
+    "games": 16,
+    "passAtt": 523,
+    "passComp": 333,
+    "passYds": 3636,
+    "passTD": 24,
+    "int": 12,
+    "rushAtt": 49,
+    "rushYds": 209,
+    "rushTD": 4
+   }
+  },
+  {
+   "n": "Aaron Rodgers",
+   "pos": "QB",
+   "tm": "PIT",
+   "games": 16,
+   "ppg_half_tep": 16.28,
+   "season_pts_half_tep": 260.5,
+   "src_pprPts": 261,
+   "line": {
+    "games": 16,
+    "passAtt": 523,
+    "passComp": 343,
+    "passYds": 3736,
+    "passTD": 24,
+    "int": 7,
+    "rushAtt": 37,
+    "rushYds": 111,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "C.J. Stroud",
+   "pos": "QB",
+   "tm": "HOU",
+   "games": 15,
+   "ppg_half_tep": 16.64,
+   "season_pts_half_tep": 249.6,
+   "src_pprPts": 250,
+   "line": {
+    "games": 15,
+    "passAtt": 490,
+    "passComp": 316,
+    "passYds": 3588,
+    "passTD": 22,
+    "int": 9,
+    "rushAtt": 40,
+    "rushYds": 181,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Jordan Love",
+   "pos": "QB",
+   "tm": "GB",
+   "games": 15,
+   "ppg_half_tep": 16.6,
+   "season_pts_half_tep": 249.0,
+   "src_pprPts": 249,
+   "line": {
+    "games": 15,
+    "passAtt": 477,
+    "passComp": 316,
+    "passYds": 3674,
+    "passTD": 22,
+    "int": 7,
+    "rushAtt": 36,
+    "rushYds": 160,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Cam Ward",
+   "pos": "QB",
+   "tm": "TEN",
+   "games": 16,
+   "ppg_half_tep": 15.58,
+   "season_pts_half_tep": 249.4,
+   "src_pprPts": 249,
+   "line": {
+    "games": 16,
+    "passAtt": 530,
+    "passComp": 317,
+    "passYds": 3554,
+    "passTD": 20,
+    "int": 7,
+    "rushAtt": 41,
+    "rushYds": 172,
+    "rushTD": 4
+   }
+  },
+  {
+   "n": "Daniel Jones",
+   "pos": "QB",
+   "tm": "IND",
+   "games": 14,
+   "ppg_half_tep": 17.67,
+   "season_pts_half_tep": 247.4,
+   "src_pprPts": 247,
+   "line": {
+    "games": 14,
+    "passAtt": 446,
+    "passComp": 303,
+    "passYds": 3404,
+    "passTD": 21,
+    "int": 9,
+    "rushAtt": 42,
+    "rushYds": 152,
+    "rushTD": 5
+   }
+  },
+  {
+   "n": "Patrick Mahomes",
+   "pos": "QB",
+   "tm": "KC",
+   "games": 15,
+   "ppg_half_tep": 16.47,
+   "season_pts_half_tep": 247.0,
+   "src_pprPts": 247,
+   "line": {
+    "games": 15,
+    "passAtt": 499,
+    "passComp": 313,
+    "passYds": 3666,
+    "passTD": 21,
+    "int": 11,
+    "rushAtt": 29,
+    "rushYds": 204,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Brock Purdy",
+   "pos": "QB",
+   "tm": "SF",
+   "games": 15,
+   "ppg_half_tep": 16.27,
+   "season_pts_half_tep": 244.0,
+   "src_pprPts": 244,
+   "line": {
+    "games": 15,
+    "passAtt": 485,
+    "passComp": 336,
+    "passYds": 3715,
+    "passTD": 24,
+    "int": 17,
+    "rushAtt": 34,
+    "rushYds": 154,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Sam Darnold",
+   "pos": "QB",
+   "tm": "SEA",
+   "games": 16,
+   "ppg_half_tep": 15.09,
+   "season_pts_half_tep": 241.5,
+   "src_pprPts": 242,
+   "line": {
+    "games": 16,
+    "passAtt": 512,
+    "passComp": 347,
+    "passYds": 3975,
+    "passTD": 24,
+    "int": 15,
+    "rushAtt": 34,
+    "rushYds": 105,
+    "rushTD": 1
+   }
+  },
+  {
+   "n": "Malik Willis",
+   "pos": "QB",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 17.26,
+   "season_pts_half_tep": 241.7,
+   "src_pprPts": 242,
+   "line": {
+    "games": 14,
+    "passAtt": 446,
+    "passComp": 382,
+    "passYds": 3150,
+    "passTD": 20,
+    "int": 0,
+    "rushAtt": 43,
+    "rushYds": 237,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Tyler Shough",
+   "pos": "QB",
+   "tm": "NO",
+   "games": 15,
+   "ppg_half_tep": 15.94,
+   "season_pts_half_tep": 239.0,
+   "src_pprPts": 239,
+   "line": {
+    "games": 15,
+    "passAtt": 490,
+    "passComp": 331,
+    "passYds": 3591,
+    "passTD": 19,
+    "int": 9,
+    "rushAtt": 38,
+    "rushYds": 194,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Jayden Daniels",
+   "pos": "QB",
+   "tm": "WAS",
+   "games": 14,
+   "ppg_half_tep": 16.98,
+   "season_pts_half_tep": 237.8,
+   "src_pprPts": 238,
+   "line": {
+    "games": 14,
+    "passAtt": 436,
+    "passComp": 264,
+    "passYds": 3189,
+    "passTD": 19,
+    "int": 7,
+    "rushAtt": 59,
+    "rushYds": 302,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Joe Burrow",
+   "pos": "QB",
+   "tm": "CIN",
+   "games": 14,
+   "ppg_half_tep": 16.78,
+   "season_pts_half_tep": 234.9,
+   "src_pprPts": 235,
+   "line": {
+    "games": 14,
+    "passAtt": 473,
+    "passComp": 316,
+    "passYds": 3453,
+    "passTD": 24,
+    "int": 9,
+    "rushAtt": 23,
+    "rushYds": 68,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Michael Penix Jr.",
+   "pos": "QB",
+   "tm": "ATL",
+   "games": 15,
+   "ppg_half_tep": 15.59,
+   "season_pts_half_tep": 233.9,
+   "src_pprPts": 234,
+   "line": {
+    "games": 15,
+    "passAtt": 483,
+    "passComp": 291,
+    "passYds": 3604,
+    "passTD": 20,
+    "int": 5,
+    "rushAtt": 23,
+    "rushYds": 77,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Lamar Jackson",
+   "pos": "QB",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 16.56,
+   "season_pts_half_tep": 231.9,
+   "src_pprPts": 232,
+   "line": {
+    "games": 14,
+    "passAtt": 437,
+    "passComp": 278,
+    "passYds": 3240,
+    "passTD": 20,
+    "int": 10,
+    "rushAtt": 45,
+    "rushYds": 243,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Geno Smith",
+   "pos": "QB",
+   "tm": "NYJ",
+   "games": 15,
+   "ppg_half_tep": 15.33,
+   "season_pts_half_tep": 230.0,
+   "src_pprPts": 230,
+   "line": {
+    "games": 15,
+    "passAtt": 485,
+    "passComp": 327,
+    "passYds": 3184,
+    "passTD": 18,
+    "int": 18,
+    "rushAtt": 82,
+    "rushYds": 246,
+    "rushTD": 7
+   }
+  },
+  {
+   "n": "Kyler Murray",
+   "pos": "QB",
+   "tm": "MIN",
+   "games": 14,
+   "ppg_half_tep": 15.67,
+   "season_pts_half_tep": 219.3,
+   "src_pprPts": 219,
+   "line": {
+    "games": 14,
+    "passAtt": 445,
+    "passComp": 304,
+    "passYds": 3101,
+    "passTD": 18,
+    "int": 8,
+    "rushAtt": 36,
+    "rushYds": 213,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Kirk Cousins",
+   "pos": "QB",
+   "tm": "LV",
+   "games": 15,
+   "ppg_half_tep": 14.2,
+   "season_pts_half_tep": 213.0,
+   "src_pprPts": 213,
+   "line": {
+    "games": 15,
+    "passAtt": 484,
+    "passComp": 299,
+    "passYds": 3405,
+    "passTD": 20,
+    "int": 9,
+    "rushAtt": 50,
+    "rushYds": 28,
+    "rushTD": 2
+   }
+  },
+  {
+   "n": "Shedeur Sanders",
+   "pos": "QB",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 14.28,
+   "season_pts_half_tep": 199.9,
+   "src_pprPts": 200,
+   "line": {
+    "games": 14,
+    "passAtt": 463,
+    "passComp": 262,
+    "passYds": 3089,
+    "passTD": 17,
+    "int": 22,
+    "rushAtt": 44,
+    "rushYds": 343,
+    "rushTD": 3
+   }
+  },
+  {
+   "n": "Marcus Mariota",
+   "pos": "QB",
+   "tm": "WAS",
+   "games": 3,
+   "ppg_half_tep": 18.51,
+   "season_pts_half_tep": 55.5,
+   "src_pprPts": 56,
+   "line": {
+    "games": 3,
+    "passAtt": 93,
+    "passComp": 56,
+    "passYds": 683,
+    "passTD": 4,
+    "int": 2,
+    "rushAtt": 40,
+    "rushYds": 162,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Joe Flacco",
+   "pos": "QB",
+   "tm": "CIN",
+   "games": 3,
+   "ppg_half_tep": 17.77,
+   "season_pts_half_tep": 53.3,
+   "src_pprPts": 53,
+   "line": {
+    "games": 3,
+    "passAtt": 101,
+    "passComp": 67,
+    "passYds": 740,
+    "passTD": 5,
+    "int": 3,
+    "rushAtt": 25,
+    "rushYds": 97,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyler Huntley",
+   "pos": "QB",
+   "tm": "BAL",
+   "games": 3,
+   "ppg_half_tep": 16.39,
+   "season_pts_half_tep": 49.2,
+   "src_pprPts": 49,
+   "line": {
+    "games": 3,
+    "passAtt": 94,
+    "passComp": 60,
+    "passYds": 694,
+    "passTD": 4,
+    "int": 3,
+    "rushAtt": 29,
+    "rushYds": 114,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "J.J. McCarthy",
+   "pos": "QB",
+   "tm": "MIN",
+   "games": 3,
+   "ppg_half_tep": 15.87,
+   "season_pts_half_tep": 47.6,
+   "src_pprPts": 48,
+   "line": {
+    "games": 3,
+    "passAtt": 96,
+    "passComp": 65,
+    "passYds": 665,
+    "passTD": 4,
+    "int": 2,
+    "rushAtt": 24,
+    "rushYds": 90,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Riley Leonard",
+   "pos": "QB",
+   "tm": "IND",
+   "games": 3,
+   "ppg_half_tep": 15.67,
+   "season_pts_half_tep": 47.0,
+   "src_pprPts": 47,
+   "line": {
+    "games": 3,
+    "passAtt": 95,
+    "passComp": 65,
+    "passYds": 730,
+    "passTD": 4,
+    "int": 2,
+    "rushAtt": 15,
+    "rushYds": 58,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Justin Fields",
+   "pos": "QB",
+   "tm": "KC",
+   "games": 2,
+   "ppg_half_tep": 21.88,
+   "season_pts_half_tep": 43.8,
+   "src_pprPts": 44,
+   "line": {
+    "games": 2,
+    "passAtt": 67,
+    "passComp": 42,
+    "passYds": 489,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 40,
+    "rushYds": 162,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cam Miller",
+   "pos": "QB",
+   "tm": "MIA",
+   "games": 3,
+   "ppg_half_tep": 14.27,
+   "season_pts_half_tep": 42.8,
+   "src_pprPts": 43,
+   "line": {
+    "games": 3,
+    "passAtt": 96,
+    "passComp": 65,
+    "passYds": 675,
+    "passTD": 4,
+    "int": 2,
+    "rushAtt": 10,
+    "rushYds": 38,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyrod Taylor",
+   "pos": "QB",
+   "tm": "GB",
+   "games": 2,
+   "ppg_half_tep": 19.35,
+   "season_pts_half_tep": 38.7,
+   "src_pprPts": 39,
+   "line": {
+    "games": 2,
+    "passAtt": 64,
+    "passComp": 42,
+    "passYds": 490,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 28,
+    "rushYds": 111,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Spencer Rattler",
+   "pos": "QB",
+   "tm": "NO",
+   "games": 2,
+   "ppg_half_tep": 19.48,
+   "season_pts_half_tep": 39.0,
+   "src_pprPts": 39,
+   "line": {
+    "games": 2,
+    "passAtt": 66,
+    "passComp": 45,
+    "passYds": 479,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 26,
+    "rushYds": 118,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mac Jones",
+   "pos": "QB",
+   "tm": "SF",
+   "games": 2,
+   "ppg_half_tep": 18.5,
+   "season_pts_half_tep": 37.0,
+   "src_pprPts": 37,
+   "line": {
+    "games": 2,
+    "passAtt": 65,
+    "passComp": 44,
+    "passYds": 495,
+    "passTD": 3,
+    "int": 3,
+    "rushAtt": 29,
+    "rushYds": 112,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Deshaun Watson",
+   "pos": "QB",
+   "tm": "CLE",
+   "games": 3,
+   "ppg_half_tep": 11.93,
+   "season_pts_half_tep": 35.8,
+   "src_pprPts": 36,
+   "line": {
+    "games": 3,
+    "passAtt": 100,
+    "passComp": 57,
+    "passYds": 662,
+    "passTD": 4,
+    "int": 5,
+    "rushAtt": 9,
+    "rushYds": 33,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tua Tagovailoa",
+   "pos": "QB",
+   "tm": "ATL",
+   "games": 2,
+   "ppg_half_tep": 16.87,
+   "season_pts_half_tep": 33.7,
+   "src_pprPts": 34,
+   "line": {
+    "games": 2,
+    "passAtt": 65,
+    "passComp": 39,
+    "passYds": 481,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 17,
+    "rushYds": 65,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Davis Mills",
+   "pos": "QB",
+   "tm": "HOU",
+   "games": 2,
+   "ppg_half_tep": 17.11,
+   "season_pts_half_tep": 34.2,
+   "src_pprPts": 34,
+   "line": {
+    "games": 2,
+    "passAtt": 66,
+    "passComp": 43,
+    "passYds": 478,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 18,
+    "rushYds": 71,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jameis Winston",
+   "pos": "QB",
+   "tm": "NYG",
+   "games": 2,
+   "ppg_half_tep": 16.21,
+   "season_pts_half_tep": 32.4,
+   "src_pprPts": 32,
+   "line": {
+    "games": 2,
+    "passAtt": 65,
+    "passComp": 41,
+    "passYds": 463,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 15,
+    "rushYds": 59,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Carson Beck",
+   "pos": "QB",
+   "tm": "ARI",
+   "games": 2,
+   "ppg_half_tep": 15.38,
+   "season_pts_half_tep": 30.8,
+   "src_pprPts": 31,
+   "line": {
+    "games": 2,
+    "passAtt": 68,
+    "passComp": 44,
+    "passYds": 489,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 8,
+    "rushYds": 32,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Fernando Mendoza",
+   "pos": "QB",
+   "tm": "LV",
+   "games": 2,
+   "ppg_half_tep": 14.58,
+   "season_pts_half_tep": 29.2,
+   "src_pprPts": 29,
+   "line": {
+    "games": 2,
+    "passAtt": 65,
+    "passComp": 40,
+    "passYds": 454,
+    "passTD": 3,
+    "int": 2,
+    "rushAtt": 7,
+    "rushYds": 30,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cade Klubnik",
+   "pos": "QB",
+   "tm": "NYJ",
+   "games": 2,
+   "ppg_half_tep": 11.83,
+   "season_pts_half_tep": 23.7,
+   "src_pprPts": 24,
+   "line": {
+    "games": 2,
+    "passAtt": 64,
+    "passComp": 43,
+    "passYds": 424,
+    "passTD": 2,
+    "int": 3,
+    "rushAtt": 11,
+    "rushYds": 47,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nick Mullens",
+   "pos": "QB",
+   "tm": "JAX",
+   "games": 1,
+   "ppg_half_tep": 21.08,
+   "season_pts_half_tep": 21.1,
+   "src_pprPts": 21,
+   "line": {
+    "games": 1,
+    "passAtt": 32,
+    "passComp": 19,
+    "passYds": 242,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 14,
+    "rushYds": 54,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Joe Milton III",
+   "pos": "QB",
+   "tm": "DAL",
+   "games": 1,
+   "ppg_half_tep": 19.46,
+   "season_pts_half_tep": 19.5,
+   "src_pprPts": 19,
+   "line": {
+    "games": 1,
+    "passAtt": 34,
+    "passComp": 23,
+    "passYds": 259,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 8,
+    "rushYds": 31,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Trey Lance",
+   "pos": "QB",
+   "tm": "LAC",
+   "games": 1,
+   "ppg_half_tep": 18.78,
+   "season_pts_half_tep": 18.8,
+   "src_pprPts": 19,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 22,
+    "passYds": 242,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 18,
+    "rushYds": 71,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kyle Allen",
+   "pos": "QB",
+   "tm": "BUF",
+   "games": 1,
+   "ppg_half_tep": 18.84,
+   "season_pts_half_tep": 18.8,
+   "src_pprPts": 19,
+   "line": {
+    "games": 1,
+    "passAtt": 32,
+    "passComp": 22,
+    "passYds": 246,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 8,
+    "rushYds": 30,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyson Bagent",
+   "pos": "QB",
+   "tm": "CHI",
+   "games": 1,
+   "ppg_half_tep": 17.9,
+   "season_pts_half_tep": 17.9,
+   "src_pprPts": 18,
+   "line": {
+    "games": 1,
+    "passAtt": 32,
+    "passComp": 19,
+    "passYds": 240,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 6,
+    "rushYds": 23,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Teddy Bridgewater",
+   "pos": "QB",
+   "tm": "DET",
+   "games": 1,
+   "ppg_half_tep": 18.3,
+   "season_pts_half_tep": 18.3,
+   "src_pprPts": 18,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 22,
+    "passYds": 260,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 5,
+    "rushYds": 19,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Behren Morton",
+   "pos": "QB",
+   "tm": "NE",
+   "games": 1,
+   "ppg_half_tep": 18.26,
+   "season_pts_half_tep": 18.3,
+   "src_pprPts": 18,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 22,
+    "passYds": 259,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 5,
+    "rushYds": 19,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jalen Milroe",
+   "pos": "QB",
+   "tm": "SEA",
+   "games": 1,
+   "ppg_half_tep": 18.22,
+   "season_pts_half_tep": 18.2,
+   "src_pprPts": 18,
+   "line": {
+    "games": 1,
+    "passAtt": 32,
+    "passComp": 22,
+    "passYds": 248,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 5,
+    "rushYds": 23,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mason Rudolph",
+   "pos": "QB",
+   "tm": "PIT",
+   "games": 1,
+   "ppg_half_tep": 17.36,
+   "season_pts_half_tep": 17.4,
+   "src_pprPts": 17,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 22,
+    "passYds": 234,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 15,
+    "rushYds": 60,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ty Simpson",
+   "pos": "QB",
+   "tm": "LA",
+   "games": 1,
+   "ppg_half_tep": 17.16,
+   "season_pts_half_tep": 17.2,
+   "src_pprPts": 17,
+   "line": {
+    "games": 1,
+    "passAtt": 34,
+    "passComp": 22,
+    "passYds": 259,
+    "passTD": 2,
+    "int": 1,
+    "rushAtt": 2,
+    "rushYds": 8,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mitchell Trubisky",
+   "pos": "QB",
+   "tm": "TEN",
+   "games": 1,
+   "ppg_half_tep": 15.98,
+   "season_pts_half_tep": 16.0,
+   "src_pprPts": 16,
+   "line": {
+    "games": 1,
+    "passAtt": 34,
+    "passComp": 20,
+    "passYds": 222,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 13,
+    "rushYds": 51,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cole Payton",
+   "pos": "QB",
+   "tm": "PHI",
+   "games": 1,
+   "ppg_half_tep": 13.56,
+   "season_pts_half_tep": 13.6,
+   "src_pprPts": 14,
+   "line": {
+    "games": 1,
+    "passAtt": 31,
+    "passComp": 20,
+    "passYds": 229,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 6,
+    "rushYds": 24,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kenny Pickett",
+   "pos": "QB",
+   "tm": "CAR",
+   "games": 1,
+   "ppg_half_tep": 13.98,
+   "season_pts_half_tep": 14.0,
+   "src_pprPts": 14,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 21,
+    "passYds": 227,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 7,
+    "rushYds": 29,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jarrett Stidham",
+   "pos": "QB",
+   "tm": "DEN",
+   "games": 1,
+   "ppg_half_tep": 13.36,
+   "season_pts_half_tep": 13.4,
+   "src_pprPts": 13,
+   "line": {
+    "games": 1,
+    "passAtt": 32,
+    "passComp": 20,
+    "passYds": 234,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 5,
+    "rushYds": 20,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Connor Bazelak",
+   "pos": "QB",
+   "tm": "TB",
+   "games": 1,
+   "ppg_half_tep": 12.62,
+   "season_pts_half_tep": 12.6,
+   "src_pprPts": 13,
+   "line": {
+    "games": 1,
+    "passAtt": 33,
+    "passComp": 21,
+    "passYds": 238,
+    "passTD": 1,
+    "int": 1,
+    "rushAtt": 3,
+    "rushYds": 11,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jonathan Taylor",
+   "pos": "RB",
+   "tm": "IND",
+   "games": 17,
+   "ppg_half_tep": 23.1,
+   "season_pts_half_tep": 392.7,
+   "src_pprPts": 422,
+   "line": {
+    "games": 17,
+    "rushAtt": 311,
+    "rushYds": 1767,
+    "rushTD": 21,
+    "tgt": 75,
+    "rec": 58,
+    "recYds": 490,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Jahmyr Gibbs",
+   "pos": "RB",
+   "tm": "DET",
+   "games": 17,
+   "ppg_half_tep": 22.84,
+   "season_pts_half_tep": 388.3,
+   "src_pprPts": 417,
+   "line": {
+    "games": 17,
+    "rushAtt": 283,
+    "rushYds": 1740,
+    "rushTD": 19,
+    "tgt": 75,
+    "rec": 58,
+    "recYds": 473,
+    "recTD": 4
+   }
+  },
+  {
+   "n": "Christian McCaffrey",
+   "pos": "RB",
+   "tm": "SF",
+   "games": 17,
+   "ppg_half_tep": 21.04,
+   "season_pts_half_tep": 357.7,
+   "src_pprPts": 393,
+   "line": {
+    "games": 17,
+    "rushAtt": 267,
+    "rushYds": 1370,
+    "rushTD": 15,
+    "tgt": 93,
+    "rec": 70,
+    "recYds": 717,
+    "recTD": 4
+   }
+  },
+  {
+   "n": "Bijan Robinson",
+   "pos": "RB",
+   "tm": "ATL",
+   "games": 17,
+   "ppg_half_tep": 19.43,
+   "season_pts_half_tep": 330.3,
+   "src_pprPts": 361,
+   "line": {
+    "games": 17,
+    "rushAtt": 236,
+    "rushYds": 1374,
+    "rushTD": 13,
+    "tgt": 82,
+    "rec": 61,
+    "recYds": 664,
+    "recTD": 3
+   }
+  },
+  {
+   "n": "De'Von Achane",
+   "pos": "RB",
+   "tm": "MIA",
+   "games": 16,
+   "ppg_half_tep": 17.35,
+   "season_pts_half_tep": 277.6,
+   "src_pprPts": 309,
+   "line": {
+    "games": 16,
+    "rushAtt": 193,
+    "rushYds": 1212,
+    "rushTD": 9,
+    "tgt": 86,
+    "rec": 63,
+    "recYds": 529,
+    "recTD": 3
+   }
+  },
+  {
+   "n": "Chase Brown",
+   "pos": "RB",
+   "tm": "CIN",
+   "games": 17,
+   "ppg_half_tep": 16.35,
+   "season_pts_half_tep": 278.0,
+   "src_pprPts": 307,
+   "line": {
+    "games": 17,
+    "rushAtt": 206,
+    "rushYds": 1171,
+    "rushTD": 11,
+    "tgt": 78,
+    "rec": 57,
+    "recYds": 424,
+    "recTD": 4
+   }
+  },
+  {
+   "n": "Derrick Henry",
+   "pos": "RB",
+   "tm": "BAL",
+   "games": 17,
+   "ppg_half_tep": 17.0,
+   "season_pts_half_tep": 289.0,
+   "src_pprPts": 303,
+   "line": {
+    "games": 17,
+    "rushAtt": 262,
+    "rushYds": 1529,
+    "rushTD": 15,
+    "tgt": 40,
+    "rec": 28,
+    "recYds": 261,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Ashton Jeanty",
+   "pos": "RB",
+   "tm": "LV",
+   "games": 17,
+   "ppg_half_tep": 16.23,
+   "season_pts_half_tep": 275.9,
+   "src_pprPts": 298,
+   "line": {
+    "games": 17,
+    "rushAtt": 268,
+    "rushYds": 1446,
+    "rushTD": 11,
+    "tgt": 62,
+    "rec": 45,
+    "recYds": 308,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "James Cook III",
+   "pos": "RB",
+   "tm": "BUF",
+   "games": 17,
+   "ppg_half_tep": 16.43,
+   "season_pts_half_tep": 279.3,
+   "src_pprPts": 296,
+   "line": {
+    "games": 17,
+    "rushAtt": 218,
+    "rushYds": 1291,
+    "rushTD": 15,
+    "tgt": 44,
+    "rec": 34,
+    "recYds": 312,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Kenneth Walker",
+   "pos": "RB",
+   "tm": "KC",
+   "games": 17,
+   "ppg_half_tep": 16.13,
+   "season_pts_half_tep": 274.2,
+   "src_pprPts": 295,
+   "line": {
+    "games": 17,
+    "rushAtt": 236,
+    "rushYds": 1287,
+    "rushTD": 12,
+    "tgt": 56,
+    "rec": 42,
+    "recYds": 405,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Kyren Williams",
+   "pos": "RB",
+   "tm": "LA",
+   "games": 17,
+   "ppg_half_tep": 14.81,
+   "season_pts_half_tep": 251.7,
+   "src_pprPts": 271,
+   "line": {
+    "games": 17,
+    "rushAtt": 200,
+    "rushYds": 1150,
+    "rushTD": 11,
+    "tgt": 54,
+    "rec": 39,
+    "recYds": 332,
+    "recTD": 3
+   }
+  },
+  {
+   "n": "Josh Jacobs",
+   "pos": "RB",
+   "tm": "GB",
+   "games": 15,
+   "ppg_half_tep": 16.65,
+   "season_pts_half_tep": 249.7,
+   "src_pprPts": 266,
+   "line": {
+    "games": 15,
+    "rushAtt": 233,
+    "rushYds": 1193,
+    "rushTD": 13,
+    "tgt": 42,
+    "rec": 32,
+    "recYds": 244,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Javonte Williams",
+   "pos": "RB",
+   "tm": "DAL",
+   "games": 16,
+   "ppg_half_tep": 15.51,
+   "season_pts_half_tep": 248.1,
+   "src_pprPts": 264,
+   "line": {
+    "games": 16,
+    "rushAtt": 228,
+    "rushYds": 1320,
+    "rushTD": 12,
+    "tgt": 44,
+    "rec": 31,
+    "recYds": 166,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Saquon Barkley",
+   "pos": "RB",
+   "tm": "PHI",
+   "games": 16,
+   "ppg_half_tep": 15.29,
+   "season_pts_half_tep": 244.7,
+   "src_pprPts": 263,
+   "line": {
+    "games": 16,
+    "rushAtt": 216,
+    "rushYds": 1079,
+    "rushTD": 13,
+    "tgt": 49,
+    "rec": 36,
+    "recYds": 288,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "TreVeyon Henderson",
+   "pos": "RB",
+   "tm": "NE",
+   "games": 17,
+   "ppg_half_tep": 13.56,
+   "season_pts_half_tep": 230.6,
+   "src_pprPts": 248,
+   "line": {
+    "games": 17,
+    "rushAtt": 188,
+    "rushYds": 1113,
+    "rushTD": 11,
+    "tgt": 44,
+    "rec": 34,
+    "recYds": 243,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Chuba Hubbard",
+   "pos": "RB",
+   "tm": "CAR",
+   "games": 15,
+   "ppg_half_tep": 15.35,
+   "season_pts_half_tep": 230.2,
+   "src_pprPts": 246,
+   "line": {
+    "games": 15,
+    "rushAtt": 233,
+    "rushYds": 1187,
+    "rushTD": 10,
+    "tgt": 41,
+    "rec": 31,
+    "recYds": 240,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "D'Andre Swift",
+   "pos": "RB",
+   "tm": "CHI",
+   "games": 16,
+   "ppg_half_tep": 14.36,
+   "season_pts_half_tep": 229.8,
+   "src_pprPts": 244,
+   "line": {
+    "games": 16,
+    "rushAtt": 198,
+    "rushYds": 1115,
+    "rushTD": 11,
+    "tgt": 42,
+    "rec": 29,
+    "recYds": 258,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Rico Dowdle",
+   "pos": "RB",
+   "tm": "PIT",
+   "games": 17,
+   "ppg_half_tep": 12.7,
+   "season_pts_half_tep": 215.9,
+   "src_pprPts": 234,
+   "line": {
+    "games": 17,
+    "rushAtt": 177,
+    "rushYds": 962,
+    "rushTD": 10,
+    "tgt": 50,
+    "rec": 37,
+    "recYds": 292,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Jaylen Warren",
+   "pos": "RB",
+   "tm": "PIT",
+   "games": 16,
+   "ppg_half_tep": 13.34,
+   "season_pts_half_tep": 213.5,
+   "src_pprPts": 231,
+   "line": {
+    "games": 16,
+    "rushAtt": 172,
+    "rushYds": 939,
+    "rushTD": 10,
+    "tgt": 46,
+    "rec": 35,
+    "recYds": 301,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Breece Hall",
+   "pos": "RB",
+   "tm": "NYJ",
+   "games": 16,
+   "ppg_half_tep": 13.4,
+   "season_pts_half_tep": 214.4,
+   "src_pprPts": 229,
+   "line": {
+    "games": 16,
+    "rushAtt": 205,
+    "rushYds": 1126,
+    "rushTD": 9,
+    "tgt": 40,
+    "rec": 29,
+    "recYds": 273,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Omarion Hampton",
+   "pos": "RB",
+   "tm": "LAC",
+   "games": 15,
+   "ppg_half_tep": 13.12,
+   "season_pts_half_tep": 196.8,
+   "src_pprPts": 219,
+   "line": {
+    "games": 15,
+    "rushAtt": 175,
+    "rushYds": 831,
+    "rushTD": 8,
+    "tgt": 55,
+    "rec": 44,
+    "recYds": 317,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Quinshon Judkins",
+   "pos": "RB",
+   "tm": "CLE",
+   "games": 15,
+   "ppg_half_tep": 13.44,
+   "season_pts_half_tep": 201.6,
+   "src_pprPts": 217,
+   "line": {
+    "games": 15,
+    "rushAtt": 199,
+    "rushYds": 975,
+    "rushTD": 9,
+    "tgt": 43,
+    "rec": 30,
+    "recYds": 231,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "David Montgomery",
+   "pos": "RB",
+   "tm": "HOU",
+   "games": 17,
+   "ppg_half_tep": 11.89,
+   "season_pts_half_tep": 202.2,
+   "src_pprPts": 216,
+   "line": {
+    "games": 17,
+    "rushAtt": 191,
+    "rushYds": 1065,
+    "rushTD": 8,
+    "tgt": 36,
+    "rec": 27,
+    "recYds": 222,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Travis Etienne Jr.",
+   "pos": "RB",
+   "tm": "NO",
+   "games": 17,
+   "ppg_half_tep": 11.53,
+   "season_pts_half_tep": 196.0,
+   "src_pprPts": 213,
+   "line": {
+    "games": 17,
+    "rushAtt": 172,
+    "rushYds": 900,
+    "rushTD": 8,
+    "tgt": 47,
+    "rec": 33,
+    "recYds": 295,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Bucky Irving",
+   "pos": "RB",
+   "tm": "TB",
+   "games": 15,
+   "ppg_half_tep": 12.79,
+   "season_pts_half_tep": 191.8,
+   "src_pprPts": 211,
+   "line": {
+    "games": 15,
+    "rushAtt": 162,
+    "rushYds": 702,
+    "rushTD": 9,
+    "tgt": 50,
+    "rec": 38,
+    "recYds": 366,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Cam Skattebo",
+   "pos": "RB",
+   "tm": "NYG",
+   "games": 14,
+   "ppg_half_tep": 13.51,
+   "season_pts_half_tep": 189.2,
+   "src_pprPts": 209,
+   "line": {
+    "games": 14,
+    "rushAtt": 152,
+    "rushYds": 765,
+    "rushTD": 8,
+    "tgt": 52,
+    "rec": 39,
+    "recYds": 332,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Bhayshul Tuten",
+   "pos": "RB",
+   "tm": "JAX",
+   "games": 15,
+   "ppg_half_tep": 13.06,
+   "season_pts_half_tep": 195.9,
+   "src_pprPts": 208,
+   "line": {
+    "games": 15,
+    "rushAtt": 179,
+    "rushYds": 859,
+    "rushTD": 11,
+    "tgt": 34,
+    "rec": 24,
+    "recYds": 200,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Kenny Gainwell",
+   "pos": "RB",
+   "tm": "TB",
+   "games": 17,
+   "ppg_half_tep": 10.35,
+   "season_pts_half_tep": 175.9,
+   "src_pprPts": 207,
+   "line": {
+    "games": 17,
+    "rushAtt": 92,
+    "rushYds": 555,
+    "rushTD": 4,
+    "tgt": 78,
+    "rec": 62,
+    "recYds": 474,
+    "recTD": 3
+   }
+  },
+  {
+   "n": "Jordan Mason",
+   "pos": "RB",
+   "tm": "MIN",
+   "games": 16,
+   "ppg_half_tep": 11.95,
+   "season_pts_half_tep": 191.2,
+   "src_pprPts": 202,
+   "line": {
+    "games": 16,
+    "rushAtt": 193,
+    "rushYds": 1004,
+    "rushTD": 10,
+    "tgt": 29,
+    "rec": 22,
+    "recYds": 138,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Tony Pollard",
+   "pos": "RB",
+   "tm": "TEN",
+   "games": 17,
+   "ppg_half_tep": 11.08,
+   "season_pts_half_tep": 188.4,
+   "src_pprPts": 199,
+   "line": {
+    "games": 17,
+    "rushAtt": 170,
+    "rushYds": 961,
+    "rushTD": 10,
+    "tgt": 30,
+    "rec": 22,
+    "recYds": 153,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Jeremiyah Love",
+   "pos": "RB",
+   "tm": "ARI",
+   "games": 14,
+   "ppg_half_tep": 12.69,
+   "season_pts_half_tep": 177.7,
+   "src_pprPts": 192,
+   "line": {
+    "games": 14,
+    "rushAtt": 149,
+    "rushYds": 929,
+    "rushTD": 7,
+    "tgt": 40,
+    "rec": 28,
+    "recYds": 228,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "RJ Harvey",
+   "pos": "RB",
+   "tm": "DEN",
+   "games": 17,
+   "ppg_half_tep": 10.4,
+   "season_pts_half_tep": 176.8,
+   "src_pprPts": 192,
+   "line": {
+    "games": 17,
+    "rushAtt": 150,
+    "rushYds": 700,
+    "rushTD": 9,
+    "tgt": 41,
+    "rec": 31,
+    "recYds": 253,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Rhamondre Stevenson",
+   "pos": "RB",
+   "tm": "NE",
+   "games": 15,
+   "ppg_half_tep": 11.57,
+   "season_pts_half_tep": 173.6,
+   "src_pprPts": 191,
+   "line": {
+    "games": 15,
+    "rushAtt": 125,
+    "rushYds": 677,
+    "rushTD": 7,
+    "tgt": 42,
+    "rec": 34,
+    "recYds": 349,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Jacory Croskey-Merritt",
+   "pos": "RB",
+   "tm": "WAS",
+   "games": 17,
+   "ppg_half_tep": 10.49,
+   "season_pts_half_tep": 178.3,
+   "src_pprPts": 189,
+   "line": {
+    "games": 17,
+    "rushAtt": 159,
+    "rushYds": 893,
+    "rushTD": 9,
+    "tgt": 31,
+    "rec": 22,
+    "recYds": 180,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Blake Corum",
+   "pos": "RB",
+   "tm": "LA",
+   "games": 17,
+   "ppg_half_tep": 9.84,
+   "season_pts_half_tep": 167.3,
+   "src_pprPts": 178,
+   "line": {
+    "games": 17,
+    "rushAtt": 141,
+    "rushYds": 864,
+    "rushTD": 7,
+    "tgt": 33,
+    "rec": 22,
+    "recYds": 159,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "J.K. Dobbins",
+   "pos": "RB",
+   "tm": "DEN",
+   "games": 15,
+   "ppg_half_tep": 11.3,
+   "season_pts_half_tep": 169.5,
+   "src_pprPts": 177,
+   "line": {
+    "games": 15,
+    "rushAtt": 145,
+    "rushYds": 924,
+    "rushTD": 9,
+    "tgt": 20,
+    "rec": 15,
+    "recYds": 96,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Kyle Monangai",
+   "pos": "RB",
+   "tm": "CHI",
+   "games": 17,
+   "ppg_half_tep": 9.66,
+   "season_pts_half_tep": 164.3,
+   "src_pprPts": 175,
+   "line": {
+    "games": 17,
+    "rushAtt": 138,
+    "rushYds": 736,
+    "rushTD": 8,
+    "tgt": 34,
+    "rec": 22,
+    "recYds": 197,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Rachaad White",
+   "pos": "RB",
+   "tm": "WAS",
+   "games": 17,
+   "ppg_half_tep": 9.12,
+   "season_pts_half_tep": 155.0,
+   "src_pprPts": 173,
+   "line": {
+    "games": 17,
+    "rushAtt": 125,
+    "rushYds": 658,
+    "rushTD": 7,
+    "tgt": 43,
+    "rec": 35,
+    "recYds": 237,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Jadarian Price",
+   "pos": "RB",
+   "tm": "SEA",
+   "games": 14,
+   "ppg_half_tep": 11.51,
+   "season_pts_half_tep": 161.1,
+   "src_pprPts": 170,
+   "line": {
+    "games": 14,
+    "rushAtt": 145,
+    "rushYds": 792,
+    "rushTD": 10,
+    "tgt": 24,
+    "rec": 17,
+    "recYds": 134,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Aaron Jones Sr.",
+   "pos": "RB",
+   "tm": "MIN",
+   "games": 15,
+   "ppg_half_tep": 10.19,
+   "season_pts_half_tep": 152.9,
+   "src_pprPts": 169,
+   "line": {
+    "games": 15,
+    "rushAtt": 142,
+    "rushYds": 641,
+    "rushTD": 6,
+    "tgt": 47,
+    "rec": 32,
+    "recYds": 248,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Tyrone Tracy Jr.",
+   "pos": "RB",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 9.0,
+   "season_pts_half_tep": 135.0,
+   "src_pprPts": 148,
+   "line": {
+    "games": 15,
+    "rushAtt": 112,
+    "rushYds": 583,
+    "rushTD": 6,
+    "tgt": 35,
+    "rec": 26,
+    "recYds": 217,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Tank Bigsby",
+   "pos": "RB",
+   "tm": "PHI",
+   "games": 15,
+   "ppg_half_tep": 9.13,
+   "season_pts_half_tep": 136.9,
+   "src_pprPts": 145,
+   "line": {
+    "games": 15,
+    "rushAtt": 103,
+    "rushYds": 715,
+    "rushTD": 6,
+    "tgt": 23,
+    "rec": 17,
+    "recYds": 149,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Woody Marks",
+   "pos": "RB",
+   "tm": "HOU",
+   "games": 16,
+   "ppg_half_tep": 8.18,
+   "season_pts_half_tep": 130.9,
+   "src_pprPts": 142,
+   "line": {
+    "games": 16,
+    "rushAtt": 133,
+    "rushYds": 587,
+    "rushTD": 6,
+    "tgt": 33,
+    "rec": 22,
+    "recYds": 192,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Samaje Perine",
+   "pos": "RB",
+   "tm": "CIN",
+   "games": 15,
+   "ppg_half_tep": 8.43,
+   "season_pts_half_tep": 126.5,
+   "src_pprPts": 137,
+   "line": {
+    "games": 15,
+    "rushAtt": 101,
+    "rushYds": 593,
+    "rushTD": 6,
+    "tgt": 28,
+    "rec": 21,
+    "recYds": 147,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Brian Robinson",
+   "pos": "RB",
+   "tm": "ATL",
+   "games": 17,
+   "ppg_half_tep": 7.42,
+   "season_pts_half_tep": 126.1,
+   "src_pprPts": 137,
+   "line": {
+    "games": 17,
+    "rushAtt": 122,
+    "rushYds": 595,
+    "rushTD": 6,
+    "tgt": 28,
+    "rec": 21,
+    "recYds": 141,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Tyler Allgeier",
+   "pos": "RB",
+   "tm": "ARI",
+   "games": 17,
+   "ppg_half_tep": 7.44,
+   "season_pts_half_tep": 126.4,
+   "src_pprPts": 136,
+   "line": {
+    "games": 17,
+    "rushAtt": 114,
+    "rushYds": 588,
+    "rushTD": 6,
+    "tgt": 27,
+    "rec": 20,
+    "recYds": 156,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Dylan Sampson",
+   "pos": "RB",
+   "tm": "CLE",
+   "games": 15,
+   "ppg_half_tep": 7.91,
+   "season_pts_half_tep": 118.7,
+   "src_pprPts": 134,
+   "line": {
+    "games": 15,
+    "rushAtt": 113,
+    "rushYds": 413,
+    "rushTD": 5,
+    "tgt": 40,
+    "rec": 30,
+    "recYds": 264,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Justice Hill",
+   "pos": "RB",
+   "tm": "BAL",
+   "games": 12,
+   "ppg_half_tep": 9.93,
+   "season_pts_half_tep": 119.1,
+   "src_pprPts": 132,
+   "line": {
+    "games": 12,
+    "rushAtt": 85,
+    "rushYds": 492,
+    "rushTD": 4,
+    "tgt": 35,
+    "rec": 25,
+    "recYds": 214,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Tyjae Spears",
+   "pos": "RB",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 8.22,
+   "season_pts_half_tep": 115.1,
+   "src_pprPts": 128,
+   "line": {
+    "games": 14,
+    "rushAtt": 85,
+    "rushYds": 425,
+    "rushTD": 5,
+    "tgt": 33,
+    "rec": 26,
+    "recYds": 176,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Chris Rodriguez Jr.",
+   "pos": "RB",
+   "tm": "JAX",
+   "games": 14,
+   "ppg_half_tep": 8.66,
+   "season_pts_half_tep": 121.2,
+   "src_pprPts": 127,
+   "line": {
+    "games": 14,
+    "rushAtt": 98,
+    "rushYds": 569,
+    "rushTD": 7,
+    "tgt": 16,
+    "rec": 12,
+    "recYds": 103,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Zach Charbonnet",
+   "pos": "RB",
+   "tm": "SEA",
+   "games": 16,
+   "ppg_half_tep": 7.06,
+   "season_pts_half_tep": 113.0,
+   "src_pprPts": 122,
+   "line": {
+    "games": 16,
+    "rushAtt": 98,
+    "rushYds": 494,
+    "rushTD": 6,
+    "tgt": 22,
+    "rec": 17,
+    "recYds": 131,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Ray Davis",
+   "pos": "RB",
+   "tm": "BUF",
+   "games": 17,
+   "ppg_half_tep": 6.65,
+   "season_pts_half_tep": 113.1,
+   "src_pprPts": 122,
+   "line": {
+    "games": 17,
+    "rushAtt": 88,
+    "rushYds": 469,
+    "rushTD": 6,
+    "tgt": 24,
+    "rec": 18,
+    "recYds": 152,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Malik Davis",
+   "pos": "RB",
+   "tm": "DAL",
+   "games": 12,
+   "ppg_half_tep": 8.55,
+   "season_pts_half_tep": 102.6,
+   "src_pprPts": 109,
+   "line": {
+    "games": 12,
+    "rushAtt": 85,
+    "rushYds": 497,
+    "rushTD": 5,
+    "tgt": 20,
+    "rec": 13,
+    "recYds": 104,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Keaton Mitchell",
+   "pos": "RB",
+   "tm": "LAC",
+   "games": 14,
+   "ppg_half_tep": 7.06,
+   "season_pts_half_tep": 98.9,
+   "src_pprPts": 107,
+   "line": {
+    "games": 14,
+    "rushAtt": 74,
+    "rushYds": 465,
+    "rushTD": 4,
+    "tgt": 24,
+    "rec": 17,
+    "recYds": 139,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Isiah Pacheco",
+   "pos": "RB",
+   "tm": "DET",
+   "games": 14,
+   "ppg_half_tep": 6.99,
+   "season_pts_half_tep": 97.9,
+   "src_pprPts": 106,
+   "line": {
+    "games": 14,
+    "rushAtt": 88,
+    "rushYds": 421,
+    "rushTD": 5,
+    "tgt": 23,
+    "rec": 17,
+    "recYds": 113,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Brashard Smith",
+   "pos": "RB",
+   "tm": "KC",
+   "games": 17,
+   "ppg_half_tep": 5.21,
+   "season_pts_half_tep": 88.5,
+   "src_pprPts": 103,
+   "line": {
+    "games": 17,
+    "rushAtt": 67,
+    "rushYds": 270,
+    "rushTD": 3,
+    "tgt": 40,
+    "rec": 29,
+    "recYds": 230,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Alvin Kamara",
+   "pos": "RB",
+   "tm": "NO",
+   "games": 13,
+   "ppg_half_tep": 6.86,
+   "season_pts_half_tep": 89.2,
+   "src_pprPts": 102,
+   "line": {
+    "games": 13,
+    "rushAtt": 66,
+    "rushYds": 289,
+    "rushTD": 3,
+    "tgt": 33,
+    "rec": 25,
+    "recYds": 178,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Isaiah Davis",
+   "pos": "RB",
+   "tm": "NYJ",
+   "games": 16,
+   "ppg_half_tep": 5.38,
+   "season_pts_half_tep": 86.0,
+   "src_pprPts": 99,
+   "line": {
+    "games": 16,
+    "rushAtt": 48,
+    "rushYds": 334,
+    "rushTD": 2,
+    "tgt": 34,
+    "rec": 25,
+    "recYds": 221,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Sean Tucker",
+   "pos": "RB",
+   "tm": "TB",
+   "games": 17,
+   "ppg_half_tep": 5.23,
+   "season_pts_half_tep": 88.9,
+   "src_pprPts": 97,
+   "line": {
+    "games": 17,
+    "rushAtt": 82,
+    "rushYds": 388,
+    "rushTD": 4,
+    "tgt": 24,
+    "rec": 16,
+    "recYds": 121,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Michael Carter",
+   "pos": "RB",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 6.11,
+   "season_pts_half_tep": 85.5,
+   "src_pprPts": 94,
+   "line": {
+    "games": 14,
+    "rushAtt": 71,
+    "rushYds": 329,
+    "rushTD": 4,
+    "tgt": 24,
+    "rec": 17,
+    "recYds": 141,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Devin Singletary",
+   "pos": "RB",
+   "tm": "NYG",
+   "games": 17,
+   "ppg_half_tep": 5.09,
+   "season_pts_half_tep": 86.6,
+   "src_pprPts": 93,
+   "line": {
+    "games": 17,
+    "rushAtt": 88,
+    "rushYds": 397,
+    "rushTD": 5,
+    "tgt": 15,
+    "rec": 13,
+    "recYds": 104,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Chris Brooks",
+   "pos": "RB",
+   "tm": "GB",
+   "games": 17,
+   "ppg_half_tep": 4.52,
+   "season_pts_half_tep": 76.9,
+   "src_pprPts": 90,
+   "line": {
+    "games": 17,
+    "rushAtt": 54,
+    "rushYds": 272,
+    "rushTD": 3,
+    "tgt": 36,
+    "rec": 26,
+    "recYds": 187,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Emanuel Wilson",
+   "pos": "RB",
+   "tm": "SEA",
+   "games": 17,
+   "ppg_half_tep": 4.85,
+   "season_pts_half_tep": 82.4,
+   "src_pprPts": 90,
+   "line": {
+    "games": 17,
+    "rushAtt": 67,
+    "rushYds": 339,
+    "rushTD": 4,
+    "tgt": 20,
+    "rec": 15,
+    "recYds": 110,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Ty Johnson",
+   "pos": "RB",
+   "tm": "BUF",
+   "games": 17,
+   "ppg_half_tep": 4.51,
+   "season_pts_half_tep": 76.7,
+   "src_pprPts": 89,
+   "line": {
+    "games": 17,
+    "rushAtt": 35,
+    "rushYds": 157,
+    "rushTD": 2,
+    "tgt": 34,
+    "rec": 24,
+    "recYds": 250,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "George Holani",
+   "pos": "RB",
+   "tm": "SEA",
+   "games": 12,
+   "ppg_half_tep": 6.17,
+   "season_pts_half_tep": 74.1,
+   "src_pprPts": 81,
+   "line": {
+    "games": 12,
+    "rushAtt": 65,
+    "rushYds": 276,
+    "rushTD": 4,
+    "tgt": 17,
+    "rec": 13,
+    "recYds": 100,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Jaylen Wright",
+   "pos": "RB",
+   "tm": "MIA",
+   "games": 12,
+   "ppg_half_tep": 6.26,
+   "season_pts_half_tep": 75.1,
+   "src_pprPts": 81,
+   "line": {
+    "games": 12,
+    "rushAtt": 75,
+    "rushYds": 343,
+    "rushTD": 3,
+    "tgt": 18,
+    "rec": 12,
+    "recYds": 108,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Kaelon Black",
+   "pos": "RB",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 5.34,
+   "season_pts_half_tep": 74.7,
+   "src_pprPts": 80,
+   "line": {
+    "games": 14,
+    "rushAtt": 64,
+    "rushYds": 368,
+    "rushTD": 3,
+    "tgt": 14,
+    "rec": 10,
+    "recYds": 89,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "LeQuint Allen Jr.",
+   "pos": "RB",
+   "tm": "JAX",
+   "games": 16,
+   "ppg_half_tep": 4.49,
+   "season_pts_half_tep": 71.9,
+   "src_pprPts": 79,
+   "line": {
+    "games": 16,
+    "rushAtt": 43,
+    "rushYds": 229,
+    "rushTD": 3,
+    "tgt": 21,
+    "rec": 15,
+    "recYds": 115,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Kimani Vidal",
+   "pos": "RB",
+   "tm": "LAC",
+   "games": 14,
+   "ppg_half_tep": 4.99,
+   "season_pts_half_tep": 69.8,
+   "src_pprPts": 76,
+   "line": {
+    "games": 14,
+    "rushAtt": 65,
+    "rushYds": 290,
+    "rushTD": 3,
+    "tgt": 17,
+    "rec": 12,
+    "recYds": 108,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Devin Neal",
+   "pos": "RB",
+   "tm": "NO",
+   "games": 12,
+   "ppg_half_tep": 5.68,
+   "season_pts_half_tep": 68.2,
+   "src_pprPts": 76,
+   "line": {
+    "games": 12,
+    "rushAtt": 54,
+    "rushYds": 238,
+    "rushTD": 3,
+    "tgt": 20,
+    "rec": 16,
+    "recYds": 124,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Trevor Etienne",
+   "pos": "RB",
+   "tm": "CAR",
+   "games": 17,
+   "ppg_half_tep": 4.08,
+   "season_pts_half_tep": 69.4,
+   "src_pprPts": 72,
+   "line": {
+    "games": 17,
+    "rushAtt": 70,
+    "rushYds": 439,
+    "rushTD": 3,
+    "tgt": 8,
+    "rec": 6,
+    "recYds": 45,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Kendre Miller",
+   "pos": "RB",
+   "tm": "NO",
+   "games": 11,
+   "ppg_half_tep": 5.95,
+   "season_pts_half_tep": 65.4,
+   "src_pprPts": 71,
+   "line": {
+    "games": 11,
+    "rushAtt": 53,
+    "rushYds": 266,
+    "rushTD": 3,
+    "tgt": 15,
+    "rec": 11,
+    "recYds": 93,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Bam Knight",
+   "pos": "RB",
+   "tm": "ARI",
+   "games": 14,
+   "ppg_half_tep": 4.16,
+   "season_pts_half_tep": 58.3,
+   "src_pprPts": 67,
+   "line": {
+    "games": 14,
+    "rushAtt": 38,
+    "rushYds": 177,
+    "rushTD": 2,
+    "tgt": 26,
+    "rec": 17,
+    "recYds": 141,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Jeremy McNichols",
+   "pos": "RB",
+   "tm": "WAS",
+   "games": 16,
+   "ppg_half_tep": 3.58,
+   "season_pts_half_tep": 57.2,
+   "src_pprPts": 66,
+   "line": {
+    "games": 16,
+    "rushAtt": 35,
+    "rushYds": 212,
+    "rushTD": 2,
+    "tgt": 24,
+    "rec": 18,
+    "recYds": 150,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Braelon Allen",
+   "pos": "RB",
+   "tm": "NYJ",
+   "games": 9,
+   "ppg_half_tep": 6.4,
+   "season_pts_half_tep": 57.6,
+   "src_pprPts": 62,
+   "line": {
+    "games": 9,
+    "rushAtt": 56,
+    "rushYds": 294,
+    "rushTD": 2,
+    "tgt": 11,
+    "rec": 8,
+    "recYds": 62,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Ameer Abdullah",
+   "pos": "RB",
+   "tm": "JAX",
+   "games": 14,
+   "ppg_half_tep": 3.64,
+   "season_pts_half_tep": 51.0,
+   "src_pprPts": 60,
+   "line": {
+    "games": 14,
+    "rushAtt": 19,
+    "rushYds": 105,
+    "rushTD": 1,
+    "tgt": 24,
+    "rec": 18,
+    "recYds": 135,
+    "recTD": 2
+   }
+  },
+  {
+   "n": "Jerome Ford",
+   "pos": "RB",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 3.34,
+   "season_pts_half_tep": 46.7,
+   "src_pprPts": 58,
+   "line": {
+    "games": 14,
+    "rushAtt": 23,
+    "rushYds": 95,
+    "rushTD": 1,
+    "tgt": 30,
+    "rec": 23,
+    "recYds": 137,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Ollie Gordon II",
+   "pos": "RB",
+   "tm": "MIA",
+   "games": 17,
+   "ppg_half_tep": 3.01,
+   "season_pts_half_tep": 51.2,
+   "src_pprPts": 55,
+   "line": {
+    "games": 17,
+    "rushAtt": 73,
+    "rushYds": 230,
+    "rushTD": 3,
+    "tgt": 11,
+    "rec": 8,
+    "recYds": 62,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "James Conner",
+   "pos": "RB",
+   "tm": "ARI",
+   "games": 8,
+   "ppg_half_tep": 4.24,
+   "season_pts_half_tep": 33.9,
+   "src_pprPts": 38,
+   "line": {
+    "games": 8,
+    "rushAtt": 25,
+    "rushYds": 107,
+    "rushTD": 1,
+    "tgt": 12,
+    "rec": 9,
+    "recYds": 67,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Tyler Badie",
+   "pos": "RB",
+   "tm": "DEN",
+   "games": 16,
+   "ppg_half_tep": 1.82,
+   "season_pts_half_tep": 29.2,
+   "src_pprPts": 37,
+   "line": {
+    "games": 16,
+    "rushAtt": 6,
+    "rushYds": 22,
+    "rushTD": 0,
+    "tgt": 24,
+    "rec": 16,
+    "recYds": 130,
+    "recTD": 1
+   }
+  },
+  {
+   "n": "Jonathon Brooks",
+   "pos": "RB",
+   "tm": "CAR",
+   "games": 14,
+   "ppg_half_tep": 2.36,
+   "season_pts_half_tep": 33.0,
+   "src_pprPts": 36,
+   "line": {
+    "games": 14,
+    "rushAtt": 30,
+    "rushYds": 151,
+    "rushTD": 2,
+    "tgt": 6,
+    "rec": 5,
+    "recYds": 34,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "MarShawn Lloyd",
+   "pos": "RB",
+   "tm": "GB",
+   "games": 14,
+   "ppg_half_tep": 2.19,
+   "season_pts_half_tep": 30.7,
+   "src_pprPts": 33,
+   "line": {
+    "games": 14,
+    "rushAtt": 27,
+    "rushYds": 132,
+    "rushTD": 2,
+    "tgt": 6,
+    "rec": 5,
+    "recYds": 30,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Pierre Strong",
+   "pos": "RB",
+   "tm": "GB",
+   "games": 14,
+   "ppg_half_tep": 2.19,
+   "season_pts_half_tep": 30.7,
+   "src_pprPts": 33,
+   "line": {
+    "games": 14,
+    "rushAtt": 27,
+    "rushYds": 132,
+    "rushTD": 2,
+    "tgt": 6,
+    "rec": 5,
+    "recYds": 30,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Mike Washington Jr.",
+   "pos": "RB",
+   "tm": "LV",
+   "games": 14,
+   "ppg_half_tep": 2.19,
+   "season_pts_half_tep": 30.6,
+   "src_pprPts": 33,
+   "line": {
+    "games": 14,
+    "rushAtt": 31,
+    "rushYds": 198,
+    "rushTD": 1,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 28,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "AJ Dillon",
+   "pos": "RB",
+   "tm": "CAR",
+   "games": 10,
+   "ppg_half_tep": 3.04,
+   "season_pts_half_tep": 30.4,
+   "src_pprPts": 31,
+   "line": {
+    "games": 10,
+    "rushAtt": 23,
+    "rushYds": 155,
+    "rushTD": 2,
+    "tgt": 4,
+    "rec": 2,
+    "recYds": 19,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Rasheen Ali",
+   "pos": "RB",
+   "tm": "BAL",
+   "games": 15,
+   "ppg_half_tep": 1.47,
+   "season_pts_half_tep": 22.0,
+   "src_pprPts": 29,
+   "line": {
+    "games": 15,
+    "rushAtt": 8,
+    "rushYds": 30,
+    "rushTD": 0,
+    "tgt": 19,
+    "rec": 14,
+    "recYds": 120,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Chris Collier",
+   "pos": "RB",
+   "tm": "LV",
+   "games": 14,
+   "ppg_half_tep": 1.81,
+   "season_pts_half_tep": 25.3,
+   "src_pprPts": 28,
+   "line": {
+    "games": 14,
+    "rushAtt": 24,
+    "rushYds": 136,
+    "rushTD": 1,
+    "tgt": 6,
+    "rec": 5,
+    "recYds": 32,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jordan James",
+   "pos": "RB",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 1.82,
+   "season_pts_half_tep": 25.5,
+   "src_pprPts": 28,
+   "line": {
+    "games": 14,
+    "rushAtt": 26,
+    "rushYds": 132,
+    "rushTD": 1,
+    "tgt": 8,
+    "rec": 5,
+    "recYds": 38,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jonah Coleman",
+   "pos": "RB",
+   "tm": "DEN",
+   "games": 14,
+   "ppg_half_tep": 1.77,
+   "season_pts_half_tep": 24.8,
+   "src_pprPts": 26,
+   "line": {
+    "games": 14,
+    "rushAtt": 27,
+    "rushYds": 146,
+    "rushTD": 1,
+    "tgt": 4,
+    "rec": 3,
+    "recYds": 27,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jawhar Jordan",
+   "pos": "RB",
+   "tm": "HOU",
+   "games": 9,
+   "ppg_half_tep": 2.5,
+   "season_pts_half_tep": 22.5,
+   "src_pprPts": 25,
+   "line": {
+    "games": 9,
+    "rushAtt": 21,
+    "rushYds": 120,
+    "rushTD": 1,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 25,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Donovan Edwards",
+   "pos": "RB",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 1.54,
+   "season_pts_half_tep": 21.5,
+   "src_pprPts": 24,
+   "line": {
+    "games": 14,
+    "rushAtt": 21,
+    "rushYds": 90,
+    "rushTD": 1,
+    "tgt": 7,
+    "rec": 5,
+    "recYds": 40,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Cash Jones",
+   "pos": "RB",
+   "tm": "ATL",
+   "games": 14,
+   "ppg_half_tep": 1.49,
+   "season_pts_half_tep": 20.8,
+   "src_pprPts": 23,
+   "line": {
+    "games": 14,
+    "rushAtt": 21,
+    "rushYds": 90,
+    "rushTD": 1,
+    "tgt": 7,
+    "rec": 5,
+    "recYds": 33,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Israel Abanikanda",
+   "pos": "RB",
+   "tm": "DAL",
+   "games": 14,
+   "ppg_half_tep": 1.49,
+   "season_pts_half_tep": 20.9,
+   "src_pprPts": 23,
+   "line": {
+    "games": 14,
+    "rushAtt": 22,
+    "rushYds": 104,
+    "rushTD": 1,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 25,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jordan Waters",
+   "pos": "RB",
+   "tm": "LA",
+   "games": 14,
+   "ppg_half_tep": 1.42,
+   "season_pts_half_tep": 19.9,
+   "src_pprPts": 22,
+   "line": {
+    "games": 14,
+    "rushAtt": 20,
+    "rushYds": 92,
+    "rushTD": 1,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 27,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Will Shipley",
+   "pos": "RB",
+   "tm": "PHI",
+   "games": 15,
+   "ppg_half_tep": 1.15,
+   "season_pts_half_tep": 17.2,
+   "src_pprPts": 22,
+   "line": {
+    "games": 15,
+    "rushAtt": 11,
+    "rushYds": 47,
+    "rushTD": 0,
+    "tgt": 13,
+    "rec": 10,
+    "recYds": 75,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jaydn Ott",
+   "pos": "RB",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 1.4,
+   "season_pts_half_tep": 19.6,
+   "src_pprPts": 22,
+   "line": {
+    "games": 14,
+    "rushAtt": 19,
+    "rushYds": 85,
+    "rushTD": 1,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 31,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Frank Gore Jr.",
+   "pos": "RB",
+   "tm": "BUF",
+   "games": 14,
+   "ppg_half_tep": 1.31,
+   "season_pts_half_tep": 18.3,
+   "src_pprPts": 20,
+   "line": {
+    "games": 14,
+    "rushAtt": 17,
+    "rushYds": 72,
+    "rushTD": 1,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 31,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "DJ Giddens",
+   "pos": "RB",
+   "tm": "IND",
+   "games": 9,
+   "ppg_half_tep": 1.87,
+   "season_pts_half_tep": 16.8,
+   "src_pprPts": 18,
+   "line": {
+    "games": 9,
+    "rushAtt": 19,
+    "rushYds": 85,
+    "rushTD": 1,
+    "tgt": 2,
+    "rec": 2,
+    "recYds": 13,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Raheim Sanders",
+   "pos": "RB",
+   "tm": "CLE",
+   "games": 9,
+   "ppg_half_tep": 1.88,
+   "season_pts_half_tep": 16.9,
+   "src_pprPts": 18,
+   "line": {
+    "games": 9,
+    "rushAtt": 17,
+    "rushYds": 79,
+    "rushTD": 1,
+    "tgt": 3,
+    "rec": 2,
+    "recYds": 20,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jaret Patterson",
+   "pos": "RB",
+   "tm": "LAC",
+   "games": 10,
+   "ppg_half_tep": 1.6,
+   "season_pts_half_tep": 16.0,
+   "src_pprPts": 17,
+   "line": {
+    "games": 10,
+    "rushAtt": 17,
+    "rushYds": 71,
+    "rushTD": 1,
+    "tgt": 3,
+    "rec": 2,
+    "recYds": 19,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Seth McGowan",
+   "pos": "RB",
+   "tm": "IND",
+   "games": 14,
+   "ppg_half_tep": 1.04,
+   "season_pts_half_tep": 14.6,
+   "src_pprPts": 16,
+   "line": {
+    "games": 14,
+    "rushAtt": 12,
+    "rushYds": 63,
+    "rushTD": 1,
+    "tgt": 2,
+    "rec": 2,
+    "recYds": 13,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Ulysses Bentley IV",
+   "pos": "RB",
+   "tm": "IND",
+   "games": 7,
+   "ppg_half_tep": 1.96,
+   "season_pts_half_tep": 13.7,
+   "src_pprPts": 15,
+   "line": {
+    "games": 7,
+    "rushAtt": 12,
+    "rushYds": 55,
+    "rushTD": 1,
+    "tgt": 3,
+    "rec": 2,
+    "recYds": 12,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Tahj Brooks",
+   "pos": "RB",
+   "tm": "CIN",
+   "games": 14,
+   "ppg_half_tep": 0.94,
+   "season_pts_half_tep": 13.2,
+   "src_pprPts": 14,
+   "line": {
+    "games": 14,
+    "rushAtt": 16,
+    "rushYds": 57,
+    "rushTD": 1,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Brittain Brown",
+   "pos": "RB",
+   "tm": "CHI",
+   "games": 8,
+   "ppg_half_tep": 1.53,
+   "season_pts_half_tep": 12.2,
+   "src_pprPts": 13,
+   "line": {
+    "games": 8,
+    "rushAtt": 11,
+    "rushYds": 49,
+    "rushTD": 1,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 8,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Adam Randall",
+   "pos": "RB",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 0.89,
+   "season_pts_half_tep": 12.5,
+   "src_pprPts": 13,
+   "line": {
+    "games": 14,
+    "rushAtt": 10,
+    "rushYds": 48,
+    "rushTD": 1,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 12,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Phil Mafah",
+   "pos": "RB",
+   "tm": "DAL",
+   "games": 7,
+   "ppg_half_tep": 1.8,
+   "season_pts_half_tep": 12.6,
+   "src_pprPts": 13,
+   "line": {
+    "games": 7,
+    "rushAtt": 11,
+    "rushYds": 52,
+    "rushTD": 1,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Terrell Jennings",
+   "pos": "RB",
+   "tm": "NE",
+   "games": 10,
+   "ppg_half_tep": 1.24,
+   "season_pts_half_tep": 12.4,
+   "src_pprPts": 13,
+   "line": {
+    "games": 10,
+    "rushAtt": 14,
+    "rushYds": 50,
+    "rushTD": 1,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Josh Williams",
+   "pos": "RB",
+   "tm": "TB",
+   "games": 8,
+   "ppg_half_tep": 1.6,
+   "season_pts_half_tep": 12.8,
+   "src_pprPts": 13,
+   "line": {
+    "games": 8,
+    "rushAtt": 11,
+    "rushYds": 53,
+    "rushTD": 1,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jam Miller",
+   "pos": "RB",
+   "tm": "NE",
+   "games": 14,
+   "ppg_half_tep": 0.82,
+   "season_pts_half_tep": 11.5,
+   "src_pprPts": 12,
+   "line": {
+    "games": 14,
+    "rushAtt": 8,
+    "rushYds": 41,
+    "rushTD": 1,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Gary Brightwell",
+   "pos": "RB",
+   "tm": "CIN",
+   "games": 8,
+   "ppg_half_tep": 1.0,
+   "season_pts_half_tep": 8.0,
+   "src_pprPts": 9,
+   "line": {
+    "games": 8,
+    "rushAtt": 11,
+    "rushYds": 53,
+    "rushTD": 0,
+    "tgt": 4,
+    "rec": 2,
+    "recYds": 17,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Dylan Laube",
+   "pos": "RB",
+   "tm": "LV",
+   "games": 17,
+   "ppg_half_tep": 0.39,
+   "season_pts_half_tep": 6.6,
+   "src_pprPts": 9,
+   "line": {
+    "games": 17,
+    "rushAtt": 10,
+    "rushYds": 19,
+    "rushTD": 0,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 27,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Demond Claiborne",
+   "pos": "RB",
+   "tm": "MIN",
+   "games": 14,
+   "ppg_half_tep": 0.59,
+   "season_pts_half_tep": 8.3,
+   "src_pprPts": 9,
+   "line": {
+    "games": 14,
+    "rushAtt": 14,
+    "rushYds": 68,
+    "rushTD": 0,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Max Bredeson",
+   "pos": "RB",
+   "tm": "MIN",
+   "games": 14,
+   "ppg_half_tep": 0.59,
+   "season_pts_half_tep": 8.3,
+   "src_pprPts": 9,
+   "line": {
+    "games": 14,
+    "rushAtt": 14,
+    "rushYds": 68,
+    "rushTD": 0,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Eli Heidenreich",
+   "pos": "RB",
+   "tm": "PIT",
+   "games": 14,
+   "ppg_half_tep": 0.49,
+   "season_pts_half_tep": 6.8,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "rushAtt": 10,
+    "rushYds": 53,
+    "rushTD": 0,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Emmett Johnson",
+   "pos": "RB",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 0.44,
+   "season_pts_half_tep": 6.2,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "rushAtt": 9,
+    "rushYds": 45,
+    "rushTD": 0,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 12,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Kene Nwangwu",
+   "pos": "RB",
+   "tm": "NYJ",
+   "games": 12,
+   "ppg_half_tep": 0.54,
+   "season_pts_half_tep": 6.5,
+   "src_pprPts": 7,
+   "line": {
+    "games": 12,
+    "rushAtt": 11,
+    "rushYds": 51,
+    "rushTD": 0,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Eric Gray",
+   "pos": "RB",
+   "tm": "NYG",
+   "games": 7,
+   "ppg_half_tep": 0.91,
+   "season_pts_half_tep": 6.4,
+   "src_pprPts": 7,
+   "line": {
+    "games": 7,
+    "rushAtt": 10,
+    "rushYds": 50,
+    "rushTD": 0,
+    "tgt": 3,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Kaytron Allen",
+   "pos": "RB",
+   "tm": "WAS",
+   "games": 14,
+   "ppg_half_tep": 0.46,
+   "season_pts_half_tep": 6.5,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "rushAtt": 9,
+    "rushYds": 48,
+    "rushTD": 0,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 12,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Nicholas Singleton",
+   "pos": "RB",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 0.48,
+   "season_pts_half_tep": 6.7,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "rushAtt": 10,
+    "rushYds": 54,
+    "rushTD": 0,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 8,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "British Brooks",
+   "pos": "RB",
+   "tm": "HOU",
+   "games": 11,
+   "ppg_half_tep": 0.62,
+   "season_pts_half_tep": 6.8,
+   "src_pprPts": 7,
+   "line": {
+    "games": 11,
+    "rushAtt": 12,
+    "rushYds": 68,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Dameon Pierce",
+   "pos": "RB",
+   "tm": "PHI",
+   "games": 9,
+   "ppg_half_tep": 0.4,
+   "season_pts_half_tep": 3.6,
+   "src_pprPts": 4,
+   "line": {
+    "games": 9,
+    "rushAtt": 7,
+    "rushYds": 22,
+    "rushTD": 0,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Tyler Goodson",
+   "pos": "RB",
+   "tm": "ATL",
+   "games": 12,
+   "ppg_half_tep": 0.28,
+   "season_pts_half_tep": 3.3,
+   "src_pprPts": 4,
+   "line": {
+    "games": 12,
+    "rushAtt": 6,
+    "rushYds": 19,
+    "rushTD": 0,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 9,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Ronnie Rivers",
+   "pos": "RB",
+   "tm": "LA",
+   "games": 10,
+   "ppg_half_tep": 0.33,
+   "season_pts_half_tep": 3.3,
+   "src_pprPts": 3,
+   "line": {
+    "games": 10,
+    "rushAtt": 5,
+    "rushYds": 33,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Jacob Saylors",
+   "pos": "RB",
+   "tm": "DET",
+   "games": 13,
+   "ppg_half_tep": 0.14,
+   "season_pts_half_tep": 1.8,
+   "src_pprPts": 2,
+   "line": {
+    "games": 13,
+    "rushAtt": 3,
+    "rushYds": 18,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Roschon Johnson",
+   "pos": "RB",
+   "tm": "CHI",
+   "games": 10,
+   "ppg_half_tep": 0.11,
+   "season_pts_half_tep": 1.1,
+   "src_pprPts": 1,
+   "line": {
+    "games": 10,
+    "rushAtt": 1,
+    "rushYds": 11,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Sione Vaki",
+   "pos": "RB",
+   "tm": "DET",
+   "games": 11,
+   "ppg_half_tep": 0.05,
+   "season_pts_half_tep": 0.6,
+   "src_pprPts": 1,
+   "line": {
+    "games": 11,
+    "rushAtt": 1,
+    "rushYds": 6,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Travis Homer",
+   "pos": "RB",
+   "tm": "PIT",
+   "games": 11,
+   "ppg_half_tep": 0.0,
+   "season_pts_half_tep": 0.0,
+   "src_pprPts": 0,
+   "line": {
+    "games": 11,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Isaac Guerendo",
+   "pos": "RB",
+   "tm": "SF",
+   "games": 11,
+   "ppg_half_tep": 0.0,
+   "season_pts_half_tep": 0.0,
+   "src_pprPts": 0,
+   "line": {
+    "games": 11,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0
+   }
+  },
+  {
+   "n": "Amon-Ra St. Brown",
+   "pos": "WR",
+   "tm": "DET",
+   "games": 17,
+   "ppg_half_tep": 16.06,
+   "season_pts_half_tep": 273.0,
+   "src_pprPts": 335,
+   "line": {
+    "games": 17,
+    "tgt": 189,
+    "rec": 124,
+    "recYds": 1540,
+    "recTD": 9.2,
+    "rushAtt": 2,
+    "rushYds": 18,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Puka Nacua",
+   "pos": "WR",
+   "tm": "LA",
+   "games": 16,
+   "ppg_half_tep": 16.67,
+   "season_pts_half_tep": 266.7,
+   "src_pprPts": 321,
+   "line": {
+    "games": 16,
+    "tgt": 145,
+    "rec": 105,
+    "recYds": 1542,
+    "recTD": 7.2,
+    "rushAtt": 9,
+    "rushYds": 108,
+    "rushTD": 1
+   }
+  },
+  {
+   "n": "Ja'Marr Chase",
+   "pos": "WR",
+   "tm": "CIN",
+   "games": 16,
+   "ppg_half_tep": 15.22,
+   "season_pts_half_tep": 243.5,
+   "src_pprPts": 297,
+   "line": {
+    "games": 16,
+    "tgt": 169,
+    "rec": 106,
+    "recYds": 1377,
+    "recTD": 8.4,
+    "rushAtt": 3,
+    "rushYds": 24,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Justin Jefferson",
+   "pos": "WR",
+   "tm": "MIN",
+   "games": 17,
+   "ppg_half_tep": 13.69,
+   "season_pts_half_tep": 232.7,
+   "src_pprPts": 284,
+   "line": {
+    "games": 17,
+    "tgt": 170,
+    "rec": 103,
+    "recYds": 1341,
+    "recTD": 6.5,
+    "rushAtt": 4,
+    "rushYds": 15,
+    "rushTD": 1.1
+   }
+  },
+  {
+   "n": "Jaxon Smith-Njigba",
+   "pos": "WR",
+   "tm": "SEA",
+   "games": 17,
+   "ppg_half_tep": 13.91,
+   "season_pts_half_tep": 236.4,
+   "src_pprPts": 283,
+   "line": {
+    "games": 17,
+    "tgt": 132,
+    "rec": 93,
+    "recYds": 1443,
+    "recTD": 6.9,
+    "rushAtt": 6,
+    "rushYds": 42,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chris Olave",
+   "pos": "WR",
+   "tm": "NO",
+   "games": 16,
+   "ppg_half_tep": 13.53,
+   "season_pts_half_tep": 216.4,
+   "src_pprPts": 267,
+   "line": {
+    "games": 16,
+    "tgt": 162,
+    "rec": 99,
+    "recYds": 1339,
+    "recTD": 5.9,
+    "rushAtt": 5,
+    "rushYds": -24,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "CeeDee Lamb",
+   "pos": "WR",
+   "tm": "DAL",
+   "games": 14,
+   "ppg_half_tep": 15.15,
+   "season_pts_half_tep": 212.1,
+   "src_pprPts": 255,
+   "line": {
+    "games": 14,
+    "tgt": 134,
+    "rec": 86,
+    "recYds": 1367,
+    "recTD": 5.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Zay Flowers",
+   "pos": "WR",
+   "tm": "BAL",
+   "games": 17,
+   "ppg_half_tep": 12.39,
+   "season_pts_half_tep": 210.6,
+   "src_pprPts": 253,
+   "line": {
+    "games": 17,
+    "tgt": 127,
+    "rec": 86,
+    "recYds": 1296,
+    "recTD": 4.3,
+    "rushAtt": 11,
+    "rushYds": 68,
+    "rushTD": 0.9
+   }
+  },
+  {
+   "n": "Drake London",
+   "pos": "WR",
+   "tm": "ATL",
+   "games": 15,
+   "ppg_half_tep": 13.13,
+   "season_pts_half_tep": 197.0,
+   "src_pprPts": 239,
+   "line": {
+    "games": 15,
+    "tgt": 138,
+    "rec": 83,
+    "recYds": 1225,
+    "recTD": 5.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jameson Williams",
+   "pos": "WR",
+   "tm": "DET",
+   "games": 17,
+   "ppg_half_tep": 11.77,
+   "season_pts_half_tep": 200.1,
+   "src_pprPts": 238,
+   "line": {
+    "games": 17,
+    "tgt": 121,
+    "rec": 76,
+    "recYds": 1257,
+    "recTD": 5.7,
+    "rushAtt": 5,
+    "rushYds": 22,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Rashee Rice",
+   "pos": "WR",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 13.51,
+   "season_pts_half_tep": 189.1,
+   "src_pprPts": 234,
+   "line": {
+    "games": 14,
+    "tgt": 140,
+    "rec": 89,
+    "recYds": 1112,
+    "recTD": 4.8,
+    "rushAtt": 7,
+    "rushYds": 46,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "A.J. Brown",
+   "pos": "WR",
+   "tm": "NE",
+   "games": 15,
+   "ppg_half_tep": 12.82,
+   "season_pts_half_tep": 192.3,
+   "src_pprPts": 233,
+   "line": {
+    "games": 15,
+    "tgt": 127,
+    "rec": 82,
+    "recYds": 1105,
+    "recTD": 6.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Wan'Dale Robinson",
+   "pos": "WR",
+   "tm": "TEN",
+   "games": 16,
+   "ppg_half_tep": 11.56,
+   "season_pts_half_tep": 185.0,
+   "src_pprPts": 229,
+   "line": {
+    "games": 16,
+    "tgt": 143,
+    "rec": 89,
+    "recYds": 1061,
+    "recTD": 5.5,
+    "rushAtt": 2,
+    "rushYds": 14,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Emeka Egbuka",
+   "pos": "WR",
+   "tm": "TB",
+   "games": 17,
+   "ppg_half_tep": 11.22,
+   "season_pts_half_tep": 190.7,
+   "src_pprPts": 227,
+   "line": {
+    "games": 17,
+    "tgt": 144,
+    "rec": 72,
+    "recYds": 1180,
+    "recTD": 5.6,
+    "rushAtt": 6,
+    "rushYds": 31,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "DeVonta Smith",
+   "pos": "WR",
+   "tm": "PHI",
+   "games": 17,
+   "ppg_half_tep": 10.93,
+   "season_pts_half_tep": 185.8,
+   "src_pprPts": 225,
+   "line": {
+    "games": 17,
+    "tgt": 121,
+    "rec": 79,
+    "recYds": 1115,
+    "recTD": 5.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ladd McConkey",
+   "pos": "WR",
+   "tm": "LAC",
+   "games": 16,
+   "ppg_half_tep": 11.29,
+   "season_pts_half_tep": 180.7,
+   "src_pprPts": 222,
+   "line": {
+    "games": 16,
+    "tgt": 137,
+    "rec": 82,
+    "recYds": 1097,
+    "recTD": 5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Courtland Sutton",
+   "pos": "WR",
+   "tm": "DEN",
+   "games": 17,
+   "ppg_half_tep": 10.66,
+   "season_pts_half_tep": 181.3,
+   "src_pprPts": 219,
+   "line": {
+    "games": 17,
+    "tgt": 126,
+    "rec": 74,
+    "recYds": 1095,
+    "recTD": 5.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nico Collins",
+   "pos": "WR",
+   "tm": "HOU",
+   "games": 15,
+   "ppg_half_tep": 12.12,
+   "season_pts_half_tep": 181.8,
+   "src_pprPts": 217,
+   "line": {
+    "games": 15,
+    "tgt": 121,
+    "rec": 70,
+    "recYds": 1123,
+    "recTD": 5.4,
+    "rushAtt": 2,
+    "rushYds": 21,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tee Higgins",
+   "pos": "WR",
+   "tm": "CIN",
+   "games": 15,
+   "ppg_half_tep": 11.74,
+   "season_pts_half_tep": 176.1,
+   "src_pprPts": 212,
+   "line": {
+    "games": 15,
+    "tgt": 121,
+    "rec": 70,
+    "recYds": 1093,
+    "recTD": 5.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Davante Adams",
+   "pos": "WR",
+   "tm": "LA",
+   "games": 15,
+   "ppg_half_tep": 11.81,
+   "season_pts_half_tep": 177.1,
+   "src_pprPts": 212,
+   "line": {
+    "games": 15,
+    "tgt": 128,
+    "rec": 70,
+    "recYds": 995,
+    "recTD": 7.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Marvin Harrison Jr.",
+   "pos": "WR",
+   "tm": "ARI",
+   "games": 15,
+   "ppg_half_tep": 11.62,
+   "season_pts_half_tep": 174.3,
+   "src_pprPts": 211,
+   "line": {
+    "games": 15,
+    "tgt": 126,
+    "rec": 74,
+    "recYds": 1049,
+    "recTD": 5.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tetairoa McMillan",
+   "pos": "WR",
+   "tm": "CAR",
+   "games": 17,
+   "ppg_half_tep": 10.21,
+   "season_pts_half_tep": 173.5,
+   "src_pprPts": 209,
+   "line": {
+    "games": 17,
+    "tgt": 125,
+    "rec": 73,
+    "recYds": 1070,
+    "recTD": 5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "George Pickens",
+   "pos": "WR",
+   "tm": "DAL",
+   "games": 17,
+   "ppg_half_tep": 10.23,
+   "season_pts_half_tep": 173.9,
+   "src_pprPts": 209,
+   "line": {
+    "games": 17,
+    "tgt": 115,
+    "rec": 71,
+    "recYds": 1057,
+    "recTD": 5.4,
+    "rushAtt": 1,
+    "rushYds": 3,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Brian Thomas Jr.",
+   "pos": "WR",
+   "tm": "JAX",
+   "games": 15,
+   "ppg_half_tep": 11.25,
+   "season_pts_half_tep": 168.8,
+   "src_pprPts": 208,
+   "line": {
+    "games": 15,
+    "tgt": 123,
+    "rec": 78,
+    "recYds": 978,
+    "recTD": 4.8,
+    "rushAtt": 6,
+    "rushYds": 32,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Malik Nabers",
+   "pos": "WR",
+   "tm": "NYG",
+   "games": 14,
+   "ppg_half_tep": 12.33,
+   "season_pts_half_tep": 172.6,
+   "src_pprPts": 207,
+   "line": {
+    "games": 14,
+    "tgt": 120,
+    "rec": 70,
+    "recYds": 1016,
+    "recTD": 6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "DK Metcalf",
+   "pos": "WR",
+   "tm": "PIT",
+   "games": 15,
+   "ppg_half_tep": 11.36,
+   "season_pts_half_tep": 170.4,
+   "src_pprPts": 203,
+   "line": {
+    "games": 15,
+    "tgt": 113,
+    "rec": 66,
+    "recYds": 962,
+    "recTD": 4.6,
+    "rushAtt": 8,
+    "rushYds": 64,
+    "rushTD": 1.2
+   }
+  },
+  {
+   "n": "Michael Pittman Jr.",
+   "pos": "WR",
+   "tm": "PIT",
+   "games": 17,
+   "ppg_half_tep": 9.18,
+   "season_pts_half_tep": 156.0,
+   "src_pprPts": 196,
+   "line": {
+    "games": 17,
+    "tgt": 121,
+    "rec": 80,
+    "recYds": 872,
+    "recTD": 4.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jaylen Waddle",
+   "pos": "WR",
+   "tm": "DEN",
+   "games": 16,
+   "ppg_half_tep": 10.21,
+   "season_pts_half_tep": 163.3,
+   "src_pprPts": 195,
+   "line": {
+    "games": 16,
+    "tgt": 102,
+    "rec": 65,
+    "recYds": 965,
+    "recTD": 5.4,
+    "rushAtt": 1,
+    "rushYds": 19,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Garrett Wilson",
+   "pos": "WR",
+   "tm": "NYJ",
+   "games": 14,
+   "ppg_half_tep": 11.09,
+   "season_pts_half_tep": 155.3,
+   "src_pprPts": 192,
+   "line": {
+    "games": 14,
+    "tgt": 123,
+    "rec": 73,
+    "recYds": 894,
+    "recTD": 4.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tre Tucker",
+   "pos": "WR",
+   "tm": "LV",
+   "games": 17,
+   "ppg_half_tep": 9.14,
+   "season_pts_half_tep": 155.3,
+   "src_pprPts": 190,
+   "line": {
+    "games": 17,
+    "tgt": 111,
+    "rec": 68,
+    "recYds": 860,
+    "recTD": 4.7,
+    "rushAtt": 9,
+    "rushYds": 71,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "DJ Moore",
+   "pos": "WR",
+   "tm": "BUF",
+   "games": 17,
+   "ppg_half_tep": 9.31,
+   "season_pts_half_tep": 158.2,
+   "src_pprPts": 190,
+   "line": {
+    "games": 17,
+    "tgt": 102,
+    "rec": 61,
+    "recYds": 894,
+    "recTD": 4.5,
+    "rushAtt": 7,
+    "rushYds": 47,
+    "rushTD": 1.1
+   }
+  },
+  {
+   "n": "Terry McLaurin",
+   "pos": "WR",
+   "tm": "WAS",
+   "games": 15,
+   "ppg_half_tep": 10.36,
+   "season_pts_half_tep": 155.4,
+   "src_pprPts": 188,
+   "line": {
+    "games": 15,
+    "tgt": 104,
+    "rec": 65,
+    "recYds": 1019,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Marvin Mims Jr.",
+   "pos": "WR",
+   "tm": "DEN",
+   "games": 15,
+   "ppg_half_tep": 9.79,
+   "season_pts_half_tep": 146.8,
+   "src_pprPts": 179,
+   "line": {
+    "games": 15,
+    "tgt": 108,
+    "rec": 66,
+    "recYds": 812,
+    "recTD": 5.1,
+    "rushAtt": 5,
+    "rushYds": 20,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Rome Odunze",
+   "pos": "WR",
+   "tm": "CHI",
+   "games": 15,
+   "ppg_half_tep": 9.9,
+   "season_pts_half_tep": 148.5,
+   "src_pprPts": 177,
+   "line": {
+    "games": 15,
+    "tgt": 111,
+    "rec": 58,
+    "recYds": 865,
+    "recTD": 5.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jerry Jeudy",
+   "pos": "WR",
+   "tm": "CLE",
+   "games": 17,
+   "ppg_half_tep": 8.52,
+   "season_pts_half_tep": 144.8,
+   "src_pprPts": 177,
+   "line": {
+    "games": 17,
+    "tgt": 130,
+    "rec": 64,
+    "recYds": 863,
+    "recTD": 4.3,
+    "rushAtt": 1,
+    "rushYds": 7,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jakobi Meyers",
+   "pos": "WR",
+   "tm": "JAX",
+   "games": 16,
+   "ppg_half_tep": 9.16,
+   "season_pts_half_tep": 146.5,
+   "src_pprPts": 175,
+   "line": {
+    "games": 16,
+    "tgt": 101,
+    "rec": 58,
+    "recYds": 911,
+    "recTD": 4.4,
+    "rushAtt": 8,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Josh Downs",
+   "pos": "WR",
+   "tm": "IND",
+   "games": 16,
+   "ppg_half_tep": 9.16,
+   "season_pts_half_tep": 146.5,
+   "src_pprPts": 173,
+   "line": {
+    "games": 16,
+    "tgt": 92,
+    "rec": 52,
+    "recYds": 1043,
+    "recTD": 2.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jalen Nailor",
+   "pos": "WR",
+   "tm": "LV",
+   "games": 17,
+   "ppg_half_tep": 8.29,
+   "season_pts_half_tep": 140.9,
+   "src_pprPts": 170,
+   "line": {
+    "games": 17,
+    "tgt": 99,
+    "rec": 58,
+    "recYds": 855,
+    "recTD": 4,
+    "rushAtt": 2,
+    "rushYds": 24,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Parker Washington",
+   "pos": "WR",
+   "tm": "JAX",
+   "games": 16,
+   "ppg_half_tep": 8.9,
+   "season_pts_half_tep": 142.4,
+   "src_pprPts": 169,
+   "line": {
+    "games": 16,
+    "tgt": 99,
+    "rec": 53,
+    "recYds": 817,
+    "recTD": 4.8,
+    "rushAtt": 3,
+    "rushYds": 54,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jordan Addison",
+   "pos": "WR",
+   "tm": "MIN",
+   "games": 15,
+   "ppg_half_tep": 9.46,
+   "season_pts_half_tep": 141.9,
+   "src_pprPts": 167,
+   "line": {
+    "games": 15,
+    "tgt": 91,
+    "rec": 52,
+    "recYds": 762,
+    "recTD": 3.3,
+    "rushAtt": 3,
+    "rushYds": 133,
+    "rushTD": 1.1
+   }
+  },
+  {
+   "n": "Quentin Johnston",
+   "pos": "WR",
+   "tm": "LAC",
+   "games": 14,
+   "ppg_half_tep": 9.77,
+   "season_pts_half_tep": 136.8,
+   "src_pprPts": 165,
+   "line": {
+    "games": 14,
+    "tgt": 93,
+    "rec": 55,
+    "recYds": 851,
+    "recTD": 3.8,
+    "rushAtt": 2,
+    "rushYds": 14,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Carnell Tate",
+   "pos": "WR",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 9.61,
+   "season_pts_half_tep": 134.5,
+   "src_pprPts": 164,
+   "line": {
+    "games": 14,
+    "tgt": 102,
+    "rec": 60,
+    "recYds": 757,
+    "recTD": 4.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Romeo Doubs",
+   "pos": "WR",
+   "tm": "NE",
+   "games": 16,
+   "ppg_half_tep": 8.16,
+   "season_pts_half_tep": 130.5,
+   "src_pprPts": 158,
+   "line": {
+    "games": 16,
+    "tgt": 86,
+    "rec": 55,
+    "recYds": 754,
+    "recTD": 4.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Christian Watson",
+   "pos": "WR",
+   "tm": "GB",
+   "games": 15,
+   "ppg_half_tep": 8.57,
+   "season_pts_half_tep": 128.6,
+   "src_pprPts": 155,
+   "line": {
+    "games": 15,
+    "tgt": 84,
+    "rec": 52,
+    "recYds": 818,
+    "recTD": 3.4,
+    "rushAtt": 1,
+    "rushYds": 4,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Alec Pierce",
+   "pos": "WR",
+   "tm": "IND",
+   "games": 15,
+   "ppg_half_tep": 8.18,
+   "season_pts_half_tep": 122.7,
+   "src_pprPts": 155,
+   "line": {
+    "games": 15,
+    "tgt": 99,
+    "rec": 64,
+    "recYds": 694,
+    "recTD": 3.6,
+    "rushAtt": 3,
+    "rushYds": -3,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Zavion Thomas",
+   "pos": "WR",
+   "tm": "CHI",
+   "games": 14,
+   "ppg_half_tep": 9.14,
+   "season_pts_half_tep": 128.0,
+   "src_pprPts": 154,
+   "line": {
+    "games": 14,
+    "tgt": 72,
+    "rec": 50,
+    "recYds": 715,
+    "recTD": 3.3,
+    "rushAtt": 14,
+    "rushYds": 69,
+    "rushTD": 0.8
+   }
+  },
+  {
+   "n": "Jayden Higgins",
+   "pos": "WR",
+   "tm": "HOU",
+   "games": 17,
+   "ppg_half_tep": 7.29,
+   "season_pts_half_tep": 123.9,
+   "src_pprPts": 153,
+   "line": {
+    "games": 17,
+    "tgt": 93,
+    "rec": 56,
+    "recYds": 749,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Malik Washington",
+   "pos": "WR",
+   "tm": "MIA",
+   "games": 17,
+   "ppg_half_tep": 7.25,
+   "season_pts_half_tep": 123.3,
+   "src_pprPts": 152,
+   "line": {
+    "games": 17,
+    "tgt": 89,
+    "rec": 59,
+    "recYds": 566,
+    "recTD": 3.3,
+    "rushAtt": 14,
+    "rushYds": 108,
+    "rushTD": 1.1
+   }
+  },
+  {
+   "n": "Khalil Shakir",
+   "pos": "WR",
+   "tm": "BUF",
+   "games": 16,
+   "ppg_half_tep": 7.59,
+   "season_pts_half_tep": 121.5,
+   "src_pprPts": 151,
+   "line": {
+    "games": 16,
+    "tgt": 84,
+    "rec": 60,
+    "recYds": 681,
+    "recTD": 3.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Rashid Shaheed",
+   "pos": "WR",
+   "tm": "SEA",
+   "games": 17,
+   "ppg_half_tep": 7.29,
+   "season_pts_half_tep": 124.0,
+   "src_pprPts": 150,
+   "line": {
+    "games": 17,
+    "tgt": 83,
+    "rec": 52,
+    "recYds": 650,
+    "recTD": 4.1,
+    "rushAtt": 8,
+    "rushYds": 84,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jordyn Tyson",
+   "pos": "WR",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 8.7,
+   "season_pts_half_tep": 121.8,
+   "src_pprPts": 146,
+   "line": {
+    "games": 14,
+    "tgt": 82,
+    "rec": 48,
+    "recYds": 666,
+    "recTD": 5.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Michael Wilson",
+   "pos": "WR",
+   "tm": "ARI",
+   "games": 17,
+   "ppg_half_tep": 7.06,
+   "season_pts_half_tep": 120.0,
+   "src_pprPts": 143,
+   "line": {
+    "games": 17,
+    "tgt": 83,
+    "rec": 46,
+    "recYds": 712,
+    "recTD": 4.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Brenen Thompson",
+   "pos": "WR",
+   "tm": "LAC",
+   "games": 14,
+   "ppg_half_tep": 8.37,
+   "season_pts_half_tep": 117.2,
+   "src_pprPts": 143,
+   "line": {
+    "games": 14,
+    "tgt": 83,
+    "rec": 54,
+    "recYds": 676,
+    "recTD": 3.3,
+    "rushAtt": 2,
+    "rushYds": 28,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Calvin Ridley",
+   "pos": "WR",
+   "tm": "TEN",
+   "games": 11,
+   "ppg_half_tep": 10.56,
+   "season_pts_half_tep": 116.2,
+   "src_pprPts": 141,
+   "line": {
+    "games": 11,
+    "tgt": 99,
+    "rec": 49,
+    "recYds": 653,
+    "recTD": 4.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Keon Coleman",
+   "pos": "WR",
+   "tm": "BUF",
+   "games": 14,
+   "ppg_half_tep": 7.73,
+   "season_pts_half_tep": 108.2,
+   "src_pprPts": 133,
+   "line": {
+    "games": 14,
+    "tgt": 75,
+    "rec": 48,
+    "recYds": 584,
+    "recTD": 4.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Xavier Worthy",
+   "pos": "WR",
+   "tm": "KC",
+   "games": 15,
+   "ppg_half_tep": 7.29,
+   "season_pts_half_tep": 109.4,
+   "src_pprPts": 130,
+   "line": {
+    "games": 15,
+    "tgt": 73,
+    "rec": 41,
+    "recYds": 581,
+    "recTD": 2.9,
+    "rushAtt": 7,
+    "rushYds": 74,
+    "rushTD": 1
+   }
+  },
+  {
+   "n": "Makai Lemon",
+   "pos": "WR",
+   "tm": "PHI",
+   "games": 14,
+   "ppg_half_tep": 7.36,
+   "season_pts_half_tep": 103.0,
+   "src_pprPts": 127,
+   "line": {
+    "games": 14,
+    "tgt": 78,
+    "rec": 47,
+    "recYds": 615,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jack Bech",
+   "pos": "WR",
+   "tm": "LV",
+   "games": 15,
+   "ppg_half_tep": 6.61,
+   "season_pts_half_tep": 99.1,
+   "src_pprPts": 124,
+   "line": {
+    "games": 15,
+    "tgt": 74,
+    "rec": 48,
+    "recYds": 595,
+    "recTD": 2.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chimere Dike",
+   "pos": "WR",
+   "tm": "TEN",
+   "games": 17,
+   "ppg_half_tep": 5.86,
+   "season_pts_half_tep": 99.6,
+   "src_pprPts": 124,
+   "line": {
+    "games": 17,
+    "tgt": 81,
+    "rec": 51,
+    "recYds": 520,
+    "recTD": 2.7,
+    "rushAtt": 9,
+    "rushYds": 59,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jaylin Noel",
+   "pos": "WR",
+   "tm": "HOU",
+   "games": 17,
+   "ppg_half_tep": 5.87,
+   "season_pts_half_tep": 99.8,
+   "src_pprPts": 122,
+   "line": {
+    "games": 17,
+    "tgt": 66,
+    "rec": 45,
+    "recYds": 557,
+    "recTD": 2.2,
+    "rushAtt": 6,
+    "rushYds": 18,
+    "rushTD": 1.1
+   }
+  },
+  {
+   "n": "DeMario Douglas",
+   "pos": "WR",
+   "tm": "NE",
+   "games": 16,
+   "ppg_half_tep": 6.33,
+   "season_pts_half_tep": 101.2,
+   "src_pprPts": 120,
+   "line": {
+    "games": 16,
+    "tgt": 65,
+    "rec": 38,
+    "recYds": 628,
+    "recTD": 3.1,
+    "rushAtt": 2,
+    "rushYds": 8,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cooper Kupp",
+   "pos": "WR",
+   "tm": "SEA",
+   "games": 16,
+   "ppg_half_tep": 6.13,
+   "season_pts_half_tep": 98.1,
+   "src_pprPts": 119,
+   "line": {
+    "games": 16,
+    "tgt": 66,
+    "rec": 43,
+    "recYds": 568,
+    "recTD": 3.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Darnell Mooney",
+   "pos": "WR",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 6.43,
+   "season_pts_half_tep": 96.5,
+   "src_pprPts": 116,
+   "line": {
+    "games": 15,
+    "tgt": 78,
+    "rec": 40,
+    "recYds": 561,
+    "recTD": 3.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mike Evans",
+   "pos": "WR",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 6.79,
+   "season_pts_half_tep": 95.0,
+   "src_pprPts": 114,
+   "line": {
+    "games": 14,
+    "tgt": 72,
+    "rec": 38,
+    "recYds": 550,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chris Godwin Jr.",
+   "pos": "WR",
+   "tm": "TB",
+   "games": 12,
+   "ppg_half_tep": 7.7,
+   "season_pts_half_tep": 92.4,
+   "src_pprPts": 113,
+   "line": {
+    "games": 12,
+    "tgt": 65,
+    "rec": 40,
+    "recYds": 520,
+    "recTD": 3.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Matthew Golden",
+   "pos": "WR",
+   "tm": "GB",
+   "games": 15,
+   "ppg_half_tep": 6.05,
+   "season_pts_half_tep": 90.7,
+   "src_pprPts": 111,
+   "line": {
+    "games": 15,
+    "tgt": 64,
+    "rec": 41,
+    "recYds": 508,
+    "recTD": 2.4,
+    "rushAtt": 9,
+    "rushYds": 50,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Greg Dortch",
+   "pos": "WR",
+   "tm": "DET",
+   "games": 14,
+   "ppg_half_tep": 6.52,
+   "season_pts_half_tep": 91.3,
+   "src_pprPts": 110,
+   "line": {
+    "games": 14,
+    "tgt": 60,
+    "rec": 37,
+    "recYds": 518,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "KC Concepcion",
+   "pos": "WR",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 6.38,
+   "season_pts_half_tep": 89.3,
+   "src_pprPts": 110,
+   "line": {
+    "games": 14,
+    "tgt": 69,
+    "rec": 41,
+    "recYds": 538,
+    "recTD": 2.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Xavier Legette",
+   "pos": "WR",
+   "tm": "CAR",
+   "games": 15,
+   "ppg_half_tep": 5.95,
+   "season_pts_half_tep": 89.3,
+   "src_pprPts": 110,
+   "line": {
+    "games": 15,
+    "tgt": 70,
+    "rec": 41,
+    "recYds": 478,
+    "recTD": 3.5,
+    "rushAtt": 2,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jalen Coker",
+   "pos": "WR",
+   "tm": "CAR",
+   "games": 13,
+   "ppg_half_tep": 6.85,
+   "season_pts_half_tep": 89.1,
+   "src_pprPts": 110,
+   "line": {
+    "games": 13,
+    "tgt": 58,
+    "rec": 40,
+    "recYds": 511,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Xavier Hutchinson",
+   "pos": "WR",
+   "tm": "HOU",
+   "games": 16,
+   "ppg_half_tep": 5.63,
+   "season_pts_half_tep": 90.0,
+   "src_pprPts": 109,
+   "line": {
+    "games": 16,
+    "tgt": 67,
+    "rec": 38,
+    "recYds": 458,
+    "recTD": 4.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jauan Jennings",
+   "pos": "WR",
+   "tm": "MIN",
+   "games": 15,
+   "ppg_half_tep": 5.79,
+   "season_pts_half_tep": 86.9,
+   "src_pprPts": 108,
+   "line": {
+    "games": 15,
+    "tgt": 68,
+    "rec": 41,
+    "recYds": 520,
+    "recTD": 2.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Omar Cooper Jr.",
+   "pos": "WR",
+   "tm": "NYJ",
+   "games": 14,
+   "ppg_half_tep": 6.26,
+   "season_pts_half_tep": 87.7,
+   "src_pprPts": 107,
+   "line": {
+    "games": 14,
+    "tgt": 66,
+    "rec": 38,
+    "recYds": 495,
+    "recTD": 3.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kyle Williams",
+   "pos": "WR",
+   "tm": "NE",
+   "games": 15,
+   "ppg_half_tep": 5.97,
+   "season_pts_half_tep": 89.5,
+   "src_pprPts": 107,
+   "line": {
+    "games": 15,
+    "tgt": 54,
+    "rec": 36,
+    "recYds": 519,
+    "recTD": 2.6,
+    "rushAtt": 6,
+    "rushYds": 40,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Troy Franklin",
+   "pos": "WR",
+   "tm": "DEN",
+   "games": 17,
+   "ppg_half_tep": 5.14,
+   "season_pts_half_tep": 87.3,
+   "src_pprPts": 106,
+   "line": {
+    "games": 17,
+    "tgt": 60,
+    "rec": 38,
+    "recYds": 503,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Adonai Mitchell",
+   "pos": "WR",
+   "tm": "NYJ",
+   "games": 16,
+   "ppg_half_tep": 5.37,
+   "season_pts_half_tep": 85.9,
+   "src_pprPts": 105,
+   "line": {
+    "games": 16,
+    "tgt": 77,
+    "rec": 38,
+    "recYds": 530,
+    "recTD": 2.5,
+    "rushAtt": 2,
+    "rushYds": -11,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Pat Bryant",
+   "pos": "WR",
+   "tm": "DEN",
+   "games": 14,
+   "ppg_half_tep": 6.06,
+   "season_pts_half_tep": 84.9,
+   "src_pprPts": 103,
+   "line": {
+    "games": 14,
+    "tgt": 52,
+    "rec": 35,
+    "recYds": 378,
+    "recTD": 2.4,
+    "rushAtt": 9,
+    "rushYds": 80,
+    "rushTD": 1.2
+   }
+  },
+  {
+   "n": "Denzel Boston",
+   "pos": "WR",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 5.96,
+   "season_pts_half_tep": 83.5,
+   "src_pprPts": 101,
+   "line": {
+    "games": 14,
+    "tgt": 52,
+    "rec": 34,
+    "recYds": 397,
+    "recTD": 2.4,
+    "rushAtt": 12,
+    "rushYds": 124,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Andrei Iosivas",
+   "pos": "WR",
+   "tm": "CIN",
+   "games": 15,
+   "ppg_half_tep": 5.55,
+   "season_pts_half_tep": 83.3,
+   "src_pprPts": 100,
+   "line": {
+    "games": 15,
+    "tgt": 57,
+    "rec": 32,
+    "recYds": 473,
+    "recTD": 3,
+    "rushAtt": 3,
+    "rushYds": 20,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Rashod Bateman",
+   "pos": "WR",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 5.76,
+   "season_pts_half_tep": 80.7,
+   "src_pprPts": 99,
+   "line": {
+    "games": 14,
+    "tgt": 67,
+    "rec": 36,
+    "recYds": 477,
+    "recTD": 2.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ricky Pearsall",
+   "pos": "WR",
+   "tm": "SF",
+   "games": 12,
+   "ppg_half_tep": 6.76,
+   "season_pts_half_tep": 81.1,
+   "src_pprPts": 97,
+   "line": {
+    "games": 12,
+    "tgt": 49,
+    "rec": 32,
+    "recYds": 512,
+    "recTD": 2.4,
+    "rushAtt": 6,
+    "rushYds": -5,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "De'Zhaun Stribling",
+   "pos": "WR",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 5.67,
+   "season_pts_half_tep": 79.4,
+   "src_pprPts": 97,
+   "line": {
+    "games": 14,
+    "tgt": 63,
+    "rec": 36,
+    "recYds": 416,
+    "recTD": 3.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Darius Slayton",
+   "pos": "WR",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 5.23,
+   "season_pts_half_tep": 78.5,
+   "src_pprPts": 95,
+   "line": {
+    "games": 15,
+    "tgt": 54,
+    "rec": 33,
+    "recYds": 482,
+    "recTD": 2.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Elic Ayomanor",
+   "pos": "WR",
+   "tm": "TEN",
+   "games": 16,
+   "ppg_half_tep": 4.87,
+   "season_pts_half_tep": 77.9,
+   "src_pprPts": 92,
+   "line": {
+    "games": 16,
+    "tgt": 53,
+    "rec": 29,
+    "recYds": 454,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Isaac TeSlaa",
+   "pos": "WR",
+   "tm": "DET",
+   "games": 15,
+   "ppg_half_tep": 4.95,
+   "season_pts_half_tep": 74.3,
+   "src_pprPts": 91,
+   "line": {
+    "games": 15,
+    "tgt": 49,
+    "rec": 32,
+    "recYds": 373,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dontayvion Wicks",
+   "pos": "WR",
+   "tm": "PHI",
+   "games": 14,
+   "ppg_half_tep": 5.32,
+   "season_pts_half_tep": 74.5,
+   "src_pprPts": 90,
+   "line": {
+    "games": 14,
+    "tgt": 48,
+    "rec": 31,
+    "recYds": 391,
+    "recTD": 3,
+    "rushAtt": 3,
+    "rushYds": 19,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Caleb Douglas",
+   "pos": "WR",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 5.24,
+   "season_pts_half_tep": 73.4,
+   "src_pprPts": 89,
+   "line": {
+    "games": 14,
+    "tgt": 58,
+    "rec": 32,
+    "recYds": 442,
+    "recTD": 2.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Britain Covey",
+   "pos": "WR",
+   "tm": "PHI",
+   "games": 10,
+   "ppg_half_tep": 6.9,
+   "season_pts_half_tep": 69.0,
+   "src_pprPts": 84,
+   "line": {
+    "games": 10,
+    "tgt": 49,
+    "rec": 31,
+    "recYds": 409,
+    "recTD": 2.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nikko Remigio",
+   "pos": "WR",
+   "tm": "KC",
+   "games": 15,
+   "ppg_half_tep": 4.59,
+   "season_pts_half_tep": 68.9,
+   "src_pprPts": 83,
+   "line": {
+    "games": 15,
+    "tgt": 49,
+    "rec": 29,
+    "recYds": 370,
+    "recTD": 2.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tank Dell",
+   "pos": "WR",
+   "tm": "HOU",
+   "games": 14,
+   "ppg_half_tep": 4.84,
+   "season_pts_half_tep": 67.7,
+   "src_pprPts": 82,
+   "line": {
+    "games": 14,
+    "tgt": 47,
+    "rec": 28,
+    "recYds": 369,
+    "recTD": 2.5,
+    "rushAtt": 3,
+    "rushYds": 18,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "KaVontae Turpin",
+   "pos": "WR",
+   "tm": "DAL",
+   "games": 15,
+   "ppg_half_tep": 4.41,
+   "season_pts_half_tep": 66.2,
+   "src_pprPts": 81,
+   "line": {
+    "games": 15,
+    "tgt": 45,
+    "rec": 30,
+    "recYds": 388,
+    "recTD": 1.7,
+    "rushAtt": 3,
+    "rushYds": 22,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tory Horton",
+   "pos": "WR",
+   "tm": "SEA",
+   "games": 11,
+   "ppg_half_tep": 6.09,
+   "season_pts_half_tep": 67.0,
+   "src_pprPts": 79,
+   "line": {
+    "games": 11,
+    "tgt": 41,
+    "rec": 25,
+    "recYds": 329,
+    "recTD": 3.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jayden Reed",
+   "pos": "WR",
+   "tm": "GB",
+   "games": 9,
+   "ppg_half_tep": 6.8,
+   "season_pts_half_tep": 61.2,
+   "src_pprPts": 76,
+   "line": {
+    "games": 9,
+    "tgt": 39,
+    "rec": 28,
+    "recYds": 327,
+    "recTD": 2.2,
+    "rushAtt": 1,
+    "rushYds": 13,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Antonio Williams",
+   "pos": "WR",
+   "tm": "WAS",
+   "games": 14,
+   "ppg_half_tep": 4.47,
+   "season_pts_half_tep": 62.6,
+   "src_pprPts": 74,
+   "line": {
+    "games": 14,
+    "tgt": 40,
+    "rec": 23,
+    "recYds": 299,
+    "recTD": 2,
+    "rushAtt": 13,
+    "rushYds": 50,
+    "rushTD": 0.7
+   }
+  },
+  {
+   "n": "Malachi Corley",
+   "pos": "WR",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 4.18,
+   "season_pts_half_tep": 58.5,
+   "src_pprPts": 72,
+   "line": {
+    "games": 14,
+    "tgt": 45,
+    "rec": 26,
+    "recYds": 353,
+    "recTD": 1.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jordan Whittington",
+   "pos": "WR",
+   "tm": "LA",
+   "games": 15,
+   "ppg_half_tep": 3.79,
+   "season_pts_half_tep": 56.8,
+   "src_pprPts": 69,
+   "line": {
+    "games": 15,
+    "tgt": 41,
+    "rec": 27,
+    "recYds": 328,
+    "recTD": 1.5,
+    "rushAtt": 2,
+    "rushYds": 15,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Zachariah Branch",
+   "pos": "WR",
+   "tm": "ATL",
+   "games": 14,
+   "ppg_half_tep": 3.95,
+   "season_pts_half_tep": 55.3,
+   "src_pprPts": 69,
+   "line": {
+    "games": 14,
+    "tgt": 43,
+    "rec": 27,
+    "recYds": 277,
+    "recTD": 2.1,
+    "rushAtt": 3,
+    "rushYds": 15,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ted Hurst III",
+   "pos": "WR",
+   "tm": "TB",
+   "games": 14,
+   "ppg_half_tep": 4.12,
+   "season_pts_half_tep": 57.7,
+   "src_pprPts": 69,
+   "line": {
+    "games": 14,
+    "tgt": 34,
+    "rec": 22,
+    "recYds": 340,
+    "recTD": 2.1,
+    "rushAtt": 1,
+    "rushYds": 1,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mack Hollins",
+   "pos": "WR",
+   "tm": "NE",
+   "games": 15,
+   "ppg_half_tep": 3.53,
+   "season_pts_half_tep": 52.9,
+   "src_pprPts": 64,
+   "line": {
+    "games": 15,
+    "tgt": 34,
+    "rec": 22,
+    "recYds": 288,
+    "recTD": 2.1,
+    "rushAtt": 1,
+    "rushYds": 5,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Devin Duvernay",
+   "pos": "WR",
+   "tm": "ARI",
+   "games": 17,
+   "ppg_half_tep": 3.03,
+   "season_pts_half_tep": 51.5,
+   "src_pprPts": 62,
+   "line": {
+    "games": 17,
+    "tgt": 34,
+    "rec": 21,
+    "recYds": 326,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyquan Thornton",
+   "pos": "WR",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 3.72,
+   "season_pts_half_tep": 52.1,
+   "src_pprPts": 61,
+   "line": {
+    "games": 14,
+    "tgt": 31,
+    "rec": 18,
+    "recYds": 347,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jaylin Lane",
+   "pos": "WR",
+   "tm": "WAS",
+   "games": 15,
+   "ppg_half_tep": 3.31,
+   "season_pts_half_tep": 49.6,
+   "src_pprPts": 60,
+   "line": {
+    "games": 15,
+    "tgt": 37,
+    "rec": 21,
+    "recYds": 306,
+    "recTD": 1.2,
+    "rushAtt": 3,
+    "rushYds": 13,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kaden Wetjen",
+   "pos": "WR",
+   "tm": "PIT",
+   "games": 14,
+   "ppg_half_tep": 3.46,
+   "season_pts_half_tep": 48.5,
+   "src_pprPts": 59,
+   "line": {
+    "games": 14,
+    "tgt": 35,
+    "rec": 21,
+    "recYds": 260,
+    "recTD": 2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ryan Flournoy",
+   "pos": "WR",
+   "tm": "DAL",
+   "games": 15,
+   "ppg_half_tep": 3.3,
+   "season_pts_half_tep": 49.5,
+   "src_pprPts": 58,
+   "line": {
+    "games": 15,
+    "tgt": 27,
+    "rec": 18,
+    "recYds": 260,
+    "recTD": 1.4,
+    "rushAtt": 13,
+    "rushYds": 61,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Luther Burden III",
+   "pos": "WR",
+   "tm": "CHI",
+   "games": 15,
+   "ppg_half_tep": 2.91,
+   "season_pts_half_tep": 43.6,
+   "src_pprPts": 53,
+   "line": {
+    "games": 15,
+    "tgt": 27,
+    "rec": 18,
+    "recYds": 234,
+    "recTD": 1.4,
+    "rushAtt": 4,
+    "rushYds": 28,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Luke McCaffrey",
+   "pos": "WR",
+   "tm": "WAS",
+   "games": 12,
+   "ppg_half_tep": 3.72,
+   "season_pts_half_tep": 44.6,
+   "src_pprPts": 53,
+   "line": {
+    "games": 12,
+    "tgt": 26,
+    "rec": 18,
+    "recYds": 278,
+    "recTD": 1.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chris Brazzell II",
+   "pos": "WR",
+   "tm": "CAR",
+   "games": 14,
+   "ppg_half_tep": 2.97,
+   "season_pts_half_tep": 41.6,
+   "src_pprPts": 53,
+   "line": {
+    "games": 14,
+    "tgt": 34,
+    "rec": 22,
+    "recYds": 230,
+    "recTD": 1.4,
+    "rushAtt": 7,
+    "rushYds": -8,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Christian Kirk",
+   "pos": "WR",
+   "tm": "SF",
+   "games": 13,
+   "ppg_half_tep": 3.04,
+   "season_pts_half_tep": 39.5,
+   "src_pprPts": 48,
+   "line": {
+    "games": 13,
+    "tgt": 28,
+    "rec": 17,
+    "recYds": 238,
+    "recTD": 1.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Germie Bernard",
+   "pos": "WR",
+   "tm": "PIT",
+   "games": 14,
+   "ppg_half_tep": 2.81,
+   "season_pts_half_tep": 39.3,
+   "src_pprPts": 47,
+   "line": {
+    "games": 14,
+    "tgt": 27,
+    "rec": 15,
+    "recYds": 216,
+    "recTD": 1.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dyami Brown",
+   "pos": "WR",
+   "tm": "WAS",
+   "games": 13,
+   "ppg_half_tep": 2.92,
+   "season_pts_half_tep": 38.0,
+   "src_pprPts": 46,
+   "line": {
+    "games": 13,
+    "tgt": 27,
+    "rec": 17,
+    "recYds": 217,
+    "recTD": 1.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Olamide Zaccheaus",
+   "pos": "WR",
+   "tm": "ATL",
+   "games": 15,
+   "ppg_half_tep": 2.51,
+   "season_pts_half_tep": 37.6,
+   "src_pprPts": 45,
+   "line": {
+    "games": 15,
+    "tgt": 25,
+    "rec": 15,
+    "recYds": 217,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nick Westbrook-Ikhine",
+   "pos": "WR",
+   "tm": "IND",
+   "games": 14,
+   "ppg_half_tep": 2.54,
+   "season_pts_half_tep": 35.6,
+   "src_pprPts": 44,
+   "line": {
+    "games": 14,
+    "tgt": 27,
+    "rec": 17,
+    "recYds": 187,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "John Metchie III",
+   "pos": "WR",
+   "tm": "CAR",
+   "games": 14,
+   "ppg_half_tep": 2.31,
+   "season_pts_half_tep": 32.3,
+   "src_pprPts": 40,
+   "line": {
+    "games": 14,
+    "tgt": 23,
+    "rec": 14,
+    "recYds": 181,
+    "recTD": 1.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Isaiah Williams",
+   "pos": "WR",
+   "tm": "NYJ",
+   "games": 15,
+   "ppg_half_tep": 2.09,
+   "season_pts_half_tep": 31.4,
+   "src_pprPts": 39,
+   "line": {
+    "games": 15,
+    "tgt": 22,
+    "rec": 14,
+    "recYds": 140,
+    "recTD": 0.7,
+    "rushAtt": 8,
+    "rushYds": 62,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Xavier Smith",
+   "pos": "WR",
+   "tm": "LA",
+   "games": 16,
+   "ppg_half_tep": 1.96,
+   "season_pts_half_tep": 31.4,
+   "src_pprPts": 38,
+   "line": {
+    "games": 16,
+    "tgt": 20,
+    "rec": 13,
+    "recYds": 207,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jalen Tolbert",
+   "pos": "WR",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 2.19,
+   "season_pts_half_tep": 30.6,
+   "src_pprPts": 37,
+   "line": {
+    "games": 14,
+    "tgt": 22,
+    "rec": 13,
+    "recYds": 175,
+    "recTD": 1.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kendrick Law",
+   "pos": "WR",
+   "tm": "DET",
+   "games": 14,
+   "ppg_half_tep": 2.09,
+   "season_pts_half_tep": 29.2,
+   "src_pprPts": 36,
+   "line": {
+    "games": 14,
+    "tgt": 19,
+    "rec": 13,
+    "recYds": 128,
+    "recTD": 1.4,
+    "rushAtt": 5,
+    "rushYds": 15,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dont'e Thornton Jr.",
+   "pos": "WR",
+   "tm": "LV",
+   "games": 13,
+   "ppg_half_tep": 2.08,
+   "season_pts_half_tep": 27.1,
+   "src_pprPts": 33,
+   "line": {
+    "games": 13,
+    "tgt": 22,
+    "rec": 11,
+    "recYds": 144,
+    "recTD": 1.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Skyy Moore",
+   "pos": "WR",
+   "tm": "GB",
+   "games": 17,
+   "ppg_half_tep": 1.53,
+   "season_pts_half_tep": 26.0,
+   "src_pprPts": 32,
+   "line": {
+    "games": 17,
+    "tgt": 17,
+    "rec": 11,
+    "recYds": 124,
+    "recTD": 0.8,
+    "rushAtt": 9,
+    "rushYds": 33,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jalen McMillan",
+   "pos": "WR",
+   "tm": "TB",
+   "games": 9,
+   "ppg_half_tep": 2.92,
+   "season_pts_half_tep": 26.3,
+   "src_pprPts": 32,
+   "line": {
+    "games": 9,
+    "tgt": 20,
+    "rec": 11,
+    "recYds": 154,
+    "recTD": 0.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chris Bell",
+   "pos": "WR",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 1.91,
+   "season_pts_half_tep": 26.8,
+   "src_pprPts": 32,
+   "line": {
+    "games": 14,
+    "tgt": 20,
+    "rec": 11,
+    "recYds": 153,
+    "recTD": 1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jahan Dotson",
+   "pos": "WR",
+   "tm": "ATL",
+   "games": 15,
+   "ppg_half_tep": 1.65,
+   "season_pts_half_tep": 24.8,
+   "src_pprPts": 31,
+   "line": {
+    "games": 15,
+    "tgt": 19,
+    "rec": 12,
+    "recYds": 152,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Elijah Sarratt",
+   "pos": "WR",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 1.84,
+   "season_pts_half_tep": 25.7,
+   "src_pprPts": 31,
+   "line": {
+    "games": 14,
+    "tgt": 18,
+    "rec": 11,
+    "recYds": 142,
+    "recTD": 1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Malachi Fields",
+   "pos": "WR",
+   "tm": "NYG",
+   "games": 14,
+   "ppg_half_tep": 1.59,
+   "season_pts_half_tep": 22.2,
+   "src_pprPts": 28,
+   "line": {
+    "games": 14,
+    "tgt": 18,
+    "rec": 11,
+    "recYds": 137,
+    "recTD": 0.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Anthony Gould",
+   "pos": "WR",
+   "tm": "IND",
+   "games": 13,
+   "ppg_half_tep": 1.84,
+   "season_pts_half_tep": 23.9,
+   "src_pprPts": 27,
+   "line": {
+    "games": 13,
+    "tgt": 13,
+    "rec": 8,
+    "recYds": 117,
+    "recTD": 0.7,
+    "rushAtt": 4,
+    "rushYds": 40,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kalif Raymond",
+   "pos": "WR",
+   "tm": "CHI",
+   "games": 15,
+   "ppg_half_tep": 1.43,
+   "season_pts_half_tep": 21.5,
+   "src_pprPts": 26,
+   "line": {
+    "games": 15,
+    "tgt": 15,
+    "rec": 9,
+    "recYds": 116,
+    "recTD": 0.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Savion Williams",
+   "pos": "WR",
+   "tm": "GB",
+   "games": 14,
+   "ppg_half_tep": 1.51,
+   "season_pts_half_tep": 21.1,
+   "src_pprPts": 25,
+   "line": {
+    "games": 14,
+    "tgt": 13,
+    "rec": 8,
+    "recYds": 115,
+    "recTD": 0.7,
+    "rushAtt": 3,
+    "rushYds": 14,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tim Patrick",
+   "pos": "WR",
+   "tm": "NYJ",
+   "games": 14,
+   "ppg_half_tep": 1.39,
+   "season_pts_half_tep": 19.4,
+   "src_pprPts": 24,
+   "line": {
+    "games": 14,
+    "tgt": 14,
+    "rec": 8,
+    "recYds": 112,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Gage Larvadain",
+   "pos": "WR",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 1.19,
+   "season_pts_half_tep": 16.7,
+   "src_pprPts": 20,
+   "line": {
+    "games": 14,
+    "tgt": 11,
+    "rec": 7,
+    "recYds": 88,
+    "recTD": 0.7,
+    "rushAtt": 1,
+    "rushYds": 2,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kameron Johnson",
+   "pos": "WR",
+   "tm": "TB",
+   "games": 17,
+   "ppg_half_tep": 1.05,
+   "season_pts_half_tep": 17.9,
+   "src_pprPts": 20,
+   "line": {
+    "games": 17,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 78,
+    "recTD": 0.7,
+    "rushAtt": 6,
+    "rushYds": 29,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "CJ Daniels",
+   "pos": "WR",
+   "tm": "LA",
+   "games": 14,
+   "ppg_half_tep": 1.08,
+   "season_pts_half_tep": 15.1,
+   "src_pprPts": 19,
+   "line": {
+    "games": 14,
+    "tgt": 11,
+    "rec": 6,
+    "recYds": 85,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jacob Cowing",
+   "pos": "WR",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 1.01,
+   "season_pts_half_tep": 14.1,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 69,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Vinny Anthony II",
+   "pos": "WR",
+   "tm": "ATL",
+   "games": 14,
+   "ppg_half_tep": 1.01,
+   "season_pts_half_tep": 14.1,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 69,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Anthony Smith",
+   "pos": "WR",
+   "tm": "DAL",
+   "games": 14,
+   "ppg_half_tep": 1.01,
+   "season_pts_half_tep": 14.2,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 10,
+    "rec": 6,
+    "recYds": 76,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Emmanuel Henderson Jr.",
+   "pos": "WR",
+   "tm": "SEA",
+   "games": 14,
+   "ppg_half_tep": 0.99,
+   "season_pts_half_tep": 13.9,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 73,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tre Harris",
+   "pos": "WR",
+   "tm": "LAC",
+   "games": 16,
+   "ppg_half_tep": 0.89,
+   "season_pts_half_tep": 14.2,
+   "src_pprPts": 17,
+   "line": {
+    "games": 16,
+    "tgt": 11,
+    "rec": 6,
+    "recYds": 90,
+    "recTD": 0,
+    "rushAtt": 2,
+    "rushYds": 22,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Barion Brown",
+   "pos": "WR",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 1.01,
+   "season_pts_half_tep": 14.1,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 10,
+    "rec": 6,
+    "recYds": 69,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kevin Coleman Jr.",
+   "pos": "WR",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 0.99,
+   "season_pts_half_tep": 13.8,
+   "src_pprPts": 17,
+   "line": {
+    "games": 14,
+    "tgt": 10,
+    "rec": 5,
+    "recYds": 77,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Derius Davis",
+   "pos": "WR",
+   "tm": "LAC",
+   "games": 13,
+   "ppg_half_tep": 0.97,
+   "season_pts_half_tep": 12.6,
+   "src_pprPts": 16,
+   "line": {
+    "games": 13,
+    "tgt": 10,
+    "rec": 6,
+    "recYds": 78,
+    "recTD": 0.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Trey Palmer",
+   "pos": "WR",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 0.94,
+   "season_pts_half_tep": 13.1,
+   "src_pprPts": 16,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 5,
+    "recYds": 70,
+    "recTD": 0.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ashton Dulin",
+   "pos": "WR",
+   "tm": "IND",
+   "games": 14,
+   "ppg_half_tep": 0.84,
+   "season_pts_half_tep": 11.7,
+   "src_pprPts": 15,
+   "line": {
+    "games": 14,
+    "tgt": 12,
+    "rec": 8,
+    "recYds": 77,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Gunner Olszewski",
+   "pos": "WR",
+   "tm": "NYG",
+   "games": 16,
+   "ppg_half_tep": 0.72,
+   "season_pts_half_tep": 11.5,
+   "src_pprPts": 15,
+   "line": {
+    "games": 16,
+    "tgt": 10,
+    "rec": 6,
+    "recYds": 85,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ja'Kobi Lane",
+   "pos": "WR",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 0.86,
+   "season_pts_half_tep": 12.0,
+   "src_pprPts": 15,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 5,
+    "recYds": 71,
+    "recTD": 0.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Bryce Lance",
+   "pos": "WR",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 0.89,
+   "season_pts_half_tep": 12.4,
+   "src_pprPts": 15,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 5,
+    "recYds": 75,
+    "recTD": 0.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Josh Cameron",
+   "pos": "WR",
+   "tm": "JAX",
+   "games": 14,
+   "ppg_half_tep": 0.85,
+   "season_pts_half_tep": 11.9,
+   "src_pprPts": 14,
+   "line": {
+    "games": 14,
+    "tgt": 8,
+    "rec": 5,
+    "recYds": 64,
+    "recTD": 0.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Roman Wilson",
+   "pos": "WR",
+   "tm": "PIT",
+   "games": 12,
+   "ppg_half_tep": 0.88,
+   "season_pts_half_tep": 10.5,
+   "src_pprPts": 13,
+   "line": {
+    "games": 12,
+    "tgt": 8,
+    "rec": 5,
+    "recYds": 62,
+    "recTD": 0.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Skyler Bell",
+   "pos": "WR",
+   "tm": "BUF",
+   "games": 14,
+   "ppg_half_tep": 0.79,
+   "season_pts_half_tep": 11.1,
+   "src_pprPts": 13,
+   "line": {
+    "games": 14,
+    "tgt": 7,
+    "rec": 5,
+    "recYds": 62,
+    "recTD": 0.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Colbie Young",
+   "pos": "WR",
+   "tm": "CIN",
+   "games": 14,
+   "ppg_half_tep": 0.68,
+   "season_pts_half_tep": 9.5,
+   "src_pprPts": 12,
+   "line": {
+    "games": 14,
+    "tgt": 7,
+    "rec": 4,
+    "recYds": 57,
+    "recTD": 0.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Malik Benson",
+   "pos": "WR",
+   "tm": "LV",
+   "games": 14,
+   "ppg_half_tep": 0.71,
+   "season_pts_half_tep": 9.9,
+   "src_pprPts": 12,
+   "line": {
+    "games": 14,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 49,
+    "recTD": 0.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jahdae Walker",
+   "pos": "WR",
+   "tm": "CHI",
+   "games": 10,
+   "ppg_half_tep": 1.0,
+   "season_pts_half_tep": 10.0,
+   "src_pprPts": 11,
+   "line": {
+    "games": 10,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 43,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mecole Hardman",
+   "pos": "WR",
+   "tm": "BUF",
+   "games": 8,
+   "ppg_half_tep": 1.17,
+   "season_pts_half_tep": 9.4,
+   "src_pprPts": 11,
+   "line": {
+    "games": 8,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 37,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kendrick Bourne",
+   "pos": "WR",
+   "tm": "ARI",
+   "games": 15,
+   "ppg_half_tep": 0.51,
+   "season_pts_half_tep": 7.7,
+   "src_pprPts": 9,
+   "line": {
+    "games": 15,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 44,
+    "recTD": 0.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Marquise Brown",
+   "pos": "WR",
+   "tm": "PHI",
+   "games": 16,
+   "ppg_half_tep": 0.36,
+   "season_pts_half_tep": 5.7,
+   "src_pprPts": 6,
+   "line": {
+    "games": 16,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 42,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Myles Price",
+   "pos": "WR",
+   "tm": "MIN",
+   "games": 16,
+   "ppg_half_tep": 0.27,
+   "season_pts_half_tep": 4.3,
+   "src_pprPts": 6,
+   "line": {
+    "games": 16,
+    "tgt": 6,
+    "rec": 2,
+    "recYds": 33,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Austin Trammell",
+   "pos": "WR",
+   "tm": "JAX",
+   "games": 10,
+   "ppg_half_tep": 0.51,
+   "season_pts_half_tep": 5.1,
+   "src_pprPts": 6,
+   "line": {
+    "games": 10,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 36,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Reggie Virgil",
+   "pos": "WR",
+   "tm": "ARI",
+   "games": 14,
+   "ppg_half_tep": 0.19,
+   "season_pts_half_tep": 2.7,
+   "src_pprPts": 4,
+   "line": {
+    "games": 14,
+    "tgt": 4,
+    "rec": 1,
+    "recYds": 22,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ke'Shawn Williams",
+   "pos": "WR",
+   "tm": "CIN",
+   "games": 13,
+   "ppg_half_tep": 0.2,
+   "season_pts_half_tep": 2.6,
+   "src_pprPts": 3,
+   "line": {
+    "games": 13,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 11,
+    "recTD": 0,
+    "rushAtt": 2,
+    "rushYds": 10,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cyrus Allen",
+   "pos": "WR",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 0.23,
+   "season_pts_half_tep": 3.2,
+   "src_pprPts": 3,
+   "line": {
+    "games": 14,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 14,
+    "recTD": 0,
+    "rushAtt": 1,
+    "rushYds": 13,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tai Felton",
+   "pos": "WR",
+   "tm": "MIN",
+   "games": 14,
+   "ppg_half_tep": 0.0,
+   "season_pts_half_tep": 0.0,
+   "src_pprPts": 0,
+   "line": {
+    "games": 14,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "LaJohntay Wester",
+   "pos": "WR",
+   "tm": "BAL",
+   "games": 15,
+   "ppg_half_tep": 0.0,
+   "season_pts_half_tep": 0.0,
+   "src_pprPts": 0,
+   "line": {
+    "games": 15,
+    "tgt": 0,
+    "rec": 0,
+    "recYds": 0,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Trey McBride",
+   "pos": "TE",
+   "tm": "ARI",
+   "games": 17,
+   "ppg_half_tep": 16.25,
+   "season_pts_half_tep": 276.2,
+   "src_pprPts": 276,
+   "line": {
+    "games": 17,
+    "tgt": 162,
+    "rec": 112,
+    "recYds": 1228,
+    "recTD": 6.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyler Warren",
+   "pos": "TE",
+   "tm": "IND",
+   "games": 17,
+   "ppg_half_tep": 12.95,
+   "season_pts_half_tep": 220.1,
+   "src_pprPts": 221,
+   "line": {
+    "games": 17,
+    "tgt": 136,
+    "rec": 91,
+    "recYds": 1027,
+    "recTD": 4.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Travis Kelce",
+   "pos": "TE",
+   "tm": "KC",
+   "games": 17,
+   "ppg_half_tep": 12.55,
+   "season_pts_half_tep": 213.4,
+   "src_pprPts": 213,
+   "line": {
+    "games": 17,
+    "tgt": 128,
+    "rec": 85,
+    "recYds": 1062,
+    "recTD": 3.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Colston Loveland",
+   "pos": "TE",
+   "tm": "CHI",
+   "games": 16,
+   "ppg_half_tep": 13.07,
+   "season_pts_half_tep": 209.2,
+   "src_pprPts": 209,
+   "line": {
+    "games": 16,
+    "tgt": 114,
+    "rec": 77,
+    "recYds": 974,
+    "recTD": 5.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Brock Bowers",
+   "pos": "TE",
+   "tm": "LV",
+   "games": 15,
+   "ppg_half_tep": 13.49,
+   "season_pts_half_tep": 202.4,
+   "src_pprPts": 203,
+   "line": {
+    "games": 15,
+    "tgt": 115,
+    "rec": 81,
+    "recYds": 908,
+    "recTD": 5.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tucker Kraft",
+   "pos": "TE",
+   "tm": "GB",
+   "games": 14,
+   "ppg_half_tep": 13.85,
+   "season_pts_half_tep": 193.9,
+   "src_pprPts": 194,
+   "line": {
+    "games": 14,
+    "tgt": 104,
+    "rec": 70,
+    "recYds": 969,
+    "recTD": 4.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jake Ferguson",
+   "pos": "TE",
+   "tm": "DAL",
+   "games": 17,
+   "ppg_half_tep": 10.76,
+   "season_pts_half_tep": 182.9,
+   "src_pprPts": 183,
+   "line": {
+    "games": 17,
+    "tgt": 115,
+    "rec": 84,
+    "recYds": 713,
+    "recTD": 4.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Hunter Henry",
+   "pos": "TE",
+   "tm": "NE",
+   "games": 17,
+   "ppg_half_tep": 10.66,
+   "season_pts_half_tep": 181.3,
+   "src_pprPts": 181,
+   "line": {
+    "games": 17,
+    "tgt": 97,
+    "rec": 65,
+    "recYds": 851,
+    "recTD": 5.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Sam LaPorta",
+   "pos": "TE",
+   "tm": "DET",
+   "games": 15,
+   "ppg_half_tep": 12.04,
+   "season_pts_half_tep": 180.6,
+   "src_pprPts": 180,
+   "line": {
+    "games": 15,
+    "tgt": 89,
+    "rec": 67,
+    "recYds": 806,
+    "recTD": 5.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chig Okonkwo",
+   "pos": "TE",
+   "tm": "WAS",
+   "games": 17,
+   "ppg_half_tep": 10.49,
+   "season_pts_half_tep": 178.3,
+   "src_pprPts": 178,
+   "line": {
+    "games": 17,
+    "tgt": 108,
+    "rec": 74,
+    "recYds": 821,
+    "recTD": 3.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "George Kittle",
+   "pos": "TE",
+   "tm": "SF",
+   "games": 15,
+   "ppg_half_tep": 11.63,
+   "season_pts_half_tep": 174.4,
+   "src_pprPts": 174,
+   "line": {
+    "games": 15,
+    "tgt": 89,
+    "rec": 66,
+    "recYds": 850,
+    "recTD": 3.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Harold Fannin Jr.",
+   "pos": "TE",
+   "tm": "CLE",
+   "games": 16,
+   "ppg_half_tep": 10.07,
+   "season_pts_half_tep": 161.1,
+   "src_pprPts": 161,
+   "line": {
+    "games": 16,
+    "tgt": 102,
+    "rec": 65,
+    "recYds": 751,
+    "recTD": 3.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dalton Schultz",
+   "pos": "TE",
+   "tm": "HOU",
+   "games": 17,
+   "ppg_half_tep": 9.28,
+   "season_pts_half_tep": 157.7,
+   "src_pprPts": 158,
+   "line": {
+    "games": 17,
+    "tgt": 90,
+    "rec": 66,
+    "recYds": 683,
+    "recTD": 3.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dalton Kincaid",
+   "pos": "TE",
+   "tm": "BUF",
+   "games": 15,
+   "ppg_half_tep": 10.55,
+   "season_pts_half_tep": 158.2,
+   "src_pprPts": 158,
+   "line": {
+    "games": 15,
+    "tgt": 73,
+    "rec": 54,
+    "recYds": 796,
+    "recTD": 4.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mark Andrews",
+   "pos": "TE",
+   "tm": "BAL",
+   "games": 17,
+   "ppg_half_tep": 9.25,
+   "season_pts_half_tep": 157.3,
+   "src_pprPts": 157,
+   "line": {
+    "games": 17,
+    "tgt": 103,
+    "rec": 67,
+    "recYds": 687,
+    "recTD": 3.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dallas Goedert",
+   "pos": "TE",
+   "tm": "PHI",
+   "games": 15,
+   "ppg_half_tep": 10.4,
+   "season_pts_half_tep": 156.0,
+   "src_pprPts": 156,
+   "line": {
+    "games": 15,
+    "tgt": 91,
+    "rec": 62,
+    "recYds": 694,
+    "recTD": 4.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kyle Pitts Sr.",
+   "pos": "TE",
+   "tm": "ATL",
+   "games": 17,
+   "ppg_half_tep": 9.04,
+   "season_pts_half_tep": 153.7,
+   "src_pprPts": 153,
+   "line": {
+    "games": 17,
+    "tgt": 84,
+    "rec": 61,
+    "recYds": 711,
+    "recTD": 3.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "AJ Barner",
+   "pos": "TE",
+   "tm": "SEA",
+   "games": 17,
+   "ppg_half_tep": 9.04,
+   "season_pts_half_tep": 153.7,
+   "src_pprPts": 153,
+   "line": {
+    "games": 17,
+    "tgt": 87,
+    "rec": 62,
+    "recYds": 677,
+    "recTD": 4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Greg Dulcich",
+   "pos": "TE",
+   "tm": "MIA",
+   "games": 15,
+   "ppg_half_tep": 10.2,
+   "season_pts_half_tep": 153.0,
+   "src_pprPts": 153,
+   "line": {
+    "games": 15,
+    "tgt": 82,
+    "rec": 56,
+    "recYds": 778,
+    "recTD": 3.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Pat Freiermuth",
+   "pos": "TE",
+   "tm": "PIT",
+   "games": 15,
+   "ppg_half_tep": 9.92,
+   "season_pts_half_tep": 148.8,
+   "src_pprPts": 149,
+   "line": {
+    "games": 15,
+    "tgt": 85,
+    "rec": 59,
+    "recYds": 718,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Oronde Gadsden II",
+   "pos": "TE",
+   "tm": "LAC",
+   "games": 15,
+   "ppg_half_tep": 9.81,
+   "season_pts_half_tep": 147.1,
+   "src_pprPts": 147,
+   "line": {
+    "games": 15,
+    "tgt": 80,
+    "rec": 53,
+    "recYds": 749,
+    "recTD": 3.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Colby Parkinson",
+   "pos": "TE",
+   "tm": "LA",
+   "games": 15,
+   "ppg_half_tep": 9.28,
+   "season_pts_half_tep": 139.2,
+   "src_pprPts": 139,
+   "line": {
+    "games": 15,
+    "tgt": 75,
+    "rec": 54,
+    "recYds": 582,
+    "recTD": 4.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Brenton Strange",
+   "pos": "TE",
+   "tm": "JAX",
+   "games": 15,
+   "ppg_half_tep": 8.93,
+   "season_pts_half_tep": 133.9,
+   "src_pprPts": 134,
+   "line": {
+    "games": 15,
+    "tgt": 73,
+    "rec": 50,
+    "recYds": 641,
+    "recTD": 3.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cade Otton",
+   "pos": "TE",
+   "tm": "TB",
+   "games": 15,
+   "ppg_half_tep": 8.75,
+   "season_pts_half_tep": 131.3,
+   "src_pprPts": 131,
+   "line": {
+    "games": 15,
+    "tgt": 78,
+    "rec": 53,
+    "recYds": 597,
+    "recTD": 3.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Evan Engram",
+   "pos": "TE",
+   "tm": "DEN",
+   "games": 16,
+   "ppg_half_tep": 7.94,
+   "season_pts_half_tep": 127.1,
+   "src_pprPts": 127,
+   "line": {
+    "games": 16,
+    "tgt": 82,
+    "rec": 53,
+    "recYds": 555,
+    "recTD": 3.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Isaiah Likely",
+   "pos": "TE",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 8.09,
+   "season_pts_half_tep": 121.3,
+   "src_pprPts": 121,
+   "line": {
+    "games": 15,
+    "tgt": 70,
+    "rec": 49,
+    "recYds": 573,
+    "recTD": 2.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "T.J. Hockenson",
+   "pos": "TE",
+   "tm": "MIN",
+   "games": 15,
+   "ppg_half_tep": 7.89,
+   "season_pts_half_tep": 118.3,
+   "src_pprPts": 119,
+   "line": {
+    "games": 15,
+    "tgt": 71,
+    "rec": 51,
+    "recYds": 493,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Theo Johnson",
+   "pos": "TE",
+   "tm": "NYG",
+   "games": 15,
+   "ppg_half_tep": 7.63,
+   "season_pts_half_tep": 114.5,
+   "src_pprPts": 115,
+   "line": {
+    "games": 15,
+    "tgt": 71,
+    "rec": 45,
+    "recYds": 539,
+    "recTD": 2.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Juwan Johnson",
+   "pos": "TE",
+   "tm": "NO",
+   "games": 17,
+   "ppg_half_tep": 6.69,
+   "season_pts_half_tep": 113.7,
+   "src_pprPts": 114,
+   "line": {
+    "games": 17,
+    "tgt": 63,
+    "rec": 44,
+    "recYds": 583,
+    "recTD": 1.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Gunnar Helm",
+   "pos": "TE",
+   "tm": "TEN",
+   "games": 16,
+   "ppg_half_tep": 7.09,
+   "season_pts_half_tep": 113.4,
+   "src_pprPts": 113,
+   "line": {
+    "games": 16,
+    "tgt": 69,
+    "rec": 50,
+    "recYds": 466,
+    "recTD": 2.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Sam Roush",
+   "pos": "TE",
+   "tm": "CHI",
+   "games": 14,
+   "ppg_half_tep": 7.79,
+   "season_pts_half_tep": 109.0,
+   "src_pprPts": 110,
+   "line": {
+    "games": 14,
+    "tgt": 68,
+    "rec": 41,
+    "recYds": 500,
+    "recTD": 3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mike Gesicki",
+   "pos": "TE",
+   "tm": "CIN",
+   "games": 15,
+   "ppg_half_tep": 7.01,
+   "season_pts_half_tep": 105.1,
+   "src_pprPts": 106,
+   "line": {
+    "games": 15,
+    "tgt": 59,
+    "rec": 37,
+    "recYds": 465,
+    "recTD": 3.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kenyon Sadiq",
+   "pos": "TE",
+   "tm": "NYJ",
+   "games": 14,
+   "ppg_half_tep": 7.02,
+   "season_pts_half_tep": 98.3,
+   "src_pprPts": 99,
+   "line": {
+    "games": 14,
+    "tgt": 62,
+    "rec": 38,
+    "recYds": 435,
+    "recTD": 2.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mason Taylor",
+   "pos": "TE",
+   "tm": "NYJ",
+   "games": 14,
+   "ppg_half_tep": 6.8,
+   "season_pts_half_tep": 95.2,
+   "src_pprPts": 95,
+   "line": {
+    "games": 14,
+    "tgt": 62,
+    "rec": 40,
+    "recYds": 390,
+    "recTD": 2.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Oscar Delp",
+   "pos": "TE",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 5.89,
+   "season_pts_half_tep": 82.5,
+   "src_pprPts": 83,
+   "line": {
+    "games": 14,
+    "tgt": 50,
+    "rec": 36,
+    "recYds": 381,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jake Tonges",
+   "pos": "TE",
+   "tm": "SF",
+   "games": 12,
+   "ppg_half_tep": 6.22,
+   "season_pts_half_tep": 74.6,
+   "src_pprPts": 75,
+   "line": {
+    "games": 12,
+    "tgt": 41,
+    "rec": 28,
+    "recYds": 310,
+    "recTD": 2.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ja'Tavion Sanders",
+   "pos": "TE",
+   "tm": "CAR",
+   "games": 15,
+   "ppg_half_tep": 4.89,
+   "season_pts_half_tep": 73.4,
+   "src_pprPts": 74,
+   "line": {
+    "games": 15,
+    "tgt": 45,
+    "rec": 34,
+    "recYds": 292,
+    "recTD": 1.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "David Njoku",
+   "pos": "TE",
+   "tm": "LAC",
+   "games": 13,
+   "ppg_half_tep": 5.63,
+   "season_pts_half_tep": 73.2,
+   "src_pprPts": 73,
+   "line": {
+    "games": 13,
+    "tgt": 44,
+    "rec": 29,
+    "recYds": 310,
+    "recTD": 2.2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Darnell Washington",
+   "pos": "TE",
+   "tm": "PIT",
+   "games": 14,
+   "ppg_half_tep": 5.11,
+   "season_pts_half_tep": 71.5,
+   "src_pprPts": 72,
+   "line": {
+    "games": 14,
+    "tgt": 41,
+    "rec": 27,
+    "recYds": 325,
+    "recTD": 2,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Michael Mayer",
+   "pos": "TE",
+   "tm": "LV",
+   "games": 14,
+   "ppg_half_tep": 5.01,
+   "season_pts_half_tep": 70.2,
+   "src_pprPts": 71,
+   "line": {
+    "games": 14,
+    "tgt": 42,
+    "rec": 28,
+    "recYds": 296,
+    "recTD": 2.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dawson Knox",
+   "pos": "TE",
+   "tm": "BUF",
+   "games": 16,
+   "ppg_half_tep": 4.29,
+   "season_pts_half_tep": 68.6,
+   "src_pprPts": 69,
+   "line": {
+    "games": 16,
+    "tgt": 33,
+    "rec": 23,
+    "recYds": 288,
+    "recTD": 2.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Max Klare",
+   "pos": "TE",
+   "tm": "LA",
+   "games": 14,
+   "ppg_half_tep": 4.52,
+   "season_pts_half_tep": 63.3,
+   "src_pprPts": 64,
+   "line": {
+    "games": 14,
+    "tgt": 36,
+    "rec": 24,
+    "recYds": 255,
+    "recTD": 2.3,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Luke Schoonmaker",
+   "pos": "TE",
+   "tm": "DAL",
+   "games": 15,
+   "ppg_half_tep": 3.95,
+   "season_pts_half_tep": 59.3,
+   "src_pprPts": 59,
+   "line": {
+    "games": 15,
+    "tgt": 32,
+    "rec": 21,
+    "recYds": 209,
+    "recTD": 2.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Luke Musgrave",
+   "pos": "TE",
+   "tm": "GB",
+   "games": 14,
+   "ppg_half_tep": 3.79,
+   "season_pts_half_tep": 53.1,
+   "src_pprPts": 53,
+   "line": {
+    "games": 14,
+    "tgt": 30,
+    "rec": 21,
+    "recYds": 225,
+    "recTD": 1.6,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tommy Tremble",
+   "pos": "TE",
+   "tm": "CAR",
+   "games": 15,
+   "ppg_half_tep": 3.53,
+   "season_pts_half_tep": 52.9,
+   "src_pprPts": 53,
+   "line": {
+    "games": 15,
+    "tgt": 31,
+    "rec": 22,
+    "recYds": 225,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Noah Gray",
+   "pos": "TE",
+   "tm": "KC",
+   "games": 15,
+   "ppg_half_tep": 3.44,
+   "season_pts_half_tep": 51.6,
+   "src_pprPts": 52,
+   "line": {
+    "games": 15,
+    "tgt": 37,
+    "rec": 22,
+    "recYds": 242,
+    "recTD": 0.9,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jackson Hawes",
+   "pos": "TE",
+   "tm": "BUF",
+   "games": 14,
+   "ppg_half_tep": 3.65,
+   "season_pts_half_tep": 51.1,
+   "src_pprPts": 52,
+   "line": {
+    "games": 14,
+    "tgt": 27,
+    "rec": 18,
+    "recYds": 229,
+    "recTD": 1.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mitchell Evans",
+   "pos": "TE",
+   "tm": "CAR",
+   "games": 15,
+   "ppg_half_tep": 3.31,
+   "season_pts_half_tep": 49.7,
+   "src_pprPts": 50,
+   "line": {
+    "games": 15,
+    "tgt": 30,
+    "rec": 21,
+    "recYds": 221,
+    "recTD": 1.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Elijah Higgins",
+   "pos": "TE",
+   "tm": "ARI",
+   "games": 17,
+   "ppg_half_tep": 2.8,
+   "season_pts_half_tep": 47.6,
+   "src_pprPts": 48,
+   "line": {
+    "games": 17,
+    "tgt": 27,
+    "rec": 18,
+    "recYds": 212,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jaren Kanak",
+   "pos": "TE",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 3.3,
+   "season_pts_half_tep": 46.2,
+   "src_pprPts": 46,
+   "line": {
+    "games": 14,
+    "tgt": 23,
+    "rec": 16,
+    "recYds": 218,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "DJ Rogers",
+   "pos": "TE",
+   "tm": "DAL",
+   "games": 14,
+   "ppg_half_tep": 3.06,
+   "season_pts_half_tep": 42.9,
+   "src_pprPts": 44,
+   "line": {
+    "games": 14,
+    "tgt": 29,
+    "rec": 17,
+    "recYds": 193,
+    "recTD": 1.1,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Elijah Arroyo",
+   "pos": "TE",
+   "tm": "SEA",
+   "games": 14,
+   "ppg_half_tep": 2.85,
+   "season_pts_half_tep": 39.9,
+   "src_pprPts": 40,
+   "line": {
+    "games": 14,
+    "tgt": 22,
+    "rec": 13,
+    "recYds": 161,
+    "recTD": 1.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jack Endries",
+   "pos": "TE",
+   "tm": "CIN",
+   "games": 14,
+   "ppg_half_tep": 2.82,
+   "season_pts_half_tep": 39.5,
+   "src_pprPts": 39,
+   "line": {
+    "games": 14,
+    "tgt": 21,
+    "rec": 15,
+    "recYds": 161,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ben Sinnott",
+   "pos": "TE",
+   "tm": "WAS",
+   "games": 12,
+   "ppg_half_tep": 3.15,
+   "season_pts_half_tep": 37.8,
+   "src_pprPts": 37,
+   "line": {
+    "games": 12,
+    "tgt": 19,
+    "rec": 14,
+    "recYds": 154,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Davis Allen",
+   "pos": "TE",
+   "tm": "LA",
+   "games": 15,
+   "ppg_half_tep": 2.33,
+   "season_pts_half_tep": 34.9,
+   "src_pprPts": 35,
+   "line": {
+    "games": 15,
+    "tgt": 20,
+    "rec": 12,
+    "recYds": 145,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Eli Stowers",
+   "pos": "TE",
+   "tm": "PHI",
+   "games": 14,
+   "ppg_half_tep": 2.44,
+   "season_pts_half_tep": 34.1,
+   "src_pprPts": 35,
+   "line": {
+    "games": 14,
+    "tgt": 18,
+    "rec": 11,
+    "recYds": 129,
+    "recTD": 1.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Josh Oliver",
+   "pos": "TE",
+   "tm": "MIN",
+   "games": 14,
+   "ppg_half_tep": 2.45,
+   "season_pts_half_tep": 34.3,
+   "src_pprPts": 34,
+   "line": {
+    "games": 14,
+    "tgt": 17,
+    "rec": 12,
+    "recYds": 139,
+    "recTD": 1.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Marlin Klein",
+   "pos": "TE",
+   "tm": "HOU",
+   "games": 14,
+   "ppg_half_tep": 1.97,
+   "season_pts_half_tep": 27.6,
+   "src_pprPts": 28,
+   "line": {
+    "games": 14,
+    "tgt": 18,
+    "rec": 11,
+    "recYds": 124,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Andrew Ogletree",
+   "pos": "TE",
+   "tm": "IND",
+   "games": 13,
+   "ppg_half_tep": 2.08,
+   "season_pts_half_tep": 27.0,
+   "src_pprPts": 27,
+   "line": {
+    "games": 13,
+    "tgt": 17,
+    "rec": 11,
+    "recYds": 118,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Austin Hooper",
+   "pos": "TE",
+   "tm": "ATL",
+   "games": 14,
+   "ppg_half_tep": 1.91,
+   "season_pts_half_tep": 26.8,
+   "src_pprPts": 27,
+   "line": {
+    "games": 14,
+    "tgt": 14,
+    "rec": 10,
+    "recYds": 126,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Josh Whyle",
+   "pos": "TE",
+   "tm": "GB",
+   "games": 10,
+   "ppg_half_tep": 2.56,
+   "season_pts_half_tep": 25.6,
+   "src_pprPts": 25,
+   "line": {
+    "games": 10,
+    "tgt": 21,
+    "rec": 13,
+    "recYds": 126,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jeremy Ruckert",
+   "pos": "TE",
+   "tm": "NYJ",
+   "games": 15,
+   "ppg_half_tep": 1.72,
+   "season_pts_half_tep": 25.8,
+   "src_pprPts": 25,
+   "line": {
+    "games": 15,
+    "tgt": 15,
+    "rec": 11,
+    "recYds": 106,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tyler Conklin",
+   "pos": "TE",
+   "tm": "DET",
+   "games": 10,
+   "ppg_half_tep": 2.51,
+   "season_pts_half_tep": 25.1,
+   "src_pprPts": 25,
+   "line": {
+    "games": 10,
+    "tgt": 21,
+    "rec": 11,
+    "recYds": 141,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "John Bates",
+   "pos": "TE",
+   "tm": "WAS",
+   "games": 12,
+   "ppg_half_tep": 1.83,
+   "season_pts_half_tep": 21.9,
+   "src_pprPts": 22,
+   "line": {
+    "games": 12,
+    "tgt": 13,
+    "rec": 8,
+    "recYds": 97,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nate Boerkircher",
+   "pos": "TE",
+   "tm": "JAX",
+   "games": 14,
+   "ppg_half_tep": 1.66,
+   "season_pts_half_tep": 23.2,
+   "src_pprPts": 22,
+   "line": {
+    "games": 14,
+    "tgt": 14,
+    "rec": 9,
+    "recYds": 100,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Eli Raridon",
+   "pos": "TE",
+   "tm": "NE",
+   "games": 14,
+   "ppg_half_tep": 1.53,
+   "season_pts_half_tep": 21.4,
+   "src_pprPts": 22,
+   "line": {
+    "games": 14,
+    "tgt": 12,
+    "rec": 8,
+    "recYds": 92,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Cole Kmet",
+   "pos": "TE",
+   "tm": "CHI",
+   "games": 16,
+   "ppg_half_tep": 1.23,
+   "season_pts_half_tep": 19.6,
+   "src_pprPts": 20,
+   "line": {
+    "games": 16,
+    "tgt": 12,
+    "rec": 7,
+    "recYds": 78,
+    "recTD": 0.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Matthew Hibner",
+   "pos": "TE",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 1.28,
+   "season_pts_half_tep": 17.9,
+   "src_pprPts": 18,
+   "line": {
+    "games": 14,
+    "tgt": 10,
+    "rec": 6,
+    "recYds": 71,
+    "recTD": 0.8,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Rivaldo Fairweather",
+   "pos": "TE",
+   "tm": "ARI",
+   "games": 14,
+   "ppg_half_tep": 1.21,
+   "season_pts_half_tep": 16.9,
+   "src_pprPts": 18,
+   "line": {
+    "games": 14,
+    "tgt": 11,
+    "rec": 6,
+    "recYds": 67,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Brock Wright",
+   "pos": "TE",
+   "tm": "DET",
+   "games": 11,
+   "ppg_half_tep": 1.46,
+   "season_pts_half_tep": 16.1,
+   "src_pprPts": 17,
+   "line": {
+    "games": 11,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 59,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Luke Farrell",
+   "pos": "TE",
+   "tm": "SF",
+   "games": 14,
+   "ppg_half_tep": 1.16,
+   "season_pts_half_tep": 16.3,
+   "src_pprPts": 16,
+   "line": {
+    "games": 14,
+    "tgt": 8,
+    "rec": 6,
+    "recYds": 61,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Charlie Kolar",
+   "pos": "TE",
+   "tm": "LAC",
+   "games": 14,
+   "ppg_half_tep": 1.0,
+   "season_pts_half_tep": 14.0,
+   "src_pprPts": 15,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 6,
+    "recYds": 80,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Noah Fant",
+   "pos": "TE",
+   "tm": "NO",
+   "games": 14,
+   "ppg_half_tep": 1.04,
+   "season_pts_half_tep": 14.6,
+   "src_pprPts": 15,
+   "line": {
+    "games": 14,
+    "tgt": 9,
+    "rec": 5,
+    "recYds": 66,
+    "recTD": 0.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Jaheim Bell",
+   "pos": "TE",
+   "tm": "PIT",
+   "games": 14,
+   "ppg_half_tep": 1.01,
+   "season_pts_half_tep": 14.2,
+   "src_pprPts": 14,
+   "line": {
+    "games": 14,
+    "tgt": 8,
+    "rec": 5,
+    "recYds": 50,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Grant Calcaterra",
+   "pos": "TE",
+   "tm": "PHI",
+   "games": 12,
+   "ppg_half_tep": 1.1,
+   "season_pts_half_tep": 13.2,
+   "src_pprPts": 13,
+   "line": {
+    "games": 12,
+    "tgt": 7,
+    "rec": 4,
+    "recYds": 50,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ian Thomas",
+   "pos": "TE",
+   "tm": "LV",
+   "games": 12,
+   "ppg_half_tep": 1.04,
+   "season_pts_half_tep": 12.5,
+   "src_pprPts": 13,
+   "line": {
+    "games": 12,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 43,
+    "recTD": 0.7,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Julian Hill",
+   "pos": "TE",
+   "tm": "NE",
+   "games": 13,
+   "ppg_half_tep": 0.89,
+   "season_pts_half_tep": 11.6,
+   "src_pprPts": 12,
+   "line": {
+    "games": 13,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 46,
+    "recTD": 0.5,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Will Kacmarek",
+   "pos": "TE",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 0.81,
+   "season_pts_half_tep": 11.4,
+   "src_pprPts": 12,
+   "line": {
+    "games": 14,
+    "tgt": 7,
+    "rec": 4,
+    "recYds": 50,
+    "recTD": 0.4,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Joe Royer",
+   "pos": "TE",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 0.72,
+   "season_pts_half_tep": 10.1,
+   "src_pprPts": 10,
+   "line": {
+    "games": 14,
+    "tgt": 7,
+    "rec": 5,
+    "recYds": 51,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "John Michael Gyllenborg",
+   "pos": "TE",
+   "tm": "KC",
+   "games": 14,
+   "ppg_half_tep": 0.61,
+   "season_pts_half_tep": 8.6,
+   "src_pprPts": 9,
+   "line": {
+    "games": 14,
+    "tgt": 7,
+    "rec": 4,
+    "recYds": 46,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Carsen Ryan",
+   "pos": "TE",
+   "tm": "CLE",
+   "games": 14,
+   "ppg_half_tep": 0.61,
+   "season_pts_half_tep": 8.5,
+   "src_pprPts": 9,
+   "line": {
+    "games": 14,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 45,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tanner Koziol",
+   "pos": "TE",
+   "tm": "JAX",
+   "games": 14,
+   "ppg_half_tep": 0.6,
+   "season_pts_half_tep": 8.4,
+   "src_pprPts": 8,
+   "line": {
+    "games": 14,
+    "tgt": 5,
+    "rec": 4,
+    "recYds": 44,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Nate Adkins",
+   "pos": "TE",
+   "tm": "DEN",
+   "games": 10,
+   "ppg_half_tep": 0.81,
+   "season_pts_half_tep": 8.1,
+   "src_pprPts": 8,
+   "line": {
+    "games": 10,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 41,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Tanner Hudson",
+   "pos": "TE",
+   "tm": "CIN",
+   "games": 12,
+   "ppg_half_tep": 0.59,
+   "season_pts_half_tep": 7.1,
+   "src_pprPts": 7,
+   "line": {
+    "games": 12,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 41,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Mo Alie-Cox",
+   "pos": "TE",
+   "tm": "IND",
+   "games": 13,
+   "ppg_half_tep": 0.58,
+   "season_pts_half_tep": 7.6,
+   "src_pprPts": 7,
+   "line": {
+    "games": 13,
+    "tgt": 4,
+    "rec": 4,
+    "recYds": 36,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Charlie Woerner",
+   "pos": "TE",
+   "tm": "ATL",
+   "games": 11,
+   "ppg_half_tep": 0.67,
+   "season_pts_half_tep": 7.4,
+   "src_pprPts": 7,
+   "line": {
+    "games": 11,
+    "tgt": 4,
+    "rec": 4,
+    "recYds": 34,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Daniel Bellinger",
+   "pos": "TE",
+   "tm": "TEN",
+   "games": 14,
+   "ppg_half_tep": 0.47,
+   "season_pts_half_tep": 6.6,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 36,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Bauer Sharp",
+   "pos": "TE",
+   "tm": "TB",
+   "games": 14,
+   "ppg_half_tep": 0.56,
+   "season_pts_half_tep": 7.8,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "tgt": 6,
+    "rec": 4,
+    "recYds": 38,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Seydou Traore",
+   "pos": "TE",
+   "tm": "MIA",
+   "games": 14,
+   "ppg_half_tep": 0.5,
+   "season_pts_half_tep": 7.0,
+   "src_pprPts": 7,
+   "line": {
+    "games": 14,
+    "tgt": 6,
+    "rec": 3,
+    "recYds": 40,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Josh Cuevas",
+   "pos": "TE",
+   "tm": "BAL",
+   "games": 14,
+   "ppg_half_tep": 0.44,
+   "season_pts_half_tep": 6.2,
+   "src_pprPts": 6,
+   "line": {
+    "games": 14,
+    "tgt": 5,
+    "rec": 3,
+    "recYds": 32,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Dallen Bentley",
+   "pos": "TE",
+   "tm": "DEN",
+   "games": 14,
+   "ppg_half_tep": 0.44,
+   "season_pts_half_tep": 6.1,
+   "src_pprPts": 6,
+   "line": {
+    "games": 14,
+    "tgt": 3,
+    "rec": 3,
+    "recYds": 31,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Foster Moreau",
+   "pos": "TE",
+   "tm": "HOU",
+   "games": 11,
+   "ppg_half_tep": 0.52,
+   "season_pts_half_tep": 5.7,
+   "src_pprPts": 6,
+   "line": {
+    "games": 11,
+    "tgt": 4,
+    "rec": 3,
+    "recYds": 27,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Eric Saubert",
+   "pos": "TE",
+   "tm": "SEA",
+   "games": 12,
+   "ppg_half_tep": 0.38,
+   "season_pts_half_tep": 4.5,
+   "src_pprPts": 5,
+   "line": {
+    "games": 12,
+    "tgt": 3,
+    "rec": 2,
+    "recYds": 25,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Kenny Fletcher Jr.",
+   "pos": "TE",
+   "tm": "TB",
+   "games": 14,
+   "ppg_half_tep": 0.33,
+   "season_pts_half_tep": 4.6,
+   "src_pprPts": 5,
+   "line": {
+    "games": 14,
+    "tgt": 3,
+    "rec": 2,
+    "recYds": 26,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Ben Yurosek",
+   "pos": "TE",
+   "tm": "MIN",
+   "games": 10,
+   "ppg_half_tep": 0.2,
+   "season_pts_half_tep": 2.0,
+   "src_pprPts": 1,
+   "line": {
+    "games": 10,
+    "tgt": 2,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
+  },
+  {
+   "n": "Chris Manhertz",
+   "pos": "TE",
+   "tm": "NYG",
+   "games": 9,
+   "ppg_half_tep": 0.22,
+   "season_pts_half_tep": 2.0,
+   "src_pprPts": 1,
+   "line": {
+    "games": 9,
+    "tgt": 1,
+    "rec": 1,
+    "recYds": 10,
+    "recTD": 0,
+    "rushAtt": 0,
+    "rushYds": 0,
+    "rushTD": 0
+   }
   }
  ]
 }
