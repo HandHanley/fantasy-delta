@@ -558,3 +558,51 @@ same terms as the snapshot itself. Every source is named and linked in the file'
 `attribution` block. KeepTradeCut values in particular are reproduced with
 attribution for accuracy-ledger use; they are that publisher's product, not
 DELTA's.
+
+### What was searched for and could not be recovered
+
+Recorded because a year from now the difference between "nobody thought of it"
+and "it was tried and the data does not exist" is worth having in writing. This
+is the same reason `NULL-RESULTS.md` exists.
+
+The target was a **free, named, industry projection of 2026 season points**,
+timestamped before Week 1 — the one comparator that would let Test 1 report a
+head-to-head rather than a figure standing alone. Searched 11 September 2026 via
+the Internet Archive.
+
+| Source | Outcome | Why |
+|---|---|---|
+| FantasyPros season projections | Found, partly unusable | Archived 6 Sep, 22:19–22:28 UTC, all four positions, page stamped "Consensus last updated Sep 6, 2026". The free portion renders; the full table requires an account. **Not extracted** — pulling the gated rows out of an archived copy is working around access control. |
+| ESPN | Not recoverable | The projections table is built client-side. The archive holds the page wrapper and no numbers. |
+| CBS | Not recoverable | Same shape, plus a partial paywall. |
+| NFL.com | No 2026 capture | Nearest capture was mid-August and served 2025 figures. |
+| FFToday | Found, deliberately excluded | See below. |
+
+**FFToday, and why it was left out.** Free, no account, and the only source whose
+full table survives archiving intact. But the sole 2026 capture is **2 June**,
+and the page is stamped "updated 6/2". The deciding evidence is 2025: the last
+pre-season capture that year is **25 April**. Two consecutive years of spring-only
+captures means the date is set by how often a crawler visits, not by when the
+publisher last revised the numbers — so it cannot be established whether 2 June
+was FFToday's final word or simply the last time the page was saved.
+
+A June projection graded against the 2026 season would flatter DELTA on
+information rather than on modelling. It predates training camp, preseason and
+most starter decisions, none of which the June number could have known and all of
+which the 7 September freeze did. That is the known-out exclusion in section 4
+running in reverse: an apparent win that is not a prediction anyone made.
+
+**Consequence for Test 1.** There is no frozen head-to-head against a named
+industry projection for 2026, and there will not be one. Test 1 stands on what
+section 2 pre-registered: MAE and RMSE against the published industry figures,
+the two no-modelling baselines (last season carried forward, and a plain 3-year
+average), and the declared expectation of 2.33–2.63 MAE. The StatHead file is
+reported alongside as one publisher's model.
+
+**Fix for 2027, and it is five minutes of work.** The Internet Archive accepts
+manual submissions. In the week before Week 1 2027, save each projection page
+through Save Page Now before the first game: FantasyPros, ESPN, CBS, NFL.com and
+FFToday, all four positions. Saving what a browser actually renders captures the
+client-side pages the crawler cannot, and the archive's own timestamp is the
+third-party proof. Do it as part of the freeze-day sequence, not as a separate
+task that can be forgotten.
