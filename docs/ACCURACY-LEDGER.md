@@ -441,6 +441,7 @@ Freeze-to-freeze (September to September) rather than calendar year, so both
 readings sit at the same point in the seasonal cycle — after the rookie class
 has repriced the market, not in the middle of post-season hype.
 
+
 ---
 
 ## 8. External comparators — added after the freeze, 11 September 2026
@@ -451,26 +452,26 @@ because the whole value of this document is that nothing gets added quietly.
 
 ### What was added
 
-Three files of other people's preseason opinions, captured on 11 September from
+Four files of other people's preseason opinions, captured on 11 September from
 public git archives, stored at `data/freeze-2026-comparators.json`:
 
-| Source | What it is | Upstream commit |
+| Source | What it is | Committed upstream |
 |---|---|---|
 | FantasyPros dynasty ECR | Expert consensus ranking | 4 Sep 2026, 04:23 UTC |
 | DynastyProcess values | Trade values built from that ECR | 4 Sep 2026, 07:19 UTC |
 | KeepTradeCut | Crowdsourced trade values, user votes | 7 Sep 2026, 12:01 UTC |
+| StatHead projections | Season stat lines with projected games | 8 Sep 2026, 23:55 UTC |
 
 Coverage of the 376 graded players: FantasyPros 370, DynastyProcess 371,
-KeepTradeCut 359. The union reaches 374; the two misses are Nick Chubb and
-Zonovan Knight.
+KeepTradeCut 359, StatHead 327. The rankings sources together reach 374; the two
+misses are Nick Chubb and Zonovan Knight.
 
 ### Why this is not a free pass
 
-**The data is clean. The choice of it is not.** Every file above was committed
-upstream before the season started — the latest by two days, and the KeepTradeCut
-file ten hours before `freeze-2026.json` was written. The commit dates belong to
-third parties and were not made by DELTA. Nobody's numbers were revised after
-seeing a game.
+**The data is clean. The choice of it is not.** Every file was committed upstream
+before the season started — the latest by hours, the KeepTradeCut file ten hours
+before `freeze-2026.json` was written. The commit dates belong to third parties
+and were not made by DELTA. Nobody's numbers were revised after seeing a game.
 
 But the decision to add them was made on 11 September, by which point two games
 had been played and their results were known. That is a real, if small,
@@ -478,15 +479,14 @@ contamination, and the defence against it is procedural rather than evidential:
 
 1. **The comparator list is fixed by this section and closed.** Nothing may be
    added later because it scored well, and nothing dropped because it scored
-   badly. If a further source is added, it gets its own dated entry saying when
-   and why, exactly as this one does.
-2. **No comparator has been graded.** The list was written before anyone looked
-   at how any of these sources perform against anything.
+   badly. A further source gets its own dated entry saying when and why.
+2. **No comparator has been graded.** The list, the scoring rules and the graded
+   subsets below were all written before anyone looked at how any of these
+   sources performs against anything.
 3. **DELTA's own frozen numbers are untouched.** Section 5 rule 1 still holds.
-   `data/freeze-2026.json` has not been opened, regenerated or corrected, and its
-   SHA-256 is unchanged.
+   `data/freeze-2026.json` has not been opened, regenerated or corrected.
 
-### These are two opinions, not three
+### The rankings sources are two opinions, not three
 
 Measured directly on the captured DynastyProcess file: the rank correlation
 between its superflex ECR and its superflex trade value is **0.997** across 640
@@ -494,31 +494,67 @@ players. The values are a transform of the ranking. Counting FantasyPros and
 DynastyProcess as separate opponents would inflate agreement that is really one
 source appearing twice.
 
-KeepTradeCut is the genuine second opinion — a different mechanism (user votes
-on head-to-head trades) and a different population (players, not analysts).
+KeepTradeCut is the genuine second opinion — a different mechanism (user votes on
+head-to-head trades) and a different population (players, not analysts).
+
+### The projection source is secondary, and the reason matters
+
+StatHead is one publisher's own model. It is not ESPN, FantasyPros, CBS or any
+industry projection service, and this ledger must never imply otherwise. **No
+sentence of the form "DELTA beat the industry on projection accuracy" is
+supported by this file.** The supportable sentence is "DELTA was measured against
+an independent preseason projection, and here is the result."
+
+It is included because the test is lopsided in a useful direction. Beating one
+publisher's model proves very little. Losing to it would be genuinely
+informative, and worth knowing regardless of how it reads.
+
+**Scoring, fixed here.** The source publishes full stat lines, so its numbers are
+run through **DELTA's own `gamefp()`** at half PPR with the tight-end premium —
+the formula read out of the deployed `delta-engine.js`, not reconstructed — and
+divided by the source's projected games. Same yardstick on both sides. Fumbles
+lost, two-point conversions and return touchdowns are absent from the source and
+score as zero, a small net bias in the source's favour.
+
+**Graded subset, fixed here.** Only players the source projects for **10 or more
+games**, which is 298 of the 376. Below that its per-game rate is conditional on
+the player appearing at all: Trey Lance is projected for one game at a starter's
+rate and reads 18.8 points per game against DELTA's 1.6. That is two different
+questions being asked, not a disagreement about a player, and grading it as one
+would be measuring nothing.
 
 ### What these comparators can and cannot grade
 
 **Test 2 (ranking accuracy) gains a real head-to-head.** The frozen `ds` ordering
-can now be scored against expert consensus and against the crowd, on the identical
-player set, against the identical 2026 production. That is a much stronger claim
-than a number reported alone.
+can be scored against expert consensus and against the crowd, on the identical
+player set, against the identical 2026 production.
 
 **Test 3 (pricing calls) gains a second market.** FantasyCalc was already frozen
 in the snapshot as `mkt` and `rankMk`. KeepTradeCut gives a second market whose
-2027 movement can be read the same way.
+2027 movement reads the same way.
 
-**Test 1 (projection accuracy) gains nothing.** None of these sources publishes a
-season points-per-game projection, so there is still no frozen head-to-head on
-MAE. Test 1 keeps the plan it was pre-registered with in section 2: DELTA's MAE
-against the published industry figures, plus the two internal baselines.
+**Test 1 (projection accuracy) gains a secondary check only.** The headline
+comparison stays as section 2 pre-registered it: DELTA's MAE against published
+industry figures, plus the two internal baselines. StatHead is reported alongside,
+labelled as one publisher's model.
 
-### Storage
+**Not captured: an industry projection head-to-head.** FantasyPros publishes
+season projections but gates the full table behind an account. The free portion
+was available in the archive and the rest was not; extracting the gated rows from
+an archived copy would be working around their access control, so it was not
+done. There is therefore still no frozen head-to-head against a named industry
+projection, and that gap belongs in the 2027 freeze.
 
-Names are stored **verbatim from each source and are deliberately not joined to
-DELTA's universe**. A join baked in now would freeze whatever name-matching rule
-happened to be used on the day; the engine's own normaliser does it at grading
-time, and a miss is then visible rather than silently pre-resolved. Each source
-carries its repository, commit hash, commit date and a SHA-256 fingerprint of the
-exact bytes captured, so the file is reconstructable on the same terms as the
-snapshot itself.
+### Storage and attribution
+
+Names are stored **verbatim from each source and deliberately not joined to
+DELTA's universe**. A join baked in today would freeze whatever name-matching rule
+happened to be used this afternoon; the engine's own normaliser does it at grading
+time, and a miss then stays visible rather than being silently pre-resolved.
+
+Each source carries its repository, commit hash, commit date and a SHA-256
+fingerprint of the exact bytes captured, so the file is reconstructable on the
+same terms as the snapshot itself. Every source is named and linked in the file's
+`attribution` block. KeepTradeCut values in particular are reproduced with
+attribution for accuracy-ledger use; they are that publisher's product, not
+DELTA's.
