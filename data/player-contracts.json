@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-11T10:52:27.051623+00:00",
+  "fetched": "2026-09-12T10:20:18.782056+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -144,12 +144,12 @@
     },
     "Baker Mayfield": {
       "team": "Buccaneers",
-      "year_signed": 2024,
+      "year_signed": 2026,
       "years": 3,
-      "end_year": 2026,
-      "aav": 33.33,
-      "total": 100.0,
-      "guaranteed": 40.0,
+      "end_year": 2028,
+      "aav": 55.0,
+      "total": 165.0,
+      "guaranteed": 70.0,
       "is_active": true
     },
     "Sam Darnold": {
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -983,7 +983,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2063,7 +2063,7 @@
       "is_active": true
     },
     "Kayshon Boutte": {
-      "team": "NE/HOU",
+      "team": "HOU/NE",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -3183,7 +3183,7 @@
       "is_active": true
     },
     "Emari Demercado": {
-      "team": "DAL/KC",
+      "team": "KC/DAL",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
@@ -3263,7 +3263,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "Browns",
+      "team": "CLE/LAC",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
