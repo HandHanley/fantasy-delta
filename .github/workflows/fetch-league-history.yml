@@ -1,0 +1,56 @@
+name: Fetch League History (one-off)
+
+# Pulls a Sleeper dynasty league's ENTIRE transaction history — every season the
+# league has existed for, every week of each season — and commits one file per
+# season to data/fixtures/.
+#
+# MANUAL ONLY. No schedule. This is a tool for gathering test material, not a
+# pipeline. Run it when you want fresh fixtures, ignore it otherwise.
+#
+# DELIBERATELY NOT IN THE DEPLOY PAGES TRIGGER LIST.
+# The standing rule is that any workflow committing data/ must be added there,
+# because otherwise the repo has data the live site never serves. That rule
+# exists for files the SITE READS. Nothing in the app reads data/fixtures/ —
+# these files are build-time test material for the trade-history feature, which
+# fetches from Sleeper in the browser at runtime. Adding this workflow to the
+# deploy list would rebuild the whole site for files no visitor can reach.
+# If that ever changes — if something in index.html or player.html starts
+# reading data/fixtures/ — this workflow MUST be added to that list.
+
+on:
+  workflow_dispatch:
+    inputs:
+      league_id:
+        description: 'Sleeper league ID (any season — it walks back to the first one on its own)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Fetch full league history
+        run: node scripts/fetch-league-history.js "${{ inputs.league_id }}"
+
+      - name: Commit fixtures
+        run: |
+          git config user.name "DELTA Bot"
+          git config user.email "delta-bot@users.noreply.github.com"
+          git add data/fixtures/
+          if git diff --staged --quiet; then
+            echo "No changes — skipping commit"
+          else
+            git commit -m "chore: refresh Sleeper league history fixtures [skip ci]"
+            git push
+          fi
