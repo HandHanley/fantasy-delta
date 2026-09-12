@@ -2,7 +2,27 @@ name: Update Market Values
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    # ── WHY THESE TIMES (measured 11 Sep 2026, do not "tidy" them) ─────────────
+    # DELTA's game logs come from nflverse, which publishes on TWO clocks:
+    #   stats + play-by-play  nflverse/nflverse-pbp, event-based crons, 5-17 min builds
+    #   snap counts           nflverse/nflverse-pfr, every 6h at 00/06/12/18 UTC
+    # fetch-game-logs.py needs BOTH: a missing snap row becomes snp:0.0 and the DNP
+    # rule falls through, so a player who took snaps but scored nothing vanishes from
+    # that week (see handoff §9). Running before the snap file lands publishes that.
+    # GitHub also starts scheduled runs 30-140 min late (observed in nflverse's own
+    # run history), so every slot below carries slack rather than chasing a kickoff.
+    #
+    # 13:20 UTC daily — 06:20 MST. The old 06:00 UTC collided with the 06:00 UTC snap
+    # cron, so the nightly always read snaps that were six hours stale. 13:20 lands
+    # after the previous evening's stats build AND after the 06:00/12:00 snap builds,
+    # which covers Thursday night (Fri run), Sunday night (Mon run) and Monday night
+    # (Tue run) with no extra workflow.
+    - cron: '20 13 * * *'
+    # 03:20 UTC Monday — 20:20 MST Sunday. The Sunday day games. Their stats build
+    # fires 22:03 and 00:07 UTC and their snaps land on the 00:00 UTC cycle, so this
+    # is the earliest point all of it is complete. Pulls Sunday's box scores forward
+    # by a full day. Season months only; pointless in June.
+    - cron: '20 3 * 9-12,1 1'
   workflow_dispatch:
 
 jobs:

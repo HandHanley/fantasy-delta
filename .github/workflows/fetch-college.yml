@@ -36,7 +36,20 @@ on:
         required: false
         default: ""
   schedule:
-    # Tuesdays 09:00 UTC — after the weekend's games are finalised.
+    # Sundays 16:20 UTC — 09:20 MST, after the full Saturday slate. Late West Coast
+    # kickoffs finish around 06:00 UTC Sunday, so this catches every game against a
+    # COMPLETE pool. That last word is the whole reason there is no Saturday run:
+    # dDOM and PPA are within-position PERCENTILES recomputed against that season's
+    # live qualified pool, so a mid-Saturday capture ranks the teams that have played
+    # against a pool where the late half of the country has not. The percentiles move
+    # and then move back on Sunday — movement that is an artefact of the capture time,
+    # not of anything a player did. Cost is not the reason (2 weekend runs fits the
+    # 1,000-call free tier fine at ~30 calls a run); the pool is.
+    # Aug-Dec only: the regular season. Bowls/playoffs are a separate script and this
+    # pipeline requests season_type="regular" anyway.
+    - cron: "20 16 * 8-12 0"
+    # Tuesdays 09:00 UTC — after the weekend's games are finalised. The settled read;
+    # anything CFBD corrected or backfilled over Sunday and Monday lands here.
     - cron: "0 9 * * 2"
 
 permissions:
