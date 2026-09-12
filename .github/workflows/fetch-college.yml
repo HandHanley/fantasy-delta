@@ -23,7 +23,7 @@ on:
         required: false
         default: "16"
       probe:
-        description: "Probe only — report whether CFBD has this week's box scores yet, then exit. ~1-2 API calls, writes nothing."
+        description: "Probe only — report whether CFBD has this week's box scores yet, then exit. 1 API call with probe_week set, up to 3 without. Writes nothing."
         type: boolean
         required: false
         default: false
