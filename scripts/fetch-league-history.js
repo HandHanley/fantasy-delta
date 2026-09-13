@@ -79,6 +79,7 @@ function networkSource() {
     league: (id) => get(`${API}/league/${id}`),
     users: (id) => get(`${API}/league/${id}/users`),
     drafts: (id) => get(`${API}/league/${id}/drafts`),
+    rosters: (id) => get(`${API}/league/${id}/rosters`),
     draft: (draftId) => get(`${API}/draft/${draftId}`),
     draftPicks: (draftId) => get(`${API}/draft/${draftId}/picks`),
     transactions: (id, week) => get(`${API}/league/${id}/transactions/${week}`),
@@ -100,6 +101,7 @@ function localSource(dir) {
     },
     users: async (id) => read(`${id}-users.json`) || [],
     drafts: async (id) => read(`${id}-drafts.json`) || [],
+    rosters: async (id) => read(`${id}-rosters.json`) || [],
     draft: async (draftId) => read(`draft-${draftId}.json`) || null,
     draftPicks: async (draftId) => read(`draft-${draftId}-picks.json`) || [],
     transactions: async (id, week) => read(`${id}-${week}.json`) || [],
@@ -119,7 +121,8 @@ async function walkChain(src, startId, log) {
     seen.add(id);
     const lg = await src.league(id);
     if (!lg || !lg.league_id) throw new Error(`league ${id} returned nothing`);
-    chain.push({ league_id: lg.league_id, season: lg.season, name: lg.name, status: lg.status });
+    chain.push({ league_id: lg.league_id, season: lg.season, name: lg.name, status: lg.status,
+                 roster_positions: lg.roster_positions || null });
     log(`  ${lg.season}  ${lg.name}  (${lg.league_id})`);
     id = lg.previous_league_id || null;
     await src.pause();
@@ -151,6 +154,30 @@ async function fetchUsers(src, league) {
     };
   }
   return out;
+}
+
+// Rosters as they stand right now, slimmed.
+//
+// Needed to estimate whether a team's FUTURE pick is an early, mid or late one.
+// Draft order follows the standings, so the proxy is roster strength: rank every
+// team by the best legal starting lineup it can field, then cut into thirds.
+// That is a forecast, not a lookup — it cannot know injuries or luck — so
+// anything derived from it must be labelled an estimate.
+async function fetchRosters(src, league) {
+  const raw = await src.rosters(league.league_id);
+  if (!Array.isArray(raw)) throw new Error(`${league.season} rosters returned ${typeof raw}, expected an array`);
+  return raw.map(r => ({
+    roster_id: r.roster_id,
+    owner_id: r.owner_id || null,
+    co_owners: r.co_owners || null,
+    players: r.players || [],
+    starters: r.starters || [],
+    taxi: r.taxi || null,
+    reserve: r.reserve || null,
+    wins: (r.settings && r.settings.wins) != null ? r.settings.wins : null,
+    losses: (r.settings && r.settings.losses) != null ? r.settings.losses : null,
+    fpts: (r.settings && r.settings.fpts) != null ? r.settings.fpts : null,
+  }));
 }
 
 // Drafts, and every selection in them.
@@ -260,8 +287,12 @@ async function main() {
 
   for (const league of chain) {
     const users = await fetchUsers(src, league);
+    await src.pause();
+    const rosters = await fetchRosters(src, league);
+    await src.pause();
     const drafts = await fetchDrafts(src, league, log);
     const { transactions, perWeek, weeksWithData, trades, skipped } = await fetchSeason(src, league, log);
+    log(`    ${rosters.length} roster(s), slots: ${(league.roster_positions || []).filter(x => x !== 'BN').join('/') || 'unknown'}`);
     const payload = {
       source: 'sleeper',
       league_id: league.league_id,
@@ -274,6 +305,10 @@ async function main() {
       records_per_week: perWeek,
       incomplete_dropped: skipped,
       managers: users,
+      // The league's starting slots — FLEX, SUPER_FLEX and the rest. Without them
+      // a "best legal lineup" cannot be built.
+      roster_positions: league.roster_positions || null,
+      rosters,
       drafts,
       count: transactions.length,
       trade_count: trades,
