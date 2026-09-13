@@ -142,6 +142,12 @@ async function fetchUsers(src, league) {
     out[u.user_id] = {
       display_name: u.display_name || null,
       team_name: meta.team_name || null,   // manager's own team name, when they set one
+      // Avatar hashes, not URLs. Sleeper serves them from its own CDN:
+      //   https://sleepercdn.com/avatars/thumbs/<hash>
+      // `avatar` is the account picture; metadata.avatar is a full URL the manager
+      // set for this league specifically, which wins when present.
+      avatar: u.avatar || null,
+      league_avatar: meta.avatar || null,
     };
   }
   return out;
