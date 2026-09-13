@@ -5268,7 +5268,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-13b</span>
+  <span class="foot-build">2026-09-13c</span>
 </footer>
 
 
@@ -7951,18 +7951,32 @@ function slpLedgerSearch(el){
 // Power Rankings read. A player outside DELTA's universe still gets a market
 // value from the FantasyCalc index. A retired player has neither, and reads as
 // no current value rather than as a zero — a zero would be a claim.
+// THE MARKET FIELD ON A COMP ENTRY IS ktcEff, NOT mkt. There is no `mkt` on a
+// COMP player anywhere in the engine — an earlier version of this read one and
+// every player in every trade came back "no current value" while picks priced
+// fine. (`p.mkt` does appear in the rankings scatter; that is a local object
+// built for the plot, not a COMP row.)
+//
+// Lookup order, widest last:
+//   1. SLP.match — but it is built from CURRENT ROSTERS ONLY, so a player who
+//      was traded years ago and has since been dropped is simply absent.
+//   2. COMP by name, then by normalised name.
+//   3. The FantasyCalc index, which covers players outside DELTA's universe.
+//   4. Nothing — which reads as "no current value", never as a zero. A zero
+//      would be a claim that he is worthless; absent means we do not know.
 function slpLedgerValuer(){
-  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+  const byName={}, byNorm={};
+  COMP.forEach(function(p){ byName[p.n]=p; byNorm[slpNorm(p.n)]=p; });
   const fcIdx=slpFcIndex();
+  const mktOf=function(p){ return (p&&p.ktcEff>0)?p.ktcEff:null; };
   return function(pid,fallbackName){
     const dn=(SLP.match&&SLP.match[pid])||null;
-    let name=dn||fallbackName||null, pos=null, val=null;
-    if(dn&&byName[dn]){ name=dn; pos=byName[dn].p; val=byName[dn].mkt||null; }
-    else{
-      const sp=(SLP.players&&SLP.players[pid])||null;
-      if(sp){ name=sp.n; pos=sp.p; const fc=fcIdx[slpNorm(sp.n)]; if(fc) val=fc.value||null; }
-    }
-    return {n:name||('Player '+pid),p:pos||'',v:val};
+    const sp=(SLP.players&&SLP.players[pid])||null;
+    const name=dn||(sp?sp.n:null)||fallbackName||('Player '+pid);
+    const c=byName[name]||byNorm[slpNorm(name)]||null;
+    let val=mktOf(c);
+    if(val==null){ const fc=fcIdx[slpNorm(name)]; if(fc&&fc.value>0) val=fc.value; }
+    return {n:name,p:(c&&c.p)||(sp&&sp.p)||'',v:val};
   };
 }
 
@@ -7971,11 +7985,8 @@ function slpLedgerValuer(){
 // own number for that round, at this league's format.
 function slpLedgerPickValue(pk,valuer){
   if(pk.became){
-    const nm=pk.became;
-    const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
-    if(byName[nm]) return {label:pk.label,who:nm,pos:pk.becamePos||byName[nm].p,v:byName[nm].mkt||null};
-    const fc=slpFcIndex()[slpNorm(nm)];
-    return {label:pk.label,who:nm,pos:pk.becamePos||'',v:fc?fc.value:null};
+    const p=valuer(null,pk.became);
+    return {label:pk.label,who:p.n,pos:pk.becamePos||p.p,v:p.v};
   }
   const a=slpPickAsset(pk.season,pk.round);
   const v=a?((a.kMkt!=null?a.kMkt:a.k)||null):null;
