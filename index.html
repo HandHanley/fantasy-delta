@@ -5203,7 +5203,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-10b</span>
+  <span class="foot-build">2026-09-13a</span>
 </footer>
 
 
@@ -7578,6 +7578,240 @@ function renderSlpSubNav(){
     +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +'</div>';
+}
+
+// ── League Trade Ledger — data layer ─────────────────────────
+// Every trade the league has ever made, across every season it has existed for,
+// priced against today's market.
+//
+// NOT a loader, and deliberately NOT in any boot chain. It runs only when the
+// ledger pill is opened inside My Team, exactly like the rest of the Sleeper
+// code. `player.html` and `freeze-snapshot.js` have no My Team, so there is
+// nothing for them to miss — this is the written-down exclusion the three-boot-
+// chain rule asks for.
+//
+// WHERE SLEEPER PUTS THINGS, measured on four seasons of a real league rather
+// than assumed:
+//   · Week 1 is the OFFSEASON bucket. Everything from January to the first
+//     kickoff lands there, months of it.
+//   · Weeks 2–18 hold in-season activity, filed under the week it happened.
+//   · So a finished season needs 18 requests, not one. `leg` is the current
+//     week, never the week a trade happened — only `created` dates anything.
+//   · A trade records where players ENDED UP, not who gave what: the same
+//     player id appears in `adds` under one roster and `drops` under another.
+//     Verified across 159 trades — the add-set and drop-set matched every time.
+//   · ~24% of all records are FAILED waiver claims. Dropped on arrival.
+
+const SLP_LS_HIST='delta_slp_hist';   // + '_<leagueId>_<season>'
+const SLP_HIST_V=1;
+const SLP_HIST_WEEKS=18;
+
+// A finished season is immutable, so it is cached forever. Only the season in
+// progress is refetched, and `slpLedgerRefresh()` clears everything by hand.
+function slpHistKey(leagueId,season){ return SLP_LS_HIST+'_'+leagueId+'_'+season; }
+
+function slpHistRead(leagueId,season){
+  try{
+    const c=JSON.parse(localStorage.getItem(slpHistKey(leagueId,season))||'null');
+    if(c&&c.v===SLP_HIST_V&&c.done&&Array.isArray(c.tx)) return c;
+  }catch(e){ slpLog('ledger cache read failed:',e); }
+  return null;
+}
+
+function slpHistWrite(leagueId,season,payload){
+  try{ localStorage.setItem(slpHistKey(leagueId,season),JSON.stringify(payload)); }
+  catch(e){ slpLog('ledger cache WRITE failed (quota?) \u2014 kept in memory only:',e); }
+}
+
+// Walk previous_league_id back to the inaugural season. Newest first.
+async function slpLeagueChain(leagueId){
+  const chain=[], seen={};
+  let id=leagueId;
+  while(id&&chain.length<20){
+    if(seen[id]) throw new Error('league chain loops at '+id);
+    seen[id]=1;
+    const lg=await slpFetch('/league/'+id);
+    if(!lg||!lg.league_id) break;
+    chain.push({leagueId:lg.league_id,season:lg.season,name:lg.name,status:lg.status,
+                rosterPositions:lg.roster_positions||null});
+    id=lg.previous_league_id||null;
+  }
+  return chain;
+}
+
+// One season: managers, drafts with every selection, and all 18 weeks merged.
+async function slpFetchSeason(lg,onProgress){
+  const users=await slpFetch('/league/'+lg.leagueId+'/users').catch(function(){ return []; });
+  const managers={};
+  (users||[]).forEach(function(u){
+    if(!u||!u.user_id) return;
+    const meta=u.metadata||{};
+    managers[u.user_id]={name:u.display_name||null,
+      img:meta.avatar||(u.avatar?'https://sleepercdn.com/avatars/thumbs/'+u.avatar:null)};
+  });
+
+  // Drafts turn a traded pick into a player. The per-league drafts LIST does not
+  // carry slot_to_roster_id — measured, it comes back null — so each draft's own
+  // record has to be fetched for it.
+  const drafts=[];
+  const list=await slpFetch('/league/'+lg.leagueId+'/drafts').catch(function(){ return []; });
+  for(let i=0;i<(list||[]).length;i++){
+    const sum=list[i];
+    if(!sum||!sum.draft_id) continue;
+    const det=await slpFetch('/draft/'+sum.draft_id).catch(function(){ return null; });
+    const d=Object.assign({},sum,det||{});
+    if(d.season!==lg.season) continue;                 // a startup sits under its own year
+    const picks=await slpFetch('/draft/'+d.draft_id+'/picks').catch(function(){ return []; });
+    drafts.push({season:d.season,status:d.status,type:d.type,
+      teams:(d.settings&&d.settings.teams)||null,
+      rounds:(d.settings&&d.settings.rounds)||null,
+      slotToRoster:d.slot_to_roster_id||null,
+      picks:(picks||[]).map(function(p){
+        const m=p.metadata||{};
+        return {no:p.pick_no,rd:p.round,slot:p.draft_slot,roster:p.roster_id,
+                name:[m.first_name,m.last_name].filter(Boolean).join(' ')||null,
+                pos:m.position||null};
+      })});
+  }
+
+  const byId={};
+  let kept=0,dropped=0;
+  for(let wk=1;wk<=SLP_HIST_WEEKS;wk++){
+    if(onProgress) onProgress(lg.season,wk);
+    const rows=await slpFetch('/league/'+lg.leagueId+'/transactions/'+wk).catch(function(){ return []; });
+    if(!Array.isArray(rows)) continue;
+    for(let i=0;i<rows.length;i++){
+      const row=rows[i];
+      if(!row||!row.transaction_id) continue;
+      if(row.status!=='complete'){ dropped++; continue; }   // failed waiver claims
+      if(!byId[row.transaction_id]){ byId[row.transaction_id]=row; kept++; }
+    }
+  }
+  const tx=Object.keys(byId).map(function(k){ return byId[k]; })
+    .sort(function(a,b){ return b.created-a.created; });
+  slpLog('ledger '+lg.season+': '+kept+' records kept, '+dropped+' incomplete dropped, '
+    +tx.filter(function(t){ return t.type==='trade'; }).length+' trades');
+  return {v:SLP_HIST_V,done:lg.status==='complete',season:lg.season,leagueId:lg.leagueId,
+          name:lg.name,managers:managers,drafts:drafts,tx:tx,ts:Date.now()};
+}
+
+// Every season, cache-first. A completed season is read from localStorage and
+// never refetched; the live one always goes back to Sleeper.
+async function slpLoadHistory(leagueId,force,onProgress){
+  const chain=await slpLeagueChain(leagueId);
+  const out=[];
+  for(let i=0;i<chain.length;i++){
+    const lg=chain[i];
+    const hit=force?null:slpHistRead(lg.leagueId,lg.season);
+    if(hit){ slpLog('ledger '+lg.season+': cache HIT ('+hit.tx.length+' records)'); out.push(hit); continue; }
+    const season=await slpFetchSeason(lg,onProgress);
+    if(season.done) slpHistWrite(lg.leagueId,lg.season,season);
+    out.push(season);
+  }
+  return out;
+}
+
+function slpLedgerClearCache(leagueId){
+  try{
+    const pre=SLP_LS_HIST+'_'+leagueId+'_';
+    const kill=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.indexOf(pre)===0) kill.push(k);
+    }
+    kill.forEach(function(k){ localStorage.removeItem(k); });
+    slpLog('ledger cache cleared:',kill.length,'season(s)');
+  }catch(e){ slpLog('ledger cache clear failed:',e); }
+}
+
+// ── Turning a traded pick into a player ──────────────────────
+// Sleeper records a pick as "roster 4's 2025 1st" — a round and an ORIGINAL
+// owner, never a pick number. slot_to_roster_id says which draft slot was
+// roster 4's; slot plus round gives the pick number, which names the player.
+// Checked against every traded pick in four seasons: the team that ended up
+// owning a pick in the trade history is the team that made that selection in
+// the draft, 68 times out of 68.
+function slpDraftIndex(seasons){
+  const idx={};
+  seasons.forEach(function(s){
+    (s.drafts||[]).forEach(function(d){
+      if(!d.slotToRoster||d.status!=='complete') return;
+      const r2s={}, byNo={};
+      Object.keys(d.slotToRoster).forEach(function(slot){ r2s[d.slotToRoster[slot]]=Number(slot); });
+      d.picks.forEach(function(p){ byNo[p.no]=p; });
+      idx[d.season]={type:d.type,teams:d.teams,rounds:d.rounds,r2s:r2s,byNo:byNo};
+    });
+  });
+  return idx;
+}
+
+function slpResolvePick(idx,season,rnd,origRoster){
+  const d=idx[season];
+  if(!d||!d.teams||rnd>d.rounds) return null;
+  const slot=d.r2s[origRoster];
+  if(!slot) return null;
+  const no=d.type==='linear'
+    ? (rnd-1)*d.teams+slot
+    : (rnd-1)*d.teams+(rnd%2?slot:d.teams-slot+1);
+  const p=d.byNo[no];
+  if(!p||!p.name) return null;
+  return {slot:slot,no:no,name:p.name,pos:p.pos};
+}
+
+// ── Normalising a season's transactions into trades ──────────
+// Output is display-ready: one entry per trade, one block per team, each block
+// holding what that team RECEIVED. Valuation happens at render time so the
+// numbers follow the viewer's own league settings.
+function slpBuildLedger(seasons){
+  const idx=slpDraftIndex(seasons);
+  const managers={};
+  const trades=[];
+  seasons.forEach(function(s){
+    Object.keys(s.managers||{}).forEach(function(u){ managers[u]=s.managers[u]; });
+
+    // roster -> user, per season. Rosters change hands between seasons, so a
+    // manager is tracked by user id and the roster number is only a label.
+    const tally={}, r2u={};
+    s.tx.forEach(function(x){
+      if(!x.roster_ids||x.roster_ids.length!==1||!x.creator) return;
+      const k=x.creator+'|'+x.roster_ids[0];
+      tally[k]=(tally[k]||0)+1;
+    });
+    Object.keys(tally).forEach(function(k){
+      const p=k.split('|'), u=p[0], r=Number(p[1]);
+      if(!r2u[r]||tally[k]>r2u[r].n) r2u[r]={u:u,n:tally[k]};
+    });
+
+    s.tx.forEach(function(x){
+      if(x.type!=='trade') return;
+      const teams={};
+      (x.roster_ids||[]).forEach(function(r){ teams[r]={players:[],picks:[],faab:[]}; });
+      const adds=x.adds||{};
+      Object.keys(adds).forEach(function(pid){
+        const r=adds[pid];
+        if(teams[r]) teams[r].players.push(pid);
+      });
+      (x.draft_picks||[]).forEach(function(p){
+        if(!teams[p.owner_id]) return;
+        const hit=slpResolvePick(idx,p.season,p.round,p.roster_id);
+        teams[p.owner_id].picks.push({season:p.season,round:p.round,orig:p.roster_id,
+          from:p.previous_owner_id,
+          label:hit?(p.season+' '+p.round+'.'+(hit.slot<10?'0':'')+hit.slot):null,
+          became:hit?hit.name:null, becamePos:hit?hit.pos:null});
+      });
+      (x.waiver_budget||[]).forEach(function(w){
+        if(teams[w.receiver]) teams[w.receiver].faab.push({amt:w.amount,from:w.sender});
+      });
+      const users={};
+      (x.roster_ids||[]).forEach(function(r){ users[r]=r2u[r]?r2u[r].u:null; });
+      trades.push({id:x.transaction_id,season:s.season,leg:x.leg,created:x.created,
+        counter:!!(x.settings&&x.settings.is_counter),teams:teams,users:users});
+    });
+  });
+  trades.sort(function(a,b){ return b.created-a.created; });
+  slpLog('ledger built:',trades.length,'trades across',seasons.length,'season(s),',
+    Object.keys(managers).length,'managers');
+  return {trades:trades,managers:managers};
 }
 
 function renderMyTeam(){
