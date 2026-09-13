@@ -79,6 +79,7 @@ function networkSource() {
     league: (id) => get(`${API}/league/${id}`),
     users: (id) => get(`${API}/league/${id}/users`),
     drafts: (id) => get(`${API}/league/${id}/drafts`),
+    draft: (draftId) => get(`${API}/draft/${draftId}`),
     draftPicks: (draftId) => get(`${API}/draft/${draftId}/picks`),
     transactions: (id, week) => get(`${API}/league/${id}/transactions/${week}`),
     pause: () => new Promise(res => setTimeout(res, PAUSE_MS)),
@@ -99,6 +100,7 @@ function localSource(dir) {
     },
     users: async (id) => read(`${id}-users.json`) || [],
     drafts: async (id) => read(`${id}-drafts.json`) || [],
+    draft: async (draftId) => read(`draft-${draftId}.json`) || null,
     draftPicks: async (draftId) => read(`draft-${draftId}-picks.json`) || [],
     transactions: async (id, week) => read(`${id}-${week}.json`) || [],
     pause: async () => {},
@@ -160,8 +162,16 @@ async function fetchDrafts(src, league, log) {
   const list = await src.drafts(league.league_id);
   if (!Array.isArray(list)) throw new Error(`${league.season} drafts returned ${typeof list}, expected an array`);
   const out = [];
-  for (const d of list) {
-    if (!d || !d.draft_id) continue;
+  for (const summary of list) {
+    if (!summary || !summary.draft_id) continue;
+    // The per-league drafts LIST does not carry slot_to_roster_id — measured, it
+    // came back null on all four seasons. The individual draft record does. We
+    // store that record whole (minus picks, which we fetch separately) rather
+    // than cherry-picking fields, so a mapping under a name we did not expect
+    // still lands in the file instead of being silently dropped.
+    const detail = await src.draft(summary.draft_id);
+    await src.pause();
+    const d = Object.assign({}, summary, detail || {});
     const picks = await src.draftPicks(d.draft_id);
     if (!Array.isArray(picks)) throw new Error(`draft ${d.draft_id} picks returned ${typeof picks}`);
     out.push({
@@ -173,6 +183,10 @@ async function fetchDrafts(src, league, log) {
       teams: (d.settings && d.settings.teams) || null,
       start_time: d.start_time || null,
       slot_to_roster_id: d.slot_to_roster_id || null,   // THE mapping
+      draft_order: d.draft_order || null,               // user_id -> slot, same information
+      detail_keys: Object.keys(detail || {}).sort(),    // so a rename is visible, not silent
+      metadata: d.metadata || null,
+      settings: d.settings || null,
       picks: picks.map(p => {
         const m = p.metadata || {};
         return {
@@ -187,7 +201,11 @@ async function fetchDrafts(src, league, log) {
         };
       }),
     });
-    log(`    draft ${d.draft_id}: ${d.type}, ${picks.length} picks, slot map ${d.slot_to_roster_id ? 'present' : 'MISSING'}`);
+    const mapped = d.slot_to_roster_id ? Object.keys(d.slot_to_roster_id).length
+                 : d.draft_order ? Object.keys(d.draft_order).length : 0;
+    log(`    draft ${d.draft_id}: ${d.type}, ${picks.length} picks, ` +
+        (mapped ? `slot map present (${mapped} entries)`
+                : `slot map MISSING — detail fields were: ${Object.keys(detail || {}).sort().join(', ') || '(no detail returned)'}`));
     await src.pause();
   }
   return out;
