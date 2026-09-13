@@ -4,7 +4,8 @@
  *
  * Pulls the COMPLETE transaction history of a Sleeper dynasty league: every
  * season it has ever existed for, every week of each season, plus that season's
- * manager list. Writes one file per season to data/fixtures/.
+ * manager list and every draft with all of its selections. Writes one file per
+ * season to data/fixtures/.
  *
  * Failed waiver claims are DROPPED. They are ~24% of every season and carry no
  * information — "this player was claimed by another owner", "your roster will
@@ -77,6 +78,8 @@ function networkSource() {
   return {
     league: (id) => get(`${API}/league/${id}`),
     users: (id) => get(`${API}/league/${id}/users`),
+    drafts: (id) => get(`${API}/league/${id}/drafts`),
+    draftPicks: (draftId) => get(`${API}/draft/${draftId}/picks`),
     transactions: (id, week) => get(`${API}/league/${id}/transactions/${week}`),
     pause: () => new Promise(res => setTimeout(res, PAUSE_MS)),
   };
@@ -95,6 +98,8 @@ function localSource(dir) {
       return d;
     },
     users: async (id) => read(`${id}-users.json`) || [],
+    drafts: async (id) => read(`${id}-drafts.json`) || [],
+    draftPicks: async (draftId) => read(`draft-${draftId}-picks.json`) || [],
     transactions: async (id, week) => read(`${id}-${week}.json`) || [],
     pause: async () => {},
   };
@@ -136,6 +141,54 @@ async function fetchUsers(src, league) {
       display_name: u.display_name || null,
       team_name: meta.team_name || null,   // manager's own team name, when they set one
     };
+  }
+  return out;
+}
+
+// Drafts, and every selection in them.
+//
+// THIS IS THE PIECE THAT TURNS A TRADED PICK INTO A PLAYER. Sleeper records a
+// traded pick as "roster 4's 2025 1st" — a round and an ORIGINAL owner, never a
+// pick number. The draft's slot_to_roster_id says which draft slot belonged to
+// roster 4, and slot + round gives the pick number, which names the player.
+// The board in the app cannot supply this: it shows who MADE each pick, which
+// is the owner after trades, not the original owner.
+//
+// Kept deliberately slim — the raw picks payload carries a large metadata blob
+// per selection and we need six fields of it.
+async function fetchDrafts(src, league, log) {
+  const list = await src.drafts(league.league_id);
+  if (!Array.isArray(list)) throw new Error(`${league.season} drafts returned ${typeof list}, expected an array`);
+  const out = [];
+  for (const d of list) {
+    if (!d || !d.draft_id) continue;
+    const picks = await src.draftPicks(d.draft_id);
+    if (!Array.isArray(picks)) throw new Error(`draft ${d.draft_id} picks returned ${typeof picks}`);
+    out.push({
+      draft_id: d.draft_id,
+      season: d.season,
+      status: d.status,
+      type: d.type,                       // snake / linear — decides the pick-number maths
+      rounds: (d.settings && d.settings.rounds) || null,
+      teams: (d.settings && d.settings.teams) || null,
+      start_time: d.start_time || null,
+      slot_to_roster_id: d.slot_to_roster_id || null,   // THE mapping
+      picks: picks.map(p => {
+        const m = p.metadata || {};
+        return {
+          pick_no: p.pick_no,
+          round: p.round,
+          draft_slot: p.draft_slot,
+          roster_id: p.roster_id,          // who actually made the selection
+          picked_by: p.picked_by || null,
+          player_id: p.player_id,
+          name: [m.first_name, m.last_name].filter(Boolean).join(' ') || null,
+          pos: m.position || null,
+        };
+      }),
+    });
+    log(`    draft ${d.draft_id}: ${d.type}, ${picks.length} picks, slot map ${d.slot_to_roster_id ? 'present' : 'MISSING'}`);
+    await src.pause();
   }
   return out;
 }
@@ -183,6 +236,7 @@ async function main() {
 
   for (const league of chain) {
     const users = await fetchUsers(src, league);
+    const drafts = await fetchDrafts(src, league, log);
     const { transactions, perWeek, weeksWithData, trades, skipped } = await fetchSeason(src, league, log);
     const payload = {
       source: 'sleeper',
@@ -196,6 +250,7 @@ async function main() {
       records_per_week: perWeek,
       incomplete_dropped: skipped,
       managers: users,
+      drafts,
       count: transactions.length,
       trade_count: trades,
       transactions,
