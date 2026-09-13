@@ -1274,6 +1274,71 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   .dl-lb-tbl .badge{font-size:9px;padding:2px 5px}
 }
 
+
+/* ── League Trade Ledger ──────────────────────────────────────
+   All new classes, prefixed dl-lg-. Nothing here restyles a shared class and
+   nothing sits inside a media query — checked at brace depth 0 so these apply
+   at every width. Signal colours are NOT used: the leading side of a trade is
+   marked with --sky, because --emerald means buy and a green side would read
+   as a verdict on the players in it. */
+.dl-lg-lbl2{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--fog-2);margin:10px 0 6px}
+.dl-lg-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dl-lg-bar::-webkit-scrollbar{display:none}
+.dl-lg-pill{flex:0 0 auto;background:var(--ink-2);border:1px solid var(--line);color:var(--fog);border-radius:999px;padding:6px 13px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:var(--sans)}
+.dl-lg-pill.dl-lg-on{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
+.dl-lg-ct{font-family:var(--mono);font-size:11px;opacity:.75;margin-left:5px}
+.dl-lg-srch input{width:100%;box-sizing:border-box;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;color:var(--paper);font-family:var(--sans);font-size:16px;padding:9px 12px;outline:none;-webkit-appearance:none}
+.dl-lg-srch input:focus{border-color:var(--teal-br)}
+.dl-lg-srch input::placeholder{color:var(--fog-2);font-size:13px}
+.dl-lg-count{font-size:11px;color:var(--fog-2);margin:14px 0 12px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line);padding-top:12px}
+.dl-lg-tc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 0 10px;margin-bottom:13px;overflow:hidden}
+.dl-lg-mine{border-color:rgba(45,212,191,.3)}
+.dl-lg-th{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:var(--ink-2);border-bottom:1px solid var(--line)}
+.dl-lg-dt{font-family:var(--mono);font-size:11.5px;color:var(--fog)}
+.dl-lg-tags{display:flex;gap:5px;flex-wrap:wrap}
+.dl-lg-tag{font-size:9.5px;font-family:var(--mono);padding:2.5px 7px;border-radius:3px;background:var(--ink);color:var(--fog-2);border:1px solid var(--line);white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
+.dl-lg-tag.dl-lg-wk{color:var(--sky);background:var(--sky-tint);border-color:transparent}
+.dl-lg-tag.dl-lg-me{color:var(--teal-br);background:var(--teal-tint);border-color:transparent}
+.dl-lg-side{padding:11px 12px 9px;border-left:3px solid transparent}
+.dl-lg-side+.dl-lg-side{border-top:1px solid var(--line)}
+.dl-lg-side.dl-lg-lead{border-left-color:var(--sky);background:linear-gradient(90deg,var(--sky-tint),transparent 62%)}
+.dl-lg-who{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.dl-lg-av{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--ink);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--geo);font-size:14px;font-weight:700;color:var(--fog);overflow:hidden}
+.dl-lg-av img{width:100%;height:100%;object-fit:cover;display:block}
+.dl-lg-side.dl-lg-lead .dl-lg-av{border-color:var(--sky);color:var(--sky)}
+.dl-lg-col{flex:1 1 auto;min-width:0}
+.dl-lg-nm{display:block;font-family:var(--geo);font-size:15.5px;font-weight:700;color:var(--paper);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-lg-you{font-family:var(--sans);color:var(--teal-br);font-weight:600;font-size:10px;margin-left:6px;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px}
+.dl-lg-tot{flex:0 0 auto;text-align:right}
+.dl-lg-tot b{display:block;font-family:var(--mono);font-size:15px;font-weight:500;color:var(--fog);line-height:1.1}
+.dl-lg-side.dl-lg-lead .dl-lg-tot b{color:var(--sky)}
+.dl-lg-tot s{display:block;text-decoration:none;font-size:9.5px;color:var(--fog-2);letter-spacing:.05em;text-transform:uppercase}
+.dl-lg-it{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:3.5px 0 3.5px 39px;font-size:13.5px;line-height:1.35}
+.dl-lg-lft{display:inline-flex;flex-wrap:wrap;align-items:baseline;row-gap:1px;min-width:0}
+.dl-lg-pl{color:var(--paper)}
+.dl-lg-pos{font-size:10.5px;color:var(--fog-2);font-family:var(--mono);margin-left:6px}
+.dl-lg-val{font-family:var(--mono);font-size:12.5px;color:var(--fog);white-space:nowrap}
+.dl-lg-val.dl-lg-na,.dl-lg-na{color:var(--fog-2);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase}
+.dl-lg-pk{color:var(--sky);font-family:var(--mono);font-size:11.5px}
+.dl-lg-own{color:var(--fog-2);font-size:11px;margin:0 6px;white-space:nowrap}
+.dl-lg-own::before{content:'\00b7';margin-right:6px}
+.dl-lg-bec{color:var(--paper)}
+.dl-lg-fa{color:var(--topaz)}
+.dl-lg-hit{background:var(--topaz-tint);border-radius:3px;padding:0 3px;margin:0 -3px}
+.dl-lg-split{display:flex;height:4px;border-radius:2px;overflow:hidden;margin:2px 12px 0;background:var(--ink-2)}
+.dl-lg-split i{display:block;height:100%}
+.dl-lg-split i.dl-lg-l{background:var(--sky)}
+.dl-lg-split i.dl-lg-o{background:var(--fog-2);opacity:.55}
+.dl-lg-mg{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:9px 12px 0;padding-top:8px;border-top:1px solid var(--line);font-size:12.5px}
+.dl-lg-lbl{color:var(--fog-2);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase}
+.dl-lg-res{font-family:var(--mono);font-size:13px;color:var(--sky)}
+.dl-lg-res.dl-lg-even{color:var(--fog)}
+.dl-lg-note{color:var(--fog-2);font-size:10.5px;margin:7px 12px 0;line-height:1.45}
+.dl-lg-load,.dl-lg-err,.dl-lg-empty{color:var(--fog);font-size:13px;padding:1rem 12px}
+.dl-lg-err{color:var(--coral)}
+.dl-lg-prog{color:var(--fog-2);font-size:11.5px;margin-top:6px;line-height:1.5}
+.dl-lg-foot{color:var(--fog-2);font-size:10.5px;margin-top:18px;border-top:1px solid var(--line);padding-top:12px;line-height:1.6}
+.dl-lg-rf{margin-left:8px;font-size:11px;padding:4px 11px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer;font-family:var(--sans)}
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -5203,7 +5268,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-13a</span>
+  <span class="foot-build">2026-09-13b</span>
 </footer>
 
 
@@ -7577,6 +7642,7 @@ function renderSlpSubNav(){
     +'<div class="dl-mt-row dl-mt-analysis">'
     +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
+    +analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger')
     +'</div>';
 }
 
@@ -7814,6 +7880,301 @@ function slpBuildLedger(seasons){
   return {trades:trades,managers:managers};
 }
 
+// ── League Trade Ledger — view ───────────────────────────────
+// Values are resolved AT RENDER TIME, never stored with the trade, so the
+// numbers follow the viewer's own league settings the way every other My Team
+// view does. A trade from 2023 is priced on today's market, which is the whole
+// point: what each side is worth NOW, not what anyone thought at the time.
+//
+// It does not say who won. That is deliberate — facts in the UI, not verdicts.
+// A trade that looks lopsided in September often is not by December, and the
+// reader is better placed to argue about it than the page is.
+
+function slpLedgerState(){
+  if(!SLP.ledger) SLP.ledger={loading:false,error:null,data:null,progress:'',
+                              f:{season:'all',user:'all',q:''}};
+  return SLP.ledger;
+}
+
+function slpViewLedger(){
+  SLP.view='ledger';
+  renderMyTeam();
+  const st=slpLedgerState();
+  if(!st.data&&!st.loading) slpLedgerLoad(false);
+}
+
+function slpLedgerRefresh(){
+  if(SLP.conn) slpLedgerClearCache(SLP.conn.leagueId);
+  const st=slpLedgerState();
+  st.data=null;
+  slpLedgerLoad(true);
+}
+
+async function slpLedgerLoad(force){
+  const st=slpLedgerState();
+  if(st.loading||!SLP.conn) return;
+  st.loading=true; st.error=null; st.progress='Reading league history\u2026';
+  renderMyTeam();
+  try{
+    await slpEnsurePlayers();
+    const seasons=await slpLoadHistory(SLP.conn.leagueId,force,function(season,wk){
+      st.progress='Season '+season+' \u2014 week '+wk+' of '+SLP_HIST_WEEKS;
+      const el=document.getElementById('slp-ledger-progress');
+      if(el) el.textContent=st.progress;
+    });
+    st.data=slpBuildLedger(seasons);
+  }catch(e){
+    st.error=(e&&e.message)||String(e);
+    slpLog('ledger load FAILED:',e);
+  }
+  st.loading=false; st.progress='';
+  renderMyTeam();
+}
+
+function slpLedgerFilter(kind,val){
+  const st=slpLedgerState();
+  st.f[kind]=val;
+  renderMyTeam();
+}
+
+function slpLedgerSearch(el){
+  const st=slpLedgerState();
+  st.f.q=(el&&el.value||'').trim().toLowerCase();
+  const list=document.getElementById('slp-ledger-list');
+  const cnt=document.getElementById('slp-ledger-count');
+  if(list&&cnt){ const r=slpLedgerRows(); cnt.textContent=slpLedgerCount(r); list.innerHTML=slpLedgerCards(r); }
+  else renderMyTeam();
+}
+
+// ── Valuation ────────────────────────────────────────────────
+// Modeled players come from COMP, which is the same source the roster and
+// Power Rankings read. A player outside DELTA's universe still gets a market
+// value from the FantasyCalc index. A retired player has neither, and reads as
+// no current value rather than as a zero — a zero would be a claim.
+function slpLedgerValuer(){
+  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+  const fcIdx=slpFcIndex();
+  return function(pid,fallbackName){
+    const dn=(SLP.match&&SLP.match[pid])||null;
+    let name=dn||fallbackName||null, pos=null, val=null;
+    if(dn&&byName[dn]){ name=dn; pos=byName[dn].p; val=byName[dn].mkt||null; }
+    else{
+      const sp=(SLP.players&&SLP.players[pid])||null;
+      if(sp){ name=sp.n; pos=sp.p; const fc=fcIdx[slpNorm(sp.n)]; if(fc) val=fc.value||null; }
+    }
+    return {n:name||('Player '+pid),p:pos||'',v:val};
+  };
+}
+
+// A pick from a draft that has happened is worth the player it became. One that
+// has not is valued the way Power Rankings already values picks — the market's
+// own number for that round, at this league's format.
+function slpLedgerPickValue(pk,valuer){
+  if(pk.became){
+    const nm=pk.became;
+    const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+    if(byName[nm]) return {label:pk.label,who:nm,pos:pk.becamePos||byName[nm].p,v:byName[nm].mkt||null};
+    const fc=slpFcIndex()[slpNorm(nm)];
+    return {label:pk.label,who:nm,pos:pk.becamePos||'',v:fc?fc.value:null};
+  }
+  const a=slpPickAsset(pk.season,pk.round);
+  const v=a?((a.kMkt!=null?a.kMkt:a.k)||null):null;
+  return {label:pk.season+' '+slpOrd(pk.round),who:null,pos:'',v:v};
+}
+
+// ── Rows and rendering ───────────────────────────────────────
+function slpLedgerNames(t,valuer){
+  const out=[];
+  for(const r in t.teams){
+    t.teams[r].players.forEach(function(pid){ out.push(valuer(pid).n); });
+    t.teams[r].picks.forEach(function(pk){ if(pk.became) out.push(pk.became); });
+  }
+  return out;
+}
+
+function slpLedgerRows(){
+  const st=slpLedgerState();
+  if(!st.data) return [];
+  const f=st.f, valuer=slpLedgerValuer();
+  return st.data.trades.filter(function(t){
+    if(f.season!=='all'&&t.season!==f.season) return false;
+    if(f.user!=='all'){
+      let hit=false;
+      for(const r in t.users) if(t.users[r]===f.user) hit=true;
+      if(!hit) return false;
+    }
+    if(f.q){
+      const names=slpLedgerNames(t,valuer);
+      if(!names.some(function(n){ return n.toLowerCase().indexOf(f.q)>=0; })) return false;
+    }
+    return true;
+  });
+}
+
+function slpLedgerCount(rows){
+  const st=slpLedgerState();
+  return rows.length+' trade'+(rows.length===1?'':'s')+(st.f.q?' matching \u201c'+st.f.q+'\u201d':'');
+}
+
+function slpLedgerMgr(u){
+  const st=slpLedgerState();
+  const m=st.data&&st.data.managers[u];
+  return (m&&m.name)||(u?'Manager '+String(u).slice(-4):'Unknown');
+}
+
+function slpLedgerImg(u){
+  const st=slpLedgerState();
+  const m=st.data&&st.data.managers[u];
+  return (m&&m.img)||null;
+}
+
+function slpLedgerSide(r,side,users,lead,valuer,q){
+  const rows=[];
+  let sum=0,unpriced=0;
+  side.players.forEach(function(pid){
+    const p=valuer(pid);
+    if(p.v==null) unpriced++; else sum+=p.v;
+    rows.push('<div class="dl-lg-it"><span class="dl-lg-pl">'+slpLedgerMark(p.n,q)
+      +(p.p?'<span class="dl-lg-pos">'+slpEsc(p.p)+'</span>':'')+'</span>'
+      +(p.v==null?'<span class="dl-lg-val dl-lg-na">no current value</span>'
+                 :'<span class="dl-lg-val">'+p.v.toLocaleString()+'</span>')+'</div>');
+  });
+  side.picks.forEach(function(pk){
+    const v=slpLedgerPickValue(pk,valuer);
+    if(v.v==null) unpriced++; else sum+=v.v;
+    const own=pk.orig===r?'':'<span class="dl-lg-own">'+slpEsc(slpLedgerMgr(users[pk.orig]))+'</span>';
+    rows.push('<div class="dl-lg-it"><span class="dl-lg-lft"><span class="dl-lg-pk">'+slpEsc(v.label)+'</span>'
+      +own+(v.who?'<span class="dl-lg-bec">'+slpLedgerMark(v.who,q)
+      +(v.pos?'<span class="dl-lg-pos">'+slpEsc(v.pos)+'</span>':'')+'</span>':'')+'</span>'
+      +(v.v==null?'<span class="dl-lg-val dl-lg-na">no current value</span>'
+                 :'<span class="dl-lg-val">'+v.v.toLocaleString()+'</span>')+'</div>');
+  });
+  side.faab.forEach(function(f){
+    rows.push('<div class="dl-lg-it"><span class="dl-lg-fa">'+f.amt+' FAAB</span>'
+      +'<span class="dl-lg-val dl-lg-na">from '+slpEsc(slpLedgerMgr(users[f.from]))+'</span></div>');
+  });
+  if(!rows.length) rows.push('<div class="dl-lg-it"><span class="dl-lg-na">Nothing \u2014 this side only sent</span></div>');
+
+  const u=users[r];
+  const me=SLP.conn&&u&&u===SLP.conn.userId;
+  const label=slpLedgerMgr(u);
+  const img=slpLedgerImg(u);
+  const initial=(label.replace(/[^A-Za-z0-9]/g,'').charAt(0)||'?').toUpperCase();
+  return '<div class="dl-lg-side'+(lead?' dl-lg-lead':'')+'">'
+    +'<div class="dl-lg-who"><span class="dl-lg-av">'
+    +(img?'<img src="'+slpEsc(img)+'" alt="" loading="lazy">':slpEsc(initial))+'</span>'
+    +'<span class="dl-lg-col"><span class="dl-lg-nm">'+slpEsc(label)
+    +(me?'<span class="dl-lg-you">you</span>':'')+'</span></span>'
+    +'<span class="dl-lg-tot"><b>'+(sum?sum.toLocaleString():'\u2014')+'</b><s>value today</s></span>'
+    +'</div>'+rows.join('')+'</div>';
+}
+
+function slpLedgerMark(n,q){
+  const e=slpEsc(n);
+  if(!q) return e;
+  const i=e.toLowerCase().indexOf(q);
+  if(i<0) return e;
+  return e.slice(0,i)+'<span class="dl-lg-hit">'+e.slice(i,i+q.length)+'</span>'+e.slice(i+q.length);
+}
+
+function slpLedgerCards(rows){
+  if(!rows.length) return '<div class="dl-lg-empty">No trades match.</div>';
+  const valuer=slpLedgerValuer();
+  const st=slpLedgerState();
+  const q=st.f.q;
+  return rows.map(function(t){
+    const teams=Object.keys(t.teams).sort(function(a,b){ return Number(a)-Number(b); });
+    const tot=teams.map(function(r){
+      let sum=0,un=0;
+      t.teams[r].players.forEach(function(pid){ const p=valuer(pid); if(p.v==null) un++; else sum+=p.v; });
+      t.teams[r].picks.forEach(function(pk){ const v=slpLedgerPickValue(pk,valuer); if(v.v==null) un++; else sum+=v.v; });
+      return {r:Number(r),sum:sum,un:un};
+    }).sort(function(a,b){ return b.sum-a.sum; });
+    const anyValue=tot.some(function(x){ return x.sum>0; });
+    const leadR=(anyValue&&tot[0].sum>tot[1].sum)?tot[0].r:null;
+    const unpriced=tot.reduce(function(a,x){ return a+x.un; },0);
+    const grand=tot.reduce(function(a,x){ return a+x.sum; },0);
+
+    const tags=[];
+    if(teams.length>2) tags.push('<span class="dl-lg-tag">'+teams.length+' teams</span>');
+    tags.push(t.leg>1?'<span class="dl-lg-tag dl-lg-wk">week '+t.leg+'</span>'
+                     :'<span class="dl-lg-tag">offseason</span>');
+    if(t.counter) tags.push('<span class="dl-lg-tag">counter</span>');
+    let mine=false;
+    for(const r in t.users) if(SLP.conn&&t.users[r]===SLP.conn.userId) mine=true;
+    if(mine) tags.push('<span class="dl-lg-tag dl-lg-me">you</span>');
+
+    const split=grand>0
+      ? '<div class="dl-lg-split">'+tot.map(function(x){
+          return '<i class="'+(x.r===leadR?'dl-lg-l':'dl-lg-o')+'" style="width:'
+            +(100*x.sum/grand).toFixed(1)+'%"></i>'; }).join('')+'</div>'
+      : '';
+    const margin=!anyValue
+      ? '<span class="dl-lg-res dl-lg-even">No priced players on either side</span>'
+      : leadR==null
+        ? '<span class="dl-lg-res dl-lg-even">Level on today\u2019s values</span>'
+        : '<span class="dl-lg-res">'+slpEsc(slpLedgerMgr(t.users[leadR]))+' by '
+          +(tot[0].sum-tot[1].sum).toLocaleString()+'</span>';
+
+    const d=new Date(t.created);
+    const date=d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();
+
+    return '<div class="dl-lg-tc'+(mine?' dl-lg-mine':'')+'">'
+      +'<div class="dl-lg-th"><span class="dl-lg-dt">'+date+'</span>'
+      +'<span class="dl-lg-tags">'+tags.join('')+'</span></div>'
+      +teams.map(function(r){ return slpLedgerSide(Number(r),t.teams[r],t.users,Number(r)===leadR,valuer,q); }).join('')
+      +split
+      +'<div class="dl-lg-mg"><span class="dl-lg-lbl">Value today</span>'+margin+'</div>'
+      +(unpriced?'<div class="dl-lg-note">'+unpriced+' asset'+(unpriced===1?'':'s')+' no longer priced</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function renderSlpLedger(){
+  const st=slpLedgerState();
+  if(st.loading) return '<div class="dl-lg-load">Building the ledger\u2026'
+    +'<div id="slp-ledger-progress" class="dl-lg-prog">'+slpEsc(st.progress)+'</div>'
+    +'<div class="dl-lg-prog">First time takes a moment \u2014 every week of every season. '
+    +'Finished seasons are then kept on this device.</div></div>';
+  if(st.error) return '<div class="dl-lg-err">Could not build the ledger: '+slpEsc(st.error)
+    +'<div><button class="dl-lg-rf" onclick="slpLedgerRefresh()">Try again</button></div></div>';
+  if(!st.data) return '<div class="dl-lg-load">Opening\u2026</div>';
+
+  const f=st.f;
+  const seasons={}, users={};
+  st.data.trades.forEach(function(t){
+    seasons[t.season]=(seasons[t.season]||0)+1;
+    for(const r in t.users){ const u=t.users[r]; if(u) users[u]=(users[u]||0)+1; }
+  });
+  const sPills='<button class="dl-lg-pill'+(f.season==='all'?' dl-lg-on':'')
+      +'" onclick="slpLedgerFilter(\'season\',\'all\')">All<span class="dl-lg-ct">'+st.data.trades.length+'</span></button>'
+    +Object.keys(seasons).sort().reverse().map(function(s){
+      return '<button class="dl-lg-pill'+(f.season===s?' dl-lg-on':'')+'" onclick="slpLedgerFilter(\'season\',\''
+        +slpEscJs(s)+'\')">'+slpEsc(s)+'<span class="dl-lg-ct">'+seasons[s]+'</span></button>'; }).join('');
+  const uPills='<button class="dl-lg-pill'+(f.user==='all'?' dl-lg-on':'')
+      +'" onclick="slpLedgerFilter(\'user\',\'all\')">All Managers</button>'
+    +Object.keys(users).sort(function(a,b){ return users[b]-users[a]; }).map(function(u){
+      const me=SLP.conn&&u===SLP.conn.userId;
+      return '<button class="dl-lg-pill'+(f.user===u?' dl-lg-on':'')+'" onclick="slpLedgerFilter(\'user\',\''
+        +slpEscJs(u)+'\')">'+slpEsc(slpLedgerMgr(u))+(me?' (you)':'')
+        +'<span class="dl-lg-ct">'+users[u]+'</span></button>'; }).join('');
+
+  const rows=slpLedgerRows();
+  return '<div class="dl-lg">'
+    +'<div class="dl-lg-lbl2">Season</div><div class="dl-lg-bar">'+sPills+'</div>'
+    +'<div class="dl-lg-lbl2">Manager</div><div class="dl-lg-bar">'+uPills+'</div>'
+    +'<div class="dl-lg-lbl2">Player</div>'
+    +'<div class="dl-lg-srch"><input id="slp-ledger-q" type="search" autocomplete="off" spellcheck="false" '
+    +'value="'+slpEsc(f.q)+'" oninput="slpLedgerSearch(this)" '
+    +'placeholder="Search a player \u2014 every trade he appears in"></div>'
+    +'<div class="dl-lg-count" id="slp-ledger-count">'+slpLedgerCount(rows)+'</div>'
+    +'<div id="slp-ledger-list">'+slpLedgerCards(rows)+'</div>'
+    +'<div class="dl-lg-foot">Every trade this league has made, priced on today\u2019s market at your '
+    +'league settings. A pick from a draft that has happened is priced as the player it became. '
+    +'FAAB is shown but not counted. <button class="dl-lg-rf" onclick="slpLedgerRefresh()">Refresh history</button></div>'
+    +'</div>';
+}
+
 function renderMyTeam(){
   const connectDiv=document.getElementById('myteam-connect');
   const rosterDiv=document.getElementById('myteam-roster');
@@ -7855,6 +8216,7 @@ function renderMyTeam(){
 
   rosterDiv.innerHTML=header+(SLP.view==='board'?renderSlpBoard()
                              :SLP.view==='power'?renderSlpPower()
+                             :SLP.view==='ledger'?renderSlpLedger()
                              :renderSlpRoster(SLP.viewRosterId));
 }
 
