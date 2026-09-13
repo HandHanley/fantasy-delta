@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-12T10:20:18.782056+00:00",
+  "fetched": "2026-09-13T16:59:26.349493+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1764,12 +1764,12 @@
     },
     "Tucker Kraft": {
       "team": "Packers",
-      "year_signed": 2023,
+      "year_signed": 2026,
       "years": 4,
-      "end_year": 2026,
-      "aav": 1.38,
-      "total": 5.54,
-      "guaranteed": 1.03,
+      "end_year": 2029,
+      "aav": 18.75,
+      "total": 75.0,
+      "guaranteed": 26.5,
       "is_active": true
     },
     "Pat Freiermuth": {
@@ -2793,7 +2793,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "MIA/DEN",
+      "team": "DEN/MIA",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -3740,6 +3740,16 @@
       "aav": 1.04,
       "total": 4.16,
       "guaranteed": 0.14,
+      "is_active": true
+    },
+    "Xavier Restrepo": {
+      "team": "Titans",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Kameron Johnson": {
