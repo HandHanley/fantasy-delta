@@ -1314,13 +1314,14 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-lg-side.dl-lg-lead .dl-lg-tot b{color:var(--sky)}
 .dl-lg-tot s{display:block;text-decoration:none;font-size:9.5px;color:var(--fog-2);letter-spacing:.05em;text-transform:uppercase}
 .dl-lg-it{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:3.5px 0 3.5px 39px;font-size:13.5px;line-height:1.35}
-.dl-lg-lft{display:inline-flex;flex-wrap:wrap;align-items:baseline;row-gap:1px;min-width:0}
+.dl-lg-lft{display:inline-flex;flex-wrap:wrap;align-items:baseline;row-gap:2px;min-width:0}
+.dl-lg-bec{margin-left:2px}
 .dl-lg-pl{color:var(--paper)}
 .dl-lg-pos{font-size:10.5px;color:var(--fog-2);font-family:var(--mono);margin-left:6px}
 .dl-lg-val{font-family:var(--mono);font-size:12.5px;color:var(--fog);white-space:nowrap}
 .dl-lg-val.dl-lg-na,.dl-lg-na{color:var(--fog-2);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase}
 .dl-lg-pk{color:var(--sky);font-family:var(--mono);font-size:11.5px}
-.dl-lg-own{color:var(--fog-2);font-size:11px;margin:0 6px;white-space:nowrap}
+.dl-lg-own{color:var(--fog-2);font-size:11px;margin:0 4px 0 6px;white-space:nowrap}
 .dl-lg-own::before{content:'\00b7';margin-right:6px}
 .dl-lg-bec{color:var(--paper)}
 .dl-lg-fa{color:var(--topaz)}
@@ -5268,7 +5269,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-13c</span>
+  <span class="foot-build">2026-09-13d</span>
 </footer>
 
 
@@ -7868,10 +7869,17 @@ function slpBuildLedger(seasons){
       (x.waiver_budget||[]).forEach(function(w){
         if(teams[w.receiver]) teams[w.receiver].faab.push({amt:w.amount,from:w.sender});
       });
+      // Participants only — used to decide whose trade this is.
       const users={};
       (x.roster_ids||[]).forEach(function(r){ users[r]=r2u[r]?r2u[r].u:null; });
+      // EVERY roster in the league that season. A traded pick usually belongs to
+      // a team that is NOT in the trade — 205 of 223 in the league this was built
+      // against — so the participant map cannot name its owner and every one of
+      // them rendered as "Unknown".
+      const all={};
+      Object.keys(r2u).forEach(function(r){ all[r]=r2u[r].u; });
       trades.push({id:x.transaction_id,season:s.season,leg:x.leg,created:x.created,
-        counter:!!(x.settings&&x.settings.is_counter),teams:teams,users:users});
+        counter:!!(x.settings&&x.settings.is_counter),teams:teams,users:users,rosters:all});
     });
   });
   trades.sort(function(a,b){ return b.created-a.created; });
@@ -8039,7 +8047,7 @@ function slpLedgerImg(u){
   return (m&&m.img)||null;
 }
 
-function slpLedgerSide(r,side,users,lead,valuer,q){
+function slpLedgerSide(r,side,users,lead,valuer,q,all){
   const rows=[];
   let sum=0,unpriced=0;
   side.players.forEach(function(pid){
@@ -8053,7 +8061,10 @@ function slpLedgerSide(r,side,users,lead,valuer,q){
   side.picks.forEach(function(pk){
     const v=slpLedgerPickValue(pk,valuer);
     if(v.v==null) unpriced++; else sum+=v.v;
-    const own=pk.orig===r?'':'<span class="dl-lg-own">'+slpEsc(slpLedgerMgr(users[pk.orig]))+'</span>';
+    // Always name the owner, always in the same slot. Suppressing it on a team's
+    // own pick left the label touching the player name: "2025 2.03Matthew Golden".
+    const ownerU=(all&&all[pk.orig])||users[pk.orig]||null;
+    const own='<span class="dl-lg-own">'+slpEsc(slpLedgerMgr(ownerU))+'</span>';
     rows.push('<div class="dl-lg-it"><span class="dl-lg-lft"><span class="dl-lg-pk">'+slpEsc(v.label)+'</span>'
       +own+(v.who?'<span class="dl-lg-bec">'+slpLedgerMark(v.who,q)
       +(v.pos?'<span class="dl-lg-pos">'+slpEsc(v.pos)+'</span>':'')+'</span>':'')+'</span>'
@@ -8133,7 +8144,7 @@ function slpLedgerCards(rows){
     return '<div class="dl-lg-tc'+(mine?' dl-lg-mine':'')+'">'
       +'<div class="dl-lg-th"><span class="dl-lg-dt">'+date+'</span>'
       +'<span class="dl-lg-tags">'+tags.join('')+'</span></div>'
-      +teams.map(function(r){ return slpLedgerSide(Number(r),t.teams[r],t.users,Number(r)===leadR,valuer,q); }).join('')
+      +teams.map(function(r){ return slpLedgerSide(Number(r),t.teams[r],t.users,Number(r)===leadR,valuer,q,t.rosters); }).join('')
       +split
       +'<div class="dl-lg-mg"><span class="dl-lg-lbl">Value today</span>'+margin+'</div>'
       +(unpriced?'<div class="dl-lg-note">'+unpriced+' asset'+(unpriced===1?'':'s')+' no longer priced</div>':'')
