@@ -3,8 +3,12 @@
  * DELTA league-history fetcher  —  ONE-OFF TOOL, NOT PART OF THE APP.
  *
  * Pulls the COMPLETE transaction history of a Sleeper dynasty league: every
- * season it has ever existed for, every week of each season. Writes one file
- * per season to data/fixtures/.
+ * season it has ever existed for, every week of each season, plus that season's
+ * manager list. Writes one file per season to data/fixtures/.
+ *
+ * Failed waiver claims are DROPPED. They are ~24% of every season and carry no
+ * information — "this player was claimed by another owner", "your roster will
+ * have too many players". Only status:"complete" rows are kept.
  *
  * Why this exists: Sleeper files offseason activity under week 1 and in-season
  * activity under the week it happened, so a full season needs 18 calls, not 1.
@@ -72,6 +76,7 @@ function networkSource() {
   };
   return {
     league: (id) => get(`${API}/league/${id}`),
+    users: (id) => get(`${API}/league/${id}/users`),
     transactions: (id, week) => get(`${API}/league/${id}/transactions/${week}`),
     pause: () => new Promise(res => setTimeout(res, PAUSE_MS)),
   };
@@ -89,6 +94,7 @@ function localSource(dir) {
       if (!d) throw new Error(`missing local file: ${id}-league.json`);
       return d;
     },
+    users: async (id) => read(`${id}-users.json`) || [],
     transactions: async (id, week) => read(`${id}-${week}.json`) || [],
     pause: async () => {},
   };
@@ -116,15 +122,37 @@ async function walkChain(src, startId, log) {
 }
 
 // Every week of one season, merged and de-duplicated by transaction_id.
+// Managers, by Sleeper user id. Pulled per season on purpose: a manager who left
+// the league two years ago is absent from the CURRENT season's user list, and
+// their old trades would otherwise render as a bare id.
+async function fetchUsers(src, league) {
+  const raw = await src.users(league.league_id);
+  if (!Array.isArray(raw)) throw new Error(`${league.season} users returned ${typeof raw}, expected an array`);
+  const out = {};
+  for (const u of raw) {
+    if (!u || !u.user_id) continue;
+    const meta = u.metadata || {};
+    out[u.user_id] = {
+      display_name: u.display_name || null,
+      team_name: meta.team_name || null,   // manager's own team name, when they set one
+    };
+  }
+  return out;
+}
+
 async function fetchSeason(src, league, log) {
   const byId = new Map();
   const perWeek = {};
+  let skipped = 0;
   for (let week = 1; week <= MAX_WEEK; week++) {
     const rows = await src.transactions(league.league_id, week);
     if (!Array.isArray(rows)) throw new Error(`${league.season} week ${week} returned ${typeof rows}, expected an array`);
     perWeek[week] = rows.length;
     for (const row of rows) {
       if (!row || !row.transaction_id) throw new Error(`${league.season} week ${week}: row without transaction_id`);
+      // Failed waiver claims are noise: "somebody else got him" / "your roster is
+      // full". 24% of every season and worth nothing to any view we build.
+      if (row.status !== 'complete') { skipped++; continue; }
       byId.set(row.transaction_id, row);   // last write wins; ids are unique anyway
     }
     await src.pause();
@@ -132,8 +160,8 @@ async function fetchSeason(src, league, log) {
   const transactions = [...byId.values()].sort((a, b) => b.created - a.created);
   const weeksWithData = Object.entries(perWeek).filter(([, n]) => n > 0).map(([w]) => Number(w));
   const trades = transactions.filter(t => t.type === 'trade').length;
-  log(`  ${league.season}: ${transactions.length} records, ${trades} trades, weeks with data: ${weeksWithData.join(', ') || 'none'}`);
-  return { transactions, perWeek, weeksWithData, trades };
+  log(`  ${league.season}: ${transactions.length} records, ${trades} trades, ${skipped} incomplete dropped, weeks with data: ${weeksWithData.join(', ') || 'none'}`);
+  return { transactions, perWeek, weeksWithData, trades, skipped };
 }
 
 // --------------------------------------------------------------------- main
@@ -154,7 +182,8 @@ async function main() {
   let totalRecords = 0, totalTrades = 0;
 
   for (const league of chain) {
-    const { transactions, perWeek, weeksWithData, trades } = await fetchSeason(src, league, log);
+    const users = await fetchUsers(src, league);
+    const { transactions, perWeek, weeksWithData, trades, skipped } = await fetchSeason(src, league, log);
     const payload = {
       source: 'sleeper',
       league_id: league.league_id,
@@ -165,6 +194,8 @@ async function main() {
       weeks_requested: MAX_WEEK,
       weeks_with_data: weeksWithData,
       records_per_week: perWeek,
+      incomplete_dropped: skipped,
+      managers: users,
       count: transactions.length,
       trade_count: trades,
       transactions,
