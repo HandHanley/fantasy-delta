@@ -4033,7 +4033,14 @@ function dlNewsInit(){
   /* No key at all means a first-ever visit: record everything as seen and show
      nothing. Otherwise the bar greets a brand-new reader with changes they have
      never known about. */
-  if(dlNewsSeen()===null) dlNewsSave(DL_NEWS.map(n=>n.id));
+  /* ?news=1 replays the unread state on this device, so the bar and the dot can be
+     eye-tested on a phone where there is no console. It clears the key and then
+     behaves exactly as a returning reader would, rather than forcing the display —
+     forcing it would make the dot un-clearable and hide the one bug worth finding. */
+  var replay=false;
+  try{ replay = new URLSearchParams(location.search).get('news')==='1'; }catch(e){}
+  if(replay) dlNewsSave([]);
+  else if(dlNewsSeen()===null) dlNewsSave(DL_NEWS.map(n=>n.id));
   /* Delegated, so only a REAL click retires an entry. Calling this from showTab()
      would also fire on the landing-tab restore at boot, which would silently retire
      the notice for exactly the reader whose landing tab is the one that changed. */
@@ -5406,7 +5413,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14a</span>
+  <span class="foot-build">2026-09-14b</span>
 </footer>
 
 
