@@ -4002,7 +4002,8 @@ function countUp(el, target, duration=600) {
 /* ── What's New ──────────────────────────────────────────────────────────────
    Entries are authored here, newest first. One per change a reader would actually
    notice; a CSS fix is not an entry. `tab` is optional — when set, that tab carries
-   a dot until the reader opens it.
+   a dot until the reader opens it. Set `quiet:true` for anything that shipped a while
+   ago: it still lists, but it raises no bar and no dot.
 
    They live in this file rather than data/whats-new.json on purpose: a data file
    needs a loader, and a loader has to be added to all three boot chains or it
@@ -4014,10 +4015,10 @@ function countUp(el, target, duration=600) {
 const DL_NEWS=[
   {id:'2026-09-13-ledger', d:'13 Sep 2026', t:'League Trade Ledger', tab:'myteam',
    b:"Every trade your league has ever made, priced on today's market at your own settings. The search reaches through picks. My Team &rsaquo; Ledger."},
-  {id:'2026-09-08-inactive', d:'8 Sep 2026', t:'Inactive Badges', tab:'',
-   b:"Players off the active roster now carry an INACTIVE tag instead of reading as healthy."},
-  {id:'2026-08-30-bands', d:'30 Aug 2026', t:'One Verdict Ladder', tab:'',
-   b:"Tight ends now use the same buy and sell bands as every other position."}
+  {id:'2026-09-03-power', d:'3 Sep 2026', t:'Power Rankings', quiet:true,
+   b:"Every team in your league ranked on DELTA model value across roster and future picks, with the market's ranking beside it so you can see where the two disagree. My Team &rsaquo; Power Rankings."},
+  {id:'2026-08-27-bigboard', d:'27 Aug 2026', t:'Consensus Big Board', quiet:true,
+   b:"The consensus draft board with DELTA's own college production beside each prospect. College &rsaquo; Big Board."}
 ];
 function dlNewsSeen(){
   try{ const v=JSON.parse(dlPref('delta_news_seen')||'null'); return Array.isArray(v)?v:null; }
@@ -4028,7 +4029,10 @@ function dlNewsSave(ids){
   const keep=DL_NEWS.filter(n=>ids.indexOf(n.id)>=0).map(n=>n.id);
   dlPref('delta_news_seen', JSON.stringify(keep));
 }
-function dlNewsUnseen(){ const s=dlNewsSeen()||[]; return DL_NEWS.filter(n=>s.indexOf(n.id)<0); }
+/* `quiet` entries list in the panel but never raise the bar or a dot. That is what an
+   entry for something that shipped weeks ago needs: it belongs in the log a reader
+   scrolls, not in a notice claiming it is new. */
+function dlNewsUnseen(){ const s=dlNewsSeen()||[]; return DL_NEWS.filter(n=>!n.quiet && s.indexOf(n.id)<0); }
 function dlNewsInit(){
   /* No key at all means a first-ever visit: record everything as seen and show
      nothing. Otherwise the bar greets a brand-new reader with changes they have
@@ -5413,7 +5417,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14b</span>
+  <span class="foot-build">2026-09-14c</span>
 </footer>
 
 
