@@ -1364,6 +1364,24 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
      own line against the screen edge. Drop the tail instead. */
   .dl-nw-go{display:none}
 }
+/* Add As App. A one-time sheet, mobile only, never shown to anyone already running
+   DELTA installed. Chrome teal only — nothing here is a verdict. It sits below the
+   modal layer (1001) so an open panel always covers it. */
+.dl-ap-sheet{position:fixed;left:0;right:0;bottom:0;z-index:990;background:var(--panel);border-top:1px solid var(--line);border-top-left-radius:14px;border-top-right-radius:14px;padding:15px 16px 17px;box-shadow:0 -14px 36px rgba(0,0,0,.5)}
+.dl-ap-in{max-width:520px;margin:0 auto}
+.dl-ap-top{display:flex;align-items:flex-start;gap:11px}
+.dl-ap-mk{color:var(--teal-br);font-size:19px;line-height:1.1;flex-shrink:0}
+.dl-ap-t{color:var(--paper);font-size:13.5px;font-weight:700;margin-bottom:3px}
+.dl-ap-sub{color:var(--fog);font-size:12px;line-height:1.55}
+.dl-ap-x{color:var(--fog-2);font-size:17px;line-height:1;cursor:pointer;flex-shrink:0;background:none;border:none;padding:0;font-family:var(--sans)}
+.dl-ap-steps{margin-top:13px;padding:11px 12px;background:var(--teal-soft);border-radius:9px}
+.dl-ap-step{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}
+.dl-ap-step:last-child{margin-bottom:0}
+.dl-ap-n{font-family:var(--mono);font-size:11px;color:var(--fog-2);flex-shrink:0;padding-top:1px}
+.dl-ap-txt{font-size:12px;color:var(--paper);line-height:1.5}
+.dl-ap-txt b{color:var(--paper);font-weight:700}
+.dl-ap-ico{vertical-align:-3px;margin-left:2px}
+.dl-ap-done{margin-top:12px;font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;background:var(--teal-tint);color:var(--teal-br);border:none;cursor:pointer;font-family:var(--sans)}
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -1548,6 +1566,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     <div class="set-sec">DATA</div>
     <div id="set-fresh" style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:14px"></div>
     <div style="border-top:1px solid var(--line);padding-top:12px">
+      <button class="set-pill" id="dl-ap-set" style="display:none;width:100%;justify-content:center;margin-bottom:6px" onclick="closeSettings();openAppCard()">Add As App</button>
       <button class="set-pill" onclick="closeSettings();openAbout()" style="width:100%;justify-content:center">About DELTA</button>
     </div>
     <div id="dsync-scope-note" style="font-size:9px;color:var(--fog-2);margin-top:9px;line-height:1.5">Saved on this device only &mdash; every visitor has their own.</div>
@@ -4099,6 +4118,81 @@ function openNews(){
 function closeNews(){ const o=document.getElementById('dl-nw-overlay'); if(o) o.classList.remove('open'); }
 function closeNewsOverlay(e){ if(e.target===document.getElementById('dl-nw-overlay')) closeNews(); }
 
+/* ── Add As App ─────────────────────────────────────────────
+   Most visits are phones, and the install gesture is the thing people do not know
+   exists. There is no way to trigger it from script on either platform — iOS has no
+   API at all, and Chrome's install prompt needs a service worker DELTA does not have
+   — so this shows the steps instead.
+
+   The copy names no browser. Since iOS 16.4 third-party browsers support Add to Home
+   Screen through the same Share sheet, so "tap Share" is correct in Safari, Chrome
+   and Edge alike; saying "Safari" would be wrong for a real share of readers. */
+const DL_AP_SHARE='<svg width="15" height="15" viewBox="0 0 24 24" class="dl-ap-ico" aria-hidden="true" style="fill:none;stroke:var(--teal-br);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M4 13v6a2 2 0 002 2h12a2 2 0 002-2v-6"/></svg>';
+const DL_AP_MENU='<svg width="15" height="15" viewBox="0 0 24 24" class="dl-ap-ico" aria-hidden="true" style="fill:var(--teal-br)"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>';
+const DL_AP_STEPS={
+  ios:[['Tap the Share button',DL_AP_SHARE],['Choose <b>Add to Home Screen</b>','']],
+  android:[['Open the browser menu',DL_AP_MENU],
+           ['Choose <b>Install app</b> &mdash; some versions call it <b>Add to Home screen</b>','']]
+};
+/* iPadOS 13+ reports itself as a Mac, so the touch check is the only thing that
+   separates an iPad from a desktop. Without it, iPad readers get nothing. */
+function dlAppPlatform(){
+  try{
+    const ua=navigator.userAgent||'';
+    if(/Android/i.test(ua)) return 'android';
+    if(/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+    if(/Mac/i.test(ua) && navigator.maxTouchPoints>1) return 'ios';
+  }catch(e){}
+  return '';
+}
+/* Checked live on every load rather than remembered, so it can never go stale.
+   navigator.standalone is the iOS signal; display-mode covers Chrome on Android. */
+function dlAppInstalled(){
+  try{
+    if(navigator.standalone===true) return true;
+    return ['standalone','minimal-ui','fullscreen'].some(function(m){
+      return window.matchMedia('(display-mode: '+m+')').matches;
+    });
+  }catch(e){ return false; }
+}
+function dlAppInit(){
+  if(dlAppInstalled()) return;          // already running as an app
+  if(!dlAppPlatform()) return;          // desktop: no branch shows it anything
+  const setBtn=document.getElementById('dl-ap-set');
+  if(setBtn) setBtn.style.display='flex';   // always reachable, even once dismissed
+  if(dlPref('delta_app_prompt')) return;    // shown once on this device already
+  /* Second real tab tap. A timer would fire mid-scroll at a moment the reader did
+     not choose, and spend the single showing on people who never engaged. */
+  let taps=0;
+  const strip=document.querySelector('.tabs');
+  if(!strip) return;
+  strip.addEventListener('click',function(e){
+    const b=e.target && e.target.closest ? e.target.closest('.tab[data-tab]') : null;
+    if(!b) return;
+    /* The stored key is the single source of truth for "already shown", so a tap
+       after a dismissal cannot re-open the sheet. openAppCard() writes it on show. */
+    if(++taps>=2 && !dlPref('delta_app_prompt')) openAppCard();
+  });
+}
+function openAppCard(){
+  const plat=dlAppPlatform();
+  if(!plat) return;
+  const box=document.getElementById('dl-ap-steps');
+  if(box) box.innerHTML=DL_AP_STEPS[plat].map(function(s,i){
+    return '<div class="dl-ap-step"><span class="dl-ap-n">'+(i+1)+'</span>'
+         + '<span class="dl-ap-txt">'+s[0]+s[1]+'</span></div>';
+  }).join('');
+  const sheet=document.getElementById('dl-ap-sheet');
+  if(sheet) sheet.style.display='block';
+  /* Written on show, not on dismiss: navigating away still counts as the one
+     showing this device gets. Settings keeps it reachable afterwards. */
+  dlPref('delta_app_prompt','1');
+}
+function closeAppCard(){
+  const sheet=document.getElementById('dl-ap-sheet');
+  if(sheet) sheet.style.display='none';
+}
+
 function openAbout(){document.getElementById('about-overlay').classList.add('open');}
 function closeAbout(){document.getElementById('about-overlay').classList.remove('open');}
 function closeAboutOverlay(e){if(e.target===document.getElementById('about-overlay'))closeAbout();}
@@ -4122,7 +4216,7 @@ function closeDeck(e){
   if(e.target===document.getElementById('dd-overlay')) closeDeckNow();
 }
 
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();closeNews();} });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();closeNews();closeAppCard();} });
 
 function projChipColor(v,pos){
   // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
@@ -5394,6 +5488,24 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
+<!-- Add As App. Hidden until dlAppInit() decides this device qualifies: mobile, not
+     already installed, and not shown before. Desktop never reaches a branch that
+     shows it. -->
+<div class="dl-ap-sheet" id="dl-ap-sheet" style="display:none">
+  <div class="dl-ap-in">
+    <div class="dl-ap-top">
+      <span class="dl-ap-mk">&#9651;</span>
+      <div style="flex:1">
+        <div class="dl-ap-t">Add DELTA To Your Home Screen</div>
+        <div class="dl-ap-sub">Opens full screen, with no browser tab in the way.</div>
+      </div>
+      <button class="dl-ap-x" onclick="closeAppCard()" aria-label="Dismiss">&times;</button>
+    </div>
+    <div class="dl-ap-steps" id="dl-ap-steps"></div>
+    <button class="dl-ap-done" onclick="closeAppCard()">Got It</button>
+  </div>
+</div>
+
 <footer style="margin-top:2.25rem;padding-top:.9rem;padding-bottom:1.75rem;border-top:1px solid var(--line);
   display:flex;gap:16px;flex-wrap:wrap;align-items:center;
   font-size:10.5px;color:var(--fog-2);line-height:1.6">
@@ -5417,7 +5529,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14c</span>
+  <span class="foot-build">2026-09-14d</span>
 </footer>
 
 
@@ -8684,6 +8796,7 @@ function dlBuildStamp(){
 async function bootDelta(){
   dlBuildStamp();   // first, so the stamp is right even if a loader throws
   try{ dlNewsInit(); }catch(e){ console.warn('news',e); }
+  try{ dlAppInit(); }catch(e){ console.warn('addapp',e); }
   syncSettingsUI();
   // Normalise any legacy bare watchlist entries BEFORE the first render, so the
   // rookie board and the Watchlist tab agree on day one rather than after a toggle.
