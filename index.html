@@ -5529,7 +5529,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14d</span>
+  <span class="foot-build">2026-09-14e</span>
 </footer>
 
 
@@ -7499,6 +7499,40 @@ function slpPickInventory(rosterId){
   }
   return out;
 }
+/* ── Future pick tiers ─────────────────────────────────────────
+   A future pick used to price at Mid whatever team it came from, and the spread
+   is large — a 2026 first runs 5,882 Early against 3,954 Late, a 49% gap. So
+   every trade involving a future first was priced wrong in one direction.
+
+   Teams are cut into thirds on the SAME projected-points number Power Rankings
+   already shows, and a pick takes its ORIGINAL owner's tier: the weakest third
+   pick early. Nothing is computed twice — the ranking is a by-product of a
+   number the table needed anyway.
+
+   FIRST FUTURE SEASON ONLY. Two seasons out is two offseasons of churn away and
+   a tier there would be invention, so 2028 and beyond stay Mid. Even the tiered
+   season is an estimate off today's rosters, and the UI says so. */
+function slpTierCut(rows){
+  const ranked=rows.slice().sort(function(a,b){ return (a.winNow||0)-(b.winNow||0); });
+  const n=ranked.length, map={};
+  ranked.forEach(function(r,i){
+    map[String(r.rosterId)] = i < n/3 ? 'Early' : (i < (2*n)/3 ? 'Mid' : 'Late');
+  });
+  SLP._pickTiers=map;
+  return map;
+}
+/* The first future season, read from the league rather than the clock, so it
+   matches whatever slpPickInventory() is listing. */
+function slpTierSeason(){
+  const lg=SLP.league||{};
+  return parseInt(lg.season||new Date().getFullYear(),10)+1;
+}
+function slpPickTier(origRosterId, season){
+  if(parseInt(season,10)!==slpTierSeason()) return 'Mid';
+  const m=SLP._pickTiers;
+  if(!m) return 'Mid';
+  return m[String(origRosterId)]||'Mid';
+}
 function slpOrd(n){ return n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th'; }
 
 function slpRosterById(rid){
@@ -7526,8 +7560,8 @@ function slpShowBoard(){ SLP.view='board'; renderMyTeam(); }
 // the MARKET value for a pick (DELTA does not model picks independently), so a
 // pick adds the same amount to both columns. Picks move the ranking; they cannot
 // move the gap.
-function slpPickAsset(season, round){
-  const nm = season+' Mid '+slpOrd(round)+' Round Pick';
+function slpPickAsset(season, round, tier){
+  const nm = season+' '+(tier||'Mid')+' '+slpOrd(round)+' Round Pick';
   let a = (typeof ASSETS!=='undefined'&&ASSETS) ? ASSETS.find(function(x){return x.n===nm;}) : null;
   if(!a && typeof PICKS!=='undefined') a = PICKS.find(function(x){return x.n===nm;});
   return a||null;
@@ -7554,11 +7588,11 @@ function slpPickDecay(round){
    priced season discounted forward by that measured rate. Returning null there
    told a team holding a full set of 2029s that it had no draft capital at all.
    `est` carries how many years were extrapolated so the UI can say so. */
-function slpPickValue(season, round){
-  let a=slpPickAsset(season, round), est=0;
+function slpPickValue(season, round, tier){
+  let a=slpPickAsset(season, round, tier), est=0;
   if(!a){
     for(let back=1; back<=6; back++){
-      const prev=slpPickAsset(season-back, round);
+      const prev=slpPickAsset(season-back, round, tier);
       if(prev){ a=prev; est=back; break; }
     }
   }
@@ -7727,23 +7761,31 @@ function slpTeamValues(){
       if(pl.a){ row.ageW+=mw; row.ageWA+=mw*pl.a; }
     }
 
-    for(const pk of slpPickInventory(r.roster_id)){
-      const v=slpPickValue(pk.season, pk.round);
-      if(!v){ row.picksUnpriced++; continue; }
-      const pw=slpPowerWeight(v.market,row._ref);
-      row.pickModel+=v.model*pw; row.pickMarket+=v.market*pw; row.picks++;
-      if(v.est) row.picksEst++;
-    }
     // Roster-only, captured before picks are added. The gap between this and
     // the total IS the win-now-versus-future question: a team can be first on
     // the field and last in future capital, and one blended rank hides exactly
     // that.
     row.modelRoster=row.model;
-    row.model+=row.pickModel; row.market+=row.pickMarket;
     const wn=slpWinNow(squad);
     row.winNow=wn.pts; row.lineupOpen=wn.open;
     row.avgAge=row.ageW>0?(row.ageWA/row.ageW):null;
     return row;
+  });
+
+  /* Picks are priced HERE rather than inside the pass above, because a tier is a
+     team's standing against the rest of the league and no such thing exists until
+     every team has been through it. Everything below — shares, ranks — reads
+     row.model, so this has to land before them and does. */
+  slpTierCut(rows);
+  rows.forEach(function(row){
+    for(const pk of slpPickInventory(row.rosterId)){
+      const v=slpPickValue(pk.season, pk.round, slpPickTier(pk.from, pk.season));
+      if(!v){ row.picksUnpriced++; continue; }
+      const pw=slpPowerWeight(v.market,row._ref);
+      row.pickModel+=v.model*pw; row.pickMarket+=v.market*pw; row.picks++;
+      if(v.est) row.picksEst++;
+    }
+    row.model+=row.pickModel; row.market+=row.pickMarket;
   });
 
   const totM=rows.reduce(function(a,b){return a+b.model;},0)||1;
@@ -7796,7 +7838,7 @@ function renderSlpPower(){
     +'<th class="dl-b-c" data-tip="Rank by DELTA model value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
     +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 green means DELTA ranks them higher than the market does, red means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
-    +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted.">Picks</th>'
+    +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted. Picks from next season are priced Early, Mid or Late by their original owner\u2019s standing in Proj PPG, cut into thirds \u2014 an estimate from today\u2019s rosters, which moves as rosters do. Seasons after that are priced Mid.">Picks</th>'
     +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
     +'<th class="col-hide-mobile dl-b-r" data-tip="Average age of the roster, weighted by each player\u2019s DELTA value \u2014 so age reflects the players a team is actually built around, not deep-bench filler. Picks are not aged.">Avg Age</th>'
     +'</tr>';
@@ -8256,7 +8298,9 @@ function slpLedgerPickValue(pk,valuer){
     const p=valuer(null,pk.became);
     return {label:pk.label,who:p.n,pos:pk.becamePos||p.p,v:p.v};
   }
-  const a=slpPickAsset(pk.season,pk.round);
+  /* Same tier as Power Rankings. Without this a 2027 first reads one value in one
+     view and another in the other, on the same screen. */
+  const a=slpPickAsset(pk.season,pk.round,slpPickTier(pk.orig,pk.season));
   const v=a?((a.kMkt!=null?a.kMkt:a.k)||null):null;
   return {label:pk.season+' '+slpOrd(pk.round),who:null,pos:'',v:v};
 }
@@ -8413,6 +8457,11 @@ function slpLedgerCards(rows){
 }
 
 function renderSlpLedger(){
+  /* Fills SLP._pickTiers. The Ledger can be opened without Power Rankings ever
+     having rendered, and slpPickTier() falls back to Mid when the map is absent —
+     which would price picks differently in the two views. Returns null when roster
+     data has not loaded; the fallback then applies and nothing breaks. */
+  try{ slpTeamValues(); }catch(e){}
   const st=slpLedgerState();
   if(st.loading) return '<div class="dl-lg-load">Building the ledger\u2026'
     +'<div id="slp-ledger-progress" class="dl-lg-prog">'+slpEsc(st.progress)+'</div>'
