@@ -1382,6 +1382,15 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-ap-txt b{color:var(--paper);font-weight:700}
 .dl-ap-ico{vertical-align:-3px;margin-left:2px}
 .dl-ap-done{margin-top:12px;font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;background:var(--teal-tint);color:var(--teal-br);border:none;cursor:pointer;font-family:var(--sans)}
+/* Ledger build progress. NOT .dl-lg-bar — that is already the filter-pill scroll
+   strip, and a second rule for it later in the sheet wins at equal specificity and
+   flattens both pill rows to 4px. Fourth prefix collision of this project: a prefix
+   is not a namespace, so grep the exact class.
+   Chrome teal — a loading bar is not a verdict, so no
+   signal colour. The fill is a width transition rather than an animation, so a
+   stalled fetch LOOKS stalled instead of pretending to move. */
+.dl-lg-pbar{height:4px;border-radius:3px;background:var(--line);overflow:hidden;margin:9px 12px 0;max-width:420px}
+.dl-lg-pfill{height:100%;width:0;border-radius:3px;background:var(--teal-br);transition:width .25s ease}
 </style>
 <script>
 /* Apply the saved accent theme BEFORE first paint (no flash of the default). Self-contained
@@ -5529,7 +5538,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14f</span>
+  <span class="foot-build">2026-09-14g</span>
 </footer>
 
 
@@ -8071,9 +8080,16 @@ async function slpLoadHistory(leagueId,force,onProgress){
   const out=[];
   for(let i=0;i<chain.length;i++){
     const lg=chain[i];
+    /* slpFetchSeason only knows its own week, so the season index and the chain
+       length are added here. Without them a bar can only guess at the total. */
+    const step=onProgress?function(season,wk){ onProgress(season,wk,i,chain.length); }:null;
     const hit=force?null:slpHistRead(lg.leagueId,lg.season);
-    if(hit){ slpLog('ledger '+lg.season+': cache HIT ('+hit.tx.length+' records)'); out.push(hit); continue; }
-    const season=await slpFetchSeason(lg,onProgress);
+    if(hit){ slpLog('ledger '+lg.season+': cache HIT ('+hit.tx.length+' records)'); out.push(hit);
+             /* A cached season really is done, so the bar jumps. That is honest —
+                it did not take any time. */
+             if(step) step(lg.season,SLP_HIST_WEEKS);
+             continue; }
+    const season=await slpFetchSeason(lg,step);
     if(season.done) slpHistWrite(lg.leagueId,lg.season,season);
     out.push(season);
   }
@@ -8201,7 +8217,7 @@ function slpBuildLedger(seasons){
 // reader is better placed to argue about it than the page is.
 
 function slpLedgerState(){
-  if(!SLP.ledger) SLP.ledger={loading:false,error:null,data:null,progress:'',
+  if(!SLP.ledger) SLP.ledger={loading:false,error:null,data:null,progress:'',pct:0,
                               f:{season:'all',user:'all',q:''}};
   return SLP.ledger;
 }
@@ -8227,17 +8243,23 @@ async function slpLedgerLoad(force){
   renderMyTeam();
   try{
     await slpEnsurePlayers();
-    const seasons=await slpLoadHistory(SLP.conn.leagueId,force,function(season,wk){
+    const seasons=await slpLoadHistory(SLP.conn.leagueId,force,function(season,wk,i,total){
       st.progress='Season '+season+' \u2014 week '+wk+' of '+SLP_HIST_WEEKS;
+      /* Weeks finished over weeks to do. The chain length is not known until the
+         first callback arrives, so the bar sits at zero until then rather than
+         inventing a denominator. */
+      if(total>0) st.pct=Math.min(100,Math.round(((i*SLP_HIST_WEEKS+wk)/(total*SLP_HIST_WEEKS))*100));
       const el=document.getElementById('slp-ledger-progress');
       if(el) el.textContent=st.progress;
+      const fill=document.getElementById('slp-ledger-fill');
+      if(fill) fill.style.width=st.pct+'%';
     });
     st.data=slpBuildLedger(seasons);
   }catch(e){
     st.error=(e&&e.message)||String(e);
     slpLog('ledger load FAILED:',e);
   }
-  st.loading=false; st.progress='';
+  st.loading=false; st.progress=''; st.pct=0;
   renderMyTeam();
 }
 
@@ -8472,6 +8494,7 @@ function renderSlpLedger(){
   try{ slpTeamValues(); }catch(e){}
   const st=slpLedgerState();
   if(st.loading) return '<div class="dl-lg-load">Building the ledger\u2026'
+    +'<div class="dl-lg-pbar"><div class="dl-lg-pfill" id="slp-ledger-fill" style="width:'+(st.pct||0)+'%"></div></div>'
     +'<div id="slp-ledger-progress" class="dl-lg-prog">'+slpEsc(st.progress)+'</div>'
     +'<div class="dl-lg-prog">First time takes a moment \u2014 every week of every season. '
     +'Finished seasons are then kept on this device.</div></div>';
