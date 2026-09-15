@@ -5529,7 +5529,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14e</span>
+  <span class="foot-build">2026-09-14f</span>
 </footer>
 
 
@@ -8310,7 +8310,15 @@ function slpLedgerNames(t,valuer){
   const out=[];
   for(const r in t.teams){
     t.teams[r].players.forEach(function(pid){ out.push(valuer(pid).n); });
-    t.teams[r].picks.forEach(function(pk){ if(pk.became) out.push(pk.became); });
+    t.teams[r].picks.forEach(function(pk){
+      if(pk.became) out.push(pk.became);
+      /* The pick ITSELF, not only the player it turned into. A future pick has no
+         player yet, so searching "2027" matched nothing at all; a resolved pick was
+         findable by the player's name but never by its own slot. Both forms go in:
+         the drafted label ("2025 2.03") and the round form ("2027 1st"). */
+      if(pk.label) out.push(pk.label);
+      out.push(pk.season+' '+slpOrd(pk.round));
+    });
   }
   return out;
 }
