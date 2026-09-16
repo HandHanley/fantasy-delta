@@ -417,6 +417,24 @@ var DSYNC = (function () {
     else if (!immediate) setStatus('ready');
   }
 
+  /* Two paths both start a merge on a signed-in page load: onAuthStateChange
+     fires for the existing session, and the getSession() restore right after it
+     runs one too. That is two concurrent merges racing on the same local state
+     and pushing twice.
+
+     Deduped by what is IN FLIGHT rather than by which caller won, so it is
+     correct whichever path fires first, and neither path has to be removed —
+     both remain as a fallback for the other. The flag clears on failure as well
+     as success, so a failed pull never blocks the next attempt. */
+  var pulling = null;
+  function pullAndMergeOnce() {
+    if (pulling) return pulling;
+    pulling = pullAndMerge();
+    var clear = function () { pulling = null; };
+    pulling.then(clear, clear);
+    return pulling;
+  }
+
   // ═════════════════════════════════════════════════════════════════════════
   //  PUBLIC API
   // ═════════════════════════════════════════════════════════════════════════
@@ -437,7 +455,7 @@ var DSYNC = (function () {
           user = session && session.user
             ? { id: session.user.id, email: session.user.email } : null;
           if (user && user.id !== was) {
-            pullAndMerge().catch(function (e) {
+            pullAndMergeOnce().catch(function (e) {
               log('merge failed:', e.message); setStatus('error', e);
             });
           } else if (!user) {
@@ -447,7 +465,7 @@ var DSYNC = (function () {
         var sess = await sb.auth.getSession();
         if (sess.data && sess.data.session) {
           user = { id: sess.data.session.user.id, email: sess.data.session.user.email };
-          await pullAndMerge();
+          await pullAndMergeOnce();
         } else {
           setStatus('signed-out');
         }
