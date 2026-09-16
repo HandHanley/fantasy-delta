@@ -66,7 +66,9 @@ jobs:
             git push
           fi
 
-      # Pages does not redeploy on a workflow commit, so the refreshed board sits in the
-      # repo but not on the live site until a deploy runs.
+      # Deploy Pages runs itself off the back of this workflow — "Build Devy Board" is in
+      # its workflow_run list (matched on the name: field above, not the filename). It was
+      # added 10 Sep 2026; before that a pasted board reached the repo and not the site
+      # until the next nightly. Verify on fantasydelta.com, never in the repo.
       - name: Reminder
-        run: echo "Board rebuilt. Run Deploy Pages, then check fantasydelta.com (not the repo)."
+        run: echo "Board rebuilt. Deploy Pages runs automatically — check fantasydelta.com (not the repo)."
