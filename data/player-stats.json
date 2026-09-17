@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-16T17:39:41.786937+00:00",
+  "fetched": "2026-09-17T17:40:03.148435+00:00",
   "seasons": [
     2022,
     2023,
@@ -26088,6 +26088,7 @@
     "Emari Demercado": "DAL",
     "Ty Johnson": "BUF",
     "Devin Singletary": "NYG",
+    "Jerome Ford": "MIN",
     "Will Shipley": "PHI",
     "Phil Mafah": "NYG",
     "Samaje Perine": "CIN",
@@ -26124,7 +26125,7 @@
     "Roman Wilson": "PIT",
     "Mack Hollins": "NE",
     "Tai Felton": "MIN",
-    "Jimmy Horn": "CAR",
+    "Jimmy Horn": "CLE",
     "Konata Mumpfield": "LAR",
     "Arian Smith": "NYJ",
     "Jordan Whittington": "LAR",
@@ -26144,12 +26145,16 @@
   },
   "injury": {
     "Sam Darnold": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Lower Body"
     },
     "Kyler Murray": {
       "status": "Questionable",
       "body_part": "Concussion"
+    },
+    "Joe Burrow": {
+      "status": "Questionable",
+      "body_part": "Back"
     },
     "Tua Tagovailoa": {
       "status": "Questionable",
@@ -26163,21 +26168,21 @@
       "status": "NA",
       "body_part": "Personal"
     },
-    "TreVeyon Henderson": {
+    "RJ Harvey": {
       "status": "Questionable",
-      "body_part": "Ankle"
+      "body_part": "Hamstring"
     },
     "Zach Charbonnet": {
       "status": "PUP",
       "body_part": "Knee - ACL"
     },
-    "Jordan Mason": {
+    "Kyle Monangai": {
       "status": "Questionable",
-      "body_part": "Thumb"
+      "body_part": "Hamstring"
     },
-    "Alvin Kamara": {
-      "status": "Questionable",
-      "body_part": "Knee - MCL"
+    "Jordan Mason": {
+      "status": "IR",
+      "body_part": "Thumb"
     },
     "Isaac Guerendo": {
       "status": "PUP",
@@ -26207,17 +26212,25 @@
       "status": "Questionable",
       "body_part": "Hamstring"
     },
+    "Nico Collins": {
+      "status": "Questionable",
+      "body_part": "Hamstring"
+    },
     "A.J. Brown": {
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Alec Pierce": {
+    "Michael Pittman Jr.": {
       "status": "Questionable",
-      "body_part": "Hand"
+      "body_part": "Foot"
     },
     "Ladd McConkey": {
       "status": "Questionable",
       "body_part": "Chest"
+    },
+    "Jakobi Meyers": {
+      "status": "Questionable",
+      "body_part": "Thumb"
     },
     "Brian Thomas Jr.": {
       "status": "Questionable",
@@ -26239,13 +26252,21 @@
       "status": "Questionable",
       "body_part": "Ankle"
     },
-    "Jalen McMillan": {
+    "Marvin Mims": {
       "status": "Questionable",
-      "body_part": "Knee"
+      "body_part": "Foot"
     },
     "Brock Bowers": {
       "status": "Questionable",
       "body_part": "Knee - Meniscus"
+    },
+    "George Kittle": {
+      "status": "Questionable",
+      "body_part": "Achilles"
+    },
+    "Juwan Johnson": {
+      "status": "Questionable",
+      "body_part": "Illness"
     },
     "Chigoziem Okonkwo": {
       "status": "Questionable",
@@ -26255,37 +26276,41 @@
       "status": "IR",
       "body_part": "Calf"
     },
+    "Cooper Kupp": {
+      "status": "Questionable",
+      "body_part": "Back"
+    },
     "Tank Dell": {
       "status": "IR",
       "body_part": "Knee - ACL + MCL"
     },
-    "Sean Tucker": {
+    "Tyrone Tracy": {
       "status": "Questionable",
-      "body_part": "Hamstring"
+      "body_part": "Illness"
     },
     "Jake Tonges": {
-      "status": "Questionable",
+      "status": "IR",
       "body_part": "Knee"
+    },
+    "Anthony Richardson": {
+      "status": "Questionable",
+      "body_part": "Groin"
     },
     "Dillon Gabriel": {
       "status": "IR",
-      "body_part": "Back"
-    },
-    "Tyson Bagent": {
-      "status": "Questionable",
       "body_part": "Back"
     },
     "Devin Neal": {
       "status": "Questionable",
       "body_part": "Hamstring"
     },
+    "LeQuint Allen": {
+      "status": "Questionable",
+      "body_part": "Hip"
+    },
     "Trevor Etienne": {
       "status": "IR",
       "body_part": "Ankle"
-    },
-    "Joe Mixon": {
-      "status": "Out",
-      "body_part": "Foot"
     },
     "Malik Davis": {
       "status": "IR",
@@ -26299,9 +26324,9 @@
       "status": "PUP",
       "body_part": "Undisclosed"
     },
-    "Tory Horton": {
+    "Jaylin Lane": {
       "status": "Questionable",
-      "body_part": "Hamstring"
+      "body_part": "Groin"
     },
     "Savion Williams": {
       "status": "IR",
@@ -26314,6 +26339,10 @@
     "KeAndre Lambert-Smith": {
       "status": "IR",
       "body_part": "Hamstring"
+    },
+    "D'Andre Swift": {
+      "status": "Questionable",
+      "body_part": "Knee"
     },
     "Dont'e Thornton": {
       "status": "IR",
@@ -29366,7 +29395,7 @@
     "Omarion Hampton": 23.5,
     "Blake Corum": 25.8,
     "Cam Skattebo": 24.6,
-    "J.K. Dobbins": 27.7,
+    "J.K. Dobbins": 27.8,
     "Chuba Hubbard": 27.3,
     "Bhayshul Tuten": 24.6,
     "Aaron Jones": 31.8,
@@ -29398,12 +29427,12 @@
     "Courtland Sutton": 30.9,
     "Tee Higgins": 27.7,
     "A.J. Brown": 29.2,
-    "Tetairoa McMillan": 23.4,
+    "Tetairoa McMillan": 23.5,
     "Drake London": 25.1,
     "Emeka Egbuka": 23.9,
     "CeeDee Lamb": 27.4,
     "DeVonta Smith": 27.8,
-    "Michael Pittman Jr.": 28.9,
+    "Michael Pittman Jr.": 29.0,
     "Jaylen Waddle": 27.8,
     "Alec Pierce": 26.4,
     "Justin Jefferson": 27.3,
@@ -29417,13 +29446,13 @@
     "Khalil Shakir": 26.6,
     "Rome Odunze": 24.3,
     "Rashee Rice": 26.4,
-    "Christian Watson": 27.3,
+    "Christian Watson": 27.4,
     "Brian Thomas Jr.": 23.9,
     "Jordan Addison": 24.6,
     "Luther Burden": 22.8,
     "Elic Ayomanor": 23.3,
     "Terry McLaurin": 31.0,
-    "Tre Harris": 24.5,
+    "Tre Harris": 24.6,
     "Jayden Higgins": 23.8,
     "Matthew Golden": 23.1,
     "Ricky Pearsall": 26.0,
@@ -29458,7 +29487,7 @@
     "George Kittle": 32.9,
     "Sam LaPorta": 25.7,
     "Kyle Pitts": 25.9,
-    "Travis Kelce": 36.9,
+    "Travis Kelce": 37.0,
     "Tyler Warren": 24.3,
     "Harold Fannin Jr.": 22.2,
     "Dallas Goedert": 31.7,
@@ -29524,7 +29553,7 @@
     "Michael Mayer": 25.2,
     "JaTavion Sanders": 23.5,
     "Ben Sinnott": 24.3,
-    "Zach Ertz": 35.8,
+    "Zach Ertz": 35.9,
     "Mac Jones": 28.0,
     "Joe Flacco": 41.7,
     "Justin Fields": 27.5,
@@ -29564,7 +29593,7 @@
     "Reggie Virgil": 22.3,
     "Kendrick Law": 22.3,
     "Kaden Wetjen": 24.5,
-    "Colbie Young": 24.1,
+    "Colbie Young": 24.2,
     "Nicholas Singleton": 22.7,
     "Emmett Johnson": 22.9,
     "Jonah Coleman": 23.1,
@@ -29627,7 +29656,7 @@
     "Ty Johnson": 29.0,
     "Devin Singletary": 29.0,
     "Jerome Ford": 27.0,
-    "Will Shipley": 24.0,
+    "Will Shipley": 24.1,
     "Phil Mafah": 23.9,
     "Damien Martinez": 22.6,
     "Samaje Perine": 31.0,
@@ -29638,7 +29667,7 @@
     "Austin Ekeler": 31.3,
     "Raheim Sanders": 24.3,
     "Michael Trigg": 24.2,
-    "Elijah Arroyo": 23.4,
+    "Elijah Arroyo": 23.5,
     "Jack Endries": 22.5,
     "Tanner Koziol": 22.6,
     "John Michael Gyllenborg": 24.1,
@@ -29688,7 +29717,7 @@
     "Xavier Restrepo": 24.4,
     "Kameron Johnson": 24.5,
     "Tutu Atwell": 26.9,
-    "Olamide Zaccheaus": 29.1,
+    "Olamide Zaccheaus": 29.2,
     "Jacob Cowing": 25.6,
     "Efton Chism": 24.9,
     "D'Andre Swift": 27.7,

@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-16T17:39:45.451451+00:00",
+  "fetched": "2026-09-17T17:40:06.654170+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -983,7 +983,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1053,7 +1053,7 @@
       "is_active": true
     },
     "Jaylen Waddle": {
-      "team": "MIA/DEN",
+      "team": "DEN/MIA",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "NO/DEN",
+      "team": "DEN/NO",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1893,7 +1893,7 @@
       "is_active": true
     },
     "Elijah Higgins": {
-      "team": "MIA/ARI",
+      "team": "ARI/MIA",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2033,7 +2033,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "NYJ/IND",
+      "team": "IND/NYJ",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2063,7 +2063,7 @@
       "is_active": true
     },
     "Kayshon Boutte": {
-      "team": "HOU/NE",
+      "team": "NE/HOU",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2873,7 +2873,7 @@
       "is_active": true
     },
     "Quinn Ewers": {
-      "team": "MIA/JAX",
+      "team": "JAX/MIA",
       "year_signed": 2025,
       "years": 4,
       "end_year": 2028,
@@ -3183,7 +3183,7 @@
       "is_active": true
     },
     "Emari Demercado": {
-      "team": "KC/DAL",
+      "team": "DAL/KC",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
@@ -3220,6 +3220,16 @@
       "aav": 1.18,
       "total": 4.74,
       "guaranteed": 0.72,
+      "is_active": true
+    },
+    "Phil Mafah": {
+      "team": "Giants",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Samaje Perine": {
@@ -3702,16 +3712,6 @@
       "guaranteed": 1.12,
       "is_active": true
     },
-    "Jimmy Horn": {
-      "team": "Panthers",
-      "year_signed": 2025,
-      "years": 4,
-      "end_year": 2028,
-      "aav": 1.1,
-      "total": 4.4,
-      "guaranteed": 0.2,
-      "is_active": true
-    },
     "Konata Mumpfield": {
       "team": "Rams",
       "year_signed": 2025,
@@ -3763,7 +3763,7 @@
       "is_active": true
     },
     "Tutu Atwell": {
-      "team": "Rams",
+      "team": "MIA/LAR",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
@@ -3843,7 +3843,7 @@
       "is_active": true
     },
     "D.J. Moore": {
-      "team": "CHI/BUF",
+      "team": "BUF/CHI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
