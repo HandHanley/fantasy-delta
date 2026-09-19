@@ -451,17 +451,19 @@ def fetch_sleeper_teams():
             raw = json.loads(resp.read().decode('utf-8'))
     except Exception as e:
         print(f'[DELTA] Sleeper feed unavailable ({e}) — falling back to nflverse roster feed')
-        return None, {}
+        return None, {}, {}
 
     if not isinstance(raw, dict) or not raw:
         print('[DELTA] Sleeper feed: empty or unexpected shape — falling back to nflverse')
-        return None, {}
+        return None, {}, {}
 
     SKILL_POS = {'QB', 'RB', 'WR', 'TE'}
     seen = defaultdict(set)
     raw_names = defaultdict(set)
     free_agents = 0
     injuries = {}
+    roster_status = {}
+    roster_status_seen = {}
     for _pid, p in raw.items():
         if not isinstance(p, dict):
             continue
@@ -489,6 +491,26 @@ def fetch_sleeper_teams():
                 'body_part': (p.get('injury_body_part') or '').strip() or None,
             }
 
+        # Roster status — Sleeper's 'status' field, which is NOT the
+        # 'injury_status' read above. They are different things: a player can be
+        # perfectly healthy and still be unavailable. The commissioner's-exempt
+        # case is exactly that, and it currently renders as a healthy starter
+        # with no tag because nothing here ever read this field.
+        #
+        # DISPLAY ONLY, same posture as injury status — it must never touch a
+        # projection. Season-ending calls stay hand-made in
+        # data/injury-overrides.json.
+        #
+        # Rostered players only: a free agent's status is noise. Every value
+        # seen is counted and printed, because this field's vocabulary is not
+        # reliably documented and which values deserve a badge should be decided
+        # from that log rather than guessed.
+        rstat = (p.get('status') or '').strip()
+        if p.get('team') and rstat:
+            roster_status_seen[rstat] = roster_status_seen.get(rstat, 0) + 1
+            if rstat.upper() != 'ACTIVE':
+                roster_status[(norm(full), pos)] = {'status': rstat, 'name': full}
+
         team = p.get('team')
         if not team:
             free_agents += 1
@@ -507,7 +529,14 @@ def fetch_sleeper_teams():
         print(f'[DELTA] Sleeper feed: {len(ambiguous)} ambiguous (name,pos) skipped — {ambiguous[:6]}')
     print(f'[DELTA] Sleeper feed: teams for {len(out)} skill (name,pos) keys '
           f'({free_agents} free agents skipped) · {len(injuries)} carrying an injury status')
-    return (out or None), injuries
+    if roster_status_seen:
+        print('[DELTA] Sleeper roster status (rostered skill players): ' + ', '.join(
+            f'{k}={v}' for k, v in sorted(roster_status_seen.items(), key=lambda kv: -kv[1])))
+    if roster_status:
+        names = sorted(r['name'] for r in roster_status.values())
+        print(f'[DELTA] {len(roster_status)} rostered but NOT active: ' + ', '.join(names[:40])
+              + (' …' if len(names) > 40 else ''))
+    return (out or None), injuries, roster_status
 
 
 def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
@@ -1384,7 +1413,7 @@ def main():
     agg, headshots, qb_starts = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     roster_teams = fetch_current_teams()
-    sleeper_teams, sleeper_injuries = fetch_sleeper_teams()
+    sleeper_teams, sleeper_injuries, sleeper_roster_status = fetch_sleeper_teams()
     qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
     # Team overrides for the runtime: only DELTA players the roster feed
     # resolves; RAW's baked team stays the fallback for everyone else.
@@ -1413,6 +1442,7 @@ def main():
     }
     team_overrides = {}
     injury_status = {}
+    roster_status = {}
     unresolved = []
     unknown_codes = {}
     disagreements = []
@@ -1486,6 +1516,12 @@ def main():
             rec = (sleeper_injuries or {}).get((norm(nfl_name), pos))
             if rec:
                 injury_status[dn] = {'status': rec['status'], 'body_part': rec.get('body_part')}
+            # Rostered-but-not-active, keyed the same way. Written to the output
+            # so the badge rule can be switched on without another pipeline run.
+            # NOTHING READS THIS YET — deliberately. See the note above.
+            rstat = (sleeper_roster_status or {}).get((norm(nfl_name), pos))
+            if rstat:
+                roster_status[dn] = {'status': rstat['status']}
         if injury_status:
             by_status = {}
             for dn, r in injury_status.items():
@@ -1561,6 +1597,10 @@ def main():
         'qb_roles': qb_roles,
         'teams': team_overrides,
         'injury': injury_status,   # display-only; see docs/ACCURACY-LEDGER.md s.6
+        # Rostered but not on the active list (Sleeper 'status', not injury).
+        # Display-only and currently UNREAD by the engine — captured first so the
+        # badge rule can be set from real counts rather than a guess.
+        'roster_status': roster_status,
         'epa': epa_out,
         'draft': draft_map,
         'college': college_map,
