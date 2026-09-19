@@ -5538,7 +5538,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-18a</span>
+  <span class="foot-build">2026-09-19a</span>
 </footer>
 
 
@@ -8225,18 +8225,28 @@ function slpBuildLedger(seasons){
    slpSwitchLeague covers all nine sites that assign SLP.conn, including
    restore-on-boot and the error paths, and cannot be forgotten when a tenth is
    added. It also strands an in-flight load from the old league: that load's
-   closure writes into the object it captured, which is no longer the object
-   anybody reads. The per-league localStorage cache (delta_slp_hist_<id>_<yr>)
-   is already keyed correctly, so switching back refills from disk rather than
-   recrawling Sleeper. The season/manager/search filters live in here too and
+   closure writes into that league's own bucket, which is exactly where it
+   belongs. That matters for one specific sequence: open the Ledger on league A,
+   switch to B and open the Ledger there, then switch back to A while A is still
+   loading. With a single bucket, A's is discarded when B claims it, so the
+   return starts a SECOND concurrent crawl of A — measured at 33 week-requests
+   against 15 for this version. Here A's bucket survives with loading still set,
+   so the return joins the crawl already running. One bucket per connected
+   league is cheap (a handful of leagues per user) and it also means a league
+   already opened this session reappears instantly. A cold return, where the
+   first load had already finished, was never affected either way: the
+   per-league localStorage cache serves it with no network at all. The per-league localStorage cache
+   (delta_slp_hist_<id>_<yr>) is keyed the same way and still backs a cold
+   open. The season/manager/search filters live in here too and
    reset with it, which is intended — a manager filter from another league
    matches nobody in this one. */
 function slpLedgerState(){
   const lid=SLP.conn?String(SLP.conn.leagueId):'';
-  if(!SLP.ledger||SLP.ledger.leagueId!==lid)
-    SLP.ledger={leagueId:lid,loading:false,error:null,data:null,progress:'',pct:0,
-                f:{season:'all',user:'all',q:''}};
-  return SLP.ledger;
+  if(!SLP.ledgers) SLP.ledgers={};
+  if(!SLP.ledgers[lid])
+    SLP.ledgers[lid]={leagueId:lid,loading:false,error:null,data:null,progress:'',pct:0,
+                      f:{season:'all',user:'all',q:''}};
+  return SLP.ledgers[lid];
 }
 
 function slpViewLedger(){

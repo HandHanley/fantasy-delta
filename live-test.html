@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DELTA — Live Feed Test</title>
+<!--
+  THROWAWAY DIAGNOSTIC. Not part of the app. Delete it once it has answered.
+
+  It answers one question that cannot be answered from a browser address bar:
+  will ESPN's feed let a page served from fantasydelta.com read it?
+
+  Opening a feed URL directly proves only that it needs no password. A page
+  reading another site's data is a different permission, granted by a header
+  that feed has to send back. Plenty of feeds return JSON in the address bar
+  and refuse when a webpage asks.
+
+  This MUST be served from fantasydelta.com to mean anything. Opened from a
+  file on your phone, or from anywhere else, it tests the wrong origin and the
+  answer is worthless.
+-->
+<style>
+:root{
+  --ink:#0A0F1A; --panel:#111A28; --line:#1E2A3A;
+  --paper:#EAF0F4; --fog:#8CA0B3; --fog-2:#5C7080;
+  --emerald:#10B981; --emerald-tint:rgba(16,185,129,.14);
+  --coral:#E05745; --coral-tint:rgba(224,87,69,.13);
+  --topaz:#E0B34D; --topaz-tint:rgba(224,179,77,.14);
+  --teal-br:#2DD4BF; --sky:#6BB6E0;
+  --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:var(--sans);background:var(--ink);color:var(--paper);
+     font-size:14px;line-height:1.5}
+h1{font-size:17px;margin:0 0 4px}
+.sub{color:var(--fog);font-size:12px;margin:0 0 18px}
+.test{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+      padding:12px;margin-bottom:10px}
+.test h2{font-size:13px;margin:0 0 6px;font-weight:600}
+.verdict{font-family:var(--mono);font-size:12px;padding:5px 8px;border-radius:6px;
+         display:inline-block;margin-bottom:6px}
+.pass{background:var(--emerald-tint);color:var(--emerald)}
+.fail{background:var(--coral-tint);color:var(--coral)}
+.wait{background:var(--topaz-tint);color:var(--topaz)}
+.detail{font-family:var(--mono);font-size:11px;color:var(--fog);
+        white-space:pre-wrap;word-break:break-word;margin-top:4px}
+.games{margin-top:20px}
+.g{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+   padding:11px 13px;margin-bottom:8px}
+.grow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.gt{font-weight:600}
+.gs{font-family:var(--mono);font-size:16px}
+.gst{color:var(--sky);font-size:11px;font-family:var(--mono);margin-top:5px}
+.note{color:var(--fog-2);font-size:11px;margin-top:22px;border-top:1px solid var(--line);
+      padding-top:12px}
+button{background:transparent;color:var(--teal-br);border:1px solid var(--line);
+       border-radius:8px;padding:9px 14px;font-family:var(--sans);font-size:13px;
+       margin-top:10px}
+</style>
+</head>
+<body>
+
+<h1>Live Feed Test</h1>
+<p class="sub">Answers one question: will ESPN let a page on this domain read its data?</p>
+
+<div class="test" id="t1"><h2>1. NFL scoreboard</h2><div class="verdict wait">running…</div></div>
+<div class="test" id="t2"><h2>2. College scoreboard</h2><div class="verdict wait">running…</div></div>
+<div class="test" id="t3"><h2>3. Single game detail</h2><div class="verdict wait">running…</div></div>
+
+<div class="games" id="games"></div>
+<button onclick="runAll()">Run again</button>
+
+<p class="note">
+If all three pass, a live arm is buildable and the only open questions are upkeep
+and terms. If they fail with a message mentioning CORS or "Failed to fetch", the
+feed will not talk to a webpage and this route is closed — the data would have to
+come through something that fetches it elsewhere first. Delete this file either way.
+</p>
+
+<script>
+const BASE = 'https://site.api.espn.com/apis/site/v2/sports/football';
+const TESTS = [
+  { el: 't1', url: BASE + '/nfl/scoreboard',              render: true  },
+  { el: 't2', url: BASE + '/college-football/scoreboard', render: false },
+  { el: 't3', url: BASE + '/college-football/summary?event=401858230', render: false }
+];
+
+function say(elId, cls, text, detail) {
+  const box = document.getElementById(elId);
+  box.querySelector('.verdict').className = 'verdict ' + cls;
+  box.querySelector('.verdict').textContent = text;
+  let d = box.querySelector('.detail');
+  if (!d) { d = document.createElement('div'); d.className = 'detail'; box.appendChild(d); }
+  d.textContent = detail || '';
+}
+
+async function runOne(t) {
+  const started = Date.now();
+  try {
+    const res = await fetch(t.url, { cache: 'no-store' });
+    const ms = Date.now() - started;
+    if (!res.ok) { say(t.el, 'fail', 'HTTP ' + res.status, t.url); return null; }
+    const body = await res.json();
+    const kb = Math.round(JSON.stringify(body).length / 1024);
+    say(t.el, 'pass', 'PASS · ' + ms + 'ms · ' + kb + ' KB',
+        (body.events ? body.events.length + ' games in the feed'
+                     : 'single game: ' + ((body.header && body.header.id) || 'loaded')));
+    return body;
+  } catch (err) {
+    say(t.el, 'fail', 'BLOCKED',
+        err.message + '\n\nThis is what a refused cross-site read looks like. '
+        + 'The address bar can still open the same URL fine.');
+    return null;
+  }
+}
+
+function renderGames(data) {
+  const wrap = document.getElementById('games');
+  wrap.innerHTML = '';
+  const evs = (data && data.events) || [];
+  if (!evs.length) { wrap.innerHTML = '<p class="sub">No games in the feed right now.</p>'; return; }
+  evs.slice(0, 8).forEach(ev => {
+    const c = ev.competitions && ev.competitions[0];
+    if (!c) return;
+    const teams = (c.competitors || []).map(x =>
+      ({ name: (x.team && (x.team.abbreviation || x.team.displayName)) || '?', score: x.score }));
+    const status = (ev.status && ev.status.type && ev.status.type.shortDetail) || '';
+    const div = document.createElement('div');
+    div.className = 'g';
+    div.innerHTML = teams.map(t =>
+      '<div class="grow"><span class="gt"></span><span class="gs"></span></div>').join('')
+      + '<div class="gst"></div>';
+    const rows = div.querySelectorAll('.grow');
+    teams.forEach((t, i) => {
+      if (!rows[i]) return;
+      rows[i].querySelector('.gt').textContent = t.name;
+      rows[i].querySelector('.gs').textContent = t.score == null ? '–' : t.score;
+    });
+    div.querySelector('.gst').textContent = status;
+    wrap.appendChild(div);
+  });
+}
+
+async function runAll() {
+  document.getElementById('games').innerHTML = '';
+  TESTS.forEach(t => say(t.el, 'wait', 'running…', ''));
+  for (const t of TESTS) {
+    const body = await runOne(t);
+    if (t.render && body) renderGames(body);
+  }
+}
+runAll();
+</script>
+</body>
+</html>
