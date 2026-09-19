@@ -5538,7 +5538,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-14g</span>
+  <span class="foot-build">2026-09-18a</span>
 </footer>
 
 
@@ -8216,9 +8216,26 @@ function slpBuildLedger(seasons){
 // A trade that looks lopsided in September often is not by December, and the
 // reader is better placed to argue about it than the page is.
 
+/* KEYED TO THE LEAGUE IT WAS BUILT FROM. This object used to be created once
+   and never replaced. slpSwitchLeague() clears eleven SLP fields and never
+   touched this one, so after a switch slpViewLedger() saw data already present,
+   skipped the load entirely — it never even requested the new league's
+   transactions — and painted the previous league's trades under the new
+   league's name. Keying it here rather than resetting it inside
+   slpSwitchLeague covers all nine sites that assign SLP.conn, including
+   restore-on-boot and the error paths, and cannot be forgotten when a tenth is
+   added. It also strands an in-flight load from the old league: that load's
+   closure writes into the object it captured, which is no longer the object
+   anybody reads. The per-league localStorage cache (delta_slp_hist_<id>_<yr>)
+   is already keyed correctly, so switching back refills from disk rather than
+   recrawling Sleeper. The season/manager/search filters live in here too and
+   reset with it, which is intended — a manager filter from another league
+   matches nobody in this one. */
 function slpLedgerState(){
-  if(!SLP.ledger) SLP.ledger={loading:false,error:null,data:null,progress:'',pct:0,
-                              f:{season:'all',user:'all',q:''}};
+  const lid=SLP.conn?String(SLP.conn.leagueId):'';
+  if(!SLP.ledger||SLP.ledger.leagueId!==lid)
+    SLP.ledger={leagueId:lid,loading:false,error:null,data:null,progress:'',pct:0,
+                f:{season:'all',user:'all',q:''}};
   return SLP.ledger;
 }
 
