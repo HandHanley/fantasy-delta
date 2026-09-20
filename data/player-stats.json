@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-19T16:33:41.092339+00:00",
+  "fetched": "2026-09-20T16:52:53.435433+00:00",
   "seasons": [
     2022,
     2023,
@@ -26152,12 +26152,8 @@
       "status": "Out",
       "body_part": "Concussion"
     },
-    "Joe Burrow": {
-      "status": "Questionable",
-      "body_part": "Back"
-    },
     "Tua Tagovailoa": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Oblique"
     },
     "Michael Penix Jr.": {
@@ -26208,12 +26204,8 @@
       "status": "Questionable",
       "body_part": "Hip"
     },
-    "Chris Olave": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "Zay Flowers": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Hamstring"
     },
     "Nico Collins": {
@@ -26225,8 +26217,8 @@
       "body_part": "Ankle"
     },
     "Michael Pittman Jr.": {
-      "status": "Questionable",
-      "body_part": "Foot"
+      "status": "Out",
+      "body_part": "Ankle"
     },
     "Ladd McConkey": {
       "status": "Questionable",
@@ -26247,10 +26239,6 @@
     "Jauan Jennings": {
       "status": "Out",
       "body_part": "Personal"
-    },
-    "Jalen McMillan": {
-      "status": "Questionable",
-      "body_part": "Knee"
     },
     "Marvin Mims": {
       "status": "Out",
@@ -26276,9 +26264,17 @@
       "status": "IR",
       "body_part": "Knee"
     },
+    "JaTavion Sanders": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
     "Dillon Gabriel": {
       "status": "IR",
       "body_part": "Back"
+    },
+    "Tanner McKee": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
     },
     "DJ Giddens": {
       "status": "Questionable",
@@ -26295,6 +26291,10 @@
     "Malik Davis": {
       "status": "IR",
       "body_part": "Hip"
+    },
+    "Kendre Miller": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
     },
     "Ty Johnson": {
       "status": "Out",
@@ -26317,7 +26317,7 @@
       "body_part": "Hamstring"
     },
     "Jordan Whittington": {
-      "status": "Questionable",
+      "status": "Doubtful",
       "body_part": "Quadriceps"
     },
     "D.J. Moore": {
@@ -26331,6 +26331,65 @@
     "Ja'Lynn Polk": {
       "status": "NA",
       "body_part": "Undisclosed"
+    }
+  },
+  "roster_status": {
+    "Jordan Mason": {
+      "status": "Inactive"
+    },
+    "Trey Benson": {
+      "status": "Inactive"
+    },
+    "Dylan Sampson": {
+      "status": "Inactive"
+    },
+    "James Conner": {
+      "status": "Inactive"
+    },
+    "Isiah Pacheco": {
+      "status": "Inactive"
+    },
+    "Audric Estime": {
+      "status": "Inactive"
+    },
+    "A.J. Brown": {
+      "status": "Inactive"
+    },
+    "Jayden Higgins": {
+      "status": "Inactive"
+    },
+    "Ricky Pearsall": {
+      "status": "Inactive"
+    },
+    "Christian Kirk": {
+      "status": "Inactive"
+    },
+    "Tank Dell": {
+      "status": "Inactive"
+    },
+    "Jake Tonges": {
+      "status": "Inactive"
+    },
+    "Dillon Gabriel": {
+      "status": "Inactive"
+    },
+    "Trevor Etienne": {
+      "status": "Inactive"
+    },
+    "Malik Davis": {
+      "status": "Inactive"
+    },
+    "Savion Williams": {
+      "status": "Inactive"
+    },
+    "Calvin Austin": {
+      "status": "Inactive"
+    },
+    "KeAndre Lambert-Smith": {
+      "status": "Inactive"
+    },
+    "Dont'e Thornton": {
+      "status": "Inactive"
     }
   },
   "epa": {
@@ -29410,7 +29469,7 @@
     "Tetairoa McMillan": 23.5,
     "Drake London": 25.2,
     "Emeka Egbuka": 23.9,
-    "CeeDee Lamb": 27.4,
+    "CeeDee Lamb": 27.5,
     "DeVonta Smith": 27.8,
     "Michael Pittman Jr.": 29.0,
     "Jaylen Waddle": 27.8,
@@ -29427,7 +29486,7 @@
     "Rome Odunze": 24.3,
     "Rashee Rice": 26.4,
     "Christian Watson": 27.4,
-    "Brian Thomas Jr.": 23.9,
+    "Brian Thomas Jr.": 24.0,
     "Jordan Addison": 24.6,
     "Luther Burden": 22.8,
     "Elic Ayomanor": 23.3,
@@ -29449,7 +29508,7 @@
     "Jauan Jennings": 29.2,
     "Stefon Diggs": 32.8,
     "Jayden Reed": 26.4,
-    "Calvin Ridley": 31.7,
+    "Calvin Ridley": 31.8,
     "Rashid Shaheed": 28.1,
     "Darnell Mooney": 28.9,
     "Rashod Bateman": 26.8,
@@ -29507,10 +29566,10 @@
     "Cedric Tillman": 26.4,
     "Pat Bryant": 23.8,
     "Tre Tucker": 25.5,
-    "Kyle Williams": 23.8,
+    "Kyle Williams": 23.9,
     "Tank Dell": 26.9,
     "DeMario Douglas": 25.8,
-    "Adonai Mitchell": 23.9,
+    "Adonai Mitchell": 24.0,
     "Jaylin Noel": 24.0,
     "Malik Washington": 25.9,
     "Kayshon Boutte": 24.4,
@@ -29570,7 +29629,7 @@
     "Kaelon Black": 24.9,
     "Barion Brown": 22.8,
     "Cyrus Allen": 23.6,
-    "Reggie Virgil": 22.3,
+    "Reggie Virgil": 22.4,
     "Kendrick Law": 22.3,
     "Kaden Wetjen": 24.5,
     "Colbie Young": 24.2,
