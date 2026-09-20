@@ -132,6 +132,20 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .fkey{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono);
       font-size:9.5px;color:var(--fog)}
 
+/* The player card is DELTA's own page, opened in a sheet over the feed rather
+   than copied in here. Same origin, so it just works, and it can never drift
+   from the real card because it IS the real card. */
+.sheet{position:fixed;inset:0;background:rgba(10,15,26,.82);z-index:50;display:flex;
+       flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.sheet-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;
+          padding:11px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.sheet-nm{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-x{background:transparent;border:1px solid var(--line);color:var(--fog);border-radius:8px;
+         padding:7px 12px;font-family:var(--sans);font-size:13px;flex:none}
+.sheet iframe{flex:1;width:100%;border:0;background:var(--ink)}
+.pname{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;
+       text-align:left;text-decoration:underline;text-decoration-color:var(--line);
+       text-underline-offset:3px}
 .play{font-size:13px;line-height:1.45}
 .empty{color:var(--fog);font-size:13px;padding:18px 2px}
 details{margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
@@ -563,11 +577,15 @@ function statLine(parts){
   return '<div class="statline">' + parts.map(function(x){ return esc(x.t); })
     .join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
 }
+function nameButton(name, trail){
+  return '<button class="pname" type="button" data-player="' + esc(name) + '">'
+    + esc(name) + '</button>' + (trail || '');
+}
 function playerRows(players){
   return players.map(function(p){
     return '<div class="rowb"><div class="nm">'
       + (watched(p.name) ? '<span class="trk">&#9733;</span> ' : '')
-      + esc(p.name) + (p.jersey ? ' <span class="pos">#' + esc(p.jersey) + '</span>' : '')
+      + nameButton(p.name, p.jersey ? ' <span class="pos">#' + esc(p.jersey) + '</span>' : '')
       + '</div>' + statLine(p.line) + '</div>';
   }).join('');
 }
@@ -619,8 +637,8 @@ function renderGame(){
         + '</span><span class="rule"></span></div><div class="card">'
         + hits.map(function(h){
             return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
-              + esc(h.p.name) + ' <span class="pos">' + esc(h.p.team) + '</span></div>'
-              + h.lines.map(statLine).join('') + '</div>';
+              + nameButton(h.p.name, ' <span class="pos">' + esc(h.p.team) + '</span>')
+              + '</div>' + h.lines.map(statLine).join('') + '</div>';
           }).join('') + '</div>';
     }else{
       html += '<div class="notice" style="margin-top:16px">'
@@ -719,6 +737,31 @@ function render(){
   document.getElementById('fc').textContent = txt;
 }
 
+/* ── DELTA's player card, in a sheet ───────────────────────────────────── */
+function openCard(name){
+  closeCard();
+  // Whichever card page belongs to the sport currently being watched. Both take
+  // ?name= and both handle a name they do not know with their own clear
+  // message, which is the honest answer: DELTA does not track that player.
+  const page = S.league === 'cfb' ? 'cfb-player.html' : 'player.html';
+  const el = document.createElement('div');
+  el.className = 'sheet';
+  el.id = 'sheet';
+  el.innerHTML = '<div class="sheet-hd"><span class="sheet-nm">' + esc(name) + '</span>'
+    + '<button class="sheet-x" type="button" id="sheet-x">Close</button></div>'
+    + '<iframe title="DELTA player card" src="' + esc(page + '?name=' + encodeURIComponent(name)) + '"></iframe>';
+  document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+}
+function closeCard(){
+  const el = document.getElementById('sheet');
+  if(el) el.remove();
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeCard();
+});
+
 /* ── loading ───────────────────────────────────────────────────────────── */
 async function loadList(){
   const a = ADAPTERS[ACTIVE_SOURCE], which = S.league;
@@ -755,6 +798,15 @@ document.addEventListener('visibilitychange', function(){
 
 document.addEventListener('click', async function(ev){
   const t = ev.target;
+  if(t.closest && t.closest('#sheet-x')){ closeCard(); return; }
+  const sheet = t.closest && t.closest('#sheet');
+  if(sheet){
+    // Tapping the dimmed area outside the card closes it; taps inside do not.
+    if(t === sheet) closeCard();
+    return;
+  }
+  const pn = t.closest ? t.closest('[data-player]') : null;
+  if(pn){ openCard(pn.getAttribute('data-player')); return; }
   const lg = t.closest ? t.closest('[data-lg]') : null;
   if(lg){
     S.league = lg.getAttribute('data-lg'); S.view = 'list'; S.game = null; S.gameId = null;
