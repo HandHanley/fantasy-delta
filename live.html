@@ -104,6 +104,24 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .nm{font-size:13.5px;font-weight:700}
 .nm .pos{color:var(--fog);font-weight:400;font-size:11px}
 .sub{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:2px}
+/* The box score is a TABLE, because its job is comparing players down a column.
+   Five columns is the ceiling that fits a phone; anything more and the right
+   edge gets cut off, which is the exact fault in every other app's version.
+   Nothing here ever scrolls sideways. */
+table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
+.bx th{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--fog-2);
+       font-weight:600;text-align:right;padding:0 0 7px;white-space:nowrap}
+.bx th.p,.bx td.p{text-align:left;width:auto}
+.bx col.n{width:38px}
+.bx td{font-family:var(--mono);font-size:12px;text-align:right;padding:9px 0;
+       border-top:1px solid var(--line);font-variant-numeric:tabular-nums;
+       white-space:nowrap}
+.bx tbody tr:first-child td{border-top:0}
+.bx td.p{font-family:var(--sans);font-size:13px;font-weight:700;
+         overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+/* A zero is kept so the columns stay aligned, but dimmed so the numbers that
+   actually happened are the ones the eye catches. */
+.bx td .z{color:var(--fog-2)}
 .rowb{padding:10px 0;border-bottom:1px solid var(--line)}
 .rowb:last-child{border-bottom:0}
 .statline{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:4px;
@@ -256,6 +274,10 @@ const ADAPTERS = {
         for(const st of (tm.statistics || [])){
           const labels = st.labels || [];
           const players = [];
+          // Per statistic block, NOT per athlete: the column set below is chosen
+          // after the athlete loop has ended, so a const scoped inside that loop
+          // is not in scope where it is needed.
+          const unit = String(st.name || '').toLowerCase();
           for(const a of (st.athletes || [])){
             const ath = a.athlete || {};
             const stats = a.stats || [];
@@ -280,25 +302,39 @@ const ADAPTERS = {
             const addIf = function(v, label){
               if(v && v !== '0' && v !== '0.0') line.push({ t: v + ' ' + label, e: false });
             };
-            const unit = String(st.name || '').toLowerCase();
+            const tgt = pickAny(['TGTS', 'TGT', 'TAR', 'TARGETS']);
+            if(tgt != null) found.targets++;
+
+            // `cells` feeds the box-score TABLE; `line` feeds the watchlist
+            // block, where players from different categories sit together and a
+            // shared column set would be meaningless. Both come off the same
+            // reads so they can never disagree.
+            const cells = {};
             if(unit.indexOf('pass') === 0){
+              cells['C/ATT'] = pick('C/ATT'); cells.YDS = pick('YDS');
+              cells.TD = pick('TD');          cells.INT = pick('INT');
               add(pick('C/ATT'), '');
-              add(pick('YDS'), 'YDS', true);
+              add(pick('YDS'), 'YDS');
               addIf(pick('TD'), 'TD');
               addIf(pick('INT'), 'INT');
               add(pick('AVG'), 'Y/A');
             }else if(unit.indexOf('rush') === 0){
+              cells.CAR = pick('CAR');  cells.YDS = pick('YDS');
+              cells.TD = pick('TD');    cells.LG = pick('LONG');
               add(pick('CAR'), 'CAR');
-              add(pick('YDS'), 'YDS', true);
+              add(pick('YDS'), 'YDS');
               addIf(pick('TD'), 'TD');
               add(pick('AVG'), 'AVG');
               addIf(pick('LONG'), 'LONG');
             }else{
-              add(pick('REC'), 'REC');
-              const tgt = pickAny(['TGTS', 'TGT', 'TAR', 'TARGETS']);
-              if(tgt != null) found.targets++;
+              // Targets before receptions: the chance comes before the catch,
+              // and it is the order both ESPN and Yahoo print.
+              cells.TGT = tgt;          cells.REC = pick('REC');
+              cells.YDS = pick('YDS');  cells.TD = pick('TD');
+              cells.LG = pick('LONG');
               addIf(tgt, 'TGT');
-              add(pick('YDS'), 'YDS', true);
+              add(pick('REC'), 'REC');
+              add(pick('YDS'), 'YDS');
               addIf(pick('TD'), 'TD');
               add(pick('AVG'), 'AVG');
               addIf(pick('LONG'), 'LONG');
@@ -314,7 +350,7 @@ const ADAPTERS = {
               return isFinite(n) ? n : 0;
             };
             players.push({ name: ath.displayName || ath.shortName || '',
-                           jersey: ath.jersey || '', line: line, team: abbr,
+                           jersey: ath.jersey || '', line: line, cells: cells, team: abbr,
                            _yds: num(pick('YDS')), _td: num(pick('TD')),
                            _vol: num(pick('REC') || pick('CAR') || pick('C/ATT')) });
             found.players++;
@@ -328,7 +364,15 @@ const ADAPTERS = {
               return (b._yds - a._yds) || (b._td - a._td) || (b._vol - a._vol);
             });
             found.sections++;
-            sections.push({ name: st.name || st.text || '', teamAbbr: abbr, players: players });
+            // Deliberately NOT every column the feed sends. AVG is yards
+            // divided by a column already shown, and fumbles are not what this
+            // page is for. Five columns is what fits a phone without the right
+            // edge being cut off, which is the flaw in every other app's table.
+            const COLS = unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT']
+                       : unit.indexOf('rush') === 0 ? ['CAR','YDS','TD','LG']
+                       : ['TGT','REC','YDS','TD','LG'];
+            sections.push({ name: st.name || st.text || '', teamAbbr: abbr,
+                            cols: COLS, players: players });
           }
         }
       }
@@ -581,13 +625,27 @@ function nameButton(name, trail){
   return '<button class="pname" type="button" data-player="' + esc(name) + '">'
     + esc(name) + '</button>' + (trail || '');
 }
-function playerRows(players){
-  return players.map(function(p){
-    return '<div class="rowb"><div class="nm">'
-      + (watched(p.name) ? '<span class="trk">&#9733;</span> ' : '')
-      + nameButton(p.name, p.jersey ? ' <span class="pos">#' + esc(p.jersey) + '</span>' : '')
-      + '</div>' + statLine(p.line) + '</div>';
-  }).join('');
+function cell(v){
+  if(v == null || v === '') return '<span class="z">&ndash;</span>';
+  const t = String(v);
+  return (t === '0' || t === '0.0' || t === '0/0')
+    ? '<span class="z">' + esc(t) + '</span>' : esc(t);
+}
+function playerTable(sec){
+  const cols = sec.cols || [];
+  return '<table class="bx"><colgroup><col>'
+    + cols.map(function(){ return '<col class="n">'; }).join('') + '</colgroup>'
+    + '<thead><tr><th class="p"></th>'
+    + cols.map(function(c){ return '<th>' + esc(c) + '</th>'; }).join('')
+    + '</tr></thead><tbody>'
+    + sec.players.map(function(p){
+        return '<tr><td class="p">'
+          + (watched(p.name) ? '<span class="trk">&#9733;</span> ' : '')
+          + nameButton(p.name) + '</td>'
+          + cols.map(function(c){ return '<td>' + cell(p.cells && p.cells[c]) + '</td>'; }).join('')
+          + '</tr>';
+      }).join('')
+    + '</tbody></table>';
 }
 
 function heroBlock(g){
@@ -695,7 +753,7 @@ function renderBox(){
         return '<div class="hd"><span class="swatch" style="background:' + col + '"></span>'
           + '<span>' + esc(titleFor(sec.name)) + '</span><span class="rule"></span></div>'
           + '<div class="card tinted" style="border-top-color:' + col + '">'
-          + playerRows(sec.players) + '</div>';
+          + playerTable(sec) + '</div>';
       }).join('')
     : '<div class="empty">No player stats for this team yet.</div>';
   html += '<div class="hd"><span><span class="trk">&#9733;</span> On Your Watchlist</span>'
