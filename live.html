@@ -141,14 +141,19 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .hero .abbr{font-size:17px}
 .hero .sc{font-size:34px;line-height:1}
 
-.field{position:relative;height:26px;border-radius:5px;overflow:hidden;
+.field{position:relative;height:36px;border-radius:6px;overflow:hidden;
        background:var(--ink-2);border:1px solid var(--line)}
-.ez{position:absolute;top:0;bottom:0;width:9%}
-.tick{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
-.ball{position:absolute;top:0;bottom:0;width:3px;background:var(--sky)}
+.ez{position:absolute;top:0;bottom:0}
+.tick{position:absolute;top:22%;bottom:22%;width:1px;background:var(--line)}
+.tick.mid{top:8%;bottom:8%;background:var(--fog-2)}
+/* The ground still to cover, shaded between the ball and the line to gain. On a
+   3rd and 2 it is a sliver; on a 1st and 10 it is a block. That difference is
+   the whole point of drawing this rather than printing the number. */
+.gain{position:absolute;top:0;bottom:0;background:rgba(234,240,244,.10)}
+.ball{position:absolute;top:0;bottom:0;width:4px;box-shadow:0 0 0 1px rgba(10,15,26,.55)}
 .togo{position:absolute;top:0;bottom:0;width:2px;background:var(--paper)}
-.fkey{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono);
-      font-size:9.5px;color:var(--fog)}
+.fkey{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);
+      font-size:9.5px;color:var(--fog-2);letter-spacing:.04em}
 
 /* The player card is DELTA's own page, opened in a sheet over the feed rather
    than copied in here. Same origin, so it just works, and it can never drift
@@ -165,6 +170,10 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
        text-align:left;text-decoration:underline;text-decoration-color:var(--line);
        text-underline-offset:3px}
 .play{font-size:13px;line-height:1.45}
+details.prev{margin:10px 0 0;border-top:1px solid var(--line);padding-top:9px;border-bottom:0}
+details.prev summary{font-family:var(--mono);font-size:10.5px;color:var(--fog);cursor:pointer}
+.pv{padding:9px 0 0;border-top:1px solid var(--line);margin-top:9px}
+.pv:first-of-type{border-top:0;margin-top:0}
 .empty{color:var(--fog);font-size:13px;padding:18px 2px}
 details{margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
 summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
@@ -182,9 +191,13 @@ summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
 <div id="notice"></div>
 <div id="view"><div class="empty">Loading&hellip;</div></div>
 
-<details>
+<!-- Feed Check was scaffolding: it reported which optional fields the feed
+     actually sent, while that was still unknown. It is answered now, so it is
+     off the page. Add ?debug=1 to the address if a field ever needs checking
+     again. -->
+<details id="fcwrap" hidden>
   <summary>Feed Check</summary>
-  <div class="fc" id="fc">Waiting for a response&hellip;</div>
+  <div class="fc" id="fc"></div>
 </details>
 
 <script>
@@ -433,15 +446,16 @@ const ADAPTERS = {
           }
         }
       }
-      let lastPlay = null;
+      // The drive's plays, newest first. Six is enough to catch up on what was
+      // missed without turning the screen into a transcript.
       const cur = raw && raw.drives && raw.drives.current;
-      const plays = (cur && cur.plays) || [];
-      const p = plays.length ? plays[plays.length - 1] : null;
-      if(p && p.text){
-        lastPlay = { text: p.text, at: (p.clock && p.clock.displayValue) || '' };
-        found.lastPlay++;
-      }
-      return { sections: sections, lastPlay: lastPlay, found: found };
+      const plays = ((cur && cur.plays) || [])
+        .filter(function(p){ return p && p.text; })
+        .slice(-6).reverse()
+        .map(function(p){ return { text: p.text, at: (p.clock && p.clock.displayValue) || '' }; });
+      found.lastPlay = plays.length;
+      const lastPlay = plays.length ? plays[0] : null;
+      return { sections: sections, lastPlay: lastPlay, plays: plays, found: found };
     }
   }
 };
@@ -495,6 +509,7 @@ function readWatchlist(league){
    Those KB are the JSON after the browser unpacks it. What actually crosses the
    wire is compressed and typically far smaller — the Network tab shows the real
    figure, and that is the one to check before worrying about a phone plan. */
+const DEBUG = /(?:^|[?&])debug=1(?:&|$)/.test(location.search);
 const LIST_MS  = 60000;   // the game list, nothing open
 const SCORE_MS = 15000;   // score, clock, possession while following a game
 const DETAIL_MS = 60000;  // box score and last play while following a game
@@ -634,35 +649,90 @@ function findGame(){
   return d ? d.games.filter(function(g){ return g.id === S.gameId; })[0] : null;
 }
 
-/* Drawn from yardLine, whose convention is NOT confirmed. Raw values go into
-   Feed Check so a live game settles it. Missing data hides the bar rather than
-   drawing something invented. */
-function fieldBar(g){
-  const s = g.situation;
-  if(!s || s.yardLine == null) return '';
-  const pct = Math.max(2, Math.min(98, s.yardLine));
-  const poss = g.teams.filter(function(t){ return t.hasBall; })[0];
-  const goingLeft = poss && poss.homeAway === 'home';
-  let togo = null;
-  if(s.distance != null){
-    const t = goingLeft ? pct - s.distance : pct + s.distance;
-    if(t > 2 && t < 98) togo = t;
+/* WHERE THE BALL IS.
+
+   Position comes from the down-and-distance text ("1st & 10 at LOU 32") rather
+   than from situation.yardLine, whose zero point ESPN does not document. The
+   text names the team whose half the ball is on, and that team is one of the
+   two already being drawn, so the geometry is self-consistent with no guess
+   about the feed's conventions. yardLine is kept only as a fallback.
+
+   DIRECTION IS TAKEN FROM THE DRAWN ORDER, NOT FROM HOME/AWAY. That was the
+   bug: the bar draws teams in the order the feed sends them, while the
+   direction was computed from which side was home. When the feed leads with the
+   home team those two disagree, and the line to gain lands behind the ball
+   instead of ahead of it. Whoever has the ball attacks the OTHER team's
+   endzone, and "the other team" is simply the other end of this bar. */
+const EZ = 8;                     // endzone width, percent of the bar
+const FIELD = 100 - (EZ * 2);     // playing surface between them
+const yd = function(n){ return EZ + (n / 100) * FIELD; };
+
+function fieldPos(g){
+  const s = g.situation || {};
+  const teams = g.teams || [];
+  const possIdx = teams.findIndex(function(t){ return t.hasBall; });
+  if(possIdx < 0) return null;
+
+  // "… at LOU 32" · "… at 50" · "4th & Goal at LOU 3"
+  let ball = null;
+  const m = String(g.detail || '').match(/at\s+([A-Za-z]{2,5})?\s*(\d{1,2})\s*$/);
+  if(m){
+    const n = parseInt(m[2], 10);
+    if(m[1]){
+      const ab = m[1].toUpperCase();
+      const side = teams.findIndex(function(t){ return String(t.abbr).toUpperCase() === ab; });
+      if(side === 0) ball = n;             // n yards from the LEFT goal line
+      else if(side === 1) ball = 100 - n;  // n yards from the RIGHT goal line
+    }else if(n === 50){ ball = 50; }
   }
+  if(ball == null && typeof s.yardLine === 'number') ball = s.yardLine;
+  if(ball == null) return null;
+
+  // Left team attacks right; right team attacks left.
+  const dir = possIdx === 0 ? 1 : -1;
+
+  let dist = (typeof s.distance === 'number') ? s.distance : null;
+  if(dist == null){
+    const d = String(g.detail || '').match(/&\s*(\d{1,2})\b/);
+    if(d) dist = parseInt(d[1], 10);
+  }
+  if(/&\s*goal/i.test(String(g.detail || ''))) dist = dir === 1 ? (100 - ball) : ball;
+
+  let togo = null;
+  if(dist != null){
+    const t = ball + dir * dist;
+    if(t >= 0 && t <= 100) togo = t;
+  }
+  return { ball: ball, togo: togo, dir: dir, poss: teams[possIdx] };
+}
+
+function fieldBar(g){
+  const f = fieldPos(g);
+  if(!f) return '';
+  const a = yd(f.ball);
+  const t = f.togo == null ? null : yd(f.togo);
+  const lo = t == null ? null : Math.min(a, t);
+  const w  = t == null ? null : Math.abs(t - a);
+  const possCol = teamColor(f.poss || {});
+
+  let ticks = '';
+  for(let i = 1; i < 10; i++)
+    ticks += '<span class="tick' + (i === 5 ? ' mid' : '') + '" style="left:' + yd(i * 10) + '%"></span>';
+
   return '<div class="hd"><span>Where The Ball Is</span><span class="rule"></span></div>'
-    + '<div class="card" style="padding:13px 12px 11px">'
-    + '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px">'
+    + '<div class="card" style="padding:12px 12px 10px">'
+    + '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px">'
     + '<span style="font-weight:700;font-size:14px">' + esc(g.detail || '') + '</span>'
-    + (poss ? '<span class="rec">' + esc(poss.abbr) + ' ball</span>' : '') + '</div>'
+    + '<span class="rec">' + esc((f.poss || {}).abbr || '') + ' ball</span></div>'
     + '<div class="field">'
-    + '<span class="ez" style="left:0;background:' + teamColor(g.teams[0] || {}) + '"></span>'
-    + '<span class="ez" style="right:0;background:' + teamColor(g.teams[1] || {}) + '"></span>'
-    + '<span class="tick" style="left:27.2%"></span><span class="tick" style="left:45.5%"></span>'
-    + '<span class="tick" style="left:63.8%"></span>'
-    + (togo != null ? '<span class="togo" style="left:' + togo + '%"></span>' : '')
-    + '<span class="ball" style="left:' + pct + '%"></span></div>'
+    + '<span class="ez" style="left:0;width:' + EZ + '%;background:' + teamColor(g.teams[0] || {}) + '"></span>'
+    + '<span class="ez" style="right:0;width:' + EZ + '%;background:' + teamColor(g.teams[1] || {}) + '"></span>'
+    + ticks
+    + (w != null ? '<span class="gain" style="left:' + lo + '%;width:' + w + '%"></span>' : '')
+    + (t != null ? '<span class="togo" style="left:' + t + '%"></span>' : '')
+    + '<span class="ball" style="left:' + a + '%;background:' + possCol + '"></span>'
+    + '</div>'
     + '<div class="fkey"><span>' + esc((g.teams[0] || {}).abbr || '') + '</span>'
-    + '<span style="color:var(--sky)">Ball</span>'
-    + (togo != null ? '<span style="color:var(--paper)">To Go</span>' : '')
     + '<span>' + esc((g.teams[1] || {}).abbr || '') + '</span></div></div>';
 }
 
@@ -731,10 +801,20 @@ function renderGame(){
 
   // A finished game's "last play" is a kneel-down. Only show it while it moves.
   if(sum && sum.lastPlay && g.state === 'in'){
+    const older = (sum.plays || []).slice(1);
     html += '<div class="hd"><span>Last Play</span><span class="rule"></span></div>'
       + '<div class="card" style="padding:11px 13px">'
       + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
-      + '<div class="play">' + esc(sum.lastPlay.text) + '</div></div>';
+      + '<div class="play">' + esc(sum.lastPlay.text) + '</div>'
+      + (older.length
+          ? '<details class="prev"><summary>' + older.length + ' before that</summary>'
+            + older.map(function(p){
+                return '<div class="pv">'
+                  + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
+                  + '<div class="play">' + esc(p.text) + '</div></div>';
+              }).join('') + '</details>'
+          : '')
+      + '</div>';
   }
 
   if(sum && sum.sections.length){
@@ -854,6 +934,9 @@ function render(){
   for(const k in a) f[k] = a[k];
   if(S.game) for(const k in S.game.found) f[k] = S.game.found[k];
   for(const k in S.fc) f[k] = S.fc[k];
+  const fcw = document.getElementById('fcwrap');
+  if(!DEBUG){ if(fcw) fcw.hidden = true; return; }
+  if(fcw) fcw.hidden = false;
   const g = findGame();
   let txt = Object.keys(f).map(function(k){
     return (k + ':' + '                      ').slice(0, 22) + f[k];
