@@ -93,7 +93,12 @@ a{color:var(--teal-br);text-decoration:none}
 table.dl-board.gl{font-size:11.5px}
 .dl-board.gl th{text-align:right;color:var(--fog-2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;padding:6px 8px;border-bottom:1px solid var(--line)}
 .dl-board.gl th:nth-child(-n+2),.dl-board.gl td:nth-child(-n+2){text-align:left}
-.dl-board.gl td{height:auto;text-align:right;padding:6px 8px;font-size:inherit;border-bottom:1px solid var(--ink-2);font-family:var(--mono)}
+.dl-board.gl td{height:auto;text-align:right;padding:6px 8px;font-size:inherit;border-bottom:1px solid var(--ink-2);font-family:var(--mono);color:var(--paper)}
+/* The colour above is stated rather than inherited on purpose. #gamelog carries
+   class="muted" for its loading line, and the table was landing inside it and
+   picking up --fog-2, the dimmest token on the page — so the log read far
+   fainter than the Team Construction table right below it. Set here so the row
+   colour cannot depend on what the container happens to be wearing. */
 /* The row for the player whose page you are on. Was an opaque green wash, which quietly
    invents a signal — --emerald means BUY everywhere else. --row-hi is the token that
    already means highlighted row, and it follows the accent theme. Same fix as player.html. */
@@ -147,11 +152,51 @@ table.dl-board.gl{font-size:11.5px}
     <a href="https://ko-fi.com/fantasydelta" target="_blank" rel="noopener noreferrer"
        style="color:var(--teal-br);font-weight:700;text-decoration:none;border-bottom:1px solid var(--teal-br)">Support DELTA</a>
     </span>
-    <!-- BUILD MARKER for cfb-player.html. No engine pairing here: this page deliberately
-         does not load delta-engine.js, so there is no second marker to compare against. -->
-    <span class="foot-build">2026-09-08b</span>
+    <!-- BUILD MARKER for cfb-player.html. This page NOW loads delta-engine.js, added
+         19 Sep 2026 so the watchlist star has dwHas/dwToggle. The note here used to say
+         it deliberately did not; that is no longer true. It is paired with the engine
+         marker the same way player.html and index.html are, and the two differing is a
+         normal state, never coloured as a fault. -->
+    <span class="foot-build">2026-09-19a</span>
   </footer>
 </div>
+<script src="delta-engine.js"></script>
+<script src="delta-sync.js" defer></script>
+<script>
+/* Sync boot, copied from player.html. No account UI here — this page only needs
+   the watchlist star to reach the cloud when the user is already signed in.
+
+   WHY THE ENGINE IS LOADED AT ALL. It is here for dwHas/dwToggle and nothing
+   else. A local copy of those thirty lines was the alternative and is worse:
+   the engine is the single writer for the watchlist and carries the DSYNC hook,
+   and a second writer of that key is precisely what caused trouble before. The
+   file is already cached for anyone who arrived through the site, since every
+   other page loads it. */
+window.addEventListener('load', function(){
+  try{ if(typeof DSYNC!=='undefined') DSYNC.init(); }catch(e){}
+});
+
+/* Report the engine marker next to this page's, exactly as player.html does. */
+function dlBuildStamp(){
+  const el=document.querySelector('.foot-build');
+  if(!el) return;
+  const page=el.textContent.trim();
+  const eng=(typeof DL_BUILD==='string')?DL_BUILD:'unknown';
+  if(eng===page) return;
+  el.textContent=page+' \u00b7 eng '+eng;
+}
+window.addEventListener('load', dlBuildStamp);
+
+/* College players live under the 'cfb' namespace. Passing it is not optional:
+   dwKey defaults to nfl, so omitting it would file a college player into the
+   NFL list and he would never appear in the College watchlist. */
+function cfbStar(el){
+  const on = dwToggle(el.dataset.name, 'cfb');
+  el.textContent = on ? '\u2605' : '\u2606';
+  el.style.color = on ? 'var(--topaz)' : 'var(--fog-2)';
+  el.setAttribute('aria-pressed', String(on));
+}
+</script>
 <script>
 // ── shared dDOM math (kept in sync with index.html; pure functions, stable/calibrated) ──
 const DDOM_SWING=0.50;
@@ -288,7 +333,14 @@ function render(p, pool, seasons, season){
   const gridHtml='<div class="grid3">'+pc.map(c=>'<div class="cell"><div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div></div>').join('')+'</div>';
 
   document.getElementById('app').innerHTML=
-    '<div class="nm">'+p.n+' <span id="bo"></span></div>'
+    '<div class="nm">'+p.n
+      +' <span data-name="'+String(p.n).replace(/"/g,'&quot;')+'" onclick="cfbStar(this)"'
+      +' role="button" tabindex="0" aria-label="Add to watchlist"'
+      +' aria-pressed="'+dwHas(p.n,'cfb')+'"'
+      +' style="cursor:pointer;font-size:17px;vertical-align:2px;color:'
+      +(dwHas(p.n,'cfb')?'var(--topaz)':'var(--fog-2)')+'">'
+      +(dwHas(p.n,'cfb')?'\u2605':'\u2606')+'</span>'
+      +' <span id="bo"></span></div>'
     +'<div class="sub"><span class="posdot" style="background:'+posCol+'">'+p.pos+'</span>'+(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
       +compHtml+starsHtml+'<span>'+cfbClassName(clsNum)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span></div>'
     +'<div class="cols">'+heroCard+ppaCard+'</div>'
@@ -327,7 +379,7 @@ function cfbPostFor(name, yr){
 }
 const GL={};
 function classInSeason(rec, yr){ return rec.rcls ? (yr-rec.rcls+1) : (rec.ageEst?rec.ageEst-17:null); }
-function gameLogTable(pos, games){
+function cfbGameLogTable(pos, games){
   const cols = pos==='QB'?[['C/ATT','ca'],['Yds','py'],['TD','pt'],['INT','pi'],['Car','car'],['RuYd','ry'],['RuTD','rt']]
     : pos==='RB'?[['Car','car'],['RuYd','ry'],['RuTD','rt'],['Rec','rec'],['ReYd','rey'],['ReTD','ret']]
     : [['Rec','rec'],['ReYd','rey'],['ReTD','ret'],['Car','car'],['RuYd','ry'],['RuTD','rt']];
@@ -384,14 +436,14 @@ function renderGL(){
       return '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
         +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+y+'</div>'
         +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+sum+' \u00b7 '+(d.games||[]).length+' g</div></div>'
-        +gameLogTable(d.pos,d.games)
+        +cfbGameLogTable(d.pos,d.games)
         +postseasonTable(d.pos, cfbPostFor(d.rec&&d.rec.n||GL.name, y), y)+'</div>'; }).join('');
     teamHost=GL.data[yrs[yrs.length-1]];
   } else { const cur=GL.data[GL.sel];
     body='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px">'
         +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">'+GL.sel+'</div>'
         +'<div style="font-size:10.5px;color:var(--fog-2);font-family:var(--mono)">'+glTotals(cur.pos,cur.games)+' \u00b7 '+(cur.games||[]).length+' g</div></div>'
-        +gameLogTable(cur.pos,cur.games)
+        +cfbGameLogTable(cur.pos,cur.games)
         +postseasonTable(cur.pos, cfbPostFor(cur.rec&&cur.rec.n||GL.name, GL.sel), GL.sel);
     teamHost=cur; }
   document.getElementById('gamelog').innerHTML=pills+body;
