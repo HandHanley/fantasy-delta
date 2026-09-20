@@ -359,7 +359,14 @@ const ADAPTERS = {
             if(lost != null){ cells.FL = lost; found.fumblesLost++; }
             else if(fumb != null){ cells.FUM = fumb; found.fumbles++; }
 
-            if(unit.indexOf('pass') === 0){
+            if(unit.indexOf('kick') === 0){
+              cells.FG = pick('FG'); cells.XP = pick('XP');
+              cells.PTS = pick('PTS'); cells.LG = pick('LONG');
+              add(pick('FG'), 'FG');
+              add(pick('XP'), 'XP');
+              add(pick('PTS'), 'PTS');
+              addIf(pick('LONG'), 'LONG');
+            }else if(unit.indexOf('pass') === 0){
               cells['C/ATT'] = pick('C/ATT'); cells.YDS = pick('YDS');
               cells.TD = pick('TD');          cells.INT = pick('INT');
               add(pick('C/ATT'), '');
@@ -400,7 +407,10 @@ const ADAPTERS = {
             };
             players.push({ name: ath.displayName || ath.shortName || '',
                            jersey: ath.jersey || '', line: line, cells: cells, team: abbr,
-                           _yds: num(pick('YDS')), _td: num(pick('TD')),
+                           // Kickers have no yardage, so points are their
+                           // headline number and what the sort ranks them by.
+                           _yds: unit.indexOf('kick') === 0 ? num(pick('PTS')) : num(pick('YDS')),
+                           _td: num(pick('TD')),
                            _vol: num(pick('REC') || pick('CAR') || pick('C/ATT')) });
             found.players++;
           }
@@ -425,10 +435,12 @@ const ADAPTERS = {
                  FL  — hidden unless somebody actually lost one, which is most
                        games. When it does appear it outranks LG, because a lost
                        fumble costs points and a long gain is flavour. */
-            const ORDER = unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT','FL','FUM']
+            const ORDER = unit.indexOf('kick') === 0 ? ['FG','XP','PTS','LG']
+                        : unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT','FL','FUM']
                         : unit.indexOf('rush') === 0 ? ['CAR','YDS','TD','FL','FUM','LG']
                         : ['TGT','REC','YDS','TD','FL','FUM','LG'];
-            const ALWAYS = { 'C/ATT':1, YDS:1, TD:1, INT:1, CAR:1, REC:1, LG:1 };
+            const ALWAYS = { 'C/ATT':1, YDS:1, TD:1, INT:1, CAR:1, REC:1, LG:1,
+                             FG:1, XP:1, PTS:1 };
             const COLS = [];
             for(const c of ORDER){
               if(COLS.length >= 5) break;
@@ -455,7 +467,28 @@ const ADAPTERS = {
         .map(function(p){ return { text: p.text, at: (p.clock && p.clock.displayValue) || '' }; });
       found.lastPlay = plays.length;
       const lastPlay = plays.length ? plays[0] : null;
-      return { sections: sections, lastPlay: lastPlay, plays: plays, found: found };
+      /* Scoring plays, in the order they happened. Chronological on purpose:
+         the running score only makes sense read forwards, and every box score
+         ever printed does it this way. The away/home scores are matched to
+         teams by their own homeAway flag rather than by feed order, which has
+         already proved unreliable once. */
+      const scoring = (raw && raw.scoringPlays || [])
+        .filter(function(x){ return x && x.text; })
+        .map(function(x){
+          return {
+            text: x.text,
+            team: (x.team && (x.team.abbreviation || x.team.displayName)) || '',
+            period: (x.period && x.period.number) || null,
+            at: (x.clock && x.clock.displayValue) || '',
+            kind: (x.scoringType && (x.scoringType.displayName || x.scoringType.name))
+                  || (x.type && x.type.text) || '',
+            away: x.awayScore, home: x.homeScore
+          };
+        });
+      found.scoringPlays = scoring.length;
+
+      return { sections: sections, lastPlay: lastPlay, plays: plays,
+               scoring: scoring, found: found };
     }
   }
 };
@@ -741,6 +774,7 @@ function titleFor(name){
   if(n.indexOf('pass') === 0) return 'Passing';
   if(n.indexOf('rush') === 0) return 'Rushing';
   if(n.indexOf('rec') === 0)  return 'Receiving';
+  if(n.indexOf('kick') === 0) return 'Kicking';
   return name || 'Other';
 }
 
@@ -820,12 +854,46 @@ function renderGame(){
   if(sum && sum.sections.length){
     // Everyone the user actually stars, with no cap — the list is theirs, so
     // every row on it is relevant by definition.
+    html += scoringBlock(g, sum);
     html += watchlistBlock(sum);
     html += '<button class="tab" type="button" id="tobox" style="width:100%;margin-top:14px">Full Box Score</button>';
   }else{
     html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
   }
   view.innerHTML = html;
+}
+
+/* The scoring summary. Shown on whichever screen you actually land on: the
+   follow screen for a live game, and the box score for a finished one, since a
+   finished game now skips the follow screen entirely. Same rule as the
+   watchlist block — the box score carries what you would have seen on the
+   screen you skipped. */
+function scoringBlock(g, sum){
+  const rows = (sum && sum.scoring) || [];
+  if(!rows.length) return '';
+  const teams = g.teams || [];
+  const byHA = function(ha){
+    const t = teams.filter(function(x){ return x.homeAway === ha; })[0];
+    return t ? t.abbr : '';
+  };
+  const awayAb = byHA('away') || (teams[0] || {}).abbr || '';
+  const homeAb = byHA('home') || (teams[1] || {}).abbr || '';
+  return '<div class="hd"><span>Scoring &middot; ' + rows.length
+    + '</span><span class="rule"></span></div><div class="card">'
+    + rows.map(function(r){
+        const t = teams.filter(function(x){ return String(x.abbr) === String(r.team); })[0];
+        const q = r.period ? 'Q' + r.period : '';
+        return '<div class="rowb"><div style="display:flex;align-items:baseline;gap:8px">'
+          + (t ? '<span class="spine" style="height:14px;background:' + teamColor(t) + '"></span>' : '')
+          + '<span class="nm" style="font-size:12.5px">' + esc(r.team) + '</span>'
+          + (r.kind ? '<span class="rec">' + esc(r.kind) + '</span>' : '')
+          + '<span class="rec" style="margin-left:auto;white-space:nowrap">'
+          + esc(awayAb) + ' ' + esc(r.away == null ? '' : r.away) + ' &middot; '
+          + esc(homeAb) + ' ' + esc(r.home == null ? '' : r.home) + '</span></div>'
+          + '<div class="play" style="margin-top:4px">' + esc(r.text) + '</div>'
+          + ((q || r.at) ? '<div class="sub">' + esc((q + ' ' + r.at).trim()) + '</div>' : '')
+          + '</div>';
+      }).join('') + '</div>';
 }
 
 /* One row per PLAYER, not per stat category. A quarterback who ran, or a
@@ -877,7 +945,7 @@ function renderBox(){
   if(!S.boxTeam || abbrs.indexOf(S.boxTeam) < 0) S.boxTeam = abbrs[0] || null;
 
   let html = heroBlock(g);
-  if(S.from === 'list') html += watchlistBlock(sum);
+  if(S.from === 'list'){ html += scoringBlock(g, sum); html += watchlistBlock(sum); }
   if(abbrs.length > 1){
     html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
       const on = a === S.boxTeam, c = teamColor(teamByAbbr(g, a) || {});
@@ -890,7 +958,7 @@ function renderBox(){
   }
   // Only the three that matter. ESPN also sends fumbles, defence, kicking and
   // returns; none of that is what this page is for.
-  const KEEP = ['pass', 'rush', 'rec'];
+  const KEEP = ['pass', 'rush', 'rec', 'kick'];
   const rank = function(sec){
     const n = String(sec.name || '').toLowerCase();
     for(let i = 0; i < KEEP.length; i++) if(n.indexOf(KEEP[i]) === 0) return i;
