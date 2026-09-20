@@ -498,7 +498,11 @@ function readWatchlist(league){
 const LIST_MS  = 60000;   // the game list, nothing open
 const SCORE_MS = 15000;   // score, clock, possession while following a game
 const DETAIL_MS = 60000;  // box score and last play while following a game
-const S = { view:'list', league:'nfl', gameId:null, boxTeam:null,
+/* `from` records which screen the box score was reached from. It does two jobs:
+   the back arrow goes back where you came from, and the watchlist block appears
+   on the box score only when you arrived straight from the list — because then
+   you skipped the screen that would have shown it. */
+const S = { view:'list', league:'nfl', gameId:null, boxTeam:null, from:'game',
             data:{nfl:null,cfb:null}, at:{nfl:0,cfb:0},
             game:null, gameAt:0, failed:false, watch:new Set(), fc:{} };
 let timer = null, detailTimer = null;
@@ -725,7 +729,8 @@ function renderGame(){
   const sum = S.game;
   let html = heroBlock(g) + fieldBar(g);
 
-  if(sum && sum.lastPlay){
+  // A finished game's "last play" is a kneel-down. Only show it while it moves.
+  if(sum && sum.lastPlay && g.state === 'in'){
     html += '<div class="hd"><span>Last Play</span><span class="rule"></span></div>'
       + '<div class="card" style="padding:11px 13px">'
       + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
@@ -735,38 +740,48 @@ function renderGame(){
   if(sum && sum.sections.length){
     // Everyone the user actually stars, with no cap — the list is theirs, so
     // every row on it is relevant by definition.
-    // One row per PLAYER, not per stat category. A quarterback who ran, or a
-    // receiver who took a carry, was appearing twice — two half-pictures of the
-    // same person. Their lines stack inside a single row instead.
-    const hits = [], seen = {};
-    for(const sec of sum.sections){
-      for(const p of sec.players){
-        if(!watched(p.name)) continue;
-        const k = normName(p.name);
-        if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [] }); }
-        hits[seen[k]].lines.push(p.line);
-      }
-    }
-    if(hits.length){
-      html += '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
-        + '</span><span class="rule"></span></div><div class="card">'
-        + hits.map(function(h){
-            return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
-              + nameButton(h.p.name, ' <span class="pos">' + esc(h.p.team) + '</span>')
-              + '</div>' + h.lines.map(statLine).join('') + '</div>';
-          }).join('') + '</div>';
-    }else{
-      html += '<div class="notice" style="margin-top:16px">'
-        + (S.watch.size
-            ? 'Nobody from your watchlist is in this game.'
-            : 'Star players in DELTA and they show up here when they play.')
-        + '</div>';
-    }
+    html += watchlistBlock(sum);
     html += '<button class="tab" type="button" id="tobox" style="width:100%;margin-top:14px">Full Box Score</button>';
   }else{
-    html += '<div class="notice" style="margin-top:16px">Loading the detail for this game\u2026</div>';
+    html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
   }
   view.innerHTML = html;
+}
+
+/* One row per PLAYER, not per stat category. A quarterback who ran, or a
+   receiver who took a carry, was appearing twice — two half-pictures of the
+   same person. Their lines stack inside a single row instead. */
+function watchlistBlock(sum){
+  const hits = [], seen = {};
+  for(const sec of sum.sections){
+    for(const p of sec.players){
+      if(!watched(p.name)) continue;
+      const k = normName(p.name);
+      if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [] }); }
+      hits[seen[k]].lines.push(p.line);
+    }
+  }
+  if(!hits.length){
+    return '<div class="notice" style="margin-top:16px">'
+      + (S.watch.size ? 'Nobody from your watchlist is in this game.'
+                      : 'Star players in DELTA and they show up here when they play.')
+      + '</div>';
+  }
+  return '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
+    + '</span><span class="rule"></span></div><div class="card">'
+    + hits.map(function(h){
+        return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
+          + nameButton(h.p.name, ' <span class="pos">' + esc(h.p.team) + '</span>')
+          + '</div>' + h.lines.map(statLine).join('') + '</div>';
+      }).join('') + '</div>';
+}
+
+/* "Loading" is only true while it IS loading. A game that has not kicked off
+   has no player stats to fetch, and saying loading forever reads as broken. */
+function noDetailYet(g){
+  if(!S.game) return 'Loading the detail for this game\u2026';
+  if(g && g.state === 'pre') return 'This game has not kicked off yet.';
+  return 'No player stats for this game yet.';
 }
 
 function renderBox(){
@@ -782,6 +797,7 @@ function renderBox(){
   if(!S.boxTeam || abbrs.indexOf(S.boxTeam) < 0) S.boxTeam = abbrs[0] || null;
 
   let html = heroBlock(g);
+  if(S.from === 'list') html += watchlistBlock(sum);
   if(abbrs.length > 1){
     html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
       const on = a === S.boxTeam, c = teamColor(teamByAbbr(g, a) || {});
@@ -929,15 +945,22 @@ document.addEventListener('click', async function(ev){
   }
   const tm = t.closest ? t.closest('[data-team]') : null;
   if(tm){ S.boxTeam = tm.getAttribute('data-team'); render(); return; }
-  if(t.closest && t.closest('#tobox')){ S.view = 'box'; render(); return; }
+  if(t.closest && t.closest('#tobox')){ S.view = 'box'; S.from = 'game'; render(); return; }
   if(t.closest && t.closest('#back')){
-    if(S.view === 'box') S.view = 'game';
+    if(S.view === 'box' && S.from === 'game'){ S.view = 'game'; }
     else { S.view = 'list'; S.gameId = null; S.game = null; }
     render(); schedule(); return;
   }
   const card = t.closest ? t.closest('[data-id]') : null;
   if(card){
-    S.gameId = card.getAttribute('data-id'); S.view = 'game'; S.game = null; S.boxTeam = null;
+    S.gameId = card.getAttribute('data-id'); S.game = null; S.boxTeam = null;
+    S.from = 'list';
+    // A finished game has no clock, no possession and no last play worth
+    // reading — the follow-along screen would only repeat the card just tapped.
+    // Go straight to the numbers. Live and upcoming games still land on the
+    // game screen, which is the one that has something to follow.
+    const g0 = findGame();
+    S.view = (g0 && g0.state === 'post') ? 'box' : 'game';
     render(); schedule();
     await loadGame();
   }
