@@ -132,6 +132,7 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 /* topaz IS the reserved signal for WATCH, so a watchlist star is its correct
    use, not an exception to the rule. */
 .trk{color:var(--topaz);font-size:11px}
+.ahead{color:var(--paper);font-weight:700}
 
 .hero{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:2px}
 .hero .bar{height:4px}
@@ -359,7 +360,7 @@ const ADAPTERS = {
             if(lost != null){ cells.FL = lost; found.fumblesLost++; }
             else if(fumb != null){ cells.FUM = fumb; found.fumbles++; }
 
-            if(unit.indexOf('kick') === 0){
+            if(unit.indexOf('kicking') === 0){
               cells.FG = pick('FG'); cells.XP = pick('XP');
               cells.PTS = pick('PTS'); cells.LG = pick('LONG');
               add(pick('FG'), 'FG');
@@ -409,7 +410,7 @@ const ADAPTERS = {
                            jersey: ath.jersey || '', line: line, cells: cells, team: abbr,
                            // Kickers have no yardage, so points are their
                            // headline number and what the sort ranks them by.
-                           _yds: unit.indexOf('kick') === 0 ? num(pick('PTS')) : num(pick('YDS')),
+                           _yds: unit.indexOf('kicking') === 0 ? num(pick('PTS')) : num(pick('YDS')),
                            _td: num(pick('TD')),
                            _vol: num(pick('REC') || pick('CAR') || pick('C/ATT')) });
             found.players++;
@@ -435,7 +436,7 @@ const ADAPTERS = {
                  FL  — hidden unless somebody actually lost one, which is most
                        games. When it does appear it outranks LG, because a lost
                        fumble costs points and a long gain is flavour. */
-            const ORDER = unit.indexOf('kick') === 0 ? ['FG','XP','PTS','LG']
+            const ORDER = unit.indexOf('kicking') === 0 ? ['FG','XP','PTS','LG']
                         : unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT','FL','FUM']
                         : unit.indexOf('rush') === 0 ? ['CAR','YDS','TD','FL','FUM','LG']
                         : ['TGT','REC','YDS','TD','FL','FUM','LG'];
@@ -774,7 +775,7 @@ function titleFor(name){
   if(n.indexOf('pass') === 0) return 'Passing';
   if(n.indexOf('rush') === 0) return 'Rushing';
   if(n.indexOf('rec') === 0)  return 'Receiving';
-  if(n.indexOf('kick') === 0) return 'Kicking';
+  if(n.indexOf('kicking') === 0) return 'Kicking';
   return name || 'Other';
 }
 
@@ -823,10 +824,10 @@ function heroBlock(g){
 
 function renderGame(){
   const g = findGame();
-  document.getElementById('tabs').innerHTML = '';
   document.getElementById('head').innerHTML =
     '<button class="back" type="button" id="back" aria-label="Back To Game List">&#8592;</button><h1>'
     + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Game') + '</h1>';
+  document.getElementById('tabs').innerHTML = gameTabs(g, 'game');
   const view = document.getElementById('view');
   if(!g){ view.innerHTML = '<div class="empty">That game is no longer in the feed.</div>'; return; }
 
@@ -856,11 +857,21 @@ function renderGame(){
     // every row on it is relevant by definition.
     html += scoringBlock(g, sum);
     html += watchlistBlock(sum);
-    html += '<button class="tab" type="button" id="tobox" style="width:100%;margin-top:14px">Full Box Score</button>';
   }else{
     html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
   }
   view.innerHTML = html;
+}
+
+/* Live and Box Score as tabs, so switching is one tap either way instead of a
+   button at the bottom and a back arrow at the top. Only for a game that has
+   something live to show — a finished one has a box score and nothing else. */
+function gameTabs(g, which){
+  if(!g || g.state === 'post') return '';
+  return '<div class="tabs"><button class="tab" type="button" data-gv="game" aria-selected="'
+    + (which === 'game') + '">Live</button>'
+    + '<button class="tab" type="button" data-gv="box" aria-selected="'
+    + (which === 'box') + '">Box Score</button></div>';
 }
 
 /* The scoring summary. Shown on whichever screen you actually land on: the
@@ -876,6 +887,13 @@ function scoringBlock(g, sum){
     const t = teams.filter(function(x){ return x.homeAway === ha; })[0];
     return t ? t.abbr : '';
   };
+  // Whoever is ahead after each score reads bright, so a lead changing hands is
+  // visible by scanning rather than by doing arithmetic. A tie leaves both muted.
+  const lead = function(r){
+    const a = Number(r.away), h = Number(r.home);
+    if(!isFinite(a) || !isFinite(h) || a === h) return '';
+    return a > h ? 'a' : 'h';
+  };
   const awayAb = byHA('away') || (teams[0] || {}).abbr || '';
   const homeAb = byHA('home') || (teams[1] || {}).abbr || '';
   return '<div class="hd"><span>Scoring &middot; ' + rows.length
@@ -888,8 +906,12 @@ function scoringBlock(g, sum){
           + '<span class="nm" style="font-size:12.5px">' + esc(r.team) + '</span>'
           + (r.kind ? '<span class="rec">' + esc(r.kind) + '</span>' : '')
           + '<span class="rec" style="margin-left:auto;white-space:nowrap">'
-          + esc(awayAb) + ' ' + esc(r.away == null ? '' : r.away) + ' &middot; '
-          + esc(homeAb) + ' ' + esc(r.home == null ? '' : r.home) + '</span></div>'
+          + '<span class="' + (lead(r) === 'a' ? 'ahead' : '') + '">'
+          + esc(awayAb) + ' ' + esc(r.away == null ? '' : r.away) + '</span>'
+          + ' &middot; '
+          + '<span class="' + (lead(r) === 'h' ? 'ahead' : '') + '">'
+          + esc(homeAb) + ' ' + esc(r.home == null ? '' : r.home) + '</span>'
+          + '</span></div>'
           + '<div class="play" style="margin-top:4px">' + esc(r.text) + '</div>'
           + ((q || r.at) ? '<div class="sub">' + esc((q + ' ' + r.at).trim()) + '</div>' : '')
           + '</div>';
@@ -934,9 +956,10 @@ function noDetailYet(g){
 
 function renderBox(){
   const g = findGame(), sum = S.game;
-  document.getElementById('tabs').innerHTML = '';
   document.getElementById('head').innerHTML =
-    '<button class="back" type="button" id="back" aria-label="Back To Game">&#8592;</button><h1>Box Score</h1>';
+    '<button class="back" type="button" id="back" aria-label="Back To Game List">&#8592;</button><h1>'
+    + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Box Score') + '</h1>';
+  document.getElementById('tabs').innerHTML = gameTabs(g, 'box');
   const view = document.getElementById('view');
   if(!g || !sum){ view.innerHTML = '<div class="empty">No box score available.</div>'; return; }
 
@@ -958,7 +981,10 @@ function renderBox(){
   }
   // Only the three that matter. ESPN also sends fumbles, defence, kicking and
   // returns; none of that is what this page is for.
-  const KEEP = ['pass', 'rush', 'rec', 'kick'];
+  // 'kicking' spelled out, not 'kick': ESPN also sends kickReturns, which
+  // starts with the same four letters and was being drawn as a second Kicking
+  // section carrying nothing but a long return.
+  const KEEP = ['pass', 'rush', 'rec', 'kicking'];
   const rank = function(sec){
     const n = String(sec.name || '').toLowerCase();
     for(let i = 0; i < KEEP.length; i++) if(n.indexOf(KEEP[i]) === 0) return i;
@@ -1096,10 +1122,17 @@ document.addEventListener('click', async function(ev){
   }
   const tm = t.closest ? t.closest('[data-team]') : null;
   if(tm){ S.boxTeam = tm.getAttribute('data-team'); render(); return; }
-  if(t.closest && t.closest('#tobox')){ S.view = 'box'; S.from = 'game'; render(); return; }
+  const gv = t.closest ? t.closest('[data-gv]') : null;
+  if(gv){
+    const next = gv.getAttribute('data-gv');
+    // Switching tabs means the Live screen has been seen, so the box score
+    // stops repeating the scoring summary and watchlist that live there.
+    if(next === 'box') S.from = 'game';
+    S.view = next; render(); schedule(); return;
+  }
   if(t.closest && t.closest('#back')){
-    if(S.view === 'box' && S.from === 'game'){ S.view = 'game'; }
-    else { S.view = 'list'; S.gameId = null; S.game = null; }
+    // The tabs move between Live and Box Score, so back always means "out".
+    S.view = 'list'; S.gameId = null; S.game = null;
     render(); schedule(); return;
   }
   const card = t.closest ? t.closest('[data-id]') : null;
