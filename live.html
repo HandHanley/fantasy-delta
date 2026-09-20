@@ -266,11 +266,38 @@ const ADAPTERS = {
     },
 
     summary: function(raw){
-      const found = { sections:0, players:0, lastPlay:0, targets:0 };
+      const found = { sections:0, players:0, lastPlay:0, targets:0,
+                      fumblesLost:0, fumbles:0 };
       const sections = [];
       const box = (raw && raw.boxscore) || {};
       for(const tm of (box.players || [])){
         const abbr = (tm.team && (tm.team.abbreviation || tm.team.displayName)) || '?';
+
+        /* Fumbles arrive in their own section, which this page otherwise drops.
+           They matter, though: a lost fumble costs fantasy points, so it belongs
+           on the player's own row rather than in a section nobody opens. Harvest
+           them first, then fold each one into its player below.
+
+           FUMBLES and FUMBLES LOST are different things and only the second
+           costs anything. If the feed gives the lost count it is shown as FL; if
+           it only gives total fumbles, the column says FUM instead. Labelling a
+           plain fumble as "lost" would be claiming something the feed never
+           said. */
+        const fum = {};
+        for(const st of (tm.statistics || [])){
+          if(String(st.name || '').toLowerCase().indexOf('fumble') !== 0) continue;
+          const L = st.labels || [];
+          const iLost = L.indexOf('LOST'), iFum = L.indexOf('FUM');
+          for(const a of (st.athletes || [])){
+            const nm = (a.athlete && (a.athlete.displayName || a.athlete.shortName)) || '';
+            if(!nm) continue;
+            fum[normName(nm)] = {
+              lost: iLost >= 0 ? (a.stats || [])[iLost] : null,
+              fum:  iFum  >= 0 ? (a.stats || [])[iFum]  : null
+            };
+          }
+        }
+
         for(const st of (tm.statistics || [])){
           const labels = st.labels || [];
           const players = [];
@@ -310,6 +337,15 @@ const ADAPTERS = {
             // shared column set would be meaningless. Both come off the same
             // reads so they can never disagree.
             const cells = {};
+            // Either the section carries it, or the fumbles section did.
+            const own = fum[normName(ath.displayName || ath.shortName || '')] || {};
+            const lost = pickAny(['FUML', 'FL', 'LOST']) != null
+                       ? pickAny(['FUML', 'FL', 'LOST']) : own.lost;
+            const fumb = pickAny(['FUM', 'FUMBLES']) != null
+                       ? pickAny(['FUM', 'FUMBLES']) : own.fum;
+            if(lost != null){ cells.FL = lost; found.fumblesLost++; }
+            else if(fumb != null){ cells.FUM = fumb; found.fumbles++; }
+
             if(unit.indexOf('pass') === 0){
               cells['C/ATT'] = pick('C/ATT'); cells.YDS = pick('YDS');
               cells.TD = pick('TD');          cells.INT = pick('INT');
@@ -364,13 +400,34 @@ const ADAPTERS = {
               return (b._yds - a._yds) || (b._td - a._td) || (b._vol - a._vol);
             });
             found.sections++;
-            // Deliberately NOT every column the feed sends. AVG is yards
-            // divided by a column already shown, and fumbles are not what this
-            // page is for. Five columns is what fits a phone without the right
-            // edge being cut off, which is the flaw in every other app's table.
-            const COLS = unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT']
-                       : unit.indexOf('rush') === 0 ? ['CAR','YDS','TD','LG']
-                       : ['TGT','REC','YDS','TD','LG'];
+            /* Columns in priority order, then the ones carrying nothing are
+               dropped and the rest capped at five — the most a phone fits
+               without the right edge being cut off, which is the flaw in every
+               other app's table. AVG never appears: it is yards divided by a
+               column already on screen.
+
+               Two are conditional, which is what keeps the cap honest:
+                 TGT — hidden when the feed sends no targets at all. College
+                       feeds may not; a column of dashes would waste a slot.
+                 FL  — hidden unless somebody actually lost one, which is most
+                       games. When it does appear it outranks LG, because a lost
+                       fumble costs points and a long gain is flavour. */
+            const ORDER = unit.indexOf('pass') === 0 ? ['C/ATT','YDS','TD','INT','FL','FUM']
+                        : unit.indexOf('rush') === 0 ? ['CAR','YDS','TD','FL','FUM','LG']
+                        : ['TGT','REC','YDS','TD','FL','FUM','LG'];
+            const ALWAYS = { 'C/ATT':1, YDS:1, TD:1, INT:1, CAR:1, REC:1, LG:1 };
+            const COLS = [];
+            for(const c of ORDER){
+              if(COLS.length >= 5) break;
+              const any = players.some(function(pl){
+                const v = pl.cells[c];
+                if(v == null || v === '') return false;
+                // A column of nothing-happened is noise, so the optional ones
+                // have to clear zero as well as exist.
+                return ALWAYS[c] ? true : !(v === '0' || v === '0.0');
+              });
+              if(any) COLS.push(c);
+            }
             sections.push({ name: st.name || st.text || '', teamAbbr: abbr,
                             cols: COLS, players: players });
           }
