@@ -108,7 +108,7 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .rowb:last-child{border-bottom:0}
 .statline{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:4px;
           line-height:1.5;font-variant-numeric:tabular-nums}
-.statline .em{color:var(--paper);font-weight:700;font-size:12.5px}
+.statline{color:var(--fog)}
 .swatch{width:9px;height:9px;border-radius:2px;flex:none}
 .card.tinted{border-top-width:2px;border-top-style:solid}
 /* topaz IS the reserved signal for WATCH, so a watchlist star is its correct
@@ -234,7 +234,7 @@ const ADAPTERS = {
     },
 
     summary: function(raw){
-      const found = { sections:0, players:0, lastPlay:0 };
+      const found = { sections:0, players:0, lastPlay:0, targets:0 };
       const sections = [];
       const box = (raw && raw.boxscore) || {};
       for(const tm of (box.players || [])){
@@ -248,6 +248,12 @@ const ADAPTERS = {
             const pick = function(key){
               const i = labels.indexOf(key);
               return i >= 0 ? stats[i] : null;
+            };
+            // Targets are labelled inconsistently and are missing from some
+            // college feeds altogether, so try the spellings rather than one.
+            const pickAny = function(keys){
+              for(const k of keys){ const v = pick(k); if(v != null) return v; }
+              return null;
             };
             // One line, read the way the stat is spoken: volume, then yards,
             // then what it produced. Yards carries the emphasis flag so the
@@ -275,17 +281,38 @@ const ADAPTERS = {
               addIf(pick('LONG'), 'LONG');
             }else{
               add(pick('REC'), 'REC');
-              addIf(pick('TGTS'), 'TGT');
+              const tgt = pickAny(['TGTS', 'TGT', 'TAR', 'TARGETS']);
+              if(tgt != null) found.targets++;
+              addIf(tgt, 'TGT');
               add(pick('YDS'), 'YDS', true);
               addIf(pick('TD'), 'TD');
               add(pick('AVG'), 'AVG');
               addIf(pick('LONG'), 'LONG');
             }
+            // Sort keys. Yards first: this site scores what a player DID, and
+            // yards are the production. Opportunity — targets and carries — is
+            // deliberately NOT the sort, because DELTA's own research found the
+            // opportunity signal is already priced by the market once current
+            // production is controlled for. Ranking by it would lead with the
+            // one number the site says is least informative.
+            const num = function(v){
+              const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''));
+              return isFinite(n) ? n : 0;
+            };
             players.push({ name: ath.displayName || ath.shortName || '',
-                           jersey: ath.jersey || '', line: line, team: abbr });
+                           jersey: ath.jersey || '', line: line, team: abbr,
+                           _yds: num(pick('YDS')), _td: num(pick('TD')),
+                           _vol: num(pick('REC') || pick('CAR') || pick('C/ATT')) });
             found.players++;
           }
           if(players.length){
+            // Sorted here rather than trusting the feed's order. ESPN appears to
+            // send these by yards already, but that is an observation about
+            // today's responses, not a promise, and it is not something the page
+            // should silently depend on.
+            players.sort(function(a, b){
+              return (b._yds - a._yds) || (b._td - a._td) || (b._vol - a._vol);
+            });
             found.sections++;
             sections.push({ name: st.name || st.text || '', teamAbbr: abbr, players: players });
           }
@@ -528,11 +555,13 @@ function titleFor(name){
   return name || 'Other';
 }
 
+/* Every stat carries the same weight. An earlier version made the yardage
+   louder than the rest; it drew the eye oddly and read as though the other
+   numbers were afterthoughts. */
 function statLine(parts){
   if(!parts || !parts.length) return '';
-  return '<div class="statline">' + parts.map(function(x){
-    return x.e ? '<span class="em">' + esc(x.t) + '</span>' : esc(x.t);
-  }).join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
+  return '<div class="statline">' + parts.map(function(x){ return esc(x.t); })
+    .join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
 }
 function playerRows(players){
   return players.map(function(p){
@@ -573,17 +602,25 @@ function renderGame(){
   if(sum && sum.sections.length){
     // Everyone the user actually stars, with no cap — the list is theirs, so
     // every row on it is relevant by definition.
-    const hits = [];
-    for(const sec of sum.sections)
-      for(const p of sec.players)
-        if(watched(p.name)) hits.push({ p: p });
+    // One row per PLAYER, not per stat category. A quarterback who ran, or a
+    // receiver who took a carry, was appearing twice — two half-pictures of the
+    // same person. Their lines stack inside a single row instead.
+    const hits = [], seen = {};
+    for(const sec of sum.sections){
+      for(const p of sec.players){
+        if(!watched(p.name)) continue;
+        const k = normName(p.name);
+        if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [] }); }
+        hits[seen[k]].lines.push(p.line);
+      }
+    }
     if(hits.length){
       html += '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
         + '</span><span class="rule"></span></div><div class="card">'
         + hits.map(function(h){
             return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
               + esc(h.p.name) + ' <span class="pos">' + esc(h.p.team) + '</span></div>'
-              + statLine(h.p.line) + '</div>';
+              + h.lines.map(statLine).join('') + '</div>';
           }).join('') + '</div>';
     }else{
       html += '<div class="notice" style="margin-top:16px">'
