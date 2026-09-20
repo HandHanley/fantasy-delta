@@ -3,157 +3,701 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DELTA — Live Feed Test</title>
+<title>DELTA — Live</title>
 <!--
-  THROWAWAY DIAGNOSTIC. Not part of the app. Delete it once it has answered.
+  STANDALONE. Not wired into index.html, not linked from the nav. Touches no
+  engine code and carries no build marker, so it can be deleted with no
+  consequence to the site.
 
-  It answers one question that cannot be answered from a browser address bar:
-  will ESPN's feed let a page served from fantasydelta.com read it?
+  ── THE SOURCE IS MEANT TO BE REPLACED ──────────────────────────────────────
+  Only the ADAPTERS block knows where data comes from. Everything else works on
+  one internal shape. Swapping sources = one more adapter + ACTIVE_SOURCE.
 
-  Opening a feed URL directly proves only that it needs no password. A page
-  reading another site's data is a different permission, granted by a header
-  that feed has to send back. Plenty of feeds return JSON in the address bar
-  and refuse when a webpage asks.
+  ── CONFIRMED vs ASSUMED ────────────────────────────────────────────────────
+  Confirmed against the real feed 19 Sep 2026:
+    events[] · competitions[0].competitors[].team.abbreviation · .score
+    team.displayName · status.type.shortDetail · the summary endpoint responds
+  ASSUMED, read defensively, page works without each:
+    status.type.state · situation.{possession,downDistanceText,yardLine,distance}
+    competitors[].{records,homeAway} · team.{color,alternateColor}
+    boxscore.players[].statistics[] · drives.current
+  The Feed Check panel reports which of these actually arrived. Anything
+  reading 0 there is not available to build on, whatever the docs say.
 
-  This MUST be served from fantasydelta.com to mean anything. Opened from a
-  file on your phone, or from anywhere else, it tests the wrong origin and the
-  answer is worthless.
+  ── THE FIELD BAR IS UNVERIFIED ─────────────────────────────────────────────
+  ESPN's yardLine convention is not documented anywhere reliable. The bar is
+  drawn from it, and the RAW values are printed in Feed Check so the first live
+  game either confirms the convention or shows it is backwards. Do not trust
+  the bar until that check has been eyeballed against a real game.
 -->
 <style>
 :root{
-  --ink:#0A0F1A; --panel:#111A28; --line:#1E2A3A;
+  --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
   --paper:#EAF0F4; --fog:#8CA0B3; --fog-2:#5C7080;
-  --emerald:#10B981; --emerald-tint:rgba(16,185,129,.14);
-  --coral:#E05745; --coral-tint:rgba(224,87,69,.13);
-  --topaz:#E0B34D; --topaz-tint:rgba(224,179,77,.14);
-  --teal-br:#2DD4BF; --sky:#6BB6E0;
+  --teal-br:#2DD4BF; --teal-tint:rgba(45,212,191,.12);
+  --sky:#6BB6E0; --sky-tint:rgba(107,182,224,.14);
+  --topaz:#E0B34D;
+  /* emerald / coral / topaz are RESERVED SIGNAL COLOURS (buy / sell / watch)
+     and must never mark a game state. Live is sky, settled is fog. Team
+     colours are DATA from the feed, not tokens, so they are set inline. */
   --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
-  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box}
-body{margin:0;padding:16px;font-family:var(--sans);background:var(--ink);color:var(--paper);
-     font-size:14px;line-height:1.5}
-h1{font-size:17px;margin:0 0 4px}
-.sub{color:var(--fog);font-size:12px;margin:0 0 18px}
-.test{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-      padding:12px;margin-bottom:10px}
-.test h2{font-size:13px;margin:0 0 6px;font-weight:600}
-.verdict{font-family:var(--mono);font-size:12px;padding:5px 8px;border-radius:6px;
-         display:inline-block;margin-bottom:6px}
-.pass{background:var(--emerald-tint);color:var(--emerald)}
-.fail{background:var(--coral-tint);color:var(--coral)}
-.wait{background:var(--topaz-tint);color:var(--topaz)}
-.detail{font-family:var(--mono);font-size:11px;color:var(--fog);
-        white-space:pre-wrap;word-break:break-word;margin-top:4px}
-.games{margin-top:20px}
-.g{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-   padding:11px 13px;margin-bottom:8px}
-.grow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.gt{font-weight:600}
-.gs{font-family:var(--mono);font-size:16px}
-.gst{color:var(--sky);font-size:11px;font-family:var(--mono);margin-top:5px}
-.note{color:var(--fog-2);font-size:11px;margin-top:22px;border-top:1px solid var(--line);
-      padding-top:12px}
-button{background:transparent;color:var(--teal-br);border:1px solid var(--line);
-       border-radius:8px;padding:9px 14px;font-family:var(--sans);font-size:13px;
-       margin-top:10px}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:14px 12px 30px;font-family:var(--sans);background:var(--ink);
+     color:var(--paper);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.top-l{display:flex;align-items:center;gap:10px;min-width:0}
+h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
+   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stamp{font-family:var(--mono);font-size:10.5px;color:var(--fog);white-space:nowrap}
+.back{background:transparent;border:0;color:var(--teal-br);font-size:17px;line-height:1;
+      padding:8px 10px 8px 0;margin:-8px 0}
+
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--fog);
+     border-radius:9px;padding:12px 6px;font-family:var(--sans);font-size:13px;font-weight:600}
+.tab[aria-selected="true"]{color:var(--teal-br);border-color:var(--teal-br);background:var(--teal-tint)}
+
+.hd{display:flex;align-items:center;gap:9px;margin:16px 0 9px}
+.hd span:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--fog);
+                     text-transform:uppercase;white-space:nowrap}
+.rule{flex:1;height:1px;background:var(--line)}
+
+.notice{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;
+        padding:10px 12px;font-size:12px;color:var(--fog);margin-bottom:12px;line-height:1.45}
+
+.g{background:var(--panel);border:1px solid var(--line);border-radius:11px;overflow:hidden;
+   margin-bottom:9px;width:100%;text-align:left;padding:0;font-family:var(--sans);color:inherit;display:block}
+.bar{display:flex;height:3px}
+.bar span{flex:1}
+.gin{padding:9px 12px 10px}
+.chiprow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--sky);
+      background:var(--sky-tint);border-radius:4px;padding:3px 6px}
+.chip.done{color:var(--fog);background:transparent;padding-left:0}
+.when{font-family:var(--mono);font-size:11px;color:var(--sky)}
+.when.off{color:var(--fog)}
+.tm{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 0}
+.tm-l{display:flex;align-items:center;gap:9px;min-width:0}
+.spine{width:3px;height:20px;border-radius:2px;flex:none}
+.abbr{font-weight:800;font-size:15px;letter-spacing:-.01em}
+.nick{font-size:11.5px;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec{font-family:var(--mono);font-size:10px;color:var(--fog)}
+.dot{color:var(--sky);font-size:10px}
+.sc{font-family:var(--mono);font-size:21px;font-variant-numeric:tabular-nums;color:var(--fog)}
+.sc.lead{color:var(--paper);font-weight:700}
+.gfoot{margin-top:7px;border-top:1px solid var(--line);padding-top:7px;
+       font-family:var(--mono);font-size:10.5px;color:var(--fog)}
+.pre{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px}
+.pre-t{font-weight:800;font-size:14.5px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:3px 13px;margin-bottom:2px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0;
+     border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.nm{font-size:13.5px;font-weight:700}
+.nm .pos{color:var(--fog);font-weight:400;font-size:11px}
+.sub{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:2px}
+.big{font-family:var(--mono);font-size:16px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.big .unit{font-size:10px;color:var(--fog)}
+/* topaz IS the reserved signal for WATCH, so a watchlist star is its correct
+   use, not an exception to the rule. */
+.trk{color:var(--topaz);font-size:11px}
+
+.hero{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:2px}
+.hero .bar{height:4px}
+.hero-in{padding:12px 14px 13px}
+.hero .tm{padding:4px 0}
+.hero .spine{width:4px;height:28px}
+.hero .abbr{font-size:17px}
+.hero .sc{font-size:34px;line-height:1}
+
+.field{position:relative;height:26px;border-radius:5px;overflow:hidden;
+       background:var(--ink-2);border:1px solid var(--line)}
+.ez{position:absolute;top:0;bottom:0;width:9%}
+.tick{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.ball{position:absolute;top:0;bottom:0;width:3px;background:var(--sky)}
+.togo{position:absolute;top:0;bottom:0;width:2px;background:var(--paper)}
+.fkey{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono);
+      font-size:9.5px;color:var(--fog)}
+
+.play{font-size:13px;line-height:1.45}
+.empty{color:var(--fog);font-size:13px;padding:18px 2px}
+details{margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
+summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
+.fc{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:8px;white-space:pre-wrap;
+    word-break:break-word}
 </style>
 </head>
 <body>
 
-<h1>Live Feed Test</h1>
-<p class="sub">Answers one question: will ESPN let a page on this domain read its data?</p>
+<div class="top">
+  <div class="top-l" id="head"></div>
+  <div class="stamp" id="stamp">&mdash;</div>
+</div>
+<div id="tabs"></div>
+<div id="notice"></div>
+<div id="view"><div class="empty">Loading&hellip;</div></div>
 
-<div class="test" id="t1"><h2>1. NFL scoreboard</h2><div class="verdict wait">running…</div></div>
-<div class="test" id="t2"><h2>2. College scoreboard</h2><div class="verdict wait">running…</div></div>
-<div class="test" id="t3"><h2>3. Single game detail</h2><div class="verdict wait">running…</div></div>
-
-<div class="games" id="games"></div>
-<button onclick="runAll()">Run again</button>
-
-<p class="note">
-If all three pass, a live arm is buildable and the only open questions are upkeep
-and terms. If they fail with a message mentioning CORS or "Failed to fetch", the
-feed will not talk to a webpage and this route is closed — the data would have to
-come through something that fetches it elsewhere first. Delete this file either way.
-</p>
+<details>
+  <summary>Feed Check</summary>
+  <div class="fc" id="fc">Waiting for a response&hellip;</div>
+</details>
 
 <script>
-const BASE = 'https://site.api.espn.com/apis/site/v2/sports/football';
-const TESTS = [
-  { el: 't1', url: BASE + '/nfl/scoreboard',              render: true  },
-  { el: 't2', url: BASE + '/college-football/scoreboard', render: false },
-  { el: 't3', url: BASE + '/college-football/summary?event=401858230', render: false }
-];
+/* ══════════════════════════════════════════════════════════════════════════
+   ADAPTERS — the ONLY part of this file that knows where data comes from.
 
-function say(elId, cls, text, detail) {
-  const box = document.getElementById(elId);
-  box.querySelector('.verdict').className = 'verdict ' + cls;
-  box.querySelector('.verdict').textContent = text;
-  let d = box.querySelector('.detail');
-  if (!d) { d = document.createElement('div'); d.className = 'detail'; box.appendChild(d); }
-  d.textContent = detail || '';
+   scoreboard(raw) -> { games:[ { id, state:'pre'|'in'|'post', status, detail,
+       situation:{yardLine,distance,possessionAbbr}|null,
+       teams:[{abbr,nick,score,record,color,altColor,hasBall,homeAway}] } ], found:{} }
+
+   summary(raw) -> { lastPlay:{text,at}|null,
+       sections:[{name,teamAbbr,players:[{name,jersey,headline,sub,team}]}], found:{} }
+
+   To move off ESPN: add a sibling object and change ACTIVE_SOURCE.
+   ══════════════════════════════════════════════════════════════════════════ */
+const ADAPTERS = {
+  espn: {
+    label: 'ESPN',
+    base: 'https://site.api.espn.com/apis/site/v2/sports/football/',
+    path: function(league){ return league === 'cfb' ? 'college-football' : 'nfl'; },
+    scoreboardUrl: function(league){ return this.base + this.path(league) + '/scoreboard'; },
+    summaryUrl: function(league, id){
+      return this.base + this.path(league) + '/summary?event=' + encodeURIComponent(id);
+    },
+
+    scoreboard: function(raw){
+      const found = { total:0, state:0, possession:0, downDistance:0, record:0, color:0, yardLine:0 };
+      const games = [];
+      const events = (raw && raw.events) || [];
+      for(const ev of events){
+        const comp = ev && ev.competitions && ev.competitions[0];
+        if(!comp) continue;
+        const type = (ev.status && ev.status.type) || {};
+
+        // ESPN sends 0-0 before kickoff, so the score alone cannot decide
+        // whether to show a scoreline.
+        let state = type.state;
+        if(state) found.state++;
+        else if(type.completed === true) state = 'post';
+        else state = /\d{1,2}\/\d{1,2}|AM|PM/i.test(type.shortDetail || '') ? 'pre' : 'in';
+
+        const sit = comp.situation || {};
+        if(sit.possession != null) found.possession++;
+        if(sit.downDistanceText) found.downDistance++;
+        if(typeof sit.yardLine === 'number') found.yardLine++;
+
+        let possAbbr = null;
+        const teams = (comp.competitors || []).map(function(c){
+          const t = c.team || {};
+          const rec = (c.records && c.records[0] && c.records[0].summary) || '';
+          if(rec) found.record++;
+          if(t.color) found.color++;
+          const ball = sit.possession != null && String(sit.possession) === String(t.id);
+          const abbr = t.abbreviation || t.shortDisplayName || t.displayName || '?';
+          if(ball) possAbbr = abbr;
+          return { abbr: abbr, nick: t.name || '', score: c.score == null ? null : String(c.score),
+                   record: rec, color: t.color || null, altColor: t.alternateColor || null,
+                   hasBall: ball, homeAway: c.homeAway || '' };
+        });
+
+        // A competition with fewer than two teams is not a game anyone can
+        // read — it rendered as a blank card. Skip it rather than show it.
+        if(teams.length < 2) continue;
+
+        found.total++;
+        games.push({
+          id: ev.id || '', state: state,
+          status: type.shortDetail || type.description || '',
+          detail: state === 'in' ? (sit.downDistanceText || '') : '',
+          situation: state === 'in' ? {
+            yardLine: typeof sit.yardLine === 'number' ? sit.yardLine : null,
+            distance: typeof sit.distance === 'number' ? sit.distance : null,
+            possessionAbbr: possAbbr
+          } : null,
+          teams: teams
+        });
+      }
+      return { games: games, found: found };
+    },
+
+    summary: function(raw){
+      const found = { sections:0, players:0, lastPlay:0 };
+      const sections = [];
+      const box = (raw && raw.boxscore) || {};
+      for(const tm of (box.players || [])){
+        const abbr = (tm.team && (tm.team.abbreviation || tm.team.displayName)) || '?';
+        for(const st of (tm.statistics || [])){
+          const labels = st.labels || [];
+          const players = [];
+          for(const a of (st.athletes || [])){
+            const ath = a.athlete || {};
+            const stats = a.stats || [];
+            const pick = function(key){
+              const i = labels.indexOf(key);
+              return i >= 0 ? stats[i] : null;
+            };
+            const yds = pick('YDS');
+            const bits = [];
+            const cmp = pick('C/ATT'); if(cmp) bits.push(cmp);
+            const car = pick('CAR');   if(car) bits.push(car + ' CAR');
+            const rec = pick('REC');   if(rec) bits.push(rec + ' REC');
+            const avg = pick('AVG');   if(avg) bits.push(avg + ' AVG');
+            const td  = pick('TD');    if(td && td !== '0') bits.push(td + ' TD');
+            const lng = pick('LONG');  if(lng && lng !== '0') bits.push(lng + ' LONG');
+            players.push({ name: ath.displayName || ath.shortName || '',
+                           jersey: ath.jersey || '',
+                           headline: yds == null ? '' : String(yds),
+                           sub: bits.join(' \u00b7 '), team: abbr });
+            found.players++;
+          }
+          if(players.length){
+            found.sections++;
+            sections.push({ name: st.name || st.text || '', teamAbbr: abbr, players: players });
+          }
+        }
+      }
+      let lastPlay = null;
+      const cur = raw && raw.drives && raw.drives.current;
+      const plays = (cur && cur.plays) || [];
+      const p = plays.length ? plays[plays.length - 1] : null;
+      if(p && p.text){
+        lastPlay = { text: p.text, at: (p.clock && p.clock.displayValue) || '' };
+        found.lastPlay++;
+      }
+      return { sections: sections, lastPlay: lastPlay, found: found };
+    }
+  }
+};
+const ACTIVE_SOURCE = 'espn';
+
+/* THE USER'S OWN WATCHLIST, not DELTA's whole universe.
+
+   This page is served from the same origin as the app, so it reads the very
+   same localStorage the star buttons write to — no download of any kind, and a
+   star set in the app shows up here on the next redraw. The key and the shape
+   are the engine's (delta-engine.js, dwKey/dwList): one JSON array of
+   namespaced strings, "nfl:Josh Allen" / "cfb:Kevin Jennings". The two
+   namespaces in use are exactly nfl and cfb, which is what this page's two
+   tabs already are.
+
+   READ ONLY. The engine is the single writer and carries the DSYNC hook, so
+   nothing here ever writes to that key. */
+const DW_LS = 'delta_watchlist';
+function readWatchlist(league){
+  const pre = (league === 'cfb' ? 'cfb' : 'nfl') + ':';
+  let raw = [];
+  try{ raw = JSON.parse(localStorage.getItem(DW_LS) || '[]'); }catch(e){ return new Set(); }
+  if(!Array.isArray(raw)) return new Set();
+  const out = new Set();
+  for(const e of raw){
+    if(typeof e !== 'string') continue;
+    // A legacy bare entry with no namespace is an NFL player: the engine's own
+    // migration treats it that way, and it may not have run here yet.
+    const name = e.slice(0, pre.length) === pre ? e.slice(pre.length)
+               : (league !== 'cfb' && e.indexOf(':') < 0 ? e : null);
+    if(name) out.add(normName(name));
+  }
+  return out;
 }
 
-async function runOne(t) {
-  const started = Date.now();
-  try {
-    const res = await fetch(t.url, { cache: 'no-store' });
-    const ms = Date.now() - started;
-    if (!res.ok) { say(t.el, 'fail', 'HTTP ' + res.status, t.url); return null; }
-    const body = await res.json();
-    const kb = Math.round(JSON.stringify(body).length / 1024);
-    say(t.el, 'pass', 'PASS · ' + ms + 'ms · ' + kb + ' KB',
-        (body.events ? body.events.length + ' games in the feed'
-                     : 'single game: ' + ((body.header && body.header.id) || 'loaded')));
-    return body;
-  } catch (err) {
-    say(t.el, 'fail', 'BLOCKED',
-        err.message + '\n\nThis is what a refused cross-site read looks like. '
-        + 'The address bar can still open the same URL fine.');
-    return null;
+/* ══════════════════════════════════════════════════════════════════════════
+   Source-agnostic from here down.
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Two feeds, two clocks, because they are very different sizes and change at
+   very different rates.
+
+   The SCOREBOARD carries everything that moves play to play — score, clock,
+   possession, down and distance — for every game at once, and measured 278 KB.
+   The SUMMARY carries the box score and the last play, and measured 487 KB.
+
+   Snaps come roughly every 25-40 real seconds, so a 30-second refresh could put
+   you a whole play behind. Scores now refresh every 15. The box score can lag a
+   minute without anyone noticing, so it does, and that pays for the faster
+   scoreline: the old build pulled BOTH every 30 seconds.
+
+   Those KB are the JSON after the browser unpacks it. What actually crosses the
+   wire is compressed and typically far smaller — the Network tab shows the real
+   figure, and that is the one to check before worrying about a phone plan. */
+const LIST_MS  = 60000;   // the game list, nothing open
+const SCORE_MS = 15000;   // score, clock, possession while following a game
+const DETAIL_MS = 60000;  // box score and last play while following a game
+const S = { view:'list', league:'nfl', gameId:null, boxTeam:null,
+            data:{nfl:null,cfb:null}, at:{nfl:0,cfb:0},
+            game:null, gameAt:0, failed:false, watch:new Set(), fc:{} };
+let timer = null, detailTimer = null;
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function ago(ts){
+  if(!ts) return '\u2014';
+  const s = Math.round((Date.now() - ts) / 1000);
+  if(s < 10) return 'Just Now';
+  if(s < 60) return s + 's Ago';
+  const m = Math.round(s / 60);
+  return m + (m === 1 ? ' Min Ago' : ' Mins Ago');
+}
+function normName(s){
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\b(jr|sr|ii|iii|iv|v)\b/g,'').replace(/[^a-z ]/g,'').replace(/\s+/g,' ').trim();
+}
+
+/* A team colour from the feed is often near-black and vanishes on this
+   background. Take the primary, fall back to the alternate, then lift it until
+   it is actually visible. */
+function teamColor(t){
+  function parse(h){
+    if(!h) return null;
+    const v = String(h).replace('#','');
+    if(!/^[0-9a-fA-F]{6}$/.test(v)) return null;
+    const r = parseInt(v.slice(0,2),16), g = parseInt(v.slice(2,4),16), b = parseInt(v.slice(4,6),16);
+    return { r:r, g:g, b:b, lum:(0.2126*r + 0.7152*g + 0.0722*b) / 255 };
+  }
+  let c = parse(t && t.color);
+  if(!c || c.lum < 0.18){
+    const alt = parse(t && t.altColor);
+    if(alt && (!c || alt.lum > c.lum)) c = alt;
+  }
+  if(!c) return 'var(--fog-2)';
+  let r = c.r, g = c.g, b = c.b, lum = c.lum, guard = 0;
+  while(lum < 0.22 && guard++ < 12){
+    r = Math.min(255, Math.round(r * 1.25 + 12));
+    g = Math.min(255, Math.round(g * 1.25 + 12));
+    b = Math.min(255, Math.round(b * 1.25 + 12));
+    lum = (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+  }
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+async function getJSON(url){
+  const res = await fetch(url, { cache:'no-store' });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function watched(name){ return S.watch.size > 0 && S.watch.has(normName(name)); }
+
+/* ── rendering ─────────────────────────────────────────────────────────── */
+function teamRow(t, lead, big){
+  return '<div class="tm"><div class="tm-l">'
+    + '<span class="spine" style="background:' + teamColor(t) + '"></span>'
+    + '<span class="abbr">' + esc(t.abbr) + '</span>'
+    + (t.nick ? '<span class="nick">' + esc(t.nick) + '</span>' : '')
+    + (t.record ? '<span class="rec">' + esc(t.record) + '</span>' : '')
+    + (t.hasBall ? '<span class="dot">&#9679;</span>' : '')
+    + '</div><span class="sc' + (lead ? ' lead' : '') + '">'
+    + (big == null ? '&ndash;' : esc(big)) + '</span></div>';
+}
+function colourBar(teams){
+  return '<div class="bar">' + teams.map(function(t){
+    return '<span style="background:' + teamColor(t) + '"></span>';
+  }).join('') + '</div>';
+}
+function leadIndex(teams){
+  const n = teams.map(function(t){ return t.score == null ? -1 : Number(t.score); });
+  if(n.length < 2 || n[0] === n[1]) return -1;
+  return n[0] > n[1] ? 0 : 1;
+}
+function chip(live){
+  return live ? '<span class="chip">LIVE</span>' : '<span class="chip done">FINAL</span>';
+}
+
+function gameCard(g){
+  if(g.state === 'pre'){
+    return '<button class="g" type="button" data-id="' + esc(g.id) + '">' + colourBar(g.teams)
+      + '<div class="pre"><div style="display:flex;align-items:center;gap:10px">'
+      + '<span class="spine" style="height:34px;background:' + teamColor(g.teams[0] || {}) + '"></span><div>'
+      + g.teams.map(function(t){ return '<div class="pre-t">' + esc(t.abbr) + '</div>'; }).join('')
+      + '</div></div><span class="rec">' + esc(g.status) + '</span></div></button>';
+  }
+  const live = g.state === 'in', li = leadIndex(g.teams);
+  return '<button class="g" type="button" data-id="' + esc(g.id) + '">' + colourBar(g.teams)
+    + '<div class="gin"><div class="chiprow">' + chip(live)
+    + '<span class="when' + (live ? '' : ' off') + '">' + esc(g.status) + '</span></div>'
+    + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
+    + (g.detail ? '<div class="gfoot">' + esc(g.detail) + '</div>' : '')
+    + '</div></button>';
+}
+
+function renderList(){
+  const d = S.data[S.league];
+  document.getElementById('head').innerHTML = '<h1>Live</h1>';
+  document.getElementById('tabs').innerHTML =
+      '<div class="tabs"><button class="tab" type="button" data-lg="nfl" aria-selected="'
+    + (S.league === 'nfl') + '">NFL</button>'
+    + '<button class="tab" type="button" data-lg="cfb" aria-selected="'
+    + (S.league === 'cfb') + '">College</button></div>';
+  const view = document.getElementById('view');
+  if(!d){
+    view.innerHTML = '<div class="empty">' + (S.failed ? 'Nothing to show yet.' : 'Loading\u2026') + '</div>';
+    return;
+  }
+  const groups = [['In Progress','in'],['Upcoming','pre'],['Final','post']]
+    .map(function(x){ return [x[0], d.games.filter(function(g){ return g.state === x[1]; })]; })
+    .filter(function(x){ return x[1].length; });
+  view.innerHTML = groups.length
+    ? groups.map(function(x){
+        return '<div class="hd"><span>' + esc(x[0]) + ' &middot; ' + x[1].length
+          + '</span><span class="rule"></span></div>' + x[1].map(gameCard).join('');
+      }).join('')
+    : '<div class="empty">No games in this feed right now.</div>';
+}
+
+function findGame(){
+  const d = S.data[S.league];
+  return d ? d.games.filter(function(g){ return g.id === S.gameId; })[0] : null;
+}
+
+/* Drawn from yardLine, whose convention is NOT confirmed. Raw values go into
+   Feed Check so a live game settles it. Missing data hides the bar rather than
+   drawing something invented. */
+function fieldBar(g){
+  const s = g.situation;
+  if(!s || s.yardLine == null) return '';
+  const pct = Math.max(2, Math.min(98, s.yardLine));
+  const poss = g.teams.filter(function(t){ return t.hasBall; })[0];
+  const goingLeft = poss && poss.homeAway === 'home';
+  let togo = null;
+  if(s.distance != null){
+    const t = goingLeft ? pct - s.distance : pct + s.distance;
+    if(t > 2 && t < 98) togo = t;
+  }
+  return '<div class="hd"><span>Where The Ball Is</span><span class="rule"></span></div>'
+    + '<div class="card" style="padding:13px 12px 11px">'
+    + '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px">'
+    + '<span style="font-weight:700;font-size:14px">' + esc(g.detail || '') + '</span>'
+    + (poss ? '<span class="rec">' + esc(poss.abbr) + ' ball</span>' : '') + '</div>'
+    + '<div class="field">'
+    + '<span class="ez" style="left:0;background:' + teamColor(g.teams[0] || {}) + '"></span>'
+    + '<span class="ez" style="right:0;background:' + teamColor(g.teams[1] || {}) + '"></span>'
+    + '<span class="tick" style="left:27.2%"></span><span class="tick" style="left:45.5%"></span>'
+    + '<span class="tick" style="left:63.8%"></span>'
+    + (togo != null ? '<span class="togo" style="left:' + togo + '%"></span>' : '')
+    + '<span class="ball" style="left:' + pct + '%"></span></div>'
+    + '<div class="fkey"><span>' + esc((g.teams[0] || {}).abbr || '') + '</span>'
+    + '<span style="color:var(--sky)">Ball</span>'
+    + (togo != null ? '<span style="color:var(--paper)">To Go</span>' : '')
+    + '<span>' + esc((g.teams[1] || {}).abbr || '') + '</span></div></div>';
+}
+
+function unitFor(name){
+  const n = String(name || '').toLowerCase();
+  if(n.indexOf('pass') === 0) return 'PASS';
+  if(n.indexOf('rush') === 0) return 'RUSH';
+  if(n.indexOf('rec') === 0)  return 'REC';
+  return 'YDS';
+}
+function titleFor(name){
+  const n = String(name || '').toLowerCase();
+  if(n.indexOf('pass') === 0) return 'Passing';
+  if(n.indexOf('rush') === 0) return 'Rushing';
+  if(n.indexOf('rec') === 0)  return 'Receiving';
+  return name || 'Other';
+}
+
+function playerRows(players, unit){
+  return players.map(function(p){
+    return '<div class="row"><div><div class="nm">'
+      + (watched(p.name) ? '<span class="trk">&#9733;</span> ' : '')
+      + esc(p.name) + (p.jersey ? ' <span class="pos">#' + esc(p.jersey) + '</span>' : '')
+      + '</div>' + (p.sub ? '<div class="sub">' + esc(p.sub) + '</div>' : '') + '</div>'
+      + '<span class="big">' + esc(p.headline || '0')
+      + ' <span class="unit">' + esc(unit) + '</span></span></div>';
+  }).join('');
+}
+
+function heroBlock(g){
+  const live = g.state === 'in', li = leadIndex(g.teams);
+  return '<div class="hero">' + colourBar(g.teams) + '<div class="hero-in"><div class="chiprow">'
+    + chip(live) + '<span class="when' + (live ? '' : ' off') + '">' + esc(g.status) + '</span></div>'
+    + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
+    + '</div></div>';
+}
+
+function renderGame(){
+  const g = findGame();
+  document.getElementById('tabs').innerHTML = '';
+  document.getElementById('head').innerHTML =
+    '<button class="back" type="button" id="back" aria-label="Back To Game List">&#8592;</button><h1>'
+    + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Game') + '</h1>';
+  const view = document.getElementById('view');
+  if(!g){ view.innerHTML = '<div class="empty">That game is no longer in the feed.</div>'; return; }
+
+  const sum = S.game;
+  let html = heroBlock(g) + fieldBar(g);
+
+  if(sum && sum.lastPlay){
+    html += '<div class="hd"><span>Last Play</span><span class="rule"></span></div>'
+      + '<div class="card" style="padding:11px 13px">'
+      + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
+      + '<div class="play">' + esc(sum.lastPlay.text) + '</div></div>';
+  }
+
+  if(sum && sum.sections.length){
+    // Everyone the user actually stars, with no cap — the list is theirs, so
+    // every row on it is relevant by definition.
+    const hits = [];
+    for(const sec of sum.sections)
+      for(const p of sec.players)
+        if(watched(p.name)) hits.push({ p: p, unit: unitFor(sec.name) });
+    if(hits.length){
+      html += '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
+        + '</span><span class="rule"></span></div><div class="card">'
+        + hits.map(function(h){
+            return '<div class="row"><div><div class="nm"><span class="trk">&#9733;</span> '
+              + esc(h.p.name) + ' <span class="pos">' + esc(h.p.team) + '</span></div>'
+              + (h.p.sub ? '<div class="sub">' + esc(h.p.sub) + '</div>' : '') + '</div>'
+              + '<span class="big">' + esc(h.p.headline || '0')
+              + ' <span class="unit">' + esc(h.unit) + '</span></span></div>';
+          }).join('') + '</div>';
+    }else{
+      html += '<div class="notice" style="margin-top:16px">'
+        + (S.watch.size
+            ? 'Nobody from your watchlist is in this game.'
+            : 'Star players in DELTA and they show up here when they play.')
+        + '</div>';
+    }
+    html += '<button class="tab" type="button" id="tobox" style="width:100%;margin-top:14px">Full Box Score</button>';
+  }else{
+    html += '<div class="notice" style="margin-top:16px">Loading the detail for this game\u2026</div>';
+  }
+  view.innerHTML = html;
+}
+
+function renderBox(){
+  const g = findGame(), sum = S.game;
+  document.getElementById('tabs').innerHTML = '';
+  document.getElementById('head').innerHTML =
+    '<button class="back" type="button" id="back" aria-label="Back To Game">&#8592;</button><h1>Box Score</h1>';
+  const view = document.getElementById('view');
+  if(!g || !sum){ view.innerHTML = '<div class="empty">No box score available.</div>'; return; }
+
+  const abbrs = [];
+  for(const s of sum.sections) if(abbrs.indexOf(s.teamAbbr) < 0) abbrs.push(s.teamAbbr);
+  if(!S.boxTeam || abbrs.indexOf(S.boxTeam) < 0) S.boxTeam = abbrs[0] || null;
+
+  let html = heroBlock(g);
+  if(abbrs.length > 1){
+    html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
+      return '<button class="tab" type="button" data-team="' + esc(a) + '" aria-selected="'
+        + (a === S.boxTeam) + '">' + esc(a) + '</button>';
+    }).join('') + '</div>';
+  }
+  const mine = sum.sections.filter(function(s){ return s.teamAbbr === S.boxTeam; });
+  html += mine.length
+    ? mine.map(function(sec){
+        return '<div class="hd"><span>' + esc(titleFor(sec.name)) + '</span><span class="rule"></span></div>'
+          + '<div class="card">' + playerRows(sec.players, unitFor(sec.name)) + '</div>';
+      }).join('')
+    : '<div class="empty">No player stats for this team yet.</div>';
+  html += '<div class="hd"><span><span class="trk">&#9733;</span> On Your Watchlist</span>'
+    + '<span class="rule"></span></div>';
+  view.innerHTML = html;
+}
+
+function render(){
+  // Cheap, and it means a star set in the main app shows up on the next redraw
+  // without this page being reloaded.
+  S.watch = readWatchlist(S.league);
+  S.fc.watchlist = S.watch.size;
+
+  document.getElementById('notice').innerHTML = S.failed
+    ? '<div class="notice">Could not reach the feed just now. Showing the last good read.</div>' : '';
+  if(S.view === 'list') renderList();
+  else if(S.view === 'game') renderGame();
+  else renderBox();
+
+  document.getElementById('stamp').textContent =
+    ago(S.view === 'list' ? S.at[S.league] : (S.gameAt || S.at[S.league]));
+
+  const f = {};
+  const a = S.data[S.league] ? S.data[S.league].found : {};
+  for(const k in a) f[k] = a[k];
+  if(S.game) for(const k in S.game.found) f[k] = S.game.found[k];
+  for(const k in S.fc) f[k] = S.fc[k];
+  const g = findGame();
+  let txt = Object.keys(f).map(function(k){
+    return (k + ':' + '                      ').slice(0, 22) + f[k];
+  }).join('\n');
+  if(g && g.situation){
+    txt += '\n\nRAW yardLine: ' + g.situation.yardLine
+      + '\nRAW distance: ' + g.situation.distance
+      + '\nposs: ' + g.situation.possessionAbbr
+      + '\n(does the bar match the real game? if not, the convention is flipped)';
+  }
+  txt += '\n\nA zero means this source did not send that field.';
+  document.getElementById('fc').textContent = txt;
+}
+
+/* ── loading ───────────────────────────────────────────────────────────── */
+async function loadList(){
+  const a = ADAPTERS[ACTIVE_SOURCE], which = S.league;
+  try{
+    const parsed = a.scoreboard(await getJSON(a.scoreboardUrl(which)));
+    S.data[which] = parsed; S.at[which] = Date.now(); S.failed = false;
+  }catch(e){ S.failed = true; }
+  if(which === S.league) render();
+}
+async function loadGame(){
+  const a = ADAPTERS[ACTIVE_SOURCE], id = S.gameId, which = S.league;
+  if(!id) return;
+  try{
+    const parsed = a.summary(await getJSON(a.summaryUrl(which, id)));
+    if(S.gameId === id){ S.game = parsed; S.gameAt = Date.now(); S.failed = false; }
+  }catch(e){ S.failed = true; }
+  if(S.gameId === id) render();
+}
+function schedule(){
+  if(timer) clearInterval(timer);
+  if(detailTimer) clearInterval(detailTimer);
+  if(document.visibilityState !== 'visible') return;   // never poll in the background
+  if(S.view === 'list'){
+    timer = setInterval(loadList, LIST_MS);
+  }else{
+    timer = setInterval(loadList, SCORE_MS);           // cheap, fast, all games
+    detailTimer = setInterval(loadGame, DETAIL_MS);    // expensive, slow, one game
   }
 }
+document.addEventListener('visibilitychange', function(){
+  schedule();
+  if(document.visibilityState === 'visible'){ loadList(); if(S.view !== 'list') loadGame(); }
+});
 
-function renderGames(data) {
-  const wrap = document.getElementById('games');
-  wrap.innerHTML = '';
-  const evs = (data && data.events) || [];
-  if (!evs.length) { wrap.innerHTML = '<p class="sub">No games in the feed right now.</p>'; return; }
-  evs.slice(0, 8).forEach(ev => {
-    const c = ev.competitions && ev.competitions[0];
-    if (!c) return;
-    const teams = (c.competitors || []).map(x =>
-      ({ name: (x.team && (x.team.abbreviation || x.team.displayName)) || '?', score: x.score }));
-    const status = (ev.status && ev.status.type && ev.status.type.shortDetail) || '';
-    const div = document.createElement('div');
-    div.className = 'g';
-    div.innerHTML = teams.map(t =>
-      '<div class="grow"><span class="gt"></span><span class="gs"></span></div>').join('')
-      + '<div class="gst"></div>';
-    const rows = div.querySelectorAll('.grow');
-    teams.forEach((t, i) => {
-      if (!rows[i]) return;
-      rows[i].querySelector('.gt').textContent = t.name;
-      rows[i].querySelector('.gs').textContent = t.score == null ? '–' : t.score;
-    });
-    div.querySelector('.gst').textContent = status;
-    wrap.appendChild(div);
-  });
-}
-
-async function runAll() {
-  document.getElementById('games').innerHTML = '';
-  TESTS.forEach(t => say(t.el, 'wait', 'running…', ''));
-  for (const t of TESTS) {
-    const body = await runOne(t);
-    if (t.render && body) renderGames(body);
+document.addEventListener('click', async function(ev){
+  const t = ev.target;
+  const lg = t.closest ? t.closest('[data-lg]') : null;
+  if(lg){
+    S.league = lg.getAttribute('data-lg'); S.view = 'list'; S.game = null; S.gameId = null;
+    render(); loadList(); schedule(); return;
   }
-}
-runAll();
+  const tm = t.closest ? t.closest('[data-team]') : null;
+  if(tm){ S.boxTeam = tm.getAttribute('data-team'); render(); return; }
+  if(t.closest && t.closest('#tobox')){ S.view = 'box'; render(); return; }
+  if(t.closest && t.closest('#back')){
+    if(S.view === 'box') S.view = 'game';
+    else { S.view = 'list'; S.gameId = null; S.game = null; }
+    render(); schedule(); return;
+  }
+  const card = t.closest ? t.closest('[data-id]') : null;
+  if(card){
+    S.gameId = card.getAttribute('data-id'); S.view = 'game'; S.game = null; S.boxTeam = null;
+    render(); schedule();
+    await loadGame();
+  }
+});
+
+render();
+loadList();
+schedule();
 </script>
 </body>
 </html>
