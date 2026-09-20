@@ -171,8 +171,9 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
        text-align:left;text-decoration:underline;text-decoration-color:var(--line);
        text-underline-offset:3px}
 .play{font-size:13px;line-height:1.45}
-details.prev{margin:10px 0 0;border-top:1px solid var(--line);padding-top:9px;border-bottom:0}
-details.prev summary{font-family:var(--mono);font-size:10.5px;color:var(--fog);cursor:pointer}
+.prev{margin:10px 0 0;border-top:1px solid var(--line);padding-top:9px}
+.prevb{background:transparent;border:0;padding:0;font-family:var(--mono);font-size:10.5px;
+       color:var(--fog);text-align:left;width:100%}
 .pv{padding:9px 0 0;border-top:1px solid var(--line);margin-top:9px}
 .pv:first-of-type{border-top:0;margin-top:0}
 .empty{color:var(--fog);font-size:13px;padding:18px 2px}
@@ -553,7 +554,13 @@ const DETAIL_MS = 60000;  // box score and last play while following a game
    you skipped the screen that would have shown it. */
 const S = { view:'list', league:'nfl', gameId:null, boxTeam:null, from:'game',
             data:{nfl:null,cfb:null}, at:{nfl:0,cfb:0},
-            game:null, gameAt:0, failed:false, watch:new Set(), fc:{} };
+            game:null, gameAt:0, failed:false, watch:new Set(), fc:{},
+            /* Anything the reader has opened has to live HERE, not in the DOM.
+               A live game repaints this screen every 15 seconds, and a <details>
+               left to manage itself is wiped each time — it opened and snapped
+               shut, or never appeared to open at all if a refresh landed on the
+               tap. */
+            playsOpen:false, painted:'' };
 let timer = null, detailTimer = null;
 
 function esc(s){
@@ -660,18 +667,18 @@ function renderList(){
     + (S.league === 'cfb') + '">College</button></div>';
   const view = document.getElementById('view');
   if(!d){
-    view.innerHTML = '<div class="empty">' + (S.failed ? 'Nothing to show yet.' : 'Loading\u2026') + '</div>';
+    paint('<div class="empty">' + (S.failed ? 'Nothing to show yet.' : 'Loading\u2026') + '</div>');
     return;
   }
   const groups = [['In Progress','in'],['Upcoming','pre'],['Final','post']]
     .map(function(x){ return [x[0], d.games.filter(function(g){ return g.state === x[1]; })]; })
     .filter(function(x){ return x[1].length; });
-  view.innerHTML = groups.length
+  paint(groups.length
     ? groups.map(function(x){
         return '<div class="hd"><span>' + esc(x[0]) + ' &middot; ' + x[1].length
           + '</span><span class="rule"></span></div>' + x[1].map(gameCard).join('');
       }).join('')
-    : '<div class="empty">No games in this feed right now.</div>';
+    : '<div class="empty">No games in this feed right now.</div>');
 }
 
 function teamByAbbr(g, abbr){
@@ -829,7 +836,7 @@ function renderGame(){
     + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Game') + '</h1>';
   document.getElementById('tabs').innerHTML = gameTabs(g, 'game');
   const view = document.getElementById('view');
-  if(!g){ view.innerHTML = '<div class="empty">That game is no longer in the feed.</div>'; return; }
+  if(!g){ paint('<div class="empty">That game is no longer in the feed.</div>'); return; }
 
   const sum = S.game;
   let html = heroBlock(g) + fieldBar(g);
@@ -842,12 +849,18 @@ function renderGame(){
       + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
       + '<div class="play">' + esc(sum.lastPlay.text) + '</div>'
       + (older.length
-          ? '<details class="prev"><summary>' + older.length + ' before that</summary>'
-            + older.map(function(p){
-                return '<div class="pv">'
-                  + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
-                  + '<div class="play">' + esc(p.text) + '</div></div>';
-              }).join('') + '</details>'
+          ? '<div class="prev"><button class="prevb" type="button" data-plays="1"'
+            + ' aria-expanded="' + S.playsOpen + '">'
+            + (S.playsOpen ? '&#9652; Hide' : '&#9662; ' + older.length + ' before that')
+            + '</button>'
+            + (S.playsOpen
+                ? older.map(function(p){
+                    return '<div class="pv">'
+                      + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
+                      + '<div class="play">' + esc(p.text) + '</div></div>';
+                  }).join('')
+                : '')
+            + '</div>'
           : '')
       + '</div>';
   }
@@ -860,7 +873,7 @@ function renderGame(){
   }else{
     html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
   }
-  view.innerHTML = html;
+  paint(html);
 }
 
 /* Live and Box Score as tabs, so switching is one tap either way instead of a
@@ -961,7 +974,7 @@ function renderBox(){
     + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Box Score') + '</h1>';
   document.getElementById('tabs').innerHTML = gameTabs(g, 'box');
   const view = document.getElementById('view');
-  if(!g || !sum){ view.innerHTML = '<div class="empty">No box score available.</div>'; return; }
+  if(!g || !sum){ paint('<div class="empty">No box score available.</div>'); return; }
 
   const abbrs = [];
   for(const s of sum.sections) if(abbrs.indexOf(s.teamAbbr) < 0) abbrs.push(s.teamAbbr);
@@ -1005,7 +1018,17 @@ function renderBox(){
     : '<div class="empty">No player stats for this team yet.</div>';
   html += '<div class="hd"><span><span class="trk">&#9733;</span> On Your Watchlist</span>'
     + '<span class="rule"></span></div>';
-  view.innerHTML = html;
+  paint(html);
+}
+
+/* Replacing innerHTML on an unchanged screen throws away whatever the reader
+   was in the middle of — an open toggle, a scroll position, a half-pressed
+   button — for no gain. Between plays the feed usually says the same thing, so
+   most refreshes should paint nothing at all. */
+function paint(html){
+  if(html === S.painted) return;
+  S.painted = html;
+  document.getElementById('view').innerHTML = html;
 }
 
 function render(){
@@ -1122,6 +1145,7 @@ document.addEventListener('click', async function(ev){
   }
   const tm = t.closest ? t.closest('[data-team]') : null;
   if(tm){ S.boxTeam = tm.getAttribute('data-team'); render(); return; }
+  if(t.closest && t.closest('[data-plays]')){ S.playsOpen = !S.playsOpen; render(); return; }
   const gv = t.closest ? t.closest('[data-gv]') : null;
   if(gv){
     const next = gv.getAttribute('data-gv');
@@ -1138,6 +1162,7 @@ document.addEventListener('click', async function(ev){
   const card = t.closest ? t.closest('[data-id]') : null;
   if(card){
     S.gameId = card.getAttribute('data-id'); S.game = null; S.boxTeam = null;
+    S.playsOpen = false;
     S.from = 'list';
     // A finished game has no clock, no possession and no last play worth
     // reading — the follow-along screen would only repeat the card just tapped.
