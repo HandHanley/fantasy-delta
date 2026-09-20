@@ -104,8 +104,13 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .nm{font-size:13.5px;font-weight:700}
 .nm .pos{color:var(--fog);font-weight:400;font-size:11px}
 .sub{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:2px}
-.big{font-family:var(--mono);font-size:16px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.big .unit{font-size:10px;color:var(--fog)}
+.rowb{padding:10px 0;border-bottom:1px solid var(--line)}
+.rowb:last-child{border-bottom:0}
+.statline{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:4px;
+          line-height:1.5;font-variant-numeric:tabular-nums}
+.statline .em{color:var(--paper);font-weight:700;font-size:12.5px}
+.swatch{width:9px;height:9px;border-radius:2px;flex:none}
+.card.tinted{border-top-width:2px;border-top-style:solid}
 /* topaz IS the reserved signal for WATCH, so a watchlist star is its correct
    use, not an exception to the rule. */
 .trk{color:var(--topaz);font-size:11px}
@@ -244,18 +249,40 @@ const ADAPTERS = {
               const i = labels.indexOf(key);
               return i >= 0 ? stats[i] : null;
             };
-            const yds = pick('YDS');
-            const bits = [];
-            const cmp = pick('C/ATT'); if(cmp) bits.push(cmp);
-            const car = pick('CAR');   if(car) bits.push(car + ' CAR');
-            const rec = pick('REC');   if(rec) bits.push(rec + ' REC');
-            const avg = pick('AVG');   if(avg) bits.push(avg + ' AVG');
-            const td  = pick('TD');    if(td && td !== '0') bits.push(td + ' TD');
-            const lng = pick('LONG');  if(lng && lng !== '0') bits.push(lng + ' LONG');
+            // One line, read the way the stat is spoken: volume, then yards,
+            // then what it produced. Yards carries the emphasis flag so the
+            // renderer can make it the thing the eye lands on.
+            const line = [];
+            const add = function(v, label, emph){
+              if(v == null || v === '' || v === '0/0') return;
+              line.push({ t: label ? (v + ' ' + label) : String(v), e: !!emph });
+            };
+            const addIf = function(v, label){
+              if(v && v !== '0' && v !== '0.0') line.push({ t: v + ' ' + label, e: false });
+            };
+            const unit = String(st.name || '').toLowerCase();
+            if(unit.indexOf('pass') === 0){
+              add(pick('C/ATT'), '');
+              add(pick('YDS'), 'YDS', true);
+              addIf(pick('TD'), 'TD');
+              addIf(pick('INT'), 'INT');
+              add(pick('AVG'), 'Y/A');
+            }else if(unit.indexOf('rush') === 0){
+              add(pick('CAR'), 'CAR');
+              add(pick('YDS'), 'YDS', true);
+              addIf(pick('TD'), 'TD');
+              add(pick('AVG'), 'AVG');
+              addIf(pick('LONG'), 'LONG');
+            }else{
+              add(pick('REC'), 'REC');
+              addIf(pick('TGTS'), 'TGT');
+              add(pick('YDS'), 'YDS', true);
+              addIf(pick('TD'), 'TD');
+              add(pick('AVG'), 'AVG');
+              addIf(pick('LONG'), 'LONG');
+            }
             players.push({ name: ath.displayName || ath.shortName || '',
-                           jersey: ath.jersey || '',
-                           headline: yds == null ? '' : String(yds),
-                           sub: bits.join(' \u00b7 '), team: abbr });
+                           jersey: ath.jersey || '', line: line, team: abbr });
             found.players++;
           }
           if(players.length){
@@ -452,6 +479,10 @@ function renderList(){
     : '<div class="empty">No games in this feed right now.</div>';
 }
 
+function teamByAbbr(g, abbr){
+  if(!g) return null;
+  return g.teams.filter(function(t){ return t.abbr === abbr; })[0] || null;
+}
 function findGame(){
   const d = S.data[S.league];
   return d ? d.games.filter(function(g){ return g.id === S.gameId; })[0] : null;
@@ -489,13 +520,6 @@ function fieldBar(g){
     + '<span>' + esc((g.teams[1] || {}).abbr || '') + '</span></div></div>';
 }
 
-function unitFor(name){
-  const n = String(name || '').toLowerCase();
-  if(n.indexOf('pass') === 0) return 'PASS';
-  if(n.indexOf('rush') === 0) return 'RUSH';
-  if(n.indexOf('rec') === 0)  return 'REC';
-  return 'YDS';
-}
 function titleFor(name){
   const n = String(name || '').toLowerCase();
   if(n.indexOf('pass') === 0) return 'Passing';
@@ -504,14 +528,18 @@ function titleFor(name){
   return name || 'Other';
 }
 
-function playerRows(players, unit){
+function statLine(parts){
+  if(!parts || !parts.length) return '';
+  return '<div class="statline">' + parts.map(function(x){
+    return x.e ? '<span class="em">' + esc(x.t) + '</span>' : esc(x.t);
+  }).join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
+}
+function playerRows(players){
   return players.map(function(p){
-    return '<div class="row"><div><div class="nm">'
+    return '<div class="rowb"><div class="nm">'
       + (watched(p.name) ? '<span class="trk">&#9733;</span> ' : '')
       + esc(p.name) + (p.jersey ? ' <span class="pos">#' + esc(p.jersey) + '</span>' : '')
-      + '</div>' + (p.sub ? '<div class="sub">' + esc(p.sub) + '</div>' : '') + '</div>'
-      + '<span class="big">' + esc(p.headline || '0')
-      + ' <span class="unit">' + esc(unit) + '</span></span></div>';
+      + '</div>' + statLine(p.line) + '</div>';
   }).join('');
 }
 
@@ -548,16 +576,14 @@ function renderGame(){
     const hits = [];
     for(const sec of sum.sections)
       for(const p of sec.players)
-        if(watched(p.name)) hits.push({ p: p, unit: unitFor(sec.name) });
+        if(watched(p.name)) hits.push({ p: p });
     if(hits.length){
       html += '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
         + '</span><span class="rule"></span></div><div class="card">'
         + hits.map(function(h){
-            return '<div class="row"><div><div class="nm"><span class="trk">&#9733;</span> '
+            return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
               + esc(h.p.name) + ' <span class="pos">' + esc(h.p.team) + '</span></div>'
-              + (h.p.sub ? '<div class="sub">' + esc(h.p.sub) + '</div>' : '') + '</div>'
-              + '<span class="big">' + esc(h.p.headline || '0')
-              + ' <span class="unit">' + esc(h.unit) + '</span></span></div>';
+              + statLine(h.p.line) + '</div>';
           }).join('') + '</div>';
     }else{
       html += '<div class="notice" style="margin-top:16px">'
@@ -588,15 +614,33 @@ function renderBox(){
   let html = heroBlock(g);
   if(abbrs.length > 1){
     html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
+      const on = a === S.boxTeam, c = teamColor(teamByAbbr(g, a) || {});
+      // Selected tab wears that team's own colour rather than the brand teal,
+      // which is what stops the page reading as one grey block.
       return '<button class="tab" type="button" data-team="' + esc(a) + '" aria-selected="'
-        + (a === S.boxTeam) + '">' + esc(a) + '</button>';
+        + on + '"' + (on ? ' style="color:' + c + ';border-color:' + c + ';background:transparent"' : '')
+        + '>' + esc(a) + '</button>';
     }).join('') + '</div>';
   }
-  const mine = sum.sections.filter(function(s){ return s.teamAbbr === S.boxTeam; });
+  // Only the three that matter. ESPN also sends fumbles, defence, kicking and
+  // returns; none of that is what this page is for.
+  const KEEP = ['pass', 'rush', 'rec'];
+  const rank = function(sec){
+    const n = String(sec.name || '').toLowerCase();
+    for(let i = 0; i < KEEP.length; i++) if(n.indexOf(KEEP[i]) === 0) return i;
+    return -1;
+  };
+  const mine = sum.sections
+    .filter(function(s){ return s.teamAbbr === S.boxTeam && rank(s) >= 0; })
+    .sort(function(a, b){ return rank(a) - rank(b); });
+
+  const col = teamColor(teamByAbbr(g, S.boxTeam) || {});
   html += mine.length
     ? mine.map(function(sec){
-        return '<div class="hd"><span>' + esc(titleFor(sec.name)) + '</span><span class="rule"></span></div>'
-          + '<div class="card">' + playerRows(sec.players, unitFor(sec.name)) + '</div>';
+        return '<div class="hd"><span class="swatch" style="background:' + col + '"></span>'
+          + '<span>' + esc(titleFor(sec.name)) + '</span><span class="rule"></span></div>'
+          + '<div class="card tinted" style="border-top-color:' + col + '">'
+          + playerRows(sec.players) + '</div>';
       }).join('')
     : '<div class="empty">No player stats for this team yet.</div>';
   html += '<div class="hd"><span><span class="trk">&#9733;</span> On Your Watchlist</span>'
