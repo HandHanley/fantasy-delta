@@ -1470,14 +1470,14 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
        It carries NO data-sec, so setSection() can never mark it on or treat it as
        a section; tapping it leaves for live.html, which stays inside the installed
        app because the manifest scope is ./ -->
-  <button type="button" class="eb-btn" onclick="location.href='live.html'" role="tab" aria-selected="false">Live</button>
+  <button type="button" class="eb-btn" data-arm="live" onclick="dlNewsSeenArm('live');location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
 <div class="seg" role="tablist" aria-label="Section">
   <button type="button" class="seg-btn on" data-sec="nfl"  onclick="setSection('nfl')"  role="tab" aria-selected="true">NFL</button>
   <button type="button" class="seg-btn"    data-sec="cfb"  onclick="setSection('cfb')"  role="tab" aria-selected="false">College</button>
   <button type="button" class="seg-btn"    data-sec="me"   onclick="setSection('me')"   role="tab" aria-selected="false">My Team</button>
   <!-- Live: see the note on the desktop switcher above. -->
-  <button type="button" class="seg-btn" onclick="location.href='live.html'" role="tab" aria-selected="false">Live</button>
+  <button type="button" class="seg-btn" data-arm="live" onclick="dlNewsSeenArm('live');location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
@@ -4041,8 +4041,11 @@ function countUp(el, target, duration=600) {
 /* ── What's New ──────────────────────────────────────────────────────────────
    Entries are authored here, newest first. One per change a reader would actually
    notice; a CSS fix is not an entry. `tab` is optional — when set, that tab carries
-   a dot until the reader opens it. Set `quiet:true` for anything that shipped a while
-   ago: it still lists, but it raises no bar and no dot.
+   a dot until the reader opens it. `arm` does the same for a section button that is
+   not a tab (Live, which leaves for its own page): the dot sits on [data-arm], and
+   tapping that button retires it before the page changes.
+   Set `quiet:true` for anything that shipped a while ago: it still lists, but it
+   raises no bar and no dot.
 
    They live in this file rather than data/whats-new.json on purpose: a data file
    needs a loader, and a loader has to be added to all three boot chains or it
@@ -4052,6 +4055,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-09-21-live', d:'21 Sep 2026', t:'Live Scores', arm:'live',
+   b:"Every NFL and college game as it happens. Follow the ball down the field, read every play quarter by quarter, and see what the players on your watchlist are scoring in your league's own format. Tap Live, beside My Team."},
   {id:'2026-09-13-ledger', d:'13 Sep 2026', t:'League Trade Ledger', tab:'myteam',
    b:"Every trade your league has ever made, priced on today's market at your own settings. The search reaches through picks. My Team &rsaquo; Ledger."},
   {id:'2026-09-03-power', d:'3 Sep 2026', t:'Power Rankings', quiet:true,
@@ -4104,15 +4109,25 @@ function dlNewsPaint(){
   }
   document.querySelectorAll('.dl-nw-dot').forEach(d=>d.remove());
   document.querySelectorAll('.dl-nw-hastab').forEach(t=>t.classList.remove('dl-nw-hastab'));
-  un.forEach(function(n){
-    if(!n.tab) return;
-    const b=dlTabBtn(n.tab);
-    if(!b) return;
+  const dotOn=function(b){
     b.classList.add('dl-nw-hastab');
     const dot=document.createElement('span');
     dot.className='dl-nw-dot'; dot.setAttribute('aria-hidden','true');
     b.appendChild(dot);
+  };
+  un.forEach(function(n){
+    if(n.tab){ const b=dlTabBtn(n.tab); if(b) dotOn(b); }
+    // An arm lives in BOTH switchers (phone bar and desktop row); dot each.
+    if(n.arm) document.querySelectorAll('[data-arm="'+n.arm+'"]').forEach(dotOn);
   });
+}
+/* Tapping an arm retires its entry. Called from the button's own onclick BEFORE it
+   navigates: localStorage writes synchronously, so the seen state is saved even
+   though this page is about to be replaced. */
+function dlNewsSeenArm(id){
+  const hit=dlNewsUnseen().filter(n=>n.arm===id);
+  if(!hit.length) return;
+  dlNewsSave((dlNewsSeen()||[]).concat(hit.map(n=>n.id)));
 }
 /* Arriving on the tab is the whole point of the dot, so it retires that entry. */
 function dlNewsSeenTab(id){
@@ -5549,7 +5564,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-21a</span>
+  <span class="foot-build">2026-09-21b</span>
 </footer>
 
 
