@@ -57,7 +57,7 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stamp{font-family:var(--mono);font-size:10.5px;color:var(--fog);white-space:nowrap}
 .back{background:transparent;border:0;color:var(--teal-br);font-size:17px;line-height:1;
-      padding:8px 10px 8px 0;margin:-8px 0}
+      padding:8px 10px 8px 0;margin:-8px 0;text-decoration:none;display:inline-block}
 
 .tabs{display:flex;gap:8px;margin-bottom:12px}
 .tab{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--fog);
@@ -627,6 +627,10 @@ function readWatchlist(league){
    wire is compressed and typically far smaller — the Network tab shows the real
    figure, and that is the one to check before worrying about a phone plan. */
 const DEBUG = /(?:^|[?&])debug=1(?:&|$)/.test(location.search);
+/* ?lg=cfb arrives from the College section of the app, ?lg=nfl from NFL, so the
+   sport is already chosen before the page draws and the reader is not asked the
+   question twice. Anything else falls back to NFL. */
+const START_LG = /(?:^|[?&])lg=cfb(?:&|$)/.test(location.search) ? 'cfb' : 'nfl';
 const LIST_MS  = 60000;   // the game list, nothing open
 const SCORE_MS = 15000;   // score, clock, possession while following a game
 const DETAIL_MS = 60000;  // box score and last play while following a game
@@ -634,7 +638,7 @@ const DETAIL_MS = 60000;  // box score and last play while following a game
    the back arrow goes back where you came from, and the watchlist block appears
    on the box score only when you arrived straight from the list — because then
    you skipped the screen that would have shown it. */
-const S = { view:'list', league:'nfl', gameId:null, boxTeam:null, from:'game',
+const S = { view:'list', league:START_LG, gameId:null, boxTeam:null, from:'game',
             data:{nfl:null,cfb:null}, at:{nfl:0,cfb:0},
             game:null, gameAt:0, failed:false, watch:new Set(), fc:{},
             /* Anything the reader has opened has to live HERE, not in the DOM.
@@ -741,7 +745,10 @@ function gameCard(g){
 
 function renderList(){
   const d = S.data[S.league];
-  document.getElementById('head').innerHTML = '<h1>Live</h1>';
+  // A real link, so opening in a new tab and long-press both behave. "./" lands
+  // back on whichever section of the app was last open.
+  document.getElementById('head').innerHTML =
+    '<a class="back" href="./" aria-label="Back To DELTA">&#8592;</a><h1>Live</h1>';
   document.getElementById('tabs').innerHTML =
       '<div class="tabs"><button class="tab" type="button" data-lg="nfl" aria-selected="'
     + (S.league === 'nfl') + '">NFL</button>'
