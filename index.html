@@ -463,8 +463,6 @@ body{font-family:var(--sans);background:var(--ink);color:var(--paper)}
    carried .about-tab, which sets margin-left:auto — two auto margins split the
    free space between them, leaving Sign in stranded mid-bar. */
 .tab-right{margin-left:auto;display:flex;align-items:center;gap:2px}
-/* An anchor needs the tab look without a link's underline or baseline. */
-a.tab.live-link{text-decoration:none;display:inline-flex;align-items:center}
 .tab-right .about-tab{margin-left:0}
 /* Inherits .tab typography (12px/600/--fog) so it matches Projections, Trade
    Calc et al automatically rather than drifting if .tab is ever restyled. */
@@ -1464,11 +1462,22 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   <button type="button" class="eb-btn on" data-sec="nfl" onclick="setSection('nfl')" role="tab" aria-selected="true">NFL</button>
   <button type="button" class="eb-btn"    data-sec="cfb" onclick="setSection('cfb')" role="tab" aria-selected="false">College</button>
   <button type="button" class="eb-btn"    data-sec="me"  onclick="setSection('me')"  role="tab" aria-selected="false">My Team</button>
+  <!-- LIVE is its own arm, beside NFL / College / My Team — it covers both sports,
+       so it never belonged under either one. It is a <button> for the same reason
+       the others are: .tab / .seg-btn / .eb-btn never set a font, so a button
+       takes the phone's system face while an <a> inherits the page's, and the two
+       look like different sizes and weights side by side. That was the bug in 19b.
+       It carries NO data-sec, so setSection() can never mark it on or treat it as
+       a section; tapping it leaves for live.html, which stays inside the installed
+       app because the manifest scope is ./ -->
+  <button type="button" class="eb-btn" onclick="location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
 <div class="seg" role="tablist" aria-label="Section">
   <button type="button" class="seg-btn on" data-sec="nfl"  onclick="setSection('nfl')"  role="tab" aria-selected="true">NFL</button>
   <button type="button" class="seg-btn"    data-sec="cfb"  onclick="setSection('cfb')"  role="tab" aria-selected="false">College</button>
   <button type="button" class="seg-btn"    data-sec="me"   onclick="setSection('me')"   role="tab" aria-selected="false">My Team</button>
+  <!-- Live: see the note on the desktop switcher above. -->
+  <button type="button" class="seg-btn" onclick="location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
@@ -1484,15 +1493,6 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
-  <!-- Live scores. Deliberately NOT data-tab: it is a separate page, not a panel,
-       and setSection() iterates .tab[data-tab] to decide which panel to show. A
-       data-tab here could be picked as a section's landing tab, and showTab()
-       would then look for a panel that does not exist. The .live-link class is
-       what setSection uses to show the right one per section. It appears under
-       BOTH sports because it covers both, and the section switcher already
-       answers which one, so the page opens on that sport unasked. -->
-  <a class="tab live-link" data-sec="nfl" href="live.html?lg=nfl">Live</a>
-  <a class="tab live-link" data-sec="cfb" href="live.html?lg=cfb" style="display:none">Live</a>
   <span class="tab-right">
   <button class="tab signin-tab" id="signin-btn" title="Sign in to sync across your devices"
     onclick="openSettingsAtAccount(event)" style="display:none">Sign in</button>
@@ -3882,11 +3882,6 @@ function setSection(s, wantTab){
     b.style.display = show ? '' : 'none';
     if(show) vis.push(b);
   });
-  // Live is a link rather than a tab, so it is filtered separately and never
-  // enters `vis` — nothing can land on it as a section's default.
-  document.querySelectorAll('.live-link').forEach(a=>{
-    a.style.display = (a.dataset.sec===s) ? '' : 'none';
-  });
   if(!vis.length) return;
   const remembered=dlPref('delta_lasttab2_'+s);   // v2: retires values written under the old ordering bug
   // Fall back through SEC_TABS order, not DOM order — the intended first tab of a
@@ -5554,7 +5549,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-19b</span>
+  <span class="foot-build">2026-09-21a</span>
 </footer>
 
 

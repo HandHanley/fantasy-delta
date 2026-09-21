@@ -133,6 +133,9 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
    use, not an exception to the rule. */
 .trk{color:var(--topaz);font-size:11px}
 .ahead{color:var(--paper);font-weight:700}
+/* A scoring play in the log reads bright and bold, so a thumb scrolling fast
+   still stops on it. */
+.play.scored{color:var(--paper);font-weight:700}
 .fp{margin-left:auto;font-family:var(--mono);font-size:15px;font-weight:700;
     white-space:nowrap;font-variant-numeric:tabular-nums}
 .fp .fpu{font-size:9px;font-weight:400;color:var(--fog)}
@@ -482,12 +485,44 @@ const ADAPTERS = {
       }
       // The drive's plays, newest first. Six is enough to catch up on what was
       // missed without turning the screen into a transcript.
-      const cur = raw && raw.drives && raw.drives.current;
-      const plays = ((cur && cur.plays) || [])
-        .filter(function(p){ return p && p.text; })
-        .slice(-6).reverse()
-        .map(function(p){ return { text: p.text, at: (p.clock && p.clock.displayValue) || '' }; });
+      /* EVERY DRIVE, not just the current one. Reading only drives.current was
+         why the count wandered between 1 and 6: a drive that has just started
+         has one play in it. The last six now come from the whole game, so the
+         count only drops below six in the opening minutes.
+
+         The current drive can also appear as the last entry of drives.previous,
+         so drives are keyed by id and the later copy wins. Plays are keyed the
+         same way, so a play is never listed twice. */
+      const dr = (raw && raw.drives) || {};
+      const rawDrives = [].concat(dr.previous || [], dr.current ? [dr.current] : []);
+      const driveIdx = {}, drives = [];
+      for(const d of rawDrives){
+        if(!d) continue;
+        const dteam = (d.team && (d.team.abbreviation || d.team.displayName)) || '';
+        const dplays = (d.plays || []).filter(function(p){ return p && p.text; }).map(function(p){
+          return { id: p.id || null, text: p.text,
+                   at: (p.clock && p.clock.displayValue) || '',
+                   period: (p.period && p.period.number) || null,
+                   scoring: !!p.scoringPlay };
+        });
+        const entry = { id: d.id || null, team: dteam,
+                        result: d.displayResult || d.result || '',
+                        desc: d.description || '', plays: dplays };
+        if(entry.id && driveIdx[entry.id] != null){ drives[driveIdx[entry.id]] = entry; continue; }
+        if(entry.id) driveIdx[entry.id] = drives.length;
+        drives.push(entry);
+      }
+      const seenPlay = {}, flat = [];
+      for(const d of drives){
+        for(const p of d.plays){
+          const k = p.id || (p.period + '|' + p.at + '|' + p.text);
+          if(seenPlay[k]) continue;
+          seenPlay[k] = 1; flat.push(p);
+        }
+      }
+      const plays = flat.slice(-6).reverse();
       found.lastPlay = plays.length;
+      found.drives = drives.length;
       const lastPlay = plays.length ? plays[0] : null;
       /* Team totals — plays, yards, time of possession. They say whether this is
          a game with volume in it, which says something about everyone playing in
@@ -531,7 +566,7 @@ const ADAPTERS = {
         });
       found.scoringPlays = scoring.length;
 
-      return { sections: sections, lastPlay: lastPlay, plays: plays,
+      return { sections: sections, lastPlay: lastPlay, plays: plays, drives: drives,
                scoring: scoring, totals: totals, found: found };
     }
   }
@@ -630,10 +665,24 @@ const DEBUG = /(?:^|[?&])debug=1(?:&|$)/.test(location.search);
 /* ?lg=cfb arrives from the College section of the app, ?lg=nfl from NFL, so the
    sport is already chosen before the page draws and the reader is not asked the
    question twice. Anything else falls back to NFL. */
-const START_LG = /(?:^|[?&])lg=cfb(?:&|$)/.test(location.search) ? 'cfb' : 'nfl';
+const LG_LS = 'delta_live_lg';
+/* The Live arm in the app carries no sport, so the page remembers the last one
+   you looked at on this device. ?lg= still wins when a link sets it. Per-device,
+   like every other display preference on the site. */
+const START_LG = (function(){
+  const m = location.search.match(/(?:^|[?&])lg=(cfb|nfl)(?:&|$)/);
+  if(m) return m[1];
+  try{ const v = localStorage.getItem(LG_LS); if(v === 'cfb' || v === 'nfl') return v; }catch(e){}
+  return 'nfl';
+})();
 const LIST_MS  = 60000;   // the game list, nothing open
 const SCORE_MS = 15000;   // score, clock, possession while following a game
-const DETAIL_MS = 60000;  // box score and last play while following a game
+const DETAIL_MS = 60000;  // box score: numbers can lag a minute unnoticed
+/* The Live and Plays tabs are where you are reading plays as they happen, and
+   a minute's lag there is a whole series gone by. Twice as fast there only —
+   this is the heaviest response the page pulls, so the box score keeps the
+   slower clock. */
+const FOLLOW_MS = 30000;
 /* `from` records which screen the box score was reached from. It does two jobs:
    the back arrow goes back where you came from, and the watchlist block appears
    on the box score only when you arrived straight from the list — because then
@@ -969,11 +1018,46 @@ function renderGame(){
    button at the bottom and a back arrow at the top. Only for a game that has
    something live to show — a finished one has a box score and nothing else. */
 function gameTabs(g, which){
-  if(!g || g.state === 'post') return '';
-  return '<div class="tabs"><button class="tab" type="button" data-gv="game" aria-selected="'
-    + (which === 'game') + '">Live</button>'
-    + '<button class="tab" type="button" data-gv="box" aria-selected="'
-    + (which === 'box') + '">Box Score</button></div>';
+  if(!g || g.state === 'pre') return '';
+  // A finished game has nothing live, but its play log is still worth reading.
+  const list = g.state === 'post' ? [['box','Box Score'],['plays','Plays']]
+                                  : [['game','Live'],['box','Box Score'],['plays','Plays']];
+  return '<div class="tabs">' + list.map(function(x){
+    return '<button class="tab" type="button" data-gv="' + x[0] + '" aria-selected="'
+      + (which === x[0]) + '">' + x[1] + '</button>';
+  }).join('') + '</div>';
+}
+
+/* THE WHOLE GAME, PLAY BY PLAY. Newest drive first and newest play first within
+   it — the same rule as the Last Play block, so "down the page" always means
+   "earlier". (The scoring summary is the one exception, and that is because a
+   running score only reads forwards.) Scores are picked out so a glance down
+   the list finds them. */
+function renderPlays(){
+  const g = findGame(), sum = S.game;
+  document.getElementById('head').innerHTML =
+    '<button class="back" type="button" id="back" aria-label="Back To Game List">&#8592;</button><h1>'
+    + esc(g ? g.teams.map(function(t){ return t.abbr; }).join(' at ') : 'Plays') + '</h1>';
+  document.getElementById('tabs').innerHTML = gameTabs(g, 'plays');
+  if(!g){ paint('<div class="empty">That game is no longer in the feed.</div>'); return; }
+  const drives = (sum && sum.drives) || [];
+  if(!drives.length){ paint('<div class="notice">' + esc(noDetailYet(g)) + '</div>'); return; }
+  const lastIdx = drives.length - 1;
+  paint(heroBlock(g) + drives.slice().reverse().map(function(d, i){
+    const t = g.teams.filter(function(x){ return String(x.abbr) === String(d.team); })[0];
+    const current = i === 0 && g.state === 'in';
+    return '<div class="hd"><span style="display:flex;align-items:center;gap:7px">'
+      + (t ? '<span class="swatch" style="background:' + teamColor(t) + '"></span>' : '')
+      + esc(d.team || 'Drive') + (current ? ' &middot; On The Field' : (d.result ? ' &middot; ' + esc(d.result) : ''))
+      + '</span><span class="rule"></span></div>'
+      + (d.desc ? '<div class="fine" style="margin:-4px 2px 8px">' + esc(d.desc) + '</div>' : '')
+      + '<div class="card">' + d.plays.slice().reverse().map(function(p){
+          const q = p.period ? 'Q' + p.period : '';
+          return '<div class="rowb"' + (p.scoring ? ' style="border-left:0"' : '') + '>'
+            + ((q || p.at) ? '<div class="sub" style="margin:0 0 3px">' + esc((q + ' ' + p.at).trim()) + '</div>' : '')
+            + '<div class="play' + (p.scoring ? ' scored' : '') + '">' + esc(p.text) + '</div></div>';
+        }).join('') + '</div>';
+  }).join(''));
 }
 
 /* The scoring summary. Shown on whichever screen you actually land on: the
@@ -1088,7 +1172,10 @@ function renderBox(){
   if(!S.boxTeam || abbrs.indexOf(S.boxTeam) < 0) S.boxTeam = abbrs[0] || null;
 
   let html = heroBlock(g);
-  if(S.from === 'list'){ html += scoringBlock(g, sum); html += watchlistBlock(sum); }
+  // A finished game has no Live tab, so its box score carries what that tab
+  // would have shown. Keyed on the game's state rather than on how you got
+  // here, because a finished game now also has a Plays tab to wander through.
+  if(g.state === 'post'){ html += scoringBlock(g, sum); html += watchlistBlock(sum); }
   if(abbrs.length > 1){
     html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
       const on = a === S.boxTeam, c = teamColor(teamByAbbr(g, a) || {});
@@ -1158,6 +1245,7 @@ function render(){
     ? '<div class="notice">Could not reach the feed just now. Showing the last good read.</div>' : '';
   if(S.view === 'list') renderList();
   else if(S.view === 'game') renderGame();
+  else if(S.view === 'plays') renderPlays();
   else renderBox();
 
   document.getElementById('stamp').textContent =
@@ -1236,7 +1324,8 @@ function schedule(){
     timer = setInterval(loadList, LIST_MS);
   }else{
     timer = setInterval(loadList, SCORE_MS);           // cheap, fast, all games
-    detailTimer = setInterval(loadGame, DETAIL_MS);    // expensive, slow, one game
+    detailTimer = setInterval(loadGame,                // expensive, one game
+      S.view === 'box' ? DETAIL_MS : FOLLOW_MS);
   }
 }
 document.addEventListener('visibilitychange', function(){
@@ -1258,6 +1347,7 @@ document.addEventListener('click', async function(ev){
   const lg = t.closest ? t.closest('[data-lg]') : null;
   if(lg){
     S.league = lg.getAttribute('data-lg'); S.view = 'list'; S.game = null; S.gameId = null;
+    try{ localStorage.setItem(LG_LS, S.league); }catch(e){}
     render(); loadList(); schedule(); return;
   }
   const tm = t.closest ? t.closest('[data-team]') : null;
