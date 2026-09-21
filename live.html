@@ -24,6 +24,18 @@
   The Feed Check panel reports which of these actually arrived. Anything
   reading 0 there is not available to build on, whatever the docs say.
 
+  Confirmed 21 Sep 2026, by the owner's phone against the live feed:
+    NFL ?seasontype=2&week=N returns that week (finals for Week 1, schedule
+    for Week 13) · leagues[0].calendar lists every week with its dates ·
+    college default feed = only games with a Top 25 team (18 of them) ·
+    college ?groups=80 = every top-division game (71 the same weekend).
+  ASSUMED, checked by the page itself rather than trusted:
+    college honours ?week= the way the NFL does — every week read is compared
+    with the week the response says it is, and a mismatch is shown, not drawn ·
+    the summary's header carries score, clock and status — if it does not, a
+    game followed outside the Top 25 falls back to the all-games list, and
+    Feed Check's scoreFrom line says which one is feeding it.
+
   ── THE FIELD BAR IS UNVERIFIED ─────────────────────────────────────────────
   ESPN's yardLine convention is not documented anywhere reliable. The bar is
   drawn from it, and the RAW values are printed in Feed Check so the first live
@@ -193,6 +205,26 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .empty{color:var(--fog);font-size:13px;padding:18px 2px}
 details{margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
 summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
+
+/* WEEK STRIP. One line that scrolls sideways, like the app's own tabs, so no
+   week is ever hidden off the edge. The chosen week is centred when it changes,
+   never on a refresh, so a thumb halfway along the strip is not yanked back. */
+.wks{display:flex;gap:6px;overflow-x:auto;margin:0 -12px 12px;padding:0 12px 2px;
+     scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wks::-webkit-scrollbar{display:none}
+.wk{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--fog);
+    border-radius:999px;padding:7px 12px;font-family:var(--mono);font-size:12px;
+    font-weight:600;white-space:nowrap}
+/* This week reads brighter than the rest, so it can be found again after
+   wandering back through the season. */
+.wk[aria-current="date"]{color:var(--paper)}
+.wk[aria-pressed="true"]{color:var(--teal-br);border-color:var(--teal-br);background:var(--teal-tint)}
+/* 16px or iOS zooms the page on focus and never zooms back. */
+.srch{display:block;width:100%;background:var(--ink-2);border:1px solid var(--line);
+      color:var(--paper);border-radius:10px;padding:11px 12px;margin-bottom:12px;
+      font-family:var(--sans);font-size:16px;-webkit-appearance:none;appearance:none}
+.srch::placeholder{color:var(--fog-2);font-size:13px}
+.srch:focus{outline:none;border-color:var(--teal-br)}
 .fc{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:8px;white-space:pre-wrap;
     word-break:break-word}
 </style>
@@ -204,6 +236,11 @@ summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
   <div class="stamp" id="stamp">&mdash;</div>
 </div>
 <div id="tabs"></div>
+<!-- Both live OUTSIDE #view on purpose. #view is repainted on every refresh;
+     a search box inside it would lose the keyboard mid-word, and the week strip
+     would lose its scroll position every minute. -->
+<div id="weeks"></div>
+<div id="search"></div>
 <div id="notice"></div>
 <div id="view"><div class="empty">Loading&hellip;</div></div>
 
@@ -234,7 +271,18 @@ const ADAPTERS = {
     label: 'ESPN',
     base: 'https://site.api.espn.com/apis/site/v2/sports/football/',
     path: function(league){ return league === 'cfb' ? 'college-football' : 'nfl'; },
-    scoreboardUrl: function(league){ return this.base + this.path(league) + '/scoreboard'; },
+    /* opt.week = {st, wk} asks for one week; omitted, ESPN sends the current
+       one, which is the address this page has always used. opt.all asks the
+       college feed for every top-division game rather than only the games with
+       a Top 25 team in them — 71 against 18 on the weekend it was measured. */
+    scoreboardUrl: function(league, opt){
+      opt = opt || {};
+      const q = [];
+      if(opt.all && league === 'cfb') q.push('groups=80');
+      if(opt.week) q.push('seasontype=' + encodeURIComponent(opt.week.st),
+                          'week=' + encodeURIComponent(opt.week.wk));
+      return this.base + this.path(league) + '/scoreboard' + (q.length ? '?' + q.join('&') : '');
+    },
     summaryUrl: function(league, id){
       return this.base + this.path(league) + '/summary?event=' + encodeURIComponent(id);
     },
@@ -269,7 +317,11 @@ const ADAPTERS = {
           const ball = sit.possession != null && String(sit.possession) === String(t.id);
           const abbr = t.abbreviation || t.shortDisplayName || t.displayName || '?';
           if(ball) possAbbr = abbr;
-          return { abbr: abbr, nick: t.name || '', score: c.score == null ? null : String(c.score),
+          // loc / full / short are only for FINDING a team — search, and matching
+          // a watchlisted player's school. Nothing draws them.
+          return { abbr: abbr, nick: t.name || '', loc: t.location || '',
+                   full: t.displayName || '', short: t.shortDisplayName || '',
+                   score: c.score == null ? null : String(c.score),
                    record: rec, color: t.color || null, altColor: t.alternateColor || null,
                    hasBall: ball, homeAway: c.homeAway || '' };
         });
@@ -301,7 +353,46 @@ const ADAPTERS = {
           teams: teams
         });
       }
-      return { games: games, found: found };
+      /* The season's weeks, with ESPN's own labels and dates, so the week strip
+         is never a list typed in here that goes stale. Preseason and off-season
+         are left out: nothing in them matters to a dynasty roster. */
+      const calendar = [];
+      const lg0 = raw && raw.leagues && raw.leagues[0];
+      for(const blk of ((lg0 && lg0.calendar) || [])){
+        const st = Number(blk && blk.value);
+        if(st !== 2 && st !== 3) continue;
+        for(const e of (blk.entries || [])){
+          const wk = Number(e && e.value);
+          if(!isFinite(wk)) continue;
+          calendar.push({ st: st, wk: wk,
+                          label: st === 2 ? 'Wk ' + wk : (e.alternateLabel || e.label || ('Wk ' + wk)) });
+        }
+      }
+      const week = (raw && raw.season && raw.week && raw.week.number != null)
+        ? { st: Number(raw.season.type), wk: Number(raw.week.number) } : null;
+      return { games: games, found: found, calendar: calendar, week: week };
+    },
+
+    /* One game, read from the SUMMARY instead of the scoreboard. Used only while
+       following a college game that is not in the Top 25 list: that list does
+       not carry it, and re-reading all 71 games every few seconds to keep one
+       score current is the cost this avoids. The header is shaped like a
+       scoreboard event, so it goes through the same reader and cannot drift
+       from it. Returns null if the header is not there — the caller then falls
+       back to the all-games list. */
+    summaryGame: function(raw){
+      const h = raw && raw.header;
+      const comp = h && h.competitions && h.competitions[0];
+      if(!comp || !(comp.competitors || []).length) return null;
+      const sit = Object.assign({}, (raw && raw.situation) || {}, comp.situation || {});
+      if(sit.possession == null){
+        const pc = (comp.competitors || []).filter(function(c){ return c && c.possession === true; })[0];
+        if(pc) sit.possession = (pc.team && pc.team.id) || pc.id;
+      }
+      const ev = { id: h.id || comp.id || '', status: comp.status || h.status || {},
+                   competitions: [Object.assign({}, comp, { situation: sit })] };
+      const g = this.scoreboard({ events: [ev] }).games[0];
+      return g || null;
     },
 
     summary: function(raw){
@@ -702,8 +793,26 @@ const S = { view:'list', league:START_LG, gameId:null, boxTeam:null, from:'game'
             playsOpen:false, painted:'',
             // null means "follow the latest quarter"; a number means the reader
             // picked one and it should stay picked.
-            playsQ:null };
-let timer = null, detailTimer = null;
+            playsQ:null,
+            /* WEEKS. wk[league] is null for "whatever ESPN says is current" —
+               the address this page has always used — or {st, wk} for a week the
+               reader picked. cur is the current week as ESPN reported it; cal is
+               the season's calendar. */
+            wk:{nfl:null,cfb:null}, cur:{nfl:null,cfb:null}, cal:{nfl:null,cfb:null},
+            weeksPainted:'',
+            /* THE ALL-GAMES COLLEGE LIST. Several times heavier than the Top 25
+               list, so it is only read when something needs it: a search, or a
+               watchlisted player at a school the Top 25 list does not show. */
+            full:{nfl:null,cfb:null}, fullState:'idle', q:'',
+            /* normName(player) -> [school, …] from DELTA's own college file, so a
+               watchlisted college player's game can be found. A name can belong
+               to more than one player, so it can map to more than one school. */
+            school:null, schoolState:'idle',
+            /* A game followed outside the Top 25 list, as last read from its
+               summary. soloOk: null not yet known, true the summary carries the
+               score, false it does not and the all-games list stands in. */
+            solo:null, soloOk:null };
+let timer = null, detailTimer = null, fullTimer = null;
 
 function esc(s){
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
@@ -749,13 +858,78 @@ function teamColor(t){
   return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
-async function getJSON(url){
-  const res = await fetch(url, { cache:'no-store' });
+async function getJSON(url, cache){
+  const res = await fetch(url, { cache: cache || 'no-store' });
   if(!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
 
 function watched(name){ return S.watch.size > 0 && S.watch.has(normName(name)); }
+
+function wkKey(w){ return w ? w.st + '-' + w.wk : ''; }
+function viewWeek(){ return S.wk[S.league] || S.cur[S.league]; }
+
+/* Team names are compared on letters and digits only. "Hawai'i" and the
+   ʻokina spelling both become "hawaii"; "Texas A&M" matches itself either way. */
+function normTeam(s){
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/&/g, ' and ').replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+}
+/* Every name a team goes by in the feed, plus its full name with the nickname
+   taken off — "Florida International Panthers" becomes "florida international",
+   which is how DELTA's college file spells a school whose short name is "FIU". */
+function teamKeys(t){
+  const keys = [t.loc, t.short, t.abbr, t.full].map(normTeam);
+  const f = normTeam(t.full), n = normTeam(t.nick);
+  if(f && n && f.length > n.length && f.slice(-n.length) === n) keys.push(f.slice(0, f.length - n.length).trim());
+  return keys.filter(Boolean);
+}
+function gameHasSchool(g, school){
+  const s = normTeam(school);
+  return !!s && g.teams.some(function(t){ return teamKeys(t).indexOf(s) >= 0; });
+}
+function gameMatches(g, q){
+  return g.teams.some(function(t){
+    return teamKeys(t).concat([normTeam(t.nick)]).some(function(k){ return k.indexOf(q) >= 0; });
+  });
+}
+function searchQ(){ const q = normTeam(S.q); return q.length >= 2 ? q : ''; }
+
+function watchSchools(){
+  if(S.league !== 'cfb' || !S.watch.size || !S.school) return [];
+  const out = [];
+  S.watch.forEach(function(n){
+    (S.school[n] || []).forEach(function(tm){ if(out.indexOf(tm) < 0) out.push(tm); });
+  });
+  return out;
+}
+/* Games with a watchlisted player's school in them that the Top 25 list does
+   not already show. */
+function extraGames(){
+  const d = S.data.cfb, f = S.full.cfb;
+  if(S.league !== 'cfb' || !d || !f) return [];
+  const schools = watchSchools();
+  if(!schools.length) return [];
+  const have = {};
+  d.games.forEach(function(g){ have[g.id] = 1; });
+  return f.games.filter(function(g){
+    return !have[g.id] && schools.some(function(s){ return gameHasSchool(g, s); });
+  });
+}
+/* Does anything on screen need the all-games list? */
+function needFull(){
+  if(S.league !== 'cfb' || !S.data.cfb) return false;
+  if(searchQ()) return true;
+  const shown = S.data.cfb.games;
+  return watchSchools().some(function(s){
+    return !shown.some(function(g){ return gameHasSchool(g, s); });
+  });
+}
+function anyLive(games){ return (games || []).some(function(g){ return g.state === 'in'; }); }
+function gameIsFeatured(id){
+  const d = S.data[S.league];
+  return !!(d && d.games.some(function(g){ return g.id === id; }));
+}
 
 /* ── rendering ─────────────────────────────────────────────────────────── */
 function teamRow(t, lead, big){
@@ -815,15 +989,80 @@ function renderList(){
     paint('<div class="empty">' + (S.failed ? 'Nothing to show yet.' : 'Loading\u2026') + '</div>');
     return;
   }
+  if(d.wrongWeek){
+    paint('<div class="empty">ESPN did not send that week. Try another.</div>');
+    return;
+  }
+
+  /* SEARCH. Any top-division game that week, not only the ones on the list.
+     Until the all-games list arrives, the Top 25 games that match show at once
+     so the screen is never blank while it loads. */
+  const q = S.league === 'cfb' ? searchQ() : '';
+  if(q){
+    const pool = S.full.cfb ? S.full.cfb.games : d.games;
+    const hits = pool.filter(function(g){ return gameMatches(g, q); });
+    const note = S.full.cfb ? ''
+      : '<div class="fine" style="margin:0 2px 10px">'
+        + (S.fullState === 'failed' ? 'Could not load every game just now, so only the listed games are searched.'
+                                    : 'Searching every game&hellip;') + '</div>';
+    paint(note + (hits.length
+      ? '<div class="hd"><span>Matches &middot; ' + hits.length + '</span><span class="rule"></span></div>'
+        + hits.map(gameCard).join('')
+      : (S.full.cfb || S.fullState === 'failed'
+          ? '<div class="empty">No game this week for \u201c' + esc(S.q.trim()) + '\u201d.</div>' : '')));
+    return;
+  }
+
+  /* Watchlisted players at schools the Top 25 list leaves out — the reason
+     this page reads the all-games list at all. They go first: they are the
+     games this reader has told DELTA they care about. */
+  const extra = extraGames();
+  const extraHtml = extra.length
+    ? '<div class="hd"><span>Your Watchlist Games &middot; ' + extra.length
+      + '</span><span class="rule"></span></div>' + extra.map(gameCard).join('')
+    : '';
   const groups = [['In Progress','in'],['Upcoming','pre'],['Final','post']]
     .map(function(x){ return [x[0], d.games.filter(function(g){ return g.state === x[1]; })]; })
     .filter(function(x){ return x[1].length; });
-  paint(groups.length
+  paint(extraHtml + (groups.length
     ? groups.map(function(x){
         return '<div class="hd"><span>' + esc(x[0]) + ' &middot; ' + x[1].length
           + '</span><span class="rule"></span></div>' + x[1].map(gameCard).join('');
       }).join('')
-    : '<div class="empty">No games in this feed right now.</div>');
+    : (extraHtml ? '' : '<div class="empty">No games in this feed right now.</div>')));
+}
+
+/* Painted only when its markup changes, and centred only then, so the minute
+   refresh never resets a strip the reader has scrolled. */
+function renderWeeks(){
+  const el = document.getElementById('weeks');
+  const cal = S.cal[S.league];
+  const sel = wkKey(viewWeek()), cur = wkKey(S.cur[S.league]);
+  const html = (S.view === 'list' && cal && cal.length)
+    ? '<div class="wks" id="wks">' + cal.map(function(e){
+        const k = wkKey(e);
+        return '<button class="wk" type="button" data-wk="' + esc(k) + '" aria-pressed="' + (k === sel) + '"'
+          + (k === cur ? ' aria-current="date"' : '') + '>' + esc(e.label) + '</button>';
+      }).join('') + '</div>'
+    : '';
+  if(html === S.weeksPainted) return;
+  S.weeksPainted = html;
+  el.innerHTML = html;
+  const strip = document.getElementById('wks');
+  const on = strip && strip.querySelector('[aria-pressed="true"]');
+  if(strip && on) strip.scrollLeft = Math.max(0, on.offsetLeft - (strip.clientWidth - on.offsetWidth) / 2);
+}
+
+/* College only: the NFL never has more than sixteen games, so it lists them all.
+   Built once and then left alone — rebuilding it would drop the keyboard. */
+function renderSearch(){
+  const el = document.getElementById('search');
+  if(!(S.view === 'list' && S.league === 'cfb')){ if(el.innerHTML) el.innerHTML = ''; return; }
+  if(document.getElementById('srch')) return;
+  el.innerHTML = '<input class="srch" id="srch" type="search" inputmode="search" enterkeyhint="search"'
+    + ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"'
+    + ' placeholder="Find Any Team" aria-label="Find any team\u2019s game this week">';
+  document.getElementById('srch').value = S.q;
 }
 
 function teamByAbbr(g, abbr){
@@ -832,7 +1071,11 @@ function teamByAbbr(g, abbr){
 }
 function findGame(){
   const d = S.data[S.league];
-  return d ? d.games.filter(function(g){ return g.id === S.gameId; })[0] : null;
+  const hit = d ? d.games.filter(function(g){ return g.id === S.gameId; })[0] : null;
+  if(hit) return hit;
+  if(S.solo && S.solo.id === S.gameId) return S.solo;
+  const f = S.full[S.league];
+  return (f && f.games.filter(function(g){ return g.id === S.gameId; })[0]) || null;
 }
 
 /* WHERE THE BALL IS.
@@ -1284,6 +1527,19 @@ function render(){
   S.watch = readWatchlist(S.league);
   S.fc.watchlist = S.watch.size;
 
+  if(S.league === 'cfb'){
+    S.fc.watchSchools = watchSchools().length;
+    // A school with no game in the all-games list is usually a bye week — or a
+    // spelling the matcher does not know. This line is how to tell which.
+    const f = S.full.cfb;
+    if(f) S.fc.watchNoGame = watchSchools().filter(function(s){
+      return !f.games.some(function(g){ return gameHasSchool(g, s); });
+    }).join(', ') || 'none';
+  }
+  S.fc.week = wkKey(viewWeek()) + (S.wk[S.league] ? '' : ' (current)');
+  renderWeeks();
+  renderSearch();
+
   document.getElementById('notice').innerHTML = S.failed
     ? '<div class="notice">Could not reach the feed just now. Showing the last good read.</div>' : '';
   if(S.view === 'list') renderList();
@@ -1343,31 +1599,135 @@ document.addEventListener('keydown', function(e){
 
 /* ── loading ───────────────────────────────────────────────────────────── */
 async function loadList(){
-  const a = ADAPTERS[ACTIVE_SOURCE], which = S.league;
+  const a = ADAPTERS[ACTIVE_SOURCE], which = S.league, w = S.wk[which], key = wkKey(w);
+  const first = !S.data[which];
   try{
-    const parsed = a.scoreboard(await getJSON(a.scoreboardUrl(which)));
+    const parsed = a.scoreboard(await getJSON(a.scoreboardUrl(which, { week: w })));
+    // The reader picked another week while this was on its way. Drop it.
+    if(wkKey(S.wk[which]) !== key) return;
+    if(parsed.calendar.length) S.cal[which] = parsed.calendar;
+    if(!w && parsed.week) S.cur[which] = parsed.week;
+    // A week asked for by number has to BE that week. If the feed ignored the
+    // request it sends the current one, and drawing that under the wrong pill
+    // would be worse than saying so.
+    if(w && parsed.week && wkKey(parsed.week) !== key){
+      parsed.games = []; parsed.wrongWeek = true;
+      S.fc.weekMismatch = 'asked ' + key + ', got ' + wkKey(parsed.week);
+    }
     S.data[which] = parsed; S.at[which] = Date.now(); S.failed = false;
   }catch(e){ S.failed = true; }
-  if(which === S.league) render();
+  if(which !== S.league) return;
+  render();
+  if(which === 'cfb') await afterCollegeList();
+  // A past week's first read decides whether it needs refreshing at all.
+  if(first) schedule();
 }
+
+/* After the Top 25 list: fetch what the watchlist and search need, and only
+   what they need. */
+async function afterCollegeList(){
+  if(S.watch.size && S.schoolState === 'idle') await loadSchools();
+  if(S.league === 'cfb' && needFull() && !S.full.cfb && S.fullState !== 'loading') await loadFull();
+}
+
+async function loadSchools(){
+  S.schoolState = 'loading';
+  try{
+    // DELTA's own file: revalidate rather than re-download, like the app does.
+    const d = await getJSON('data/college-players.json', 'no-cache');
+    const m = {};
+    for(const p of ((d && d.players) || [])){
+      if(!p || !p.n || !p.tm) continue;
+      const k = normName(p.n);
+      if(!m[k]) m[k] = [];
+      if(m[k].indexOf(p.tm) < 0) m[k].push(p.tm);
+    }
+    S.school = m; S.schoolState = 'ready';
+  }catch(e){ S.schoolState = 'failed'; S.fc.schoolFile = 'failed'; }
+}
+
+async function loadFull(){
+  const a = ADAPTERS[ACTIVE_SOURCE], lg = 'cfb', w = S.wk[lg], key = wkKey(w);
+  if(S.league !== lg) return;
+  const first = !S.full[lg];
+  S.fullState = 'loading';
+  try{
+    const parsed = a.scoreboard(await getJSON(a.scoreboardUrl(lg, { all: true, week: w })));
+    if(S.league !== lg || wkKey(S.wk[lg]) !== key) return;
+    const want = w || S.cur[lg];
+    if(want && parsed.week && wkKey(parsed.week) !== wkKey(want)){
+      S.full[lg] = null; S.fullState = 'failed';
+      S.fc.fullWeekMismatch = 'asked ' + wkKey(want) + ', got ' + wkKey(parsed.week);
+    }else{
+      S.full[lg] = parsed; S.fullState = 'ok'; S.fc.fullGames = parsed.games.length;
+    }
+  }catch(e){ S.fullState = 'failed'; }
+  if(S.league !== lg) return;
+  render();
+  if(first) schedule();
+}
+
 async function loadGame(){
   const a = ADAPTERS[ACTIVE_SOURCE], id = S.gameId, which = S.league;
   if(!id) return;
   try{
-    const parsed = a.summary(await getJSON(a.summaryUrl(which, id)));
-    if(S.gameId === id){ S.game = parsed; S.gameAt = Date.now(); S.failed = false; }
+    const raw = await getJSON(a.summaryUrl(which, id));
+    const parsed = a.summary(raw);
+    if(S.gameId === id){
+      S.game = parsed; S.gameAt = Date.now(); S.failed = false;
+      // A game the Top 25 list does not carry takes its score from here.
+      if(!gameIsFeatured(id)){
+        const g = a.summaryGame ? a.summaryGame(raw) : null;
+        if(g && !g.id) g.id = id;
+        const was = S.soloOk;
+        S.solo = (g && g.id === id) ? g : null;
+        S.soloOk = !!S.solo;
+        S.fc.scoreFrom = S.soloOk ? 'play feed' : 'all-games list';
+        if(was !== S.soloOk) schedule();
+      }
+    }
   }catch(e){ S.failed = true; }
   if(S.gameId === id) render();
 }
+
+/* WHAT REFRESHES, AND HOW OFTEN.
+
+   A past or future week does not move, so it is read once and left alone —
+   unless something in it is live, which covers a Monday night game sitting in
+   last week's column.
+
+   The list: the Top 25 list every minute, as it always was. The all-games list
+   only while it is showing something that can still change — search results, or
+   a watchlisted player's game that has not finished.
+
+   Inside a game: a Top 25 game keeps the fast scoreboard refresh it always had,
+   because that list is small. Any other game takes its score from the summary
+   the Live and Plays tabs already pull every thirty seconds, so following one
+   costs nothing extra. If the summary turns out not to carry the score, the
+   all-games list stands in at that slower clock. A finished game's score does
+   not change, so it is not refreshed at all. */
 function schedule(){
   if(timer) clearInterval(timer);
   if(detailTimer) clearInterval(detailTimer);
+  if(fullTimer) clearInterval(fullTimer);
+  timer = detailTimer = fullTimer = null;
   if(document.visibilityState !== 'visible') return;   // never poll in the background
+  const d = S.data[S.league];
+  const moving = !S.wk[S.league] || anyLive(d && d.games) || anyLive(extraGames());
   if(S.view === 'list'){
-    timer = setInterval(loadList, LIST_MS);
+    if(moving) timer = setInterval(loadList, LIST_MS);
+    if(S.league === 'cfb' && moving && S.full.cfb
+       && (searchQ() || extraGames().some(function(g){ return g.state !== 'post'; })))
+      fullTimer = setInterval(loadFull, LIST_MS);
   }else{
-    timer = setInterval(loadList, SCORE_MS);           // cheap, fast, all games
-    detailTimer = setInterval(loadGame,                // expensive, one game
+    const g = findGame();
+    const settled = !!(g && g.state === 'post');
+    if(gameIsFeatured(S.gameId)){
+      if(!settled) timer = setInterval(loadList, SCORE_MS);   // small list, fast
+    }else if(S.soloOk === false && !settled){
+      fullTimer = setInterval(loadFull, FOLLOW_MS);
+    }
+    detailTimer = setInterval(loadGame,                       // expensive, one game
       S.view === 'box' ? DETAIL_MS : FOLLOW_MS);
   }
 }
@@ -1387,9 +1747,25 @@ document.addEventListener('click', async function(ev){
   }
   const pn = t.closest ? t.closest('[data-player]') : null;
   if(pn){ openCard(pn.getAttribute('data-player')); return; }
+  const wkb = t.closest ? t.closest('[data-wk]') : null;
+  if(wkb){
+    const k = wkb.getAttribute('data-wk');
+    const e = (S.cal[S.league] || []).filter(function(x){ return wkKey(x) === k; })[0];
+    if(!e) return;
+    const next = k === wkKey(S.cur[S.league]) ? null : { st: e.st, wk: e.wk };
+    if(wkKey(next) === wkKey(S.wk[S.league])) return;
+    S.wk[S.league] = next;
+    S.data[S.league] = null; S.full[S.league] = null; S.fullState = 'idle';
+    render(); schedule(); loadList(); return;
+  }
   const lg = t.closest ? t.closest('[data-lg]') : null;
   if(lg){
-    S.league = lg.getAttribute('data-lg'); S.view = 'list'; S.game = null; S.gameId = null;
+    const nextLg = lg.getAttribute('data-lg');
+    // A sport always opens on its current week, with no search carried over.
+    if(S.wk[nextLg]){ S.wk[nextLg] = null; S.data[nextLg] = null; }
+    S.full[nextLg] = null; S.fullState = 'idle'; S.q = '';
+    S.solo = null; S.soloOk = null;
+    S.league = nextLg; S.view = 'list'; S.game = null; S.gameId = null;
     try{ localStorage.setItem(LG_LS, S.league); }catch(e){}
     render(); loadList(); schedule(); return;
   }
@@ -1408,12 +1784,14 @@ document.addEventListener('click', async function(ev){
   }
   if(t.closest && t.closest('#back')){
     // The tabs move between Live and Box Score, so back always means "out".
-    S.view = 'list'; S.gameId = null; S.game = null;
+    S.view = 'list'; S.gameId = null; S.game = null; S.solo = null; S.soloOk = null;
+    delete S.fc.scoreFrom;
     render(); schedule(); return;
   }
   const card = t.closest ? t.closest('[data-id]') : null;
   if(card){
     S.gameId = card.getAttribute('data-id'); S.game = null; S.boxTeam = null;
+    S.solo = null; S.soloOk = null;
     S.playsOpen = false;
     S.playsQ = null;
     S.from = 'list';
@@ -1426,6 +1804,17 @@ document.addEventListener('click', async function(ev){
     render(); schedule();
     await loadGame();
   }
+});
+
+/* Typing filters at once; the all-games list is fetched on the first real
+   search and not before. S.q is the source of truth, not the input, so a
+   repaint can never lose what was typed. */
+document.addEventListener('input', function(ev){
+  if(!ev.target || ev.target.id !== 'srch') return;
+  S.q = ev.target.value || '';
+  render();
+  if(searchQ() && !S.full.cfb && S.fullState !== 'loading') loadFull();
+  else schedule();
 });
 
 render();
