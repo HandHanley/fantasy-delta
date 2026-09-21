@@ -344,6 +344,11 @@ const ADAPTERS = {
         games.push({
           id: ev.id || '', state: state,
           status: type.shortDetail || type.description || '',
+          /* The exact kickoff instant, so the page can show it in the reader's
+             own time zone. shortDetail is ESPN's text and is always Eastern.
+             timeValid false means ESPN has not fixed the time yet ("TBD"). */
+          start: Date.parse(ev.date || comp.date || '') || null,
+          timeKnown: comp.timeValid !== false,
           detail: state === 'in' ? (sit.downDistanceText || '') : '',
           situation: state === 'in' ? {
             yardLine: typeof sit.yardLine === 'number' ? sit.yardLine : null,
@@ -952,6 +957,20 @@ function leadIndex(teams){
   if(n.length < 2 || n[0] === n[1]) return -1;
   return n[0] > n[1] ? 0 : 1;
 }
+/* KICKOFF IN THE READER'S OWN TIME ZONE. ESPN writes its time text in Eastern
+   ("9/26 - 12:00 PM EDT") for everyone. The feed also carries the exact
+   kickoff instant, so the device's own clock setting decides what is shown:
+   Arizona sees MST, London sees BST, and nobody has to set anything. Only an
+   upcoming game shows a kickoff; live and finished games keep ESPN's text,
+   which is a game clock or "Final". A time ESPN has not fixed yet keeps ESPN's
+   own words rather than inventing one. */
+const KICK_DAY  = new Intl.DateTimeFormat(undefined, { month:'numeric', day:'numeric' });
+const KICK_TIME = new Intl.DateTimeFormat(undefined, { hour:'numeric', minute:'2-digit', timeZoneName:'short' });
+function whenText(g){
+  if(!g || g.state !== 'pre' || !g.timeKnown || !g.start) return g ? g.status : '';
+  const d = new Date(g.start);
+  return KICK_DAY.format(d) + ' - ' + KICK_TIME.format(d);
+}
 function chip(live){
   return live ? '<span class="chip">LIVE</span>' : '<span class="chip done">FINAL</span>';
 }
@@ -962,12 +981,12 @@ function gameCard(g){
       + '<div class="pre"><div style="display:flex;align-items:center;gap:10px">'
       + '<span class="spine" style="height:34px;background:' + teamColor(g.teams[0] || {}) + '"></span><div>'
       + g.teams.map(function(t){ return '<div class="pre-t">' + esc(t.abbr) + '</div>'; }).join('')
-      + '</div></div><span class="rec">' + esc(g.status) + '</span></div></button>';
+      + '</div></div><span class="rec">' + esc(whenText(g)) + '</span></div></button>';
   }
   const live = g.state === 'in', li = leadIndex(g.teams);
   return '<button class="g" type="button" data-id="' + esc(g.id) + '">' + colourBar(g.teams)
     + '<div class="gin"><div class="chiprow">' + chip(live)
-    + '<span class="when' + (live ? '' : ' off') + '">' + esc(g.status) + '</span></div>'
+    + '<span class="when' + (live ? '' : ' off') + '">' + esc(whenText(g)) + '</span></div>'
     + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
     + (g.detail ? '<div class="gfoot">' + esc(g.detail) + '</div>' : '')
     + '</div></button>';
@@ -1212,7 +1231,8 @@ function playerTable(sec){
 function heroBlock(g){
   const live = g.state === 'in', li = leadIndex(g.teams);
   return '<div class="hero">' + colourBar(g.teams) + '<div class="hero-in"><div class="chiprow">'
-    + chip(live) + '<span class="when' + (live ? '' : ' off') + '">' + esc(g.status) + '</span></div>'
+    + (g.state === 'pre' ? '' : chip(live))
+    + '<span class="when' + (live ? '' : ' off') + '">' + esc(whenText(g)) + '</span></div>'
     + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
     + '</div></div>';
 }
