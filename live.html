@@ -133,6 +133,13 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
    use, not an exception to the rule. */
 .trk{color:var(--topaz);font-size:11px}
 .ahead{color:var(--paper);font-weight:700}
+.fp{margin-left:auto;font-family:var(--mono);font-size:15px;font-weight:700;
+    white-space:nowrap;font-variant-numeric:tabular-nums}
+.fp .fpu{font-size:9px;font-weight:400;color:var(--fog)}
+.fine{font-size:11px;color:var(--fog-2);margin:7px 2px 0;line-height:1.45}
+.tt{font-family:var(--mono);font-size:11.5px;color:var(--paper);margin:12px 2px 0;
+    font-variant-numeric:tabular-nums}
+.tt .u{color:var(--fog);font-size:10px}
 
 .hero{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:2px}
 .hero .bar{height:4px}
@@ -264,6 +271,16 @@ const ADAPTERS = {
         // read — it rendered as a blank card. Skip it rather than show it.
         if(teams.length < 2) continue;
 
+        /* AWAY ON TOP, HOME UNDERNEATH, always. Every matchup then reads the way
+           it is spoken: "Dallas at Washington". ESPN's own order varies, so it
+           cannot be relied on. Sorted here, once, because everything downstream
+           reads meaning into this order — the field bar takes attack direction
+           from it, and the header joins the names with "at". */
+        if(teams.some(function(t){ return t.homeAway === 'home'; })
+           && teams.some(function(t){ return t.homeAway === 'away'; })){
+          teams.sort(function(a, b){ return (a.homeAway === 'home' ? 1 : 0) - (b.homeAway === 'home' ? 1 : 0); });
+        }
+
         found.total++;
         games.push({
           id: ev.id || '', state: state,
@@ -282,7 +299,7 @@ const ADAPTERS = {
 
     summary: function(raw){
       const found = { sections:0, players:0, lastPlay:0, targets:0,
-                      fumblesLost:0, fumbles:0 };
+                      fumblesLost:0, fumbles:0, teamTotals:0 };
       const sections = [];
       const box = (raw && raw.boxscore) || {};
       for(const tm of (box.players || [])){
@@ -409,6 +426,9 @@ const ADAPTERS = {
             };
             players.push({ name: ath.displayName || ath.shortName || '',
                            jersey: ath.jersey || '', line: line, cells: cells, team: abbr,
+                           unit: unit.indexOf('pass') === 0 ? 'pass'
+                               : unit.indexOf('rush') === 0 ? 'rush'
+                               : unit.indexOf('kicking') === 0 ? 'kick' : 'rec',
                            // Kickers have no yardage, so points are their
                            // headline number and what the sort ranks them by.
                            _yds: unit.indexOf('kicking') === 0 ? num(pick('PTS')) : num(pick('YDS')),
@@ -469,6 +489,28 @@ const ADAPTERS = {
         .map(function(p){ return { text: p.text, at: (p.clock && p.clock.displayValue) || '' }; });
       found.lastPlay = plays.length;
       const lastPlay = plays.length ? plays[0] : null;
+      /* Team totals — plays, yards, time of possession. They say whether this is
+         a game with volume in it, which says something about everyone playing in
+         it. Matched by name with the label as a backstop, because the exact
+         spelling is not something to depend on; anything missing is simply left
+         out rather than guessed at. */
+      const totals = {};
+      for(const tm of (box.teams || [])){
+        const abbr = (tm.team && (tm.team.abbreviation || tm.team.displayName)) || '';
+        if(!abbr) continue;
+        const bag = {};
+        for(const st of (tm.statistics || [])){
+          const key = String(st.name || '').toLowerCase().replace(/[^a-z]/g, '');
+          const lab = String(st.label || '').toLowerCase().replace(/[^a-z]/g, '');
+          const val = st.displayValue != null ? String(st.displayValue) : null;
+          if(val == null || val === '') continue;
+          if(key === 'totaloffensiveplays' || lab === 'totalplays') bag.plays = val;
+          else if(key === 'totalyards' || lab === 'totalyards') bag.yards = val;
+          else if(key === 'possessiontime' || lab === 'possession' || lab === 'possessiontime') bag.top = val;
+        }
+        if(bag.plays || bag.yards || bag.top){ totals[abbr] = bag; found.teamTotals++; }
+      }
+
       /* Scoring plays, in the order they happened. Chronological on purpose:
          the running score only makes sense read forwards, and every box score
          ever printed does it this way. The away/home scores are matched to
@@ -490,7 +532,7 @@ const ADAPTERS = {
       found.scoringPlays = scoring.length;
 
       return { sections: sections, lastPlay: lastPlay, plays: plays,
-               scoring: scoring, found: found };
+               scoring: scoring, totals: totals, found: found };
     }
   }
 };
@@ -508,6 +550,46 @@ const ACTIVE_SOURCE = 'espn';
 
    READ ONLY. The engine is the single writer and carries the DSYNC hook, so
    nothing here ever writes to that key. */
+/* The reader's OWN scoring format, from the same settings the rest of the site
+   uses. Same origin, so no copy and no drift: change it on the rankings page and
+   the points here change with it. No other scoreboard can do this, because no
+   other scoreboard knows what league you are in.
+
+   'std' | 'half' | 'full' — the _tep variants are tight-end premium, which
+   needs a position the box score does not reliably carry, so they score as
+   their base and the note under the block says so. */
+const DS_LS = 'delta_settings';
+function pprValue(){
+  let f = 'half';
+  try{
+    const o = JSON.parse(localStorage.getItem(DS_LS) || '{}');
+    if(o && typeof o.fmt === 'string') f = o.fmt;
+  }catch(e){}
+  if(f.indexOf('std') === 0) return { per: 0, label: 'Standard' };
+  if(f.indexOf('full') === 0) return { per: 1, label: 'PPR' };
+  return { per: 0.5, label: 'Half PPR' };
+}
+
+/* Points from what actually happened. Passing yards at a quarter the rate of
+   rushing and receiving, four for a passing score and six for any other, minus
+   two for a pick or a lost fumble — the scoring nearly every league shares.
+   Kickers are left out: their scoring is distance-banded and varies league to
+   league far too much to state a number and stand behind it. */
+function fantasyPoints(parts, per){
+  let pts = 0, flSeen = 0;
+  for(const c of parts){
+    const n = function(k){ const v = parseFloat(String(c.cells[k] == null ? '' : c.cells[k])
+      .replace(/[^0-9.\-]/g, '')); return isFinite(v) ? v : 0; };
+    if(c.unit === 'pass') pts += n('YDS') * 0.04 + n('TD') * 4 - n('INT') * 2;
+    else if(c.unit === 'rush') pts += n('YDS') * 0.1 + n('TD') * 6;
+    else if(c.unit === 'rec')  pts += n('YDS') * 0.1 + n('TD') * 6 + n('REC') * per;
+    // A lost fumble is copied onto every category that player appears in, so
+    // take the largest rather than adding it up twice.
+    flSeen = Math.max(flSeen, n('FL'));
+  }
+  return Math.round((pts - flSeen * 2) * 10) / 10;
+}
+
 const DW_LS = 'delta_watchlist';
 function readWatchlist(league){
   const pre = (league === 'cfb' ? 'cfb' : 'nfl') + ':';
@@ -940,8 +1022,9 @@ function watchlistBlock(sum){
     for(const p of sec.players){
       if(!watched(p.name)) continue;
       const k = normName(p.name);
-      if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [] }); }
+      if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [], parts: [] }); }
       hits[seen[k]].lines.push(p.line);
+      hits[seen[k]].parts.push(p);
     }
   }
   if(!hits.length){
@@ -950,13 +1033,30 @@ function watchlistBlock(sum){
                       : 'Star players in DELTA and they show up here when they play.')
       + '</div>';
   }
+  const fmt = pprValue();
+  // Best day on top. Points, not yards, because points are the thing being
+  // asked about on the screen where your own players are listed.
+  hits.forEach(function(h){ h.fp = fantasyPoints(h.parts, fmt.per); });
+  hits.sort(function(a, b){ return b.fp - a.fp; });
+  const anyKicker = hits.some(function(h){
+    return h.parts.some(function(x){ return x.unit === 'kick'; }); });
+
   return '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
     + '</span><span class="rule"></span></div><div class="card">'
     + hits.map(function(h){
-        return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
+        const kickOnly = h.parts.every(function(x){ return x.unit === 'kick'; });
+        return '<div class="rowb"><div style="display:flex;align-items:baseline;gap:10px">'
+          + '<div class="nm" style="min-width:0"><span class="trk">&#9733;</span> '
           + nameButton(h.p.name, ' <span class="pos">' + esc(h.p.team) + '</span>')
+          + '</div>'
+          + (kickOnly ? ''
+             : '<span class="fp">' + esc(h.fp.toFixed(1))
+               + ' <span class="fpu">PTS</span></span>')
           + '</div>' + h.lines.map(statLine).join('') + '</div>';
-      }).join('') + '</div>';
+      }).join('') + '</div>'
+    + '<div class="fine">' + esc(fmt.label) + ' scoring, from your league settings.'
+    + (anyKicker ? ' Kickers are not scored \u2014 the rules vary too much between leagues.' : '')
+    + '</div>';
 }
 
 /* "Loading" is only true while it IS loading. A game that has not kicked off
@@ -1003,6 +1103,16 @@ function renderBox(){
     for(let i = 0; i < KEEP.length; i++) if(n.indexOf(KEEP[i]) === 0) return i;
     return -1;
   };
+  const tt = (sum.totals || {})[S.boxTeam];
+  if(tt){
+    const bits = [];
+    if(tt.plays) bits.push(esc(tt.plays) + ' <span class="u">Plays</span>');
+    if(tt.yards) bits.push(esc(tt.yards) + ' <span class="u">Yds</span>');
+    if(tt.top)   bits.push(esc(tt.top)   + ' <span class="u">Possession</span>');
+    if(bits.length)
+      html += '<div class="tt">' + bits.join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
+  }
+
   const mine = sum.sections
     .filter(function(s){ return s.teamAbbr === S.boxTeam && rank(s) >= 0; })
     .sort(function(a, b){ return rank(a) - rank(b); });
