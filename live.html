@@ -136,6 +136,10 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 /* A scoring play in the log reads bright and bold, so a thumb scrolling fast
    still stops on it. */
 .play.scored{color:var(--paper);font-weight:700}
+.qpills{display:flex;gap:6px;margin:14px 0 2px;flex-wrap:wrap}
+.qp{flex:1;min-width:44px;background:var(--panel);border:1px solid var(--line);color:var(--fog);
+    border-radius:999px;padding:8px 6px;font-family:var(--mono);font-size:12px;font-weight:600}
+.qp[aria-pressed="true"]{color:var(--teal-br);border-color:var(--teal-br);background:var(--teal-tint)}
 .fp{margin-left:auto;font-family:var(--mono);font-size:15px;font-weight:700;
     white-space:nowrap;font-variant-numeric:tabular-nums}
 .fp .fpu{font-size:9px;font-weight:400;color:var(--fog)}
@@ -695,7 +699,10 @@ const S = { view:'list', league:START_LG, gameId:null, boxTeam:null, from:'game'
                left to manage itself is wiped each time — it opened and snapped
                shut, or never appeared to open at all if a refresh landed on the
                tap. */
-            playsOpen:false, painted:'' };
+            playsOpen:false, painted:'',
+            // null means "follow the latest quarter"; a number means the reader
+            // picked one and it should stay picked.
+            playsQ:null };
 let timer = null, detailTimer = null;
 
 function esc(s){
@@ -1028,11 +1035,22 @@ function gameTabs(g, which){
   }).join('') + '</div>';
 }
 
-/* THE WHOLE GAME, PLAY BY PLAY. Newest drive first and newest play first within
-   it — the same rule as the Last Play block, so "down the page" always means
-   "earlier". (The scoring summary is the one exception, and that is because a
-   running score only reads forwards.) Scores are picked out so a glance down
-   the list finds them. */
+/* THE WHOLE GAME, PLAY BY PLAY, one quarter at a time.
+
+   Pills across the top pick the quarter, so the first carry of the game is one
+   tap away instead of at the bottom of a hundred-and-fifty-play scroll.
+
+   ORDER DEPENDS ON WHETHER THE QUARTER IS OVER. A finished quarter reads start
+   to finish, the way it happened — tap Q1 and the opening kickoff is on top.
+   The quarter being played right now reads newest first, because while a game
+   is on, the play that just happened is the one you want. Without that split,
+   pills would only have moved the scrolling somewhere else.
+
+   With no quarter chosen the tab follows the latest one, so a live game rolls
+   into the next quarter on its own. Tap a pill and it stays put until you
+   leave the game. */
+function periodLabel(n){ return n <= 4 ? 'Q' + n : (n === 5 ? 'OT' : (n - 4) + 'OT'); }
+
 function renderPlays(){
   const g = findGame(), sum = S.game;
   document.getElementById('head').innerHTML =
@@ -1042,19 +1060,47 @@ function renderPlays(){
   if(!g){ paint('<div class="empty">That game is no longer in the feed.</div>'); return; }
   const drives = (sum && sum.drives) || [];
   if(!drives.length){ paint('<div class="notice">' + esc(noDetailYet(g)) + '</div>'); return; }
-  const lastIdx = drives.length - 1;
-  paint(heroBlock(g) + drives.slice().reverse().map(function(d, i){
-    const t = g.teams.filter(function(x){ return String(x.abbr) === String(d.team); })[0];
-    const current = i === 0 && g.state === 'in';
+
+  const has = {};
+  drives.forEach(function(d){ d.plays.forEach(function(p){ if(p.period) has[p.period] = 1; }); });
+  const periods = Object.keys(has).map(Number).sort(function(a, b){ return a - b; });
+  const latest = periods.length ? periods[periods.length - 1] : null;
+  // Unpicked, a live game follows the quarter being played; a finished game is
+  // history, read from the start, so it opens on the first quarter.
+  const fallback = g.state === 'in' ? latest : (periods.length ? periods[0] : null);
+  const sel = (S.playsQ != null && has[S.playsQ]) ? S.playsQ : fallback;
+  const nowPlaying = g.state === 'in' && sel === latest;
+  const onField = g.state === 'in' ? drives[drives.length - 1] : null;
+
+  const pills = periods.length
+    ? '<div class="qpills">' + periods.map(function(n){
+        return '<button class="qp" type="button" data-q="' + n + '" aria-pressed="'
+          + (n === sel) + '">' + periodLabel(n) + '</button>';
+      }).join('') + '</div>'
+    : '';
+
+  let rows = drives.map(function(d){
+    return { d: d, plays: sel == null ? d.plays
+                         : d.plays.filter(function(p){ return p.period === sel; }) };
+  }).filter(function(x){ return x.plays.length; });
+  if(nowPlaying){
+    rows = rows.reverse();
+    rows.forEach(function(x){ x.plays = x.plays.slice().reverse(); });
+  }
+
+  paint(heroBlock(g) + pills + rows.map(function(x){
+    const d = x.d;
+    const t = g.teams.filter(function(v){ return String(v.abbr) === String(d.team); })[0];
+    const current = d === onField;
     return '<div class="hd"><span style="display:flex;align-items:center;gap:7px">'
       + (t ? '<span class="swatch" style="background:' + teamColor(t) + '"></span>' : '')
-      + esc(d.team || 'Drive') + (current ? ' &middot; On The Field' : (d.result ? ' &middot; ' + esc(d.result) : ''))
+      + esc(d.team || 'Drive')
+      + (current ? ' &middot; On The Field' : (d.result ? ' &middot; ' + esc(d.result) : ''))
       + '</span><span class="rule"></span></div>'
       + (d.desc ? '<div class="fine" style="margin:-4px 2px 8px">' + esc(d.desc) + '</div>' : '')
-      + '<div class="card">' + d.plays.slice().reverse().map(function(p){
-          const q = p.period ? 'Q' + p.period : '';
-          return '<div class="rowb"' + (p.scoring ? ' style="border-left:0"' : '') + '>'
-            + ((q || p.at) ? '<div class="sub" style="margin:0 0 3px">' + esc((q + ' ' + p.at).trim()) + '</div>' : '')
+      + '<div class="card">' + x.plays.map(function(p){
+          return '<div class="rowb">'
+            + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
             + '<div class="play' + (p.scoring ? ' scored' : '') + '">' + esc(p.text) + '</div></div>';
         }).join('') + '</div>';
   }).join(''));
@@ -1118,12 +1164,9 @@ function watchlistBlock(sum){
       hits[seen[k]].parts.push(p);
     }
   }
-  if(!hits.length){
-    return '<div class="notice" style="margin-top:16px">'
-      + (S.watch.size ? 'Nobody from your watchlist is in this game.'
-                      : 'Star players in DELTA and they show up here when they play.')
-      + '</div>';
-  }
+  // Nobody starred in this game means nothing at all — not a line explaining the
+  // absence. It read as out of place on a scoreboard.
+  if(!hits.length) return '';
   const fmt = pprValue();
   // Best day on top. Points, not yards, because points are the thing being
   // asked about on the screen where your own players are listed.
@@ -1353,6 +1396,8 @@ document.addEventListener('click', async function(ev){
   const tm = t.closest ? t.closest('[data-team]') : null;
   if(tm){ S.boxTeam = tm.getAttribute('data-team'); render(); return; }
   if(t.closest && t.closest('[data-plays]')){ S.playsOpen = !S.playsOpen; render(); return; }
+  const qp = t.closest ? t.closest('[data-q]') : null;
+  if(qp){ S.playsQ = Number(qp.getAttribute('data-q')); render(); return; }
   const gv = t.closest ? t.closest('[data-gv]') : null;
   if(gv){
     const next = gv.getAttribute('data-gv');
@@ -1370,6 +1415,7 @@ document.addEventListener('click', async function(ev){
   if(card){
     S.gameId = card.getAttribute('data-id'); S.game = null; S.boxTeam = null;
     S.playsOpen = false;
+    S.playsQ = null;
     S.from = 'list';
     // A finished game has no clock, no possession and no last play worth
     // reading — the follow-along screen would only repeat the card just tapped.
