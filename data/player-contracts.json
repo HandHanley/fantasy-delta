@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-21T18:47:12.617104+00:00",
+  "fetched": "2026-09-22T17:40:24.275211+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -2993,7 +2993,7 @@
       "is_active": true
     },
     "Kaleb Johnson": {
-      "team": "GB/PIT",
+      "team": "PIT/GB",
       "year_signed": 2025,
       "years": 4,
       "end_year": 2028,
@@ -3209,6 +3209,16 @@
       "end_year": 2026,
       "aav": 1.3,
       "total": 1.3,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
+    "Jerome Ford": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.33,
+      "total": 0.33,
       "guaranteed": 0.0,
       "is_active": true
     },
@@ -3710,6 +3720,16 @@
       "aav": 1.54,
       "total": 6.16,
       "guaranteed": 1.12,
+      "is_active": true
+    },
+    "Jimmy Horn": {
+      "team": "Browns",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Konata Mumpfield": {
