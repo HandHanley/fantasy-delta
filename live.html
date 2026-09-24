@@ -141,6 +141,14 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .statline{color:var(--fog)}
 .swatch{width:9px;height:9px;border-radius:2px;flex:none}
 .card.tinted{border-top-width:2px;border-top-style:solid}
+/* Label on the left, fact on the right. Used by the screen a game shows before
+   it kicks off, where everything is a short labelled fact. */
+.kv{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:9px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:0}
+.kvk{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+     color:var(--fog);white-space:nowrap}
+.kvv{font-size:13px;color:var(--paper);text-align:right}
 /* topaz IS the reserved signal for WATCH, so a watchlist star is its correct
    use, not an exception to the rule. */
 .trk{color:var(--topaz);font-size:11px}
@@ -288,7 +296,8 @@ const ADAPTERS = {
     },
 
     scoreboard: function(raw){
-      const found = { total:0, state:0, possession:0, downDistance:0, record:0, color:0, yardLine:0 };
+      const found = { total:0, state:0, possession:0, downDistance:0, record:0, color:0, yardLine:0,
+                      leaders:0, venue:0, tv:0, weather:0 };
       const games = [];
       const events = (raw && raw.events) || [];
       for(const ev of events){
@@ -308,11 +317,47 @@ const ADAPTERS = {
         if(sit.downDistanceText) found.downDistance++;
         if(typeof sit.yardLine === 'number') found.yardLine++;
 
+        /* SEASON LEADERS, as the feed gives them before kickoff: each team's
+           leading passer, rusher and receiver with their season line. ESPN calls
+           the groups passingLeader / passingYards depending on where they sit,
+           so the name is matched on its first word rather than exactly. */
+        const leadersOf = function(c){
+          const out = [];
+          for(const pair of [['passing','Passing'], ['rushing','Rushing'], ['receiving','Receiving']]){
+            const grp = (c.leaders || []).filter(function(x){
+              return String(x && x.name || '').toLowerCase().indexOf(pair[0]) === 0; })[0];
+            const top = grp && grp.leaders && grp.leaders[0];
+            const ath = top && top.athlete;
+            if(!ath || !top.displayValue) continue;
+            out.push({ label: pair[1],
+                       who: ath.displayName || ath.fullName || ath.shortName || '',
+                       pos: (ath.position && ath.position.abbreviation) || '',
+                       line: String(top.displayValue) });
+          }
+          return out;
+        };
+
         let possAbbr = null;
         const teams = (comp.competitors || []).map(function(c){
           const t = c.team || {};
           const rec = (c.records && c.records[0] && c.records[0].summary) || '';
           if(rec) found.record++;
+          /* The same record arrives under different type names in the two feeds:
+             the NFL says home/road, college says homerecord/awayrecord, and only
+             college sends a conference record. Read by kind, not by position. */
+          const recs = {};
+          for(const r of (c.records || [])){
+            if(!r || !r.summary) continue;
+            const ty = String(r.type || r.name || '').toLowerCase();
+            if(ty === 'total' || ty === 'overall') recs.overall = r.summary;
+            else if(ty === 'home' || ty === 'homerecord') recs.home = r.summary;
+            else if(ty === 'road' || ty === 'away' || ty === 'awayrecord') recs.away = r.summary;
+            else if(ty === 'vsconf') recs.conf = r.summary;
+          }
+          // College sends 99 for everyone outside the Top 25. That is not a rank.
+          const rankN = Number(c.curatedRank && c.curatedRank.current);
+          const leaders = state === 'pre' ? leadersOf(c) : [];
+          if(leaders.length) found.leaders++;
           if(t.color) found.color++;
           const ball = sit.possession != null && String(sit.possession) === String(t.id);
           const abbr = t.abbreviation || t.shortDisplayName || t.displayName || '?';
@@ -322,7 +367,9 @@ const ADAPTERS = {
           return { abbr: abbr, nick: t.name || '', loc: t.location || '',
                    full: t.displayName || '', short: t.shortDisplayName || '',
                    score: c.score == null ? null : String(c.score),
-                   record: rec, color: t.color || null, altColor: t.alternateColor || null,
+                   record: rec, recs: recs, leaders: leaders,
+                   rank: (rankN > 0 && rankN < 99) ? rankN : null,
+                   color: t.color || null, altColor: t.alternateColor || null,
                    hasBall: ball, homeAway: c.homeAway || '' };
         });
 
@@ -349,6 +396,27 @@ const ADAPTERS = {
              timeValid false means ESPN has not fixed the time yet ("TBD"). */
           start: Date.parse(ev.date || comp.date || '') || null,
           timeKnown: comp.timeValid !== false,
+          /* Where, when and on what — only kept for a game that has not started,
+             which is the only screen that shows it. Weather is in the college
+             feed; the NFL feed did not carry it on 21 Sep 2026. */
+          info: state !== 'pre' ? null : (function(){
+            const v = comp.venue || {}, ad = v.address || {}, w = ev.weather || {};
+            const tv = comp.broadcast
+              || ((comp.broadcasts || []).map(function(b){ return (b.names || []).join('/'); })
+                    .filter(Boolean)[0] || '');
+            if(v.fullName) found.venue++;
+            if(tv) found.tv++;
+            if(w.displayValue || typeof w.temperature === 'number') found.weather++;
+            return {
+              tv: tv, venue: v.fullName || '',
+              city: [ad.city || '', ad.state || ''].filter(Boolean).join(', '),
+              indoor: v.indoor === true, neutral: comp.neutralSite === true,
+              note: (comp.notes && comp.notes[0] && comp.notes[0].headline) || '',
+              weather: (w.displayValue || typeof w.temperature === 'number')
+                ? { text: w.displayValue || '', temp: typeof w.temperature === 'number' ? w.temperature : null }
+                : null
+            };
+          })(),
           detail: state === 'in' ? (sit.downDistanceText || '') : '',
           situation: state === 'in' ? {
             yardLine: typeof sit.yardLine === 'number' ? sit.yardLine : null,
@@ -1273,7 +1341,11 @@ function renderGame(){
       + '</div>';
   }
 
-  if(sum && sum.sections.length){
+  if(g.state === 'pre'){
+    // Decided by the game's own state, not by whether the summary happens to be
+    // carrying stats: a game that has not kicked off shows the pre-kickoff screen.
+    html += preview(g);
+  }else if(sum && sum.sections.length){
     // Everyone the user actually stars, with no cap — the list is theirs, so
     // every row on it is relevant by definition.
     html += scoringBlock(g, sum);
@@ -1454,6 +1526,73 @@ function watchlistBlock(sum){
     + '<div class="fine">' + esc(fmt.label) + ' scoring, from your league settings.'
     + (anyKicker ? ' Kickers are not scored \u2014 the rules vary too much between leagues.' : '')
     + '</div>';
+}
+
+function kv(pair){
+  return '<div class="kv"><span class="kvk">' + esc(pair[0]) + '</span>'
+    + '<span class="kvv">' + esc(pair[1]) + '</span></div>';
+}
+/* How long until kickoff, in the words a person would use. Nothing beyond two
+   days out — "in 61h" is not something anyone reads as a time. */
+function countdown(g){
+  if(!g.timeKnown || !g.start) return '';
+  const ms = g.start - Date.now();
+  if(ms <= 0) return 'starting shortly';
+  if(ms > 48 * 3600000) return '';
+  const mins = Math.round(ms / 60000), h = Math.floor(mins / 60);
+  const m = mins - h * 60;
+  return 'in ' + (h ? (m ? h + 'h ' + m + 'm' : h + 'h') : mins + 'm');
+}
+
+/* WHAT A GAME SHOWS BEFORE IT KICKS OFF. Everything here is already in the game
+   list this page reads anyway, so the screen costs nothing extra to fill.
+   Deliberately not here: the spread, the over/under and ESPN's win probability.
+   DELTA does not carry a bet, and a win probability is a projection about a
+   game nobody has played. */
+function preview(g){
+  const info = g.info || {};
+  const rows = [['Kickoff', whenText(g) + (countdown(g) ? ' \u00b7 ' + countdown(g) : '')]];
+  if(info.tv) rows.push(['TV', info.tv]);
+  if(info.venue) rows.push(['Venue', info.venue + (info.city ? ' \u00b7 ' + info.city : '')
+    + (info.indoor ? ' \u00b7 Indoor' : '') + (info.neutral ? ' \u00b7 Neutral Site' : '')]);
+  if(info.weather) rows.push(['Weather', [info.weather.text,
+    info.weather.temp == null ? '' : info.weather.temp + '\u00b0'].filter(Boolean).join(' \u00b7 ')]);
+  if(info.note) rows.push(['Note', info.note]);
+  let html = '<div class="hd"><span>Kickoff</span><span class="rule"></span></div>'
+    + '<div class="card">' + rows.map(kv).join('') + '</div>';
+
+  // Home and road records, because 2-0 at home and 2-0 on the road are not the
+  // same team. The conference record only exists in college, so it only shows there.
+  const recs = g.teams.map(function(t){
+    const side = t.homeAway === 'home' ? 'home' : 'away';
+    const r = t.recs || {}, bits = [];
+    if(r.overall) bits.push(r.overall + ' overall');
+    if(r[side]) bits.push(r[side] + (side === 'home' ? ' at home' : ' on the road'));
+    if(r.conf) bits.push(r.conf + ' in conference');
+    return bits.length ? [(t.rank ? '#' + t.rank + ' ' : '') + t.abbr, bits.join(' \u00b7 ')] : null;
+  }).filter(Boolean);
+  if(recs.length) html += '<div class="hd"><span>Records</span><span class="rule"></span></div>'
+    + '<div class="card">' + recs.map(kv).join('') + '</div>';
+
+  // Each side's leading passer, rusher and receiver this season. Tapping a name
+  // opens DELTA's own card on him, same as everywhere else on this page.
+  const lead = g.teams.filter(function(t){ return (t.leaders || []).length; });
+  if(lead.length){
+    html += '<div class="hd"><span>Season So Far</span><span class="rule"></span></div>'
+      + lead.map(function(t){
+          return '<div class="card tinted" style="border-top-color:' + teamColor(t) + '">'
+            + t.leaders.map(function(L){
+                return '<div class="rowb"><div class="nm">'
+                  + nameButton(L.who, ' <span class="pos">' + esc(t.abbr)
+                      + (L.pos ? ' \u00b7 ' + esc(L.pos) : '') + '</span>')
+                  + '</div><div class="statline">' + esc(L.label) + ': ' + esc(L.line) + '</div></div>';
+              }).join('') + '</div>';
+        }).join('');
+  }
+  // A feed that sent none of it still gets the honest one-liner it had before.
+  if(rows.length === 1 && !recs.length && !lead.length)
+    html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
+  return html;
 }
 
 /* "Loading" is only true while it IS loading. A game that has not kicked off
