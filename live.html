@@ -342,20 +342,6 @@ const ADAPTERS = {
           const t = c.team || {};
           const rec = (c.records && c.records[0] && c.records[0].summary) || '';
           if(rec) found.record++;
-          /* The same record arrives under different type names in the two feeds:
-             the NFL says home/road, college says homerecord/awayrecord, and only
-             college sends a conference record. Read by kind, not by position. */
-          const recs = {};
-          for(const r of (c.records || [])){
-            if(!r || !r.summary) continue;
-            const ty = String(r.type || r.name || '').toLowerCase();
-            if(ty === 'total' || ty === 'overall') recs.overall = r.summary;
-            else if(ty === 'home' || ty === 'homerecord') recs.home = r.summary;
-            else if(ty === 'road' || ty === 'away' || ty === 'awayrecord') recs.away = r.summary;
-            else if(ty === 'vsconf') recs.conf = r.summary;
-          }
-          // College sends 99 for everyone outside the Top 25. That is not a rank.
-          const rankN = Number(c.curatedRank && c.curatedRank.current);
           const leaders = state === 'pre' ? leadersOf(c) : [];
           if(leaders.length) found.leaders++;
           if(t.color) found.color++;
@@ -367,9 +353,7 @@ const ADAPTERS = {
           return { abbr: abbr, nick: t.name || '', loc: t.location || '',
                    full: t.displayName || '', short: t.shortDisplayName || '',
                    score: c.score == null ? null : String(c.score),
-                   record: rec, recs: recs, leaders: leaders,
-                   rank: (rankN > 0 && rankN < 99) ? rankN : null,
-                   color: t.color || null, altColor: t.alternateColor || null,
+                   record: rec, leaders: leaders, color: t.color || null, altColor: t.alternateColor || null,
                    hasBall: ball, homeAway: c.homeAway || '' };
         });
 
@@ -884,7 +868,14 @@ const S = { view:'list', league:START_LG, gameId:null, boxTeam:null, from:'game'
             /* A game followed outside the Top 25 list, as last read from its
                summary. soloOk: null not yet known, true the summary carries the
                score, false it does not and the all-games list stands in. */
-            solo:null, soloOk:null };
+            solo:null, soloOk:null,
+            /* DELTA's own files, read only when a game that has not kicked off
+               contains someone on the watchlist. depth: which NFL team a player
+               is on this season (small). logs: this season's production so far
+               (large, so it is only fetched once a match is actually found).
+               college: school and season line, from the file the college
+               watchlist already uses. */
+            depth:null, depthState:'idle', logs:null, logsState:'idle', college:null };
 let timer = null, detailTimer = null, fullTimer = null;
 
 function esc(s){
@@ -998,6 +989,108 @@ function needFull(){
     return !shown.some(function(g){ return gameHasSchool(g, s); });
   });
 }
+/* nflverse writes LA and WAS where ESPN writes LAR and WSH. Two names for the
+   same team is all this is. */
+const NFL_ALIAS = { LA:'LAR', WAS:'WSH', JAC:'JAX' };
+function teamCode(x){ const c = String(x || '').toUpperCase(); return NFL_ALIAS[c] || c; }
+function fmtN(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+/* A season so far, in the order a football person reads it. Empty categories are
+   left out: a running back's passing line is noise. */
+function seasonLine(s){
+  if(!s) return '';
+  const bits = [];
+  if(s.py) bits.push(fmtN(s.py) + ' pass yds' + (s.pt ? ', ' + s.pt + ' TD' : '')
+                     + (s.pi ? ', ' + s.pi + ' INT' : ''));
+  if(s.ry || s.car) bits.push(fmtN(s.ry || 0) + ' rush yds' + (s.rt ? ', ' + s.rt + ' TD' : ''));
+  if(s.rec || s.rey) bits.push((s.rec || 0) + ' rec, ' + fmtN(s.rey || 0) + ' yds'
+                     + (s.ret ? ', ' + s.ret + ' TD' : ''));
+  const games = s.gms ? s.gms + (s.gms === 1 ? ' game' : ' games') : '';
+  if(!bits.length) return games ? games + ' \u00b7 no production yet' : '';
+  return (games ? games + ' \u00b7 ' : '') + bits.join(' \u00b7 ');
+}
+
+async function loadDepth(){
+  S.depthState = 'loading';
+  try{
+    const d = await getJSON('data/depth-charts.json', 'no-cache');
+    const m = {};
+    for(const k in (d && d.players) || {}){
+      const p = d.players[k];
+      if(p && p.team) m[normName(p.name || k)] = { name: p.name || k, team: p.team, slot: p.slot || '' };
+    }
+    S.depth = m; S.depthState = 'ready';
+  }catch(e){ S.depthState = 'failed'; S.fc.depthFile = 'failed'; }
+}
+
+/* Per-game lines for every season DELTA keeps. Only this season's PLAYED games
+   count: rows marked upcoming or missed carry no stats by design. */
+async function loadLogs(){
+  S.logsState = 'loading';
+  try{
+    const d = await getJSON('data/game-logs.json', 'no-cache');
+    const season = Math.max.apply(null, (d && d.seasons) || [0]);
+    const m = {};
+    for(const k in (d && d.games) || {}){
+      const tot = { gms:0, py:0, pt:0, pi:0, car:0, ry:0, rt:0, rec:0, rey:0, ret:0, tm:'' };
+      for(const r of d.games[k]){
+        if(!r || r.s !== season || r.up || r.dnp) continue;
+        tot.gms++; tot.tm = r.tm || tot.tm;
+        for(const f of ['py','pt','pi','car','ry','rt','rec','rey','ret']) tot[f] += Number(r[f]) || 0;
+      }
+      if(tot.gms) m[normName(k)] = tot;
+    }
+    S.logs = m; S.logsState = 'ready'; S.fc.logsSeason = season;
+  }catch(e){ S.logsState = 'failed'; S.fc.logsFile = 'failed'; }
+}
+
+/* Who on the watchlist is playing in THIS game, and what they have done so far.
+   NFL: the depth chart says which team a player is on, DELTA's logs say what he
+   has done. College: both come from the college file the watchlist already uses. */
+function watchInGame(g){
+  const out = [];
+  if(!S.watch.size) return out;
+  if(S.league === 'nfl'){
+    if(!S.depth) return out;
+    const codes = g.teams.map(function(t){ return teamCode(t.abbr); });
+    S.watch.forEach(function(n){
+      const d = S.depth[n];
+      if(!d) return;
+      const code = teamCode(d.team);
+      if(codes.indexOf(code) < 0) return;
+      out.push({ name: d.name, team: code, pos: d.slot, stats: S.logs ? S.logs[n] : null });
+    });
+  }else{
+    if(!S.college) return out;
+    S.watch.forEach(function(n){
+      (S.college[n] || []).forEach(function(p){
+        const t = g.teams.filter(function(x){ return gameHasSchool({ teams:[x] }, p.tm); })[0];
+        if(!t) return;
+        out.push({ name: p.name, team: t.abbr, pos: p.pos, stats: p.stats });
+      });
+    });
+  }
+  // The away team first, to match the order everything else on the page uses.
+  const order = g.teams.map(function(t){ return S.league === 'nfl' ? teamCode(t.abbr) : t.abbr; });
+  out.sort(function(a, b){ return order.indexOf(a.team) - order.indexOf(b.team); });
+  return out;
+}
+
+/* Fetched only when a pre-kickoff game is open and the watchlist is not empty,
+   and the heavy file only when someone on it is actually in this game. Both are
+   kept for the rest of the visit. */
+async function ensurePreData(){
+  const g = findGame();
+  if(!g || g.state !== 'pre' || !S.watch.size) return;
+  if(S.league === 'nfl'){
+    if(S.depthState === 'idle') await loadDepth();
+    if(S.depth && watchInGame(g).length && S.logsState === 'idle') await loadLogs();
+  }else if(S.schoolState === 'idle'){
+    await loadSchools();
+  }
+  if(S.gameId === g.id) render();
+}
+
 function anyLive(games){ return (games || []).some(function(g){ return g.state === 'in'; }); }
 function gameIsFeatured(id){
   const d = S.data[S.league];
@@ -1561,18 +1654,26 @@ function preview(g){
   let html = '<div class="hd"><span>Kickoff</span><span class="rule"></span></div>'
     + '<div class="card">' + rows.map(kv).join('') + '</div>';
 
-  // Home and road records, because 2-0 at home and 2-0 on the road are not the
-  // same team. The conference record only exists in college, so it only shows there.
-  const recs = g.teams.map(function(t){
-    const side = t.homeAway === 'home' ? 'home' : 'away';
-    const r = t.recs || {}, bits = [];
-    if(r.overall) bits.push(r.overall + ' overall');
-    if(r[side]) bits.push(r[side] + (side === 'home' ? ' at home' : ' on the road'));
-    if(r.conf) bits.push(r.conf + ' in conference');
-    return bits.length ? [(t.rank ? '#' + t.rank + ' ' : '') + t.abbr, bits.join(' \u00b7 ')] : null;
-  }).filter(Boolean);
-  if(recs.length) html += '<div class="hd"><span>Records</span><span class="rule"></span></div>'
-    + '<div class="card">' + recs.map(kv).join('') + '</div>';
+  /* YOUR PLAYERS IN THIS GAME, and what they have done this season. Records came
+     out of this spot: the hero above already carries them, and a road record in
+     September says nothing. This says something only DELTA can say. */
+  const mine = watchInGame(g);
+  if(mine.length){
+    const waiting = S.league === 'nfl' && S.logsState === 'loading';
+    html += '<div class="hd"><span>Your Watchlist \u00b7 ' + mine.length
+      + '</span><span class="rule"></span></div><div class="card">'
+      + mine.map(function(m){
+          const line = seasonLine(m.stats);
+          return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
+            + nameButton(m.name, ' <span class="pos">' + esc(m.team)
+                + (m.pos ? ' \u00b7 ' + esc(m.pos) : '') + '</span>')
+            + '</div>'
+            + (line ? '<div class="statline">' + esc(line) + '</div>'
+                    : (waiting ? '<div class="statline">Season numbers loading\u2026</div>'
+                               : '<div class="statline">No games played yet this season.</div>'))
+            + '</div>';
+        }).join('') + '</div>';
+  }
 
   // Each side's leading passer, rusher and receiver this season. Tapping a name
   // opens DELTA's own card on him, same as everywhere else on this page.
@@ -1590,7 +1691,7 @@ function preview(g){
         }).join('');
   }
   // A feed that sent none of it still gets the honest one-liner it had before.
-  if(rows.length === 1 && !recs.length && !lead.length)
+  if(rows.length === 1 && !mine.length && !lead.length)
     html += '<div class="notice" style="margin-top:16px">' + esc(noDetailYet(g)) + '</div>';
   return html;
 }
@@ -1794,14 +1895,20 @@ async function loadSchools(){
   try{
     // DELTA's own file: revalidate rather than re-download, like the app does.
     const d = await getJSON('data/college-players.json', 'no-cache');
-    const m = {};
+    const m = {}, rows = {};
     for(const p of ((d && d.players) || [])){
       if(!p || !p.n || !p.tm) continue;
       const k = normName(p.n);
       if(!m[k]) m[k] = [];
       if(m[k].indexOf(p.tm) < 0) m[k].push(p.tm);
+      // The same shorthand the NFL logs use, so one reader draws both sports.
+      if(!rows[k]) rows[k] = [];
+      rows[k].push({ name: p.n, tm: p.tm, pos: p.pos || '',
+                     stats: { gms: p.gms || 0, py: p.py || 0, pt: p.pt || 0, pi: p.pi || 0,
+                              car: p.car || 0, ry: p.ry || 0, rt: p.rt || 0,
+                              rec: p.rec || 0, rey: p.rey || 0, ret: p.ret || 0 } });
     }
-    S.school = m; S.schoolState = 'ready';
+    S.school = m; S.college = rows; S.schoolState = 'ready';
   }catch(e){ S.schoolState = 'failed'; S.fc.schoolFile = 'failed'; }
 }
 
@@ -1847,6 +1954,8 @@ async function loadGame(){
     }
   }catch(e){ S.failed = true; }
   if(S.gameId === id) render();
+  // A game that has not kicked off has a watchlist block to fill.
+  ensurePreData();
 }
 
 /* WHAT REFRESHES, AND HOW OFTEN.
