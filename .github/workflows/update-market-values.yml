@@ -61,6 +61,14 @@ jobs:
       - name: Fetch game logs + snap counts
         run: python scripts/fetch-game-logs.py
 
+      # Scorecard: grades DELTA's projections against real 2026 games and saves a
+      # weekly snapshot of the live projections the first night each NFL week is
+      # complete (never overwritten). Must never block the nightly data, so a
+      # failure here is logged and the fresh data still commits below.
+      - name: Build Scorecard
+        continue-on-error: true
+        run: node scripts/build-scorecard.js
+
       - name: Commit updated data
         run: |
           git config user.name "DELTA Bot"
