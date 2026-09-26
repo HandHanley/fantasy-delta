@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-26a';
+const DL_BUILD='2026-09-26b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2848,6 +2848,28 @@ function rookieBaseline(pl){
   return row ? row[rookieTier(di.pick)] : null;
 }
 
+/* ── IN-SEASON BLEND (26 Sep 2026) ─────────────────────────────────────────
+   docs/PREREG-in-season-blend.md, locked 0398624/c164ba0, PASSED: blending this
+   season's points per game into the preseason projection cut the typical miss on
+   rest-of-season PPG by 16.4% on 2023-25 (p=0.0005, every season and position).
+   Winning form "D": (w x this-season PPG + (1-w) x preseason) x (1 + 0.5 x d_volatility),
+   w = G/(G+BLEND_K). K=4 was the training peak (flat 3-6): this season counts 43%
+   after 3 games, 60% after 6, 69% after 9.
+   Tested population only: >=8 played games across the three prior seasons (the
+   study's projection rule). Rookies and thin-history players keep today's path.
+   Games = the live DNP rule (game-logs.json played rows). Points use gamefp() in
+   the selected format, so the blend is in the same units as the base. */
+const BLEND_K=4;
+function inSeasonForm(name,pos){
+  if(!GAMELOGS||!GAMELOGS[name]) return null;
+  let g=0,pts=0,prior=0;
+  for(const r of GAMELOGS[name]){
+    if(r.up||r.dnp) continue;
+    if(r.s===SEASON_YEAR){ g++; pts+=gamefp(r,pos,scoringFmt); }
+    else if(r.s<SEASON_YEAR && r.s>=SEASON_YEAR-3) prior++;
+  }
+  return {g, ppg:g?pts/g:0, prior};
+}
 function calcProj(pl){
   // A true rookie has no NFL history at all. Supply the draft-capital baseline as its
   // forward projection so the rookie override below fires; otherwise it falls to a
@@ -3108,6 +3130,19 @@ function calcProj(pl){
   const totalDelta=rawDelta+d_curve+0.5*d_stability+0.5*d_volatility+d_decay;
   const delta=Math.max(floorD,Math.min(cap,totalDelta));
   let proj=base*agM*(1+delta)*e.inj;
+  // In-season blend (see BLEND_K above). The preseason number is rebuilt WITHOUT the
+  // volatility term, blended, and the term applied once to the result — the tested
+  // form D. The blended PPG is NOT run back through the team multipliers: it was
+  // already scored in this system with this QB. projPre keeps today's number.
+  const projPre=proj;
+  const form=inSeasonForm(pl.n,pl.p);
+  let blendW=0;
+  if(form && form.g>0 && form.prior>=8){
+    const deltaNoVol=Math.max(floorD,Math.min(cap,totalDelta-0.5*d_volatility));
+    const pre=base*agM*(1+deltaNoVol)*e.inj;
+    blendW=form.g/(form.g+BLEND_K);
+    proj=(blendW*form.ppg+(1-blendW)*pre)*(1+0.5*d_volatility);
+  }
 
   // ── FIX 2: MISS% AS HARD PROJECTION CEILING ────────────────────
   // High Miss% players cannot project into reliable starter territory
@@ -3132,7 +3167,7 @@ function calcProj(pl){
   // e.ktc stays the 12-SF anchor the model rescales from via scarcity(); a manual
   // ktc override (OV) is an explicit market value and takes precedence.
   const kMkt=(OV[pl.n]&&OV[pl.n].ktc!==undefined)?e.ktc:(pl.kMkt!=null?pl.kMkt:e.ktc);
-  const result={...pl,pos:pl.p,t:e.team,base,proj,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
+  const result={...pl,pos:pl.p,t:e.team,base,proj,projPre,inSeason:form&&blendW?{g:form.g,ppg:form.ppg,w:blendW}:null,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-kMkt,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
     ktcEff:kMkt,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
