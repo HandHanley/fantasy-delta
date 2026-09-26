@@ -217,3 +217,39 @@ active on 6,907 of 9,352 rows.
 ## Amendments
 
 *(none)*
+
+## Result (26 September 2026) — PASSED, ship
+
+Run once, `python3 scripts/blend-study.py --run`, against this file as committed in `0398624`/`c164ba0`
+(sha256 prefix `774542360bd0403e`). Nothing above this section was changed after the run.
+
+**The candidate, chosen on training seasons only, was D (blend plus the live step penalty) at K = 4.**
+Training out-of-fold typical miss: B 3.212, D 3.207, C 3.201 (exploratory). D edged B by 0.005 — a tie
+in practice — so under §7 the step penalty stays.
+
+| Held-Out (2023–2025) | Typical Miss (RMSE, PPG) | Better Than Preseason Alone |
+|---|---|---|
+| A — preseason only | 3.810 | — |
+| B — blend | 3.186 | 16.4% |
+| **D — blend + penalty (candidate)** | **3.186** | **16.4%** |
+| C — rolling games (exploratory) | 3.185 | 16.4% |
+
+**Gates, all passed:** size 16.4% (bar 2%) · p = 0.0005, 0 of 2,000 shuffles as good (bar 0.05) ·
+every held-out season (2023 21.8%, 2024 14.1%, 2025 13.1%) · every position (QB 13.1%, RB 19.6%,
+WR 17.2%, TE 13.6%; bar −1%).
+
+**By checkpoint:** Week 3 13.3%, Week 6 14.4%, Week 9 17.3%, Week 12 19.9% — growing through the season
+as §6 predicted, not peaking early. **Rostered range only (8+ PPG preseason, reported, not gated):**
+B 14.5%, D 14.8%, C 14.5%.
+
+**K = 4 sits at the bottom of the grid, so it was checked afterwards on training seasons only** (not
+part of the decision): K = 2 3.277, 3 3.227, **4 3.211**, 6 3.221, 8 3.251. A genuine peak, flat
+between 3 and 6. At K = 4 this season counts 43% after 3 games, 60% after 6, 69% after 9.
+
+**What this does NOT show:** A is the projection *core*. The live preseason projection also carries
+the situational multipliers, so the live gain will be smaller than 16%. And only players who played
+4+ more games are graded — someone benched for good after Week 3 has no outcome to score.
+
+**Penalty verdict:** blend alone and blend plus penalty are indistinguishable (held-out 3.1855 vs
+3.1862). The penalty neither helps nor hurts once the blend is in; it stays because the pre-set rule
+picked D on training.
