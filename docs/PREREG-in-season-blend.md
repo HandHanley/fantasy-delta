@@ -216,7 +216,18 @@ active on 6,907 of 9,352 rows.
 
 ## Amendments
 
-*(none)*
+**1 — 26 Sep 2026, after the result, before shipping: where the blend sits in `calcProj`.**
+§7 said "blends this season's points per game into the base". Built literally, the blended number
+would then pass through the situational multipliers (team system, play-caller, QB quality), which
+multiplies 2026 points that were already scored in that system with that QB — the team situation
+counted twice, and not what was tested. The study's form was
+`(w × this-season PPG + (1 − w) × preseason projection) × (1 + 0.5 × d_volatility)`, so that is what
+shipped: the live preseason projection is rebuilt without the volatility term, blended at K = 4, and
+the term applied once to the result. Eligibility follows the study: ≥8 played games in the three
+prior seasons (counted from `game-logs.json`), so rookies keep today's path. Points use the site's
+`gamefp()` in the selected format, which also counts fumbles, two-point plays and return TDs.
+**Also found while building, not tested here:** "FIX 2" in `calcProj`, a hard projection ceiling for
+Miss % above 55/65, reads the same Start Profile. It is left exactly as it was.
 
 ## Result (26 September 2026) — PASSED, ship
 
