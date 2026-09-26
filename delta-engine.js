@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-26b';
+const DL_BUILD='2026-09-26c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2855,8 +2855,12 @@ function rookieBaseline(pl){
    Winning form "D": (w x this-season PPG + (1-w) x preseason) x (1 + 0.5 x d_volatility),
    w = G/(G+BLEND_K). K=4 was the training peak (flat 3-6): this season counts 43%
    after 3 games, 60% after 6, 69% after 9.
-   Tested population only: >=8 played games across the three prior seasons (the
-   study's projection rule). Rookies and thin-history players keep today's path.
+   K depends on the player's HISTORY, not on which code path he takes (blendK below):
+     >=8 played games in the three prior seasons  K=4  (Part 1)
+     1-7 played games                              K=2  (Part 2, thin history: 22.3%, p=0.031)
+     drafted rookie in his draft season            K=3  (Part 2, rookies: 23.3%, p=0.0005)
+     undrafted rookie / no history                 no blend (untested)
+   docs/PREREG-in-season-blend-rookies.md, locked b54b288, both groups PASSED 26 Sep 2026.
    Games = the live DNP rule (game-logs.json played rows). Points use gamefp() in
    the selected format, so the blend is in the same units as the base. */
 const BLEND_K=4;
@@ -2869,6 +2873,14 @@ function inSeasonForm(name,pos){
     else if(r.s<SEASON_YEAR && r.s>=SEASON_YEAR-3) prior++;
   }
   return {g, ppg:g?pts/g:0, prior};
+}
+const BLEND_K_THIN=2, BLEND_K_ROOKIE=3;
+function blendK(pl,form){
+  if(!form||form.g<1) return 0;
+  if(form.prior>=8) return BLEND_K;
+  if(form.prior>=1) return BLEND_K_THIN;
+  const di=dsDraftInfo(pl.n);           // no prior games: only a drafted rookie in his draft year
+  return (di&&di.pick!=null&&di.year===SEASON_YEAR) ? BLEND_K_ROOKIE : 0;
 }
 function calcProj(pl){
   // A true rookie has no NFL history at all. Supply the draft-capital baseline as its
@@ -2957,13 +2969,20 @@ function calcProj(pl){
             sits after this return. Latent rather than live today (no current
             entry takes this path), but it would have failed silently. */
     const e2=getEff(pl);
-    const rookieProj = pl.ppg25 * agM * e2.inj;
+    const rookiePre = pl.ppg25 * agM * e2.inj;
+    // In-season blend (blendK): this path also carries veterans with a forward
+    // projection, so K comes from the player's history, not from this branch.
+    const formR=inSeasonForm(pl.n,pl.p);
+    const kR=blendK(pl,formR);
+    const wR=kR?formR.g/(formR.g+kR):0;
+    const rookieProj = kR ? wR*formR.ppg+(1-wR)*rookiePre : rookiePre;
     const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
     const ciV2=ci(e2.c);
     const rookieResult={...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
       gap:mv2-e2.ktc,s:e2.s,c:e2.c,oc:e2.oc,ch:e2.ch,inj:e2.inj,
-      ktcEff:e2.ktc,notes:'',hasOv:true,
+      ktcEff:e2.ktc,notes:'',hasOv:true,projPre:rookiePre,
+      inSeason:kR?{g:formR.g,ppg:formR.ppg,w:wR,k:kR}:null,
       epaSc:1.0,epaFl:false,epaFr:null,epaTr:'flat',
       role:0,roleLabel:'—',sys:50,oppSc:null};
     // Projected rookies (drafted, ppg25 set as a forward projection, no NFL
@@ -3137,10 +3156,11 @@ function calcProj(pl){
   const projPre=proj;
   const form=inSeasonForm(pl.n,pl.p);
   let blendW=0;
-  if(form && form.g>0 && form.prior>=8){
+  const blendKv=blendK(pl,form);
+  if(blendKv){
     const deltaNoVol=Math.max(floorD,Math.min(cap,totalDelta-0.5*d_volatility));
     const pre=base*agM*(1+deltaNoVol)*e.inj;
-    blendW=form.g/(form.g+BLEND_K);
+    blendW=form.g/(form.g+blendKv);
     proj=(blendW*form.ppg+(1-blendW)*pre)*(1+0.5*d_volatility);
   }
 
@@ -3167,7 +3187,7 @@ function calcProj(pl){
   // e.ktc stays the 12-SF anchor the model rescales from via scarcity(); a manual
   // ktc override (OV) is an explicit market value and takes precedence.
   const kMkt=(OV[pl.n]&&OV[pl.n].ktc!==undefined)?e.ktc:(pl.kMkt!=null?pl.kMkt:e.ktc);
-  const result={...pl,pos:pl.p,t:e.team,base,proj,projPre,inSeason:form&&blendW?{g:form.g,ppg:form.ppg,w:blendW}:null,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
+  const result={...pl,pos:pl.p,t:e.team,base,proj,projPre,inSeason:form&&blendW?{g:form.g,ppg:form.ppg,w:blendW,k:blendKv}:null,floor:proj*(1-ciV),ceil:proj*(1+ciV),mv,
     gap:mv-kMkt,sys:e.s,oc:e.oc,och:e.ch,ci:ciV,inj:e.inj,
     ktcEff:kMkt,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
