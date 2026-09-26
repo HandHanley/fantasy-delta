@@ -155,3 +155,40 @@ QB 157; veterans 875, rookies 178, thin history 44.
 ## Amendments
 
 *(none)*
+
+## Result (26 September 2026) — NOT SHOWN. Calls unchanged.
+
+Run once, `python3 scripts/market-form-study.py --run`, against this file as committed in `be322f3`
+(sha256 prefix `1f641015858253c5`). Nothing above this section was changed after the run.
+
+| Held-Out 2023–2025 (2,100 checkpoints) | Typical Miss, Log Price |
+|---|---|
+| Market only | 0.5851 |
+| Market plus DELTA's move | 0.5845 |
+| **Improvement** | **0.10%** (bar: 2%) |
+
+| Gate | Result |
+|---|---|
+| 1. Size ≥ 2% | **FAIL** — 0.10% |
+| 2. Permutation p < 0.05 | passed, p = 0.0005 — **but see the flaw below** |
+| 3. Right direction | passed — coefficient +0.161 (the market later drifts slightly toward DELTA) |
+| 4. Every held-out season | **FAIL** — 2023 +0.26%, 2024 +0.60%, **2025 −0.56%** |
+| 5. No position worse than −1% | passed — QB +0.22%, RB +0.45%, WR −0.08%, TE −0.43% |
+
+**Outcome by §5's table: "Not shown."** "Real but small" needed gates 2, 3 and 4; gate 4 failed.
+
+**Flaw in gate 2, found on reading the result.** The shuffles replaced DELTA's move with shuffled
+values while keeping the fitted coefficient, so every shuffle adds noise at that weight and makes the
+forecast worse. That tests "better than a random nudge of the same size", not "better than adding
+nothing", and it passes almost anything with a positive fit. The p-value overstates the evidence.
+It does not change the outcome (gates 1 and 4 fail regardless). **Any future study using this
+design must shuffle and refit, or test against a zero coefficient.**
+
+**Reported only, never gated:** partial correlation +0.095 (August's level test: +0.047) ·
+by group: veterans −0.13%, thin history −0.43%, **rookies +1.02%** (178 held-out player-seasons) ·
+next-season PPG, in-sample and descriptive: 3.629 → 3.604 (0.7%).
+
+**What this says:** the market does move a little toward DELTA's in-season read on average, but by
+far too little to change a forecast, and not reliably from year to year. The market already prices
+early-season form. The rookie number is the only one worth a second look, and it would need its own
+pre-registration — it cannot be promoted from this run.
