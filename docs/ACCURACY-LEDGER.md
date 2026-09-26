@@ -308,6 +308,12 @@ and the clamp in particular is a conservative choice rather than a derivation.
 It is recorded here as an open question for the first ledger to answer, not as a
 validated improvement.
 
+> ⚠️ **Correction 26 Sep 2026:** an archive does exist. DynastyProcess's git
+> history holds roughly weekly superflex values 2020–2026 (expert consensus, not
+> FantasyCalc's trade-based prices, which keep no public history). The sentence
+> above is left as written because it describes what was believed at the time;
+> the taper has still not been tested against that archive.
+
 ---
 
 ## 4. Exclusions
@@ -361,18 +367,37 @@ Decided August 2026, before the pilot season. The governing principle:
 
 | Quantity | Moves in-season? | Why |
 |---|---|---|
-| **DELTA Score** | Essentially no | Claims *demonstrated* dynasty value. A demonstration is a completed season; three weeks of games is noise. Caveat below. |
-| **Projected PPG** | Only for confirmed season-enders | Forward-looking by definition, but see the ripple decision below. |
+| **DELTA Score** | **Not from weekly stats.** Contracts, yes. Age, no. | Claims *demonstrated* dynasty value. A demonstration is a completed season; three weeks of games is noise. Age is pinned to one date per season. Caveat below. |
+| **Projected PPG** | **Yes** | Blends this season's points per game into the preseason projection (pre-registered and tested, see below). Also moves on team changes and confirmed season-enders. |
 | **Model value** | Yes, daily | It is market × DELTA's multipliers, and the market reprices nightly. |
-| **Game logs** | Yes, weekly | Descriptive. They inform the reader; they do not feed the model. |
+| **Game logs** | Yes, weekly | Shown to the reader, **and** read by the model (the in-season blend and the Start Profile). |
 
-**Why weekly stats change nothing in the model.** This is deliberate, not a gap.
-`SEASONS` in the stats pipeline is pinned to completed seasons, so 2026 results
-never reach `ppg`, `games`, or anything derived from them until the offseason
-roll. If a player has three big games and his market value jumps while his DELTA
-Score holds, **that divergence is the signal** — it is the buy/sell mechanism
-working in-season. A score that chased box scores would say nothing the market
-had not already said louder.
+> ⚠️ **Revised 26 Sep 2026 (owner decision).** This table previously said weekly
+> stats change nothing in the model and that projections move only for confirmed
+> season-enders. The owner decided the frozen file is the ledger's fixed record,
+> not a freeze on the live site: a DELTA that doesn't change its mind in-season
+> looks obsolete. **Nothing about the graded record changed** — the ledger grades
+> `data/freeze-2026.json`, which is immutable. Two further corrections to the old
+> text: game logs already fed the model before this change (the Start Profile's
+> Miss %/Elite % step penalty, undocumented until 25 Sep), and ages had been moving
+> scores and projections mid-season on birthdays (fixed 25 Sep: pinned per season).
+
+**Why the DELTA Score still ignores weekly stats.** `SEASONS` in the stats
+pipeline is pinned to completed seasons, so 2026 results never reach the Score's
+`ppg` or `games` until the offseason roll. If a player has three big games and
+his market value jumps while his DELTA Score holds, **that divergence is the
+signal**. A score that chased box scores would say nothing the market had not
+already said louder.
+
+**Why the projection now does.** Tested before shipping, on 2018–2025 with
+2023–2025 held out, pre-registered in `docs/PREREG-in-season-blend.md` and
+`docs/PREREG-in-season-blend-rookies.md`: blending this season's points per game
+into the preseason number cut the typical miss on rest-of-season PPG by 16.4%
+for veterans, 23.3% for rookies and 22.3% for players with a thin record.
+
+**Why buy/sell calls do not chase it.** Tested too (`docs/PREREG-market-form.md`):
+DELTA's in-season re-rating improved a market-only forecast of next September's
+price by 0.10% and reversed in 2025. The market already prices early-season form.
 
 **Caveat on the DELTA Score.** It is not perfectly static: contracts refresh
 nightly and `dsContract` is 10% of the score, so a mid-season extension nudges
@@ -417,6 +442,10 @@ that gap small in year one means the results can be reported without asterisks.
 Pre-freeze changes are free — they land in the frozen record. Post-freeze changes
 cost interpretability. This reason expires once the mechanism has one clean
 season behind it.
+
+> ⚠️ **Revised 26 Sep 2026.** The owner accepted that cost: the live site reacts
+> in-season (above). The ledger is unaffected — it grades only the frozen file —
+> but any published comparison should say which of the two a number comes from.
 
 ---
 
