@@ -6,7 +6,7 @@ Stores raw stat lines in data/player-stats.json.
 """
 
 import json, os, re, sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 try:
@@ -47,6 +47,14 @@ def die(msg):
 # Season window for the stat/trend history. Extended back to 2022 so player pages can
 # toggle a multi-season stat line. EPA still looks back one additional year (see fetch_pbp).
 SEASONS    = [2022, 2023, 2024, 2025]
+# Ages are measured on ONE date per season, not on the day the script runs.
+# Decided 25 Sep 2026: a birthday in Week 7 doesn't make a player a different
+# player that season, so age must not move scores or projections mid-season.
+# The date is 7 Sep of the season being played (last finished season + 1), so
+# it rolls by itself when SEASONS is bumped at the offseason roll. 7 Sep is
+# the day the 2026 freeze was taken: it reproduces the frozen ages exactly
+# (404 of 404); 1 Sep would have shifted 70 of them.
+AGE_AS_OF  = date(max(SEASONS) + 1, 9, 7)
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "player-stats.json"
 INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
@@ -1108,8 +1116,7 @@ def fetch_draft_and_college(delta_names, meta):
         # age (years, 1-decimal) from birth_date if present — same dataset, one pass
         bd_col = next((c for c in ['birth_date','birthdate','birth_year'] if c in cols), None)
         if name_col and pos_c:
-            from datetime import date
-            today = date.today()
+            as_of = AGE_AS_OF   # fixed per season; see the note by SEASONS
             raw_col = {}   # (norm name, pos) -> college
             raw_age = {}   # (norm name, pos) -> age
             for _, row in pdf.iterrows():
@@ -1128,7 +1135,7 @@ def fetch_draft_and_college(delta_names, meta):
                         try:
                             s = str(bd)[:10]
                             y, m, d = int(s[0:4]), int(s[5:7]), int(s[8:10])
-                            age_yrs = (today - date(y, m, d)).days / 365.25
+                            age_yrs = (as_of - date(y, m, d)).days / 365.25
                             if 18 <= age_yrs <= 50:
                                 raw_age[key] = round(age_yrs, 1)
                         except (ValueError, TypeError):
