@@ -136,3 +136,30 @@ player-seasons (WR 30, RB 20, TE 14, QB 10).
 ## Amendments
 
 *(none)*
+
+## Result (26 September 2026) — BOTH GROUPS PASSED, ship
+
+Run once, `python3 scripts/blend-study-rookies.py --run`, against this file as committed in `b54b288`
+(sha256 prefix `ff8aed925fd758da`). Nothing above this section was changed after the run.
+
+| Held-Out 2023–2025 | Prior Alone (Typical Miss, PPG) | Blend | Better By | K | Shuffle Test |
+|---|---|---|---|---|---|
+| **R — rookies** (183 player-seasons) | 4.242 | 3.253 | **23.3%** | 3 | p = 0.0005 (0 of 2,000) |
+| **T — thin history** (74 player-seasons) | 3.067 | 2.382 | **22.3%** | 2 | p = 0.031 |
+
+**R gates, all passed:** 2023 30.1% · 2024 29.2% · 2025 7.7% · QB 13.1% (n 18, reported) · RB 20.6% ·
+WR 26.6% · TE 29.7%. By checkpoint: Week 3 15.6%, 6 22.9%, 9 26.3%, 12 27.3%.
+**Reported only — shipped engine table as the prior** (includes the graded seasons, so optimistic):
+prior 3.933 → blend 3.115, 20.8% better. The blend's gain doesn't depend on the rebuild.
+
+**T gates, all passed:** 2023 24.3% · 2024 27.8% · 2025 8.3% · WR 30.2% (the only position with n ≥ 30) ·
+RB 28.6%, TE 15.4% (reported) · **QB −5.7% (n 10, reported, not gated)**. By checkpoint: Week 3 20.6%,
+6 30.4%, 9 23.9%, 12 15.8%. p = 0.031 passes but is the weakest result of the three — small sample.
+
+**Both K values checked afterwards on training seasons only** (not part of the decision), because T's
+sits at the bottom of the grid. R: K 1 3.756, 2 3.673, **3 3.653**, 4 3.658, 6 3.693. T: K 1 3.312,
+**2 3.257**, 3 3.271, 4 3.304. Both genuine peaks. At K = 3 a rookie's season counts 50% after 3
+games; at K = 2 a thin-history player's counts 60% after 3 games.
+
+**As predicted:** both groups want less weight on the prior than Part 1's veterans (K 4), and 2025 is
+the weakest season in both.
