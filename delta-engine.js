@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-10a';
+const DL_BUILD='2026-09-26a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3392,8 +3392,16 @@ function mvAssetRaw(pl){
   // Missed most of 2025 (not a known full-year injury that's already priced via inj)
   if(g25h>0&&g25h<9) d_inj_hist-=0.04;
   // Missed significant games multiple recent seasons
-  if(g25h<14&&ppg24h===0&&(pl.a||30)>22) d_inj_hist-=0.03;
-  if(g25h<14&&ppg23h===0&&ppg24h===0&&(pl.a||30)>23) d_inj_hist-=0.02;
+  // A blank season only counts if the player was in the league that year (26 Sep
+  // 2026). Before this, "no 2024 production" could not tell an injury from a
+  // player who hadn't been drafted yet: 25 of the 35 graded players reaching this
+  // cut were docked for a season before their draft (2025 rookies up to -8%).
+  // 2026 rookies never get here (rookie shortcut in mvAsset). No draft record
+  // (undrafted) = unchanged behaviour.
+  const dyH=(DRAFT_PICKS[pl.n]||{}).y;
+  const inLeague=yr=>!dyH||dyH<=yr;
+  if(g25h<14&&ppg24h===0&&(pl.a||30)>22&&inLeague(2024)) d_inj_hist-=0.03;
+  if(g25h<14&&ppg23h===0&&ppg24h===0&&(pl.a||30)>23&&inLeague(2023)) d_inj_hist-=0.02;
   d_inj_hist=Math.max(-0.08,d_inj_hist);
 
   // ── FEATURE 3: Positional scarcity ──────────────────────────
