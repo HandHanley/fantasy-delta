@@ -616,6 +616,20 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 #panel-scorecard .dl-sc-num small{display:block;font-size:10.5px;color:var(--fog)}
 #panel-scorecard .dl-sc-chip{display:inline-block;padding:2px 8px;border-radius:999px;font-family:var(--sans);font-size:10.5px;font-weight:800;background:var(--teal-tint);color:var(--teal-br)}
 #panel-scorecard .dl-sc-chip.alt{background:none;border:1px solid var(--line);color:var(--fog);font-weight:700}
+#panel-scorecard .dl-sc-chip{white-space:nowrap}
+/* over / under: support hues only (sky, violet) — never the buy/sell signal colours; arrows carry it too */
+#panel-scorecard .dl-sc-dir{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font-family:var(--mono);font-weight:700}
+#panel-scorecard .dl-sc-dir svg{width:9px;height:9px;flex:none}
+#panel-scorecard .dl-sc-dir.up{color:var(--sky)}
+#panel-scorecard .dl-sc-dir.dn{color:var(--violet)}
+#panel-scorecard .dl-sc-dir.eq{color:var(--paper)}
+#panel-scorecard .dl-sc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#panel-scorecard .dl-sc-db{display:block;width:120px;height:14px;margin:5px 0 0 auto}
+#panel-scorecard .dl-sc-db .ax{stroke:var(--line);stroke-width:2}
+#panel-scorecard .dl-sc-db .pj{fill:var(--ink-2);stroke:var(--fog);stroke-width:1.5}
+#panel-scorecard .dl-sc-legend{display:flex;flex-wrap:wrap;gap:14px;margin:-.4rem 0 .8rem;font-size:11.5px;color:var(--fog)}
+#panel-scorecard .dl-sc-legend span{display:inline-flex;align-items:center;gap:5px}
+#panel-scorecard .dl-sc-nowrap{white-space:nowrap}
 #panel-scorecard .dl-sc-dim{color:var(--fog-2)}
 #panel-scorecard .dl-sc-live{color:var(--teal-br);font-weight:700}
 #panel-scorecard .dl-sc-empty{padding:18px;font-size:13px;color:var(--fog)}
@@ -4051,6 +4065,24 @@ function scBars(rows){
   return rows.filter(r=>r.v!=null).map(r=>'<div class="dl-sc-bar'+(r.me?' me':'')+'"><span>'+r.label+'</span><i><u style="width:'
     +(100*r.v/max).toFixed(1)+'%"></u></i><em>'+r.v.toFixed(2)+'</em></div>').join('');
 }
+/* off = projected − actual. Positive: DELTA was too high, he scored LESS (down, violet).
+   Negative: DELTA was too low, he scored MORE (up, sky). Within 0.05: on the number. */
+function scDir(off,dp){
+  if(off==null||isNaN(off)) return '<span class="dl-sc-dim">\u2014</span>';
+  const a=Math.abs(off);
+  if(a<0.05) return '<span class="dl-sc-dir eq">'+a.toFixed(dp)+'<span class="dl-sc-sr"> on the number</span></span>';
+  const up=off<0;
+  return '<span class="dl-sc-dir '+(up?'up':'dn')+'" title="'+(up?'Scored more than projected':'Scored less than projected')+'">'
+    +'<svg viewBox="0 0 10 10" aria-hidden="true"><path d="'+(up?'M5 1 L9.5 9 L0.5 9 Z':'M5 9 L9.5 1 L0.5 1 Z')+'" fill="currentColor"></path></svg>'
+    +a.toFixed(dp)+'<span class="dl-sc-sr">'+(up?' more than projected':' less than projected')+'</span></span>';
+}
+/* projected (hollow) vs actual (solid) on one shared scale, coloured by direction */
+function scDb(pre,act,max){
+  const x=v=>(6+Math.max(0,Math.min(v,max))/max*108).toFixed(1), up=act>pre, c=Math.abs(pre-act)<0.05?'var(--paper)':(up?'var(--sky)':'var(--violet)');
+  return '<svg class="dl-sc-db" viewBox="0 0 120 14" aria-hidden="true"><line class="ax" x1="6" y1="7" x2="114" y2="7"></line>'
+    +'<line x1="'+x(pre)+'" y1="7" x2="'+x(act)+'" y2="7" stroke="'+c+'" stroke-width="3"></line>'
+    +'<circle class="pj" cx="'+x(pre)+'" cy="7" r="4"></circle><circle cx="'+x(act)+'" cy="7" r="4.5" fill="'+c+'"></circle></svg>';
+}
 function scSetSort(v){ SC_SORT=v; renderScorecard(); }
 function scSetPos(v){ SC_POS=v; renderScorecard(); }
 function renderScorecard(){
@@ -4079,27 +4111,33 @@ function renderScorecard(){
     liv+='<div class="dl-sc-foot">'+snap.n+' players'+(early?' so far \u00b7 reads for real at '+d.rules.ready_at+'+':'')+'</div>';
   } else liv+='<div class="dl-sc-empty">The first snapshot is graded once players have two games after it.</div>';
   liv+='</div>';
+  const dbAll=[...(d.closest||[]),...(d.farthest||[])].flatMap(p=>[p.pre,p.sofar]);
+  const dbMax=Math.max(30,Math.ceil(Math.max(0,...dbAll)/10)*10);   // one shared scale for both lists
   const top=(arr,far)=>'<div class="dl-sc-list">'+arr.map(p=>'<div class="dl-sc-li" data-name="'+scEsc(p.n)+'" onclick="openDeck(this.dataset.name)">'
     +'<div><div class="dl-sc-nm">'+scEsc(p.n)+'</div><div class="dl-sc-meta">'+scEsc(p.pos)+' \u00b7 '+scEsc(p.t)+(p.r?' \u00b7 #'+p.r:'')+'</div></div>'
-    +'<div class="dl-sc-num">'+scF(p.pre)+' \u2192 '+scF(p.sofar)+'<small>'+(far?Math.abs(p.off).toFixed(1)+(p.off>0?' high':' low'):'off by '+Math.abs(p.off).toFixed(2))
-    +' \u00b7 '+p.g+' g</small></div></div>').join('')+'</div>';
+    +'<div class="dl-sc-num"><span class="dl-sc-nowrap">'+scF(p.pre)+' \u2192 '+scF(p.sofar)+'</span><small>'+scDir(p.off,far?1:2)+'</small>'+scDb(p.pre,p.sofar,dbMax)
+    +'</div></div>').join('')+'</div>';
   const t100=d.rules.top_pool?' <span class="dl-sc-tag">TOP '+d.rules.top_pool+'</span>':'';
   const tops='<div class="dl-sc-grid"><div><h3 class="dl-sc-h">Closest Preseason Calls'+t100+'</h3>'+top(d.closest||[],0)+'</div>'
-    +'<div><h3 class="dl-sc-h">Farthest Off'+t100+'</h3>'+top(d.farthest||[],1)+'</div></div>';
+    +'<div><h3 class="dl-sc-h">Farthest Off'+t100+'</h3>'+top(d.farthest||[],1)+'</div></div>'
+    +'<div class="dl-sc-legend"><span><span class="dl-sc-dir up"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 L9.5 9 L0.5 9 Z" fill="currentColor"></path></svg></span>Scored more than projected</span>'
+    +'<span><span class="dl-sc-dir dn"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 L9.5 1 L0.5 1 Z" fill="currentColor"></path></svg></span>Scored less</span>'
+    +'<span><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>Projected</span>'
+    +'<span><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4" fill="currentColor"></circle></svg>Actual</span></div>';
   let ps=(d.players||[]).filter(p=>SC_POS==='ALL'||p.pos===SC_POS);
   const miss=p=>p.sofarG>=d.rules.min_games_now&&p.pre!=null?Math.abs(p.pre-p.sofar):null;
   ps=ps.slice().sort(SC_SORT==='name'?(a,b)=>a.n.localeCompare(b.n)
     :SC_SORT==='close'?(a,b)=>(miss(a)??99)-(miss(b)??99):(a,b)=>(miss(b)??-1)-(miss(a)??-1));
   const rows=ps.map(p=>{
     const m=miss(p), hasLast=p.lastG>=d.rules.min_games_last&&m!=null;
-    const near=hasLast?(m<Math.abs(p.last-p.sofar)?'<span class="dl-sc-chip">DELTA</span>':'<span class="dl-sc-chip alt">Last season</span>'):'<span class="dl-sc-dim">\u2014</span>';
-    const snapCell=p.snapW?'<span class="'+(p.sinceG>=d.rules.min_games_after?'':'dl-sc-dim')+'">Wk '+p.snapW+': '+scF(p.snap)+' \u2192 '+scF(p.since)+' ('+p.sinceG+' g)</span>':'<span class="dl-sc-dim">\u2014</span>';
+    const near=hasLast?(m<Math.abs(p.last-p.sofar)?'<span class="dl-sc-chip">DELTA</span>':'<span class="dl-sc-chip alt">Last Yr</span>'):'<span class="dl-sc-dim">\u2014</span>';
+    const snapCell=p.snapW?'<span class="dl-sc-nowrap '+(p.sinceG>=d.rules.min_games_after?'':'dl-sc-dim')+'">Wk '+p.snapW+': '+scF(p.snap)+' \u2192 '+scF(p.since)+' ('+p.sinceG+' g)</span>':'<span class="dl-sc-dim">\u2014</span>';
     return '<tr class="dl-rk-row" data-name="'+scEsc(p.n)+'" onclick="openDeck(this.dataset.name)">'
       +'<td class="pname">'+scEsc(p.n)+' <span class="dl-sc-meta">'+scEsc(p.pos)+'</span></td>'
       +'<td class="dl-b-r">'+scF(p.pre)+'</td>'
-      +'<td class="dl-b-r dl-sc-hide-m">'+(p.lastG?scF(p.last)+' <span class="dl-sc-dim">('+p.lastG+')</span>':'<span class="dl-sc-dim">\u2014</span>')+'</td>'
-      +'<td class="dl-b-r">'+scF(p.sofar)+' <span class="dl-sc-dim">('+p.sofarG+')</span></td>'
-      +'<td class="dl-b-r">'+(m==null?'<span class="dl-sc-dim">\u2014</span>':m.toFixed(1)+' <span class="dl-sc-dim">'+(p.pre>p.sofar?'high':'low')+'</span>')+'</td>'
+      +'<td class="dl-b-r dl-sc-hide-m">'+(p.lastG?scF(p.last):'<span class="dl-sc-dim">\u2014</span>')+'</td>'
+      +'<td class="dl-b-r">'+scF(p.sofar)+'</td>'
+      +'<td class="dl-b-r">'+(m==null?'<span class="dl-sc-dim">\u2014</span>':scDir(p.pre-p.sofar,1))+'</td>'
       +'<td class="dl-b-c txt">'+near+'</td>'
       +'<td class="dl-b-r dl-sc-live">'+scF(p.live)+'</td>'
       +'<td class="dl-b-r dl-sc-hide-m">'+snapCell+'</td></tr>';
@@ -4121,7 +4159,8 @@ function renderScorecard(){
     +sel('ALL',SC_POS,'All')+sel('QB',SC_POS,'QB')+sel('RB',SC_POS,'RB')+sel('WR',SC_POS,'WR')+sel('TE',SC_POS,'TE')+'</select>'
     +'<select onchange="scSetSort(this.value)" aria-label="Sort">'+sel('miss',SC_SORT,'Farthest off')+sel('close',SC_SORT,'Closest')+sel('name',SC_SORT,'Name')+'</select></div>'
     +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Preseason</th>'
-    +'<th class="dl-b-r dl-sc-hide-m">Last Season</th><th class="dl-b-r">2026 So Far</th><th class="dl-b-r">Off By</th>'
+    +'<th class="dl-b-r dl-sc-hide-m">Last Season</th><th class="dl-b-r" data-tip="Points per game this season. A player is graded once he has '+d.rules.min_games_now+'+ games.">2026 So Far</th>'
+    +'<th class="dl-b-r" data-tip="How far the preseason projection was from 2026 so far. Blue up: he scored more than DELTA projected. Purple down: he scored less.">Off By</th>'
     +'<th class="dl-b-c" data-tip="Whose number sat nearer to 2026 so far: DELTA\u2019s preseason projection or last season\u2019s PPG.">Nearer</th>'
     +'<th class="dl-b-r">Live Now</th><th class="dl-b-r dl-sc-hide-m" data-tip="A live snapshot and what the player has averaged since. Dim until he has 2+ games after it.">Snapshot \u2192 Since</th></tr></thead>'
     +'<tbody>'+(rows||'<tr><td colspan="8" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
@@ -5713,7 +5752,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-26a</span>
+  <span class="foot-build">2026-09-26b</span>
 </footer>
 
 
