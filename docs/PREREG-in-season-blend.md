@@ -229,6 +229,13 @@ prior seasons (counted from `game-logs.json`), so rookies keep today's path. Poi
 **Also found while building, not tested here:** "FIX 2" in `calcProj`, a hard projection ceiling for
 Miss % above 55/65, reads the same Start Profile. It is left exactly as it was.
 
+**2 — 26 Sep 2026: a claim in Pre-Lock Checks was wrong.** It says the random-outcome run shows
+"noise fails the 2% bar, as it should". That run can't show that. Whether random outcomes pass
+depends on where they happen to be centred relative to the two predictions: re-centred at 6 PPG for
+Part 2, noise "passed" the thin-history group. The run is a **crash test only** — proof the code
+executes, nothing about the gate. The protection against a fluke is the paired shuffle test on the
+real outcomes (§6), which is unchanged, so the result below stands.
+
 ## Result (26 September 2026) — PASSED, ship
 
 Run once, `python3 scripts/blend-study.py --run`, against this file as committed in `0398624`/`c164ba0`
