@@ -579,6 +579,52 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
 .cfb-about summary::after{content:"+";font-weight:700;font-size:11px;line-height:1}
 .cfb-about[open] summary::after{content:"\2013"}
 .cfb-about summary:hover{color:var(--paper);border-color:var(--fog-2)}
+/* ── Scorecard (26 Sep 2026) — every colour is a :root token; no signal colours ── */
+#panel-scorecard .dl-sc-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:.6rem}
+#panel-scorecard .dl-sc-eyebrow{font-size:10px;font-weight:800;letter-spacing:.16em;color:var(--teal-br)}
+#panel-scorecard .dl-sc-title{margin:4px 0 2px;font-size:26px;font-weight:800;color:var(--paper);line-height:1.1}
+#panel-scorecard .dl-sc-sub{margin:0;font-size:13px;color:var(--fog)}
+#panel-scorecard .dl-sc-pill{padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:12px;font-weight:700;color:var(--paper);white-space:nowrap}
+#panel-scorecard .dl-sc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:.4rem 0 1.2rem}
+#panel-scorecard .dl-sc-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px}
+#panel-scorecard .dl-sc-card.early{background:var(--ink-2);border-style:dashed}
+#panel-scorecard .dl-sc-card h3{margin:0;font-size:16px;font-weight:800;color:var(--paper)}
+#panel-scorecard .dl-sc-card.early h3{color:var(--fog)}
+#panel-scorecard .dl-sc-when{font-size:12px;color:var(--fog)}
+#panel-scorecard .dl-sc-tag{padding:3px 8px;border:1px solid var(--line);border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--fog)}
+#panel-scorecard .dl-sc-big{display:flex;align-items:baseline;gap:10px}
+#panel-scorecard .dl-sc-big b{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--teal-br);line-height:1}
+#panel-scorecard .dl-sc-big span{font-size:12px;color:var(--fog)}
+#panel-scorecard .dl-sc-bar{display:grid;grid-template-columns:150px minmax(0,1fr) 44px;align-items:center;gap:10px;font-size:13px;color:var(--fog)}
+#panel-scorecard .dl-sc-bar.me{color:var(--paper);font-weight:700}
+#panel-scorecard .dl-sc-bar i{display:block;height:9px;border-radius:5px;background:var(--ink-2)}
+#panel-scorecard .dl-sc-bar i u{display:block;height:9px;border-radius:5px;background:var(--fog-2)}
+#panel-scorecard .dl-sc-bar.me i u{background:var(--teal-br)}
+#panel-scorecard .dl-sc-card.early .dl-sc-bar.me i u{opacity:.45}
+#panel-scorecard .dl-sc-bar em{font-style:normal;font-family:var(--mono);text-align:right}
+#panel-scorecard .dl-sc-verdict{font-size:15px;font-weight:800;color:var(--paper)}
+#panel-scorecard .dl-sc-verdict b{color:var(--teal-br)}
+#panel-scorecard .dl-sc-foot{font-size:11px;color:var(--fog);border-top:1px solid var(--line);padding-top:10px}
+#panel-scorecard .dl-sc-h{margin:0 0 .5rem;font-size:16px;font-weight:800;color:var(--paper)}
+#panel-scorecard .dl-sc-list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#panel-scorecard .dl-sc-li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;min-height:44px;box-sizing:border-box}
+#panel-scorecard .dl-sc-li:last-child{border-bottom:none}
+#panel-scorecard .dl-sc-li:hover{background:var(--row-hi)}
+#panel-scorecard .dl-sc-nm{font-weight:700;color:var(--paper);font-size:13px}
+#panel-scorecard .dl-sc-meta{font-size:11px;color:var(--fog)}
+#panel-scorecard .dl-sc-num{font-family:var(--mono);font-size:13px;color:var(--paper);text-align:right}
+#panel-scorecard .dl-sc-num small{display:block;font-size:10.5px;color:var(--fog)}
+#panel-scorecard .dl-sc-chip{display:inline-block;padding:2px 8px;border-radius:999px;font-family:var(--sans);font-size:10.5px;font-weight:800;background:var(--teal-tint);color:var(--teal-br)}
+#panel-scorecard .dl-sc-chip.alt{background:none;border:1px solid var(--line);color:var(--fog);font-weight:700}
+#panel-scorecard .dl-sc-dim{color:var(--fog-2)}
+#panel-scorecard .dl-sc-live{color:var(--teal-br);font-weight:700}
+#panel-scorecard .dl-sc-empty{padding:18px;font-size:13px;color:var(--fog)}
+@media (max-width:720px){
+  #panel-scorecard .dl-sc-grid{grid-template-columns:minmax(0,1fr)}
+  #panel-scorecard .dl-sc-title{font-size:22px}
+  #panel-scorecard .dl-sc-bar{grid-template-columns:118px minmax(0,1fr) 40px;font-size:12px}
+  #panel-scorecard .dl-sc-hide-m{display:none}
+}
 .cfb-about .cfb-about-body{padding:9px 2px 0;font-size:11.5px;color:var(--fog);line-height:1.6;max-width:760px}
 
 /* ── iOS focus-zoom ────────────────────────────────────────────────────────
@@ -1482,6 +1528,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button data-tab="projections" data-sec="nfl" class="tab" onclick="showTab('projections',this)">Projections</button>
+  <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="trade" data-sec="nfl" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
   <button data-tab="ripple" data-sec="nfl" class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
@@ -1776,6 +1823,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
     <tbody id="proj-body"></tbody>
   </table></div>
 </div>
+
+<div id="panel-scorecard" class="panel"><div id="sc-root"></div></div>
 
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
@@ -3846,7 +3895,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','projections','trade','epa','ripple','contracts','audit'],
+const SEC_TABS={ nfl:['rankings','projections','scorecard','trade','epa','ripple','contracts','audit'],
                  cfb:['college','portal','bigboard','rookies'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
@@ -3898,7 +3947,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','projections','scorecard','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -3980,6 +4029,103 @@ window.addEventListener('popstate', function(ev){
     _urlSyncReady = was;
   }catch(e){}
 });
+/* ── Scorecard tab (26 Sep 2026) ───────────────────────────────────────────────
+   Renders data/scorecard.json, built nightly by scripts/build-scorecard.js. All the
+   grading happens in that script, so a phone only draws a small file. Every
+   projection is graded only on games played AFTER it was made. */
+let SC_DATA=null, SC_LOADING=null, SC_SORT='miss', SC_POS='ALL';
+function scEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function scF(x){ return x==null||isNaN(x)?'\u2014':Number(x).toFixed(1); }
+function openScorecardTab(){
+  const root=document.getElementById('sc-root'); if(!root) return;
+  if(SC_DATA){ renderScorecard(); return; }
+  root.innerHTML='<div class="dl-sc-empty">Loading the Scorecard\u2026</div>';
+  if(!SC_LOADING) SC_LOADING=fetch('./data/scorecard.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():Promise.reject('scorecard '+r.status))
+    .then(d=>{ SC_DATA=d; renderScorecard(); })
+    .catch(e=>{ console.warn('scorecard',e); SC_LOADING=null;
+      root.innerHTML='<div class="dl-sc-empty">The Scorecard could not load. Try again in a moment.</div>'; });
+}
+function scBars(rows){
+  const max=Math.max(...rows.filter(r=>r.v!=null).map(r=>r.v),0.01);
+  return rows.filter(r=>r.v!=null).map(r=>'<div class="dl-sc-bar'+(r.me?' me':'')+'"><span>'+r.label+'</span><i><u style="width:'
+    +(100*r.v/max).toFixed(1)+'%"></u></i><em>'+r.v.toFixed(2)+'</em></div>').join('');
+}
+function scSetSort(v){ SC_SORT=v; renderScorecard(); }
+function scSetPos(v){ SC_POS=v; renderScorecard(); }
+function renderScorecard(){
+  const root=document.getElementById('sc-root'), d=SC_DATA; if(!root||!d) return;
+  const fz=d.frozen;
+  let pre='<div class="dl-sc-card"><div><h3>Preseason Projections</h3><div class="dl-sc-when">Frozen 7 Sep, before any game</div></div>';
+  if(fz){
+    const better=fz.delta<=fz.last, pct=Math.abs(fz.lift).toFixed(0);
+    pre+='<div class="dl-sc-big"><b>'+fz.delta.toFixed(2)+'</b><span>typical miss, points per game</span></div>'
+      +scBars([{label:'DELTA preseason',v:fz.delta,me:1},{label:"Last season's PPG",v:fz.last}])
+      +'<div class="dl-sc-verdict">'+(better?'DELTA <b>'+pct+'% closer</b> than last season\u2019s PPG'
+        :'Last season\u2019s PPG '+pct+'% closer than DELTA')+'</div>'
+      +'<div class="dl-sc-foot">'+fz.n+' players \u00b7 running tally \u00b7 official grade in February</div>';
+  } else pre+='<div class="dl-sc-empty">Grades once players have two games.</div>';
+  pre+='</div>';
+  const g=(d.graded||[]), ready=g.filter(x=>x.ready), withN=g.filter(x=>x.n>0);
+  const snap=ready.length?ready[ready.length-1]:(withN.length?withN[withN.length-1]:null);
+  const early=!snap||!snap.ready;
+  let liv='<div class="dl-sc-card'+(early?' early':'')+'"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><h3>Live Projections</h3><div class="dl-sc-when">'
+    +(snap?'Snapshot after Week '+snap.week+' \u00b7 graded on games since':'Weekly snapshots, graded on games since')+'</div></div>'
+    +(early?'<span class="dl-sc-tag">TOO EARLY</span>':'')+'</div>';
+  if(snap){
+    liv+=scBars([{label:'DELTA live',v:snap.live,me:1},{label:'DELTA preseason',v:snap.frozen},{label:"Last season's PPG",v:snap.last},{label:'Through Wk '+snap.week+' alone',v:snap.thru}]);
+    if(!early){ const lp=100*(1-snap.live/snap.frozen);
+      liv+='<div class="dl-sc-verdict">'+(lp>=0?'Updating made DELTA <b>'+lp.toFixed(0)+'% closer</b>':'Updating made DELTA '+Math.abs(lp).toFixed(0)+'% further off')+'</div>'; }
+    liv+='<div class="dl-sc-foot">'+snap.n+' players'+(early?' so far \u00b7 reads for real at '+d.rules.ready_at+'+':'')+'</div>';
+  } else liv+='<div class="dl-sc-empty">The first snapshot is graded once players have two games after it.</div>';
+  liv+='</div>';
+  const top=(arr,far)=>'<div class="dl-sc-list">'+arr.map(p=>'<div class="dl-sc-li" data-name="'+scEsc(p.n)+'" onclick="openDeck(this.dataset.name)">'
+    +'<div><div class="dl-sc-nm">'+scEsc(p.n)+'</div><div class="dl-sc-meta">'+scEsc(p.pos)+' \u00b7 '+scEsc(p.t)+(p.r?' \u00b7 #'+p.r:'')+'</div></div>'
+    +'<div class="dl-sc-num">'+scF(p.pre)+' \u2192 '+scF(p.sofar)+'<small>'+(far?Math.abs(p.off).toFixed(1)+(p.off>0?' high':' low'):'off by '+Math.abs(p.off).toFixed(2))
+    +' \u00b7 '+p.g+' g</small></div></div>').join('')+'</div>';
+  const t100=d.rules.top_pool?' <span class="dl-sc-tag">TOP '+d.rules.top_pool+'</span>':'';
+  const tops='<div class="dl-sc-grid"><div><h3 class="dl-sc-h">Closest Preseason Calls'+t100+'</h3>'+top(d.closest||[],0)+'</div>'
+    +'<div><h3 class="dl-sc-h">Farthest Off'+t100+'</h3>'+top(d.farthest||[],1)+'</div></div>';
+  let ps=(d.players||[]).filter(p=>SC_POS==='ALL'||p.pos===SC_POS);
+  const miss=p=>p.sofarG>=d.rules.min_games_now&&p.pre!=null?Math.abs(p.pre-p.sofar):null;
+  ps=ps.slice().sort(SC_SORT==='name'?(a,b)=>a.n.localeCompare(b.n)
+    :SC_SORT==='close'?(a,b)=>(miss(a)??99)-(miss(b)??99):(a,b)=>(miss(b)??-1)-(miss(a)??-1));
+  const rows=ps.map(p=>{
+    const m=miss(p), hasLast=p.lastG>=d.rules.min_games_last&&m!=null;
+    const near=hasLast?(m<Math.abs(p.last-p.sofar)?'<span class="dl-sc-chip">DELTA</span>':'<span class="dl-sc-chip alt">Last season</span>'):'<span class="dl-sc-dim">\u2014</span>';
+    const snapCell=p.snapW?'<span class="'+(p.sinceG>=d.rules.min_games_after?'':'dl-sc-dim')+'">Wk '+p.snapW+': '+scF(p.snap)+' \u2192 '+scF(p.since)+' ('+p.sinceG+' g)</span>':'<span class="dl-sc-dim">\u2014</span>';
+    return '<tr class="dl-rk-row" data-name="'+scEsc(p.n)+'" onclick="openDeck(this.dataset.name)">'
+      +'<td class="pname">'+scEsc(p.n)+' <span class="dl-sc-meta">'+scEsc(p.pos)+'</span></td>'
+      +'<td class="dl-b-r">'+scF(p.pre)+'</td>'
+      +'<td class="dl-b-r dl-sc-hide-m">'+(p.lastG?scF(p.last)+' <span class="dl-sc-dim">('+p.lastG+')</span>':'<span class="dl-sc-dim">\u2014</span>')+'</td>'
+      +'<td class="dl-b-r">'+scF(p.sofar)+' <span class="dl-sc-dim">('+p.sofarG+')</span></td>'
+      +'<td class="dl-b-r">'+(m==null?'<span class="dl-sc-dim">\u2014</span>':m.toFixed(1)+' <span class="dl-sc-dim">'+(p.pre>p.sofar?'high':'low')+'</span>')+'</td>'
+      +'<td class="dl-b-c txt">'+near+'</td>'
+      +'<td class="dl-b-r dl-sc-live">'+scF(p.live)+'</td>'
+      +'<td class="dl-b-r dl-sc-hide-m">'+snapCell+'</td></tr>';
+  }).join('');
+  const sel=(v,cur,l)=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>';
+  root.innerHTML='<div class="dl-sc-head"><div><div class="dl-sc-eyebrow">SCORECARD \u00b7 '+d.season+'</div>'
+    +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'
+    +'<p class="dl-sc-sub">Each projection is graded only on games played after it was made.</p></div>'
+    +'<span class="dl-sc-pill">Through Week '+d.through_week+'</span></div>'
+    +'<details class="cfb-about"><summary>How It\u2019s Graded</summary><div class="cfb-about-body">'
+    +'<b>Typical miss</b> is the average gap between projected and actual points per game; big misses count extra, and lower is better. '
+    +'<b>Only later games count:</b> a live projection already includes the games before it, so it is graded on the games after. '
+    +'<b>One player is noise</b> \u2014 like a batting average, the headline numbers are what DELTA stands on. '
+    +'Scoring: '+scEsc(d.basis)+'. Players: '+scEsc(d.rules.graded)+'. A live snapshot reads for real once '+d.rules.ready_at+'+ players have '+d.rules.min_games_after+'+ games after it. '
+    +'Closest and farthest are drawn from the top '+(d.rules.top_pool||100)+' players by market value at the freeze (#rank shown). '
+    +'The preseason numbers here are a running preview; the official grade is the Accuracy Ledger in February.</div></details>'
+    +'<div class="dl-sc-grid">'+pre+liv+'</div>'+tops
+    +'<h3 class="dl-sc-h">Players</h3><div class="controls"><select onchange="scSetPos(this.value)" aria-label="Position">'
+    +sel('ALL',SC_POS,'All')+sel('QB',SC_POS,'QB')+sel('RB',SC_POS,'RB')+sel('WR',SC_POS,'WR')+sel('TE',SC_POS,'TE')+'</select>'
+    +'<select onchange="scSetSort(this.value)" aria-label="Sort">'+sel('miss',SC_SORT,'Farthest off')+sel('close',SC_SORT,'Closest')+sel('name',SC_SORT,'Name')+'</select></div>'
+    +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Preseason</th>'
+    +'<th class="dl-b-r dl-sc-hide-m">Last Season</th><th class="dl-b-r">2026 So Far</th><th class="dl-b-r">Off By</th>'
+    +'<th class="dl-b-c" data-tip="Whose number sat nearer to 2026 so far: DELTA\u2019s preseason projection or last season\u2019s PPG.">Nearer</th>'
+    +'<th class="dl-b-r">Live Now</th><th class="dl-b-r dl-sc-hide-m" data-tip="A live snapshot and what the player has averaged since. Dim until he has 2+ games after it.">Snapshot \u2192 Since</th></tr></thead>'
+    +'<tbody>'+(rows||'<tr><td colspan="8" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
+}
 function showTab(id,el,skipSection){
   // A tab in another section switches the section first; setSection calls back with
   // skipSection=true, so this can recurse at most once.
@@ -4002,6 +4148,7 @@ function showTab(id,el,skipSection){
   if(id==='rankings' && typeof renderRankings==='function'
      && typeof COMP!=='undefined' && COMP.length){ try{ renderRankings(); }catch(e){ console.warn('rankings',e); } }
   if(id==='contracts')renderContracts();
+  if(id==='scorecard')openScorecardTab();
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -4055,6 +4202,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-09-26-scorecard', d:'26 Sep 2026', t:'Scorecard', tab:'scorecard',
+   b:"How accurate is DELTA? Every projection graded against real 2026 games, only on games played after it was made, with the closest calls and the biggest misses."},
   {id:'2026-09-21-live', d:'21 Sep 2026', t:'Live Scores', arm:'live',
    b:"Every NFL and college game as it happens. Follow the ball down the field, read every play quarter by quarter, and see what the players on your watchlist are scoring in your league's own format. Tap Live, beside My Team."},
   {id:'2026-09-13-ledger', d:'13 Sep 2026', t:'League Trade Ledger', tab:'myteam',
@@ -5564,7 +5713,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-21b</span>
+  <span class="foot-build">2026-09-26a</span>
 </footer>
 
 
