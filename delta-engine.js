@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-26e';
+const DL_BUILD='2026-09-27a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4240,6 +4240,16 @@ function dsProduction(ppg25, ppg24, ppg23, g25, pos, p, neutral) {
   // historical behaviour just omit the argument.
   const _fmtScale = (DS_FMT_SCALE[typeof scoringFmt!=='undefined'?scoringFmt:'half_tep'] || DS_FMT_SCALE.half_tep)[pos] || 1;
   const avg = (DS_AVG[pos]||12) * _fmtScale, elite = (DS_ELITE[pos]||14) * _fmtScale;
+  // The bar above is in the league's format, so every PPG graded against it must be too.
+  // PPGs recomputed from real stats already are (the loader stores ppgH25/24/23 beside
+  // them). A value with no ppgH is a draft-slot baseline or a stored number, which is in
+  // half PPR + TE premium — convert it with the same per-position factor (27 Sep 2026).
+  // Before this, draft-slot rookies moved uniformly with the format whatever their role:
+  // every one down in full PPR (Love 83 -> 76), up in standard (Sadiq 68 -> 83).
+  if (p && _fmtScale !== 1) {
+    const inFmt = (v, k) => (v > 0 && p['ppgH' + k] == null) ? v * _fmtScale : v;
+    ppg25 = inFmt(ppg25, '25'); ppg24 = inFmt(ppg24, '24'); ppg23 = inFmt(ppg23, '23');
+  }
   const trans = DS_TRANS[pos]||1.15;
   const scarMult = (DS_SCAR[pos]||1.0) * (neutral ? 1 : scarcity(pos, leagueTeams, qbFmt));
 
