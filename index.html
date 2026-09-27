@@ -4090,11 +4090,13 @@ function renderScorecard(){
   const fz=d.frozen;
   let pre='<div class="dl-sc-card"><div><h3>Preseason Projections</h3><div class="dl-sc-when">Frozen 7 Sep, before any game</div></div>';
   if(fz){
-    const better=fz.delta<=fz.last, pct=Math.abs(fz.lift).toFixed(0);
-    pre+='<div class="dl-sc-big"><b>'+fz.delta.toFixed(2)+'</b><span>typical miss, points per game</span></div>'
-      +scBars([{label:'DELTA preseason',v:fz.delta,me:1},{label:"Last season's PPG",v:fz.last}])
-      +'<div class="dl-sc-verdict">'+(better?'DELTA <b>'+pct+'% closer</b> than last season\u2019s PPG'
-        :'Last season\u2019s PPG '+pct+'% closer than DELTA')+'</div>'
+    const dm=fz.delta.mae, a3=fz.avg3.mae, ls=fz.last.mae, p3=Math.abs(100*(1-dm/a3)).toFixed(0);
+    const beats=(dm<a3?1:0)+(dm<ls?1:0);
+    pre+='<div class="dl-sc-big"><b>'+dm.toFixed(2)+'</b><span>average miss, points per game</span></div>'
+      +scBars([{label:'DELTA preseason',v:dm,me:1},{label:'3-year average',v:a3},{label:"Last season's PPG",v:ls}])
+      +'<div class="dl-sc-verdict">'+(beats===2?'DELTA <b>beats both</b> \u00b7 '+p3+'% closer than the 3-year average'
+        :beats===1?'DELTA beats one of the two'
+        :'Both simple benchmarks are closer than DELTA so far')+'</div>'
       +'<div class="dl-sc-foot">'+fz.n+' players \u00b7 running tally \u00b7 official grade in February</div>';
   } else pre+='<div class="dl-sc-empty">Grades once players have two games.</div>';
   pre+='</div>';
@@ -4105,8 +4107,9 @@ function renderScorecard(){
     +(snap?'Snapshot after Week '+snap.week+' \u00b7 graded on games since':'Weekly snapshots, graded on games since')+'</div></div>'
     +(early?'<span class="dl-sc-tag">TOO EARLY</span>':'')+'</div>';
   if(snap){
-    liv+=scBars([{label:'DELTA live',v:snap.live,me:1},{label:'DELTA preseason',v:snap.frozen},{label:"Last season's PPG",v:snap.last},{label:'Through Wk '+snap.week+' alone',v:snap.thru}]);
-    if(!early){ const lp=100*(1-snap.live/snap.frozen);
+    liv+=scBars([{label:'DELTA live',v:snap.live.mae,me:1},{label:'DELTA preseason',v:snap.frozen.mae},
+      {label:'3-year average',v:snap.avg3.mae},{label:"Last season's PPG",v:snap.last.mae},{label:'Through Wk '+snap.week+' alone',v:snap.thru.mae}]);
+    if(!early){ const lp=100*(1-snap.live.mae/snap.frozen.mae);
       liv+='<div class="dl-sc-verdict">'+(lp>=0?'Updating made DELTA <b>'+lp.toFixed(0)+'% closer</b>':'Updating made DELTA '+Math.abs(lp).toFixed(0)+'% further off')+'</div>'; }
     liv+='<div class="dl-sc-foot">'+snap.n+' players'+(early?' so far \u00b7 reads for real at '+d.rules.ready_at+'+':'')+'</div>';
   } else liv+='<div class="dl-sc-empty">The first snapshot is graded once players have two games after it.</div>';
@@ -4129,12 +4132,13 @@ function renderScorecard(){
   ps=ps.slice().sort(SC_SORT==='name'?(a,b)=>a.n.localeCompare(b.n)
     :SC_SORT==='close'?(a,b)=>(miss(a)??99)-(miss(b)??99):(a,b)=>(miss(b)??-1)-(miss(a)??-1));
   const rows=ps.map(p=>{
-    const m=miss(p), hasLast=p.lastG>=d.rules.min_games_last&&m!=null;
-    const near=hasLast?(m<Math.abs(p.last-p.sofar)?'<span class="dl-sc-chip">DELTA</span>':'<span class="dl-sc-chip alt">Last Yr</span>'):'<span class="dl-sc-dim">\u2014</span>';
+    const m=miss(p), hasA3=p.a3!=null&&m!=null;
+    const near=hasA3?(m<=Math.abs(p.a3-p.sofar)?'<span class="dl-sc-chip">DELTA</span>':'<span class="dl-sc-chip alt">3-Yr Avg</span>'):'<span class="dl-sc-dim">\u2014</span>';
     const snapCell=p.snapW?'<span class="dl-sc-nowrap '+(p.sinceG>=d.rules.min_games_after?'':'dl-sc-dim')+'">Wk '+p.snapW+': '+scF(p.snap)+' \u2192 '+scF(p.since)+' ('+p.sinceG+' g)</span>':'<span class="dl-sc-dim">\u2014</span>';
     return '<tr class="dl-rk-row" data-name="'+scEsc(p.n)+'" onclick="openDeck(this.dataset.name)">'
       +'<td class="pname">'+scEsc(p.n)+' <span class="dl-sc-meta">'+scEsc(p.pos)+'</span></td>'
       +'<td class="dl-b-r">'+scF(p.pre)+'</td>'
+      +'<td class="dl-b-r dl-sc-hide-m">'+(p.a3!=null?scF(p.a3):'<span class="dl-sc-dim">\u2014</span>')+'</td>'
       +'<td class="dl-b-r dl-sc-hide-m">'+(p.lastG?scF(p.last):'<span class="dl-sc-dim">\u2014</span>')+'</td>'
       +'<td class="dl-b-r">'+scF(p.sofar)+'</td>'
       +'<td class="dl-b-r">'+(m==null?'<span class="dl-sc-dim">\u2014</span>':scDir(p.pre-p.sofar,1))+'</td>'
@@ -4148,7 +4152,12 @@ function renderScorecard(){
     +'<p class="dl-sc-sub">Each projection is graded only on games played after it was made.</p></div>'
     +'<span class="dl-sc-pill">Through Week '+d.through_week+'</span></div>'
     +'<details class="cfb-about"><summary>How It\u2019s Graded</summary><div class="cfb-about-body">'
-    +'<b>Typical miss</b> is the average gap between projected and actual points per game; big misses count extra, and lower is better. '
+    +'<b>Average miss</b> is how far each projection was from what the player actually averaged, in points per game; lower is better. '
+    +'It is the Accuracy Ledger\u2019s own measure, so this previews February\u2019s grade. '
+    +(d.frozen?'Squared version, which punishes big misses harder: DELTA '+d.frozen.delta.rmse.toFixed(2)
+      +' \u00b7 3-year average '+d.frozen.avg3.rmse.toFixed(2)+' \u00b7 last season '+d.frozen.last.rmse.toFixed(2)+'. ':'')
+    +'<b>The benchmarks</b> are the two any projection should beat: his last season carried forward, and his plain 3-year average. '
+    +'No outside projection is shown: none from a recognised source could be saved before Week 1, and comparing against a weak one would prove nothing. '
     +'<b>Only later games count:</b> a live projection already includes the games before it, so it is graded on the games after. '
     +'<b>One player is noise</b> \u2014 like a batting average, the headline numbers are what DELTA stands on. '
     +'Scoring: '+scEsc(d.basis)+'. Players: '+scEsc(d.rules.graded)+'. A live snapshot reads for real once '+d.rules.ready_at+'+ players have '+d.rules.min_games_after+'+ games after it. '
@@ -4159,11 +4168,11 @@ function renderScorecard(){
     +sel('ALL',SC_POS,'All')+sel('QB',SC_POS,'QB')+sel('RB',SC_POS,'RB')+sel('WR',SC_POS,'WR')+sel('TE',SC_POS,'TE')+'</select>'
     +'<select onchange="scSetSort(this.value)" aria-label="Sort">'+sel('miss',SC_SORT,'Farthest off')+sel('close',SC_SORT,'Closest')+sel('name',SC_SORT,'Name')+'</select></div>'
     +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Preseason</th>'
-    +'<th class="dl-b-r dl-sc-hide-m">Last Season</th><th class="dl-b-r" data-tip="Points per game this season. A player is graded once he has '+d.rules.min_games_now+'+ games.">2026 So Far</th>'
+    +'<th class="dl-b-r dl-sc-hide-m" data-tip="The average of his 2023, 2024 and 2025 points per game, counting seasons with 4+ games.">3-Yr Avg</th><th class="dl-b-r dl-sc-hide-m">Last Season</th><th class="dl-b-r" data-tip="Points per game this season. A player is graded once he has '+d.rules.min_games_now+'+ games.">2026 So Far</th>'
     +'<th class="dl-b-r" data-tip="How far the preseason projection was from 2026 so far. Blue up: he scored more than DELTA projected. Purple down: he scored less.">Off By</th>'
-    +'<th class="dl-b-c" data-tip="Whose number sat nearer to 2026 so far: DELTA\u2019s preseason projection or last season\u2019s PPG.">Nearer</th>'
+    +'<th class="dl-b-c" data-tip="Whose number sat nearer to 2026 so far: DELTA\u2019s preseason projection or his 3-year average.">Nearer</th>'
     +'<th class="dl-b-r">Live Now</th><th class="dl-b-r dl-sc-hide-m" data-tip="A live snapshot and what the player has averaged since. Dim until he has 2+ games after it.">Snapshot \u2192 Since</th></tr></thead>'
-    +'<tbody>'+(rows||'<tr><td colspan="8" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
+    +'<tbody>'+(rows||'<tr><td colspan="9" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
 }
 function showTab(id,el,skipSection){
   // A tab in another section switches the section first; setSection calls back with
@@ -5752,7 +5761,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-26b</span>
+  <span class="foot-build">2026-09-26c</span>
 </footer>
 
 
