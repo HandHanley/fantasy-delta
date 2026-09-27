@@ -99,3 +99,25 @@ veterans 903, rookies 158, thin history 61.
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — NOT SHOWN. Today's blend stays.
+
+Run once, `python3 scripts/usage-study.py --run`, against this file as committed in `c032686`
+(sha256 prefix `e270dd381250c3ea`). Nothing above this section was changed after the run.
+
+**Chosen on training:** v = 0.6 (training error 3.014 at v = 0 → 2.948 at v = 0.6, about 2.2% lower).
+
+| Gate (held out 2023–2025, 4,148 checkpoints) | Result |
+|---|---|
+| 1. Size ≥ 2% | **FAIL** — 0.8% (typical miss 2.844 → 2.822) |
+| 2. Not a fluke | **FAIL** — p = 0.11 |
+| 3. Every held-out season | **FAIL** — 2023 +0.0%, 2024 −0.3%, 2025 +2.9% |
+| 4. No position worse than −1% | passed — RB +0.7%, WR +0.2%, TE +2.1% |
+
+**Reported only, cannot change the decision:** thin history +3.8% (61 player-seasons), rookies +2.4%
+(158), veterans +0.3% (903). By checkpoint: Week 2 +0.7%, 3 +0.9%, 4 +0.8%, 6 +0.7% — no early-season
+peak, against the prediction in §3. The training gain roughly halved on the held-out seasons.
+
+**What it says:** usage and points tell nearly the same story once the preseason number is in the
+mix. The rookie and thin-history figures are the only hint worth a look, and they would need their own
+pre-registration; they cannot be promoted from this run.
