@@ -44,9 +44,14 @@ function ppg(s, pos) {
   return fp / s.games;
 }
 
-// Engine recency weights (60/30/10 over Y-1, Y-2, Y-3), each shrunk by sample
-// (min(1, games/8) — mirrors the engine's minimum-sample principle), then
-// renormalized over whatever prior seasons exist.
+// Recency weights 60/30/10 over Y-1, Y-2, Y-3, each shrunk by sample
+// (min(1, games/8)), then renormalized over whatever prior seasons exist.
+// CORRECTION 27 Sep 2026: this is NOT the engine's rule, as this comment used to
+// claim. calcProj "RULE 1" uses 3/2/1, cutting only last season back in steps
+// (full at 10+ games, half at 8-9, a quarter at 4-7, none under 4). A locked study
+// (docs/PREREG-season-weights.md) found no rule worth switching the engine to, so
+// the engine keeps its rule and this harness keeps its own, unchanged, so that
+// every past backtest number stays reproducible.
 const BASE_W = [0.6, 0.3, 0.1];
 function project(p, pos) {
   let num = 0, den = 0, priorGames = 0;
