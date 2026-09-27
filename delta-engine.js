@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-27b';
+const DL_BUILD='2026-09-27c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2893,6 +2893,16 @@ function blendK(pl,form){
   const di=dsDraftInfo(pl.n);           // no prior games: only a drafted rookie in his draft year
   return (di&&di.pick!=null&&di.year===SEASON_YEAR) ? BLEND_K_ROOKIE : 0;
 }
+/* Missed-time sizes, fitted on 2018-2025 (docs/PREREG-missed-time.md). "Sat out" = no games
+   last season; "sat out two" = no production the season before either (kept at the old
+   relative gap to "sat out", 0.615/0.66 — too few cases to size alone). */
+const MISSED_TIME_MULT={sat:0.721, sat2:0.672, g1to3:0.690, g4to7:0.797};
+function missedTimeMult(g25,pl){
+  if(g25===0 && !(pl.ppg25>0)) return pl.ppg24>0 ? MISSED_TIME_MULT.sat : MISSED_TIME_MULT.sat2;
+  if(g25>=1 && g25<=3) return MISSED_TIME_MULT.g1to3;
+  if(g25>=4 && g25<=7) return MISSED_TIME_MULT.g4to7;
+  return 1;
+}
 function calcProj(plFmt){
   /* FORMAT BASIS (26 Sep 2026). The projection is built in ONE scoring — half PPR + TE
      premium, the freeze's and the ledger's basis — whatever the league's format, and
@@ -2971,11 +2981,13 @@ function calcProj(plFmt){
     }
   }
 
-  // Stale-production discount: if player has no 2025 games, prior data
-  // is unconfirmed — reduce base to reflect health/role uncertainty
-  if(g25===0 && pl.ppg25===0){
-    base *= 0.75; // stale discount — production not confirmed this season
-  }
+  // ── MISSED-TIME MULTIPLIER (27 Sep 2026) ────────────────────────────────
+  // docs/PREREG-missed-time.md, locked 9d81bd8, PASSED: 6.3% smaller miss on 360 cases
+  // (p = 0.0005, 6 of 8 seasons, every position). One multiplier by games played last
+  // season, applied to the starting number — outside the delta cap below, exactly as the
+  // study tested it. Replaces the old x0.75 stale discount AND RULE 5's -12%/-18%/-8%/-4%.
+  // Missed time counts (handoff §2); only the sizes were on trial.
+  base *= missedTimeMult(g25, pl);
   // Rookie override: if ppg25 is set as a forward projection (g25=0, ppg25>0),
   // skip all delta/efficiency adjustments — projection already accounts for situation.
   // Apply only the age curve multiplier since that's position-universal.
@@ -3089,16 +3101,7 @@ function calcProj(plFmt){
   }
 
   // ── RULE 5: INJURY / TIME-DECAY MODIFIER ─────────────────────
-  let d_decay = 0;
-  if(g25===0 && pl.ppg24===0){
-    d_decay = -0.18; // no recent data at all
-  } else if(g25===0){
-    d_decay = -0.12; // missed all of 2025
-  } else if(g25>0 && g25<4){
-    d_decay = -0.08;
-  } else if(g25>0 && g25<8){
-    d_decay = -0.04;
-  }
+  let d_decay = 0;   // missed-time cuts moved to missedTimeMult() (27 Sep 2026); the decline rule stays
   if(pl.ppg25>0 && pl.ppg24>0 && pl.ppg23>0){
     if(pl.ppg25 < pl.ppg24 && pl.ppg24 < pl.ppg23) d_decay -= 0.03;
   }
