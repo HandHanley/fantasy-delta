@@ -25,7 +25,16 @@
  *  - Closest / farthest: frozen projection vs this season so far, drawn only from
  *    the top 100 players by market value AT THE FREEZE (all positions; fixed before
  *    any game, so no hindsight), 3+ games once 100+ graded players have 3, else 2+.
- *  - Typical miss = root-mean-square gap in points per game (big misses count extra).
+ *  - Measures follow the Accuracy Ledger's Test 1 (docs/ACCURACY-LEDGER.md §2): the
+ *    headline is MAE, the average miss in points per game; RMSE is secondary.
+ *  - Yardsticks: the ledger's two baselines (§2), graded only on players where BOTH
+ *    have a number:
+ *      last season's PPG (4+ games in 2025);
+ *      a plain 3-year average: the mean of 2023, 2024 and 2025 PPG over the seasons
+ *        with 4+ games (the ledger's own computation is not in the repo).
+ *  - StatHead is deliberately NOT shown (owner, 26 Sep 2026): a single developer's
+ *    model with no track record, and comparing against it invites the charge of
+ *    picking weak opponents. It stays in data/freeze-2026-comparators.json, untouched.
  */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
@@ -83,6 +92,7 @@ async function bootEngine(dataRoot, maxWeek) {
 
 const r2 = (x) => Math.round(x * 100) / 100;
 const rmse = (e) => Math.sqrt(e.reduce((s, x) => s + x * x, 0) / e.length);
+const mae = (e) => e.reduce((s, x) => s + Math.abs(x), 0) / e.length;
 
 async function main() {
   const freeze = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'freeze-2026.json'), 'utf8'));
@@ -132,14 +142,17 @@ async function main() {
   const P = {};
   for (const n of names) {
     const g25 = games(n, season - 1), g26 = games(n, season);
+    const seas = [season - 3, season - 2, season - 1].map((y) => games(n, y)).filter((g) => g.length >= MIN_G_LAST).map(avg);
     P[n] = { n, pos: FZ[n].pos, t: FZ[n].t, pre: FZ[n].proj,
       last: g25.length ? avg(g25) : null, lastG: g25.length, sofar: g26.length ? avg(g26) : null, sofarG: g26.length,
+      a3: seas.length ? avg(seas) : null,
       live: live[n] ?? null };
   }
 
-  const fr = names.map((n) => P[n]).filter((p) => p.sofarG >= MIN_G_NOW && p.lastG >= MIN_G_LAST && p.pre != null);
-  const frozen = fr.length ? { n: fr.length, delta: r2(rmse(fr.map((p) => p.pre - p.sofar))), last: r2(rmse(fr.map((p) => p.last - p.sofar))) } : null;
-  if (frozen) frozen.lift = r2(100 * (1 - frozen.delta / frozen.last));
+  const both = (rows, pick) => ({ mae: r2(mae(rows.map((x) => pick(x) - x.act))), rmse: r2(rmse(rows.map((x) => pick(x) - x.act))) });
+  const fr = names.map((n) => P[n]).filter((p) => p.sofarG >= MIN_G_NOW && p.lastG >= MIN_G_LAST && p.pre != null && p.a3 != null)
+    .map((p) => ({ pre: p.pre, last: p.last, a3: p.a3, act: p.sofar }));
+  const frozen = fr.length ? { n: fr.length, delta: both(fr, (x) => x.pre), avg3: both(fr, (x) => x.a3), last: both(fr, (x) => x.last) } : null;
 
   const graded = snaps.map((s) => {
     const rows = [];
@@ -147,12 +160,12 @@ async function main() {
       if (s.proj[n] == null) continue;
       const after = games(n, season, s.week + 1), thru = games(n, season, 1, s.week);
       const p = P[n];
-      if (after.length >= MIN_G_AFTER && thru.length >= 1 && p.lastG >= MIN_G_LAST && p.pre != null)
-        rows.push({ live: s.proj[n], pre: p.pre, last: p.last, thru: avg(thru), act: avg(after) });
+      if (after.length >= MIN_G_AFTER && thru.length >= 1 && p.lastG >= MIN_G_LAST && p.pre != null && p.a3 != null)
+        rows.push({ live: s.proj[n], pre: p.pre, last: p.last, a3: p.a3, thru: avg(thru), act: avg(after) });
     }
-    const m = (k) => rows.length ? r2(rmse(rows.map((x) => x[k] - x.act))) : null;
+    const m = (k) => rows.length ? both(rows, (x) => x[k]) : null;
     return { week: s.week, source: s.source, engine: s.engine, n: rows.length, ready: rows.length >= MIN_READY,
-             live: m('live'), frozen: m('pre'), last: m('last'), thru: m('thru') };
+             live: m('live'), frozen: m('pre'), avg3: m('a3'), last: m('last'), thru: m('thru') };
   });
 
   // per-player snapshot line: the latest snapshot with 2+ games after it, else the earliest with 1+
@@ -187,7 +200,8 @@ async function main() {
     built_at: new Date().toISOString(), season, basis: '12-team superflex · half PPR · TE premium', engine: H.BUILD,
     through_week: through,
     rules: { graded: 'the 376 players in data/freeze-2026.json', min_games_now: MIN_G_NOW, min_games_last: MIN_G_LAST,
-             min_games_after: MIN_G_AFTER, ready_at: MIN_READY, top_min_games: minTop, top_pool: TOP_POOL, metric: 'root-mean-square PPG gap' },
+             min_games_after: MIN_G_AFTER, ready_at: MIN_READY, top_min_games: minTop, top_pool: TOP_POOL,
+             metric: 'MAE (average miss, points per game); RMSE secondary — ledger Test 1' },
     frozen, graded, closest, farthest,
     players: names.map((n) => round(P[n])).filter((p) => p.sofarG >= 1),
     snapshots: snaps,
