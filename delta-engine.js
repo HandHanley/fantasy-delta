@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-26d';
+const DL_BUILD='2026-09-26e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -146,9 +146,10 @@ function gamefp(g,pos,fmt){
   return g.py*0.04 + g.pt*4 + g.pi*-2 + g.ry*0.1 + g.rt*6
        + g.rec*recAbs + g.rey*0.1 + g.ret*6 + g.fl*-2 + g.tp*2 + g.rtd*6;
 }
-function computeStartProfile(name,pos){
+function computeStartProfile(name,pos,fmt){
+  fmt=fmt||scoringFmt;   // optional: calcProj asks for its half PPR + TE premium basis; displays use the league's
   if(!GAMELOGS||!STARTLINES||!GAMELOGS[name]) return null;
-  const line=STARTLINES[pos+'|'+scoringFmt];   // league-invariant: game quality depends on position + scoring only
+  const line=STARTLINES[pos+'|'+fmt];   // league-invariant: game quality depends on position + scoring only
   if(!line) return null;
   const [hit,elite]=line;
   const played=GAMELOGS[name].filter(g=>!g.up && !g.dnp)          // played games only — never score upcoming/DNP
@@ -156,16 +157,16 @@ function computeStartProfile(name,pos){
   const games=played.slice(-34);   // rolling window: most recent 34 games played (~two full seasons; rolls as the season unfolds)
   if(!games.length) return null;
   let m=0,ho=0,e=0;
-  for(const g of games){ const fp=gamefp(g,pos,scoringFmt); if(fp>=elite)e++; else if(fp>=hit)ho++; else m++; }
+  for(const g of games){ const fp=gamefp(g,pos,fmt); if(fp>=elite)e++; else if(fp>=hit)ho++; else m++; }
   const n=games.length;
   return {n, miss:m, hitOnly:ho, elite:e,
           missPct:Math.round(100*m/n), hitOnlyPct:Math.round(100*ho/n), elitePct:Math.round(100*e/n),
           hitPct:Math.round(100*(ho+e)/n),   // cumulative: a Hit includes Elite (Serviceable and up)
           lo:games[0].s, hi:games[n-1].s, hitLine:hit, eliteLine:elite};
 }
-function glOf(p){
+function glOf(p,fmt){
   if(!p) return null;
-  const sp=computeStartProfile(p.n, p.pos||p.p||'WR');
+  const sp=computeStartProfile(p.n, p.pos||p.p||'WR', fmt);
   return sp ? {miss:sp.missPct, hit:sp.hitPct, elite:sp.elitePct, g:sp.n} : null;
 }
 function startProfileHTML(p){
@@ -2862,14 +2863,14 @@ function rookieBaseline(pl){
      undrafted rookie / no history                 no blend (untested)
    docs/PREREG-in-season-blend-rookies.md, locked b54b288, both groups PASSED 26 Sep 2026.
    Games = the live DNP rule (game-logs.json played rows). Points use gamefp() in
-   the selected format, so the blend is in the same units as the base. */
+   half PPR + TE premium — the projection's basis (see calcProj). */
 const BLEND_K=4;
 function inSeasonForm(name,pos){
   if(!GAMELOGS||!GAMELOGS[name]) return null;
   let g=0,pts=0,prior=0;
   for(const r of GAMELOGS[name]){
     if(r.up||r.dnp) continue;
-    if(r.s===SEASON_YEAR){ g++; pts+=gamefp(r,pos,scoringFmt); }
+    if(r.s===SEASON_YEAR){ g++; pts+=gamefp(r,pos,'half_tep'); }   // the projection's basis (see calcProj)
     else if(r.s<SEASON_YEAR && r.s>=SEASON_YEAR-3) prior++;
   }
   return {g, ppg:g?pts/g:0, prior};
@@ -2882,7 +2883,18 @@ function blendK(pl,form){
   const di=dsDraftInfo(pl.n);           // no prior games: only a drafted rookie in his draft year
   return (di&&di.pick!=null&&di.year===SEASON_YEAR) ? BLEND_K_ROOKIE : 0;
 }
-function calcProj(pl){
+function calcProj(plFmt){
+  /* FORMAT BASIS (26 Sep 2026). The projection is built in ONE scoring — half PPR + TE
+     premium, the freeze's and the ledger's basis — whatever the league's format, and
+     getAdjProj() converts it to the league's format once, at display. Before this, season
+     PPGs arrived already in the league's format and getAdjProj() converted AGAIN, so a
+     full-PPR visitor saw every non-TE pass-catcher inflated (Nacua 26.3 vs 22.3).
+     The league-format PPGs are handed back (fmtBack) before the DELTA Score and model
+     value run, so those — and every season-PPG display — see exactly what they saw before. */
+  let pl={...plFmt};
+  for(const k of ['25','24','23']) if(plFmt['ppgH'+k]!=null) pl['ppg'+k]=plFmt['ppgH'+k];
+  const fmtBack=r=>{ for(const k of ['25','24','23'])
+    if(plFmt['ppgH'+k]!=null && r['ppg'+k]===plFmt['ppgH'+k]) r['ppg'+k]=plFmt['ppg'+k]; return r; };
   // A true rookie has no NFL history at all. Supply the draft-capital baseline as its
   // forward projection so the rookie override below fires; otherwise it falls to a
   // literal 8.0 AND takes the veteran stale-production discount, which is meant for
@@ -2976,7 +2988,7 @@ function calcProj(pl){
     const kR=blendK(pl,formR);
     const wR=kR?formR.g/(formR.g+kR):0;
     const rookieProj = kR ? wR*formR.ppg+(1-wR)*rookiePre : rookiePre;
-    const mv2=mvAsset({...pl,proj:rookieProj,p:pl.p});
+    const mv2=mvAsset(fmtBack({...pl,proj:rookieProj,p:pl.p}));
     const ciV2=ci(e2.c);
     const rookieResult={...pl,pos:pl.p,t:e2.team,base:pl.ppg25,proj:rookieProj,
       floor:rookieProj*(1-ciV2),ceil:rookieProj*(1+ciV2),mv:mv2,
@@ -2992,6 +3004,7 @@ function calcProj(pl){
     // rookie ceiling (DS_ROOKIE_CAP). Without this, projected rookies fell
     // through scoreless while rookies who logged any 2025 snap got a score —
     // an inconsistency (e.g. #33 pick Stribling blank, later picks scored).
+    fmtBack(rookieResult);
     rookieResult.dsScore=calcDynastyScore(rookieResult);
     // Same intervention the main path makes below: projection zeroed and tagged,
     // model value and DELTA Score deliberately untouched.
@@ -3055,7 +3068,7 @@ function calcProj(pl){
 
   // ── RULE 4: VOLATILITY PENALTY ────────────────────────────────
   let d_volatility = 0;
-  const gl = glOf(pl);
+  const gl = glOf(pl,'half_tep');   // the projection's basis, not the league's
   if(gl && gl.g >= 20){
     if(gl.miss > 65) d_volatility = -0.09;
     else if(gl.miss > 55) d_volatility = -0.06;
@@ -3180,7 +3193,7 @@ function calcProj(pl){
   // 9999 after live FC anchors inflated past it and clipped elite model values;
   // the cap is a sanity ceiling only)
   // mv computed via mvAsset (includes all 5 features: contract, injury, scarcity, competition, volatility)
-  const mv=mvAsset({...pl,proj,p:pl.p});
+  const mv=mvAsset(fmtBack({...pl,proj,p:pl.p}));
 
   const oppSc=getOppScore(pl.n,pl.p);
   // ktcEff/gap compare against the MARKET in the SELECTED format (pl.kMkt).
@@ -3192,6 +3205,7 @@ function calcProj(pl){
     ktcEff:kMkt,notes:e.notes,hasOv:e.hasOv,role:roleData.mult,roleLabel:roleData.label,
     epaSc:epa.sc,epaRaw:epa.raw,epaFl:epa.fl,epaFr:epa.fr,epaTr:epa.tr,
     ef25:epa.ef25,ef24:epa.ef24,e25:epa.e25,e24:epa.e24,e23:epa.e23,e22:epa.e22,oppSc};
+  fmtBack(result);
   result.dsScore=calcDynastyScore(result);
 
   // ── Season-ending injury ───────────────────────────────────────────────────
@@ -4993,8 +5007,8 @@ async function loadPlayerStats() {
         // undercounts multi-team (traded) seasons (one row per team stint, only
         // one survives). Game logs are the canonical played-games source under
         // the locked DNP rule; g25 syncs in ensureStartData() instead.
-        const ppg = (
-          (row.rec     || 0) * recPts +
+        const ppgAt = (rp) => (
+          (row.rec     || 0) * rp +
           (row.rec_yds || 0) * 0.1 +
           (row.rec_td  || 0) * 6 +
           (row.rush_yds|| 0) * 0.1 +
@@ -5003,7 +5017,12 @@ async function loadPlayerStats() {
           (row.pass_td || 0) * 4 -
           (row.pass_int|| 0) * 2
         ) / row.games;
+        const ppg = ppgAt(recPts);
         if (ppg > 0) { player[key] = Math.round(ppg * 10) / 10; updated++; }
+        // The same season in the projection's basis, half PPR + TE premium (26 Sep 2026).
+        // calcProj works only in this basis; getAdjProj() converts to the league's format once.
+        const ppgH = ppgAt(0.5 + (player.p === 'TE' ? 0.5 : 0));
+        if (ppgH > 0) player[key.replace('ppg', 'ppgH')] = Math.round(ppgH * 10) / 10;
       }
     }
     // Rebuild COMP with fresh PPG and opportunity scores now available
