@@ -126,3 +126,33 @@ Total 360 from 302 players (WR 141, RB 85, TE 78, QB 56).
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — PASSED. Ship the fitted sizes.
+
+Run once, `python3 scripts/missed-time-study.py --run`, against this file as committed in `9d81bd8`
+(sha256 prefix `4ba1076c75b7f0a8`). Nothing above this section was changed after the run.
+
+| Group | Today | Fitted On All Eight Seasons |
+|---|---|---|
+| S1 — sat out last season | ×0.66 | **×0.721** |
+| S2 — sat out two seasons (kept at S1's relative gap) | ×0.615 | **×0.672** |
+| P1 — 1–3 games | ×0.92 | **×0.690** |
+| P2 — 4–7 games | ×0.96 | **×0.797** |
+
+None hit the ×1.00 cap. The sizes each season was predicted with were stable (S1 0.657–0.747, P1
+0.659–0.731, P2 0.783–0.823).
+
+| Gate (360 cases, each season predicted from the other seven) | Result |
+|---|---|
+| 1. Size ≥ 2% | **passed — 6.3%** (typical miss 3.536 → 3.313; average miss 2.511 → 2.356) |
+| 2. Not a fluke | **passed — p = 0.0005** (0 of 2,000 shuffles as good) |
+| 3. Better in ≥ 6 of 8 seasons | **passed — 6** (2018 +2.8%, 2019 +5.9%, 2020 −6.3%, 2021 +9.0%, 2022 +10.1%, 2023 +12.0%, 2024 +7.0%, 2025 −4.2%) |
+| 4. No position worse than −1% | **passed** — QB +2.2%, RB +7.0%, WR +9.1%, TE +11.6% |
+
+**Reported only, by group:** P1 +11.7% (104 cases), P2 +5.2% (185), **S1 −2.8% (65)**, S2 −16.9% (6).
+The win comes from the partial-season groups; the gentler "sat out" sizes did slightly worse on their
+own cases. §6 ships all four together; choosing groups after seeing this would be selection after the
+fact, so the pre-registered rule stands.
+
+**What it says:** players who played only part of last season came back scoring well below the old
+projection — far more than the old −8%/−4% allowed.
