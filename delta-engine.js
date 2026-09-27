@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-26c';
+const DL_BUILD='2026-09-26d';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4699,6 +4699,52 @@ function applyMarketForSetting(){
 function getAdjProj(p){
   const delta=getScoringDelta(p.n,p.p||p.pos,scoringFmt);
   return Math.max(0,+(p.proj+delta).toFixed(1));
+}
+/* ── "Preseason · Now · Actual" context line (26 Sep 2026) ────────────────────
+   Shared by the rankings pop-up card (index.html) and the player page (player.html).
+   Context, not a grade: one player's weeks are noise; the Scorecard tab is the grade.
+   All three numbers are in the LEAGUE'S scoring, so they are always comparable:
+     Preseason = the frozen 7 Sep projection (data/freeze-2026.json, the ledger's record,
+                 half PPR + TE premium) plus the same getScoringDelta() the live number gets
+     Now       = getAdjProj(p), exactly the card's own projection chip
+     Actual    = this season's played games, each scored by gamefp() in the league's format
+   Players outside the frozen 376 get no line — "preseason" means the frozen record. */
+let FREEZE_PROJ=null, FREEZE_PROJ_LOADING=null;
+function loadFreezeProj(){
+  if(FREEZE_PROJ) return Promise.resolve(FREEZE_PROJ);
+  if(!FREEZE_PROJ_LOADING) FREEZE_PROJ_LOADING=fetch('./data/freeze-2026.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():Promise.reject('freeze '+r.status))
+    .then(d=>{ const m={}; for(const [n,v] of Object.entries(d.players||{})) if(v&&v.proj!=null) m[n]=v.proj; FREEZE_PROJ=m; return m; })
+    .catch(e=>{ FREEZE_PROJ_LOADING=null; throw e; });
+  return FREEZE_PROJ_LOADING;
+}
+function projContext(p){
+  if(!FREEZE_PROJ||FREEZE_PROJ[p.n]==null) return null;
+  const pos=p.pos||p.p;
+  const pre=Math.max(0,FREEZE_PROJ[p.n]+getScoringDelta(p.n,pos,scoringFmt));
+  const now=getAdjProj(p);
+  if(!GAMELOGS) return {pre,now,act:null,g:null};                 // logs still loading: no Actual yet
+  let g=0,pts=0;
+  for(const r of (GAMELOGS[p.n]||[])) if(r.s===SEASON_YEAR&&!r.up&&!r.dnp){ g++; pts+=gamefp(r,pos,scoringFmt); }
+  return {pre,now,act:g?pts/g:null,g};
+}
+function projContextHTML(p,linkHtml){
+  const c=projContext(p); if(!c) return '';
+  const m='font-family:var(--mono)';
+  let txt='<span style="color:var(--fog)">Preseason</span> <span style="'+m+'">'+c.pre.toFixed(1)+'</span>'
+    +' <span style="color:var(--fog-2)">\u00b7</span> <span style="color:var(--fog)">Now</span> <span style="'+m+';color:var(--teal-br);font-weight:700">'+c.now.toFixed(1)+'</span>';
+  if(c.g!=null) txt+=' <span style="color:var(--fog-2)">\u00b7</span> <span style="color:var(--fog)">Actual</span> '
+    +(c.act!=null?'<span style="'+m+'">'+c.act.toFixed(1)+'</span> <span style="color:var(--fog)">('+c.g+(c.g===1?' game':' games')+')</span>'
+                 :'<span style="color:var(--fog)">no games yet</span>');
+  const vals=[c.pre,c.now].concat(c.act!=null?[c.act]:[]);
+  const lo=Math.floor(Math.min(...vals)-1), hi=Math.ceil(Math.max(...vals)+1), X=v=>(6+(v-lo)/(hi-lo)*108).toFixed(1);
+  const scale='<svg width="120" height="14" viewBox="0 0 120 14" aria-hidden="true" style="flex:none">'
+    +'<line x1="6" y1="7" x2="114" y2="7" stroke="var(--line)" stroke-width="2"></line>'
+    +(c.act!=null?'<circle cx="'+X(c.act)+'" cy="7" r="4" fill="var(--paper)"></circle>':'')
+    +'<circle cx="'+X(c.now)+'" cy="7" r="4.5" fill="var(--teal-br)"></circle>'
+    +'<circle cx="'+X(c.pre)+'" cy="7" r="3.6" fill="none" stroke="var(--fog)" stroke-width="1.5"></circle></svg>';
+  return '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px">'
+    +'<span>'+txt+'</span>'+scale+(linkHtml||'')+'</span>';
 }
 function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};

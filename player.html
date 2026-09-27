@@ -267,7 +267,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-08h</span>
+    <span class="foot-build">2026-09-26a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -363,6 +363,7 @@ function buildHeroHTML(p) {
         <span class="verdict-badge" style="color:${vc}">${vt}</span>
         <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>
       </div>
+      <div id="hero-pctx" style="margin-top:6px"></div>
     </div>
   </div>`;
 }
@@ -1478,6 +1479,11 @@ function _renderPlayerPage(p) {
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
   if(_TAB==='cfb'){ ensureCollegeData(p); loadCombine(); }
+  // Preseason · Now · Actual (shared engine helper). Needs the frozen file, fetched once.
+  if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
+    const el=document.getElementById('hero-pctx');
+    if(el) el.innerHTML=projContextHTML(p,'<a href="index.html?tab=scorecard" style="font-weight:700;white-space:nowrap">Scorecard \u203a</a>');
+  }).catch(()=>{});
   document.title = p.n + ' — DELTA';
 }
 
