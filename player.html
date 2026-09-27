@@ -267,7 +267,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-09-26a</span>
+    <span class="foot-build">2026-09-26b</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1482,7 +1482,7 @@ function _renderPlayerPage(p) {
   // Preseason · Now · Actual (shared engine helper). Needs the frozen file, fetched once.
   if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
     const el=document.getElementById('hero-pctx');
-    if(el) el.innerHTML=projContextHTML(p,'<a href="index.html?tab=scorecard" style="font-weight:700;white-space:nowrap">Scorecard \u203a</a>');
+    if(el) el.innerHTML=projContextHTML(p);   // no link (owner, 26 Sep: too much on the card)
   }).catch(()=>{});
   document.title = p.n + ' — DELTA';
 }

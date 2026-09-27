@@ -4517,7 +4517,7 @@ function renderDeck(p){
     // Preseason · Now · Actual: needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
       const el=document.getElementById('dd-pctx'); if(!el||el.dataset.name!==p.n) return;
-      el.innerHTML=projContextHTML(p,'<a href="?tab=scorecard" onclick="closeDeckNow();showTab(\'scorecard\',document.querySelector(\'.tab[data-tab=scorecard]\'));return false" style="font-weight:700;white-space:nowrap">Scorecard \u203a</a>');
+      el.innerHTML=projContextHTML(p);   // no link (owner, 26 Sep: too much on the card)
     }).catch(()=>{});
   }
 
@@ -5769,7 +5769,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-09-26d</span>
+  <span class="foot-build">2026-09-26e</span>
 </footer>
 
 
