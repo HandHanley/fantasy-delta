@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-26T17:16:48.685549+00:00",
+  "fetched": "2026-09-27T17:49:10.946129+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -973,7 +973,7 @@
       "is_active": true
     },
     "A.J. Brown": {
-      "team": "PHI/NE",
+      "team": "NE/PHI",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -2023,7 +2023,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "IND/NYJ",
+      "team": "NYJ/IND",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2053,7 +2053,7 @@
       "is_active": true
     },
     "Kayshon Boutte": {
-      "team": "NE/HOU",
+      "team": "HOU/NE",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2250,6 +2250,16 @@
       "aav": 1.81,
       "total": 7.23,
       "guaranteed": 4.6,
+      "is_active": true
+    },
+    "Zach Ertz": {
+      "team": "Eagles",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.33,
+      "total": 0.33,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Mac Jones": {
@@ -2873,7 +2883,7 @@
       "is_active": true
     },
     "Quinn Ewers": {
-      "team": "JAX/MIA",
+      "team": "MIA/JAX",
       "year_signed": 2025,
       "years": 4,
       "end_year": 2028,
@@ -2940,6 +2950,16 @@
       "aav": 2.5,
       "total": 5.0,
       "guaranteed": 3.5,
+      "is_active": true
+    },
+    "Will Levis": {
+      "team": "Jets",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.33,
+      "total": 0.33,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Tyson Bagent": {
@@ -3183,7 +3203,7 @@
       "is_active": true
     },
     "Emari Demercado": {
-      "team": "KC/DAL",
+      "team": "DAL/KC",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
@@ -3783,7 +3803,7 @@
       "is_active": true
     },
     "Tutu Atwell": {
-      "team": "MIA/LAR",
+      "team": "Rams",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
