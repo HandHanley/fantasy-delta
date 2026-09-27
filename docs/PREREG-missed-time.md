@@ -125,7 +125,16 @@ Total 360 from 302 players (WR 141, RB 85, TE 78, QB 56).
 
 ## Amendments
 
-*(none)*
+**1 — 27 Sep 2026, after the result: the build, as agreed with the owner (§6).** `delta-engine.js 2026-09-27c`:
+one multiplier by games played last season (`missedTimeMult`: sat out ×0.721, sat out two ×0.672, 1–3 games
+×0.690, 4–7 ×0.797) applied to the starting number, outside `calcProj`'s delta cap — as tested. It replaces the
+old ×0.75 stale discount and RULE 5's −12%/−18%/−8%/−4%; the −3% three-season-decline rule stays. Verified old
+`27b` vs new: at the starting number, 65 of 68 group players equal the engine rule × the new multiplier exactly;
+the 3 others are QBs with the starter adjustment (applied first), each exactly that number × the multiplier
+(Daniels 18.674 × 0.797 = 14.883); all 271 other players unchanged; DELTA Scores and graded calls unchanged;
+Engine Audit 32/32. In the final projection the change is close to, not exactly, new ÷ old for many players,
+because part of the old cut sat inside the cap. **Not tested by the study:** the QB starter adjustment runs
+before the multiplier for thin-sample QBs; the study measured the multiplier on the plain starting number.
 
 ## Result (27 September 2026) — PASSED. Ship the fitted sizes.
 
