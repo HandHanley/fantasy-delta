@@ -101,3 +101,33 @@ from 518 players (WR 435, TE 273, RB 236, QB 110).
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — NOT SHOWN. The engine keeps 3/2/1 steps.
+
+Run once, `python3 scripts/weights-study.py --run`, against this file as committed in `d0c92e1`
+(sha256 prefix `b188ba9abf7a07d3`). Nothing above this section was changed after the run.
+
+**Candidate chosen on training:** 7/2/1 smooth (training error 3.324 vs the engine's 3.387).
+
+| Held-Out 2023–2025 (1,054 player-seasons) | Engine 3/2/1 Steps | Candidate 7/2/1 Smooth |
+|---|---|---|
+| Typical miss (RMSE, PPG) | 3.292 | 3.295 |
+| Average miss (MAE, reported only) | 2.479 | 2.442 |
+
+| Gate | Result |
+|---|---|
+| 1. Size ≥ 2% | **FAIL** — 0.1% worse |
+| 2. Not a fluke | **FAIL** — p = 0.55 |
+| 3. Every held-out season | **FAIL** — 2023 +0.1%, 2024 −1.1%, 2025 +0.8% |
+| 4. No position worse than −1% | **FAIL** — QB −7.0% (RB +2.3%, WR +0.6%, TE +2.4%) |
+
+**Reported only, cannot change the decision:** on the held-out seasons the lowest error of the twelve
+was 7/2/1 **steps** (3.260, about 1% better than the engine), and every weighting that leans harder on
+last season beat 3/2/1 in both training and held-out. But no combination reached 2%, the short-season
+rule that won in training ("smooth") lost on the held-out seasons, and 1/1/1 was worst in both. The
+honest reading: leaning more on last season may help a little; nothing here is big or stable enough
+to change the engine.
+
+**Done, as §5 required:** `scripts/backtest.js`'s comment now says its 60/30/10 rule is not the
+engine's. Its code is unchanged — all 89 code lines identical, and its 2025 output byte-identical
+before and after.
