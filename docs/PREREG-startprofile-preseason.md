@@ -89,3 +89,20 @@ blend-without tied.
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — NOT SHOWN. The penalty stays, and the data supports it.
+
+Run once, `python3 scripts/startprofile-study.py --run`, against this file as committed in `fcd2c66`
+(sha256 prefix `13f8860f8d9e9ca5`). Nothing above this section was changed after the run.
+
+| Held-Out 2023–2025 (838 player-seasons) | Today (Penalty On) | Penalty Off |
+|---|---|---|
+| Typical miss (RMSE, PPG) | **3.143** | 3.167 |
+
+Removing the penalty made the projection **0.8% worse**: worse in 2023 (−1.9%), 2024 (−0.3%) and 2025
+(−0.1%); worse for WR (−1.7%), RB (−0.6%), TE (−0.2%); QB +0.4%. Training seasons agreed (3.186 today vs
+3.199 off). p = 1.00 for removal. All four gates fail for removal; §4 says the penalty stays.
+
+**What it says:** the penalty is small and it helps a little, consistently — the opposite of the 10 Aug
+Miss % study, which tested a different, larger lever. It is **not** evidence that a bigger penalty
+would help; that would need its own pre-registration. The ceiling remains untested and near-inert.
