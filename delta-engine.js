@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-27a';
+const DL_BUILD='2026-09-27b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -127,14 +127,24 @@ async function ensureStartData(){
     // Conservative: never zeroes g25 (absent/empty logs leave the baked value),
     // so 2026 rookies (g25:0, no logs) are untouched and the rookie path holds.
     if(typeof RAW!=='undefined'){
-      let synced=0;
+      let synced=0; const zeroed=[];
       for(const p of RAW){
         const logs=GAMELOGS[p.n];
         if(!logs||!logs.length) continue;
         const wk=new Set();
         for(const g of logs){ if(g.s===2025 && !g.up && !g.dnp) wk.add(g.w); }
         if(wk.size>0&&p.g25!==wk.size){ p.g25=wk.size; synced++; }
+        // Zero an invented 2025 season (27 Sep 2026). The built-in RAW table credited four
+        // players with 2025 games they never played (Brooks 8, Lloyd 12, Mattison 10, Osborn
+        // 12). Zero ONLY when both sources agree he did not play: his logs (so he is a tracked
+        // NFL player, never a 2026 rookie) show no 2025 game, AND the loaded stats file has no
+        // 2025 row. He is then treated as having sat out 2025, as the missed-time rule wants.
+        else if(wk.size===0 && (p.g25||0)>0 && Object.keys(PLAYER_STATS||{}).length
+                && !(((PLAYER_STATS[p.n]||{})['2025']||{}).games)){
+          p.g25=0; p.ppg25=0; delete p.ppgH25; zeroed.push(p.n);
+        }
       }
+      if(zeroed.length) console.log('[DELTA] 2025 zeroed (logs and stats agree he did not play): '+zeroed.join(', '));
       if(synced) console.log('[DELTA] g25 synced from game logs for '+synced+' players');
     }
   }catch(e){ console.warn('[DELTA] Start Profile data load failed:',e); START_DATA_STATE='error'; }
