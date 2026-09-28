@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-28a';
+const DL_BUILD='2026-09-28b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4813,6 +4813,14 @@ function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};
   const slots = tierSlots[tierName];
   if (!slots) return;
+  /* The TIER ASSET ITSELF ('2027 Early 3rd Round Pick') is what the trade
+     calculator prices when a tiered pick is added, and it was never touched
+     here — only the numbered slots were. So even a matching name would have
+     left the thing on screen stale. It is the market's own number for that
+     tier, so it is set, not scaled. */
+  const ord = {1:'1st',2:'2nd',3:'3rd'}[rnd];
+  const tierAsset = ord && PICKS.find(p => p.n === year+' '+tierName+' '+ord+' Round Pick');
+  if (tierAsset) { tierAsset.k = Math.round(newTierVal); tierAsset.kMkt = Math.round(newTierVal); }
   const slotPicks = PICKS.filter(p => {
     const m = p.n.match(/^(\d{4}) (\d)\.(\d{2})$/);
     return m && m[1]===String(year) && parseInt(m[2])===rnd && slots.includes(parseInt(m[3]));
@@ -5106,13 +5114,6 @@ async function loadLiveMarketValues() {
     // Supports the per-format grid file {settings:{"T|Q":{...}}, default:"12|sf"}
     // and the legacy flat file {values:{...}}. The default (12-SF) slice is the
     // model's anchor (player.k); the selected-format slice drives player.kMkt.
-    const tierMap = {
-      'Early 1st Round Pick':{rnd:1,tier:'Early'},'Mid 1st Round Pick':{rnd:1,tier:'Mid'},
-      'Late 1st Round Pick':{rnd:1,tier:'Late'},'Early 2nd Round Pick':{rnd:2,tier:'Early'},
-      'Mid 2nd Round Pick':{rnd:2,tier:'Mid'},'Late 2nd Round Pick':{rnd:2,tier:'Late'},
-      'Early 3rd Round Pick':{rnd:3,tier:'Early'},'Mid 3rd Round Pick':{rnd:3,tier:'Mid'},
-      'Late 3rd Round Pick':{rnd:3,tier:'Late'},
-    };
     // direct → alias → NORMALIZED (punctuation/suffix-insensitive). The
     // normalized fallback fixes stale anchors for names FC spells differently
     // (MHJ 'Marvin Harrison Jr' vs DELTA 'Marvin Harrison Jr.', etc.).
@@ -5136,13 +5137,61 @@ async function loadLiveMarketValues() {
       anchorSlice     = data.values || {};
     }
 
-    // Pick tiers: rescale once from the anchor (default) slice — picks are not yet per-format
-    for (const [n,m] of Object.entries(tierMap)) {
-      for (const yr of [2026,2027,2028]) {
-        const fc = anchorSlice[yr+' '+n];
-        if (fc) rescalePickTier(yr, m.rnd, m.tier, fc.value);
+    /* PICK TIERS, rescaled from the anchor slice. FantasyCalc RENAMED these at
+       some point: it sends '2027 3rd (Early)' where it used to send
+       '2027 Early 3rd Round Pick'. Only the old spelling was looked up, so from
+       the rename onward every lookup missed, nothing was rescaled, and every
+       tiered and slotted pick kept the value baked into this file — by Sept 2026
+       a 2027 late 3rd read 2,212 against a market price of 987, so picks in the
+       trade calculator were worth roughly double what they should have been.
+       Both spellings are tried now, and the result is COUNTED: a third rename
+       shows up in the console instead of silently freezing prices again. */
+    const PICK_ORD = {1:'1st', 2:'2nd', 3:'3rd'};
+    let tiersHit = 0; const tiersMissed = [];
+    for (const rnd of [1,2,3]) {
+      for (const tier of ['Early','Mid','Late']) {
+        for (const yr of [2026,2027,2028]) {
+          const fc = anchorSlice[yr+' '+PICK_ORD[rnd]+' ('+tier+')']            // current naming
+                  || anchorSlice[yr+' '+tier+' '+PICK_ORD[rnd]+' Round Pick'];  // pre-rename naming
+          if (fc) { rescalePickTier(yr, rnd, tier, fc.value); tiersHit++; }
+          else tiersMissed.push(yr+' '+tier+' '+PICK_ORD[rnd]);
+        }
       }
     }
+    /* YEARS THE FILE PRICES ONLY AS A ROUND. FantasyCalc tiers just the next
+       draft class: 2028 arrives as a plain '2028 1st' with no early/mid/late.
+       Left there, every tiered and numbered 2028 pick keeps its baked value,
+       which is the same bug one year out — a 2028 early 1st read 4,991 against
+       a market pricing the whole round at 2,190. The SHAPE comes from the year
+       that does have tiers: early, mid and late sit at a measured ratio to
+       their plain round price, and that ratio carries over. Nothing is being
+       assumed about 2028 itself beyond one draft class pricing like another. */
+    const shape = {};
+    for (const rnd of [1,2,3]) {
+      for (const tier of ['Early','Mid','Late']) {
+        for (const yr of [2026,2027,2028]) {
+          const t = anchorSlice[yr+' '+PICK_ORD[rnd]+' ('+tier+')'], g = anchorSlice[yr+' '+PICK_ORD[rnd]];
+          if (t && g && g.value > 0) { shape[rnd+tier] = t.value / g.value; break; }
+        }
+      }
+    }
+    const derived = [];
+    for (const rnd of [1,2,3]) {
+      for (const tier of ['Early','Mid','Late']) {
+        for (const yr of [2026,2027,2028]) {
+          if (anchorSlice[yr+' '+PICK_ORD[rnd]+' ('+tier+')']) continue;   // already priced by tier
+          const g = anchorSlice[yr+' '+PICK_ORD[rnd]], r = shape[rnd+tier];
+          if (!g || !r) continue;
+          rescalePickTier(yr, rnd, tier, g.value * r);
+          derived.push(yr+' '+tier+' '+PICK_ORD[rnd]);
+        }
+      }
+    }
+    console.log('[DELTA] Pick tiers rescaled: ' + tiersHit + '/27'
+      + (derived.length ? ' \u00b7 ' + derived.length + ' derived from the tiered year\'s shape' : '')
+      + (tiersMissed.length ? ' \u00b7 not priced in this market file: ' + tiersMissed.join(', ') : ''));
+    if (!tiersHit) console.warn('[DELTA] NO pick tier matched the market file \u2014 every pick is showing the '
+      + 'value baked into delta-engine.js. Check how picks are named in data/market-values.json.');
 
     // Anchor: player.k = default (12-SF) market — the base the model rescales from via scarcity()
     let updated = 0, notFound = [];
