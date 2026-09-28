@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-27c';
+const DL_BUILD='2026-09-28a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2903,6 +2903,31 @@ function missedTimeMult(g25,pl){
   if(g25>=4 && g25<=7) return MISSED_TIME_MULT.g4to7;
   return 1;
 }
+/* ── TEAM-CHANGE ADJUSTMENT (28 Sep 2026) ─────────────────────────────────
+   docs/PREREG-team-change-ship.md, locked 3ddb6b3, PASSED: 9.2% smaller miss on 265 held-out
+   movers (p = 0.0005, every season, every position). Players who changed teams in the
+   offseason scored ~17% below their own history relative to stayers, at every age and in the
+   top 150; DELTA's directional team adjustments already allowed ~7%. This closes only the rest:
+   x0.898 (0.834 / 0.929). The directional adjustments stay, so a move into a strong
+   situation still helps. A MOVE = a veteran whose main team last season (most games) differs
+   from his team in his first game this season (current team if he hasn't played yet).
+   Mid-season trades are not caught (untested); rookies never reach this. */
+const TEAM_CHANGE_MULT=0.898;
+const TEAM_CODE_FIX={JAX:'JAC',LA:'LAR'};                 // game logs vs site codes
+function changedTeamsThisSeason(pl){
+  if(!GAMELOGS||!GAMELOGS[pl.n]) return false;
+  const fix=t=>TEAM_CODE_FIX[t]||t;
+  const last={}; let first=null, firstW=99;
+  for(const r of GAMELOGS[pl.n]){
+    if(r.up||r.dnp||!r.tm) continue;
+    if(r.s===SEASON_YEAR-1) last[fix(r.tm)]=(last[fix(r.tm)]||0)+1;
+    else if(r.s===SEASON_YEAR && r.w<firstW){ firstW=r.w; first=fix(r.tm); }
+  }
+  const prev=Object.keys(last).sort((a,b)=>last[b]-last[a]||a.localeCompare(b))[0];
+  const now=first||fix(pl.t);
+  if(!prev||!now||now==='FA') return false;
+  return prev!==now;
+}
 function calcProj(plFmt){
   /* FORMAT BASIS (26 Sep 2026). The projection is built in ONE scoring — half PPR + TE
      premium, the freeze's and the ledger's basis — whatever the league's format, and
@@ -2988,6 +3013,7 @@ function calcProj(plFmt){
   // study tested it. Replaces the old x0.75 stale discount AND RULE 5's -12%/-18%/-8%/-4%.
   // Missed time counts (handoff §2); only the sizes were on trial.
   base *= missedTimeMult(g25, pl);
+  if(changedTeamsThisSeason(pl)) base *= TEAM_CHANGE_MULT;   // see TEAM_CHANGE_MULT above
   // Rookie override: if ppg25 is set as a forward projection (g25=0, ppg25>0),
   // skip all delta/efficiency adjustments — projection already accounts for situation.
   // Apply only the age curve multiplier since that's position-universal.
