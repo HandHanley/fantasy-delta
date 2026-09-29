@@ -76,3 +76,32 @@ flag; the record is published. **This study changes nothing in the engine.**
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — NOT SUPPORTED at the primary sell point
+
+Run once, `python3 scripts/rookie-sellhigh-study.py --run`, against this file as committed in `b153868`
+(sha256 prefix `e617df6aa76df94a`). Nothing above this section was changed after the run.
+
+| Sell Point | Breakouts | Breakouts' Change To End Of Year 2 | Other Rookies | Difference (95% Range) | Breakouts That Lost Value |
+|---|---|---|---|---|---|
+| **End of rookie season (primary)** | 57 | **−7.1%** | −10.8% | **+4.2%** (−14.4% to +26.5%) | **51%** |
+| After Week 8 (reported) | 47 | +1.9% | −5.4% | +7.7% (−14.5% to +35.8%) | 47% |
+| Next preseason (reported) | 59 | −9.8% | +5.6% | **−14.6%** (−28.8% to +3.3%) | 59% |
+
+**Verdict (§2): not supported.** At the end of the rookie season, breakouts did not give back value
+relative to other rookies; whether a breakout lost value was a coin flip. The stated expectation
+("relative only") was also wrong.
+
+**The spread is the story.** Largest falls: Dameon Pierce −80%, Greg Dulcich −72%, Tyrone Tracy Jr. −70%,
+Elijah Mitchell −68%, Tank Dell −68%, Tyjae Spears −65%, Will Levis −65%. Largest rises: Amon-Ra St.
+Brown +548%, Rhamondre Stevenson +419%, Isiah Pacheco +221%, Darnell Mooney +200%. The owner's examples:
+Brian Thomas Jr. −45%, Sam LaPorta −26%, C.J. Stroud −10%; Puka Nacua +27%.
+
+**Two hints, reported only — each needs its own test on data not yet seen:**
+1. **Timing:** at the next preseason, after a summer of hype, breakouts did 14.6% worse than other rookies
+   (range just reaches zero). Selling into the offseason may be the better window.
+2. **Who fades:** the largest falls look heavy with running backs and mid- or late-round picks. This is
+   eyeballing a list after the fact, which is exactly what Study 2 must test properly, with its traits
+   fixed in advance.
+
+**This study changes nothing in the engine.**
