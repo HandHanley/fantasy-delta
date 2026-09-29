@@ -79,3 +79,24 @@ engine.**
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — PRICED ABOUT RIGHT
+
+Run once, `python3 scripts/pedigree-study.py --run`, against this file as committed in `f783384`
+(sha256 prefix `a2ffcadaa3cac2cc`). Nothing above this section was changed after the run.
+
+| Group | n | Price-Matched Gap | 95% Range | Verdict |
+|---|---|---|---|---|
+| **The Name (primary)** | 16 | +11.1% | −35.8% to +88.3% | **Priced about right** |
+| The Producer (reported only) | 38 | +11.9% | −23.2% to +67.0% | Priced about right |
+
+The stated expectation was right. **The ranges are enormous** because outcomes swing wildly within each
+group — The Name runs from Trey Lance −95% to Brenton Strange +609%; The Producer from Dameon Pierce −94%
+to Nico Collins +1,195%. Neither draft pedigree nor rookie production, used this way, points the market
+wrong in a way these samples can show.
+
+**Across the rookie studies (1, 2, the volume check and this one):** the dynasty market prices rookies'
+draft slot, rookie production and the sophomore slump about right on average; what it cannot foresee,
+neither can these simple rules. A DELTA edge on rookies, if one exists, has to come from information the
+market weighs less — for example DELTA's own college data (dominator, breakout age), which has not been
+tested against rookie outcomes beyond draft capital. **This study changes nothing in the engine.**
