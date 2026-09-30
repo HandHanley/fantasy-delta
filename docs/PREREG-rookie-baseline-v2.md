@@ -110,3 +110,27 @@ Undrafted rookie seasons **406** (WR 180, RB 117, TE 97, QB 12).
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — Part A NOT SHOWN · Part B PASSED
+
+Run once, `python3 scripts/rookie-baseline-study.py --run`, against this file as committed in `e30e2bc`
+(sha256 prefix `bb84e16de7a1a5c6`). Nothing above this section was changed after the run.
+
+**Part A — smooth median curve vs today's buckets (725 drafted rookie seasons): not shown.** Average miss
+2.729 → 2.659 (**+2.5%**), typical miss 3.700 → 3.541 — but **p = 0.059**, better in only **7 of 11**
+classes (2017, 2019, 2023, 2025 worse), and **WR −1.5%**, QB −1.4% (RB +5.2%, TE +11.4%). Three gates
+fail; the buckets stay. The stated expectation ("passes, modestly") was wrong by a narrow margin.
+**Reported only:** bucket averages vs medians — medians win on average miss (2.730 vs 2.798), averages on
+typical miss (3.563 vs 3.700), as expected for skewed data. The engine's literal constants, in-sample:
+average miss 2.653, typical miss 3.493 (home advantage — §2).
+
+**Part B — undrafted baseline vs the 8.0 fallback (406 undrafted rookie seasons): PASSED all gates.**
+Average miss 4.169 → **1.595 (+61.7%)**, typical miss 4.480 → 2.718, **p = 0.0005**, better in **all 11**
+classes (+48% to +78%); RB +38.0%, WR +69.3%, TE +82.1%; QB −27.1% on 12 players (exempt by size).
+**Undrafted baseline, median rookie PPG on all eleven classes:** QB 4.74 · RB 1.70 · WR 0.76 · TE 0.28.
+The stated expectation (passes clearly) was right.
+
+**§6 applies to Part B:** undrafted rookies get the position median instead of the 8.0 fallback — build
+agreed with the owner first. **Found while preparing the build:** the 8.0 path also catches two
+*veterans* whose stats are missing through a name mismatch (Joshua/Josh Palmer, Zonovan/Bam Knight), so
+the build must fix those names first and tell an undrafted rookie from a veteran with missing data.
