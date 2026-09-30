@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-28b';
+const DL_BUILD='2026-09-29a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -2849,12 +2849,28 @@ const ROOKIE_PPG = {
 function rookieTier(pick){
   return pick<=10 ? 0 : pick<=32 ? 1 : pick<=64 ? 2 : pick<=105 ? 3 : 4;
 }
+/* ── UNDRAFTED ROOKIE BASELINE (29 Sep 2026) ───────────────────────────────
+   docs/PREREG-rookie-baseline-v2.md Part B, locked e30e2bc, PASSED: 61.7% smaller average
+   miss on 406 undrafted rookie seasons 2015-2025 (p = 0.0005, all 11 classes). Median rookie
+   PPG of undrafted rookies who played, by position (QB rests on 12 players — thin). Replaces
+   the literal 8.0 fallback and the "sat out two seasons" discount it used to take.
+   Applies ONLY when the player has no draft record AND no NFL game before this season in the
+   game logs — so a veteran whose stats are missing (a name mismatch) is never mistaken for a
+   rookie. Until the logs load, it returns null and the old behaviour holds.
+   Untested extension, flagged: an undrafted player in his SECOND year who has never played
+   also gets it (the study graded first seasons only). Undrafted rookies stay out of the
+   in-season blend (blendK = 0) — that would need its own test. */
+const UNDRAFTED_PPG = {QB:4.74, RB:1.70, WR:0.76, TE:0.28};
+function undraftedBaseline(pl){
+  if(!GAMELOGS) return null;
+  const earlier=(GAMELOGS[pl.n]||[]).some(r=>r.s<SEASON_YEAR && !r.up && !r.dnp);
+  if(earlier) return null;
+  return UNDRAFTED_PPG[pl.p] ?? null;
+}
 function rookieBaseline(pl){
-  // Undrafted or unknown capital gets nothing — the caller keeps its old behaviour
-  // rather than inventing a number for a player we have no draft information about.
   let di=null;
   try{ di = (typeof dsDraftInfo==='function') ? dsDraftInfo(pl.n) : null; }catch(e){}
-  if(!di || di.pick==null) return null;
+  if(!di || di.pick==null) return undraftedBaseline(pl);
   const row = ROOKIE_PPG[pl.p];
   return row ? row[rookieTier(di.pick)] : null;
 }
