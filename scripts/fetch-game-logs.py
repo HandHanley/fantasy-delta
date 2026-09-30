@@ -75,7 +75,9 @@ def match_names(nfl_names, delta_names, no_data=None):
     # been unmatched (so nflverse is NOT using "Kenneth"), which makes "Kenny"
     # the likely key. The unmatched report below CONFIRMS it on the next run.
     ALIASES  = {'Chigoziem Okonkwo': 'Chig Okonkwo',
-                'Kenneth Gainwell': 'Kenny Gainwell'}
+                'Kenneth Gainwell': 'Kenny Gainwell',
+                'Joshua Palmer': 'Josh Palmer',      # 29 Sep 2026: logs never reached him
+                'Zonovan Knight': 'Bam Knight'}      # 29 Sep 2026: logs never reached him
     matched, not_found = {}, []
     for name in delta_names:
         key = norm(ALIASES.get(name, name))

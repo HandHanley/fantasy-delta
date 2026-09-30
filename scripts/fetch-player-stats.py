@@ -638,6 +638,8 @@ def match_names(agg, delta_names, no_data=None):
     ALIASES = {
         'Chigoziem Okonkwo': 'Chig Okonkwo',
         'Kenneth Gainwell':  'Kenny Gainwell',
+        'Joshua Palmer':     'Josh Palmer',      # 29 Sep 2026: stats never reached him
+        'Zonovan Knight':    'Bam Knight',       # 29 Sep 2026: stats never reached him
     }
 
     matched   = {}
@@ -1054,6 +1056,8 @@ def fetch_draft_and_college(delta_names, meta):
     DRAFT_ALIASES = {
         'Chigoziem Okonkwo': 'Chig Okonkwo',
         'Kenneth Gainwell':  'Kenny Gainwell',
+        'Joshua Palmer':     'Josh Palmer',
+        'Zonovan Knight':    'Bam Knight',
     }
     def _match(raw, delta_names):
         rawnorm = {}
