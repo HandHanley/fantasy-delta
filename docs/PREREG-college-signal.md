@@ -93,3 +93,26 @@ position.
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — NOT SHOWN. dDOM adds nothing measurable beyond draft slot.
+
+Run once, `python3 scripts/college-signal-study.py --run`, against this file as committed in `c260986`
+(sha256 prefix `cebd72c5a12c9e2d`). Nothing above this section was changed after the run.
+
+| 289 Rookies, Each Class Predicted From The Other Four | Draft Slot Only | + dDOM | + Raw Dominator |
+|---|---|---|---|
+| Typical miss (RMSE, PPG) | 3.898 | 3.897 | 3.897 |
+| Average miss (MAE) | 2.820 | 2.828 | 2.828 |
+
+**Primary:** +0.01% (bar 2%), p = 0.50 — **not shown**. Better in 4 of 5 classes by under 1% each (2021
+−3.7%); by position QB −0.2%, RB −0.0%, WR −0.8%, TE +2.1%. **Sub-test:** raw minus dDOM error −0.000
+(range −0.011 to +0.010) — **no clear difference.** Both stated expectations were right.
+
+**Reported only:** the fitted effect is positive in every held-out class (b 0.10–0.22; 0.14 on all
+five) — higher dDOM does go with slightly more rookie scoring — but small: a 100th-percentile dDOM moves
+the projection about 7% above a 50th-percentile one, and the draft slot already carries it. The raw
+metric does exactly as well.
+
+**What it says:** for rookies who reached the NFL, **college production is already in the draft slot**.
+dDOM stays display-only, as today. Across all five rookie studies (28–29 Sep), none found a rookie signal
+the market or the draft-slot table misses. **This study changes nothing in the engine.**
