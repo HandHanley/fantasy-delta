@@ -109,7 +109,13 @@ Undrafted rookie seasons **406** (WR 180, RB 117, TE 97, QB 12).
 
 ## Amendments
 
-*(none)*
+**1 — 29 Sep 2026, after the result: the Part B build.** First the pipeline name fix (`fetch-player-stats.py`,
+`fetch-game-logs.py` aliases: Joshua → Josh Palmer, Zonovan → Bam Knight; confirmed by the 30 Sep 02:25 UTC nightly — Palmer
+four seasons, Knight three). Then `delta-engine.js 2026-09-29a`, built on the live `28b`: `rookieBaseline()` returns
+`UNDRAFTED_PPG` (QB 4.74, RB 1.70, WR 0.76, TE 0.28) for a player with no draft record and no NFL game before this season;
+null until the game logs load. Verified old `28b` vs new: exactly 8 players change (Hibner, Thomas, Trigg, Gyllenborg,
+Henry, Caldwell, Taylor, Hemby — projections 4.7–5.1 → 0.3–1.7, DELTA Scores down 8–12); Palmer and Knight untouched and
+projecting from real production; no buy/sell call changed; Engine Audit 32/32. The frozen ledger record is unaffected.
 
 ## Result (29 September 2026) — Part A NOT SHOWN · Part B PASSED
 
