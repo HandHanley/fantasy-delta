@@ -231,3 +231,40 @@ after seeing a result, which is exactly the kind of change that must never be si
 _Amendments 1 and 2 were made before the study touched real data. Amendment 3 was made
 after, affects reporting only, and is flagged as such. All are recorded here rather than
 edited into the sections above so the original design stays visible._
+
+---
+
+## Result — SHIP w = 0.50
+
+**Record fix, 29 September 2026.** The study ran on 22 August 2026; its result was written to
+`study/out/report_rb_dominator_weight.txt` (committed with this file in `18f7061`) but never copied here.
+This section copies that report — nothing was re-run, and nothing above was changed.
+
+**Sample (§3):** 450 RBs with a qualifying final season; 144 dropped (final season 2025, class 2026);
+0 missing inputs. **Primary sample 306** — 91 drafted, 215 undrafted, the undrafted kept on purpose
+(dropping them would condition on the outcome). By final college season: 2020 35 · 2021 69 · 2022 56 ·
+2023 59 · 2024 87.
+
+**CV curve (§6, held-out Spearman rho against draft capital, by rushing weight w):**
+
+| w | 0.00 | 0.10 | 0.20 | 0.30 | 0.40 | **0.50** | 0.60 | 0.70 | 0.80 | 0.90 | 1.00 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| rho | 0.327 | 0.452 | 0.498 | 0.515 | 0.521 | **0.522** | 0.520 | 0.516 | 0.514 | 0.509 | 0.507 |
+
+Best at 0.50; 0.20–1.00 all within one standard error — the curve is flat above 0.20.
+
+**Checks and gates (§7 as amended):**
+- **Signal check:** rho at 0.50, 95% CI [0.446, 0.598] — excludes zero, **PASS**.
+- **Discrimination check:** not applicable — the empirical best is the default 0.50 (Amendment 3).
+- **Sanity gate:** 0.50 beats today's rushing-only 1.00 on **92% of 500 half-splits** (needed ≥ 60%) — **PASS**.
+- **Challenger gate:** not applicable — the selection is the default.
+
+**Secondary outcome (§4, reported regardless):** 54 backs with real NFL games — rho +0.249 at 0.50 vs
++0.199 at 1.00. Agrees with the primary.
+
+**Biggest movers (§8):** falls — Jaret Patterson 69 → 59, Abram Smith 76 → 67, Spencer Brown 68 → 59,
+Ayo Adeyi 48 → 40, B.J. Baylor 68 → 60. Rises — Calvin Turner Jr. 22 → 51, Johnny Ford 40 → 68, Tyrell
+Robinson 1 → 25, Michael Wiley 15 → 34, CJ Marable 34 → 52. 25 of 306 move 10+ percentile points (8%).
+
+**Shipped:** `dDOM_RB = [0.50 × rushing dominator + 0.50 × receiving dominator] × competition`
+(`RB_RUSH_W = 0.50` in `index.html`, `cfb-player.html` and `scripts/build-college-index.js`).
