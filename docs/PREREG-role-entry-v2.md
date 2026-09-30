@@ -77,3 +77,30 @@ season by year 3: 13%"*. Display only: no projection, Score or call changes. Bui
 ## Amendments
 
 *(none)*
+
+## Result (30 September 2026) — Method HONEST on unseen classes · Modern odds NOT honest · Nothing ships
+
+Run once, `python3 scripts/role-entry-v2-study.py --run`, against this file as committed in `5e5de54` /
+`c80b49e`. Nothing above this section was changed after the run.
+
+| Test | Calibration Error | Honest-Model Limit | Result |
+|---|---|---|---|
+| **Primary — capped method, unseen 2000–2014** (1,207 players) | **1.9 points** | 3.0 | **HONEST** |
+| **Required — capped method, 2015–2023** (712 players) | **5.2 points** | 4.2 | **NOT HONEST** |
+| Reported — first (uncapped) curve, 2000–2014 | 2.9 | 3.1 | honest |
+| Reported — 2000–2014 fit applied to 2015–2023 | 3.9 | 4.0 | honest (barely) |
+
+**§4 requires both → the odds display does not ship.** The modern miss has the first study's shape: the
+top bin predicted 75.6%, actual 62.5%; the middle bins predicted 11–16%, actual 17–24%. The fitted
+**ceilings differ sharply by era — 0.68 (2000–2014) vs 0.96 (2015–2023)** — so on the modern data the cap
+barely binds, and it cannot rein in a top end that 712 players do not pin down.
+
+**The owner's era question (reported):** hit rates 2000–2014 vs 2015–2023 — QB 13% vs 21%, **RB 22% vs 29%**,
+TE 17% vs 14%, WR 14% vs 16%. Odds at pick 5: RB 68% vs 96%, TE 68% vs 95%, WR 65% vs 82%, QB 51% vs 53%.
+**The eras differ most at the top of the draft** — today's top running backs and tight ends hit far more
+often. From pick ~45 down, the eras are close. The stated expectations: old-era pass — right; modern pass
+— **wrong**; "running backs hit more often back then" — **wrong** (the reverse).
+
+**What it says:** the capped method gives honest odds where there is enough data (1,207 players), but the
+modern classes alone are too few to pin the top of the draft honestly — and the eras differ exactly
+there, so the old era cannot stand in. **This study changes nothing in the engine.**
