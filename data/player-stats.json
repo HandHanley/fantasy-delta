@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-09-30T18:29:14.623324+00:00",
+  "fetched": "2026-10-01T18:56:33.752544+00:00",
   "seasons": [
     2022,
     2023,
@@ -26340,10 +26340,6 @@
     "Ja'Lynn Polk": "NO"
   },
   "injury": {
-    "Josh Allen": {
-      "status": "Questionable",
-      "body_part": "Knee"
-    },
     "Jayden Daniels": {
       "status": "Questionable",
       "body_part": "Elbow"
@@ -26351,6 +26347,10 @@
     "Caleb Williams": {
       "status": "Doubtful",
       "body_part": "Hamstring"
+    },
+    "Lamar Jackson": {
+      "status": "Questionable",
+      "body_part": "Undisclosed"
     },
     "Baker Mayfield": {
       "status": "Out",
@@ -26369,7 +26369,7 @@
       "body_part": "Personal"
     },
     "Rico Dowdle": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Toe"
     },
     "Breece Hall": {
@@ -26383,6 +26383,10 @@
     "Tony Pollard": {
       "status": "Questionable",
       "body_part": "Ankle"
+    },
+    "Bucky Irving": {
+      "status": "Questionable",
+      "body_part": "Lower Body"
     },
     "Rachaad White": {
       "status": "Questionable",
@@ -26428,6 +26432,10 @@
       "status": "Questionable",
       "body_part": "Hip"
     },
+    "Zay Flowers": {
+      "status": "Questionable",
+      "body_part": "Hamstring"
+    },
     "Nico Collins": {
       "status": "Questionable",
       "body_part": "Hamstring"
@@ -26436,9 +26444,9 @@
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Jaylen Waddle": {
+    "DeVonta Smith": {
       "status": "Questionable",
-      "body_part": "Leg"
+      "body_part": "Hamstring"
     },
     "Alec Pierce": {
       "status": "IR",
@@ -26447,6 +26455,14 @@
     "Justin Jefferson": {
       "status": "Questionable",
       "body_part": "Ankle"
+    },
+    "Ladd McConkey": {
+      "status": "Questionable",
+      "body_part": "Foot"
+    },
+    "Jakobi Meyers": {
+      "status": "Questionable",
+      "body_part": "Thumb"
     },
     "Jayden Higgins": {
       "status": "IR",
@@ -26460,6 +26476,10 @@
       "status": "Questionable",
       "body_part": "Ribs"
     },
+    "Keon Coleman": {
+      "status": "Questionable",
+      "body_part": "Ankle"
+    },
     "Brandon Aiyuk": {
       "status": "DNR",
       "body_part": "Knee - ACL + MCL"
@@ -26469,7 +26489,7 @@
       "body_part": "Quadriceps"
     },
     "Jayden Reed": {
-      "status": "Out",
+      "status": "IR",
       "body_part": "Neck"
     },
     "Jalen McMillan": {
@@ -26477,12 +26497,8 @@
       "body_part": "Knee - PCL"
     },
     "Xavier Legette": {
-      "status": "Questionable",
+      "status": "Doubtful",
       "body_part": "Knee"
-    },
-    "Marvin Mims": {
-      "status": "Questionable",
-      "body_part": "Foot"
     },
     "Dallas Goedert": {
       "status": "Doubtful",
@@ -26508,6 +26524,10 @@
       "status": "IR",
       "body_part": "Forearm"
     },
+    "Chris Godwin": {
+      "status": "Questionable",
+      "body_part": "Ankle"
+    },
     "Tank Dell": {
       "status": "IR",
       "body_part": "Knee - ACL + MCL"
@@ -26517,6 +26537,18 @@
       "body_part": "Finger"
     },
     "Marquise Brown": {
+      "status": "Questionable",
+      "body_part": "Ankle"
+    },
+    "Tyrone Tracy": {
+      "status": "Questionable",
+      "body_part": "Knee"
+    },
+    "George Holani": {
+      "status": "Questionable",
+      "body_part": "Ribs"
+    },
+    "Keaton Mitchell": {
       "status": "Questionable",
       "body_part": "Ankle"
     },
@@ -26536,25 +26568,33 @@
       "status": "IR",
       "body_part": "Knee"
     },
+    "Ben Sinnott": {
+      "status": "Questionable",
+      "body_part": "Ribs"
+    },
     "Dillon Gabriel": {
       "status": "IR",
       "body_part": "Back"
     },
-    "Tanner McKee": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
+    "Trey Lance": {
+      "status": "Questionable",
+      "body_part": "Groin"
+    },
+    "LeQuint Allen": {
+      "status": "Questionable",
+      "body_part": "Hip"
     },
     "Trevor Etienne": {
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Joe Mixon": {
-      "status": "Out",
-      "body_part": "Foot"
-    },
     "Malik Davis": {
       "status": "IR",
       "body_part": "Hip"
+    },
+    "Will Shipley": {
+      "status": "Questionable",
+      "body_part": "Foot"
     },
     "Luke Musgrave": {
       "status": "PUP",
@@ -26584,6 +26624,10 @@
       "status": "IR",
       "body_part": "Knee - ACL"
     },
+    "D.J. Moore": {
+      "status": "Questionable",
+      "body_part": "Shoulder"
+    },
     "Dont'e Thornton": {
       "status": "IR",
       "body_part": "Undisclosed"
@@ -26595,6 +26639,9 @@
   },
   "roster_status": {
     "Jaxson Dart": {
+      "status": "Inactive"
+    },
+    "Zach Charbonnet": {
       "status": "Inactive"
     },
     "Jordan Mason": {
