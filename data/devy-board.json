@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23",
+ "generated": "2026-10-01",
  "class": 2027,
  "note": "Consensus big-board position for skill-position prospects, compiled by hand from publicly published boards. Stored as a rank plus a coarse tier; the tier is what the platform shows, because this far out a tier stays true for weeks while an exact rank is stale in days. CONTEXT ONLY \u2014 feeds no score, no percentile and no ranking, exactly like market value on the NFL side.",
  "tiers": {
@@ -16,23 +16,23 @@
   "unmatched": []
  },
  "players": {
-  "Arch Manning": {
+  "Jeremiah Smith": {
    "rank": 1,
+   "pos": "WR",
+   "school": "Ohio State",
+   "tier": "T1",
+   "cfbName": "Jeremiah Smith",
+   "prevRank": 2,
+   "move": 1
+  },
+  "Arch Manning": {
+   "rank": 2,
    "pos": "QB",
    "school": "Texas",
    "tier": "T1",
    "cfbName": "Arch Manning",
    "prevRank": 1,
-   "move": 0
-  },
-  "Jeremiah Smith": {
-   "rank": 2,
-   "pos": "WR",
-   "school": "Ohio State",
-   "tier": "T1",
-   "cfbName": "Jeremiah Smith",
-   "prevRank": 3,
-   "move": 1
+   "move": -1
   },
   "Dante Moore": {
    "rank": 3,
@@ -40,8 +40,8 @@
    "school": "Oregon",
    "tier": "T1",
    "cfbName": "Dante Moore",
-   "prevRank": 2,
-   "move": -1
+   "prevRank": 3,
+   "move": 0
   },
   "Darian Mensah": {
    "rank": 7,
@@ -49,80 +49,80 @@
    "school": "Miami",
    "tier": "T1",
    "cfbName": "Darian Mensah",
-   "prevRank": 6,
-   "move": -1
+   "prevRank": 7,
+   "move": 0
+  },
+  "Trinidad Chambliss": {
+   "rank": 8,
+   "pos": "QB",
+   "school": "Mississippi",
+   "tier": "T1",
+   "cfbName": "Trinidad Chambliss",
+   "prevRank": 12,
+   "move": 4
   },
   "Cam Coleman": {
-   "rank": 8,
+   "rank": 9,
    "pos": "WR",
    "school": "Texas",
    "tier": "T1",
    "cfbName": "Cam Coleman",
    "prevRank": 8,
-   "move": 0
-  },
-  "CJ Carr": {
-   "rank": 10,
-   "pos": "QB",
-   "school": "Notre Dame",
-   "tier": "T1",
-   "cfbName": "CJ Carr",
-   "prevRank": 9,
    "move": -1
   },
-  "Trinidad Chambliss": {
-   "rank": 12,
-   "pos": "QB",
-   "school": "Mississippi",
-   "tier": "T2",
-   "cfbName": "Trinidad Chambliss",
-   "prevRank": 46,
-   "move": 34
-  },
   "Charlie Becker": {
-   "rank": 14,
+   "rank": 11,
    "pos": "WR",
    "school": "Indiana",
    "tier": "T2",
    "cfbName": "Charlie Becker",
-   "prevRank": 15,
-   "move": 1
+   "prevRank": 14,
+   "move": 3
   },
-  "Drew Mestemaker": {
-   "rank": 17,
+  "CJ Carr": {
+   "rank": 13,
    "pos": "QB",
-   "school": "Oklahoma State",
+   "school": "Notre Dame",
    "tier": "T2",
-   "cfbName": "Drew Mestemaker",
-   "prevRank": 34,
-   "move": 17
+   "cfbName": "CJ Carr",
+   "prevRank": 10,
+   "move": -3
+  },
+  "Jadan Baugh": {
+   "rank": 17,
+   "pos": "RB",
+   "school": "Florida",
+   "tier": "T2",
+   "cfbName": "Jadan Baugh",
+   "prevRank": 24,
+   "move": 7
   },
   "Trey'Dez Green": {
-   "rank": 19,
+   "rank": 18,
    "pos": "TE",
    "school": "LSU",
    "tier": "T2",
    "cfbName": "Trey'Dez Green",
    "prevRank": 19,
-   "move": 0
+   "move": 1
   },
   "Jamari Johnson": {
-   "rank": 20,
+   "rank": 19,
    "pos": "TE",
    "school": "Oregon",
    "tier": "T2",
    "cfbName": "Jamari Johnson",
-   "prevRank": 21,
+   "prevRank": 20,
    "move": 1
   },
-  "Jadan Baugh": {
+  "Drew Mestemaker": {
    "rank": 24,
-   "pos": "RB",
-   "school": "Florida",
+   "pos": "QB",
+   "school": "Oklahoma State",
    "tier": "T2",
-   "cfbName": "Jadan Baugh",
-   "prevRank": 26,
-   "move": 2
+   "cfbName": "Drew Mestemaker",
+   "prevRank": 17,
+   "move": -7
   },
   "Nick Marsh": {
    "rank": 32,
@@ -130,107 +130,98 @@
    "school": "Indiana",
    "tier": "T2",
    "cfbName": "Nick Marsh",
-   "prevRank": 30,
-   "move": -2
-  },
-  "LaNorris Sellers": {
-   "rank": 33,
-   "pos": "QB",
-   "school": "South Carolina",
-   "tier": "T3",
-   "cfbName": "LaNorris Sellers",
-   "prevRank": 18,
-   "move": -15
+   "prevRank": 32,
+   "move": 0
   },
   "Kewan Lacy": {
-   "rank": 34,
+   "rank": 33,
    "pos": "RB",
    "school": "Mississippi",
    "tier": "T3",
    "cfbName": "Kewan Lacy",
+   "prevRank": 34,
+   "move": 1
+  },
+  "LaNorris Sellers": {
+   "rank": 34,
+   "pos": "QB",
+   "school": "South Carolina",
+   "tier": "T3",
+   "cfbName": "LaNorris Sellers",
    "prevRank": 33,
    "move": -1
   },
-  "Julian Sayin": {
-   "rank": 35,
-   "pos": "QB",
-   "school": "Ohio State",
-   "tier": "T3",
-   "cfbName": "Julian Sayin",
-   "prevRank": 28,
-   "move": -7
-  },
   "Ryan Coleman-Williams": {
-   "rank": 38,
+   "rank": 35,
    "pos": "WR",
    "school": "Alabama",
    "tier": "T3",
    "cfbName": "Ryan Coleman-Williams",
-   "prevRank": 36,
-   "move": -2
+   "prevRank": 38,
+   "move": 3
   },
   "KJ Duff": {
-   "rank": 44,
+   "rank": 36,
    "pos": "WR",
    "school": "Rutgers",
    "tier": "T3",
    "cfbName": "KJ Duff",
-   "prevRank": 50,
-   "move": 6
+   "prevRank": 44,
+   "move": 8
   },
-  "Omarion Miller": {
-   "rank": 49,
-   "pos": "WR",
-   "school": "Arizona State",
+  "Julian Sayin": {
+   "rank": 39,
+   "pos": "QB",
+   "school": "Ohio State",
    "tier": "T3",
-   "cfbName": "Omarion Miller",
-   "prevRank": 42,
-   "move": -7
+   "cfbName": "Julian Sayin",
+   "prevRank": 35,
+   "move": -4
   },
   "Reed Harris": {
-   "rank": 50,
+   "rank": 48,
    "pos": "WR",
    "school": "Arizona State",
    "tier": "T3",
    "cfbName": "Reed Harris",
-   "prevRank": 82,
-   "move": 32
-  },
-  "Mario Craver": {
-   "rank": 53,
-   "pos": "WR",
-   "school": "Texas A&M",
-   "tier": "T3",
-   "cfbName": "Mario Craver",
-   "prevRank": 56,
-   "move": 3
+   "prevRank": 50,
+   "move": 2
   },
   "Jayden Maiava": {
-   "rank": 59,
+   "rank": 49,
    "pos": "QB",
    "school": "USC",
    "tier": "T3",
    "cfbName": "Jayden Maiava",
+   "prevRank": 59,
+   "move": 10
+  },
+  "Omarion Miller": {
+   "rank": 56,
+   "pos": "WR",
+   "school": "Arizona State",
+   "tier": "T3",
+   "cfbName": "Omarion Miller",
    "prevRank": 49,
-   "move": -10
+   "move": -7
+  },
+  "Mario Craver": {
+   "rank": 60,
+   "pos": "WR",
+   "school": "Texas A&M",
+   "tier": "T3",
+   "cfbName": "Mario Craver",
+   "prevRank": 53,
+   "move": -7
   },
   "Ahmad Hardy": {
-   "rank": 60,
+   "rank": 62,
    "pos": "RB",
    "school": "Missouri",
    "tier": "T3",
    "cfbName": "Ahmad Hardy",
-   "prevRank": 52,
-   "move": -8
-  },
-  "Duce Robinson": {
-   "rank": 64,
-   "pos": "WR",
-   "school": "Florida State",
-   "tier": "T3",
-   "cfbName": "Duce Robinson",
-   "prevRank": 54,
-   "move": -10
+   "prevRank": 60,
+   "move": -2
   },
   "Sam Leavitt": {
    "rank": 65,
@@ -238,80 +229,89 @@
    "school": "LSU",
    "tier": "T4",
    "cfbName": "Sam Leavitt",
+   "prevRank": 65,
+   "move": 0
+  },
+  "Luke Reynolds": {
+   "rank": 67,
+   "pos": "TE",
+   "school": "Virginia Tech",
+   "tier": "T4",
+   "cfbName": "Luke Reynolds",
    "prevRank": null,
    "move": null
   },
+  "Duce Robinson": {
+   "rank": 71,
+   "pos": "WR",
+   "school": "Florida State",
+   "tier": "T4",
+   "cfbName": "Duce Robinson",
+   "prevRank": 64,
+   "move": -7
+  },
   "Drake Lindsey": {
-   "rank": 66,
+   "rank": 72,
    "pos": "QB",
    "school": "Minnesota",
    "tier": "T4",
    "cfbName": "Drake Lindsey",
-   "prevRank": 81,
-   "move": 15
-  },
-  "Bryant Wesco": {
-   "rank": 74,
-   "pos": "WR",
-   "school": "Clemson",
-   "tier": "T4",
-   "cfbName": "Bryant Wesco Jr.",
-   "prevRank": 64,
-   "move": -10
-  },
-  "Austin Simmons": {
-   "rank": 76,
-   "pos": "QB",
-   "school": "Missouri",
-   "tier": "T4",
-   "cfbName": "Austin Simmons",
-   "prevRank": null,
-   "move": null
+   "prevRank": 66,
+   "move": -6
   },
   "Deuce Alexander": {
-   "rank": 79,
+   "rank": 80,
    "pos": "WR",
    "school": "Mississippi",
    "tier": "T4",
    "cfbName": "Deuce Alexander",
-   "prevRank": null,
-   "move": null
+   "prevRank": 79,
+   "move": -1
   },
   "Ryan Wingo": {
-   "rank": 80,
+   "rank": 81,
    "pos": "WR",
    "school": "Texas",
    "tier": "T4",
    "cfbName": "Ryan Wingo",
-   "prevRank": 53,
-   "move": -27
+   "prevRank": 80,
+   "move": -1
   },
-  "Andrew Rappleyea": {
-   "rank": 91,
-   "pos": "TE",
-   "school": "Penn State",
+  "Austin Simmons": {
+   "rank": 83,
+   "pos": "QB",
+   "school": "Missouri",
    "tier": "T4",
-   "cfbName": "Andrew Rappleyea",
-   "prevRank": 88,
-   "move": -3
+   "cfbName": "Austin Simmons",
+   "prevRank": 76,
+   "move": -7
+  },
+  "Bryant Wesco": {
+   "rank": 86,
+   "pos": "WR",
+   "school": "Clemson",
+   "tier": "T4",
+   "cfbName": "Bryant Wesco Jr.",
+   "prevRank": 74,
+   "move": -12
   },
   "Nate Frazier": {
-   "rank": 93,
+   "rank": 94,
    "pos": "RB",
    "school": "Georgia",
    "tier": "T4",
    "cfbName": "Nate Frazier",
-   "prevRank": null,
-   "move": null
+   "prevRank": 93,
+   "move": -1
   },
   "Wyatt Young": {
-   "rank": 99,
+   "rank": 97,
    "pos": "WR",
    "school": "Oklahoma State",
    "tier": "T4",
    "cfbName": "Wyatt Young",
-   "prevRank": null,
-   "move": null
+   "prevRank": 99,
+   "move": 2
   }
  }
 }
