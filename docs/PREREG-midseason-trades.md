@@ -176,6 +176,28 @@ a different checkpoint or a different minimum** hoping for a pass.
 
 *(none)*
 
-## Result
+## Result (1 October 2026) — DID NOT PASS. Nothing Changes.
 
-*(not run)*
+Run once, `python3 scripts/midseason-trade-study.py --run`, against this file as committed in `a9390e2` (sha256
+prefix `ad1699033fb01cc0`) and the script as committed in `6a671a1` (`0466690140dd17e6`), both byte-identical to
+the reviewed copies. Same nflverse files as the counts and crash test; same 51 movers. Nothing above this section
+was changed after the run.
+
+| Gate (51 movers, 2016–2025) | Result |
+|---|---|
+| 1. Size ≥ 2% | **failed — 1.4%** (typical miss 3.431 → 3.383; average miss 2.805 → 2.778) |
+| 2. Not a fluke | **failed — p = 0.34** |
+| 3. Both halves | passed — 2016–20 +1.9%, 2021–25 +0.9% |
+| 4. No position (25+ movers) worse than −1% | passed — WR +5.9% |
+
+**Reported only, never gated:**
+- Positions under 25 movers: RB −3.5% (11), TE −9.4% (8).
+- Size fitted freshly from the movers: ×0.914 over all ten seasons; ×0.88 to ×0.94 leaving out one season at a
+  time. Mid-season movers ran about 9% below stayers relative to the forecast — the same direction as offseason
+  movers, roughly half the size, and not distinguishable from noise with 51 players. On the §6 crash test, a
+  true 10% effect would have passed only about one time in five, so this result fits a modest real effect or
+  none.
+
+**What it means:** not shown with the evidence available — **not** "mid-season moves don't matter". Mid-season
+movers keep today's treatment (directional team adjustments on the preseason part only; no ×0.898). Per §7,
+this is **not re-run** with different gates, a different checkpoint or a different minimum.
