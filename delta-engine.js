@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-09-29a';
+const DL_BUILD='2026-10-02a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3013,12 +3013,14 @@ function calcProj(plFmt){
      fitting a PPG haircut for it returned lambda = 0.00 out of sample — the threat
      costs him GAMES, not points per game, and this projection is per-game. That
      finding belongs on the availability/opportunity side, not here. */
+  let qbLift=false;                  // set when the lift fires — the missed-time cut skips these QBs
   if(pl.p==='QB' && QB_STARTERS[pl.n] && g25<8 && den>0){
     const sb=qbStarterBaseline();
     if(sb>0){
       const K=6;                      // fitted 2000-2014, flat from 4 to 12
       const w=g25/(g25+K);            // his own thin sample vs the starter baseline
       base = w*base + (1-w)*sb;
+      qbLift=true;
     }
   }
 
@@ -3028,7 +3030,11 @@ function calcProj(plFmt){
   // season, applied to the starting number — outside the delta cap below, exactly as the
   // study tested it. Replaces the old x0.75 stale discount AND RULE 5's -12%/-18%/-8%/-4%.
   // Missed time counts (handoff §2); only the sizes were on trial.
-  base *= missedTimeMult(g25, pl);
+  // QB EXCEPTION (2 Oct 2026): docs/PREREG-qb-missedtime.md, locked 633ba62, PASSED: where the QB
+  // starter lift fired, removing this cut lowered the typical miss 11.8% on 103 Week-1 starters
+  // 2002-2025 (p = 0.050, just inside the bar), better in both halves and every cut group. The
+  // lift already pulls a thin-season starter to a starter's level; cutting again double-counted.
+  if(!qbLift) base *= missedTimeMult(g25, pl);
   if(changedTeamsThisSeason(pl)) base *= TEAM_CHANGE_MULT;   // see TEAM_CHANGE_MULT above
   // Rookie override: if ppg25 is set as a forward projection (g25=0, ppg25>0),
   // skip all delta/efficiency adjustments — projection already accounts for situation.
