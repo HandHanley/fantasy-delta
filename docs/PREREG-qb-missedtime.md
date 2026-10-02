@@ -154,6 +154,34 @@ played-game rule.
 
 *(none)*
 
-## Result
+## Result (2 October 2026) — PASSED, With The Fluke Test Right At The Bar
 
-*(not run)*
+Run once, `python3 scripts/qb-missedtime-study.py --run`, against this file as committed in `633ba62` and the
+script as committed in `ae4f740`, both byte-identical to the reviewed copies. The run printed this file's sha256
+prefix as `81fc63640f66da09`. Same 103 quarterbacks as the counts. Nothing above this section was changed after
+the run.
+
+| Gate (103 Week-1 starters, 2002–2025) | Result |
+|---|---|
+| 1. Size ≥ 2% | **passed — 11.8%** (typical miss 4.367 → 3.854; average miss 3.487 → 2.959) |
+| 2. Not a fluke, p < 0.05 | **passed — p = 0.04998** (99 of 2,000 shuffles did at least as well) |
+| 3. Both halves | passed — 2002–2013 +16.7%, 2014–2025 +8.0% |
+| 4. No cut group (25+) worse than −1% | passed — 1–3 games +16.3% (32), 4–7 games +9.2% (62) |
+
+**Reported only, never gated:**
+- Skipped-season group (9): +6.8%.
+- Cut confirmed: **no**.
+- Best-fit multiplier on top of the lift: **×0.92** overall — 1–3 games ×0.90, 4–7 games ×0.93, skipped season
+  ×0.88. The data favour at most a small trim after the lift, far smaller than today's cut (×0.69 to ×0.80).
+  A trim of that size is **not** on trial here and would need its own pre-registration on seasons this run has
+  not touched.
+
+**What it means:** removing the cut for these quarterbacks made the forecast clearly better in size (11.8%),
+in both halves and in every cut group. The fluke test cleared by the narrowest margin it can: **p = 0.04998
+against a bar of 0.05.** By the rule set before the run, this passes and ships as §7 describes; it should be
+read as "real but not overwhelming" evidence, not as a settled number.
+
+**Shipped as §7:** `delta-engine.js` `2026-10-02a` — the missed-time cut is skipped when the QB starter lift
+fired. On 2 October data: Jayden Daniels 14.92 → 17.35, Kyler Murray 9.59 → 11.60, Malik Willis 11.05 →
+12.44; no other player's numbers move; DELTA Score and model value unchanged for all 409 players (Daniels
+stays below the 18-point QB scarcity line); Engine Audit gate 32/32.
