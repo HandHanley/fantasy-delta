@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-01T18:56:33.752544+00:00",
+  "fetched": "2026-10-02T18:31:53.264355+00:00",
   "seasons": [
     2022,
     2023,
@@ -26341,16 +26341,12 @@
   },
   "injury": {
     "Jayden Daniels": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Elbow"
     },
     "Caleb Williams": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Hamstring"
-    },
-    "Lamar Jackson": {
-      "status": "Questionable",
-      "body_part": "Undisclosed"
     },
     "Baker Mayfield": {
       "status": "Out",
@@ -26361,7 +26357,7 @@
       "body_part": "Knee - Meniscus"
     },
     "Travis Etienne": {
-      "status": "Out",
+      "status": "IR",
       "body_part": "Hamstring"
     },
     "Josh Jacobs": {
@@ -26373,23 +26369,19 @@
       "body_part": "Toe"
     },
     "Breece Hall": {
-      "status": "Doubtful",
-      "body_part": "Thigh"
+      "status": "Out",
+      "body_part": "Quadriceps"
     },
     "Zach Charbonnet": {
       "status": "PUP",
       "body_part": "Knee - ACL"
-    },
-    "Tony Pollard": {
-      "status": "Questionable",
-      "body_part": "Ankle"
     },
     "Bucky Irving": {
       "status": "Questionable",
       "body_part": "Lower Body"
     },
     "Rachaad White": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Shoulder"
     },
     "Jordan Mason": {
@@ -26412,10 +26404,6 @@
       "status": "IR",
       "body_part": "Knee"
     },
-    "Jaylen Wright": {
-      "status": "Questionable",
-      "body_part": "Foot"
-    },
     "James Conner": {
       "status": "IR",
       "body_part": "Foot"
@@ -26431,10 +26419,6 @@
     "Puka Nacua": {
       "status": "Questionable",
       "body_part": "Hip"
-    },
-    "Zay Flowers": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
     },
     "Nico Collins": {
       "status": "Questionable",
@@ -26463,6 +26447,10 @@
     "Jakobi Meyers": {
       "status": "Questionable",
       "body_part": "Thumb"
+    },
+    "Terry McLaurin": {
+      "status": "Questionable",
+      "body_part": "Hamstring"
     },
     "Jayden Higgins": {
       "status": "IR",
@@ -26497,20 +26485,20 @@
       "body_part": "Knee - PCL"
     },
     "Xavier Legette": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Knee"
     },
     "Dallas Goedert": {
       "status": "Doubtful",
       "body_part": "Knee - MCL"
     },
-    "Chigoziem Okonkwo": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "Mason Taylor": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Thumb"
+    },
+    "Noah Fant": {
+      "status": "Questionable",
+      "body_part": "Abdomen"
     },
     "Charlie Kolar": {
       "status": "Doubtful",
@@ -26524,16 +26512,12 @@
       "status": "IR",
       "body_part": "Forearm"
     },
-    "Chris Godwin": {
-      "status": "Questionable",
-      "body_part": "Ankle"
-    },
     "Tank Dell": {
       "status": "IR",
       "body_part": "Knee - ACL + MCL"
     },
     "Adonai Mitchell": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Finger"
     },
     "Marquise Brown": {
@@ -26567,10 +26551,6 @@
     "Jake Tonges": {
       "status": "IR",
       "body_part": "Knee"
-    },
-    "Ben Sinnott": {
-      "status": "Questionable",
-      "body_part": "Ribs"
     },
     "Dillon Gabriel": {
       "status": "IR",
@@ -26616,8 +26596,16 @@
       "status": "IR",
       "body_part": "Hamstring"
     },
+    "Keenan Allen": {
+      "status": "Questionable",
+      "body_part": "Groin"
+    },
     "Arian Smith": {
       "status": "IR",
+      "body_part": "Knee"
+    },
+    "D'Andre Swift": {
+      "status": "Questionable",
       "body_part": "Knee"
     },
     "De'Von Achane": {
@@ -26639,6 +26627,9 @@
   },
   "roster_status": {
     "Jaxson Dart": {
+      "status": "Inactive"
+    },
+    "Travis Etienne": {
       "status": "Inactive"
     },
     "Zach Charbonnet": {
@@ -26678,9 +26669,6 @@
       "status": "Inactive"
     },
     "Jalen McMillan": {
-      "status": "Inactive"
-    },
-    "Charlie Kolar": {
       "status": "Inactive"
     },
     "Christian Kirk": {
