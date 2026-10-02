@@ -105,3 +105,10 @@ Brian Thomas Jr. −45%, Sam LaPorta −26%, C.J. Stroud −10%; Puka Nacua +27%
    fixed in advance.
 
 **This study changes nothing in the engine.**
+
+## Record Correction (1 October 2026)
+
+The Result above gives the locked file's sha256 prefix as `e617df6aa76df94a`. That value was not produced by the
+run and matches no version of any pre-registration ever committed. The Result correctly names the
+lock commit, `b153868`; this file at that commit has sha256 prefix **`6190afe71f56026d`**. Only the fingerprint was
+wrong — the outcome above is unaffected. Nothing above this section was changed.

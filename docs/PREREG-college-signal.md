@@ -116,3 +116,10 @@ metric does exactly as well.
 **What it says:** for rookies who reached the NFL, **college production is already in the draft slot**.
 dDOM stays display-only, as today. Across all five rookie studies (28–29 Sep), none found a rookie signal
 the market or the draft-slot table misses. **This study changes nothing in the engine.**
+
+## Record Correction (1 October 2026)
+
+The Result above gives the locked file's sha256 prefix as `cebd72c5a12c9e2d`. That value was not produced by the
+run and matches no version of any pre-registration ever committed. The Result correctly names the
+lock commit, `c260986`; this file at that commit has sha256 prefix **`84b6c4e527edc700`**. Only the fingerprint was
+wrong — the outcome above is unaffected. Nothing above this section was changed.

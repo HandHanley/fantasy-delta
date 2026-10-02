@@ -71,3 +71,32 @@ twice the games; the "came on late" story may be real for some players without h
 ## Amendments
 
 *(none)*
+
+## Result (30 September 2026) — NOT SHOWN. Second-year players keep their full-season average.
+
+**Record fix, 1 October 2026.** This section was written when the study ran (30 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+Run once, `python3 scripts/trajectory-study.py --run`, against this file as committed in `5930aa7` /
+`39d1134`. Nothing above this section was changed after the run.
+
+**105 excluded** (under 4 games in year two); **458 training, 283 test.**
+
+**Training error by weight on the second half:** 0.0 4.197 · **0.1 4.193** · 0.2 4.198 · 0.3 4.211 · 0.5 4.260 ·
+0.7 4.340 · 1.0 4.513 — the curve is flat near zero and climbs steadily; λ = 0.1 chosen by a hair.
+
+| Gate (283 test rookies, 2017–2024) | Result |
+|---|---|
+| 1. Size ≥ 2% | **FAIL** — +0.5% (typical miss 3.966 → 3.948; average miss 2.975 → 2.972) |
+| 2. Not a fluke | **FAIL** — p = 0.15 |
+| 3. Better in ≥ 6 of 8 classes | **FAIL** — 4 (2018, 2020, 2021, 2022) |
+| 4. No position worse than −1% | passed — QB +2.8% (29), RB +0.4%, WR −0.7%, TE −0.5% |
+
+**Reported:** second half alone (λ = 1) on the test classes — typical miss **4.205, 6% worse** than the full
+season. The stated expectation (not shown) was right.
+
+**What it says:** for predicting year two, the whole rookie season beats the late surge — half a season is
+too noisy, and "came on late" is as often a hot streak as a new level. **This study changes nothing in the
+engine.**

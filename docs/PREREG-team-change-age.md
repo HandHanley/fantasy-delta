@@ -62,3 +62,31 @@ changes nothing.
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — NOT SUPPORTED. The gap does not grow with age.
+
+**Record fix, 1 October 2026.** This section was written when the study ran (27 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+Run once, `python3 scripts/teamchange-age-study.py --run`, against this file as committed in `09ed6ed`
+(sha256 prefix `31412c7d3e3b068b`). Nothing above this section was changed after the run.
+
+| Age | Changed | Gap vs Stayers Of The Same Age | 95% Range |
+|---|---|---|---|
+| 26 and under | 205 | **−18.3%** | −24.7% to −11.2% |
+| 27–28 | 190 | −6.5% | −16.6% to +4.1% |
+| 29–30 | 137 | −11.1% | −22.1% to −0.3% |
+| 31+ | 133 | −16.7% | −23.0% to −9.9% |
+
+**H1 (older clearly worse): no** — 29+ minus 26-and-under = +4.1 points (range −4.7 to +13.1).
+**H2 (young not clearly worse): no** — young changers are clearly below young stayers.
+
+**Reported only, by position (26 and under vs 29+):** QB −23% vs −8% (8 young changers — too few), RB
+−21% vs −5%, WR −13% vs −18%, TE −22% vs −23%. Only receivers lean the hypothesised way.
+
+**What it says:** changing teams has historically cost production at every age, not just for older
+players. The owner's examples (Walker, A.J. Brown, Goff) are real but are exceptions to the average. A
+plausible reason, not tested here: young players who move are often ones their team chose not to keep,
+while young stayers include the ones on the rise. This study changes nothing in the engine.

@@ -90,3 +90,36 @@ established finding of the three); **B2 not confirmed** — draft slot already p
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — Odds strong but NOT HONEST ENOUGH TO SHOW · No add-on confirmed
+
+**Record fix, 1 October 2026.** This section was written when the study ran (29 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+Run once, `python3 scripts/role-entry-study.py --run`, against this file as committed in `73458c8` and the
+script as committed in `9652119` (the first upload of the script went to the wrong path; the run waited
+for the correct commit). Nothing above this section was changed after the run.
+
+**Part A — 712 drafted players, 139 hits** (QB 21%, RB 29%, TE 14%, WR 16%). The draft-slot curve beats a
+position-only base rate by **25.3%** (Brier 0.1158 vs 0.1549) — but its calibration error is **5.5 points
+against an honest-model limit of 4.2**: **not honest enough to show.** The bins show where it fails:
+
+| Predicted | 2.8% | 4.2% | 5.2% | 6.6% | 8.3% | 11.2% | 15.6% | 24.1% | 40.6% | **76.8%** |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Actual | 1.4% | 2.8% | 8.5% | 4.2% | 1.4% | **18.3%** | **23.9%** | 19.7% | 49.3% | **65.3%** |
+
+**Too confident at the top** (the fitted curve gives a top-5 RB "100%") and too low in the middle. The
+straight line in log-pick is too steep for the early picks. Odds at picks 5 / 20 / 45 / 80 / 120 / 180 /
+240 — QB 52/26/15/10/7/5/4%, RB 100/92/69/41/23/12/7%, WR 83/46/24/13/8/5/4%, TE 98/75/36/14/7/3/2%.
+**Undrafted rookies:** QB 0 of 64, RB 1.8% of 227, TE 0 of 231, WR 0.4% of 472.
+
+**Part B — no add-on confirmed:** **age** −0.5% (p = 0.96; older did slightly worse, but the term hurt the
+forecast); **athleticism** −0.1% (p = 0.67; TE −1.5%). **dDOM** (reported, 181 players) −0.4%. Stated
+expectations: Part A honest — **wrong**; age confirmed — **wrong**; athleticism not — right.
+
+**What it says:** draft slot alone carries the role-entry odds; age, speed and college production add
+nothing beyond it. The odds *shape* needs fixing before it can be shown — and because this data has now
+been seen, a revised curve must be validated on classes it has not touched: the **2000–2014** classes
+(nflverse stats back to 1999 are already downloaded). **This study changes nothing in the engine.**

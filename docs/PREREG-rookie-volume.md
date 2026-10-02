@@ -74,3 +74,36 @@ still need a forward check before it ships. **This study changes nothing in the 
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — NOT CONFIRMED
+
+**Record fix, 1 October 2026.** This section was written when the study ran (29 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+**One correction to the copied text:** the sha256 prefix it gives (`dd62e4b45f4ae394`) was not produced by the
+run — the run printed no fingerprint — and matches no version of any pre-registration ever committed.
+This file has had one version, committed in `80da01f`: sha256 prefix **`3dd75fc490324b43`**. Before running, the
+run confirmed the committed file was byte-identical to the reviewed copy, so the outcome is unaffected.
+
+Run once, `python3 scripts/rookie-volume-study.py --run`, against this file as committed in `80da01f`
+(sha256 prefix `dd62e4b45f4ae394`). Nothing above this section was changed after the run.
+
+**Graded 36 of 39** (3 excluded, under 4 games in year two).
+
+| | Study 2 (2015–2024) | This Study (1999–2002, 2009–2014) |
+|---|---|---|
+| **Volume**, per step up | −8.0% (−14.6% to −1.4%) | **−4.2% (−16.0% to +9.1%)** |
+| Touchdown share, per step up (reported) | +7.4% (−0.2% to +15.7%) | **−9.0% (−19.9% to +5.6%)** |
+| Average year-two change | −7.8% | −8.6% |
+| Share that fell | 67% | 50% |
+
+**Verdict (§2): not confirmed.** Volume leans the same way as in Study 2 but half as strongly, and the
+range reaches zero. Touchdown share flipped sign between the two samples — a sign that neither result
+was more than noise. The stated expectation (not confirmed) was right.
+
+**Across Studies 1, 2 and this one:** breakout rookies' scoring slips about **8% in year two** — consistent
+in all three samples — but no trait tested (touchdown share, volume, position, draft capital) reliably
+picks out which ones fade, and selling breakouts at the end of the rookie year was a coin flip on price.
+**This study changes nothing in the engine.**

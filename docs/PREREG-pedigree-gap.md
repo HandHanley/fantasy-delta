@@ -100,3 +100,10 @@ draft slot, rookie production and the sophomore slump about right on average; wh
 neither can these simple rules. A DELTA edge on rookies, if one exists, has to come from information the
 market weighs less — for example DELTA's own college data (dominator, breakout age), which has not been
 tested against rookie outcomes beyond draft capital. **This study changes nothing in the engine.**
+
+## Record Correction (1 October 2026)
+
+The Result above gives the locked file's sha256 prefix as `a2ffcadaa3cac2cc`. That value was not produced by the
+run and matches no version of any pre-registration ever committed. The Result correctly names the
+lock commit, `f783384`; this file at that commit has sha256 prefix **`c34670196cc8e8ae`**. Only the fingerprint was
+wrong — the outcome above is unaffected. Nothing above this section was changed.

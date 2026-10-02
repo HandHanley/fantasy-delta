@@ -140,3 +140,10 @@ The stated expectation (passes clearly) was right.
 agreed with the owner first. **Found while preparing the build:** the 8.0 path also catches two
 *veterans* whose stats are missing through a name mismatch (Joshua/Josh Palmer, Zonovan/Bam Knight), so
 the build must fix those names first and tell an undrafted rookie from a veteran with missing data.
+
+## Record Correction (1 October 2026)
+
+The Result above gives the locked file's sha256 prefix as `bb84e16de7a1a5c6`. That value was not produced by the
+run and matches no version of any pre-registration ever committed. The Result correctly names the
+lock commit, `e30e2bc`; this file at that commit has sha256 prefix **`9c96acd21912dc41`**. Only the fingerprint was
+wrong — the outcome above is unaffected. Nothing above this section was changed.

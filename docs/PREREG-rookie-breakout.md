@@ -76,3 +76,36 @@ example, a TD-heavy breakout. That flag would itself need design and a forward c
 ## Amendments
 
 *(none)*
+
+## Result (29 September 2026) — NO TRAIT CONFIRMED; both primary traits pointed the other way
+
+**Record fix, 1 October 2026.** This section was written when the study ran (29 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+**One correction to the copied text:** the sha256 prefix it gives (`3a6c9d79ea96d71a`) was not produced by the
+run — the run printed no fingerprint — and matches no version of any pre-registration ever committed.
+This file has had one version, committed in `b5e19df`: sha256 prefix **`09b0e5a565815405`**. Before running, the
+run confirmed the committed file was byte-identical to the reviewed copy, so the outcome is unaffected.
+
+Run once, `python3 scripts/rookie-breakout-study.py --run`, against this file as committed in `b5e19df`
+(sha256 prefix `3a6c9d79ea96d71a`). Nothing above this section was changed after the run.
+
+**Graded 49 of 50** (1 excluded, under 4 games in year two). **The sophomore slump is real but modest:**
+breakouts' points per game fell **7.8%** on average in year two; **67%** fell. By position: QB −15%,
+TE −15%, WR −12%, RB −3%.
+
+| Trait (effect per step up in the trait, or group difference) | Predicted | Estimate | 95% Range | Confirmed |
+|---|---|---|---|---|
+| **Touchdown share** (primary) | fades | **+7.4%** | −0.2% to +15.7% | no — leans the **other way** |
+| **Volume** (primary) | holds | **−8.0%** | −14.6% to −1.4% | no — clearly the **other way** |
+| Running back (secondary) | fades | +11.8% | −3.6% to +28.8% | no |
+| Rounds 1–2 (secondary) | holds | +4.7% | −15.3% to +31.5% | no |
+
+**What it says:** none of the pre-registered traits tells you which breakout rookie to sell. The stated
+expectation (touchdown share confirmed) was wrong. The volume result — high-volume breakouts fell *more* —
+is the opposite of the prediction and cannot be acted on from this run: an effect found in the direction
+nobody predicted, on 49 players, needs its own pre-registered test on fresh data (the 1999–2014 classes).
+A plausible reading, untested: a rookie carrying an unusually heavy load is unlikely to carry it again.
+**This study changes nothing in the engine.**

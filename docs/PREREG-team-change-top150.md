@@ -68,3 +68,32 @@ plausible — and Q1 closer to the engine than the all-player result was.
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — Q1: ENGINE TOO SOFT · Q2: NOT SUPPORTED
+
+**Record fix, 1 October 2026.** This section was written when the study ran (27 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+Run once, `python3 scripts/teamchange-top150-study.py --run`, against this file as committed in
+`8745efe` (sha256 prefix `c67bb05a76856964`). Nothing above this section was changed after the run.
+
+| Top-150 Players | Gap vs Stayers | 95% Range |
+|---|---|---|
+| **All changers (262)** | **−16.1%** | −20.4% to −11.9% |
+| 26 and under (74) | −18.9% | −26.1% to −11.0% |
+| 27–28 (60) | −6.4% | −19.3% to +6.0% |
+| 29–30 (48) | −13.2% | −26.3% to −1.3% |
+| 31+ (80) | −15.5% | −22.0% to −8.5% |
+
+**Q1:** the engine's −9.2% lies outside the range, on the gentle side — **engine too soft** on top-150
+team-changers. **Q2:** young top-150 changers are clearly below young stayers — **not supported**; the
+stated expectation was wrong on both counts. **Reported only, by position:** QB −10.8% (55), RB −19.1%
+(84), WR −17.8% (95), TE −21.1% (28).
+
+**What it says:** restricting to fantasy-relevant players changes almost nothing (−16.1% vs −16.6% for
+everyone). The drop for young movers is not driven by fringe players and busts. Across three slices of
+the same seasons — all players, by age, and top 150 — the answer is the same: players who change teams
+score about 16–17% below their own history relative to players who stay, at every age, and DELTA
+allows for about 7–9%. This study changes nothing in the engine.

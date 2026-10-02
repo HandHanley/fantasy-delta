@@ -82,3 +82,31 @@ Changers by position: WR 276, TE 170, RB 152, QB 67.
 ## Amendments
 
 *(none)*
+
+## Result (27 September 2026) — ENGINE TOO SOFT ON TEAM-CHANGERS
+
+**Record fix, 1 October 2026.** This section was written when the study ran (27 September 2026) and was handed
+over for upload, but that upload never reached the repo — this file had only its lock commit. It is
+copied here word for word from that session's record. Nothing was re-run, and nothing above this
+section was changed.
+
+Run once, `python3 scripts/teamchange-study.py --run`, against this file as committed in `ed08e83`
+(sha256 prefix `b3c6fe3c4c55d0a9`). Nothing above this section was changed after the run.
+
+| | Changed Teams (665) | Stayed (1,980) |
+|---|---|---|
+| Actual scoring ÷ starting number (best-fit multiplier) | ×0.811 | ×0.973 |
+
+**Historical gap: −16.6%** (95% range −20.1% to −12.9%). **The engine's gap: −7.1%** — outside the range,
+on the gentle side. Verdict by §4: **engine too soft on team-changers.** The stated expectation ("about
+right") was wrong.
+
+**Reported only:** every season shows changers below stayers — 2018 −21.3%, 2019 −17.5%, 2020 −10.9%,
+2021 −18.9%, 2022 −9.7%, 2023 −27.2%, 2024 −10.6%, 2025 −19.1% — and every position: QB −9.6% (67), RB
+−18.5% (152), WR −20.3% (276), TE −18.5% (170).
+
+**What it does and does not say:** players who change teams have historically scored about 17% below
+what their own history suggests, relative to players who stayed; DELTA's total extra caution is about
+7%. It does not say *why* (a new offence, or teams letting go of players who are slipping), and it does
+not test any particular fix: the engine's team adjustments cannot be rebuilt for past seasons. This
+study changes nothing in the engine; the gap goes to the owner as a design question.
