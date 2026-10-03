@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-03T15:24:27.252949+00:00",
+  "fetched": "2026-10-03T15:44:07.584052+00:00",
   "seasons": [
     2022,
     2023,
@@ -25897,6 +25897,158 @@
     "Ja'Lynn Polk": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/w4hcfpfjrpt0fchb0xmm"
   },
   "qb_roles": {
+    "Tua Tagovailoa": {
+      "role": "backup",
+      "behind": "Michael Penix Jr.",
+      "source": "depth-chart"
+    },
+    "J.J. McCarthy": {
+      "role": "backup",
+      "behind": "Jameis Winston",
+      "source": "depth-chart"
+    },
+    "Shedeur Sanders": {
+      "role": "backup",
+      "behind": "Deshaun Watson",
+      "source": "depth-chart"
+    },
+    "Mason Rudolph": {
+      "role": "backup",
+      "behind": "Aaron Rodgers",
+      "source": "depth-chart"
+    },
+    "Mac Jones": {
+      "role": "backup",
+      "behind": "Brock Purdy",
+      "source": "depth-chart"
+    },
+    "Joe Flacco": {
+      "role": "backup",
+      "behind": "Joe Burrow",
+      "source": "depth-chart"
+    },
+    "Justin Fields": {
+      "role": "backup",
+      "behind": "Patrick Mahomes",
+      "source": "depth-chart"
+    },
+    "Fernando Mendoza": {
+      "role": "backup",
+      "behind": "Kirk Cousins",
+      "source": "depth-chart"
+    },
+    "Ty Simpson": {
+      "role": "backup",
+      "behind": "Matthew Stafford",
+      "source": "depth-chart"
+    },
+    "Carson Beck": {
+      "role": "backup",
+      "behind": "Jacoby Brissett",
+      "source": "depth-chart"
+    },
+    "Drew Allar": {
+      "role": "backup",
+      "behind": "Aaron Rodgers",
+      "source": "incumbency-2025"
+    },
+    "Garrett Nussmeier": {
+      "role": "backup",
+      "behind": "Patrick Mahomes",
+      "source": "depth-chart"
+    },
+    "Cade Klubnik": {
+      "role": "backup",
+      "behind": "Geno Smith",
+      "source": "depth-chart"
+    },
+    "Anthony Richardson": {
+      "role": "backup",
+      "behind": "Daniel Jones",
+      "source": "depth-chart"
+    },
+    "Jalen Milroe": {
+      "role": "backup",
+      "behind": "Sam Darnold",
+      "source": "depth-chart"
+    },
+    "Will Howard": {
+      "role": "backup",
+      "behind": "Aaron Rodgers",
+      "source": "incumbency-2025"
+    },
+    "Cole Payton": {
+      "role": "backup",
+      "behind": "Jalen Hurts",
+      "source": "depth-chart"
+    },
+    "Marcus Mariota": {
+      "role": "backup",
+      "behind": "Jayden Daniels",
+      "source": "depth-chart"
+    },
+    "Riley Leonard": {
+      "role": "backup",
+      "behind": "Daniel Jones",
+      "source": "depth-chart"
+    },
+    "Quinn Ewers": {
+      "role": "backup",
+      "behind": "Trevor Lawrence",
+      "source": "depth-chart"
+    },
+    "Joe Milton": {
+      "role": "backup",
+      "behind": "Dak Prescott",
+      "source": "depth-chart-absent"
+    },
+    "Gardner Minshew": {
+      "role": "backup",
+      "behind": "Jacoby Brissett",
+      "source": "depth-chart"
+    },
+    "Kenny Pickett": {
+      "role": "backup",
+      "behind": "Bryce Young",
+      "source": "depth-chart"
+    },
+    "Tyler Huntley": {
+      "role": "backup",
+      "behind": "Lamar Jackson",
+      "source": "depth-chart"
+    },
+    "Will Levis": {
+      "role": "backup",
+      "behind": "Geno Smith",
+      "source": "depth-chart-absent"
+    },
+    "Tyson Bagent": {
+      "role": "backup",
+      "behind": "Caleb Williams",
+      "source": "depth-chart"
+    },
+    "Trey Lance": {
+      "role": "backup",
+      "behind": "Justin Herbert",
+      "source": "depth-chart"
+    },
+    "Tyrod Taylor": {
+      "role": "backup",
+      "behind": "Jordan Love",
+      "source": "depth-chart"
+    },
+    "Davis Mills": {
+      "role": "backup",
+      "behind": "C.J. Stroud",
+      "source": "depth-chart"
+    },
+    "Tanner McKee": {
+      "role": "backup",
+      "behind": "Jalen Hurts",
+      "source": "depth-chart"
+    }
+  },
+  "qb_roles_score": {
     "Mason Rudolph": {
       "role": "backup",
       "behind": "Aaron Rodgers",
@@ -26012,6 +26164,13 @@
       "behind": "Jalen Hurts",
       "source": "incumbency-2025"
     }
+  },
+  "qb_roles_status": {
+    "source": "depth-chart",
+    "reason": "ok",
+    "teams": 32,
+    "snapshot": "2026-10-03T12:27:18Z",
+    "in_season": true
   },
   "qb_start_splits": {
     "Josh Allen": {
@@ -26777,6 +26936,7 @@
       }
     }
   },
+  "qb_starter_level": 18.055,
   "teams": {
     "Josh Allen": "BUF",
     "Drake Maye": "NE",
