@@ -176,12 +176,19 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     # depth receivers still absorb targets, so summing only the 409 would inflate every share.
     # Verified against nflverse's own target_share column: 4,316 rows, max abs diff 0.000000.
     team_tgt  = defaultdict(float)
+    # Team pass-attempt leader keyed (season, week, team) -> (attempts, norm_name), over the FULL frame.
+    # A QB start = his team's most pass attempts that game, 10+ (docs/PREREG-qb-perstart.md) — the
+    # in-season blend counts only these games for a QB once the points-per-start build ships.
+    team_lead = {}
     for _, r in w.iterrows():
         key = (norm(r.get(nc)), int(_num(r, sc)), int(_num(r, wk)))
         tm_r = r.get(tmc)
         wk_team[key] = tm_r
         if tm_r is not None and not isinstance(tm_r, float):   # NaN-safe (mirrors team guards below)
             team_tgt[(key[1], key[2], tm_r)] += _num(r, tgt)
+            lk = (key[1], key[2], tm_r); a_r = _num(r, pa)
+            if lk not in team_lead or a_r > team_lead[lk][0]:
+                team_lead[lk] = (a_r, key[0])
         wk_lookup[key] = {
             'py': _num(r, py), 'pt': _num(r, pt), 'pi': _num(r, pin),
             'ry': _num(r, ry), 'rt': _num(r, rt),
@@ -235,6 +242,9 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
             }
             if opp is not None: rec_out['opp'] = opp; rec_out['h'] = home
             if team: rec_out['tm'] = str(team)   # player's OWN team that week (drives play-caller mapping; row-level, so trades track correctly)
+            lead = team_lead.get((season, week, team))
+            if lead and lead[1] == nkey and lead[0] >= 10:
+                rec_out['qs'] = 1   # his team's starting QB this game (most pass attempts, 10+)
             # tt = the player's team's TOTAL targets that week — the denominator the app
             # divides by for target share. Row-level like tm, so a trade tracks correctly.
             # Omitted when unknown/zero; the app falls back to raw target counts.
@@ -348,7 +358,7 @@ def main():
                  '(>=1 snap or recorded production); inactive games omitted so they never '
                  'count as misses. App computes fantasy points per scoring format. '
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
-                 'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. '
+                 'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. qs=1 when he was the starting QB (most pass attempts on his team, 10+). '
                  'pa/cmp=pass att/comp car=carries tgt=targets. '
                  'opp=opponent h=1 home/0 away. tm=player own team that week. '
                  'tt=team TOTAL targets that week (target share = tgt/tt); omitted if unknown. up=1 marks an UPCOMING (unplayed) game; '

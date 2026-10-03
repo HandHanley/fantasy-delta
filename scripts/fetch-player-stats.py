@@ -310,9 +310,29 @@ def fetch_season_stats():
     else:
         print('[DELTA] WARNING: no attempts/team column — QB role flags will be empty')
 
+    # Per-start splits for the points-per-start QB projection (docs/PREREG-qb-perstart.md, PASSED
+    # 2 Oct 2026). A start uses the STUDY's definition, not the >=15-attempt count above: his team's
+    # most pass attempts in that game, 10+, found by attempts (nflverse labels players by their latest
+    # position). Points: backtest half-PPR (blend-study bt_pts) — the engine's projection unit.
+    qb_splits = {}
+    if pass_att_col and season_col and week_col and name_col and team_col:
+        w = pdf[[c for c in (name_col, season_col, week_col, team_col, pass_att_col, pass_yd_col, pass_td_col,
+                             pass_int_col, rush_yd_col, rush_td_col, rec_col, rec_yd_col, rec_td_col) if c]].copy()
+        z = lambda c: w[c].fillna(0) if c else 0
+        w['_att'] = z(pass_att_col)
+        w['_pts'] = (z(rush_yd_col) * .1 + z(rush_td_col) * 6 + z(rec_yd_col) * .1 + z(rec_td_col) * 6
+                     + z(rec_col) * .5 + z(pass_yd_col) * .04 + z(pass_td_col) * 4 + z(pass_int_col) * -2)
+        lead = w.loc[w.groupby([season_col, team_col, week_col])['_att'].idxmax()]
+        lead = lead[lead['_att'] >= 10]
+        for (nm, s), g in lead.groupby([name_col, season_col]):
+            qb_splits.setdefault(nm, {})[str(int(s))] = {'starts': int(len(g)), 'ppst': round(float(g['_pts'].mean()), 3)}
+        print(f'[DELTA] QB start splits: {len(qb_splits)} players, {int(len(lead))} starts')
+    else:
+        print('[DELTA] WARNING: no attempts/team/week column — QB start splits will be empty')
+
     print(f'[DELTA] Aggregated: {len(result)} player-seasons, {len(headshots)} headshots')
     print(f"[DELTA] Sample player names after agg: {result['player_name'].unique()[:5].tolist()}")
-    return result, headshots, qb_starts
+    return result, headshots, qb_starts, qb_splits
 
 def fetch_depth_chart_qbs():
     """Best-effort 2026 QB depth chart: {team: [qb display names in depth order]}.
@@ -1421,7 +1441,7 @@ def main():
         die(f"only {len(delta_names)} players parsed from the RAW array (expected ~409). "
             "The RAW block in delta-engine.js may have been renamed or reformatted.")
 
-    agg, headshots, qb_starts = fetch_season_stats()
+    agg, headshots, qb_starts, qb_splits = fetch_season_stats()
     matched  = match_names(agg, delta_names, no_data)
     roster_teams = fetch_current_teams()
     sleeper_teams, sleeper_injuries, sleeper_roster_status = fetch_sleeper_teams()
@@ -1606,6 +1626,10 @@ def main():
         'players': players,
         'headshots': headshot_out,
         'qb_roles': qb_roles,
+        # Points-per-start inputs (DELTA name -> season -> starts, points per start). Read by the
+        # engine's QB projection once that build ships; nothing reads it before then.
+        'qb_start_splits': {dn: qb_splits[nm] for dn, nm in matched.items()
+                            if meta.get(dn, (None, None))[1] == 'QB' and nm in qb_splits},
         'teams': team_overrides,
         'injury': injury_status,   # display-only; see docs/ACCURACY-LEDGER.md s.6
         # Rostered but not on the active list (Sleeper 'status', not injury).
