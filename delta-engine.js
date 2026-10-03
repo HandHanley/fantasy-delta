@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-03a';
+const DL_BUILD='2026-10-03b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3085,7 +3085,10 @@ function calcProj(plFmt){
             sits after this return. Latent rather than live today (no current
             entry takes this path), but it would have failed silently. */
     const e2=getEff(pl);
-    const rookiePre = pl.ppg25 * agM * e2.inj;
+    // Points per start covers rookie QBs too: no role cut on the PROJECTION once the per-start data is
+    // live (model value keeps it). Without it (older data), exactly the old behaviour.
+    const rookieInj = (pl.p==='QB' && QB_PS && QB_PS_LEVEL>0) ? e2.injP : e2.inj;
+    const rookiePre = pl.ppg25 * agM * rookieInj;
     // In-season blend (blendK): this path also carries veterans with a forward
     // projection, so K comes from the player's history, not from this branch.
     const formR=inSeasonForm(pl.n,pl.p);
@@ -4084,7 +4087,8 @@ const COLLEGES={
 // Data loaded from player-stats.json via loadPlayerStats()
 
 let PLAYER_STATS = {}; // populated by loadPlayerStats()
-let QB_ROLES = {};      // pipeline-emitted QB backup flags {name:{role,behind,source}} — see dsOpportunity
+let QB_ROLES = {};      // pipeline-emitted QB backup flags {name:{role,behind,source}} — model value (availMult)
+let QB_ROLES_SCORE = {};   // the Score's own copy: 2025 incumbency, held all season (owner, 2 Oct 2026) — dsOpportunity
 let HEADSHOTS = {};    // player name → headshot URL
 
 function calcAlphaScore(name) {
@@ -4486,7 +4490,7 @@ function dsOpportunity(p) {
     // design: depth ranks are never read for other positions, where snap and
     // target share already measure opportunity. Absent qb_roles data, behavior
     // is unchanged.
-    const seat = (QB_ROLES[p.n] && QB_ROLES[p.n].role === 'backup') ? 9 : 18;
+    const seat = (QB_ROLES_SCORE[p.n] && QB_ROLES_SCORE[p.n].role === 'backup') ? 9 : 18;
     baseOpp = (noData && !noNFL) ? 13 : ((noNFL ? 14 : seat) + rushPts);
   } else {
     const oppSc = getOppScore(p.n, pos);
@@ -4945,6 +4949,9 @@ async function loadPlayerStats() {
     PLAYER_STATS = data.players;
     if (data.headshots) HEADSHOTS = data.headshots;
     QB_ROLES = data.qb_roles || {};
+    // Model value follows the live depth chart; the DELTA Score holds in-season (owner, 2 Oct 2026).
+    // Older data files without the field fall back to qb_roles, which was the same set until then.
+    QB_ROLES_SCORE = data.qb_roles_score || data.qb_roles || {};
     QB_PS = data.qb_start_splits || null; QB_PS_LEVEL = data.qb_starter_level || 0;   // points per start (null/0: old QB path)
     if (Object.keys(QB_ROLES).length) console.log('[DELTA] QB backup flags loaded:', Object.keys(QB_ROLES).join(', '));
     // Backfill g24 and g23 (games played in prior seasons) from the pipeline onto
