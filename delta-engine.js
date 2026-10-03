@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-02a';
+const DL_BUILD='2026-10-03a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -99,7 +99,7 @@ function dwToggle(n, ns){
   return i<0;                                        // true = now watched
 }
 function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
-let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle';
+let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle', GL_HAS_QS=false;
 async function ensureStartData(){
   if(START_DATA_STATE==='loaded'||START_DATA_STATE==='loading') return START_DATA_STATE;
   START_DATA_STATE='loading';
@@ -115,6 +115,9 @@ async function ensureStartData(){
       fetch('./data/start-profile-thresholds.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
     ]);
     GAMELOGS=gl.games||{}; STARTLINES=th.lines||{};
+    // QB start marks (qs) arrive with the 3 Oct pipeline. Without any, the QB blend keeps counting
+    // every game — older data files behave exactly as before.
+    GL_HAS_QS=false; for(const k in GAMELOGS){ if(GAMELOGS[k].some(g=>g.qs)){ GL_HAS_QS=true; break; } }
     let mx=0; for(const k in GAMELOGS){ for(const g of GAMELOGS[k]){ if(g.s>mx) mx=g.s; } }
     GAMELOGS_MAX=mx; START_DATA_STATE='loaded';
     // ── g25 sync from game logs ──────────────────────────────
@@ -2018,7 +2021,7 @@ const BACKUP_MULT=0.55;
 const NON_QB_BACKUP={
   'Jake Tonges':'TE2 behind George Kittle — plays almost only when Kittle is off the field.',
 };
-function availMult(pl){
+function availMult(pl,withRole=true){
   let m=1;
   if(AVAIL[pl.n]) m*=AVAIL[pl.n].m;
   /* QB_ROLES is declared further down the file (beside its loader) but getEff runs
@@ -2028,7 +2031,7 @@ function availMult(pl){
      recompute that follows loadPlayerStats(), which is when they exist anyway. */
   const roles=(typeof QB_ROLES!=='undefined')?QB_ROLES:{};
   const isBackup=(roles[pl.n]&&roles[pl.n].role==='backup')||NON_QB_BACKUP[pl.n];
-  if(isBackup) m*=BACKUP_MULT;
+  if(isBackup && withRole) m*=BACKUP_MULT;   // withRole=false: a QB's points-per-start projection (role -> model value only)
   return m;
 }
 
@@ -2045,6 +2048,35 @@ let INJ_OUT = {};
    possibly trigger the rule (under 8 games in 2025 with prior NFL history), so the file
    stays small. */
 let QB_STARTERS = {};
+
+/* ── QB POINTS PER START (3 Oct 2026) ─────────────────────────────────────
+   docs/PREREG-qb-perstart.md, locked f56dcab, PASSED: on 277 thin-history QB-seasons
+   (2002-2025, each season graded on a fit from the others) the typical miss fell 7.7%
+   (p = 0.0005), both halves, and established QBs 1.5% better too.
+   Owner's definition (2 Oct): a QB's projection is his points per game WHEN HE STARTS.
+     base = (n x own + 13 x 0.87 x level) / (n + 13)
+   n = his starts over the last three seasons; own = his points per start over them (3/2/1
+   season weights, each also weighted by its starts); level = median points per start of
+   every QB with 14+ starts last season (pipeline: qb_starter_level). A thin record is pulled
+   toward 87% of an established starter, and trusted slowly — half weight at 13 starts.
+   No backup cut (role -> model value only), no missed-time cut, no starter lift: this
+   formula replaces all three for QBs. True rookies keep the rookie path. Without the
+   pipeline fields (older data) this returns null and the old QB path runs unchanged. */
+let QB_PS = null, QB_PS_LEVEL = 0;
+const QB_PS_K = 13, QB_PS_ANCHOR = 0.87;
+function qbPerStart(pl){
+  if(!QB_PS || !(QB_PS_LEVEL>0) || pl.p!=='QB') return null;   // checked first: SEASON_YEAR is declared below
+  const sp = QB_PS[pl.n] || {};
+  const hist = (pl.g25||0)>0 || pl.ppg24>0 || pl.ppg23>0 || Object.keys(sp).length>0;
+  if(!hist) return null;                                         // a true rookie
+  let n=0, num=0, den=0;
+  for(const [k,w] of [[1,3],[2,2],[3,1]]){
+    const s = sp[String(SEASON_YEAR-k)];
+    if(s && s.starts>0){ n+=s.starts; num+=w*s.starts*s.ppst; den+=w*s.starts; }
+  }
+  const own = den>0 ? num/den : 0;
+  return {base:(n*own + QB_PS_K*QB_PS_ANCHOR*QB_PS_LEVEL)/(n+QB_PS_K), n, own};
+}
 
 /* Median PPG among quarterbacks who played a full season last year — the level a
    starting job is worth. Computed from live stats rather than hard-coded so it tracks
@@ -2068,7 +2100,7 @@ function getEff(pl){
   const team=o.team||pl.t;
   const td=gs(team);
   return{team,s:o.s!==undefined?o.s:td.s,c:o.c!==undefined?o.c:td.c,
-    oc:td.oc,ch:td.ch,inj:o.inj!==undefined?o.inj:availMult(pl),
+    oc:td.oc,ch:td.ch,inj:o.inj!==undefined?o.inj:availMult(pl),injP:o.inj!==undefined?o.inj:availMult(pl,false),
     ktc:o.ktc!==undefined?o.ktc:pl.k,notes:o.notes||'',hasOv:Object.keys(o).length>0};
 }
 
@@ -2891,12 +2923,12 @@ function rookieBaseline(pl){
    Games = the live DNP rule (game-logs.json played rows). Points use gamefp() in
    half PPR + TE premium — the projection's basis (see calcProj). */
 const BLEND_K=4;
-function inSeasonForm(name,pos){
+function inSeasonForm(name,pos,startsOnly){
   if(!GAMELOGS||!GAMELOGS[name]) return null;
   let g=0,pts=0,prior=0;
   for(const r of GAMELOGS[name]){
     if(r.up||r.dnp) continue;
-    if(r.s===SEASON_YEAR){ g++; pts+=gamefp(r,pos,'half_tep'); }   // the projection's basis (see calcProj)
+    if(r.s===SEASON_YEAR){ if(startsOnly && GL_HAS_QS && !r.qs) continue; g++; pts+=gamefp(r,pos,'half_tep'); }   // the projection's basis (see calcProj)
     else if(r.s<SEASON_YEAR && r.s>=SEASON_YEAR-3) prior++;
   }
   return {g, ppg:g?pts/g:0, prior};
@@ -2964,6 +2996,7 @@ function calcProj(plFmt){
     const rb=rookieBaseline(pl);
     if(rb) pl={...pl, ppg25: rb};
   }
+  const ps=qbPerStart(plFmt);   // a QB's points-per-start base, or null (see QB POINTS PER START)
   const e=getEff(pl);
   const age=parseFloat(pl.a)||26;
   const agM=amProj(pl.p,Math.floor(age));
@@ -2987,6 +3020,7 @@ function calcProj(plFmt){
   if(w24>0){num+=pl.ppg24*w24;den+=w24;}
   if(w23>0){num+=pl.ppg23*w23;den+=w23;}
   let base=den>0?num/den:pl.ppg25||pl.ppg24||8.0;
+  if(ps) base=ps.base;
 
   /* ── QB STARTER-BASELINE OVERRIDE ──────────────────────────────────────
      A quarterback's per-game production is only meaningful if it was produced
@@ -3014,7 +3048,7 @@ function calcProj(plFmt){
      costs him GAMES, not points per game, and this projection is per-game. That
      finding belongs on the availability/opportunity side, not here. */
   let qbLift=false;                  // set when the lift fires — the missed-time cut skips these QBs
-  if(pl.p==='QB' && QB_STARTERS[pl.n] && g25<8 && den>0){
+  if(!ps && pl.p==='QB' && QB_STARTERS[pl.n] && g25<8 && den>0){   // superseded by points per start when its data is present
     const sb=qbStarterBaseline();
     if(sb>0){
       const K=6;                      // fitted 2000-2014, flat from 4 to 12
@@ -3034,12 +3068,12 @@ function calcProj(plFmt){
   // starter lift fired, removing this cut lowered the typical miss 11.8% on 103 Week-1 starters
   // 2002-2025 (p = 0.050, just inside the bar), better in both halves and every cut group. The
   // lift already pulls a thin-season starter to a starter's level; cutting again double-counted.
-  if(!qbLift) base *= missedTimeMult(g25, pl);
+  if(!qbLift && !ps) base *= missedTimeMult(g25, pl);   // points per start: missed games don't lower his per-start level
   if(changedTeamsThisSeason(pl)) base *= TEAM_CHANGE_MULT;   // see TEAM_CHANGE_MULT above
   // Rookie override: if ppg25 is set as a forward projection (g25=0, ppg25>0),
   // skip all delta/efficiency adjustments — projection already accounts for situation.
   // Apply only the age curve multiplier since that's position-universal.
-  if(g25===0 && pl.ppg25>0){
+  if(g25===0 && pl.ppg25>0 && !ps){
     /* This early return previously bypassed TWO things that the main path applies,
        because both live below it:
          1. e.inj — the availability multiplier. Every forward-projected player was
@@ -3222,18 +3256,19 @@ function calcProj(plFmt){
   // it less. NOT tuned to minimize backtest error; residual bias left uncorrected.
   const totalDelta=rawDelta+d_curve+0.5*d_stability+0.5*d_volatility+d_decay;
   const delta=Math.max(floorD,Math.min(cap,totalDelta));
-  let proj=base*agM*(1+delta)*e.inj;
+  const injP=ps?e.injP:e.inj;   // a per-start QB takes no backup cut here; model value keeps it (e.inj)
+  let proj=base*agM*(1+delta)*injP;
   // In-season blend (see BLEND_K above). The preseason number is rebuilt WITHOUT the
   // volatility term, blended, and the term applied once to the result — the tested
   // form D. The blended PPG is NOT run back through the team multipliers: it was
   // already scored in this system with this QB. projPre keeps today's number.
   const projPre=proj;
-  const form=inSeasonForm(pl.n,pl.p);
+  const form=inSeasonForm(pl.n,pl.p,!!ps);   // per-start QBs: this season's STARTS only
   let blendW=0;
   const blendKv=blendK(pl,form);
   if(blendKv){
     const deltaNoVol=Math.max(floorD,Math.min(cap,totalDelta-0.5*d_volatility));
-    const pre=base*agM*(1+deltaNoVol)*e.inj;
+    const pre=base*agM*(1+deltaNoVol)*injP;
     blendW=form.g/(form.g+blendKv);
     proj=(blendW*form.ppg+(1-blendW)*pre)*(1+0.5*d_volatility);
   }
@@ -4910,6 +4945,7 @@ async function loadPlayerStats() {
     PLAYER_STATS = data.players;
     if (data.headshots) HEADSHOTS = data.headshots;
     QB_ROLES = data.qb_roles || {};
+    QB_PS = data.qb_start_splits || null; QB_PS_LEVEL = data.qb_starter_level || 0;   // points per start (null/0: old QB path)
     if (Object.keys(QB_ROLES).length) console.log('[DELTA] QB backup flags loaded:', Object.keys(QB_ROLES).join(', '));
     // Backfill g24 and g23 (games played in prior seasons) from the pipeline onto
     // RAW player objects. These aren't baked into RAW — the pipeline is the only
