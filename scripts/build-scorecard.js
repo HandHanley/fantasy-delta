@@ -25,6 +25,13 @@
  *  - Closest / farthest: frozen projection vs this season so far, drawn only from
  *    the top 100 players by market value AT THE FREEZE (all positions; fixed before
  *    any game, so no hindsight), 3+ games once 100+ graded players have 3, else 2+.
+ *  - QB yardstick (owner, 3 Oct 2026): every photo records the ruler its QB projections used —
+ *    'played' (every game played; all photos before QB points per start) or 'full_start'
+ *    (engine 2026-10-03a on: a QB's projection is points per FULL start). In a 'full_start'
+ *    photo, QB rows count only full starts (game-log qs: his team's most pass attempts, 10+),
+ *    after the photo and through its week, for EVERY forecast in the row — all compared on
+ *    the same games. Photos are never re-labelled. The frozen headline and closest/farthest
+ *    stay on every game played (the ledger's Test 1 yardstick).
  *  - Measures follow the Accuracy Ledger's Test 1 (docs/ACCURACY-LEDGER.md §2): the
  *    headline is MAE, the average miss in points per game; RMSE is secondary.
  *  - Yardsticks: the ledger's two baselines (§2), graded only on players where BOTH
@@ -51,7 +58,7 @@ for (const a of args) if (a.startsWith('--') && !known.has(a)) { console.error(`
 // ── headless engine: the freeze script's boot chain, reading files from dataRoot ──
 async function bootEngine(dataRoot, maxWeek) {
   const src = fs.readFileSync(path.join(ROOT, 'delta-engine.js'), 'utf8') + `
-;globalThis.__H__={ get COMP(){return COMP}, gamefp, get SEASON(){return SEASON_YEAR}, get BUILD(){return DL_BUILD},
+;globalThis.__H__={ get COMP(){return COMP}, gamefp, get SEASON(){return SEASON_YEAR}, get BUILD(){return DL_BUILD}, get PERSTART(){ return typeof QB_PS!=='undefined' && !!(QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS); },
   set:(t,q,f)=>{ leagueTeams=t; qbFmt=q; scoringFmt=f; }, recompute:()=>applyMarketForSetting(),
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
     await loadRipples(); await loadReads();
@@ -108,7 +115,8 @@ async function main() {
     const H = await bootEngine(dataRoot, week);
     const proj = {};
     for (const c of H.COMP) if (FZ[c.n] && c.proj != null) proj[c.n] = r2(c.proj);
-    const rec = { week, taken_at: new Date().toISOString(), source, engine: H.BUILD, note: note || null, proj };
+    const rec = { week, taken_at: new Date().toISOString(), source, engine: H.BUILD, note: note || null,
+                  qb: H.PERSTART ? 'full_start' : 'played', proj };
     snaps.push(rec); have.add(week);
     console.log(`[SCORECARD] Week ${week} snapshot added (${source}, engine ${H.BUILD}, ${Object.keys(proj).length} players)`);
   };
@@ -138,6 +146,11 @@ async function main() {
     .filter((r) => r.s === s && !r.up && !r.dnp && r.w >= wmin && r.w <= wmax)
     .map((r) => H.gamefp(r, FZ[n].pos, 'half_tep'));
   const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+  // A photo's own yardstick: in a 'full_start' photo a QB counts only his full starts (see the rules above).
+  const gamesFor = (n, snap, wmin = 1, wmax = 99) => (logs[n] || [])
+    .filter((r) => r.s === season && !r.up && !r.dnp && r.w >= wmin && r.w <= wmax
+                   && !(snap.qb === 'full_start' && FZ[n].pos === 'QB' && !r.qs))
+    .map((r) => H.gamefp(r, FZ[n].pos, 'half_tep'));
 
   const P = {};
   for (const n of names) {
@@ -158,13 +171,13 @@ async function main() {
     const rows = [];
     for (const n of names) {
       if (s.proj[n] == null) continue;
-      const after = games(n, season, s.week + 1), thru = games(n, season, 1, s.week);
+      const after = gamesFor(n, s, s.week + 1), thru = gamesFor(n, s, 1, s.week);
       const p = P[n];
       if (after.length >= MIN_G_AFTER && thru.length >= 1 && p.lastG >= MIN_G_LAST && p.pre != null && p.a3 != null)
         rows.push({ live: s.proj[n], pre: p.pre, last: p.last, a3: p.a3, thru: avg(thru), act: avg(after) });
     }
     const m = (k) => rows.length ? both(rows, (x) => x[k]) : null;
-    return { week: s.week, source: s.source, engine: s.engine, n: rows.length, ready: rows.length >= MIN_READY,
+    return { week: s.week, source: s.source, engine: s.engine, qb: s.qb || 'played', n: rows.length, ready: rows.length >= MIN_READY,
              live: m('live'), frozen: m('pre'), avg3: m('a3'), last: m('last'), thru: m('thru') };
   });
 
@@ -173,12 +186,12 @@ async function main() {
     let pick = null;
     for (const s of snaps) {
       if (s.proj[n] == null) continue;
-      const after = games(n, season, s.week + 1);
+      const after = gamesFor(n, s, s.week + 1);
       if (after.length >= MIN_G_AFTER) pick = { w: s.week, snap: s.proj[n], since: avg(after), sinceG: after.length };
     }
     if (!pick) for (const s of snaps) {
       if (s.proj[n] == null) continue;
-      const after = games(n, season, s.week + 1);
+      const after = gamesFor(n, s, s.week + 1);
       if (after.length >= 1) { pick = { w: s.week, snap: s.proj[n], since: avg(after), sinceG: after.length }; break; }
     }
     Object.assign(P[n], pick ? { snapW: pick.w, snap: pick.snap, since: pick.since, sinceG: pick.sinceG } : {});
@@ -201,7 +214,8 @@ async function main() {
     through_week: through,
     rules: { graded: 'the 376 players in data/freeze-2026.json', min_games_now: MIN_G_NOW, min_games_last: MIN_G_LAST,
              min_games_after: MIN_G_AFTER, ready_at: MIN_READY, top_min_games: minTop, top_pool: TOP_POOL,
-             metric: 'MAE (average miss, points per game); RMSE secondary — ledger Test 1' },
+             metric: 'MAE (average miss, points per game); RMSE secondary — ledger Test 1',
+             qb_yardstick: "each photo's own ruler: 'played' = every game played; 'full_start' = QB rows on full starts only (3 Oct 2026)" },
     frozen, graded, closest, farthest,
     players: names.map((n) => round(P[n])).filter((p) => p.sofarG >= 1),
     snapshots: snaps,
