@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-03c';
+const DL_BUILD='2026-10-03d';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4828,7 +4828,7 @@ function getAdjProj(p){
   const delta=getScoringDelta(p.n,p.p||p.pos,scoringFmt);
   return Math.max(0,+(p.proj+delta).toFixed(1));
 }
-/* ── "Preseason · Now · Actual" context line (26 Sep 2026) ────────────────────
+/* ── "Preseason · Actual So Far | Rest Of Season" context line (26 Sep 2026; relabelled 3 Oct) ─
    Shared by the rankings pop-up card (index.html) and the player page (player.html).
    Context, not a grade: one player's weeks are noise; the Scorecard tab is the grade.
    All three numbers are in the LEAGUE'S scoring, so they are always comparable:
@@ -4851,19 +4851,34 @@ function projContext(p){
   const pos=p.pos||p.p;
   const pre=Math.max(0,FREEZE_PROJ[p.n]+getScoringDelta(p.n,pos,scoringFmt));
   const now=getAdjProj(p);
-  if(!GAMELOGS) return {pre,now,act:null,g:null};                 // logs still loading: no Actual yet
-  let g=0,pts=0;
-  for(const r of (GAMELOGS[p.n]||[])) if(r.s===SEASON_YEAR&&!r.up&&!r.dnp){ g++; pts+=gamefp(r,pos,scoringFmt); }
-  return {pre,now,act:g?pts/g:null,g};
+  // A per-start QB's Rest Of Season number is per FULL start (qbPerStart). Relabelled 3 Oct 2026 (owner):
+  // the line was one comparison of three numbers; it is a grade (Preseason vs Actual So Far, both every
+  // game played — the ledger's yardstick) and a forecast (Rest Of Season). Where a QB's full starts
+  // differ from his games played (an injury exit, a bench cameo), Full Starts So Far shows what fed it.
+  const perStart = pos==='QB' && QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS;
+  if(!GAMELOGS) return {pre,now,act:null,g:null,perStart};         // logs still loading: no Actual yet
+  let g=0,pts=0,fg=0,fpts=0;
+  for(const r of (GAMELOGS[p.n]||[])) if(r.s===SEASON_YEAR&&!r.up&&!r.dnp){
+    const fp=gamefp(r,pos,scoringFmt); g++; pts+=fp; if(r.qs){ fg++; fpts+=fp; } }
+  const showFull = perStart && fg!==g;
+  return {pre,now,act:g?pts/g:null,g,perStart,showFull,full:fg?fpts/fg:null,fg};
 }
 function projContextHTML(p,linkHtml){
   const c=projContext(p); if(!c) return '';
   const m='font-family:var(--mono)';
-  let txt='<span style="color:var(--fog)">Preseason</span> <span style="'+m+'">'+c.pre.toFixed(1)+'</span>'
-    +' <span style="color:var(--fog-2)">\u00b7</span> <span style="color:var(--fog)">Now</span> <span style="'+m+';color:var(--teal-br);font-weight:700">'+c.now.toFixed(1)+'</span>';
-  if(c.g!=null) txt+=' <span style="color:var(--fog-2)">\u00b7</span> <span style="color:var(--fog)">Actual</span> '
-    +(c.act!=null?'<span style="'+m+'">'+c.act.toFixed(1)+'</span> <span style="color:var(--fog)">('+c.g+(c.g===1?' game':' games')+')</span>'
-                 :'<span style="color:var(--fog)">no games yet</span>');
+  const dot=' <span style="color:var(--fog-2)">\u00b7</span> ', lab=t=>'<span style="color:var(--fog)">'+t+'</span> ';
+  const games=k=>' <span style="color:var(--fog)">('+k+(k===1?' game':' games')+')</span>';
+  // The grade: the frozen call against every game played (the ledger's yardstick).
+  const item=h=>'<span style="white-space:nowrap">'+h+'</span>';   // a label never splits from its number on a phone
+  let txt=item(lab('Preseason')+'<span style="'+m+'">'+c.pre.toFixed(1)+'</span>');
+  if(c.g!=null) txt+=dot+item(lab('Actual So Far')
+    +(c.act!=null?'<span style="'+m+'">'+c.act.toFixed(1)+'</span>'+games(c.g):'<span style="color:var(--fog)">no games yet</span>'));
+  // The forecast: points per game from here on (per full start for a QB).
+  let fc=item(lab(c.perStart?'Rest Of Season Per Full Start':'Rest Of Season')
+    +'<span style="'+m+';color:var(--teal-br);font-weight:700">'+c.now.toFixed(1)+'</span>');
+  if(c.showFull) fc+=dot+item(lab('Full Starts So Far')
+    +(c.full!=null?'<span style="'+m+'">'+c.full.toFixed(1)+'</span>'+games(c.fg):'<span style="color:var(--fog)">none yet</span>'));
+  txt='<span>'+txt+'</span><span>'+fc+'</span>';
   const vals=[c.pre,c.now].concat(c.act!=null?[c.act]:[]);
   const lo=Math.floor(Math.min(...vals)-1), hi=Math.ceil(Math.max(...vals)+1), X=v=>(6+(v-lo)/(hi-lo)*108).toFixed(1);
   const scale='<svg width="120" height="14" viewBox="0 0 120 14" aria-hidden="true" style="flex:none">'
@@ -4872,7 +4887,7 @@ function projContextHTML(p,linkHtml){
     +'<circle cx="'+X(c.now)+'" cy="7" r="4.5" fill="var(--teal-br)"></circle>'
     +'<circle cx="'+X(c.pre)+'" cy="7" r="3.6" fill="none" stroke="var(--fog)" stroke-width="1.5"></circle></svg>';
   return '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px">'
-    +'<span>'+txt+'</span>'+scale+(linkHtml||'')+'</span>';
+    +txt+scale+(linkHtml||'')+'</span>';
 }
 function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};
