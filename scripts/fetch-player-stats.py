@@ -111,6 +111,28 @@ def norm(name):
     name = re.sub(r'\b(jr|sr|ii|iii|iv)\b', '', name)
     return re.sub(r'\s+', ' ', name).strip()
 
+def map_sleeper_status(delta_names, matched, meta, sleeper_injuries, sleeper_roster_status):
+    """Sleeper injury and roster status onto DELTA names, joined on the normalized (name, position).
+    EVERY DELTA player, not only those matched to 2022-25 stats: rookies have no stats match, so until
+    3 Oct 2026 they could never carry an injury badge or roster status. An unmatched player's own DELTA
+    name is the join key (the QB depth-chart flags already find rookies' Sleeper records this way)."""
+    injury_status, roster_status = {}, {}
+    for dn in delta_names:
+        nfl_name = matched.get(dn, dn)
+        pos = meta.get(dn, (None, None))[1]
+        if not pos:
+            continue
+        rec = (sleeper_injuries or {}).get((norm(nfl_name), pos))
+        if rec:
+            injury_status[dn] = {'status': rec['status'], 'body_part': rec.get('body_part')}
+        # Rostered-but-not-active, keyed the same way. Written to the output
+        # so the badge rule can be switched on without another pipeline run.
+        # NOTHING READS THIS YET — deliberately. See the note in main().
+        rstat = (sleeper_roster_status or {}).get((norm(nfl_name), pos))
+        if rstat:
+            roster_status[dn] = {'status': rstat['status']}
+    return injury_status, roster_status
+
 def qb_starter_level(qb_splits):
     """Median points per start, QBs with 14+ starts in the latest season (docs/PREREG-qb-perstart.md sb)."""
     y = str(max(SEASONS))
@@ -1601,19 +1623,8 @@ def main():
             print('[DELTA] ' + '!' * 68)
         # Map the Sleeper injury statuses onto DELTA names, using the same
         # normalized (name, position) join the team override uses.
-        for dn, nfl_name in matched.items():
-            pos = meta.get(dn, (None, None))[1]
-            if not pos:
-                continue
-            rec = (sleeper_injuries or {}).get((norm(nfl_name), pos))
-            if rec:
-                injury_status[dn] = {'status': rec['status'], 'body_part': rec.get('body_part')}
-            # Rostered-but-not-active, keyed the same way. Written to the output
-            # so the badge rule can be switched on without another pipeline run.
-            # NOTHING READS THIS YET — deliberately. See the note above.
-            rstat = (sleeper_roster_status or {}).get((norm(nfl_name), pos))
-            if rstat:
-                roster_status[dn] = {'status': rstat['status']}
+        inj_map, rs_map = map_sleeper_status(delta_names, matched, meta, sleeper_injuries, sleeper_roster_status)
+        injury_status.update(inj_map); roster_status.update(rs_map)
         if injury_status:
             by_status = {}
             for dn, r in injury_status.items():
