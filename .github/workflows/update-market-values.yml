@@ -88,3 +88,20 @@ jobs:
       # reason to serve stale data.
       - name: Engine Audit gate (scarcity directional validation)
         run: node scripts/engine-audit-gate.js
+
+      # QB depth-chart alarm (2 Oct 2026). All of September the depth-chart layer fell back to
+      # 2025 silently after nflverse renamed its columns. Runs AFTER commit and whatever the
+      # gate above did: fresh data always publishes; an in-season fallback turns the run red
+      # (-> email) instead of hiding in the log.
+      - name: QB depth-chart check
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, sys
+          st = json.load(open('data/player-stats.json')).get('qb_roles_status') or {}
+          print(f"QB roles source: {st.get('source')} | reason: {st.get('reason')} | teams: {st.get('teams')} | "
+                f"snapshot: {st.get('snapshot')} | in-season: {st.get('in_season')}")
+          if st.get('in_season') and st.get('source') != 'depth-chart':
+              print(f"::error title=QB depth chart not read::{st.get('reason')}")
+              sys.exit(1)
+          PY
