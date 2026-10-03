@@ -133,6 +133,32 @@ starter mid-season.
 
 *(none)*
 
-## Result
+## Result (2 October 2026) — PASSED. Anchor 87% Of The Median; Trust Builds At About Half Today's Pace.
 
-*(not run)*
+Run once, `python3 scripts/qb-perstart-study.py --run`, against this file as committed in `f56dcab` and the
+script as committed in `20c30c9`, both byte-identical to the reviewed copies. The run printed this file's sha256
+prefix as `fbc42e46bcb8c8fd`. Same 893 QB-seasons as the counts. Nothing above this section was changed after the run.
+
+| Gate | Result |
+|---|---|
+| 1. Size ≥ 2% (277 thin-history QB-seasons) | **passed — 7.7%** (typical miss 3.762 → 3.471 points per start; average miss 2.963 → 2.617) |
+| 2. Not a fluke, p < 0.05 | **passed — p = 0.0005** (no shuffle of 2,000 did as well) |
+| 3. Both halves | passed — 2002–2013 +5.4%, 2014–2025 +9.8% |
+| 4. Established QBs not more than 1% worse | passed — **+1.5%** (616 QB-seasons) |
+
+**Ships (fitted on all 24 seasons): K = 13, anchor = 0.87 × the established-starter median.** Every left-out season
+fitted K 12–14 and a 0.86–0.88.
+
+**Reported only, never gated:**
+- No modifier (his own points per start, the median when he has none): typical miss 4.633 on the thin group — the
+  modifier is doing real work.
+- Today's engine number graded per start (approximation, §3): typical miss **7.861** on the thin group and **5.266**
+  across all 893, against the new formula's **3.196** across all — the definition change alone is the larger gain.
+- 34 thin QB-seasons had no prior starts (forecast = the anchor).
+
+**What it means:** a thin record should be pulled toward about 87% of an established starter's level, not all the way
+to it, and trusted more slowly — about 13 starts before his own number carries half the weight. Illustration, not
+part of the test: Malik Willis entered 2026 with 4 starts in 2023–2025 at 20.97 points per start; today's lift
+translated gives 19.22, the new formula **16.95** (2025 starter level 18.05). He has 13.06 per start in three Miami starts.
+
+**Next, per §5:** the points-per-start build, reviewed with before-and-after numbers before it ships.
