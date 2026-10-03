@@ -1562,7 +1562,11 @@ def main():
     disagreements = []
     src_counts = {'sleeper': 0, 'nflverse': 0}
     if roster_teams or sleeper_teams:
-        for dn, nfl_name in matched.items():
+        # Every DELTA player, not only those matched to 2022-25 stats (3 Oct 2026): rookies have no
+        # stats match, so until then a rookie cut or claimed elsewhere kept his draft team forever.
+        # An unmatched player's own DELTA name is the join key, as in map_sleeper_status().
+        for dn in delta_names:
+            nfl_name = matched.get(dn, dn)
             pos = meta.get(dn, (None, None))[1]
             if not pos:
                 continue
@@ -1634,11 +1638,12 @@ def main():
             append_injury_log(injury_status)
         no_stats = sorted(set(delta_names) - set(matched.keys()))
         if unresolved:
-            print(f'[DELTA] team overrides: {len(unresolved)} matched players absent from the 2026 roster feed '
+            print(f'[DELTA] team overrides: {len(unresolved)} DELTA players absent from both roster feeds '
                   f'(baked team kept): {sorted(unresolved)[:30]}')
         if no_stats:
-            print(f'[DELTA] team overrides: {len(no_stats)} DELTA players have no 2025 stats match, so no team '
-                  f'override is possible (baked team kept): {no_stats[:30]}')
+            # Since 3 Oct 2026 these still get a team (and injury) lookup by their own DELTA name.
+            print(f'[DELTA] team overrides: {len(no_stats)} DELTA players have no 2025 stats match '
+                  f'(looked up by their DELTA name): {no_stats[:30]}')
     rz_data, epa_raw = fetch_pbp(SEASONS)
     players, headshot_out, rec_pg, ts_delta = build_output(agg, matched, rz_data, headshots)
 
