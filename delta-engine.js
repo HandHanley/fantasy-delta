@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-03b';
+const DL_BUILD='2026-10-03c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3604,7 +3604,11 @@ function mvAssetRaw(pl){
   // Anchor-basis raw (NO marketSpread here). Format rescale is applied by the
   // caller AFTER calibration so applyCenter compares anchor-raw vs anchor-market
   // consistently — composing marketSpread into raw broke that at 1QB formats.
-  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.inj));
+  // No backup charge here (owner, 3 Oct 2026). Model value is built from the market price, and the
+  // market already prices a backup's role — the x0.55 charged it a second time (flagged veteran QBs sat
+  // at a median 46% of market vs 93% for everyone else). e.injP keeps AVAIL (per-game quality, e.g.
+  // Mahomes) and drops only the role charge. Role news still reaches model value through the market.
+  return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.injP));
 }
 
 const CONTRACTS=[
