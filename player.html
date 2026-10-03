@@ -36,7 +36,7 @@ a:hover{text-decoration:underline}
    Below 1000px nothing changes — one column, exactly as before. Above it the
    page widens and the NFL cards flow into two columns.
    CSS columns rather than a grid, deliberately. A grid makes every row as tall
-   as its tallest cell, and these cards range from 73px (Scouting Report) to
+   as its tallest cell, and these cards range from under 100px to
    787px (Opportunity), so a grid would leave a 700px hole beside the tall ones.
    Columns pack vertically instead, which is what you actually want here.
    break-inside:avoid keeps a card whole; the inline-block/width:100% pair is
@@ -269,7 +269,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-01a</span>
+    <span class="foot-build">2026-10-03a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -826,16 +826,6 @@ function buildRippleHTML(p) {
       <span class="badge ${r.d==='up'?'bs':'bd'}">${r.d==='up'?'▲':'▼'} ${r.delta}</span>
       <div style="font-size:11px;color:var(--fog);line-height:1.5;margin-top:5px">${r.reason}</div>
     </div>`).join('')}
-  </div>`;
-}
-
-// ── Scout Report ──────────────────────────────────────────────────────────────
-function buildScoutHTML() {
-  return `<div class="card">
-    <div class="card-label" style="margin-bottom:2px">Scouting Report</div>
-
-    <div id="scout-text" class="scout-text" style="color:var(--fog-2)">Loading…</div>
-    <div id="scout-stamp" style="font-size:9.5px;color:var(--fog-2);margin-top:10px"></div>
   </div>`;
 }
 
@@ -1427,33 +1417,6 @@ function _renderPlayerPage(p) {
     });
   }
 
-  ensureScoutData().then(() => {
-    const el = document.getElementById('scout-text');
-    if (!el) return;
-    // Same suppression rule as the authored Read core, from the same shared test in the
-    // engine, so the two can never disagree about whether a player's copy still stands.
-    const reason = (typeof copyStaleReason === 'function') ? copyStaleReason(p) : null;
-    const txt = SCOUT[p.n];
-    if (txt && reason) {
-      el.style.color = 'var(--fog-2)';
-      el.textContent = 'Scouting report hidden — ' + p.n + ' is currently ' + reason
-        + '. It was written before that and describes a role he is not in right now.';
-    } else {
-      el.style.color = 'var(--fog)';
-      el.textContent = txt || 'No Scouting Report available.';
-    }
-    // Date stamp: an undated take invites "this is wrong"; a dated one reads as
-    // "this was the view then", which is what it actually is.
-    const stamp = document.getElementById('scout-stamp');
-    if (stamp) {
-      const g = (typeof SCOUT_GENERATED !== 'undefined') ? SCOUT_GENERATED : null;
-      if (g && txt && !reason) {
-        const d = new Date(g);
-        stamp.textContent = isNaN(d) ? '' : 'Written ' +
-          d.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-      } else { stamp.textContent = ''; }
-    }
-  });
 
   if (!hasCollege(p)) _TAB = 'nfl';
   showContent(`

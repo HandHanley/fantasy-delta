@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-03d';
+const DL_BUILD='2026-10-03e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4702,15 +4702,22 @@ function mvAssetBase(p){
 // market-calibrated model value (see MV_CENTER above), so the population
 // centers on 1.0 by construction and buy/sell reads directly off the ratio.
 // Tags remain league-invariant and identical to the band-scaled scheme.
+// The ratio every buy/sell call is read from: model value over market, both at the 12-SF
+// anchor. Shared with The Read's gap line (3 Oct 2026) — that line used the reader's own
+// league basis while the tag used this one, and in PPR formats 19 players showed a Sell
+// beside a model value ABOVE market. One function, one basis, no disagreement.
+function verdictRatio(p){
+  // Denominator is the market at the SAME 12-SF anchor basis the model uses (a manual ktc
+  // override wins, since it's the user's stated market value). Format scaling cancels → per-player gap.
+  const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
+  return mvAssetBase(p)/Math.max(mkt12,1);
+}
 function vTag(p){
   // No games across all tracked seasons = no signal
   // Selling a no-data player is bad advice regardless of model gap
   const totalG=(p.g25||0)+(p.g24||0)+(p.g23||0);
   if(totalG===0) return'<span class="badge bn" title="No NFL data yet">no data</span>';
-  // Denominator is the market at the SAME 12-SF anchor basis the model uses (a manual ktc
-  // override wins, since it's the user's stated market value). Format scaling cancels → per-player gap.
-  const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
-  const r=mvAssetBase(p)/Math.max(mkt12,1);
+  const r=verdictRatio(p);
   // ── One ladder for every position (Aug 2026) ──
   // A "strong" tag is a declarative call urging the user to act, so it has to be
   // rare and has to demand a big gap. 25% is that gap, and it means the same
@@ -5666,6 +5673,9 @@ function buildDSBreakdownHTML(p){
 }
 
 // ── AUTHORED READS ─────────────────────────────────────────────────────────
+// DORMANT since 2026-10-03e: The Read no longer renders an authored core (owner — went
+// stale in-season). loadReads() stays because three boot chains call it and it fails safe;
+// authoredCore()/copyStaleReason() have no on-screen caller. Delete together, deliberately.
 // Per-player authored cores for The Read, from data/reads.json. Each entry:
 // {n, team, authored, core}. The core is VERDICT-AGNOSTIC — it describes the
 // player; the live math sentence (always computed fresh) carries the verdict.
@@ -5851,22 +5861,14 @@ function recPgOf(p){
   return 0;
 }
 
-// A dated opinion is judged differently from an undated one — the stamp is what turns
-// "this is wrong" into "this was the view in July". Only shown when the sentence actually
-// came from the authored library; the computed fallback is always current by construction.
-function readStamp(p){
-  const e = (typeof READS!=='undefined'&&READS)?READS[p.n]:null;
-  if(!e||!e.authored||!authoredCore(p)) return '';
-  const d=new Date(e.authored+'T00:00:00Z');
-  if(isNaN(d)) return '';
-  const when=d.toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
-  return '<div style="font-size:9.5px;color:var(--fog-2);margin-bottom:11px">Written '+when+'</div>';
-}
 function buildReadHTML(p){
+  // Numbers only since 3 Oct 2026 (owner). The authored paragraph (data/reads.json, written
+  // July) and the rotating template sentences are gone: the first went stale by Week 1, the
+  // second read machine-written and added advice the model never computed. What remains is
+  // the call, one line stating the gap the call is read from, and the three rank bars.
+  // The gap uses verdictRatio() — the tag's own basis — so the line cannot contradict it.
   const mvv=mvAsset(p), mk=p.ktcEff||0, ds=p.dsScore;
   if(!mk||ds==null) return '';
-  const r=mvv/mk;
-  const pct=Math.round((r-1)*100);
   const verdict=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
   const pos=p.pos||p.p||'';
   const peers=COMP.filter(x=>(x.pos||x.p)===pos);
@@ -5875,142 +5877,16 @@ function buildReadHTML(p){
   const rankMk=peers.slice().sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).findIndex(x=>x.n===p.n)+1;
   const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
   const proofClr=ds>=72?'var(--emerald)':ds>=62?'var(--emerald)':ds>=52?'var(--sky)':ds>=42?'var(--topaz)':'var(--coral)';
-  const worthOutrunsProof=(rankDs-rankMv)>=6;
-  const ranksAgree=Math.abs(rankMv-rankMk)<=1;
-  const absPct=Math.abs(pct);
-  const gapQual=absPct>=20?' \u2014 a wide gap':absPct>=10?'':' \u2014 slim but real';
-  const gl=glOf(p);
-  const age=p.a||0;
-  const a25=p.ppg25||0,a24=p.ppg24||0;
-  const arc=(a25&&a24)?(a25-a24):0;
-  const oppSc=getOppScore(p.n,p.pos);
-  // ── evidence fragments: clean clauses, no nested parens ──
-  const ev=[];   // {t:text, s:'+'|'-', w:weight}
-  if(gl){
-    if(gl.elite>=30) ev.push({t:`an elite week in ${gl.elite}% of starts`,s:'+',w:3});
-    else if(gl.elite>=18) ev.push({t:`league-winning weeks ${gl.elite}% of the time`,s:'+',w:2});
-    if(gl.miss>=45) ev.push({t:`busts in ${gl.miss}% of starts`,s:'-',w:3});
-    else if(gl.miss<=18&&gl.hit>=75) ev.push({t:`hits in ${gl.hit}% of starts`,s:'+',w:2});
-  }
-  if(arc>=3) ev.push({t:`production climbing ${a24.toFixed(1)}→${a25.toFixed(1)} ppg`,s:'+',w:2});
-  else if(arc<=-3) ev.push({t:`production sliding ${a24.toFixed(1)}→${a25.toFixed(1)} ppg`,s:'-',w:2});
-  if(oppSc!=null){
-    if(oppSc>=88) ev.push({t:`a true bell-cow role`,s:'+',w:2});
-    else if(oppSc<=55) ev.push({t:`a committee role capping the ceiling`,s:'-',w:1});
-  }
-  if(age>=31&&pos==='RB') ev.push({t:`a short runway at ${age.toFixed(0)}`,s:'-',w:3});
-  else if(age>=33) ev.push({t:`age ${age.toFixed(0)} closing the window`,s:'-',w:3});
-  else if(age<=23&&proof!=='thin') ev.push({t:`all before age ${Math.ceil(age)}`,s:'+',w:2});
-  else if(age<=25&&proof!=='thin'&&(pos==='WR'||pos==='TE')) ev.push({t:`still just ${age.toFixed(0)}`,s:'+',w:1});
-  if(p.och) ev.push({t:`a new OC adding scheme risk`,s:'-',w:1});
-  ev.sort((a,b)=>b.w-a.w);
-  const posEv=ev.filter(e=>e.s==='+').slice(0,2).map(e=>e.t);
-  if(posEv[0]&&posEv[0].startsWith('all before')) posEv[0]=`a ${proof} résumé before age ${Math.ceil(age)}`;
-  const negEv=ev.filter(e=>e.s==='-').slice(0,2).map(e=>e.t);
-  const joinEv=a=>a.length===2?a[0]+' and '+a[1]:(a[0]||'');
-  const seed=readSeed(p.n);
-
-  // ── tier by market rank (phrasing must not treat a WR60 like a WR8) ──
-  const tierCut=(pos==='QB'||pos==='TE')?[6,12,24]:[12,24,48];
-  const tier=rankMk<=tierCut[0]?'elite':rankMk<=tierCut[1]?'starter':rankMk<=tierCut[2]?'fringe':'deep';
-
-  // ── CORE: authored if fresh, else tier-aware template ──
-  let core=authoredCore(p);
-  if(!core){
-    const posTxt={QB:'quarterback',RB:'back',WR:'receiver',TE:'tight end'}[pos]||pos;
-    if(proof==='thin'&&tier!=='elite'){
-      core=pick(seed,[
-        `Thin demonstrated base — the ${pos}${rankDs} production profile is the whole story so far`+(negEv[0]?`, with ${negEv[0]}`:'')+`.`,
-        `Not much on tape to price yet: demonstrated production ranks ${pos}${rankDs}`+(negEv[0]?` and ${negEv[0]}`:'')+`.`,
-      ]);
-    } else if(tier==='elite'){
-      // no catchphrases at this tier — compose entirely from the player's own
-      // evidence; only clause ORDER varies by seed, so no phrase can repeat
-      // recognizably across adjacent players
-      const lead=posEv.length?joinEv(posEv):`a ${proof} demonstrated base`;
-      core=pick(seed,[
-        `${lead.charAt(0).toUpperCase()+lead.slice(1)}${negEv[0]?`; ${negEv[0]} is the flag`:''}.`,
-        `${negEv[0]?negEv[0].charAt(0).toUpperCase()+negEv[0].slice(1)+' cuts against ':'Nothing currently cuts against '}${posEv.length?lead:'the profile'}.`,
-      ]);
-    } else if(tier==='starter'){
-      const lead=posEv.length?joinEv(posEv):`a ${proof} ${pos}${rankDs} demonstrated base`;
-      core=pick(seed,[
-        `${lead.charAt(0).toUpperCase()+lead.slice(1)}${negEv[0]?`, against ${negEv[0]}`:''}.`,
-        `Demonstrated production ranks ${pos}${rankDs}${posEv.length?' on '+lead:''}${negEv[0]?`; ${negEv[0]}`:''}.`,
-      ]);
-    } else if(tier==='fringe'){
-      core=pick(seed,[
-        `Fringe-starter profile — production ranks ${pos}${rankDs}${posEv.length?', with '+joinEv(posEv):''}${negEv[0]?` but ${negEv[0]}`:''}.`,
-        `Roster-edge ${posTxt}: ${posEv.length?joinEv(posEv):'a '+proof+' demonstrated base'}${negEv[0]?`, offset by ${negEv[0]}`:''}.`,
-      ]);
-    } else {
-      core=pick(seed,[
-        `Deep-roster ${posTxt} — ${negEv[0]||posEv[0]||'little demonstrated volume to price'}.`,
-        `Down-roster profile: ${negEv[0]||posEv[0]||'the production base is minimal'}.`,
-      ]);
-    }
-  }
-
-  // ── MATH sentence: always computed fresh; verdict + gap carried here ──
-  let math,clr;
+  let read,clr;
   if(verdict==='no data'){
-    const dc=(typeof DRAFT_PICKS!=='undefined'&&DRAFT_PICKS[p.n])||null;
-    const cap=!dc?null:dc.p<=10?`top-10 capital (pick ${dc.p})`:dc.r===1?`first-round capital (pick ${dc.p})`
-      :dc.r===2?`second-round capital`:dc.r===3?`third-round capital`:`Day-3 capital (round ${dc.r})`;
-    if(!authoredCore(p)) core=`No NFL production yet — nothing demonstrated to value him on.`;
-    math=cap
-      ? `${cap.charAt(0).toUpperCase()+cap.slice(1)} buys the runway, but the price is a bet on that capital converting — there's no résumé behind it yet.`
-      : `At ${age?age.toFixed(0):'his age'} this is a bet on draft capital and landing spot, not a résumé.`;
+    read='No NFL Production Yet';
     clr='var(--fog)';
-  } else if(verdict==='strong buy'||verdict==='buy'){
-    clr=verdict==='strong buy'?'var(--emerald)':'var(--emerald)';
-    if(worthOutrunsProof){
-      math=pick(seed,[
-        `The model prices the role, not the résumé: ${pos}${rankMv} against a ${pos}${rankDs} track record — ${absPct}% over the market if the situation holds. ${verdict==='strong buy'?'Strong buy':'Buy'}, eyes open.`,
-        `Model ${pos}${rankMv} runs ahead of the proven ${pos}${rankDs} — a ${absPct}% edge that's a bet on opportunity. ${verdict==='strong buy'?'Strong buy':'Buy'} if you believe the role.`,
-      ]);
-    } else if(ranksAgree){
-      const sameRank=rankMv===rankMk;
-      math=pick(seed,[
-        sameRank
-          ? `Market already pays ${pos}${rankMk} and the model agrees on the rank — it just wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`
-          : `Priced ${pos}${rankMk}, modeled ${pos}${rankMv} — no real rank dispute, but the model wants ${absPct}% more than the price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
-        `No rank dispute — priced ${pos}${rankMk}, modeled ${pos}${rankMv} — but the model has him ${absPct}% under-priced${gapQual}. ${verdict==='strong buy'?'Strong buy':'A quiet buy'}.`,
-        sameRank
-          ? `Priced ${pos}${rankMk}; the model sees ${absPct}% more value at the same rank${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`
-          : `Priced ${pos}${rankMk} against a modeled ${pos}${rankMv} — essentially the same rank, ${absPct}% apart on price${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
-      ]);
-    } else {
-      math=pick(seed,[
-        `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv} — a ${absPct}% discount${gapQual} it hasn't caught up to. ${verdict==='strong buy'?'A clear buy':'Worth buying'}.`,
-        `Priced ${pos}${rankMk} but modeled ${pos}${rankMv}: ${absPct}% of value the market is leaving on the table${gapQual}. ${verdict==='strong buy'?'Strong buy':'Buy'}.`,
-      ]);
-    }
-  } else if(verdict==='sell'||verdict==='strong sell'){
-    clr=verdict==='strong sell'?'var(--coral)':'var(--coral)';
-    if(Math.abs(rankMv-rankMk)<=1){
-      const rkTxt=rankMv===rankMk?`${pos}${rankMv}`:`${pos}${rankMk} and ${pos}${rankMv} — essentially the same rank`;
-      math=absPct>=15
-        ? `Market and model land on ${rkTxt}, but the market pays ${absPct}% more for it than the model would. Sell only into an overpay.`
-        : `Market and model land on ${rkTxt}; the ${absPct}% gap is real but slim. Hold unless someone pays a clear premium.`;
-      clr='var(--paper)';
-    } else {
-      math=pick(seed,[
-        `The market pays ${pos}${rankMk}; the model lands ${pos}${rankMv}, ${absPct}% under the price${gapQual}. ${verdict==='strong sell'?'Sell into the name value':'Lean sell — the price is ahead of the production'}.`,
-        `Priced ${pos}${rankMk} against a modeled ${pos}${rankMv} — the market is paying ${absPct}% over the model${gapQual}. ${verdict==='strong sell'?'Strong sell':'Sell'}.`,
-      ]);
-    }
   } else {
-    const dir=r>=1.0?'a hair above':'a hair under';
-    const dsGap=Math.abs(rankDs-rankMv)>8;
-    const dsNote=dsGap?` The dynasty-window score says ${pos}${rankDs}, age-adjusted.`:'';
-    math=pick(seed,[
-      `Model ${pos}${rankMv} and price ${pos}${rankMk} align — ${dir} market, not enough to act on.${dsNote} Hold.`,
-      `Fair value: modeled ${pos}${rankMv}, priced ${pos}${rankMk} — ${dir} market.${dsNote} Hold unless a clear overpay comes.`,
-    ]);
-    clr='var(--paper)';
+    const pct=Math.round((verdictRatio(p)-1)*100);
+    read=pct===0?'Model Value Level With Market Price'
+      :'Model Value '+Math.abs(pct)+'% '+(pct>0?'Above':'Below')+' Market Price';
+    clr=/buy/.test(verdict)?'var(--emerald)':/sell/.test(verdict)?'var(--coral)':'var(--paper)';
   }
-  const read=(verdict==='no data')?core+' '+math:core+' '+math;
   const N=peers.length||1;
   const barFor=(rank,c,lbl,sub)=>{
     const w=Math.max(4,Math.round((1-(rank-1)/N)*100));
@@ -6025,9 +5901,7 @@ function buildReadHTML(p){
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
-    +'<div style="font-size:12px;color:var(--paper);line-height:1.55;margin-bottom:'
-    +(readStamp(p)?'6px':'11px')+'">'+read+'</div>'
-    +readStamp(p)
+    +'<div style="font-size:12px;color:var(--paper);line-height:1.55;margin-bottom:11px">'+read+'</div>'
     +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
     +barFor(rankMv,'var(--violet)','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
     +barFor(rankMk,'var(--sky)','MARKET PRICE',mk.toLocaleString())

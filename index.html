@@ -4834,25 +4834,9 @@ function renderDeck(p){
         +'</div>';
     })()}
 
-    <div class="dd-section">
-      <div class="dd-section-label">DELTA Scouting Report</div>
-      <div class="dd-writeup loading" id="dd-writeup">Generating report…</div>
-    </div>
-
   `;
-
-  // Generate the scouting report via Claude API
-  generateScoutingReport(p);
-}
-
-async function generateScoutingReport(p){
-  const el=document.getElementById('dd-writeup');
-  await ensureScoutData();
-  const report=SCOUT[p.n];
-  if(el){
-    el.textContent=report || 'No scouting report for this player yet — regenerate data/scout-reports.json to add coverage.';
-    el.classList.remove('loading');
-  }
+  // DELTA Scouting Report removed 3 Oct 2026 (owner): hand-written in July, narrative by
+  // design, and could not stay current in-season. data/scout-reports.json is no longer read.
 }
 
 
@@ -5510,7 +5494,7 @@ document.addEventListener('click', function(e) {
       </div>
       <div class="about-section">
         <div class="about-heading">Reading the verdicts</div>
-        <p>Strong Buy / Buy / Hold / Sell / Strong Sell reflect market pricing relative to DELTA's model — not absolute player quality. A Sell on an RB35 means the market is paying more than the model thinks the player is worth at that tier, not that the player is useless. The Read section in each player card explains the specific gap driving the verdict.</p>
+        <p>Strong Buy / Buy / Hold / Sell / Strong Sell reflect market pricing relative to DELTA's model — not absolute player quality. A Sell on an RB35 means the market is paying more than the model thinks the player is worth at that tier, not that the player is useless. The Read in each player card shows the gap behind the verdict: how far DELTA's model value sits above or below the market price.</p>
       </div>
       <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:10px;color:var(--fog-2)">
         Data refreshes nightly via the nflverse pipeline. Model calibrated against the 2023–2024 NFL seasons.
@@ -5771,7 +5755,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-01a</span>
+  <span class="foot-build">2026-10-03a</span>
 </footer>
 
 
