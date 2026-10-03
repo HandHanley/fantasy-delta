@@ -101,6 +101,15 @@ def norm(name):
     name = re.sub(r'\b(jr|sr|ii|iii|iv)\b', '', name)
     return re.sub(r'\s+', ' ', name).strip()
 
+def qb_starter_level(qb_splits):
+    """Median points per start, QBs with 14+ starts in the latest season (docs/PREREG-qb-perstart.md sb)."""
+    y = str(max(SEASONS))
+    v = sorted(d[y]['ppst'] for d in qb_splits.values() if d.get(y, {}).get('starts', 0) >= 14)
+    if len(v) < 8:
+        return None
+    m = len(v) // 2
+    return round(v[m] if len(v) % 2 else (v[m - 1] + v[m]) / 2, 3)
+
 def fetch_season_stats():
     print(f"[DELTA] Fetching weekly stats for {SEASONS}...")
     df = nfl.load_player_stats(seasons=SEASONS)
@@ -1630,6 +1639,10 @@ def main():
         # engine's QB projection once that build ships; nothing reads it before then.
         'qb_start_splits': {dn: qb_splits[nm] for dn, nm in matched.items()
                             if meta.get(dn, (None, None))[1] == 'QB' and nm in qb_splits},
+        # The formula's anchor: median points per start of EVERY QB (not only DELTA's board) with
+        # 14+ starts last season — the study's sb. None if fewer than 8 qualify (the engine then
+        # keeps its old QB path rather than guess).
+        'qb_starter_level': qb_starter_level(qb_splits),
         'teams': team_overrides,
         'injury': injury_status,   # display-only; see docs/ACCURACY-LEDGER.md s.6
         # Rostered but not on the active list (Sleeper 'status', not injury).
