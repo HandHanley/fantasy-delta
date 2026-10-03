@@ -55,6 +55,16 @@ SEASONS    = [2022, 2023, 2024, 2025]
 # the day the 2026 freeze was taken: it reproduces the frozen ages exactly
 # (404 of 404); 1 Sep would have shifted 70 of them.
 AGE_AS_OF  = date(max(SEASONS) + 1, 9, 7)
+# In-season window for the QB depth-chart rules (owner, 2 Oct 2026): freeze day to mid-February.
+# Built on the same constant as AGE_AS_OF, so it rolls with SEASONS.
+IN_SEASON_FROM = date(max(SEASONS) + 1, 9, 7)
+IN_SEASON_TO   = date(max(SEASONS) + 2, 2, 15)
+# Feed / DELTA team codes -> the depth chart's (nflverse) codes, for matching only.
+DEPTH_TEAM = {'JAC': 'JAX', 'LAR': 'LA', 'WSH': 'WAS', 'ARZ': 'ARI'}
+DEPTH_STATUS = {'source': 'incumbency-2025', 'reason': 'not attempted', 'teams': 0, 'snapshot': None}
+# While the injury feed lists a QB as one of these, his chart spot reflects the injury, not his role
+# (Dart on IR listed 3rd): the chart does not judge him; the 2025-incumbency rule does (owner, 2 Oct 2026).
+CHART_SKIP_STATUS = {'IR', 'Out'}
 OUT_DIR    = Path(__file__).parent.parent / "data"
 OUT_FILE   = OUT_DIR / "player-stats.json"
 INDEX_HTML = Path(__file__).parent.parent / "delta-engine.js"  # RAW array moved here from index.html
@@ -350,33 +360,46 @@ def fetch_depth_chart_qbs():
     try:
         loader = getattr(nfl, 'load_depth_charts', None)
         if loader is None:
+            DEPTH_STATUS['reason'] = 'loader not available in nflreadpy'
             print('[DELTA] depth charts: loader not available in nflreadpy — skipping')
             return None
         df = loader(seasons=[2026])
         pdf = df.to_pandas() if hasattr(df, 'to_pandas') else df
         if pdf is None or len(pdf) == 0:
+            DEPTH_STATUS['reason'] = 'empty for 2026'
             print('[DELTA] depth charts: empty for 2026 — skipping')
             return None
         def c(*opts):
             return next((o for o in opts if o in pdf.columns), None)
+        # nflverse renamed these in 2026 (pos_abb / pos_rank / dt — one snapshot per
+        # refresh). Every night the old names failed to match and the layer fell back
+        # to 2025 silently (found 2 Oct 2026). The status now travels in the output.
         team_c = c('club_code', 'team', 'team_abbr')
-        pos_c  = c('position', 'pos', 'depth_chart_position')
-        rank_c = c('depth_team', 'depth_position', 'rank')
-        name_c = c('full_name', 'player_name', 'football_name')
-        week_c = c('week')
+        pos_c  = c('pos_abb', 'position', 'pos', 'depth_chart_position')
+        rank_c = c('pos_rank', 'depth_team', 'depth_position', 'rank')
+        name_c = c('player_name', 'full_name', 'football_name')
+        snap_c = c('dt', 'week')
         if not all([team_c, pos_c, rank_c, name_c]):
+            DEPTH_STATUS['reason'] = f'unrecognized schema {list(pdf.columns)[:12]}'
             print(f'[DELTA] depth charts: unrecognized schema {list(pdf.columns)[:12]} — skipping')
             return None
         qb = pdf[pdf[pos_c] == 'QB'].copy()
-        if week_c:
-            qb = qb[qb[week_c] == qb[week_c].max()]
+        if snap_c:   # each team's LATEST snapshot (a team missing from the newest one keeps its last)
+            qb = qb[qb[snap_c] == qb.groupby(team_c)[snap_c].transform('max')]
         qb['_rank'] = qb[rank_c].astype(str).str.extract(r'(\d+)').astype(float)
         out = {}
         for team, gr in qb.groupby(team_c):
             out[team] = list(gr.sort_values('_rank')[name_c])
-        print(f'[DELTA] depth charts: 2026 QB order loaded for {len(out)} teams')
+        if not out:
+            DEPTH_STATUS['reason'] = 'no QB rows'
+            print('[DELTA] depth charts: no QB rows — skipping')
+            return None
+        DEPTH_STATUS.update(source='depth-chart', reason='ok', teams=len(out),
+                            snapshot=str(qb[snap_c].max()) if snap_c else None)
+        print(f'[DELTA] depth charts: 2026 QB order loaded for {len(out)} teams (snapshot {DEPTH_STATUS["snapshot"]})')
         return out
     except Exception as e:
+        DEPTH_STATUS['reason'] = f'unavailable: {e}'
         print(f'[DELTA] depth charts unavailable ({e}) — falling back to 2025 incumbency')
         return None
 
@@ -576,7 +599,8 @@ def fetch_sleeper_teams():
     return (out or None), injuries, roster_status
 
 
-def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
+def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None, in_season=False, label='projection',
+                            injuries=None):
     """Conservative QB backup flags — only when an UNAMBIGUOUS established
     incumbent sits ahead. Rules (binary, asymmetric, QB-only by design — depth
     info is never read for other positions, where snap/target share already
@@ -593,21 +617,39 @@ def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
     FRANCHISE_PRIOR = 10  # 2024 starts with THIS team = franchise starter (injury exemption)
     EMPTY = {'total': 0, 'teams': {}}
     s25, s24 = qb_starts.get('2025', {}), qb_starts.get('2024', {})
+    s25n = {norm(k): v for k, v in s25.items()}   # the chart writes suffixes ('Gardner Minshew II')
     flags = {}
     qb_team = {n: tp[0] for n, tp in meta.items() if tp[1] == 'QB'}
     for q, raw_team in qb_team.items():
         nfl_q = matched.get(q, q)
-        team = (roster_teams or {}).get((nfl_q, 'QB')) or raw_team   # roster feed wins (FA/trade moves)
+        # The roster feed is keyed on the NORMALIZED name (fetch_current_teams). Looking it up by
+        # display name never matched, so every QB was placed on his baked RAW team (Mac Jones
+        # 'behind Drake Maye' while in SF). Fixed 2 Oct 2026.
+        team = (roster_teams or {}).get((norm(nfl_q), 'QB')) or raw_team   # roster feed wins (FA/trade moves)
         q25 = s25.get(nfl_q, EMPTY)
-        if depth and team in depth:
+        dteam = DEPTH_TEAM.get(team, team)
+        inj = ((injuries or {}).get((norm(nfl_q), 'QB')) or {}).get('status')
+        if depth and dteam in depth and inj not in CHART_SKIP_STATUS:
             # Depth-chart layer: present-state truth, may flag anyone behind an
             # established rank-1 — including exemption cases, since a published
-            # camp chart outranks our offseason inference.
-            order = depth[team]
-            if nfl_q in order and order.index(nfl_q) > 0:
-                starter = order[0]
-                if s25.get(starter, EMPTY)['total'] >= ESTABLISHED:
-                    flags[q] = {'role': 'backup', 'behind': starter, 'source': 'depth-chart'}
+            # camp chart outranks our offseason inference. Names are compared
+            # normalized: the chart writes suffixes the stats feed drops.
+            order = depth[dteam]
+            normed = [norm(x) for x in order]
+            nq = norm(nfl_q)
+            if nq in normed:
+                if normed.index(nq) > 0:
+                    starter = order[0]
+                    # In-season the published chart is the truth: QB2 is a backup even
+                    # behind a starter with <10 starts last year (owner, 2 Oct 2026 —
+                    # Mac Jones behind Purdy's 9). Off-season, the old caution stays.
+                    if in_season or s25n.get(norm(starter), EMPTY)['total'] >= ESTABLISHED:
+                        flags[q] = {'role': 'backup', 'behind': starter, 'source': 'depth-chart'}
+            elif in_season and order:
+                # On the team but missing from its chart (owner, 2 Oct 2026 — Joe Milton,
+                # Will Levis): treated as a backup. Off-season, camp charts miss signings,
+                # so this waits for the season.
+                flags[q] = {'role': 'backup', 'behind': order[0], 'source': 'depth-chart-absent'}
             continue  # depth chart spoke for this team — no fallback
         if q25['total'] >= ESTABLISHED:
             continue  # established themselves — never flagged by incumbency
@@ -622,7 +664,7 @@ def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
             if o == q:
                 continue
             nfl_o = matched.get(o, o)
-            o_team = (roster_teams or {}).get((nfl_o, 'QB')) or o_raw_team
+            o_team = (roster_teams or {}).get((norm(nfl_o), 'QB')) or o_raw_team
             if o_team != team:
                 continue
             o25 = s25.get(nfl_o, EMPTY)
@@ -638,7 +680,7 @@ def compute_qb_backup_flags(meta, matched, qb_starts, depth, roster_teams=None):
                 best = (o, o25['total'])
         if best:
             flags[q] = {'role': 'backup', 'behind': best[0], 'source': 'incumbency-2025'}
-    print(f'[DELTA] QB backup flags ({len(flags)}):')
+    print(f'[DELTA] QB backup flags — {label} ({len(flags)}):')
     for q, f in flags.items():
         print(f"  {q} → behind {f['behind']} ({f['source']})")
     return flags
@@ -1454,7 +1496,17 @@ def main():
     matched  = match_names(agg, delta_names, no_data)
     roster_teams = fetch_current_teams()
     sleeper_teams, sleeper_injuries, sleeper_roster_status = fetch_sleeper_teams()
-    qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams)
+    in_season = IN_SEASON_FROM <= date.today() < IN_SEASON_TO
+    qb_roles = compute_qb_backup_flags(meta, matched, qb_starts, fetch_depth_chart_qbs(), roster_teams,
+                                       in_season=in_season, label='projection', injuries=sleeper_injuries)
+    # The DELTA Score holds in-season (owner, 2 Oct 2026): it keeps the 2025-incumbency
+    # flags it has always used; only the projection follows the live depth chart.
+    # No roster feed here, on purpose: until 2 Oct the roster lookup never matched, so the Score's
+    # flags were always computed on baked RAW teams. Passing None reproduces exactly those flags;
+    # a roster-aware Score waits for the offseason roll.
+    qb_roles_score = compute_qb_backup_flags(meta, matched, qb_starts, None, None,
+                                             in_season=False, label='DELTA Score')
+    DEPTH_STATUS['in_season'] = in_season
     # Team overrides for the runtime: only DELTA players the roster feed
     # resolves; RAW's baked team stays the fallback for everyone else.
     # Normalize feed abbreviations to DELTA's convention so we don't churn the
@@ -1635,8 +1687,10 @@ def main():
         'players': players,
         'headshots': headshot_out,
         'qb_roles': qb_roles,
+        'qb_roles_score': qb_roles_score,
+        'qb_roles_status': DEPTH_STATUS,
         # Points-per-start inputs (DELTA name -> season -> starts, points per start). Read by the
-        # engine's QB projection once that build ships; nothing reads it before then.
+        # engine's QB projection (qbPerStart, 3 Oct 2026).
         'qb_start_splits': {dn: qb_splits[nm] for dn, nm in matched.items()
                             if meta.get(dn, (None, None))[1] == 'QB' and nm in qb_splits},
         # The formula's anchor: median points per start of EVERY QB (not only DELTA's board) with
