@@ -111,6 +111,10 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--sky);
       background:var(--sky-tint);border-radius:4px;padding:3px 6px}
 .chip.done{color:var(--fog);background:transparent;padding-left:0}
+/* Red Zone is sky like LIVE, outlined so the two read apart. Not coral: the
+   signal colours mean buy / sell / watch and a game state must never borrow one. */
+.chips{display:inline-flex;align-items:center;gap:6px}
+.chip.rz{color:var(--paper);background:transparent;border:1px solid var(--sky);padding:2px 5px}
 .when{font-family:var(--mono);font-size:11px;color:var(--sky)}
 .when.off{color:var(--fog)}
 .tm{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 0}
@@ -1150,8 +1154,25 @@ function whenText(g){
   const d = new Date(g.start);
   return KICK_DAY.format(d) + ' - ' + KICK_TIME.format(d);
 }
-function chip(live){
-  return live ? '<span class="chip">LIVE</span>' : '<span class="chip done">FINAL</span>';
+function chip(live, g){
+  const base = live ? '<span class="chip">LIVE</span>' : '<span class="chip done">FINAL</span>';
+  return live && inRedZone(g) ? '<span class="chips">' + base + '<span class="chip rz">RED ZONE</span></span>' : base;
+}
+
+/* RED ZONE: the team with the ball is at or inside the opponent's 20. Read from
+   the same ball position the field bar draws, so the tag and the bar can never
+   disagree. No position, no tag — never a guess. Between plays (a kickoff, an
+   extra point) the feed sends no down and distance, so the tag drops off. */
+function inRedZone(g){
+  if(!g || g.state !== 'in') return false;
+  // Only from the down-and-distance text. fieldPos() falls back to the feed's
+  // raw yardLine when the text is missing, and that number's zero point is not
+  // documented — fine for nudging a drawing, not for a tag that states a fact.
+  if(!/at\s+(?:[A-Za-z]{2,5}\s*)?\d{1,2}\s*$/.test(String(g.detail || ''))) return false;
+  const f = fieldPos(g);
+  if(!f) return false;
+  const toGoal = f.dir === 1 ? 100 - f.ball : f.ball;
+  return toGoal > 0 && toGoal <= 20;
 }
 
 function gameCard(g){
@@ -1164,7 +1185,7 @@ function gameCard(g){
   }
   const live = g.state === 'in', li = leadIndex(g.teams);
   return '<button class="g" type="button" data-id="' + esc(g.id) + '">' + colourBar(g.teams)
-    + '<div class="gin"><div class="chiprow">' + chip(live)
+    + '<div class="gin"><div class="chiprow">' + chip(live, g)
     + '<span class="when' + (live ? '' : ' off') + '">' + esc(whenText(g)) + '</span></div>'
     + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
     + (g.detail ? '<div class="gfoot">' + esc(g.detail) + '</div>' : '')
@@ -1410,7 +1431,7 @@ function playerTable(sec){
 function heroBlock(g){
   const live = g.state === 'in', li = leadIndex(g.teams);
   return '<div class="hero">' + colourBar(g.teams) + '<div class="hero-in"><div class="chiprow">'
-    + (g.state === 'pre' ? '' : chip(live))
+    + (g.state === 'pre' ? '' : chip(live, g))
     + '<span class="when' + (live ? '' : ' off') + '">' + esc(whenText(g)) + '</span></div>'
     + g.teams.map(function(t, i){ return teamRow(t, i === li, t.score); }).join('')
     + '</div></div>';
