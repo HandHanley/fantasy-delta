@@ -125,3 +125,42 @@ explaining why the popular "stickiness" number overstates the case. **No engine 
 ## Amendments
 
 *(none)*
+
+---
+
+## Result (4 October 2026) — Not Shown, Not Shown: The "Rushing Is Sticky" Edge Is Mostly Arithmetic
+
+Run once, `python3 scripts/qb-rushing-study.py --run`, against this file as committed in `0316a28`
+(sha256 prefix `4862539f4b22a2ce`, printed by the run). Nothing above this section was changed after the run.
+Full output: `study/out/report_qb_rushing.txt`. 574 pairs from 126 QBs, as counted before lock.
+
+| Test | Runners | Pocket | Difference (99% Range) | Both Halves | Verdict |
+|---|---|---|---|---|---|
+| **Q2 — Points kept** (gap to the line, points per start) | +0.83 | +0.08 | **+0.746** (−0.286 to +1.803) | +0.330 / +1.282 | **Not shown** |
+| **Q3 — Steadiness** (size of miss, points per start) | 2.42 | 2.33 | **+0.089** (−0.465 to +0.686) | +0.035 / +0.217 | **Not shown** |
+| Q1 — "Stickiness", reported only | rushing 0.812 | passing 0.554 | +0.258 (+0.117 to +0.401) | +0.198 / +0.358 | Reported only (§3) |
+
+**Predictions (§7): three of three.** Q2 positive but not shown; Q3 not shown; rushing correlation well above passing.
+
+**What it says, plainly:**
+
+- **Rushing does repeat more than passing** (0.81 vs 0.55) — but the crash test showed most of that gap appears even
+  when both are equally reliable, because QBs differ far more in how much they run. **It is not evidence that a
+  runner is the safer bet.**
+- **Given two QBs who scored the same at the same age, the runner kept about three-quarters of a point per start
+  more** the next season — roughly 12–13 points over a 17-game season. Both halves point that way, but the range
+  includes zero, so it is **not shown**. The study can confirm only gaps of about 3 points per start (§5).
+- **Runners are not more predictable.** Their next season missed the line by 2.42 points per start against 2.33 for
+  pocket QBs — if anything slightly less steady.
+- **Pay for the points, not for the legs.** Nothing here supports a premium for rushing on its own.
+
+**Reported only:** the newer half leans further toward runners (kept +1.17 vs −0.12) than the older half (+0.55 vs
++0.22) — a hint, not a finding. Dropping age from the line changes nothing (+0.84 vs +0.08). Rank correlations
+agree (rushing 0.772, passing 0.537). **"Runner" means a big share of points from rushing, which can also mean weak
+passing:** the biggest Runner drops include JaMarcus Russell 2008 and Mark Sanchez 2011, alongside the gains of
+Kyler Murray 2019, Cam Newton 2014 and Josh Allen 2019.
+
+**Limits, restated:** production when he plays only — availability is out of scope by design (§4); survivors with
+8+ starts in both seasons; 4-point passing TDs.
+
+**What it leads to:** the newsletter article (§8). No engine change.
