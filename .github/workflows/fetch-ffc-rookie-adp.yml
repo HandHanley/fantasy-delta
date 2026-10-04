@@ -1,0 +1,53 @@
+name: Fetch FFC Rookie ADP (one-off)
+
+# Pulls Fantasy Football Calculator's Dynasty Rookie ADP (12-team) for 2014 to this year and commits
+# one file per year to data/fixtures/ — research material for the Future First study.
+# FFC's API is free for personal and commercial use with attribution; every file carries it.
+#
+# MANUAL ONLY. No schedule. Thirteen calls, a second apart.
+#
+# DELIBERATELY NOT IN THE DEPLOY PAGES TRIGGER LIST — same reasoning as fetch-league-history.yml:
+# nothing in the app reads data/fixtures/. If that ever changes, this workflow MUST be added there.
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Years to fetch: YYYY or YYYY-YYYY (blank = 2014 to this year)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Fetch rookie ADP
+        run: |
+          if [ -n "${{ inputs.years }}" ]; then
+            node scripts/fetch-ffc-rookie-adp.js --years "${{ inputs.years }}"
+          else
+            node scripts/fetch-ffc-rookie-adp.js
+          fi
+
+      - name: Commit fixtures
+        run: |
+          git config user.name "DELTA Bot"
+          git config user.email "delta-bot@users.noreply.github.com"
+          git add data/fixtures/
+          if git diff --staged --quiet; then
+            echo "No changes — skipping commit"
+          else
+            git commit -m "chore: FFC rookie ADP fixtures [skip ci]"
+            git push
+          fi
