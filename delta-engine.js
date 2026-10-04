@@ -4095,8 +4095,10 @@ let QB_ROLES = {};      // pipeline-emitted QB backup flags {name:{role,behind,s
 let QB_ROLES_SCORE = {};   // the Score's own copy: 2025 incumbency, held all season (owner, 2 Oct 2026) — dsOpportunity
 let HEADSHOTS = {};    // player name → headshot URL
 
-function calcAlphaScore(name) {
-  const s = PLAYER_STATS[name]?.['2025'];
+function calcAlphaScore(name, src) {
+  // src: an explicit stats row, used ONLY by opportunitySoFar() for the cards'
+  // display line. Every scoring call passes one argument and reads 2025, unchanged.
+  const s = src || PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
   const games = s.games || 1;
 
@@ -4144,8 +4146,9 @@ function calcAlphaScore(name) {
   return Math.round(30 + raw * 69);
 }
 
-function calcWorkhorseScore(name) {
-  const s = PLAYER_STATS[name]?.['2025'];
+function calcWorkhorseScore(name, src) {
+  // src: see calcAlphaScore. Scoring calls pass one argument and read 2025.
+  const s = src || PLAYER_STATS[name]?.['2025'];
   if (!s || !s.games) return null;
   const g     = s.games;
   // rush_share = player_rush_att / team_rush_att (season totals) — diluted by
@@ -4189,6 +4192,62 @@ function getOppScore(name, pos) {
   if (pos === 'WR' || pos === 'TE') return calcAlphaScore(name);
   if (pos === 'RB') return calcWorkhorseScore(name);
   return null;
+}
+
+/* ── THIS SEASON SO FAR — DISPLAY ONLY (owner, 4 Oct 2026) ─────────────────
+   The Alpha / Workhorse the cards show for the season being played, beside the
+   2025 number the DELTA Score uses. NOTHING SCORED READS THIS: not the DELTA
+   Score, the projection, model value or the freeze. The Score holds in-season
+   (§10b); this line lets a reader see a role change as it happens.
+
+   data/season-so-far.json is built by scripts/fetch-season-so-far.py with the
+   pipeline's own functions, so each share is defined exactly as the 2025 one.
+   The formulas assume a 17-game season, so a part season is put on that basis
+   first: games and red-zone counts scale by 17 / team games played; shares are
+   already fractions of the team's games so far and pass through. With 17 team
+   games the mapping is exact — it reproduced every 2025 score (632 of 632).
+   Early weeks swing hard; the line always says how many games it is built on.
+   Loaded lazily by the card itself — no boot chain changes, and the freeze
+   never sees it. */
+let SEASON_SO_FAR = null, SEASON_SO_FAR_STATE = 'idle', SEASON_SO_FAR_P = null;
+function ensureSeasonSoFar(){
+  if (SEASON_SO_FAR_P) return SEASON_SO_FAR_P;
+  SEASON_SO_FAR_STATE = 'loading';
+  SEASON_SO_FAR_P = fetch('data/season-so-far.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { SEASON_SO_FAR = (j && j.players) ? j : null; SEASON_SO_FAR_STATE = SEASON_SO_FAR ? 'ok' : 'failed'; })
+    .catch(() => { SEASON_SO_FAR = null; SEASON_SO_FAR_STATE = 'failed'; });
+  return SEASON_SO_FAR_P;
+}
+function opportunitySoFar(name, pos) {
+  const r = SEASON_SO_FAR && SEASON_SO_FAR.players[name];
+  if (!r || !r.games || !r.team_games) return null;
+  const k = 17 / r.team_games;
+  const src = { games: r.games * k, target_share: r.target_share, air_yds_share: r.air_yds_share,
+                rush_share: r.rush_share,
+                rz_targets: r.rz_targets == null ? null : r.rz_targets * k,
+                rz_carries: r.rz_carries == null ? null : r.rz_carries * k };
+  const sc = (pos === 'WR' || pos === 'TE') ? calcAlphaScore(name, src)
+           : pos === 'RB' ? calcWorkhorseScore(name, src) : null;
+  return sc == null ? null : { sc: sc, g: r.games, tg: r.team_games, season: SEASON_SO_FAR.season };
+}
+function oppSoFarInner(p, rowCls) {
+  const o = opportunitySoFar(p.n, p.pos);
+  if (!o) return '';
+  return '<div class="' + rowCls + '" style="margin-top:6px"><span style="color:var(--fog)">'
+    + o.season + ' So Far \u00b7 ' + o.g + ' of ' + o.tg + ' games</span>'
+    + '<span style="font-weight:700;color:' + oppScoreColor(o.sc) + '">' + o.sc + '</span></div>';
+}
+/* The card drops this slot in its markup. Loaded: the line is there at once.
+   Not loaded: an empty slot, filled when the file arrives (the card has been
+   inserted by then — the fetch is never synchronous). */
+function oppSoFarSlot(p, rowCls) {
+  if (SEASON_SO_FAR_STATE === 'ok') return '<div id="opp-sofar">' + oppSoFarInner(p, rowCls) + '</div>';
+  ensureSeasonSoFar().then(() => {
+    const h = document.getElementById('opp-sofar');
+    if (h && h.dataset.n === p.n) h.innerHTML = oppSoFarInner(p, rowCls);
+  });
+  return '<div id="opp-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '"></div>';
 }
 
 function oppScoreColor(score) {
