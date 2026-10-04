@@ -1,0 +1,21 @@
+[RQB] QB-seasons with 8+ starts, 1999-2025: 850
+[RQB] pairs (8+ starts in Y and Y+1, age known): 574 from 126 QBs · halves [274, 300]
+[RQB] groups: {'Runners': 200, 'Middle': 190, 'Pocket': 184}
+  e.g. 2024 Runners: Jalen Hurts, Josh Allen, Bryce Young, Daniel Jones, Lamar Jackson, Drake Maye
+  e.g. 2024 Pocket:  Jordan Love, Aaron Rodgers, Tua Tagovailoa, Matthew Stafford, Jared Goff, Kirk Cousins
+  rush share, season Y only — Runners median 21%, Pocket median 3%
+[RQB] RESULT
+  year-to-year correlation: rushing 0.812 · passing 0.554
+  gap to the line (pts/start): Runners +0.83 · Pocket +0.08
+  size of miss (pts/start):    Runners 2.42 · Pocket 2.33
+  Q1 rushing minus passing correlation     +0.258  99% range +0.117 to +0.401  halves +0.198 / +0.358  reported only
+  Q2 Runners minus Pocket, points kept     +0.746  99% range -0.286 to +1.803  halves +0.330 / +1.282  not shown
+  Q3 Runners minus Pocket, size of miss    +0.089  99% range -0.465 to +0.686  halves +0.035 / +0.217  not shown
+[RQB] reported only:
+  rank correlation (Spearman): rushing 0.772 · passing 0.537
+  1999-2011: corr rushing 0.759 · passing 0.561 · Runners kept +0.55 vs Pocket +0.22 · miss 2.36 vs 2.32
+  2012-2024: corr rushing 0.824 · passing 0.466 · Runners kept +1.17 vs Pocket -0.12 · miss 2.50 vs 2.28
+  without age in the line: Runners +0.84 · Pocket +0.08
+  biggest Runners drops: JaMarcus Russell 2008 -8.1, Mark Sanchez 2011 -6.7, Donovan McNabb 2002 -5.7, Derek Anderson 2007 -5.7, Steve McNair 1999 -5.5
+  biggest Runners gains: Kyler Murray 2019 +8.8, Cam Newton 2014 +7.7, Aaron Rodgers 2010 +7.4, Josh Allen 2019 +7.3, Carson Wentz 2016 +7.3
+[RQB] lock: prereg commit 0316a28cc7dd6d939d4c69c6c11c95a2d6e1b019 2026-10-04T07:55:04-07:00 · sha256 4862539f4b22a2ce · seed 20261004
