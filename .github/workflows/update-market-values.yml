@@ -68,6 +68,12 @@ jobs:
         continue-on-error: true
         run: python scripts/fetch-game-reads.py
 
+      # This season so far, for the cards' display-only Alpha / Workhorse line
+      # (4 Oct 2026). Nothing scored reads it; a failure must not block the nightly.
+      - name: Build season so far (cards)
+        continue-on-error: true
+        run: python scripts/fetch-season-so-far.py
+
       # Scorecard: grades DELTA's projections against real 2026 games and saves a
       # weekly snapshot of the live projections the first night each NFL week is
       # complete (never overwritten). Must never block the nightly data, so a
