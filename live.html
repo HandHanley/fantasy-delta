@@ -158,8 +158,11 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .bx td .z{color:var(--fog-2)}
 /* DELTA Read tables: four columns, a little wider, and the header may wrap to
    two lines ("PER / PLAY") rather than truncate. Still nothing scrolls sideways. */
-.bx.rd col.n{width:46px}
-.bx.rd th{white-space:normal;line-height:1.25;vertical-align:bottom}
+/* DELTA Read tables. Headers stay on ONE line — a first version wrapped "PER /
+   PLAY" and it read as "PLAY SUCCESS" (owner, 4 Oct). Player tables carry three
+   number columns, the team table three wider ones, so values never crowd. */
+.bx.rd col.n{width:54px}
+.bx.rd.tm col.n{width:68px}
 .rowb{padding:10px 0;border-bottom:1px solid var(--line)}
 .rowb:last-child{border-bottom:0}
 .statline{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:4px;
@@ -1790,8 +1793,8 @@ function renderRead(){
     return;
   }
 
-  const head = function(label, cols){
-    return '<table class="bx rd"><colgroup><col>' + cols.map(function(){ return '<col class="n">'; }).join('')
+  const head = function(label, cols, cls){
+    return '<table class="bx rd' + (cls ? ' ' + cls : '') + '"><colgroup><col>' + cols.map(function(){ return '<col class="n">'; }).join('')
       + '</colgroup><thead><tr><th class="p">' + label + '</th>'
       + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>';
   };
@@ -1800,7 +1803,7 @@ function renderRead(){
 
   // The offenses, side by side in one table.
   html += '<div class="hd"><span>Offense</span><span class="rule"></span></div>'
-    + '<div class="card">' + head('', ['PLAYS', 'PER PLAY', 'SUCCESS'])
+    + '<div class="card">' + head('', ['PLAYS', 'PER PLAY', 'SUCCESS'], 'tm')
     + g.teams.map(function(t, i){
         const v = r.t[keys[i]];
         return '<tr><td class="p"><span class="swatch" style="display:inline-block;margin-right:7px;background:'
@@ -1818,11 +1821,13 @@ function renderRead(){
     html += '<div class="hd"><span class="swatch" style="background:' + col + '"></span>'
       + '<span>' + esc(t.abbr) + '</span><span class="rule"></span></div>'
       + '<div class="card tinted" style="border-top-color:' + col + '">'
-      + head('', ['PLAYS', 'PER PLAY', 'SUCCESS', 'TOTAL'])
+      // No per-play column here: it is just Value divided by Plays, both of which
+      // are on the row. Dropping it gave the other three room to read (4 Oct).
+      + head('', ['PLAYS', 'SUCCESS', 'VALUE'])
       + rows.map(function(p){
           return '<tr><td class="p">' + (watched(p[0]) ? '<span class="trk">&#9733;</span> ' : '')
             + nameButton(p[0]) + '</td>'
-            + '<td>' + p[3] + '</td><td>' + sgn(p[4] / p[3], 2) + '</td>'
+            + '<td>' + p[3] + '</td>'
             + '<td>' + Math.round(100 * p[5] / p[3]) + '%</td>'
             + '<td>' + sgn(p[4], 1) + '</td></tr>';
         }).join('')
@@ -1833,7 +1838,8 @@ function renderRead(){
     + ' aria-expanded="' + S.readHelp + '">' + (S.readHelp ? '&#9652; How To Read This' : '&#9662; How To Read This')
     + '</button>'
     + (S.readHelp ? '<div class="sub" style="margin-top:8px;line-height:1.6">'
-        + 'Value is how much a play changed the offense\u2019s expected points (EPA). '
+        + 'Value is how much a player\u2019s plays changed his offense\u2019s expected points (EPA), added up. '
+        + 'Per play is that total divided by plays. '
         + 'A success is a play that added value. Every play counts, garbage time included. '
         + 'Passers are credited with every dropback, sacks and scrambles too; a completion counts for the passer and the target. '
         + 'Players are sorted by total value. Source: nflverse play-by-play, updated nightly.</div>' : '')
