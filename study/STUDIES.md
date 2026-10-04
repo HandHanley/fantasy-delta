@@ -86,7 +86,7 @@ found, misses included. Checked against the record before listing (method lesson
 | Study | The Question | Status |
 |---|---|---|
 | **The Price Calendar** | When in the dynasty year is each kind of player dearest, against a player priced the same? | **Ran 4 Oct.** Summer: nothing moves. Rookies gain on equally priced veterans from October (+20% Nov, +33% Apr). Aging veterans drop: RB 26+ and QB 32+ in October, WR 29+ in December (−15% to −22% by Jan–Apr). Second-Year and QB 32+ not shown. **Newsletter: Strong.** `docs/PREREG-price-calendar.md` · `study/out/report_price_calendar.txt` |
-| Does A Hot Streak Move Prices Too Far? | After a 3-game spike, does the price overshoot and fall back? | Idea. Must be price-matched (lesson 3) |
+| **Sell The Hot Streak?** | After three starter-level weeks from a player priced as a bench player, does his price fall back further than players priced the same? | **Pre-registered 4 Oct** — `docs/PREREG-hot-streak.md`, `scripts/hot-streak-study.py`. Awaiting lock. 179 streaks, 2021–25 |
 | A Receiver's QB Change | When a WR's quarterback changes, how much does his production move? | Idea. Doubles as the first test of the QB-quality adjustment |
 | What Is A Future First Worth? | Is the 1.01 worth two late firsts, by breakout odds? | Idea. Builds on the breakout-odds study |
 | **Are Running QBs A Safer Bet?** | Does a runner keep more points, and more predictably, than a pocket QB who scored the same? | **Ran 4 Oct: not shown, not shown.** Runners kept +0.75 points per start (range crosses zero) and were no steadier. Rushing repeats more (0.81 vs 0.55), but mostly by arithmetic. "Pay for the points, not the legs." **Newsletter: Strong** (myth-check). `docs/PREREG-qb-rushing.md` · `study/out/report_qb_rushing.txt` |
