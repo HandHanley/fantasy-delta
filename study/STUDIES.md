@@ -89,11 +89,12 @@ found, misses included. Checked against the record before listing (method lesson
 | Does A Hot Streak Move Prices Too Far? | After a 3-game spike, does the price overshoot and fall back? | Idea. Must be price-matched (lesson 3) |
 | A Receiver's QB Change | When a WR's quarterback changes, how much does his production move? | Idea. Doubles as the first test of the QB-quality adjustment |
 | What Is A Future First Worth? | Is the 1.01 worth two late firsts, by breakout odds? | Idea. Builds on the breakout-odds study |
-| **Are Running QBs A Safer Bet?** | Does a runner keep more points, and more predictably, than a pocket QB who scored the same? | **Pre-registered 4 Oct** — `docs/PREREG-qb-rushing.md`, `scripts/qb-rushing-study.py`. Awaiting lock. Note: the popular "rushing is stickier" correlation is partly arithmetic — see §3 |
+| **Are Running QBs A Safer Bet?** | Does a runner keep more points, and more predictably, than a pocket QB who scored the same? | **Ran 4 Oct: not shown, not shown.** Runners kept +0.75 points per start (range crosses zero) and were no steadier. Rushing repeats more (0.81 vs 0.55), but mostly by arithmetic. "Pay for the points, not the legs." **Newsletter: Strong** (myth-check). `docs/PREREG-qb-rushing.md` · `study/out/report_qb_rushing.txt` |
 | Do Easy Schedules Fool Us? | Do points against weak defenses carry into the next stretch? | Idea. nflverse data in hand |
 | The Payday Dip | Do players produce less after a big second contract? | Idea. **Needs historical contracts** — not confirmed available |
 | When Does Usage Become Real? | How many games until target share stops bouncing? | Already in backlog §8 (usage stabilisation) |
 | Does Landing Spot Matter? | Beyond draft slot, does the offense a rookie joins change his odds? | Queued last on the 29 Sep outside review; never run |
+| Calendar Forward Check | Does the price calendar hold in **real trades** (FantasyCalc, DELTA's own nightly archive since 19 Apr 2026) and in a season it never saw? Plus a 1QB version | Idea, **later (owner, 4 Oct)**. Completes May 2027. Disclose: a few current values were printed while checking the archive's structure |
 | The TE Year-3 Breakout | Do tight ends really break out later than receivers? | Idea. Partly covered by the breakout-odds study |
 
 **Off the list on purpose:** anything that would measure or label injury-proneness.
