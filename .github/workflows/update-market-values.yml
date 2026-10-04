@@ -61,6 +61,13 @@ jobs:
       - name: Fetch game logs + snap counts
         run: python scripts/fetch-game-logs.py
 
+      # DELTA Read of a finished game, for live.html only (4 Oct 2026). Display
+      # data: nothing in the engine or the freeze reads it. Must never block the
+      # nightly data, so a failure here writes nothing and the rest still commits.
+      - name: Build game reads (Live)
+        continue-on-error: true
+        run: python scripts/fetch-game-reads.py
+
       # Scorecard: grades DELTA's projections against real 2026 games and saves a
       # weekly snapshot of the live projections the first night each NFL week is
       # complete (never overwritten). Must never block the nightly data, so a
