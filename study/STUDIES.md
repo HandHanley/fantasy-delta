@@ -85,11 +85,11 @@ found, misses included. Checked against the record before listing (method lesson
 
 | Study | The Question | Status |
 |---|---|---|
-| **The Price Calendar** | When in the dynasty year is each kind of player dearest, against a player priced the same? | **Pre-registered 3 Oct** — `docs/PREREG-price-calendar.md`, `scripts/price-calendar-study.py`. Awaiting lock |
+| **The Price Calendar** | When in the dynasty year is each kind of player dearest, against a player priced the same? | **Ran 4 Oct.** Summer: nothing moves. Rookies gain on equally priced veterans from October (+20% Nov, +33% Apr). Aging veterans drop: RB 26+ and QB 32+ in October, WR 29+ in December (−15% to −22% by Jan–Apr). Second-Year and QB 32+ not shown. **Newsletter: Strong.** `docs/PREREG-price-calendar.md` · `study/out/report_price_calendar.txt` |
 | Does A Hot Streak Move Prices Too Far? | After a 3-game spike, does the price overshoot and fall back? | Idea. Must be price-matched (lesson 3) |
 | A Receiver's QB Change | When a WR's quarterback changes, how much does his production move? | Idea. Doubles as the first test of the QB-quality adjustment |
 | What Is A Future First Worth? | Is the 1.01 worth two late firsts, by breakout odds? | Idea. Builds on the breakout-odds study |
-| Is Rushing QB Production More Reliable? | Do rushing points repeat year to year better than passing points? | Idea. nflverse data in hand |
+| **Are Running QBs A Safer Bet?** | Does a runner keep more points, and more predictably, than a pocket QB who scored the same? | **Pre-registered 4 Oct** — `docs/PREREG-qb-rushing.md`, `scripts/qb-rushing-study.py`. Awaiting lock. Note: the popular "rushing is stickier" correlation is partly arithmetic — see §3 |
 | Do Easy Schedules Fool Us? | Do points against weak defenses carry into the next stretch? | Idea. nflverse data in hand |
 | The Payday Dip | Do players produce less after a big second contract? | Idea. **Needs historical contracts** — not confirmed available |
 | When Does Usage Become Real? | How many games until target share stops bouncing? | Already in backlog §8 (usage stabilisation) |
