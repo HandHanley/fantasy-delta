@@ -70,6 +70,19 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .stamp{font-family:var(--mono);font-size:10.5px;color:var(--fog);white-space:nowrap}
 .back{background:transparent;border:0;color:var(--teal-br);font-size:17px;line-height:1;
       padding:8px 10px 8px 0;margin:-8px 0;text-decoration:none;display:inline-block}
+/* INSIDE A GAME THE HEADER STRIP STAYS PINNED, so back is one tap away however
+   far down the box score or play log you are. A solid strip, not a floating
+   button: a button in the corner sat over the player names and plays that run
+   down the left edge. The negative margins cancel the body's padding so the
+   strip spans the full width and content cannot show past its ends, and the
+   page lays out exactly as it did unpinned. The shadow fills the notch strip
+   above it, where content would otherwise scroll through under the clock.
+   The rule under it only appears once the page has scrolled. The list screen
+   is left as it was. */
+.top.pin{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);
+         margin:-14px -12px 2px;padding:14px 12px 9px;border-bottom:1px solid transparent;
+         box-shadow:0 calc(-1 * env(safe-area-inset-top,0px)) 0 var(--ink)}
+.top.pin.lift{border-bottom-color:var(--line)}
 
 .tabs{display:flex;gap:8px;margin-bottom:12px}
 .tab{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--fog);
@@ -1806,6 +1819,7 @@ function render(){
   else if(S.view === 'game') renderGame();
   else if(S.view === 'plays') renderPlays();
   else renderBox();
+  document.querySelector('.top').classList.toggle('pin', S.view !== 'list');
 
   document.getElementById('stamp').textContent =
     ago(S.view === 'list' ? S.at[S.league] : (S.gameAt || S.at[S.league]));
@@ -2054,7 +2068,10 @@ document.addEventListener('click', async function(ev){
     // The tabs move between Live and Box Score, so back always means "out".
     S.view = 'list'; S.gameId = null; S.game = null; S.solo = null; S.soloOk = null;
     delete S.fc.scoreFrom;
-    render(); schedule(); return;
+    render(); schedule();
+    // Back lands on the game you opened, not wherever the game screen was scrolled.
+    window.scrollTo(0, S.listY || 0);
+    return;
   }
   const card = t.closest ? t.closest('[data-id]') : null;
   if(card){
@@ -2063,6 +2080,7 @@ document.addEventListener('click', async function(ev){
     S.playsOpen = false;
     S.playsQ = null;
     S.from = 'list';
+    S.listY = window.scrollY || 0;
     // A finished game has no clock, no possession and no last play worth
     // reading — the follow-along screen would only repeat the card just tapped.
     // Go straight to the numbers. Live and upcoming games still land on the
@@ -2070,6 +2088,7 @@ document.addEventListener('click', async function(ev){
     const g0 = findGame();
     S.view = (g0 && g0.state === 'post') ? 'box' : 'game';
     render(); schedule();
+    window.scrollTo(0, 0);
     await loadGame();
   }
 });
@@ -2084,6 +2103,10 @@ document.addEventListener('input', function(ev){
   if(searchQ() && !S.full.cfb && S.fullState !== 'loading') loadFull();
   else schedule();
 });
+
+function liftTop(){ document.querySelector('.top').classList.toggle('lift', (window.scrollY || 0) > 0); }
+window.addEventListener('scroll', liftTop, { passive: true });
+liftTop();
 
 render();
 loadList();
