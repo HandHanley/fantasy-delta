@@ -130,3 +130,70 @@ picture side by side. **No engine change.**
 ## Amendments
 
 *(none)*
+
+---
+
+## Result (4 October 2026) — Don't Sell The Streak: Prices Kept Climbing (And A Flaw Found After The Run)
+
+Run once, `python3 scripts/hot-streak-study.py --run`, against this file as committed in `e57f579`
+(sha256 prefix `0483a95bad454f71`, printed by the run). Nothing above this section was changed after the run.
+Full output, including the check below: `study/out/report_hot_streak.txt`.
+
+### As Locked
+
+| Test | Gap vs Players Priced The Same | 97.5% Range | Halves (2021–23 / 2024–25) | Verdict |
+|---|---|---|---|---|
+| **Season over** (mid-Jan) | **+38.6%** | +27.5% to +50.4% | +33.3% / +48.6% | **SHOWN — positive** |
+| **Next preseason** (mid-Aug) | **+51.6%** | +34.8% to +71.4% | +50.5% / +53.7% | **SHOWN — positive** |
+
+**Prediction (§7): wrong, and in direction.** I predicted nothing at season's end and a small give-back by preseason.
+Instead the streak players' prices kept **rising** against players priced the same — "hold", not "sell" (§4).
+
+### A Flaw In The Comparison, Found After The Run — Corrected Numbers Below Are NOT Pre-Registered
+
+**What was wrong.** §4's pool dropped every player with a streak **at any point that season** — including streaks
+that came *after* the comparison date. A player priced the same in Week 5 who went on a run in Weeks 9–11 was thrown
+out of the pool for something that had not happened yet, so the pool leaned toward players who did nothing for the
+rest of the year. The crash tests could not catch this: their random prices ignored who streaked.
+
+**The check.** `scripts/hot-streak-lookahead-check.py` reruns the locked script with that one rule changed. It
+reproduces the locked numbers exactly first, then:
+
+| Pool | Season Over | Next Preseason | Verdict Under §4's Rules |
+|---|---|---|---|
+| As locked (excludes any streak, any time) | +38.6% | +51.6% | SHOWN / SHOWN |
+| **Fixed: excludes only streaks already over by that date** | **+29.2%** (+19.1% to +39.5%) | **+35.3%** (+20.3% to +51.9%) | SHOWN / SHOWN |
+| Excludes only the 179 streak players | +30.3% (+20.1% to +41.4%) | +28.7% (+14.8% to +44.8%) | SHOWN / SHOWN |
+
+**The flaw inflated the result by about 9–16 points (locked vs fixed); the conclusion survives every version.** The article should
+use the **fixed** numbers — about **+30% by season's end, +30–35% by the next preseason** — and say how they were
+arrived at.
+
+### What It Says, Plainly
+
+- **The market under-reacts to a hot streak, it doesn't over-react.** The price jumped during the streak (median
+  +31%, raw) and then kept climbing against equally priced players for months. Selling right after the third game
+  sold early, on average.
+- **The points mostly lasted.** Points per game before · during · rest of season · next season (reported only):
+  QB 14.3 · 23.2 · 17.1 · 15.5 — RB 7.3 · 16.7 · 11.0 · 9.4 — WR 8.6 · 17.4 · 10.5 · 9.4 — TE 7.1 · 15.6 · 10.0 · 9.4.
+  The streak itself was not repeatable, but the player kept scoring well above where he was before it.
+- **Every season, every position, every group pointed the same way** (as locked, reported only; season over):
+  QB +48.6% · RB +37.4% · WR +31.6% · TE +42.8%; Rookies +47.1% · Second-Year +52.4% · Aging +36.9% · Other +34.0%;
+  2022 the weakest year (+24.6%), 2024 the strongest (+62.9%).
+- **Averages hide busts.** Biggest give-backs by the next preseason: James Robinson 2022, Clyde Edwards-Helaire 2022,
+  Zack Moss 2021, Desmond Ridder 2023, Alexander Mattison 2023 (−64% to −80%). Biggest gains: Bucky Irving 2024,
+  Chase Brown 2024, Dalton Schultz 2021, Geno Smith 2022, Josh Jacobs 2022. (Locked-pool figures.)
+
+### Limits, Restated
+
+- **Rankings, not trades.** Expert rankings may simply update slowly; part of the "kept climbing" could be rankers
+  catching up rather than the trade market rising. The Calendar Forward Check (FantasyCalc trades, `STUDIES.md`)
+  could test this from 2026 on.
+- The fixed numbers are an after-the-run correction. They answer "how much did the flaw matter", not a fresh test.
+
+### Method Lesson
+
+**Every filter on a comparison group must use only what was known on the comparison date.** Excluding a player for
+something he did later quietly picks the pool by its future. Check every exclusion rule for this before lock.
+
+**What it leads to:** the newsletter article (§8), with the flaw disclosed. No engine change.
