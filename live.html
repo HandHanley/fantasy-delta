@@ -75,13 +75,18 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
    button: a button in the corner sat over the player names and plays that run
    down the left edge. The negative margins cancel the body's padding so the
    strip spans the full width and content cannot show past its ends, and the
-   page lays out exactly as it did unpinned. The shadow fills the notch strip
-   above it, where content would otherwise scroll through under the clock.
+   page lays out exactly as it did unpinned. On a phone the strip runs all the
+   way up under the clock and battery: the margin also cancels the notch
+   padding on :root and the padding puts it back inside the strip, so the text
+   sits where it always did but the strip's own background covers the notch.
+   (A first version stopped below the notch and filled it with a box-shadow;
+   content still showed through the gap on an iPhone, 4 Oct.)
    The rule under it only appears once the page has scrolled. The list screen
    is left as it was. */
-.top.pin{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);
-         margin:-14px -12px 2px;padding:14px 12px 9px;border-bottom:1px solid transparent;
-         box-shadow:0 calc(-1 * env(safe-area-inset-top,0px)) 0 var(--ink)}
+.top.pin{position:sticky;top:0;z-index:20;background:var(--ink);
+         margin:calc(-14px - env(safe-area-inset-top,0px)) -12px 2px;
+         padding:calc(14px + env(safe-area-inset-top,0px)) 12px 9px;
+         border-bottom:1px solid transparent}
 .top.pin.lift{border-bottom-color:var(--line)}
 
 .tabs{display:flex;gap:8px;margin-bottom:12px}
