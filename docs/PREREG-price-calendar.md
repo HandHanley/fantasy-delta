@@ -132,3 +132,46 @@ reporting every group and window as found, including the ones that are not shown
 ## Amendments
 
 *(none)*
+
+---
+
+## Result (4 October 2026) — Rookies Gain, Aging Veterans Fall Off A Mid-Season Cliff
+
+Run once, `python3 scripts/price-calendar-study.py --run`, against this file as committed in `23493df`
+(sha256 prefix `706bd52a80b60f63`, printed by the run). Nothing above this section was changed after the run.
+Full output: `study/out/report_price_calendar.txt`.
+
+**Price-matched gap** — how far the group moved against players who started the year at the same price:
+
+| Group | Aug | Nov | Jan | Apr | Calendar? |
+|---|---|---|---|---|---|
+| **Rookie** | +1.9% | **+19.9%** | **+27.6%** | **+32.7%** | **Yes — rises from October on** |
+| Second-Year | +1.2% | +5.3% | +6.3% | +11.8% | Not shown |
+| **RB 26+** | −2.6% | −9.1% *(range just crosses zero)* | **−15.1%** | **−21.9%** | **Yes — falls from October on** |
+| **WR 29+** | −3.5% | −3.5% | **−20.2%** | −24.3% *(3 of 4 years)* | **Yes — falls in December** |
+| QB 32+ | −0.9% | −15.9% | −15.0% | −24.2% | Not shown — 17 players, too few |
+
+Bold = SHOWN (≥5%, 99% range excludes zero, same direction in 4 of 5 years or 4 of 4).
+
+**Predictions (§7):** two of six right. Rookies were **not** dearer in August, and were **far dearer, not cheaper,
+by April**. Second-Year showed nothing. RB 26+ fell as predicted. WR 29+ was predicted "not shown" and fell clearly.
+QB 32+ was not shown, as predicted, though its averages point the same way as the aging RBs and WRs.
+
+**What it says, plainly:**
+
+- **Nothing moves in the summer.** From May to August every group stays within 3.5% of veterans priced the same.
+  The calendar is set by the **season**, not the offseason — rookies start pulling away in September (+7.0%).
+- **Aging veterans don't fade — they drop.** The month-by-month calendar (reported only) shows the step: RB 26+
+  −2.7% in September to −11.0% in October; QB 32+ −2.6% to −17.5% in the same month; WR 29+ −3.5% in November to
+  −16.8% in December. **The window to move an aging veteran closes about a month into the season** (RBs and QBs) or
+  just before the playoffs (WRs).
+- **Rookies climb against veterans all season**, every year: November +2% to +30%, January +13% to +39%. The
+  weakest year was the 2024 class (Nov +1.7%, Apr +3.9%).
+- **In raw price (not price-matched, reported only)** rookies peak in **January–February** (+23% on May) and give
+  back about 10 points by mid-April. Price-matched they keep rising because everyone else falls further in spring.
+
+**Limits, restated:** rankings (FantasyPros consensus turned into values), not trade prices — the rookie rise may
+partly be how rankers fold rookies in over a season, which this study cannot separate. Five years. Small
+QB 32+ and WR 29+ groups. Gaps are measured on `L`, which reads small moves on cheap players a little low.
+
+**What it leads to:** the newsletter article (§8). No engine change.
