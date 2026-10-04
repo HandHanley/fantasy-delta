@@ -149,3 +149,42 @@ A newsletter article — working title **"What Is A Future First Worth?"** — w
 ## Amendments
 
 *(none)*
+
+---
+
+## Result (4 October 2026) — Not Shown: One Early First Is Worth About Two Late Firsts
+
+Run once, `python3 scripts/future-first-study.py --run`, against this file as committed in `1ecc3f3`
+(sha256 prefix `2c51a49ed5bf08f0`, printed by the run). Nothing above this section was changed after the run.
+Full output: `study/out/report_future_first.txt`.
+
+| Test | Early 1st | Late 1st | D = Early − 2 × Late (95% Range) | Halves (2014–18 / 2019–23) | Verdict |
+|---|---|---|---|---|---|
+| **Starter-level seasons, years 1–3** | 1.60 | 0.75 | **+0.10** (−0.60 to +0.75) | −0.30 / +0.50 | **Not shown** |
+| Elite seasons (reported) | 0.90 | 0.38 | +0.15 (−0.43 to +0.70) | +0.05 / +0.25 | Not shown |
+| Without the 2016 class (reported) | 1.69 | 0.81 | +0.08 (−0.61 to +0.75) | −0.44 / +0.50 | Not shown |
+
+**Predictions (§7):** "not shown, early near 2× late, D between −0.5 and +0.5" — **right** (2.1×, +0.10). "Early firsts
+look much better on elite seasons" — **mostly wrong**: 2.4× against 2.1×, a little better, not much.
+
+**What it says, plainly:**
+
+- **One early first ≈ two late firsts.** An early first gave 1.60 starter-level seasons in years 1–3; two late firsts
+  gave 1.50. Stars barely change it (elite seasons: 0.90 against 0.76). **The common trade is about fair.** The two
+  halves disagree in sign (−0.30 / +0.50), which is what "about fair" looks like.
+- **The 1.01 stands apart:** 2.3 starter seasons on average and **10 of 10** had at least one. 1.02: 1.7, 8 of 10.
+  Then it flattens — 1.03 (1.1) and 1.04 (1.3) look like mid-firsts (1.05–1.08: 0.7 to 1.2).
+- **The curve, by tier** (starter seasons · at least one · elite): Early 1st 1.60 · 75% · 0.90 — Mid 1st 1.00 · 57%
+  · 0.42 — Late 1st 0.75 · 48% · 0.38 — 2nd round 0.53 · 32% · 0.24 — 3rd round 0.28 · 22% · 0.13.
+- **A future first, any slot:** 1.12 starter seasons on average; **60%** gave at least one in three years. By class
+  it ranged from 0.67 (2016) to 1.50 (2020).
+- **By position (first-rounders):** RB 1.32 (n 50) · WR 1.08 (n 50) · QB 0.71 (n 14) · TE 0.67 (n 6). Backs pay off
+  sooner; the three-year window undercounts receivers who peak later. QBs here are 1QB-format picks.
+- **Superflex order (DynastyProcess, 2020–23, reported only):** Early 1.69, Late 1.19 (16 picks each) — too few to
+  grade, as §4 said; one half has no classes, so its "halves" figure is blank.
+
+**Limits, restated:** mock drafts, 1QB, late summer; three seasons only; starter seasons add up across two players
+more easily than real lineups do. The test could only have confirmed a gap of roughly 3.5× or more (§5) — the answer
+it found, about 2×, sits squarely in the range it reads as "about fair".
+
+**What it leads to:** the newsletter article (§8). No engine change.
