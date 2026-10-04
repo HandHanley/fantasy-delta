@@ -1,0 +1,36 @@
+=== LOCKED RUN: python3 scripts/hot-streak-study.py --run ===
+[HOT] streaks found, 2021-2025 (first per player-season): 391  ·  dropped: {'no fp id': 0, 'no before snapshot': 0, 'unpriced before': 1, 'not cheap': 211, 'no after snapshot': 0}
+[HOT] unexpected streaks kept: 179 from 142 players
+[HOT] by season: {2021: 39, 2022: 35, 2023: 40, 2024: 31, 2025: 34} · by position: {'QB': 37, 'RB': 63, 'TE': 26, 'WR': 53}
+[HOT] streak players who are Rookies 20 · Second-Year 25 · Aging 48 · unknown draft year 0
+[HOT] horizon snapshots: {'2021 H1': '2022-01-14', '2021 H2': '2022-08-12', '2022 H1': '2023-01-15', '2022 H2': '2023-08-18', '2023 H1': '2024-01-12', '2023 H2': '2024-08-16', '2024 H1': '2025-01-17', '2024 H2': '2025-08-15', '2025 H1': '2026-01-16', '2025 H2': '2026-08-14'}
+[HOT] days before first game: median 6, max 6  ·  days after third game: median 4, max 4
+  e.g. 2024: Nick Westbrook-Ikhine (WR149, wks 11-13); Cedric Tillman (WR97, wks 7-9); Kareem Hunt (RB82, wks 5-8); Darnell Mooney (WR64, wks 8-10); Jerry Jeudy (WR58, wks 11-13); Courtland Sutton (WR52, wks 6-9); Rico Dowdle (RB51, wks 12-14); Chuba Hubbard (RB51, wks 3-5)
+[HOT] RESULT — streak players vs players priced the same right after the streak
+  Season over (mid-Jan)      n 179 (142 players)  gap  +38.6%  97.5% range +27.5% to +50.4%  halves +33.3% / +48.6%  SHOWN
+  Next preseason (mid-Aug)   n 179 (142 players)  gap  +51.6%  97.5% range +34.8% to +71.4%  halves +50.5% / +53.7%  SHOWN
+[HOT] reported only:
+  spike during the streak (raw, before -> after snapshot): median +31.4%, mean +38.0%
+  Season over (mid-Jan) by position: QB +48.6% (n 37), RB +37.4% (n 63), WR +31.6% (n 53), TE +42.8% (n 26)
+  Season over (mid-Jan) by group:    Rookie +47.1% (n 20), Second-Year +52.4% (n 25), Aging +36.9% (n 48), Other +34.0% (n 86)
+  Season over (mid-Jan) by season:   2021 +37.6%, 2022 +24.6%, 2023 +36.9%, 2024 +62.9%, 2025 +36.7%
+  Next preseason (mid-Aug) by position: QB +87.5% (n 37), RB +34.1% (n 63), WR +53.6% (n 53), TE +47.0% (n 26)
+  Next preseason (mid-Aug) by group:    Rookie +92.0% (n 20), Second-Year +73.0% (n 25), Aging +43.5% (n 48), Other +42.5% (n 86)
+  Next preseason (mid-Aug) by season:   2021 +62.3%, 2022 +39.5%, 2023 +49.3%, 2024 +65.3%, 2025 +43.8%
+  points per game (reported only) — before streak · during · rest of season (3+ games) · next season (6+ games):
+    QB: 14.3 · 23.2 · 17.1 (n 37) · 15.5 (n 24)
+    RB: 7.3 · 16.7 · 11.0 (n 61) · 9.4 (n 49)
+    WR: 8.6 · 17.4 · 10.5 (n 48) · 9.4 (n 41)
+    TE: 7.1 · 15.6 · 10.0 (n 25) · 9.4 (n 18)
+  biggest give-backs by next preseason: James Robinson 2022 -80.4%, Clyde Edwards-Helaire 2022 -74.8%, Zack Moss 2021 -66.0%, Desmond Ridder 2023 -64.2%, Alexander Mattison 2023 -63.5%
+  biggest further gains:                 Bucky Irving 2024 +578.4%, Chase Brown 2024 +555.6%, Dalton Schultz 2021 +513.3%, Geno Smith 2022 +488.9%, Josh Jacobs 2022 +454.5%
+[HOT] lock: prereg commit e57f57926d9221e0058e7ea59b67bc62a4dcdb7d 2026-10-04T09:46:03-07:00 · sha256 0483a95bad454f71 · seed 20261005
+
+=== AFTER THE RUN, NOT PRE-REGISTERED: python3 scripts/hot-streak-lookahead-check.py ===
+[DIAG] after the locked run — not pre-registered
+  LOCKED (excludes any streak, any time)       Season over (mid-Jan)      gap  +38.6%  range +27.5% to +50.4%  halves +33.3%/+48.6%  SHOWN
+  LOCKED (excludes any streak, any time)       Next preseason (mid-Aug)   gap  +51.6%  range +34.8% to +71.4%  halves +50.5%/+53.7%  SHOWN
+  FIXED (excludes only streaks already over)   Season over (mid-Jan)      gap  +29.2%  range +19.1% to +39.5%  halves +23.1%/+40.7%  SHOWN
+  FIXED (excludes only streaks already over)   Next preseason (mid-Aug)   gap  +35.3%  range +20.3% to +51.9%  halves +31.5%/+42.4%  SHOWN
+  EVERYONE (excludes only the streak players)  Season over (mid-Jan)      gap  +30.3%  range +20.1% to +41.4%  halves +27.1%/+36.0%  SHOWN
+  EVERYONE (excludes only the streak players)  Next preseason (mid-Aug)   gap  +28.7%  range +14.8% to +44.8%  halves +27.1%/+31.5%  SHOWN
