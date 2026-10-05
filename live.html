@@ -166,8 +166,13 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .rdcmp b{color:var(--paper);font-family:var(--mono);font-weight:600}
 .rdbig{font-size:17px}
 .rdtier{font-size:10px;color:var(--fog);margin-top:2px;font-family:var(--sans);letter-spacing:.02em}
-.bx.rd + .bx.rd{margin-top:14px}
-.bx.rd th.p{white-space:normal;text-transform:none;letter-spacing:.02em}
+.bx.rd th.p{white-space:normal;text-transform:none;letter-spacing:0}
+/* Group headings: what position, what measure, what it means — three lines, three weights. */
+.bx.rd thead th{padding-top:4px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.bx.rd + .bx.rd{margin-top:22px}
+.rdgrp{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--paper);letter-spacing:.01em}
+.rdmeas{font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--teal-br);margin-top:2px}
+.rddesc{font-family:var(--sans);font-size:10.5px;font-weight:400;color:var(--fog);margin-top:1px}
 .rdsub{font-size:10.5px;color:var(--fog-2);font-weight:400;margin-top:2px}
 .rowb{padding:10px 0;border-bottom:1px solid var(--line)}
 .rowb:last-child{border-bottom:0}
@@ -1795,9 +1800,11 @@ function sgn(v, dp){ const t = Math.abs(v).toFixed(dp); return (Number(t) === 0 
      WR / TE  yards per route run, estimated from snaps — 2025 uses the same
      estimate, so the two are like for like. */
 const READ_GROUPS = [
-  { pos:['QB'],      label:'Quarterback',  measure:'EPA Per Dropback', unit:'dropbacks', fmt:function(v){ return sgn(v, 2); } },
-  { pos:['RB'],      label:'Running Backs', measure:'EPA Per Carry',   unit:'carries',   fmt:function(v){ return sgn(v, 2); } },
-  { pos:['WR','TE'], label:'Receivers',     measure:'Yards Per Route Run (Est.)', unit:'routes (est.)', fmt:function(v){ return v.toFixed(2); } }
+  /* desc: one plain line saying what the number is, so the three different measures
+     can't be mistaken for one another (owner, 4 Oct: "hard to discern what I'm looking at"). */
+  { pos:['QB'],      label:'Quarterbacks', measure:'EPA Per Dropback', desc:'Points added per pass play, on average', unit:'dropbacks', fmt:function(v){ return sgn(v, 2); } },
+  { pos:['RB'],      label:'Running Backs', measure:'EPA Per Carry',   desc:'Points added per run, on average',       unit:'carries',   fmt:function(v){ return sgn(v, 2); } },
+  { pos:['WR','TE'], label:'Receivers',     measure:'Yards Per Route Run', desc:'Receiving yards each time he runs a route (routes estimated)', unit:'routes (est.)', fmt:function(v){ return v.toFixed(2); } }
 ];
 function readTier(pos, v, n){
   const c = S.reads && S.reads.tiers && S.reads.tiers[pos];
@@ -1835,8 +1842,9 @@ function renderRead(){
       if(!rows.length) return;
       const yr = S.reads.season, dash = '\u2014';
       body += '<table class="bx rd"><colgroup><col><col class="w"></colgroup>'
-        + '<thead><tr><th class="p">' + grp.label + ' \u00b7 ' + grp.measure + '</th>'
-        + '<th>THIS GAME</th></tr></thead><tbody>'
+        + '<thead><tr><th class="p"><div class="rdgrp">' + grp.label + '</div>'
+        + '<div class="rdmeas">' + grp.measure + '</div><div class="rddesc">' + grp.desc + '</div></th>'
+        + '<th>THIS<br>GAME</th></tr></thead><tbody>'
         + rows.map(function(p){
             const t = readTier(p[2], p[3], p[4]);
             return '<tr><td class="p">' + (watched(p[0]) ? '<span class="trk">&#9733;</span> ' : '')
