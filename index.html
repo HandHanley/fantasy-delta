@@ -4496,8 +4496,12 @@ function renderDeck(p){
   const dispTeam=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
   const adjProj=getAdjProj(p);
   const projClr=projChipColor(adjProj,p.pos);
-  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>${ctHtml}`;
-  const projChip=`<span style="display:inline-flex;align-items:center;gap:4px;background:${projClr}22;border:1px solid ${projClr}66;border-radius:5px;padding:1px 7px"><b style="color:${projClr};font-size:13px">${adjProj.toFixed(1)}</b><span style="font-size:9px;color:var(--fog)">proj PPG</span></span>`;
+  // Top row stays short so it fits beside the photo; the contract moved to the full-width line below.
+  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>`;
+  // Plain text, no box. The old chip built its fill and border as "var(--emerald)22" — not
+  // valid CSS, so the browser dropped both and left only the padding, which read as a stray
+  // indent under the photo (4 Oct 2026).
+  const projChip=`<span style="display:inline-flex;align-items:baseline;gap:5px"><b style="color:${projClr};font-size:14px">${adjProj.toFixed(1)}</b><span style="font-size:10px;color:var(--fog)">proj PPG</span></span>`;
   const bgParts=[];
   if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
   if(dp) bgParts.push(`<span>${dp.y} Rd${dp.r} Pick ${dp.p}</span>`);
@@ -4507,13 +4511,18 @@ function renderDeck(p){
   if(metaEl){
     // Remove EVERY extra row from the previous card (dd-meta-2, -3, -4 …). The old list named only
     // 2 and 3; a third extra row (the Preseason · Now · Actual line) was left behind on every redraw.
-    document.querySelectorAll('[id^="dd-meta-"]').forEach(ex=>ex.remove());
+    // The extra rows live in their own full-width box under the top row; emptying the box
+    // clears the previous player's rows in one step.
+    const more=document.getElementById('dd-meta-more'); more.innerHTML='';
     const rows=[];
-    if(bgParts.length) rows.push(bgParts.join(''));
-    rows.push(projChip);
+    rows.push([ctHtml].concat(bgParts).join('<span style="color:var(--fog-2)">\u00b7</span>'));
+    // Projection on the left, Full Profile on the right: the button moved here from the top
+    // row, where it squeezed the name onto two lines on a phone.
+    rows.push('<span style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:10px">'+projChip
+      +'<a id="dd-fullpage" href="player.html?name='+encodeURIComponent(p.n)+'" title="Open full page" '
+      +'style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full Profile</a></span>');
     rows.push('<span id="dd-pctx" data-name="'+scEsc(p.n)+'"></span>');   // Preseason · Now · Actual — filled below
-    let anchor=metaEl;
-    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop='2px'; d.innerHTML=html; anchor.parentNode.insertBefore(d, anchor.nextSibling); anchor=d; });
+    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop=idx?'6px':'0'; d.innerHTML=html; more.appendChild(d); });
     // Preseason · Now · Actual: needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
       const el=document.getElementById('dd-pctx'); if(!el||el.dataset.name!==p.n) return;
@@ -5511,9 +5520,15 @@ document.addEventListener('click', function(e) {
 
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
   <div class="dd-card" id="dd-card" data-player="">
-    <div class="dd-header">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-        <img id="dd-headshot" src="" alt="" width="56" height="56"
+    <!-- HEADER, TWO PARTS (4 Oct 2026). Top: photo, name, position / team / age, and
+         the buttons — one tidy row. Below it, full width: contract, college, draft,
+         projection and the Preseason line. Before, all of that sat in a narrow
+         column beside the photo, wrapping word by word on a phone with the photo
+         floating in the middle of it (owner: "looks weird"). -->
+    <div class="dd-header" style="display:block">
+      <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <img id="dd-headshot" src="" alt="" width="52" height="52"
           style="border-radius:50%;object-fit:cover;border:2px solid var(--line);
                  background:var(--panel);flex-shrink:0;display:none;cursor:pointer;
                  box-shadow:0 2px 10px rgba(0,0,0,.5)"
@@ -5527,14 +5542,12 @@ document.addEventListener('click', function(e) {
               style="cursor:pointer;font-size:15px;line-height:1;color:var(--fog-2);flex-shrink:0;align-self:baseline">&#9734;</span>
           </div>
           <div class="dd-meta" id="dd-meta"></div>
-          <div id="dd-college"></div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:9px;flex-shrink:0">
-        <a id="dd-fullpage" href="#" title="Open full page"
-           style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full profile</a>
-        <button class="dd-close" onclick="closeDeckNow()">✕</button>
+      <button class="dd-close" onclick="closeDeckNow()" style="align-self:flex-start">✕</button>
       </div>
+      <div id="dd-meta-more" style="margin-top:10px"></div>
+      <div id="dd-college"></div>
     </div>
     <div class="dd-body" id="dd-body"></div>
   </div>
