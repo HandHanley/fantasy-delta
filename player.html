@@ -47,6 +47,24 @@ a:hover{text-decoration:underline}
   #tab-nfl,#tab-cfb{column-count:2;column-gap:16px}
   #tab-nfl > *,#tab-cfb > *{break-inside:avoid;display:inline-block;width:100%;margin-bottom:16px}
   #tab-nfl > .pp-span,#tab-cfb > .pp-span{column-span:all;display:block}
+  /* THE TOP FOUR ARE A GRID, NOT COLUMNS (4 Oct 2026). In the column flow the
+     DELTA Score + season stats stacked on one side and The Read + Start Profile
+     on the other, so the two sides ended at different heights (owner: "the boxes
+     aren't aligned"). Paired in rows — Score beside The Read, stats beside Start
+     Profile — each pair now shares a top and a bottom. Markup order is unchanged,
+     so phones (one column, below 1000px) see exactly what they did. */
+  #tab-nfl > .pp-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:"ds read" "stat start";gap:16px;align-items:stretch}
+  .pp-top > .pt-ds{grid-area:ds} .pp-top > .pt-read{grid-area:read}
+  .pp-top > .pt-stat{grid-area:stat} .pp-top > .pt-start{grid-area:start}
+  .pp-top > div{display:flex;flex-direction:column;min-width:0}
+  .pp-top > div > *:last-child{flex:1;margin-bottom:0 !important}
+  /* The season stats had a loose label above a bare box, so the box started lower
+     than Start Profile beside it. On desktop the whole block sits in a card, so
+     both cards share a top as well as a bottom. */
+  .pp-top #statline-host{display:flex;flex-direction:column;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .pp-top #statline-host > *:last-child{flex:1}
 }
 .foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
 .foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
@@ -786,8 +804,8 @@ function buildOpportunityHTML(p) {
       </div>
       <div style="font-size:32px;font-weight:800;line-height:1;color:${scC}">${oppSc}</div>
     </div>
+    ${oppSoFarSlot(p)}
     ${usageRows}
-    ${oppSoFarSlot(p, 'bdr-row')}
     <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--panel)">
       ${buildSchemeHTML(p)}
     </div>
@@ -1424,10 +1442,12 @@ function _renderPlayerPage(p) {
     ${buildHeroHTML(p)}
     <div id="tabstrip">${buildTabsHTML()}</div>
     <div id="tab-nfl"${_TAB==='nfl'?'':' style="display:none"'}>
-    ${buildDSBreakdownHTML(p)}
-    ${buildStatLineHTML(p)}
-    ${buildReadHTML(p)}
-    ${buildStartProfileCard(p)}
+    <div class="pp-span pp-top">
+      <div class="pt-ds">${buildDSBreakdownHTML(p)}</div>
+      <div class="pt-stat">${buildStatLineHTML(p)}</div>
+      <div class="pt-read">${buildReadHTML(p)}</div>
+      <div class="pt-start">${buildStartProfileCard(p)}</div>
+    </div>
     <div class="pp-span">${buildGameLogCard(p)}</div>
     ${buildOpportunityHTML(p)}
     ${buildDSTrajectoryHTML(p)}

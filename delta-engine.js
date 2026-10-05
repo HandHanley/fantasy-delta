@@ -699,7 +699,7 @@ function gameLogMix(p,season){
 // wherever the player's PLAY-CALLER changed — sourced from the hand-verified
 // 2017–2026 playcallers.csv (week-level, incl. mid-season firings). Game rows
 // carry tm (own team that week), so trades map to the right caller.
-let PC_DB=null, _pcFetching=false;
+let PC_DB=null, _pcFetching=false, _trendFit=null;   // _trendFit: one re-draw per player once the chart can be measured
 const PC_ALIAS={JAX:'JAC', LA:'LAR', OAK:'LV', SD:'LAC', STL:'LAR'};   // nflverse code -> CSV code
 function ensurePlaycallers(){
   if(PC_DB||_pcFetching) return;
@@ -746,35 +746,58 @@ function gameLogTrend(p,season){
     if(callers[i]&&callers[i-1]&&callers[i]!==callers[i-1])
       marks.push({i, kind:'oc', label:_lastName(callers[i])});
   }
-  const W=560,x0=20,x1=W-8,bxR=x1-8,top=26,base=150,plotH=base-top;
-  const vMax=Math.max(1,Math.max.apply(null,pts)*1.1);
-  const step=(bxR-x0)/Math.max(1,n-1), cx=i=>x0+step*i, y=v=>base-(v/vMax)*plotH;
+  /* SIZED TO ITS REAL WIDTH (4 Oct 2026). The chart used a fixed 560-wide drawing
+     stretched to fit, so on a desktop every label grew ~1.6x and on a phone shrank
+     to ~5px. Now one drawing unit = one screen pixel: text is always the same size
+     and only the spacing between games stretches. The legend moved out of the
+     drawing into ordinary text above it. Labels can no longer collide: play-caller
+     names get the top row (a second row if two would overlap), season ticks sit on
+     the bottom axis — so a new caller AND a new season in the same week no longer
+     print on top of each other ("Kub'26iak", owner, 4 Oct). */
+  const host=(typeof document!=='undefined')&&document.getElementById('dd-gamelog-body');
+  const hw=host&&host.clientWidth?host.clientWidth:0;
+  if(!hw&&typeof requestAnimationFrame!=='undefined'&&_trendFit!==p.n){
+    _trendFit=p.n;                       // not on the page yet: draw once more after it is
+    requestAnimationFrame(()=>{ if(_glView==='trend'&&_glPlayer===p) glSetView('trend'); });
+  }
+  const W=Math.max(300,Math.round(hw||560));
+  const ocM=marks.filter(m=>m.kind==='oc'), FS=10.5, CH=7.2;        // label size; generous px-per-character for bold text, so estimates never run short
+  const x0=6,bxR=W-6,step=(bxR-x0)/Math.max(1,n-1), cx=i=>x0+step*i;
+  // play-caller labels: row 0, or row 1 if they would overlap the previous label on row 0
+  const rowEnd=[-1e9,-1e9];
+  for(const m of ocM){
+    const w=m.label.length*CH, mx=cx(m.i)-step/2;
+    const l=Math.min(Math.max(mx-w/2,x0),bxR-w);                    // keep inside the drawing
+    m.lx=l+w/2; m.row=(l>rowEnd[0]+8)?0:((l>rowEnd[1]+8)?1:-1);
+    if(m.row>=0) rowEnd[m.row]=l+w;
+  }
+  const rows2=ocM.some(m=>m.row===1);
+  const top=ocM.length?(rows2?38:24):8, base=top+150, plotH=base-top-6;
+  const vMax=Math.max(1,Math.max.apply(null,pts)*1.1), y=v=>base-(v/vMax)*plotH;
   let s='';
-  // markers behind data
   for(const m of marks){
     const mx=(cx(m.i)-step/2).toFixed(1);
     if(m.kind==='season'){
-      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--fog-2)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>'
-       +'<text x="'+mx+'" y="'+(top-6)+'" font-size="8" text-anchor="middle" fill="var(--fog-2)">'+m.label+'</text>';
+      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--fog-2)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>';
+      // season tick on the axis, unless it would sit on the first/last game label
+      if(+mx>x0+56&&+mx<bxR-56) s+='<text x="'+mx+'" y="'+(base+15)+'" font-size="'+FS+'" text-anchor="middle" fill="var(--fog-2)">'+m.label+'</text>';
     }else{
-      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--topaz)" stroke-width="1.4"/>'
-       +'<text x="'+mx+'" y="'+(top-6)+'" font-size="8" text-anchor="middle" fill="var(--topaz)" font-weight="700">'+m.label+'</text>';
+      s+='<line x1="'+mx+'" y1="'+top+'" x2="'+mx+'" y2="'+base+'" stroke="var(--topaz)" stroke-width="1.5"/>';
+      if(m.row>=0) s+='<text x="'+m.lx.toFixed(1)+'" y="'+(m.row?top-18:top-5)+'" font-size="'+FS+'" text-anchor="middle" fill="var(--topaz)" font-weight="700">'+m.label+'</text>';
     }
   }
-  // per-game dots (faint) + form line (bold teal)
-  s+=pts.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2" fill="var(--paper)" opacity="0.35"/>').join('');
-  s+='<polyline points="'+roll.map((v,i)=>cx(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')+'" fill="none" stroke="var(--teal-br)" stroke-width="2.2" stroke-linejoin="round"/>';
+  s+=pts.map((v,i)=>'<circle cx="'+cx(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--paper)" opacity="0.35"/>').join('');
+  s+='<polyline points="'+roll.map((v,i)=>cx(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')+'" fill="none" stroke="var(--teal-br)" stroke-width="2.4" stroke-linejoin="round"/>';
   s+='<line x1="'+x0+'" y1="'+base+'" x2="'+bxR+'" y2="'+base+'" stroke="var(--line)"/>';
-  // x labels: season starts (fallback: first/last game)
-  const seasonStarts=marks.filter(m=>m.kind==='season');
-  s+='<text x="'+x0+'" y="163" font-size="8" fill="var(--fog-2)">'+"'"+String(rows[0].s).slice(2)+' wk'+rows[0].w+'</text>';
-  s+='<text x="'+bxR+'" y="163" font-size="8" text-anchor="end" fill="var(--fog-2)">'+"'"+String(rows[n-1].s).slice(2)+' wk'+rows[n-1].w+'</text>';
-  // legend
-  let lg='<g font-size="8.5" fill="var(--fog)">'
-    +'<line x1="20" y1="12" x2="34" y2="12" stroke="var(--teal-br)" stroke-width="2.2"/><text x="38" y="15">4-game form</text>'
-    +'<circle cx="105" cy="12" r="2" fill="var(--paper)" opacity="0.35"/><text x="111" y="15">single game</text>'
-    +'<line x1="172" y1="6" x2="172" y2="16" stroke="var(--topaz)" stroke-width="1.4"/><text x="177" y="15">play-caller change</text></g>';
-  s=lg+s;
+  s+='<text x="'+x0+'" y="'+(base+15)+'" font-size="'+FS+'" fill="var(--fog-2)">'+"'"+String(rows[0].s).slice(2)+' wk'+rows[0].w+'</text>';
+  s+='<text x="'+bxR+'" y="'+(base+15)+'" font-size="'+FS+'" text-anchor="end" fill="var(--fog-2)">'+"'"+String(rows[n-1].s).slice(2)+' wk'+rows[n-1].w+'</text>';
+  const H=base+22;
+  // legend: ordinary text above the drawing, so it never scales or collides
+  const lg='<div style="display:flex;flex-wrap:wrap;gap:4px 16px;font-size:10.5px;color:var(--fog);margin:2px 0 6px">'
+    +'<span><span style="display:inline-block;width:14px;height:2.4px;background:var(--teal-br);vertical-align:middle;margin-right:6px"></span>4-game form</span>'
+    +'<span><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--paper);opacity:.35;vertical-align:middle;margin-right:6px"></span>Single game</span>'
+    +'<span><span style="display:inline-block;width:2px;height:11px;background:var(--topaz);vertical-align:middle;margin-right:6px"></span>Play-caller change</span>'
+    +'<span><span style="display:inline-block;width:0;height:11px;border-left:1px dashed var(--fog-2);vertical-align:middle;margin-right:6px"></span>New season</span></div>';
   // footer: before/after at most recent marker (OC preferred), neutral facts
   const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
   let facts;
@@ -791,7 +814,7 @@ function gameLogTrend(p,season){
   if(PC_DB===null) note=' \u00b7 <span style="color:var(--fog-2)">loading play-caller history\u2026</span>';
   else if(!rows.some(g=>g.tm)) note=' \u00b7 <span style="color:var(--fog-2)">play-caller markers appear after the next data refresh (game rows need team tags)</span>';
   const help='<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5;border-top:1px solid var(--line);padding-top:5px">Dots are single games; the bold line averages the <b>last 4</b>, so it deliberately trails the dots \u2014 one spike pulls it up only a quarter of the way. Dots show what happened; the line shows what\u2019s sustained. Gold lines mark a new play-caller (hand-verified 2017\u201326, mid-season changes included): if form shifted right at a gold line, circumstances changed \u2014 if it shifted with no line, the player did.</div>';
-  return '<svg viewBox="0 0 '+W+' 170" width="100%" role="img"><title>form trend</title>'+s+'</svg>'
+  return lg+'<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" style="display:block;overflow:visible"><title>form trend</title>'+s+'</svg>'
     +'<div style="font-size:10px;color:var(--fog-2);margin-top:4px;line-height:1.6">'+facts+note+'</div>'+help;
 }
 
@@ -4231,21 +4254,31 @@ function opportunitySoFar(name, pos) {
            : pos === 'RB' ? calcWorkhorseScore(name, src) : null;
   return sc == null ? null : { sc: sc, g: r.games, tg: r.team_games, season: SEASON_SO_FAR.season };
 }
-function oppSoFarInner(p, rowCls) {
+/* Sits directly under the card's main (last-season) score, as a boxed side-by-side
+   so the two numbers read as a comparison (owner, 4 Oct). The change is in fog, not
+   a signal colour: it is a fact about role, not a buy or sell. */
+function oppSoFarInner(p) {
   const o = opportunitySoFar(p.n, p.pos);
   if (!o) return '';
-  return '<div class="' + rowCls + '" style="margin-top:6px"><span style="color:var(--fog)">'
-    + o.season + ' So Far \u00b7 ' + o.g + ' of ' + o.tg + ' games</span>'
-    + '<span style="font-weight:700;color:' + oppScoreColor(o.sc) + '">' + o.sc + '</span></div>';
+  const base = getOppScore(p.n, p.pos);
+  const d = base != null ? o.sc - base : null;
+  const chg = d == null ? '' : (d === 0 ? 'no change' : (d > 0 ? '+' : '\u2212') + Math.abs(d) + ' vs ' + (o.season - 1));
+  return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
+    + 'background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:2px 0 12px">'
+    + '<div><div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--paper)">'
+    + o.season + ' So Far</div>'
+    + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + o.g + ' of ' + o.tg + ' games'
+    + (chg ? ' \u00b7 ' + chg : '') + '</div></div>'
+    + '<div style="font-size:26px;font-weight:800;line-height:1;color:' + oppScoreColor(o.sc) + '">' + o.sc + '</div></div>';
 }
 /* The card drops this slot in its markup. Loaded: the line is there at once.
    Not loaded: an empty slot, filled when the file arrives (the card has been
    inserted by then — the fetch is never synchronous). */
-function oppSoFarSlot(p, rowCls) {
-  if (SEASON_SO_FAR_STATE === 'ok') return '<div id="opp-sofar">' + oppSoFarInner(p, rowCls) + '</div>';
+function oppSoFarSlot(p) {
+  if (SEASON_SO_FAR_STATE === 'ok') return '<div id="opp-sofar">' + oppSoFarInner(p) + '</div>';
   ensureSeasonSoFar().then(() => {
     const h = document.getElementById('opp-sofar');
-    if (h && h.dataset.n === p.n) h.innerHTML = oppSoFarInner(p, rowCls);
+    if (h && h.dataset.n === p.n) h.innerHTML = oppSoFarInner(p);
   });
   return '<div id="opp-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '"></div>';
 }
