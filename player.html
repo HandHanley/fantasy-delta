@@ -660,8 +660,14 @@ function buildTDPctHTML(p) {
 }
 
 function buildEPAHTML(p) {
-  const posLabel = p.pos === 'QB' ? 'Passing' : p.pos === 'RB' ? 'Rushing' : 'Receiving';
-  const sublabel = `${posLabel} EPA per play by season — how much scoring value this player added above average on each touch or route`;
+  // Receivers' numbers here are yards per route run (DELTA's hand-entered receiver measure),
+  // not EPA — the card called them "Receiving EPA per play" and scaled them as EPA, so every
+  // receiver's bar ran full. Labelled and scaled for what they are since 4 Oct 2026.
+  const isRec = p.pos === 'WR' || p.pos === 'TE';
+  const title = p.pos === 'QB' ? 'EPA Per Dropback' : p.pos === 'RB' ? 'EPA Per Carry' : 'Yards Per Route Run';
+  const sublabel = isRec
+    ? 'Receiving yards per route run by season — DELTA\u2019s receiver efficiency measure'
+    : `${p.pos === 'QB' ? 'Passing' : 'Rushing'} EPA by season — how much each play changed the points the drive was expected to score`;
 
   const epas = [
     { yr: '2022', v: p.e22 || 0 },
@@ -673,9 +679,10 @@ function buildEPAHTML(p) {
   if (!epas.length) return '';
 
   // Absolute scale: 0.25 EPA/play fills the bar fully (elite level for any position)
-  const SCALE = 0.25;
+  const SCALE = isRec ? 3.0 : 0.25;
 
   const getClr = v => {
+    if (isRec) return v >= 1.8 ? 'var(--emerald)' : v >= 1.4 ? 'var(--sky)' : v >= 1.0 ? 'var(--topaz)' : 'var(--coral)';
     const a = Math.abs(v);
     if (v >= 0) return a >= 0.12 ? 'var(--emerald)' : a >= 0.04 ? 'var(--emerald-bri)' : 'var(--topaz)';
     else        return a >= 0.12 ? 'var(--coral)' : a >= 0.04 ? 'var(--coral-bri)' : 'var(--topaz)';
@@ -685,7 +692,7 @@ function buildEPAHTML(p) {
     const pct = Math.min(100, Math.round((Math.abs(x.v) / SCALE) * 100));
     const clr = getClr(x.v);
     const isPos = x.v >= 0;
-    const sign = x.v > 0 ? '+' : '';
+    const sign = (!isRec && x.v > 0) ? '+' : '';   // yards per route run is never negative: no sign
     return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--panel)">
       <div style="font-size:10px;color:var(--fog);width:26px;flex-shrink:0">${x.yr.slice(2)}</div>
       <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;height:8px">
@@ -705,16 +712,17 @@ function buildEPAHTML(p) {
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
-        <div class="card-label" style="margin-bottom:2px">EPA per Play</div>
+        <div class="card-label" style="margin-bottom:2px">${title}</div>
         <div class="card-sub">${sublabel}</div>
       </div>
       ${p.epaTr ? `<span style="font-size:10px;font-weight:600;color:${trendClr};flex-shrink:0;margin-left:10px">${trendTxt}</span>` : ''}
     </div>
+    ${effSoFarSlot(p)}
     ${rows}
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--fog-2);margin-top:6px;padding:0 34px 0 0">
-      <span>← below avg</span>
-      <span>above avg →</span>
-    </div>
+    ${isRec ? '' : `<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--fog-2);margin-top:6px;padding:0 34px 0 0">
+      <span>← below break-even</span>
+      <span>above break-even →</span>
+    </div>`}
   </div>`;
 }
 

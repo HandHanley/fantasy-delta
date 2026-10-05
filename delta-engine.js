@@ -256,7 +256,7 @@ function gameLogShell(p){
 }
 function gameLogInner(p){
   const seasons=glSeasons(p);
-  const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend']];
+  const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend'],['eff','Efficiency']];
   const vsw=views.map(v=>
     '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;white-space:nowrap;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
@@ -275,6 +275,8 @@ function gameLogInner(p){
     ? gameLogMix(p,_glSeason)
     : _glView==='trend'
     ? gameLogTrend(p,_glSeason)
+    : _glView==='eff'
+    ? gameLogEff(p)
     : gameLogChart(p,_glSeason,_glView);
   const subs={
     table:'Week-by-week opponents, box scores, and upcoming games.',
@@ -282,12 +284,13 @@ function gameLogInner(p){
     avg:'Weekly margin vs the typical top-starter at the position.',
     usage:'The opportunity (touches, targets, snaps) underneath the points.',
     mix:'How much of the scoring came from repeatable yardage vs touchdowns.',
-    trend:'Direction of form across seasons \u2014 gold marks a new play-caller.'
+    trend:'Direction of form across seasons \u2014 gold marks a new play-caller.',
+    eff:'This season, game by game, in the efficiency measure DELTA uses for his position.'
   };
   const sub='<div style="font-size:9.5px;color:var(--fog-2);margin:0 0 .45rem">'+(subs[_glView]||'')+'</div>';
   return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +sub
-    +(_glView==='trend'?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
+    +((_glView==='trend'||_glView==='eff')?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
     +content;
 }
 function glToggle(){
@@ -4281,6 +4284,106 @@ function oppSoFarSlot(p) {
     if (h && h.dataset.n === p.n) h.innerHTML = oppSoFarInner(p);
   });
   return '<div id="opp-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '"></div>';
+}
+
+/* ── EFFICIENCY THIS SEASON — DISPLAY ONLY (owner, 4 Oct 2026) ──────────────
+   data/efficiency.json, built nightly by scripts/fetch-game-reads.py with the
+   same numbers as Live's DELTA Read, filed under DELTA's own names. Each player
+   in the measure DELTA uses for his position:
+     QB  EPA per dropback · RB  EPA per carry   (last season = DELTA's stored e25)
+     WR / TE  yards per route run. Last season uses REAL routes (nflverse participation
+              — it reproduces DELTA's hand-entered 2025 YPRR at 0.99); this season's
+              routes are estimated from snaps, corrected by each receiver's own ratio of
+              real to estimated routes last season, so both sit on the hand table's scale.
+   Tiers place a value against last season at the position: Elite (top 10%),
+   Top Tier (top quarter), Typical (middle half), Below Typical (bottom quarter).
+   Nothing scored reads this. Fed to: the So Far box under the efficiency card,
+   the Game Log's Efficiency view, and two optional rankings columns. */
+let EFF = null, EFF_STATE = 'idle', EFF_P = null;
+function ensureEfficiency(){
+  if (EFF_P) return EFF_P;
+  EFF_STATE = 'loading';
+  EFF_P = fetch('data/efficiency.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { EFF = (j && j.players) ? j : null; EFF_STATE = EFF ? 'ok' : 'failed'; })
+    .catch(() => { EFF = null; EFF_STATE = 'failed'; });
+  return EFF_P;
+}
+function effRec(name){ return EFF && EFF.players[name] || null; }
+const EFF_MEASURE = { QB:'EPA Per Dropback', RB:'EPA Per Carry', WR:'Yards Per Route Run (Est.)', TE:'Yards Per Route Run (Est.)' };
+const EFF_UNIT    = { QB:'dropbacks', RB:'carries', WR:'routes', TE:'routes' };
+function effFmt(pos, v){
+  if (v == null) return '\u2014';
+  if (pos === 'WR' || pos === 'TE') return v.toFixed(2);
+  const t = Math.abs(v).toFixed(2);
+  return (Number(t) === 0 ? '' : (v < 0 ? '\u2212' : '+')) + t;     // never "-0.00"
+}
+/* floor: 'tier_min' for one game, 'season_min' for a season so far. Too few plays: no word. */
+function effTier(pos, v, n, floor){
+  const f = floor || 'tier_min';
+  const c = EFF && EFF.tiers && EFF.tiers[pos], min = EFF && EFF[f] && EFF[f][pos];
+  if (!c || v == null || n < (min || 0)) return '';
+  return v >= c[2] ? 'Elite' : v >= c[1] ? 'Top Tier' : v >= c[0] ? 'Typical' : 'Below Typical';
+}
+/* Where a value would have ranked among last season's regulars at the position, 0-100. */
+function effPct(pos, v){
+  const d = EFF && EFF.dist && EFF.dist[pos];
+  if (!d || v == null) return null;
+  if (v <= d[0]) return 0;
+  if (v >= d[20]) return 100;
+  for (let i = 1; i <= 20; i++) if (v <= d[i]) {
+    const lo = d[i-1], hi = d[i], fr = hi > lo ? (v - lo) / (hi - lo) : 0;
+    return Math.round((i - 1 + fr) * 5);
+  }
+  return 100;
+}
+function effSoFarInner(p){
+  const r = effRec(p.n);
+  if (!r || r.sofar == null || r.pos !== p.pos) return '';
+  const t = effTier(r.pos, r.sofar, r.n, 'season_min'), yr = EFF.season;
+  const est = '';
+  return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
+    + 'background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:2px 0 12px">'
+    + '<div><div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--paper)">'
+    + yr + ' So Far \u00b7 ' + EFF_MEASURE[r.pos] + '</div>'
+    + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + r.games.length + ' games \u00b7 ' + r.n + ' ' + EFF_UNIT[r.pos]
+    + ' \u00b7 ' + (yr - 1) + est + ': ' + effFmt(r.pos, r.base) + '</div></div>'
+    + '<div style="text-align:right;flex-shrink:0"><div style="font-size:24px;font-weight:800;line-height:1;color:var(--paper);font-family:var(--mono,monospace)">'
+    + effFmt(r.pos, r.sofar) + '</div>' + (t ? '<div style="font-size:10px;color:var(--fog);margin-top:3px">' + t + '</div>' : '') + '</div></div>';
+}
+function effSoFarSlot(p){
+  if (EFF_STATE === 'ok') return '<div id="eff-sofar">' + effSoFarInner(p) + '</div>';
+  ensureEfficiency().then(() => {
+    const h = document.getElementById('eff-sofar');
+    if (h && h.dataset.n === p.n) h.innerHTML = effSoFarInner(p);
+  });
+  return '<div id="eff-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '"></div>';
+}
+/* Game Log -> Efficiency: every game this season in DELTA's measure, with its tier,
+   against the player's season so far and last season. */
+function gameLogEff(p){
+  if (EFF_STATE !== 'ok'){
+    ensureEfficiency().then(() => { if (_glView === 'eff' && _glPlayer === p) glSetView('eff'); });
+    return '<div style="font-size:11px;color:var(--fog);padding:8px 0">' + (EFF_STATE === 'failed' ? 'Efficiency data is not available right now.' : 'Loading\u2026') + '</div>';
+  }
+  const r = effRec(p.n);
+  if (!r || !r.games.length || r.pos !== p.pos) return '<div style="font-size:11px;color:var(--fog);padding:8px 0">No ' + EFF.season + ' games measured yet.</div>';
+  const yr = EFF.season, est = '';
+  const head = '<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--fog);margin:2px 0 8px">'
+    + '<span>' + yr + ' So Far <b style="color:var(--paper);font-family:var(--mono,monospace)">' + effFmt(r.pos, r.sofar) + '</b></span>'
+    + '<span>' + (yr - 1) + est + ' <b style="color:var(--paper);font-family:var(--mono,monospace)">' + effFmt(r.pos, r.base) + '</b></span></div>';
+  const rows = r.games.slice().sort((a, b) => b[0] - a[0]).map(g => {
+    const t = effTier(r.pos, g[2], g[3], 'tier_min');
+    return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)">'
+      + '<div style="width:48px;font-size:11px;color:var(--fog)">Wk ' + g[0] + '</div>'
+      + '<div style="flex:1;font-size:11.5px;color:var(--paper)">vs ' + g[1]
+      + '<span style="color:var(--fog-2);font-size:10.5px"> \u00b7 ' + g[3] + ' ' + EFF_UNIT[r.pos] + '</span></div>'
+      + '<div style="text-align:right;min-width:86px"><b style="font-family:var(--mono,monospace);font-size:13px;color:var(--paper)">' + effFmt(r.pos, g[2]) + '</b>'
+      + (t ? '<div style="font-size:10px;color:var(--fog)">' + t + '</div>' : '') + '</div></div>';
+  }).join('');
+  return '<div style="font-size:10.5px;color:var(--fog-2);margin-bottom:2px">' + EFF_MEASURE[r.pos] + '</div>' + head + rows
+    + '<div style="font-size:9.5px;color:var(--fog-2);margin-top:6px;line-height:1.5">Tier words place each game against last season at his position. '
+    + 'One game is noisy \u2014 look for the same direction over several. A game with too few plays gets no word.</div>';
 }
 
 function oppScoreColor(score) {

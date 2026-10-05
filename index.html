@@ -2504,6 +2504,25 @@ const RK_COLS=[
   fn:(p,R)=>{ const v=p.ktcEff>0?Math.round(mvAsset(p)-p.ktcEff):null;
     return rkNum(v,(v>0?'+':'\u2212')+Math.abs(v).toLocaleString(), v==null?null:v>=0?'var(--emerald)':'var(--coral)'); }},
 
+ /* EFFICIENCY THIS SEASON (4 Oct 2026, display only). Each player in DELTA's measure for his
+    position, placed as a percentile of last season's regulars at that position — a percentile,
+    because EPA and yards per route run cannot be sorted against each other. Too few plays: blank.
+    "vs 2025" is the change from his own 2025 on the same scale. Both off by default. */
+ {k:'eff', off:true, sort:p=>{ const r=effRec(p.n); return r&&effTier(r.pos,r.sofar,r.n,'season_min')?effPct(r.pos,r.sofar):-1; },
+  lbl:'Eff', full:'Efficiency This Season', al:'r',
+  tip:'This season\u2019s efficiency in the measure DELTA uses for his position, as a percentile of last season\u2019s regulars at that position. Blank until he has enough plays.',
+  fn:(p,R)=>{ if(EFF_STATE!=='ok'){ rkEffLoad(); return rkNum(null,''); }
+    const r=effRec(p.n), ok=r&&effTier(r.pos,r.sofar,r.n,'season_min');
+    const v=ok?effPct(r.pos,r.sofar):null; return rkNum(v, v==null?'':String(v), null); }},
+
+ {k:'effd', off:true, sort:p=>{ const r=effRec(p.n); if(!r||!effTier(r.pos,r.sofar,r.n,'season_min')||r.base==null) return -999;
+    return effPct(r.pos,r.sofar)-effPct(r.pos,r.base); },
+  lbl:'Eff \u0394', full:'Efficiency vs 2025', al:'r',
+  tip:'How far this season\u2019s efficiency percentile sits above or below his own 2025, in percentile points. Sort it to find players running hotter or colder than the numbers DELTA rates them on.',
+  fn:(p,R)=>{ if(EFF_STATE!=='ok'){ rkEffLoad(); return rkNum(null,''); }
+    const r=effRec(p.n); if(!r||!effTier(r.pos,r.sofar,r.n,'season_min')||r.base==null) return rkNum(null,'');
+    const v=effPct(r.pos,r.sofar)-effPct(r.pos,r.base); return rkNum(v,(v>0?'+':v<0?'\u2212':'')+Math.abs(v),null); }},
+
  {k:'tag', lbl:'Tag', full:'Verdict', mob:true,
   fn:(p,R)=>`<td class="dl-rk-verdict">${vTag(p)}</td>`}
 ];
@@ -2512,6 +2531,9 @@ const RK_COLS=[
 /* 600px is the live breakpoint — the same one col-hide-mobile fires at, so a
    phone sees exactly the seven columns it saw before this change. */
 const RK_MQ = window.matchMedia('(max-width:600px)');
+/* The Efficiency columns read data/efficiency.json, fetched only when one of them is on. */
+let _rkEffAsked=false;
+function rkEffLoad(){ if(_rkEffAsked) return; _rkEffAsked=true; ensureEfficiency().then(()=>{ if(typeof renderRankings==='function') renderRankings(); }); }
 function rkCols(){ const set=rkColsGet(rkDev()); return RK_COLS.filter(c=>set.indexOf(c.k)>-1); }
 /* ── Column picker (reskin step 5) ────────────────────────────────────────
    Desktop and phone keep separate saved sets. Someone who trims their phone
@@ -4533,7 +4555,8 @@ function renderDeck(p){
   // ── Body ──
   const gl=glOf(p);
   const mv=mvAsset(p);
-  const epaLabel=p.pos==='QB'?'EPA/Play':'YPRR';
+  // Running backs' arc is EPA per carry; it was labelled YPRR (4 Oct 2026).
+  const epaLabel=p.pos==='QB'?'EPA/Play':p.pos==='RB'?'EPA/Carry':'YPRR';
 
   // PPG arc data
   const ppgs=[
@@ -4806,6 +4829,7 @@ function renderDeck(p){
 
     <div class="dd-section">
       <div class="dd-section-label">${epaLabel} Arc</div>
+      ${effSoFarSlot(p)}
       ${epas.length?`<div class="dd-arc">${epaBars}</div>`
         :'<div style="font-size:11px;color:var(--fog-2)">No multi-year data</div>'}
       ${p.epaTr&&epas.length?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;font-weight:600;color:${p.epaTr==='up'?'var(--emerald)':p.epaTr==='down'?'var(--coral)':'var(--fog)'}">${p.epaTr==='up'?'↑ Trending up':p.epaTr==='down'?'↓ Trending down':'→ Flat'}</span></div>`:''}

@@ -161,8 +161,14 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 /* DELTA Read tables. Headers stay on ONE line — a first version wrapped "PER /
    PLAY" and it read as "PLAY SUCCESS" (owner, 4 Oct). Player tables carry three
    number columns, the team table three wider ones, so values never crowd. */
-.bx.rd col.n{width:54px}
-.bx.rd.tm col.n{width:68px}
+.bx.rd col.w{width:96px}
+.rdcmp{font-size:11px;color:var(--fog);margin-top:4px;font-weight:400}
+.rdcmp b{color:var(--paper);font-family:var(--mono);font-weight:600}
+.rdbig{font-size:17px}
+.rdtier{font-size:10px;color:var(--fog);margin-top:2px;font-family:var(--sans);letter-spacing:.02em}
+.bx.rd + .bx.rd{margin-top:14px}
+.bx.rd th.p{white-space:normal;text-transform:none;letter-spacing:.02em}
+.rdsub{font-size:10.5px;color:var(--fog-2);font-weight:400;margin-top:2px}
 .rowb{padding:10px 0;border-bottom:1px solid var(--line)}
 .rowb:last-child{border-bottom:0}
 .statline{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:4px;
@@ -1770,10 +1776,35 @@ async function loadReads(){
 
 function readFor(g){
   if(S.league !== 'nfl' || !g || !S.reads) return null;
+  // v3 (4 Oct): DELTA's own measures, with tiers and this season so far. An older file
+  // still in a cache has a different row shape, so it shows no tab rather than misreading it.
+  if(S.reads.v !== 3) return null;
   return S.reads.games[String(g.id)] || null;
 }
 
-function sgn(v, dp){ const t = Math.abs(v).toFixed(dp); return (v < 0 ? '-' : (Number(t) === 0 ? '' : '+')) + t; }
+function sgn(v, dp){ const t = Math.abs(v).toFixed(dp); return (Number(t) === 0 ? '' : (v < 0 ? '-' : '+')) + t; }   // never "-0.00"
+
+/* DELTA READ, v3 (owner, 4 Oct 2026 — "Option B" of two mockups): each player's game
+   in the measure DELTA uses for him, shown large with its TIER in words, and his
+   season so far and last season underneath for comparison. Row: [name, team, pos,
+   game value, game count, last season or null, this season so far or null, so-far
+   count]. Tiers are cut from last season at each position (file's "tiers": the
+   bottom-quarter, top-quarter and top-10% lines). A game below "tier_min" plays
+   gets no tier word — one sack or one long catch would decide it.
+     QB  EPA per dropback      RB  EPA per carry      (2025 = DELTA's stored e25)
+     WR / TE  yards per route run, estimated from snaps — 2025 uses the same
+     estimate, so the two are like for like. */
+const READ_GROUPS = [
+  { pos:['QB'],      label:'Quarterback',  measure:'EPA Per Dropback', unit:'dropbacks', fmt:function(v){ return sgn(v, 2); } },
+  { pos:['RB'],      label:'Running Backs', measure:'EPA Per Carry',   unit:'carries',   fmt:function(v){ return sgn(v, 2); } },
+  { pos:['WR','TE'], label:'Receivers',     measure:'Yards Per Route Run (Est.)', unit:'routes (est.)', fmt:function(v){ return v.toFixed(2); } }
+];
+function readTier(pos, v, n){
+  const c = S.reads && S.reads.tiers && S.reads.tiers[pos];
+  const min = S.reads && S.reads.tier_min && S.reads.tier_min[pos];
+  if(!c || v == null || n < (min || 0)) return '';
+  return v >= c[2] ? 'Elite' : v >= c[1] ? 'Top Tier' : v >= c[0] ? 'Typical' : 'Below Typical';
+}
 
 function renderRead(){
   const g = findGame(), r = readFor(g);
@@ -1784,65 +1815,54 @@ function renderRead(){
   if(!g || !r){ paint('<div class="empty">No DELTA Read for this game.</div>'); return; }
 
   // nflverse writes LA and WAS where ESPN writes LAR and WSH; teamCode() maps both.
-  const keyOf = function(t){
+  const keys = g.teams.map(function(t){
     return Object.keys(r.t).filter(function(k){ return teamCode(k) === teamCode(t.abbr); })[0] || null;
-  };
-  const keys = g.teams.map(keyOf);
+  });
   if(keys.some(function(k){ return !k; })){
     paint(heroBlock(g) + '<div class="notice" style="margin-top:16px">This game\u2019s Read could not be matched to its teams.</div>');
     return;
   }
 
-  const head = function(label, cols, cls){
-    return '<table class="bx rd' + (cls ? ' ' + cls : '') + '"><colgroup><col>' + cols.map(function(){ return '<col class="n">'; }).join('')
-      + '</colgroup><thead><tr><th class="p">' + label + '</th>'
-      + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>';
-  };
-
   let html = heroBlock(g);
-
-  // The offenses, side by side in one table.
-  html += '<div class="hd"><span>Offense</span><span class="rule"></span></div>'
-    + '<div class="card">' + head('', ['PLAYS', 'PER PLAY', 'SUCCESS'], 'tm')
-    + g.teams.map(function(t, i){
-        const v = r.t[keys[i]];
-        return '<tr><td class="p"><span class="swatch" style="display:inline-block;margin-right:7px;background:'
-          + teamColor(t) + '"></span>' + esc(t.abbr) + '</td>'
-          + '<td>' + v[0] + '</td><td>' + sgn(v[1] / v[0], 2) + '</td>'
-          + '<td>' + Math.round(100 * v[2] / v[0]) + '%</td></tr>';
-      }).join('')
-    + '</tbody></table></div>';
-
-  // One table per team, away first, the order the whole page uses.
   g.teams.forEach(function(t, i){
-    const rows = r.p.filter(function(p){ return p[1] === keys[i]; });
-    if(!rows.length) return;
+    const mine = r.p.filter(function(p){ return p[1] === keys[i]; });
+    if(!mine.length) return;
     const col = teamColor(t);
+    let body = '';
+    READ_GROUPS.forEach(function(grp){
+      const rows = mine.filter(function(p){ return grp.pos.indexOf(p[2]) >= 0; })
+                       .sort(function(a, b){ return b[4] - a[4]; });      // most involved first
+      if(!rows.length) return;
+      const yr = S.reads.season, dash = '\u2014';
+      body += '<table class="bx rd"><colgroup><col><col class="w"></colgroup>'
+        + '<thead><tr><th class="p">' + grp.label + ' \u00b7 ' + grp.measure + '</th>'
+        + '<th>THIS GAME</th></tr></thead><tbody>'
+        + rows.map(function(p){
+            const t = readTier(p[2], p[3], p[4]);
+            return '<tr><td class="p">' + (watched(p[0]) ? '<span class="trk">&#9733;</span> ' : '')
+              + nameButton(p[0])
+              + '<div class="rdsub">' + (grp.pos.length > 1 ? p[2] + ' \u00b7 ' : '') + p[4] + ' ' + grp.unit + ' this game</div>'
+              + '<div class="rdcmp">' + yr + ' So Far <b>' + (p[6] == null ? dash : grp.fmt(p[6])) + '</b>'
+              + ' \u00b7 ' + (yr - 1) + ' <b>' + (p[5] == null ? dash : grp.fmt(p[5])) + '</b></div></td>'
+              + '<td><b class="rdbig">' + grp.fmt(p[3]) + '</b>' + (t ? '<div class="rdtier">' + t + '</div>' : '') + '</td></tr>';
+          }).join('')
+        + '</tbody></table>';
+    });
     html += '<div class="hd"><span class="swatch" style="background:' + col + '"></span>'
       + '<span>' + esc(t.abbr) + '</span><span class="rule"></span></div>'
-      + '<div class="card tinted" style="border-top-color:' + col + '">'
-      // No per-play column here: it is just Value divided by Plays, both of which
-      // are on the row. Dropping it gave the other three room to read (4 Oct).
-      + head('', ['PLAYS', 'SUCCESS', 'VALUE'])
-      + rows.map(function(p){
-          return '<tr><td class="p">' + (watched(p[0]) ? '<span class="trk">&#9733;</span> ' : '')
-            + nameButton(p[0]) + '</td>'
-            + '<td>' + p[3] + '</td>'
-            + '<td>' + Math.round(100 * p[5] / p[3]) + '%</td>'
-            + '<td>' + sgn(p[4], 1) + '</td></tr>';
-        }).join('')
-      + '</tbody></table></div>';
+      + '<div class="card tinted" style="border-top-color:' + col + '">' + body + '</div>';
   });
 
   html += '<div class="prev" style="margin-top:16px"><button class="prevb" type="button" data-readhelp="1"'
     + ' aria-expanded="' + S.readHelp + '">' + (S.readHelp ? '&#9652; How To Read This' : '&#9662; How To Read This')
     + '</button>'
     + (S.readHelp ? '<div class="sub" style="margin-top:8px;line-height:1.6">'
-        + 'Value is how much a player\u2019s plays changed his offense\u2019s expected points (EPA), added up. '
-        + 'Per play is that total divided by plays. '
-        + 'A success is a play that added value. Every play counts, garbage time included. '
-        + 'Passers are credited with every dropback, sacks and scrambles too; a completion counts for the passer and the target. '
-        + 'Players are sorted by total value. Source: nflverse play-by-play, updated nightly.</div>' : '')
+        + 'Each player is measured the way DELTA measures him. Quarterbacks: EPA per dropback. Running backs: EPA per carry. '
+        + 'EPA is how much a play changed the points the drive was expected to score, so 0.00 is break-even, not average. '
+        + 'Receivers: yards per route run. Routes for a game are estimated from snaps, corrected by the player\u2019s own route rate last season; last season\u2019s figure uses real routes. '
+        + 'The word under each number places the game against last season at that position: Elite is the top 10%, Top Tier the top quarter, '
+        + 'Typical the middle half, Below Typical the bottom quarter. A game with too few plays gets no word. '
+        + 'One game is noisy \u2014 look for the same direction over several games. A dash means no figure. Source: nflverse, updated nightly.</div>' : '')
     + '</div>';
   paint(html);
 }
