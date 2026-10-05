@@ -258,7 +258,7 @@ function gameLogInner(p){
   const seasons=glSeasons(p);
   const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend'],['eff','Efficiency']];
   const vsw=views.map(v=>
-    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-right:5px;white-space:nowrap;'
+    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:4px 6px;border-radius:10px;white-space:nowrap;text-align:center;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
   ).join('');
   const chips=seasons.map(s=>
@@ -288,7 +288,10 @@ function gameLogInner(p){
     eff:'This season, game by game, in the efficiency measure DELTA uses for his position.'
   };
   const sub='<div style="font-size:9.5px;color:var(--fog-2);margin:0 0 .45rem">'+(subs[_glView]||'')+'</div>';
-  return '<div style="display:flex;flex-wrap:wrap;align-items:center;margin:.35rem 0 .3rem">'+vsw+'</div>'
+  /* Even rows (4 Oct 2026): seven chips wrapped as six plus one alone on a phone. A grid of
+     equal cells, at least 64px each, gives four and three on a phone and a single row where
+     there is room for all seven. */
+  return '<div class="gl-tabs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:5px;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +sub
     +((_glView==='trend'||_glView==='eff')?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
     +content;

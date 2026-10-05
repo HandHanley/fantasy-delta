@@ -4538,17 +4538,20 @@ function renderDeck(p){
     const more=document.getElementById('dd-meta-more'); more.innerHTML='';
     const rows=[];
     rows.push([ctHtml].concat(bgParts).join('<span style="color:var(--fog-2)">\u00b7</span>'));
-    // Projection on the left, Full Profile on the right: the button moved here from the top
-    // row, where it squeezed the name onto two lines on a phone.
-    rows.push('<span style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:10px">'+projChip
-      +'<a id="dd-fullpage" href="player.html?name='+encodeURIComponent(p.n)+'" title="Open full page" '
-      +'style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full Profile</a></span>');
-    rows.push('<span id="dd-pctx" data-name="'+scEsc(p.n)+'"></span>');   // Preseason · Now · Actual — filled below
-    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop=idx?'6px':'0'; d.innerHTML=html; more.appendChild(d); });
+    // No separate "proj PPG" line (owner, 4 Oct: "floating by itself"). It repeated the Rest Of
+    // Season figure in the line below, so that line now carries the projection. The plain chip
+    // shows only until that line loads, or instead of it when there is no preseason record.
+    rows.push('<span id="dd-pctx" data-name="'+scEsc(p.n)+'">'+projChip+'</span>');   // Preseason · Now · Actual — filled below
+    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop=idx?'8px':'0'; d.innerHTML=html; more.appendChild(d); });
+    // Full Profile: a full-width button closing the header, instead of a pill floating mid-card.
+    const fpb=document.createElement('a'); fpb.id='dd-fullpage';
+    fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.title='Open full page'; fpb.textContent='Open Full Profile \u2192';
+    fpb.style.cssText='display:block;text-align:center;margin-top:12px;padding:8px 0;font-size:11px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:8px';
+    more.appendChild(fpb);
     // Preseason · Now · Actual: needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
       const el=document.getElementById('dd-pctx'); if(!el||el.dataset.name!==p.n) return;
-      el.innerHTML=projContextHTML(p);   // no link (owner, 26 Sep: too much on the card)
+      const h=projContextHTML(p); if(h) el.innerHTML=h;   // no link (owner, 26 Sep); keeps the plain chip if there is no context
     }).catch(()=>{});
   }
 
