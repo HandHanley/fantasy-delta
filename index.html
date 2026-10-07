@@ -5799,7 +5799,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-07a</span>
+  <span class="foot-build">2026-10-07b</span>
 </footer>
 
 
@@ -7457,6 +7457,44 @@ function mflRosterPositions(st){
   return out;
 }
 
+/* MFL scoring \u2192 DELTA's nearest preset. DELTA only needs two numbers, exactly what
+   it reads from Sleeper: points per catch (rec) and the extra a tight end gets per
+   catch (bonus_rec_te). Read from a real league's rules on 7 Oct 2026:
+     \u00b7 rules.positionRules is a list of blocks; each names positions ("QB|RB|WR|TE")
+       and carries rules; the same event can appear in several blocks for one
+       position, so a position's catch points are the SUM across its blocks.
+     \u00b7 CC is a catch. Points "*1" = 1 per catch; "a/b" = a points per b catches;
+       a bare number is a one-off award for landing in a range, not per catch.
+     \u00b7 C20 / C40 are bonuses for long catches, NOT a tight-end premium, so they
+       are deliberately ignored here.
+   Returns null when the answer is unreadable, so detection keeps current scoring. */
+function mflPerUnit(pts){
+  const t=String(pts==null?'':pts).trim();
+  if(/^\*/.test(t)){ const v=parseFloat(t.slice(1)); return isFinite(v)?v:null; }
+  const m=t.match(/^(-?[\d.]+)\/([\d.]+)$/);
+  if(m){ const a=parseFloat(m[1]), b=parseFloat(m[2]); return (isFinite(a)&&b>0)?a/b:null; }
+  return null;   // flat award or unknown \u2014 not a per-catch value
+}
+function mflRecFromRules(j){
+  const blocks=mflArr(j&&j.rules&&j.rules.positionRules);
+  if(!blocks.length) return null;
+  const per={QB:0,RB:0,WR:0,TE:0};
+  for(const b of blocks){
+    const pos=String(b.positions||'').toUpperCase().split('|');
+    for(const r of mflArr(b.rule)){
+      const ev=r&&r.event&&r.event.$t;
+      if(ev!=='CC') continue;
+      const v=mflPerUnit(r.points&&r.points.$t);
+      if(v==null){ slpLog('MFL scoring: catch rule not per-catch, ignored:',r.points&&r.points.$t); continue; }
+      pos.forEach(function(p){ if(per[p]!=null) per[p]+=v; });
+    }
+  }
+  const rec=per.WR||per.RB||0;
+  const tep=Math.max(0,+(per.TE-rec).toFixed(3));
+  slpLog('MFL scoring: catch points by position',JSON.stringify(per),'\u2192 rec',rec,'TE bonus',tep);
+  return {rec:rec, bonus_rec_te:tep};
+}
+
 async function mflLoadSet(leagueId,season){
   const id=String(leagueId).replace(/^mfl:/,'');
   const year=String(season||new Date().getFullYear());
@@ -7464,9 +7502,11 @@ async function mflLoadSet(leagueId,season){
     mflFetch('league',id,year),
     mflFetch('rosters',id,year),
     mflFetch('futureDraftPicks',id,year).catch(function(e){ slpLog('MFL picks unavailable:',e); return null; }),
-    mflFetch('players',id,year)
+    mflFetch('players',id,year),
+    mflFetch('rules',id,year).catch(function(e){ slpLog('MFL scoring rules unavailable:',e); return null; })
   ]);
   const L=res[0]&&res[0].league;
+  const sc=res[4]?mflRecFromRules(res[4]):null;
   if(!L) throw new Error('league '+id+' not found on MFL for '+year);
   const frs=mflArr(L.franchises&&L.franchises.franchise);
 
@@ -7502,7 +7542,8 @@ async function mflLoadSet(leagueId,season){
   const league={league_id:'mfl:'+id, name:mflClean(L.name)||('MFL league '+id), season:year,
                 total_rosters:frs.length||rosters.length,
                 roster_positions:mflRosterPositions(L.starters),
-                scoring_settings:{},   // MFL scoring is not read yet: detection keeps the current scoring
+                // Unreadable scoring stays {} so detection keeps the current scoring rather than assume Standard.
+                scoring_settings:sc||{}, scoringRead:!!sc,
                 settings:{}, platform:'mfl'};
   slpLog('MFL league:',league.name,'\u00b7',league.total_rosters,'teams \u00b7',Object.keys(map).length,'players \u00b7',
          (pickList?pickList.length:0),'picks \u00b7 slots',league.roster_positions.join(','));
@@ -7904,7 +7945,7 @@ function slpFmtChips(){
   const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:var(--sky);background:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:2px 7px">'+t+'</span>'; };
   return chip(leagueTeams+'-team')+' '+chip(qbFmt==='sf'?'Superflex':'1-QB')+' '+chip(labels[scoringFmt]||scoringFmt)
     +(SLP.detected?'<span style="font-size:9.5px;color:var(--fog-2);margin-left:6px">'
-      +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'teams and QB format read from MFL \u00b7 scoring is not, so set it in Settings if it differs':'auto-detected from league settings')
+      +((slpIsMfl(SLP.conn&&SLP.conn.leagueId)&&!(SLP.league&&SLP.league.scoringRead))?'teams and QB format read from MFL \u00b7 scoring could not be read, so set it in Settings if it differs':'auto-detected from league settings')
       +'</span>':'');
 }
 
