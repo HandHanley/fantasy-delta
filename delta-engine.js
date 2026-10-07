@@ -4359,15 +4359,16 @@ function effSoFarInner(p){
   const r = effRec(p.n);
   if (!r || r.sofar == null || r.pos !== p.pos) return '';
   const t = effTier(r.pos, r.sofar, r.n, 'season_min'), yr = EFF.season;
-  const est = '';
-  return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
-    + 'background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:2px 0 12px">'
-    + '<div><div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--paper)">'
-    + yr + ' So Far \u00b7 ' + EFF_MEASURE[r.pos] + '</div>'
-    + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + r.games.length + ' games \u00b7 ' + r.n + ' ' + EFF_UNIT[r.pos]
-    + ' \u00b7 ' + (yr - 1) + est + ': ' + effFmt(r.pos, r.base) + '</div></div>'
-    + '<div style="text-align:right;flex-shrink:0"><div style="font-size:19px;font-weight:700;line-height:1;color:var(--paper)">'
-    + effFmt(r.pos, r.sofar) + '</div>' + (t ? '<div style="font-size:10px;color:var(--fog);margin-top:3px">' + t + '</div>' : '') + '</div></div>';
+  /* ONE SLIM LINE (owner, 7 Oct 2026). A boxed panel with its own long title out-shouted the
+     section it sits in, whose heading already names the measure. Now a single row: season and
+     sample on the left, the number and tier on the right, sized like the card's other rows. */
+  return '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;'
+    + 'padding:7px 0;margin:0 0 10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">'
+    + '<div style="font-size:11px;color:var(--fog);min-width:0"><span style="font-weight:700;color:var(--paper)">' + yr + ' So Far</span>'
+    + ' \u00b7 ' + r.games.length + ' games \u00b7 ' + r.n + ' ' + EFF_UNIT[r.pos]
+    + ((r.pos === 'WR' || r.pos === 'TE') ? ' (est.)' : '') + '</div>'
+    + '<div style="flex-shrink:0;white-space:nowrap;font-size:11px;color:var(--fog)">'
+    + (t ? t + ' \u00b7 ' : '') + '<b style="font-size:13px;color:var(--paper)">' + effFmt(r.pos, r.sofar) + '</b></div></div>';
 }
 function effSoFarSlot(p){
   if (EFF_STATE === 'ok') return '<div id="eff-sofar">' + effSoFarInner(p) + '</div>';
