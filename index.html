@@ -4811,10 +4811,9 @@ function renderDeck(p){
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
         +'<div style="display:flex;align-items:center">'
         +'<span style="'+iconStyle+'">'+icon+'</span>'
-        +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div>'
-        +'<div id="opp-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+scC+'">'+sc+'</div></div>'
-        +'<div style="font-size:10px;color:'+scC+';margin-bottom:.6rem;font-weight:600">'+tier+'</div>'
-        +oppSoFarSlot(p)
+        +'<div class="dd-section-label" style="margin-bottom:0">'+label+'</div></div></div>'
+        +oppTiles(p,sc,scC,tier)
+        +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fog);margin:4px 0 2px">2025 Usage</div>'
         +rowsHtml+sampleNote+schemeBlock+'</div><div class="dd-divider"></div>';
     })()}
 

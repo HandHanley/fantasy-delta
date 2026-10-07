@@ -4263,30 +4263,45 @@ function opportunitySoFar(name, pos) {
 /* Sits directly under the card's main (last-season) score, as a boxed side-by-side
    so the two numbers read as a comparison (owner, 4 Oct). The change is in fog, not
    a signal colour: it is a fact about role, not a buy or sell. */
+/* SIDE-BY-SIDE TILES (owner, 7 Oct 2026). The card read "2025 score, 2026 score, 2025
+   stats", so the season of each number was easy to lose. Now the two scores sit side by
+   side as matching tiles, each naming its season, and the usage rows below are labelled
+   2025. oppTile draws one tile; oppTiles the pair. */
+function oppTile(top, num, color, sub, id) {
+  return '<div style="flex:1;min-width:0;box-sizing:border-box;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px">'
+    + '<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fog)">' + top + '</div>'
+    + '<div' + (id ? ' id="' + id + '"' : '') + ' style="font-size:28px;font-weight:800;line-height:1.1;margin-top:4px;color:' + color + '">' + num + '</div>'
+    + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + sub + '</div></div>';
+}
 function oppSoFarInner(p) {
   const o = opportunitySoFar(p.n, p.pos);
   if (!o) return '';
   const base = getOppScore(p.n, p.pos);
   const d = base != null ? o.sc - base : null;
   const chg = d == null ? '' : (d === 0 ? 'no change' : (d > 0 ? '+' : '\u2212') + Math.abs(d) + ' vs ' + (o.season - 1));
-  return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
-    + 'background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:2px 0 12px">'
-    + '<div><div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--paper)">'
-    + o.season + ' So Far</div>'
-    + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + o.g + ' of ' + o.tg + ' games'
-    + (chg ? ' \u00b7 ' + chg : '') + '</div></div>'
-    + '<div style="font-size:26px;font-weight:800;line-height:1;color:' + oppScoreColor(o.sc) + '">' + o.sc + '</div></div>';
+  return oppTile(o.season + ' So Far', o.sc, oppScoreColor(o.sc),
+    o.g + ' of ' + o.tg + ' games' + (chg ? ' \u00b7 ' + chg : ''));
 }
-/* The card drops this slot in its markup. Loaded: the line is there at once.
-   Not loaded: an empty slot, filled when the file arrives (the card has been
-   inserted by then — the fetch is never synchronous). */
+/* The 2026 tile fills when its file arrives (the card is on the page by then — the fetch
+   is never synchronous). No 2026 data: the slot is removed and the 2025 tile runs full width. */
 function oppSoFarSlot(p) {
-  if (SEASON_SO_FAR_STATE === 'ok') return '<div id="opp-sofar">' + oppSoFarInner(p) + '</div>';
+  if (SEASON_SO_FAR_STATE === 'ok') {
+    const t = oppSoFarInner(p);
+    return t ? '<div id="opp-sofar" style="flex:1;min-width:0;display:flex">' + t + '</div>' : '';
+  }
   ensureSeasonSoFar().then(() => {
     const h = document.getElementById('opp-sofar');
-    if (h && h.dataset.n === p.n) h.innerHTML = oppSoFarInner(p);
+    if (!h || h.dataset.n !== p.n) return;
+    const t = oppSoFarInner(p);
+    if (t) h.innerHTML = t; else h.remove();
   });
-  return '<div id="opp-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '"></div>';
+  return '<div id="opp-sofar" data-n="' + String(p.n).replace(/"/g, '&quot;') + '" style="flex:1;min-width:0;display:flex"></div>';
+}
+/* tier: the 2025 grade ("Clear starter"); scC: its colour. */
+function oppTiles(p, sc, scC, tier) {
+  // A grid, not flex: equal columns regardless of padding; with no 2026 tile, one column fills the row.
+  return '<div style="display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;margin:2px 0 12px">'
+    + oppTile('Last Season \u00b7 2025', sc, scC, tier, 'opp-score-val') + oppSoFarSlot(p) + '</div>';
 }
 
 /* ── EFFICIENCY THIS SEASON — DISPLAY ONLY (owner, 4 Oct 2026) ──────────────
@@ -4351,7 +4366,7 @@ function effSoFarInner(p){
     + yr + ' So Far \u00b7 ' + EFF_MEASURE[r.pos] + '</div>'
     + '<div style="font-size:10.5px;color:var(--fog);margin-top:3px">' + r.games.length + ' games \u00b7 ' + r.n + ' ' + EFF_UNIT[r.pos]
     + ' \u00b7 ' + (yr - 1) + est + ': ' + effFmt(r.pos, r.base) + '</div></div>'
-    + '<div style="text-align:right;flex-shrink:0"><div style="font-size:24px;font-weight:800;line-height:1;color:var(--paper);font-family:var(--mono,monospace)">'
+    + '<div style="text-align:right;flex-shrink:0"><div style="font-size:19px;font-weight:700;line-height:1;color:var(--paper)">'
     + effFmt(r.pos, r.sofar) + '</div>' + (t ? '<div style="font-size:10px;color:var(--fog);margin-top:3px">' + t + '</div>' : '') + '</div></div>';
 }
 function effSoFarSlot(p){
