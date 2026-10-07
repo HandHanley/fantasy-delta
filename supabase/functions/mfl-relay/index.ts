@@ -34,7 +34,7 @@
      from a key.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const VERSION = '2026-10-07c';
+const VERSION = '2026-10-07d';
 
 // Request types the relay will forward, and how long each answer is kept.
 // `league: true` means the request needs a league ID (L=).
@@ -42,6 +42,7 @@ const TYPES: Record<string, { league: boolean; ttl: number; extra?: string }> = 
   league:          { league: true,  ttl: 60 * 60 * 1000 },        // settings, franchises — 1 hour
   rosters:         { league: true,  ttl: 10 * 60 * 1000 },        // 10 minutes
   futureDraftPicks:{ league: true,  ttl: 30 * 60 * 1000 },        // 30 minutes
+  rules:           { league: true,  ttl: 60 * 60 * 1000 },        // scoring rules — 1 hour
   // League is optional here: with it, MFL may add that league's custom players.
   players:         { league: false, ttl: 12 * 60 * 60 * 1000 },   // MFL updates it at most daily
 };

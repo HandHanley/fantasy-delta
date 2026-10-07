@@ -139,7 +139,7 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
   </div>
 
   <h1>Privacy</h1>
-  <p class="updated">Last updated 8 August 2026</p>
+  <p class="updated">Last updated 7 October 2026</p>
 
   <p class="lede">DELTA is a dynasty fantasy football analytics tool. It collects the minimum needed to make the site work and to sync your settings across your devices. There are no ads, no trackers that follow you to other sites, and nothing is sold.</p>
 
@@ -166,7 +166,7 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
   <h2>What DELTA stores</h2>
 
   <h3>On your device, whether or not you sign in</h3>
-  <p>DELTA saves your preferences in your browser's local storage so the site remembers you between visits. That covers your league settings (league size, QB format, scoring format), your colour theme, your watchlist, your connected Sleeper league, and a cached list of Sleeper player names so the roster view loads quickly. None of this leaves your device unless you sign in. Clearing your browser data removes it.</p>
+  <p>DELTA saves your preferences in your browser's local storage so the site remembers you between visits. That covers your league settings (league size, QB format, scoring format), your colour theme, your watchlist, your connected Sleeper and MyFantasyLeague (MFL) leagues, and a cached list of Sleeper player names so the roster view loads quickly. None of this leaves your device unless you sign in. Clearing your browser data removes it.</p>
 
   <h3>In your account, only if you sign in</h3>
   <p>Signing in is optional. DELTA works fully without an account; signing in exists so your setup follows you from a laptop to a phone. When you do sign in, the following is stored:</p>
@@ -176,6 +176,7 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
     <li>Your watchlist — the names of the NFL and college players you have starred.</li>
     <li>Your Sleeper league connection — league ID, league name, season, your roster ID and team name, and your Sleeper user ID and username. This is the information DELTA needs to show your roster.</li>
   </ul>
+  <p>MFL leagues are not stored in your account. For now they stay on the device where you added them, even when you are signed in.</p>
   <p>There is no profile, no display name, and no password. DELTA does not ask for your real name, address, phone number, date of birth, or any payment information, because it has no use for them.</p>
 
   <h3>Analytics</h3>
@@ -186,7 +187,7 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
   <dl class="defs">
     <div class="def">
       <dt>Supabase</dt>
-      <dd>Stores accounts and synced data. Hosted in the United States (US West).</dd>
+      <dd>Stores accounts and synced data, and runs the small relay DELTA uses to read MFL leagues. Hosted in the United States (US West).</dd>
     </div>
     <div class="def">
       <dt>Google</dt>
@@ -203,6 +204,10 @@ footer a:hover{color:var(--teal-br);border-bottom-color:var(--teal-br)}
     <div class="def">
       <dt>Sleeper</dt>
       <dd>When you connect a league, your browser contacts Sleeper's public API directly, so Sleeper receives that request.</dd>
+    </div>
+    <div class="def">
+      <dt>MyFantasyLeague</dt>
+      <dd>MFL does not let other websites read its data from your browser, so when you connect an MFL league, DELTA's relay asks MFL for that league's public information and passes the answer straight back. MFL sees the request come from DELTA, not from you. The relay never asks for your MFL username or password, keeps MFL's answers for a few minutes so it is not asking repeatedly, and counts requests per connection for one minute to stop abuse. It stores nothing about you. Like any web service, Supabase may keep standard request logs.</dd>
     </div>
   </dl>
   <p class="fine">Player statistics, contract data, and market values shown in DELTA are compiled ahead of time and served as static files from the site. Viewing them does not send any information about you to those data sources.</p>

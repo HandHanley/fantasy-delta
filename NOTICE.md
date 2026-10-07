@@ -35,6 +35,11 @@ data regardless of anything in LICENSE.md:
 - **OverTheCap** — contract data.
 - **Sleeper** — league and roster data, read-only, fetched in the user's browser
   at their request. Nothing is stored beyond league and roster identifiers.
+- **MyFantasyLeague (MFL)** — league and roster data for public leagues,
+  read-only, fetched at the user's request through DELTA's relay
+  (`supabase/functions/mfl-relay`), because MFL does not allow browser reads from
+  other sites. The relay forwards and briefly caches; it never scores. Nothing is
+  stored beyond league and team identifiers, on the user's device only.
 
 If you fork this repository, you are responsible for complying with those
 sources' terms yourself. DELTA cannot and does not sublicense them to you.
@@ -46,7 +51,7 @@ by the code licence. A fork must not present itself as DELTA.
 
 DELTA is an independent project. It is not affiliated with, endorsed by, or
 sponsored by the National Football League, the NFL Players Association, Sleeper,
-or any data provider named above.
+MyFantasyLeague, or any data provider named above.
 
 ## Questions
 
