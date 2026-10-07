@@ -1,0 +1,59 @@
+// Run: node --experimental-strip-types supabase/functions/mfl-relay/relay.test.mjs  (Node 22+). Fake MFL only; never calls the real one.
+import { makeHandler } from './index.ts';
+let pass=0, fail=0;
+const ok=(c,m)=>{ if(c){pass++;} else {fail++; console.log('FAIL:',m);} };
+let clock=Date.UTC(2026,9,7,19,0,0);
+const now=()=>clock;
+let calls=[];
+const mfl=async(url,init)=>{
+  calls.push(url);
+  const u=new URL(url);
+  if(init.redirect!=='manual') throw new Error('redirect not manual');
+  if(!init.headers['User-Agent']) throw new Error('no UA');
+  if(u.hostname==='api.myfantasyleague.com' && u.searchParams.get('L')==='66666')
+    return new Response('',{status:302,headers:{location:'https://evil.example.com/x'}});
+  if(u.hostname==='api.myfantasyleague.com' && u.searchParams.get('L'))
+    return new Response('',{status:302,headers:{location:'https://www45.myfantasyleague.com'+u.pathname+u.search}});
+  if(u.searchParams.get('L')==='22222') return new Response(JSON.stringify({error:{$t:'API requires logged in user'}}),{status:200});
+  if(u.searchParams.get('L')==='33333') return new Response('<html>oops',{status:200});
+  if(u.searchParams.get('L')==='44444') return new Response('x',{status:500});
+  return new Response(JSON.stringify({type:u.searchParams.get('TYPE'),host:u.hostname,L:u.searchParams.get('L')}),{status:200});
+};
+const h=makeHandler(mfl,now);
+const R=(qs,o={})=>h(new Request('https://x.supabase.co/functions/v1/mfl-relay?'+qs,{method:o.method||'GET',headers:Object.assign({origin:'https://fantasydelta.com','x-forwarded-for':o.ip||'1.1.1.1'},o.headers||{})}));
+
+let r=await R('type=rosters&league=12345'); let b=await r.json();
+ok(r.status===200 && b.host==='www45.myfantasyleague.com' && b.type==='rosters','follows MFL redirect to league host');
+ok(r.headers.get('access-control-allow-origin')==='https://fantasydelta.com','CORS for DELTA');
+ok(r.headers.get('x-delta-cache')==='miss','first is miss');
+ok(calls[0]==='https://api.myfantasyleague.com/2026/export?TYPE=rosters&L=12345&JSON=1','first url exact: '+calls[0]);
+const n=calls.length; r=await R('type=rosters&league=12345');
+ok(r.headers.get('x-delta-cache')==='hit' && calls.length===n,'second is cache hit, no MFL call');
+clock+=11*60*1000; r=await R('type=rosters&league=12345');
+ok(r.headers.get('x-delta-cache')==='miss','expires after 10 min');
+r=await R('type=players'); b=await r.json(); ok(r.status===200 && b.type==='players' && b.L===null,'players needs no league');
+r=await R('type=transactions&league=12345'); ok(r.status===400,'unknown type refused');
+r=await R('type=import&league=12345'); ok(r.status===400,'import refused');
+r=await R('type=rosters'); ok(r.status===400,'missing league refused');
+r=await R('type=rosters&league=12345%26TYPE%3Dimport'); ok(r.status===400,'injection in league refused');
+r=await R('type=rosters&league=123456789'); ok(r.status===400,'9-digit league refused');
+r=await R('type=rosters&league=12345&year=1999'); ok(r.status===400,'old year refused');
+r=await R('type=rosters&league=12345&year=2028'); ok(r.status===400,'far future year refused');
+r=await R('type=rosters&league=12345&year=2025'); b=await r.json(); ok(r.status===200 && calls.at(-1).includes('/2025/'),'year passes through');
+r=await R('type=__proto__&league=1'); ok(r.status===400,'__proto__ refused');
+r=await R('type=toString&league=1'); ok(r.status===400,'toString refused');
+r=await R('type=rosters&league=66666'); b=await r.json(); ok(r.status===502 && /outside/.test(b.error),'off-domain redirect refused');
+r=await R('type=rosters&league=22222'); b=await r.json(); ok(r.status===200 && b.error && r.headers.get('x-delta-cache')==='skip-error','MFL error passed through');
+r=await R('type=rosters&league=22222'); ok(r.headers.get('x-delta-cache')==='skip-error','MFL error not cached');
+r=await R('type=rosters&league=33333'); ok(r.status===502,'non-JSON refused');
+r=await R('type=rosters&league=44444'); ok(r.status===502,'MFL 500 reported');
+r=await R('type=rosters&league=12345',{headers:{origin:'https://evil.example.com'}}); ok(r.status===200 && !r.headers.get('access-control-allow-origin'),'other sites get no CORS');
+r=await R('type=rosters&league=12345',{method:'POST'}); ok(r.status===405,'POST refused');
+r=await R('type=rosters&league=12345',{method:'OPTIONS'}); ok(r.status===204 && r.headers.get('access-control-allow-methods'),'preflight');
+let last; for(let i=0;i<45;i++) last=await R('type=players',{ip:'9.9.9.9'});
+ok(last.status===429,'throttle at 41st');
+r=await R('type=players',{ip:'8.8.8.8'}); ok(r.status===200,'other visitor unaffected');
+clock+=61*1000; r=await R('type=players',{ip:'9.9.9.9'}); ok(r.status===200,'throttle resets after a minute');
+const slow=makeHandler(async()=>{throw new DOMException('timeout','TimeoutError')},now);
+r=await slow(new Request('https://x/?type=players')); ok(r.status===504,'timeout -> 504');
+console.log(pass+' passed, '+fail+' failed');

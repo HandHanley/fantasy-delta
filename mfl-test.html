@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MFL Relay Test — DELTA</title>
+<meta name="robots" content="noindex,nofollow">
+<!-- Build 2026-10-07a. Step one of the MFL connection: proves the Supabase relay
+     (supabase/functions/mfl-relay) can read a public MFL league. Not linked from
+     anywhere. Nothing here is scored; nothing touches delta-engine.js. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@400;500;700&family=Josefin+Sans:wght@600;700&display=swap">
+<style>
+:root{
+  --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
+  --teal-br:#2DD4BF; --teal:#14B8A6;
+  --fog:#8CA0B3; --fog-2:#5C7080; --paper:#EAF0F4;
+  --coral:#E05745;
+  --teal-tint:rgba(45,212,191,.12);
+  --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
+  --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+  --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
+}
+*{box-sizing:border-box}
+body{font-family:var(--sans);background:var(--ink);color:var(--paper);margin:0;
+  padding:24px 16px calc(40px + env(safe-area-inset-bottom));line-height:1.5}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-family:var(--geo);font-weight:700;font-size:22px;letter-spacing:2px;text-transform:uppercase;margin:0 0 4px}
+.sub{color:var(--fog);font-size:13px;margin:0 0 20px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+input,select,button{font-family:var(--sans);font-size:14px;padding:9px 12px;border-radius:6px;
+  border:1px solid var(--line);background:var(--panel);color:var(--paper)}
+input{flex:1;min-width:150px;font-family:var(--mono)}
+button{background:var(--teal-tint);border-color:var(--teal);color:var(--teal-br);font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+.card h2{font-size:13px;font-weight:800;color:var(--teal-br);margin:0 0 8px;letter-spacing:.02em}
+.checks{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;font-size:13px}
+.checks .num{font-family:var(--mono);color:var(--fog);text-align:right}
+.good{color:var(--teal-br)}
+.bad{color:var(--coral)}
+.dim{color:var(--fog-2)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--fog);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+td.num,th.num{font-family:var(--mono);text-align:right}
+td.names{color:var(--fog);font-size:12px}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--fog);font-size:12.5px}
+pre{font-family:var(--mono);font-size:11px;color:var(--fog);white-space:pre-wrap;word-break:break-all;
+  max-height:260px;overflow:auto;background:var(--panel);border-radius:6px;padding:10px;margin:6px 0 0}
+#status{font-size:13px;color:var(--fog);min-height:20px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MFL Relay Test</h1>
+  <p class="sub">Step one of the My Fantasy League connection. Paste a public MFL league ID (the number after <span style="font-family:var(--mono)">L=</span> in the league's web address) to check DELTA can read it. Read-only, and nothing here is scored.</p>
+
+  <div class="row">
+    <input id="lg" inputmode="numeric" placeholder="MFL League ID" autocomplete="off"
+      onkeydown="if(event.key==='Enter')runTest()">
+    <select id="yr"><option>2026</option><option>2025</option></select>
+    <button id="go" onclick="runTest()">Run Test</button>
+  </div>
+  <div id="status"></div>
+  <div id="out"></div>
+</div>
+
+<script>
+// The relay's address. The function is named mfl-relay in Supabase.
+const RELAY = 'https://zpashsoixmsbzvvuodro.supabase.co/functions/v1/mfl-relay';
+const PAGE_BUILD = '2026-10-07a';
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+// MFL's JSON turns a one-item list into a bare object and an empty list into nothing.
+function arr(x){ return x==null ? [] : Array.isArray(x) ? x : [x]; }
+// MFL writes names "Last, First".
+function mflName(n){ const p=String(n||'').split(', '); return p.length===2 ? p[1]+' '+p[0] : String(n||''); }
+
+async function relay(type, league, year){
+  const qs = 'type='+encodeURIComponent(type)+'&year='+encodeURIComponent(year)+(league?'&league='+encodeURIComponent(league):'');
+  const t0 = performance.now();
+  try{
+    const r = await fetch(RELAY+'?'+qs);
+    const ms = Math.round(performance.now()-t0);
+    const text = await r.text();
+    let json=null; try{ json=JSON.parse(text); }catch(e){}
+    return { type, http:r.status, ms, cache:r.headers.get('x-delta-cache'), ver:r.headers.get('x-delta-relay'), json, text };
+  }catch(e){
+    return { type, http:0, ms:Math.round(performance.now()-t0), cache:null, ver:null, json:null, text:String(e) };
+  }
+}
+
+function problem(res){
+  if(res.http===0) return 'Could not reach the relay ('+res.text+'). Is the function deployed with Verify JWT off?';
+  if(!res.json) return 'Answer was not readable (HTTP '+res.http+').';
+  if(res.json.error){
+    const e=res.json.error;
+    return typeof e==='string' ? e : (e.$t || JSON.stringify(e));
+  }
+  if(res.http!==200) return 'HTTP '+res.http;
+  return '';
+}
+
+async function runTest(){
+  const league=document.getElementById('lg').value.trim();
+  const year=document.getElementById('yr').value;
+  const st=document.getElementById('status'), out=document.getElementById('out'), go=document.getElementById('go');
+  if(!/^\d{1,8}$/.test(league)){ st.innerHTML='<span class="bad">Enter the numeric league ID.</span>'; return; }
+  go.disabled=true; out.innerHTML=''; st.textContent='Asking the relay…';
+  const [lg, ro, pk, pl] = await Promise.all([
+    relay('league',league,year), relay('rosters',league,year),
+    relay('futureDraftPicks',league,year), relay('players','',year)
+  ]);
+  go.disabled=false;
+  st.textContent='';
+  out.innerHTML = render(lg, ro, pk, pl);
+}
+
+function render(lg, ro, pk, pl){
+  const all=[lg,ro,pk,pl];
+  const labels={league:'League Settings',rosters:'Rosters',futureDraftPicks:'Draft Picks',players:'Player List'};
+  let h='<div class="card"><h2>Relay Checks</h2><div class="checks">';
+  for(const r of all){
+    const p=problem(r);
+    h+='<div>'+esc(labels[r.type])+'</div>'
+      +'<div class="'+(p?'bad':'good')+'">'+(p?esc(p):'✓ Read')+'</div>'
+      +'<div class="num">'+r.ms+' ms'+(r.cache?' · '+esc(r.cache):'')+'</div>';
+  }
+  const ver = all.map(r=>r.ver).find(Boolean);
+  h+='</div><div class="dim" style="font-size:11.5px;margin-top:8px;font-family:var(--mono)">Relay '+esc(ver||'unknown')+' · Page '+PAGE_BUILD+'</div></div>';
+
+  // Player ID → name, so roster entries can be shown as people.
+  const names={};
+  if(!problem(pl)) for(const p of arr(pl.json.players && pl.json.players.player)) names[p.id]={n:mflName(p.name),pos:p.position,t:p.team};
+
+  const L = !problem(lg) && lg.json.league ? lg.json.league : null;
+  const fr = L ? arr(L.franchises && L.franchises.franchise) : [];
+  const frName={}; fr.forEach(f=>frName[f.id]=f.name);
+  const rosters = !problem(ro) ? arr(ro.json.rosters && ro.json.rosters.franchise) : [];
+  const picks = !problem(pk) ? arr(pk.json.futureDraftPicks && pk.json.futureDraftPicks.franchise) : [];
+  const pickCount={}; picks.forEach(f=>pickCount[f.id]=arr(f.futureDraftPick).length);
+
+  if(L){
+    h+='<div class="card"><h2>'+esc(L.name||'League')+'</h2>'
+      +'<div style="font-size:13px;color:var(--fog)">'+fr.length+' teams'
+      +(L.rosterSize?' · roster size '+esc(L.rosterSize):'')
+      +(L.starters&&L.starters.count?' · '+esc(L.starters.count)+' starters':'')
+      +'</div></div>';
+  }
+
+  if(rosters.length){
+    let total=0, found=0;
+    let rows='';
+    for(const f of rosters){
+      const ps=arr(f.player);
+      total+=ps.length;
+      const shown=ps.filter(p=>names[p.id]);
+      found+=shown.length;
+      const sample=shown.slice(0,5).map(p=>esc(names[p.id].n)+' <span class="dim">'+esc(names[p.id].pos||'')+'</span>').join(', ');
+      rows+='<tr><td>'+esc(frName[f.id]||('Team '+f.id))+'</td>'
+        +'<td class="num">'+ps.length+'</td>'
+        +'<td class="num">'+(pickCount[f.id]!=null?pickCount[f.id]:'–')+'</td>'
+        +'<td class="names">'+(sample||'<span class="dim">–</span>')+'</td></tr>';
+    }
+    h+='<div class="card"><h2>Rosters</h2>'
+      +'<div style="font-size:13px;color:var(--fog);margin-bottom:8px">'
+      +found+' of '+total+' rostered players named from MFL’s player list.</div>'
+      +'<div class="tw"><table><thead><tr><th>Team</th><th class="num">Players</th><th class="num">Picks</th><th>First Five</th></tr></thead><tbody>'
+      +rows+'</tbody></table></div></div>';
+  }
+
+  h+='<div class="card"><h2>Raw Answers</h2>';
+  for(const r of all){
+    h+='<details><summary>'+esc(labels[r.type])+' · HTTP '+r.http+' · '+r.text.length.toLocaleString()+' characters</summary><pre>'
+      +esc(r.text.slice(0,3000))+(r.text.length>3000?'\n…':'')+'</pre></details>';
+  }
+  h+='</div>';
+  return h;
+}
+</script>
+</body>
+</html>
