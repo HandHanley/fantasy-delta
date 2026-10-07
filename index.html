@@ -5584,11 +5584,15 @@ document.addEventListener('click', function(e) {
   <div id="myteam-rosterview">
   <div id="myteam-connect">
     <div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">
-      <div style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
-      <div style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px" role="group" aria-label="League platform">
+        <button id="slp-pf-sleeper" onclick="slpSetConnectPlatform('sleeper')" aria-pressed="true" style="font-size:11.5px;font-weight:800;padding:5px 14px;border-radius:14px;border:1px solid var(--teal);background:var(--panel);color:var(--teal);cursor:pointer">Sleeper</button>
+        <button id="slp-pf-mfl" onclick="slpSetConnectPlatform('mfl')" aria-pressed="false" style="font-size:11.5px;font-weight:600;padding:5px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">MFL</button>
+      </div>
+      <div id="slp-title" style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
+      <div id="slp-intro" style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')sleeperConnect()">
-        <button onclick="sleeperConnect()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
+        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')slpConnectClick()">
+        <button onclick="slpConnectClick()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
       </div>
       <div id="slp-status" style="font-size:11px;color:var(--fog);margin-top:9px;min-height:14px"></div>
       <div id="slp-pickers"></div>
@@ -5795,7 +5799,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-03a</span>
+  <span class="foot-build">2026-10-07a</span>
 </footer>
 
 
@@ -7086,7 +7090,8 @@ function slpStoreWrite(st){
   // empty connect screen. Costs one write; buys a clean revert.
   const act=slpStoreActive(st);
   try{
-    if(act){ const c=Object.assign({},act); delete c.settings; localStorage.setItem(SLP_LS_CONN,JSON.stringify(c)); }
+    if(act&&slpIsMfl(act.leagueId)){ /* MFL is device-only: leave the legacy key on the last Sleeper league */ }
+    else if(act){ const c=Object.assign({},act); delete c.settings; localStorage.setItem(SLP_LS_CONN,JSON.stringify(c)); }
     else localStorage.removeItem(SLP_LS_CONN);
   }catch(e){}
 }
@@ -7107,6 +7112,7 @@ function slpStoreUpsert(conn){
   const wasSynced=(i>=0&&st.leagues[i].synced)||false;
   let nowSynced=wasSynced;
   try{ if(typeof DSYNC!=='undefined'&&typeof DSYNC.isSignedIn==='function'&&DSYNC.isSignedIn()) nowSynced=true; }catch(e){}
+  if(slpIsMfl(conn.leagueId)) nowSynced=false;   // MFL leagues never reach the account (device-only)
   const rec=Object.assign({},conn,{settings:(i>=0?st.leagues[i].settings:null),synced:nowSynced});
   if(i>=0) st.leagues[i]=rec; else st.leagues.push(rec);
   st.active=conn.leagueId;
@@ -7194,10 +7200,10 @@ async function slpSyncLeagues(){
   });
 
   // PUSH: anything here the account has not got (added while signed out).
-  const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]; });
+  const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]&&!slpIsMfl(l.leagueId); });
   if(missing.length&&typeof DSYNC.pushLeagues==='function'){
     try{
-      await DSYNC.pushLeagues(missing,st.active);
+      await DSYNC.pushLeagues(missing,slpIsMfl(st.active)?null:st.active);
       missing.forEach(function(l){ l.synced=true; });
     }catch(e){ slpLog('league push failed:',e); }
   }
@@ -7242,18 +7248,12 @@ async function slpSwitchLeague(leagueId){
   SLP.viewRosterId=rec.rosterId; SLP.view='rosters';
   SLP.trade=null; if(typeof renderSlpTradeAssist==='function') renderSlpTradeAssist();
   renderMyTeam();
-  try{ if(typeof DSYNC!=='undefined'&&DSYNC.noteSleeperConnect) DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
+  try{ if(!slpIsMfl(rec.leagueId)&&typeof DSYNC!=='undefined'&&DSYNC.noteSleeperConnect) DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
 
   try{
     slpLog('switching to league',rec.leagueId,rec.leagueName);
-    const res=await Promise.all([
-      slpFetch('/league/'+rec.leagueId),
-      slpFetch('/league/'+rec.leagueId+'/rosters'),
-      slpFetch('/league/'+rec.leagueId+'/users'),
-      slpFetch('/league/'+rec.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
-    ]);
-    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
-    await slpEnsurePlayers();
+    slpApplySet(await slpLoadSet(rec.leagueId,rec.season));
+    if(!slpIsMfl(rec.leagueId)) await slpEnsurePlayers();
     slpRunMatch();
     SLP.loaded=true;
     // Re-score the whole platform to this league. Stored format wins when we have
@@ -7274,7 +7274,7 @@ async function slpSwitchLeague(leagueId){
   }catch(e){
     slpLog('switch FAILED:',e);
     SLP.conn=null;
-    SLP.restoreError='Could not reach Sleeper to load "'+(rec.leagueName||rec.leagueId)+'": '+(e.message||e);
+    SLP.restoreError='Could not reach '+slpPlatformName(rec.leagueId)+' to load "'+(rec.leagueName||rec.leagueId)+'": '+(e.message||e);
   }finally{ SLP.busy=false; renderMyTeam(); }
 }
 
@@ -7287,7 +7287,7 @@ function slpAddLeague(){
   renderMyTeam();
   const el=document.getElementById('slp-input');
   if(el){ el.value=''; try{ el.focus(); }catch(e){} }
-  slpStatus('Add another league \u2014 enter your Sleeper username or a league ID.');
+  slpStatus('Add another league \u2014 Sleeper or MFL, chosen above.');
 }
 
 // Remove one league. If it was the last one, this is a full disconnect.
@@ -7295,7 +7295,7 @@ function slpRemoveLeague(leagueId){
   const st0=slpStoreRead();
   const rec=(st0.leagues||[]).find(function(l){ return String(l.leagueId)===String(leagueId); });
   if(!rec) return;
-  if(!confirm('Remove "'+(rec.leagueName||leagueId)+'" from DELTA? Your Sleeper league is untouched.')) return;
+  if(!confirm('Remove "'+(rec.leagueName||leagueId)+'" from DELTA? Your '+slpPlatformName(leagueId)+' league is untouched.')) return;
   const st=slpStoreRemove(leagueId);
   // Signed in: delete the row so the removal propagates instead of being
   // re-added by the next union merge from another device.
@@ -7383,6 +7383,203 @@ async function slpFetch(path){
   return r.json();
 }
 
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// MYFANTASYLEAGUE ADAPTER (step two, 2026-10-07)
+// MFL refuses browser reads from any other site (tested 7 Oct 2026), so every
+// MFL call goes through DELTA's Supabase relay (supabase/functions/mfl-relay),
+// which is plumbing only \u2014 it fetches and forwards, never scores.
+// The translator below turns MFL's answers into the SAME shapes Sleeper gives,
+// so every My Team screen is reused rather than copied. Rules it keeps:
+//   \u00b7 League ids are stored as "mfl:<id>" so they can never collide with a
+//     Sleeper league, and every platform check is slpIsMfl().
+//   \u00b7 Player ids are stored as "mfl:<id>": MFL and Sleeper both use plain
+//     numbers and the same number means different people on each.
+//   \u00b7 Team ids become plain numbers (MFL "0001" \u2192 1), because the existing
+//     buttons pass roster ids unquoted.
+//   \u00b7 MFL leagues are DEVICE-ONLY for now. The account table was built for
+//     Sleeper and its exact layout is unverified, so nothing MFL is written to
+//     it: not synced, not mirrored to the legacy key, never set active there.
+//   \u00b7 Public leagues only. No MFL usernames or passwords, ever.
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+const MFL_RELAY='https://zpashsoixmsbzvvuodro.supabase.co/functions/v1/mfl-relay';
+let SLP_SLEEPER_DB=false;   // true once SLP.players holds Sleeper's database (not just MFL entries)
+function slpIsMfl(id){ return /^mfl:/.test(String(id==null?'':id)); }
+function slpPlatformName(id){ return slpIsMfl(id)?'MFL':'Sleeper'; }
+
+async function mflFetch(type,league,year){
+  const qs='type='+encodeURIComponent(type)+'&year='+encodeURIComponent(year)+(league?'&league='+encodeURIComponent(league):'');
+  slpLog('MFL GET',qs);
+  const r=await fetch(MFL_RELAY+'?'+qs);
+  let j=null; try{ j=await r.json(); }catch(e){}
+  slpLog('\u2192 HTTP',r.status,type);
+  if(j&&j.error){ const e=j.error; throw new Error(typeof e==='string'?e:(e.$t||'MFL refused the request')); }
+  if(!r.ok) throw new Error('MFL relay returned '+r.status+' for '+type);
+  if(!j) throw new Error('MFL answer for '+type+' was unreadable');
+  return j;
+}
+// MFL turns a one-item list into a bare object and an empty list into nothing.
+function mflArr(x){ return x==null?[]:(Array.isArray(x)?x:[x]); }
+// Names arrive as "Last, First" (suffix on the last name). Tags are removed
+// whole because MFL lets owners style team names, and several older render
+// paths interpolate team names without escaping.
+function mflClean(s){ return String(s==null?'':s).replace(/<[^>]*>/g,'').replace(/[<>]/g,'').replace(/\s+/g,' ').trim(); }
+function mflName(n){ const p=mflClean(n).split(', '); return p.length===2?(p[1]+' '+p[0]):mflClean(n); }
+function mflRid(id){ return parseInt(id,10); }
+function mflLimit(s){
+  const m=String(s==null?'':s).split('-');
+  const lo=parseInt(m[0],10)||0, hi=m.length>1?(parseInt(m[1],10)||lo):lo;
+  return [lo,hi];
+}
+/* MFL describes a lineup as a starter count plus a min-max range per position.
+   DELTA's lineup reader wants Sleeper-style slots, so fixed slots come from each
+   minimum and the rest become flex slots: one SUPER_FLEX when a second QB may
+   start (that is what makes a league superflex), the remainder plain FLEX.
+   Kicker, defence and IDP minimums are counted so they are not handed to flex,
+   but DELTA does not project those positions. Where IDP flex also exists the
+   offensive flex count can run high; it affects every team equally. */
+function mflRosterPositions(st){
+  const out=[];
+  if(!st) return out;
+  const total=parseInt(st.count,10)||0;
+  let mins=0, offExtra=0, qbFlex=false;
+  for(const p of mflArr(st.position)){
+    const lim=mflLimit(p.limit), nm=String(p.name||'').toUpperCase();
+    mins+=lim[0];
+    if(['QB','RB','WR','TE'].indexOf(nm)>=0){
+      for(let i=0;i<lim[0];i++) out.push(nm);
+      offExtra+=Math.max(0,lim[1]-lim[0]);
+      if(nm==='QB'&&lim[1]>lim[0]) qbFlex=true;
+    }
+  }
+  let flex=Math.max(0,Math.min(total-mins,offExtra));
+  if(qbFlex&&flex>0){ out.push('SUPER_FLEX'); flex--; }
+  for(let i=0;i<flex;i++) out.push('FLEX');
+  return out;
+}
+
+async function mflLoadSet(leagueId,season){
+  const id=String(leagueId).replace(/^mfl:/,'');
+  const year=String(season||new Date().getFullYear());
+  const res=await Promise.all([
+    mflFetch('league',id,year),
+    mflFetch('rosters',id,year),
+    mflFetch('futureDraftPicks',id,year).catch(function(e){ slpLog('MFL picks unavailable:',e); return null; }),
+    mflFetch('players',id,year)
+  ]);
+  const L=res[0]&&res[0].league;
+  if(!L) throw new Error('league '+id+' not found on MFL for '+year);
+  const frs=mflArr(L.franchises&&L.franchises.franchise);
+
+  // Players: QB/RB/WR/TE only, the same trim the Sleeper database gets.
+  const keep={QB:1,RB:1,WR:1,TE:1}, map={};
+  for(const p of mflArr(res[3]&&res[3].players&&res[3].players.player)){
+    if(!p||!keep[p.position]) continue;
+    const t=p.team&&!/^FA/.test(p.team)?mflClean(p.team):null;
+    map['mfl:'+p.id]={n:mflName(p.name),p:p.position,t:t,a:null};
+  }
+  SLP.players=Object.assign({},SLP.players||{},map);
+
+  const rosters=mflArr(res[1]&&res[1].rosters&&res[1].rosters.franchise).map(function(f){
+    return {roster_id:mflRid(f.id), owner_id:'mfl-'+mflRid(f.id),
+            players:mflArr(f.player).map(function(p){ return 'mfl:'+p.id; }), starters:[]};
+  });
+  const users=frs.map(function(f){
+    const nm=mflClean(f.name)||('Team '+mflRid(f.id));
+    return {user_id:'mfl-'+mflRid(f.id), display_name:nm, metadata:{team_name:nm}};
+  });
+  // Every pick MFL lists, with its holder and original owner. slpPickInventory()
+  // reads this list directly instead of inferring picks from a round count.
+  let pickList=null;
+  if(res[2]&&res[2].futureDraftPicks){
+    pickList=[];
+    for(const f of mflArr(res[2].futureDraftPicks.franchise)){
+      for(const pk of mflArr(f.futureDraftPick)){
+        pickList.push({season:parseInt(pk.year,10), round:parseInt(pk.round,10),
+                       owner:mflRid(f.id), from:mflRid(pk.originalPickFor||f.id)});
+      }
+    }
+  }
+  const league={league_id:'mfl:'+id, name:mflClean(L.name)||('MFL league '+id), season:year,
+                total_rosters:frs.length||rosters.length,
+                roster_positions:mflRosterPositions(L.starters),
+                scoring_settings:{},   // MFL scoring is not read yet: detection keeps the current scoring
+                settings:{}, platform:'mfl'};
+  slpLog('MFL league:',league.name,'\u00b7',league.total_rosters,'teams \u00b7',Object.keys(map).length,'players \u00b7',
+         (pickList?pickList.length:0),'picks \u00b7 slots',league.roster_positions.join(','));
+  return {league:league, rosters:rosters, users:users, tradedPicks:[], pickList:pickList};
+}
+
+// One loader for both platforms, used by connect, switch, refresh and restore.
+async function slpLoadSet(leagueId,season){
+  if(slpIsMfl(leagueId)) return mflLoadSet(leagueId,season);
+  const res=await Promise.all([
+    slpFetch('/league/'+leagueId),
+    slpFetch('/league/'+leagueId+'/rosters'),
+    slpFetch('/league/'+leagueId+'/users'),
+    slpFetch('/league/'+leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
+  ]);
+  return {league:res[0], rosters:res[1]||[], users:res[2]||[], tradedPicks:res[3]||[], pickList:null};
+}
+function slpApplySet(set){
+  SLP.league=set.league; SLP.rosters=set.rosters||[]; SLP.users=set.users||[];
+  SLP.tradedPicks=set.tradedPicks||[]; SLP.pickList=set.pickList||null;
+}
+
+// \u2500\u2500 Connect form: platform switch \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+let SLP_CONNECT_PF='sleeper';
+function slpSetConnectPlatform(pf){
+  SLP_CONNECT_PF=(pf==='mfl')?'mfl':'sleeper';
+  const mfl=SLP_CONNECT_PF==='mfl';
+  const set=function(id,txt){ const el=document.getElementById(id); if(el) el.textContent=txt; };
+  set('slp-title', mfl?'Connect your MFL league':'Connect your Sleeper league');
+  set('slp-intro', mfl
+    ?'Paste your MyFantasyLeague league ID (the number after L= in your league\u2019s web address), or the whole address. Public leagues only \u2014 DELTA cannot read a league that needs an MFL login. Read-only, and saved on this device only for now.'
+    :'Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only \u2014 DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.');
+  const inp=document.getElementById('slp-input');
+  if(inp){ inp.placeholder=mfl?'MFL league ID or address':'Sleeper username or league ID'; inp.value=''; }
+  ['sleeper','mfl'].forEach(function(k){
+    const b=document.getElementById('slp-pf-'+k); if(!b) return;
+    const on=k===SLP_CONNECT_PF;
+    b.style.borderColor=on?'var(--teal)':'var(--line)';
+    b.style.color=on?'var(--teal)':'var(--fog)';
+    b.style.fontWeight=on?'800':'600';
+    b.setAttribute('aria-pressed',on?'true':'false');
+  });
+  const pk=document.getElementById('slp-pickers'); if(pk) pk.innerHTML='';
+  slpStatus('');
+}
+function slpConnectClick(){ if(SLP_CONNECT_PF==='mfl') mflConnect(); else sleeperConnect(); }
+
+async function mflConnect(){
+  if(SLP.busy) return;
+  let v=((document.getElementById('slp-input')||{}).value||'').trim();
+  const m=v.match(/[?&]L=(\d+)/i)||v.match(/myfantasyleague\.com\/\d{4}\/[a-z_]+\/(\d+)/i);
+  if(m) v=m[1];
+  if(!/^\d{1,8}$/.test(v)){ slpStatus('Enter your MFL league ID \u2014 the number after L= in your league\u2019s web address.',true); return; }
+  SLP.busy=true; SLP.leagues=null; SLP.pendingUser=null;
+  const pk=document.getElementById('slp-pickers'); if(pk) pk.innerHTML='';
+  const year=new Date().getFullYear();
+  try{
+    slpStatus('Loading league from MFL\u2026');
+    let set;
+    try{ set=await mflLoadSet('mfl:'+v,year); }
+    catch(e1){
+      // Early in a new year a league may not have been renewed on MFL yet.
+      slpLog('MFL '+year+' failed ('+(e1.message||e1)+') \u2014 trying '+(year-1));
+      try{ set=await mflLoadSet('mfl:'+v,year-1); }catch(e2){ throw e1; }
+    }
+    slpApplySet(set);
+    renderSlpTeamPicker();
+    slpStatus('Select your team.');
+  }catch(e){
+    slpLog('MFL connect FAILED:',e);
+    const msg=String(e.message||e);
+    slpStatus('Could not load that MFL league: '+msg
+      +(/log(ged)? ?in/i.test(msg)?' \u2014 this league is private. DELTA can only read public MFL leagues.':''),true);
+  }finally{ SLP.busy=false; }
+}
+
+
 function slpStatus(msg,isErr){
   const el=document.getElementById('slp-status');
   if(el){ el.textContent=msg||''; el.style.color=isErr?'var(--coral)':'var(--fog)'; }
@@ -7422,12 +7619,12 @@ function slpBuildDeltaIndex(){
 
 // ── Player database (~5MB raw, fetched once, trimmed before caching) ──
 async function slpEnsurePlayers(force){
-  if(SLP.players&&!force) return SLP.players;
+  if(SLP.players&&SLP_SLEEPER_DB&&!force) return SLP.players;
   if(!force){
     try{
       const c=JSON.parse(localStorage.getItem(SLP_LS_PLAYERS)||'null');
       if(c&&c.v===2&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
-        SLP.players=c.map;
+        SLP.players=c.map; SLP_SLEEPER_DB=true;
         slpLog('player DB cache HIT:',Object.keys(c.map).length,'players, age',Math.round((Date.now()-c.ts)/3600000)+'h');
         return SLP.players;
       }
@@ -7446,7 +7643,7 @@ async function slpEnsurePlayers(force){
     if(!nm) continue;
     map[id]={n:nm,p:pl.position,t:pl.team||null,a:(typeof pl.age==='number'?pl.age:null)};
   }
-  SLP.players=map;
+  SLP.players=map; SLP_SLEEPER_DB=true;
   slpLog('player DB fetched:',total,'total \u2192',Object.keys(map).length,'QB/RB/WR/TE kept');
   try{
     const blob=JSON.stringify({v:2,ts:Date.now(),map});
@@ -7500,15 +7697,10 @@ async function slpPickLeague(leagueId){
 
 async function slpLoadLeague(leagueId,user){
   slpStatus('Loading league\u2026');
-  const res=await Promise.all([
-    slpFetch('/league/'+leagueId),
-    slpFetch('/league/'+leagueId+'/rosters'),
-    slpFetch('/league/'+leagueId+'/users'),
-    slpFetch('/league/'+leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
-  ]);
-  const league=res[0];
+  const set=await slpLoadSet(leagueId,null);
+  const league=set.league;
   if(!league||!league.league_id) throw new Error('league '+leagueId+' not found');
-  SLP.league=league; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
+  slpApplySet(set);
   slpLog('league:',league.name,'\u00b7 season',league.season,'\u00b7',league.total_rosters,'teams \u00b7',
          SLP.rosters.length,'rosters,',SLP.users.length,'users');
   let rid=null;
@@ -7536,11 +7728,11 @@ async function slpSelectTeam(rosterId,user){
     userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
   };
   slpStoreUpsert(SLP.conn);   // adds or updates this league and makes it active (also mirrors to the legacy key)
-  try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
+  try{ if(!slpIsMfl(SLP.conn.leagueId)&&typeof DSYNC!=='undefined') DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
   SLP.viewRosterId=roster.roster_id; SLP.view='rosters';
   slpLog('CONNECTED:',JSON.stringify(SLP.conn));
   slpStatus('Connected \u2014 matching players\u2026');
-  await slpEnsurePlayers();
+  if(!slpIsMfl(SLP.conn.leagueId)) await slpEnsurePlayers();
   slpRunMatch();
   slpDetectAndApplyFormat();   // detect on connect; saveLeaguePrefs() then stores the format on THIS league
   SLP.loaded=true; SLP.restoreError=null;
@@ -7555,7 +7747,7 @@ function slpRunMatch(){
   for(const r of (SLP.rosters||[])){
     for(const pid of (r.players||[])){
       if(SLP.match[pid]!==undefined) continue;
-      if(!/^\d+$/.test(String(pid))){ SLP.match[pid]=null; skipped++; continue; }   // team DEF ids like "SF"
+      if(!/^(mfl:)?\d+$/.test(String(pid))){ SLP.match[pid]=null; skipped++; continue; }   // team DEF ids like "SF"
       const sp=SLP.players?SLP.players[pid]:null;
       if(!sp){ SLP.match[pid]=null; skipped++; continue; }                          // K / IDP / unknown — not QB/RB/WR/TE
       const dn=idx[slpNorm(sp.n)];
@@ -7637,13 +7829,7 @@ async function sleeperRefresh(){
   SLP.busy=true; renderMyTeam();
   try{
     slpLog('refreshing league',SLP.conn.leagueId);
-    const res=await Promise.all([
-      slpFetch('/league/'+SLP.conn.leagueId),
-      slpFetch('/league/'+SLP.conn.leagueId+'/rosters'),
-      slpFetch('/league/'+SLP.conn.leagueId+'/users'),
-      slpFetch('/league/'+SLP.conn.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
-    ]);
-    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
+    slpApplySet(await slpLoadSet(SLP.conn.leagueId,SLP.conn.season));
     slpRunMatch();
     slpLog('refresh complete');
   }catch(e){
@@ -7678,14 +7864,8 @@ async function openMyTeamTab(){
   SLP.viewRosterId=saved.rosterId; renderMyTeam();   // shows restoring state
   try{
     slpLog('restoring active league:',saved.leagueName||saved.leagueId,'\u00b7',(st.leagues||[]).length,'stored');
-    const res=await Promise.all([
-      slpFetch('/league/'+saved.leagueId),
-      slpFetch('/league/'+saved.leagueId+'/rosters'),
-      slpFetch('/league/'+saved.leagueId+'/users'),
-      slpFetch('/league/'+saved.leagueId+'/traded_picks').catch(function(e){ slpLog('traded_picks unavailable:',e); return []; })
-    ]);
-    SLP.league=res[0]; SLP.rosters=res[1]||[]; SLP.users=res[2]||[]; SLP.tradedPicks=res[3]||[];
-    await slpEnsurePlayers();
+    slpApplySet(await slpLoadSet(saved.leagueId,saved.season));
+    if(!slpIsMfl(saved.leagueId)) await slpEnsurePlayers();
     slpRunMatch();
     SLP.loaded=true; SLP.restoreError=null;
     slpLog('restore complete');
@@ -7695,7 +7875,7 @@ async function openMyTeamTab(){
   }catch(e){
     slpLog('restore FAILED:',e);
     SLP.conn=null;   // fall back to connect UI but keep the store for the next attempt
-    SLP.restoreError='Could not reach Sleeper to restore "'+(saved.leagueName||saved.leagueId)+'": '+(e.message||e);
+    SLP.restoreError='Could not reach '+slpPlatformName(saved.leagueId)+' to restore "'+(saved.leagueName||saved.leagueId)+'": '+(e.message||e);
   }finally{ SLP.busy=false; renderMyTeam(); }
 }
 
@@ -7723,7 +7903,9 @@ function slpFmtChips(){
   const labels={half_tep:'0.5PPR+TEP',half:'0.5PPR',full_tep:'FullPPR+TEP',full:'FullPPR',std:'Standard'};
   const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:var(--sky);background:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:2px 7px">'+t+'</span>'; };
   return chip(leagueTeams+'-team')+' '+chip(qbFmt==='sf'?'Superflex':'1-QB')+' '+chip(labels[scoringFmt]||scoringFmt)
-    +(SLP.detected?'<span style="font-size:9.5px;color:var(--fog-2);margin-left:6px">auto-detected from league settings</span>':'');
+    +(SLP.detected?'<span style="font-size:9.5px;color:var(--fog-2);margin-left:6px">'
+      +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'teams and QB format read from MFL \u00b7 scoring is not, so set it in Settings if it differs':'auto-detected from league settings')
+      +'</span>':'');
 }
 
 // Normalized name → FC market entry for the CURRENT format slice. Lets
@@ -7748,6 +7930,13 @@ function slpFcIndex(){
 // are typically already drafted by June, and valuing slotted picks is the
 // trade-calc's job (Phase 3), so this is inventory only.
 function slpPickInventory(rosterId){
+  // MFL lists every pick and who holds it, so read it rather than infer it.
+  if(SLP.pickList){
+    const first=slpTierSeason();
+    return SLP.pickList.filter(function(pk){
+      return String(pk.owner)===String(rosterId)&&pk.season>=first&&pk.season<first+3;
+    }).map(function(pk){ return {season:pk.season,round:pk.round,from:pk.from}; });
+  }
   const lg=SLP.league||{};
   const rounds=(lg.settings&&lg.settings.draft_rounds)||4;
   const start=parseInt(lg.season||new Date().getFullYear(),10)+1;
@@ -7999,7 +8188,7 @@ function slpTeamValues(){
 
            A numeric id that IS in the player DB but has no DELTA match is the
            real remainder — a skill player outside the tracked universe. */
-        const numeric=/^\d+$/.test(String(pid));
+        const numeric=/^(mfl:)?\d+$/.test(String(pid));
         const known=SLP.players&&SLP.players[pid];
         if(!numeric||!known) row.nonSkill++; else row.unmatched++;
         continue;
@@ -8211,7 +8400,7 @@ function renderSlpSubNav(){
     +'<div class="dl-mt-row dl-mt-analysis">'
     +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
-    +analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger')
+    +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'':analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger'))
     +'</div>';
 }
 
@@ -8829,7 +9018,7 @@ function renderMyTeam(){
   if(SLP.busy&&SLP.conn){
     connectDiv.style.display='none'; rosterDiv.style.display='block';
     rosterDiv.innerHTML=renderSlpLeagueSwitcher()
-      +'<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+slpEsc(SLP.conn.leagueName||'your league')+' from Sleeper\u2026</div>';
+      +'<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+slpEsc(SLP.conn.leagueName||'your league')+' from '+slpPlatformName(SLP.conn.leagueId)+'\u2026</div>';
     return;
   }
   if(!SLP.conn||!SLP.loaded){
@@ -8850,7 +9039,7 @@ function renderMyTeam(){
     +(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+slpEsc(slpFmtLabel(scoringFmt))+'</span></summary>'
     +renderSlpLeagueSwitcher()
     +'<div class="dl-mt-row dl-mt-meta">'
-    +'<div style="font-size:11px;color:var(--fog)">Sleeper \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
+    +'<div style="font-size:11px;color:var(--fog)">'+slpPlatformName(SLP.conn.leagueId)+(slpIsMfl(SLP.conn.leagueId)?' \u00b7 this device only':'')+' \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
     +(multi
@@ -8972,7 +9161,13 @@ function renderSlpRoster(rid){
     +(pickLines||'<span style="color:var(--fog-2)">none</span>')
     +'</div>';
 
-  return summary+table+picksBox;
+  // MFL rosters often carry kickers, defence, IDP and league-made custom
+  // players. Say how many sit outside DELTA rather than letting them vanish.
+  const notCovered=(roster.players||[]).length-totalRostered;
+  const coverNote=(slpIsMfl(SLP.conn&&SLP.conn.leagueId)&&notCovered>0)
+    ?'<div style="font-size:11px;color:var(--fog);margin-top:8px">+ '+notCovered+' more on this roster that DELTA does not cover \u2014 kickers, defence, IDP and custom players.</div>'
+    :'';
+  return summary+table+coverNote+picksBox;
 }
 
 function renderSlpBoard(){

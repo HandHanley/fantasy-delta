@@ -33,6 +33,8 @@ ok(r.headers.get('x-delta-cache')==='hit' && calls.length===n,'second is cache h
 clock+=11*60*1000; r=await R('type=rosters&league=12345');
 ok(r.headers.get('x-delta-cache')==='miss','expires after 10 min');
 r=await R('type=players'); b=await r.json(); ok(r.status===200 && b.type==='players' && b.L===null,'players needs no league');
+r=await R('type=players&league=12345'); b=await r.json(); ok(r.status===200 && b.L==='12345','players accepts optional league');
+r=await R('type=players&league=12a'); ok(r.status===400,'bad optional league refused');
 r=await R('type=transactions&league=12345'); ok(r.status===400,'unknown type refused');
 r=await R('type=import&league=12345'); ok(r.status===400,'import refused');
 r=await R('type=rosters'); ok(r.status===400,'missing league refused');
