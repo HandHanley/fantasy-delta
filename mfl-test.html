@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MFL Relay Test — DELTA</title>
 <meta name="robots" content="noindex,nofollow">
-<!-- Build 2026-10-07a. Step one of the MFL connection: proves the Supabase relay
+<!-- Build 2026-10-07b. Step one of the MFL connection: proves the Supabase relay
      (supabase/functions/mfl-relay) can read a public MFL league. Not linked from
      anywhere. Nothing here is scored; nothing touches delta-engine.js. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,7 +72,7 @@ pre{font-family:var(--mono);font-size:11px;color:var(--fog);white-space:pre-wrap
 <script>
 // The relay's address. The function is named mfl-relay in Supabase.
 const RELAY = 'https://zpashsoixmsbzvvuodro.supabase.co/functions/v1/mfl-relay';
-const PAGE_BUILD = '2026-10-07a';
+const PAGE_BUILD = '2026-10-07b';
 
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 // MFL's JSON turns a one-item list into a bare object and an empty list into nothing.
@@ -153,13 +153,14 @@ function render(lg, ro, pk, pl){
   }
 
   if(rosters.length){
-    let total=0, found=0;
+    let total=0, found=0; const missing=[];
     let rows='';
     for(const f of rosters){
       const ps=arr(f.player);
       total+=ps.length;
       const shown=ps.filter(p=>names[p.id]);
       found+=shown.length;
+      ps.filter(p=>!names[p.id]).forEach(p=>missing.push((frName[f.id]||f.id)+': id '+p.id+(p.status?' ('+p.status+')':'')));
       const sample=shown.slice(0,5).map(p=>esc(names[p.id].n)+' <span class="dim">'+esc(names[p.id].pos||'')+'</span>').join(', ');
       rows+='<tr><td>'+esc(frName[f.id]||('Team '+f.id))+'</td>'
         +'<td class="num">'+ps.length+'</td>'
@@ -170,7 +171,9 @@ function render(lg, ro, pk, pl){
       +'<div style="font-size:13px;color:var(--fog);margin-bottom:8px">'
       +found+' of '+total+' rostered players named from MFL’s player list.</div>'
       +'<div class="tw"><table><thead><tr><th>Team</th><th class="num">Players</th><th class="num">Picks</th><th>First Five</th></tr></thead><tbody>'
-      +rows+'</tbody></table></div></div>';
+      +rows+'</tbody></table></div>'
+      +(missing.length?'<details><summary>'+missing.length+' roster entries not in MFL\u2019s player list</summary><pre>'+esc(missing.join('\n'))+'</pre></details>':'')
+      +'</div>';
   }
 
   h+='<div class="card"><h2>Raw Answers</h2>';

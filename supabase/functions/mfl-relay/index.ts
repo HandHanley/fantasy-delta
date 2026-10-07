@@ -34,7 +34,7 @@
      from a key.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const VERSION = '2026-10-07a';
+const VERSION = '2026-10-07b';
 
 // Request types the relay will forward, and how long each answer is kept.
 // `league: true` means the request needs a league ID (L=).
@@ -78,6 +78,8 @@ export function makeHandler(fetchImpl: FetchFn, now: () => number = Date.now) {
       h['Access-Control-Allow-Methods'] = 'GET, OPTIONS';
       h['Access-Control-Allow-Headers'] = 'content-type';
       h['Access-Control-Max-Age'] = '86400';
+      // Without this, browsers hide the two X-Delta headers from the page.
+      h['Access-Control-Expose-Headers'] = 'X-Delta-Relay, X-Delta-Cache';
     }
     return h;
   }

@@ -25,6 +25,7 @@ const R=(qs,o={})=>h(new Request('https://x.supabase.co/functions/v1/mfl-relay?'
 let r=await R('type=rosters&league=12345'); let b=await r.json();
 ok(r.status===200 && b.host==='www45.myfantasyleague.com' && b.type==='rosters','follows MFL redirect to league host');
 ok(r.headers.get('access-control-allow-origin')==='https://fantasydelta.com','CORS for DELTA');
+ok(/X-Delta-Cache/.test(r.headers.get('access-control-expose-headers')||'') && /X-Delta-Relay/.test(r.headers.get('access-control-expose-headers')||''),'extra headers exposed to the page');
 ok(r.headers.get('x-delta-cache')==='miss','first is miss');
 ok(calls[0]==='https://api.myfantasyleague.com/2026/export?TYPE=rosters&L=12345&JSON=1','first url exact: '+calls[0]);
 const n=calls.length; r=await R('type=rosters&league=12345');
