@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-08b';
+const DL_BUILD='2026-10-08c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5069,6 +5069,21 @@ function loadFreezeProj(){
     .catch(e=>{ FREEZE_PROJ_LOADING=null; throw e; });
   return FREEZE_PROJ_LOADING;
 }
+/* This season's played games, scored in the league's format: the ONE place "so far"
+   points are added up (8 Oct 2026). projContext's Actual So Far, the roster's PPG '26
+   and the rankings column all read it, so they cannot disagree. Played = not upcoming,
+   not DNP (the locked one-snap rule). qs marks a full start (QB per-start projection). */
+function seasonTally(p){
+  const pos=p.pos||p.p; let g=0,pts=0,fg=0,fpts=0;
+  for(const r of ((GAMELOGS&&GAMELOGS[p.n])||[])) if(r.s===SEASON_YEAR&&!r.up&&!r.dnp){
+    const fp=gamefp(r,pos,scoringFmt); g++; pts+=fp; if(r.qs){ fg++; fpts+=fp; } }
+  return {g,pts,fg,fpts};
+}
+/* PPG this season so far, or null before his first game (or while logs load). Display only. */
+function ppgSoFar(p){
+  if(!GAMELOGS) return null;
+  const t=seasonTally(p); return t.g ? t.pts/t.g : null;
+}
 function projContext(p){
   if(!FREEZE_PROJ||FREEZE_PROJ[p.n]==null) return null;
   const pos=p.pos||p.p;
@@ -5080,9 +5095,7 @@ function projContext(p){
   // differ from his games played (an injury exit, a bench cameo), Full Starts So Far shows what fed it.
   const perStart = pos==='QB' && QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS;
   if(!GAMELOGS) return {pre,now,act:null,g:null,perStart};         // logs still loading: no Actual yet
-  let g=0,pts=0,fg=0,fpts=0;
-  for(const r of (GAMELOGS[p.n]||[])) if(r.s===SEASON_YEAR&&!r.up&&!r.dnp){
-    const fp=gamefp(r,pos,scoringFmt); g++; pts+=fp; if(r.qs){ fg++; fpts+=fp; } }
+  const {g,pts,fg,fpts}=seasonTally(p);
   const showFull = perStart && fg!==g;
   return {pre,now,act:g?pts/g:null,g,perStart,showFull,full:fg?fpts/fg:null,fg};
 }
