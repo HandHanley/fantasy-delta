@@ -5799,7 +5799,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-07b</span>
+  <span class="foot-build">2026-10-08a</span>
 </footer>
 
 
@@ -8436,9 +8436,14 @@ function renderSlpSubNav(){
       +';padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2)'
       +';color:'+(on?'var(--emerald)':'var(--sky)')+';cursor:pointer;white-space:nowrap">'+label+'</button>';
   };
+  /* My Roster is always in this row (8 Oct 2026, from an MFL user). Your own team
+     used to be reachable only inside the folded "Compare another team" list, so
+     after opening Trade Targets or Power Rankings there was no visible way back. */
+  const myActive=SLP.view==='rosters'&&mine!=null&&String(SLP.viewRosterId)===String(mine);
   return teamsBlock
     // the line-break spacer went with the pills it used to separate
     +'<div class="dl-mt-row dl-mt-analysis">'
+    +(mine!=null?analysisPill(myActive,'slpViewRoster('+JSON.stringify(mine).replace(/"/g,"&quot;")+')','My Roster'):'')
     +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'':analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger'))
