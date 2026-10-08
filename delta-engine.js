@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-03e';
+const DL_BUILD='2026-10-08a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4757,6 +4757,24 @@ function dsYouthMult(age) {
   return 1.00;   // 28+ gets full credit, no penalty
 }
 
+/* CONFIRMED SEASON-ENDER: THE MISSED SEASON COUNTS NOW (owner, 8 Oct 2026).
+   The DELTA Score still never moves on weekly stats. It moves on one verified event:
+   a player on data/injury-overrides.json (INJ_OUT) will have this season recorded as
+   a full zero, and the offseason roll would apply dsProduction's existing missed-season
+   rule (zero at 40% weight) then. This applies that same rule now: seasons shift one
+   year with the current season as zero games. PRODUCTION ONLY, deliberately — the
+   opportunity axis, age and contract are untouched (the roll's opportunity behaviour
+   for a missed season is an open question, backlog). Only players with games in the
+   last completed season: someone who already missed it (Polk) has the rule applied
+   already, and a rookie with no NFL games stays on the rookie path, as at the roll.
+   Measured 8 Oct at 12-team SF: Pearsall 55 -> 48, Higgins 52 -> 44; nobody else. */
+function dsProductionNow(p, pos) {
+  const out = (typeof INJ_OUT !== 'undefined' && INJ_OUT && INJ_OUT[p.n]) && (p.g25 || 0) > 0;
+  if (!out) return dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p, true);
+  const q = Object.assign({}, p, { ppgH25: undefined, ppgH24: p.ppgH25, ppgH23: p.ppgH24 });
+  return dsProduction(0, p.ppg25||0, p.ppg24||0, 0, pos, q, true);
+}
+
 function calcDynastyScore(p) {
   const pos = p.pos||p.p||'WR';
   /* READS AS "ROOKIE", MEANS "NO 2025 GAMES" — the two are not the same, and this
@@ -4775,7 +4793,7 @@ function calcDynastyScore(p) {
   const age = p.a || 22;
   const scar = scarcity(pos, leagueTeams, qbFmt) || 1;
   const a    = dsAge(age, pos);                                                       // raw max 25
-  const prod = dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p, true); // league-NEUTRAL, raw max 32
+  const prod = dsProductionNow(p, pos);                                               // league-NEUTRAL, raw max 32
   const opp  = dsOpportunity(p);                                                     // raw max 33
   const c    = dsCont(p);                                                            // max 10
 
