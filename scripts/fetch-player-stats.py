@@ -738,7 +738,24 @@ def match_names(agg, delta_names, no_data=None):
     matched   = {}
     not_found = []
 
+    # EXACT NAME FIRST (8 Oct 2026). norm() strips Jr/Sr/II, so two real players can
+    # share a key, and nfl_norm keeps whichever came last. "Michael Carter" (RB) and
+    # "Michael Carter II" (CB) collide: from at least 2022 DELTA's Titans running back
+    # was scored on the Jets cornerback's seasons (17/15/11/7 games, zero touches).
+    # An exact display-name hit is unambiguous, so it wins; the normalized key is the
+    # fallback for spelling differences, as before. Every collision is logged.
+    nfl_exact = set(nfl_names)
+    _seen = {}
+    for n in nfl_names:
+        _seen.setdefault(norm(n), set()).add(n)
+    for k, ns in _seen.items():
+        if len(ns) > 1:
+            print(f"[DELTA] name collision after normalizing: {sorted(ns)} (exact match decides)")
+
     for name in delta_names:
+        if name in nfl_exact:
+            matched[name] = name
+            continue
         key = norm(name)
         if key not in nfl_norm and name in ALIASES:
             key = norm(ALIASES[name])
