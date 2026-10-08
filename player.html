@@ -287,7 +287,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-07c</span>
+    <span class="foot-build">2026-10-08a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1567,7 +1567,7 @@ if (!PLAYER_NAME) {
   loadLiveMarketValues()
     .then(() => loadPlayerStats())
     .then(() => loadPlayerContracts())
-    .then(() => loadRipples()).then(() => loadReads())
+    .then(() => loadRipples())
     .then(() => loadInjuryOverrides())
     .then(() => loadQBStarters())
     .then(() => loadCollegeNames())

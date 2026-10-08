@@ -132,7 +132,7 @@ const src = fs.readFileSync('delta-engine.js', 'utf8') + `
      wrote Ricky Pearsall at proj 6.83 / "strong buy"; with it he zeroes and is
      excluded below. Any loader added to index.html's bootDelta belongs here too. */
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
-    await loadRipples(); await loadReads();
+    await loadRipples();
     if(typeof loadInjuryOverrides==='function'){ try{ await loadInjuryOverrides(); }catch(e){} }
     if(typeof loadQBStarters==='function'){ try{ await loadQBStarters(); }catch(e){} }
     if(typeof ensureStartData==='function'){ try{ await ensureStartData(); }catch(e){} }

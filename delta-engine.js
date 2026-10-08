@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-08a';
+const DL_BUILD='2026-10-08b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -3909,22 +3909,6 @@ const CONTRACTS=[
 
 ];
 
-// Scouting reports now live in data/scout-reports.json (regenerate when model/thresholds change)
-let SCOUT={};
-let SCOUT_LOADED=false, SCOUT_LOADING=null;
-let SCOUT_GENERATED=null;          // file-level authoring date, shown on the card
-function ensureScoutData(){
-  if(SCOUT_LOADED) return Promise.resolve();
-  if(SCOUT_LOADING) return SCOUT_LOADING;
-  SCOUT_LOADING=fetch('./data/scout-reports.json',{cache:'no-cache'})
-    .then(r=>r.ok?r.json():Promise.reject('scout '+r.status))
-    .then(d=>{SCOUT=d.reports||d; SCOUT_GENERATED=d.generated||null; SCOUT_LOADED=true;
-              console.log('[DELTA] Scout reports loaded:',Object.keys(SCOUT).length,
-                          SCOUT_GENERATED?('· written '+String(SCOUT_GENERATED).slice(0,10)):'');})
-    .catch(e=>{console.warn('[DELTA] Scout reports unavailable:',e); SCOUT_LOADED=true;});
-  return SCOUT_LOADING;
-}
-
 const COLLEGES={
   'Jaxson Dart':'Ole Miss',
   'Cam Ward':'Miami',
@@ -5904,54 +5888,12 @@ function buildDSBreakdownHTML(p){
     +'</div>';
 }
 
-// ── AUTHORED READS ─────────────────────────────────────────────────────────
-// DORMANT since 2026-10-03e: The Read no longer renders an authored core (owner — went
-// stale in-season). loadReads() stays because three boot chains call it and it fails safe;
-// authoredCore()/copyStaleReason() have no on-screen caller. Delete together, deliberately.
-// Per-player authored cores for The Read, from data/reads.json. Each entry:
-// {n, team, authored, core}. The core is VERDICT-AGNOSTIC — it describes the
-// player; the live math sentence (always computed fresh) carries the verdict.
-// Staleness guard: a core only renders while the player is still on the team
-// it was written under; otherwise the template fallback takes over silently.
-let READS={};
-async function loadReads(){
-  try{
-    const res=await fetch('./data/reads.json',{cache:'no-cache'});
-    if(!res.ok) return;                       // absent file = template-only mode
-    const arr=await res.json();
-    if(!Array.isArray(arr)) return;
-    READS={}; for(const e of arr) if(e&&e.n&&e.core) READS[e.n]=e;
-    console.log('[DELTA] Authored reads loaded: '+Object.keys(READS).length);
-  }catch(e){ console.warn('[DELTA] reads.json skipped:',e.message); }
-}
-// Authored copy — scouting reports and the authored Read cores — is written at a point in
-// time and describes a situation. Two things invalidate it: the player changing team (already
-// handled below), and the player being OUT, because a line about bell-cow usage reads badly
-// next to a season-ending knee. Returns a short reason, or null when the copy is still fair.
-//
-// Deliberately NOT triggered by "Questionable". That is ordinary in-season and camp noise —
-// 52 of the 62 current designations are Questionable — and suppressing on it would silently
-// blank most of the library every Thursday. The trigger is the roster designations DELTA
-// already badges (IR/PUP/NFI/SUS) plus the hand-maintained confirmed-out list.
-const COPY_OUT_DESIGNATIONS = { IR:1, PUP:1, NFI:1, SUS:1 };
-function copyStaleReason(p){
-  if (typeof INJ_OUT !== 'undefined' && INJ_OUT && INJ_OUT[p.n]) return 'out for the season';
-  const st = (typeof INJ_STATUS !== 'undefined' && INJ_STATUS) ? INJ_STATUS[p.n] : null;
-  if (st && COPY_OUT_DESIGNATIONS[String(st.status || '').toUpperCase()]) {
-    return String(st.status).toUpperCase();
-  }
-  return null;
-}
-function authoredCore(p){
-  const e=READS[p.n]; if(!e) return null;
-  if(copyStaleReason(p)) return null;             // out → authored core suppressed, math still renders
-  const cur=(AL&&AL[p.t])||p.t, wrote=(AL&&AL[e.team])||e.team;
-  return (cur&&wrote&&cur===wrote)?e.core:null;   // team changed → stale → fallback
-}
-// deterministic per-player variant picker: stable across renders, differs
-// across adjacent players — kills the shared-skeleton problem
-function readSeed(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return h;}
-const pick=(seed,arr)=>arr[seed%arr.length];
+// ── RETIRED: AUTHORED READS AND SCOUT REPORTS (removed 8 Oct 2026) ────────────
+// The Read is numbers only since 3 Oct and the Scouting Report was removed the same day;
+// data/reads.json, data/scout-reports.json and the code that loaded them are gone. This
+// no-op stays so a page cached from before this deploy, which still calls loadReads() in
+// its boot chain, keeps working. Safe to delete once no boot chain anywhere calls it.
+function loadReads(){ return Promise.resolve(); }
 
 // ── SCHEME / SYSTEM CONTEXT ─────────────────────────────────────────────────
 // Shared explainer for the Offensive System Score: what the number means, the
@@ -6094,7 +6036,7 @@ function recPgOf(p){
 }
 
 function buildReadHTML(p){
-  // Numbers only since 3 Oct 2026 (owner). The authored paragraph (data/reads.json, written
+  // Numbers only since 3 Oct 2026 (owner). The authored paragraph (reads.json, retired 8 Oct; written
   // July) and the rotating template sentences are gone: the first went stale by Week 1, the
   // second read machine-written and added advice the model never computed. What remains is
   // the call, one line stating the gap the call is read from, and the three rank bars.

@@ -61,7 +61,7 @@ async function bootEngine(dataRoot, maxWeek) {
 ;globalThis.__H__={ get COMP(){return COMP}, gamefp, get SEASON(){return SEASON_YEAR}, get BUILD(){return DL_BUILD}, get PERSTART(){ return typeof QB_PS!=='undefined' && !!(QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS); },
   set:(t,q,f)=>{ leagueTeams=t; qbFmt=q; scoringFmt=f; }, recompute:()=>applyMarketForSetting(),
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
-    await loadRipples(); await loadReads();
+    await loadRipples();
     if(typeof loadInjuryOverrides==='function'){ try{ await loadInjuryOverrides(); }catch(e){} }
     if(typeof loadQBStarters==='function'){ try{ await loadQBStarters(); }catch(e){} }
     if(typeof ensureStartData==='function'){ try{ await ensureStartData(); }catch(e){} }
