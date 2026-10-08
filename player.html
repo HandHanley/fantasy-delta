@@ -287,7 +287,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-07a</span>
+    <span class="foot-build">2026-10-07b</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -450,7 +450,8 @@ function statLineInner(p, season, yrs) {
         + `border:1px solid ${y === season ? 'var(--teal-br)' : 'var(--line)'};background:${y === season ? 'var(--ink)' : 'transparent'};`
         + `color:${y === season ? 'var(--teal-br)' : 'var(--fog)'}">${y}</button>`).join('') + `</div>`
     : '';
-  const label = live && s ? `${season} SO FAR \u00b7 ${s.games} ${s.games === 1 ? 'GAME' : 'GAMES'}` : `${season} SEASON`;
+  // Same label for every year, the season in progress included (owner, 7 Oct).
+  const label = `${season} SEASON`;
   // Wraps on a phone: five season pills do not fit beside the title at 390px.
   const head = `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;margin:0 0 8px">`
     + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:var(--fog-2)">${label}</div>${pills}</div>`;
