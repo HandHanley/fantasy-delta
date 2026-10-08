@@ -39,7 +39,8 @@ data regardless of anything in LICENSE.md:
   read-only, fetched at the user's request through DELTA's relay
   (`supabase/functions/mfl-relay`), because MFL does not allow browser reads from
   other sites. The relay forwards and briefly caches; it never scores. Nothing is
-  stored beyond league and team identifiers, on the user's device only.
+  stored beyond league and team identifiers (on the device, and in the account
+  when the user is signed in).
 
 If you fork this repository, you are responsible for complying with those
 sources' terms yourself. DELTA cannot and does not sublicense them to you.

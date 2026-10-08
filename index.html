@@ -5799,7 +5799,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-08a</span>
+  <span class="foot-build">2026-10-08b</span>
 </footer>
 
 
@@ -7090,7 +7090,7 @@ function slpStoreWrite(st){
   // empty connect screen. Costs one write; buys a clean revert.
   const act=slpStoreActive(st);
   try{
-    if(act&&slpIsMfl(act.leagueId)){ /* MFL is device-only: leave the legacy key on the last Sleeper league */ }
+    if(act&&slpIsMfl(act.leagueId)){ /* Only pre-MFL builds read the legacy key, and they cannot load an MFL league: leave it on the last Sleeper one */ }
     else if(act){ const c=Object.assign({},act); delete c.settings; localStorage.setItem(SLP_LS_CONN,JSON.stringify(c)); }
     else localStorage.removeItem(SLP_LS_CONN);
   }catch(e){}
@@ -7112,12 +7112,24 @@ function slpStoreUpsert(conn){
   const wasSynced=(i>=0&&st.leagues[i].synced)||false;
   let nowSynced=wasSynced;
   try{ if(typeof DSYNC!=='undefined'&&typeof DSYNC.isSignedIn==='function'&&DSYNC.isSignedIn()) nowSynced=true; }catch(e){}
-  if(slpIsMfl(conn.leagueId)) nowSynced=false;   // MFL leagues never reach the account (device-only)
   const rec=Object.assign({},conn,{settings:(i>=0?st.leagues[i].settings:null),synced:nowSynced});
   if(i>=0) st.leagues[i]=rec; else st.leagues.push(rec);
   st.active=conn.leagueId;
   slpStoreWrite(st);
   return st;
+}
+
+// slpStoreUpsert marks a league synced the moment it is saved while signed in,
+// trusting the save. When the save reports failure, take that back, so the next
+// sync re-pushes it instead of mistaking it for a league deleted elsewhere.
+function slpAfterSave(leagueId,p){
+  if(!p||typeof p.then!=='function') return;
+  p.then(function(ok){
+    if(ok!==false) return;
+    const st=slpStoreRead();
+    const l=(st.leagues||[]).find(function(x){ return String(x.leagueId)===String(leagueId); });
+    if(l&&l.synced){ l.synced=false; slpStoreWrite(st); slpLog('save to account failed \u2014 '+leagueId+' marked unsynced'); }
+  }).catch(function(){});
 }
 
 function slpStoreRemove(leagueId){
@@ -7200,11 +7212,18 @@ async function slpSyncLeagues(){
   });
 
   // PUSH: anything here the account has not got (added while signed out).
-  const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]&&!slpIsMfl(l.leagueId); });
+  const missing=st.leagues.filter(function(l){ return !cloudIds[String(l.leagueId)]; });
   if(missing.length&&typeof DSYNC.pushLeagues==='function'){
     try{
-      await DSYNC.pushLeagues(missing,slpIsMfl(st.active)?null:st.active);
-      missing.forEach(function(l){ l.synced=true; });
+      /* Mark a league synced ONLY when the save succeeded (8 Oct 2026). It used to be
+         marked regardless, so a failed save left synced:true with nothing in the
+         account, and the next sync read that as "deleted on another device" and
+         removed it here. pushLeagues returns true/false; older delta-sync.js copies
+         return undefined, which keeps the old behaviour rather than leaving every
+         league unsynced. */
+      const pushed=await DSYNC.pushLeagues(missing,st.active);
+      if(pushed!==false) missing.forEach(function(l){ l.synced=true; });
+      else slpLog('league push failed \u2014 '+missing.length+' league(s) stay unsynced and retry next sync');
     }catch(e){ slpLog('league push failed:',e); }
   }
   // Everything reconciled against the account is, by definition, known to it.
@@ -7248,7 +7267,7 @@ async function slpSwitchLeague(leagueId){
   SLP.viewRosterId=rec.rosterId; SLP.view='rosters';
   SLP.trade=null; if(typeof renderSlpTradeAssist==='function') renderSlpTradeAssist();
   renderMyTeam();
-  try{ if(!slpIsMfl(rec.leagueId)&&typeof DSYNC!=='undefined'&&DSYNC.noteSleeperConnect) DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
+  try{ if(typeof DSYNC!=='undefined'&&DSYNC.noteSleeperConnect) slpAfterSave(rec.leagueId,DSYNC.noteSleeperConnect(SLP.conn)); }catch(e){}
 
   try{
     slpLog('switching to league',rec.leagueId,rec.leagueName);
@@ -7396,9 +7415,10 @@ async function slpFetch(path){
 //     numbers and the same number means different people on each.
 //   \u00b7 Team ids become plain numbers (MFL "0001" \u2192 1), because the existing
 //     buttons pass roster ids unquoted.
-//   \u00b7 MFL leagues are DEVICE-ONLY for now. The account table was built for
-//     Sleeper and its exact layout is unverified, so nothing MFL is written to
-//     it: not synced, not mirrored to the legacy key, never set active there.
+//   \u00b7 MFL leagues sync to the account like Sleeper ones (since 8 Oct 2026; the
+//     sleeper_leagues columns were checked: league_id is text, roster_id a number,
+//     so "mfl:<id>" and the plain team number fit). They are still never mirrored
+//     to the legacy key, which only pre-MFL builds read.
 //   \u00b7 Public leagues only. No MFL usernames or passwords, ever.
 // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 const MFL_RELAY='https://zpashsoixmsbzvvuodro.supabase.co/functions/v1/mfl-relay';
@@ -7574,7 +7594,7 @@ function slpSetConnectPlatform(pf){
   const set=function(id,txt){ const el=document.getElementById(id); if(el) el.textContent=txt; };
   set('slp-title', mfl?'Connect your MFL league':'Connect your Sleeper league');
   set('slp-intro', mfl
-    ?'Paste your MyFantasyLeague league ID (the number after L= in your league\u2019s web address), or the whole address. Public leagues only \u2014 DELTA cannot read a league that needs an MFL login. Read-only, and saved on this device only for now.'
+    ?'Paste your MyFantasyLeague league ID (the number after L= in your league\u2019s web address), or the whole address. Public leagues only \u2014 DELTA cannot read a league that needs an MFL login. Read-only.'
     :'Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only \u2014 DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.');
   const inp=document.getElementById('slp-input');
   if(inp){ inp.placeholder=mfl?'MFL league ID or address':'Sleeper username or league ID'; inp.value=''; }
@@ -7769,7 +7789,7 @@ async function slpSelectTeam(rosterId,user){
     userId:user?user.id:(roster.owner_id||null), username:user?user.name:null
   };
   slpStoreUpsert(SLP.conn);   // adds or updates this league and makes it active (also mirrors to the legacy key)
-  try{ if(!slpIsMfl(SLP.conn.leagueId)&&typeof DSYNC!=='undefined') DSYNC.noteSleeperConnect(SLP.conn); }catch(e){}
+  try{ if(typeof DSYNC!=='undefined') slpAfterSave(SLP.conn.leagueId,DSYNC.noteSleeperConnect(SLP.conn)); }catch(e){}
   SLP.viewRosterId=roster.roster_id; SLP.view='rosters';
   slpLog('CONNECTED:',JSON.stringify(SLP.conn));
   slpStatus('Connected \u2014 matching players\u2026');
@@ -9085,7 +9105,7 @@ function renderMyTeam(){
     +(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+slpEsc(slpFmtLabel(scoringFmt))+'</span></summary>'
     +renderSlpLeagueSwitcher()
     +'<div class="dl-mt-row dl-mt-meta">'
-    +'<div style="font-size:11px;color:var(--fog)">'+slpPlatformName(SLP.conn.leagueId)+(slpIsMfl(SLP.conn.leagueId)?' \u00b7 this device only':'')+' \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
+    +'<div style="font-size:11px;color:var(--fog)">'+slpPlatformName(SLP.conn.leagueId)+' \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
     +'<div style="flex:1"></div>'
     +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
     +(multi

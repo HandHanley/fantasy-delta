@@ -524,16 +524,22 @@ var DSYNC = (function () {
       });
     },
 
+    /* Returns a promise of true (saved), false (the save failed) or undefined (not
+       signed in — nothing attempted). index.html uses false to take back the
+       "synced" mark it set optimistically (8 Oct 2026). */
     noteSleeperConnect: function (conn) {
       touch('leagues');
-      if (!sb || !user || !conn || !conn.leagueId) return;
-      sb.from('sleeper_leagues')
+      if (!sb || !user || !conn || !conn.leagueId) return Promise.resolve(undefined);
+      var saved = false;
+      return sb.from('sleeper_leagues')
         .upsert([connToRow(user.id, conn, false)], { onConflict: 'user_id,league_id' })
         .then(function (r) {
           if (r.error) { log('league upsert failed:', r.error.message); return; }
+          saved = true;
           return sb.rpc('set_active_league', { p_league_id: String(conn.leagueId) });
         })
-        .then(function (r) { if (r && r.error) log('set active failed:', r.error.message); });
+        .then(function (r) { if (r && r.error) log('set active failed:', r.error.message); return saved; })
+        .catch(function (e) { log('league upsert failed:', e); return false; });
     },
 
     /* Disconnect clears the LOCAL connection only. The saved league stays in
@@ -559,15 +565,16 @@ var DSYNC = (function () {
         if (!list[i] || !list[i].leagueId) continue;
         rows.push(connToRow(user.id, list[i], false));
       }
-      if (!rows.length) return;
+      if (!rows.length) return true;
       var r = await sb.from('sleeper_leagues')
         .upsert(rows, { onConflict: 'user_id,league_id' });
-      if (r.error) { log('league bulk push failed:', r.error.message); return; }
+      if (r.error) { log('league bulk push failed:', r.error.message); return false; }
       if (activeId) {
         var a = await sb.rpc('set_active_league', { p_league_id: String(activeId) });
         if (a.error) log('set_active_league failed:', a.error.message);
       }
       log('pushed ' + rows.length + ' league(s) to the account');
+      return true;
     },
 
     /* Like listLeagues(), but distinguishes "the account has no leagues" from
