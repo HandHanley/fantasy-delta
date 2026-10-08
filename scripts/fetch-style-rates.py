@@ -39,6 +39,24 @@ except ImportError:
     import polars as pl  # noqa: F401
 
 SEASONS = [2022, 2023, 2024, 2025]   # FTN charting floor is 2022
+OUT_PATH = "data/style-rates.json"
+
+# In-season use (7 Oct 2026): the nightly runs
+#   python scripts/fetch-style-rates.py --seasons 2026 --out data/style-rates-2026.json
+# so the season being played is fetched on its own, small and fast, while the
+# completed seasons in data/style-rates.json stay exactly as they were (the
+# research harness validate-style.py reads that file and must not see 2026).
+# With no arguments the script behaves exactly as before.
+def parse_args(argv):
+    global SEASONS, OUT_PATH
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--seasons" and i + 1 < len(argv):
+            SEASONS = [int(x) for x in argv[i + 1].split(",")]; i += 2
+        elif argv[i] == "--out" and i + 1 < len(argv):
+            OUT_PATH = argv[i + 1]; i += 2
+        else:
+            sys.exit(f"[DELTA] unknown argument: {argv[i]}")
 
 
 def to_pd(df):
@@ -47,6 +65,8 @@ def to_pd(df):
 
 def main():
     import pandas as pd
+    parse_args(sys.argv[1:])
+    print(f"[DELTA] seasons {SEASONS} -> {OUT_PATH}")
 
     # ── FTN charting ─────────────────────────────────────────────
     print(f"[DELTA] loading FTN charting {SEASONS} ...")
@@ -148,9 +168,14 @@ def main():
         "teams": teams,
     }
     os.makedirs("data", exist_ok=True)
-    with open("data/style-rates.json", "w") as f:
+    if OUT_PATH != "data/style-rates.json":
+        out["note"] = ("Season in progress, refreshed nightly. Feeds only the playcaller tendency "
+                       "chart (display) via scripts/generate-style-fingerprint.py. Nothing scored reads it.")
+    if not teams:
+        sys.exit("[DELTA] no team-seasons produced — not writing " + OUT_PATH)
+    with open(OUT_PATH, "w") as f:
         json.dump(out, f, indent=1)
-    print(f"[DELTA] wrote data/style-rates.json — {len(teams)} team-seasons")
+    print(f"[DELTA] wrote {OUT_PATH} — {len(teams)} team-seasons")
     nulls = sum(1 for v in teams.values() if v.get("motion_pct") is None)
     if nulls:
         print(f"[DELTA] WARNING: {nulls} team-seasons missing motion_pct — check FTN schema output above")

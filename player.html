@@ -287,7 +287,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-07b</span>
+    <span class="foot-build">2026-10-07c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -391,6 +391,26 @@ function buildHeroHTML(p) {
 // Season stat line — raw counting stats. DELTA is rate-driven, so these were never shown;
 // they ground every derived metric. Rendered AFTER the DELTA Score so the signature metric
 // leads and the stats read as its evidence — matching the college page's order.
+/* PLAYCALLER TENDENCIES DATA (7 Oct 2026) — DISPLAY ONLY.
+   data/pc-fingerprint.json is rebuilt nightly by scripts/generate-style-fingerprint.py
+   (completed seasons + the season in progress, weighted by plays). It replaces the
+   copy of PC_FINGERPRINT baked into delta-engine.js, which stays as the fallback if
+   the file is missing or malformed. Only buildSchemeHTML reads it — only this page
+   draws that chart — so index.html and the freeze deliberately do not load it. */
+function loadPCFingerprint() {
+  return fetch('data/pc-fingerprint.json', { cache: 'no-cache' })
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      const t = j && j.teams;
+      if (!t || typeof PC_FINGERPRINT === 'undefined') return;
+      const vals = Object.values(t);
+      if (vals.length < 28 || !vals.every(x => x && x.pc && x.d)) return;
+      Object.keys(PC_FINGERPRINT).forEach(k => delete PC_FINGERPRINT[k]);
+      Object.assign(PC_FINGERPRINT, t);
+    })
+    .catch(() => {});
+}
+
 /* SEASON IN PROGRESS (owner, 7 Oct 2026) — DISPLAY ONLY.
    Completed seasons come from PLAYER_STATS, whose seasons are pinned to finished
    ones so the DELTA Score never sees a partial year. The season being played is
@@ -1553,6 +1573,7 @@ if (!PLAYER_NAME) {
     .then(() => loadCollegeNames())
     .then(() => loadDepthCharts())
     .then(() => ensureStartData())
+    .then(() => loadPCFingerprint())   // display only; this page alone draws the tendency chart
     .then(() => {
       applyMarketForSetting();       // rebuild COMP so the g25 sync above is reflected
           dlBuildStamp();

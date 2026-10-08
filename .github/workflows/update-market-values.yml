@@ -74,6 +74,16 @@ jobs:
         continue-on-error: true
         run: python scripts/fetch-season-so-far.py
 
+      # Playcaller tendency chart with the season in progress (7 Oct 2026). Display
+      # only: player.html loads data/pc-fingerprint.json over the copy baked into the
+      # engine, and nothing scored reads either file. FTN charting publishes with
+      # play-by-play. A failure writes nothing and the chart keeps its last good file.
+      - name: Build playcaller tendencies (chart)
+        continue-on-error: true
+        run: |
+          python scripts/fetch-style-rates.py --seasons 2026 --out data/style-rates-2026.json
+          python scripts/generate-style-fingerprint.py
+
       # Scorecard: grades DELTA's projections against real 2026 games and saves a
       # weekly snapshot of the live projections the first night each NFL week is
       # complete (never overwritten). Must never block the nightly data, so a
