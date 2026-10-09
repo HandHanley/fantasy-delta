@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-09a';
+const DL_BUILD='2026-10-09b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -100,6 +100,51 @@ function dwToggle(n, ns){
 }
 function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
 let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle', GL_HAS_QS=false;
+/* ACROSS YOUR LEAGUES (9 Oct 2026). DISPLAY ONLY: reads the per-device record My Team
+   writes (localStorage 'delta_my_roster': per connected league, your players, every
+   DELTA player rostered by anyone in it, and look-alike keys for rostered players
+   DELTA could not match by name). Used by the player-page header and the Free Agents
+   panel: "Owned in 2 of 3 leagues \u00b7 Available in 1". A player counts as available
+   only when nobody rosters him AND no unmatched rostered player shares his position,
+   first initial and last name, so a name mismatch can never show a taken player as
+   free. Leagues saved before 9 Oct have no roster-wide list and are left out until
+   they refresh (My Team does that in the background). Nothing scored reads this. */
+function dlNearKey(name,pos){
+  const w=String(name||'').toLowerCase().replace(/[.'\u2019\-]/g,'').replace(/\s+/g,' ').trim()
+    .replace(/\s+(jr|sr|ii|iii|iv)$/,'').split(' ').filter(Boolean);
+  if(!w.length) return '';
+  return String(pos||'')+'|'+w[0].charAt(0)+'|'+w[w.length-1];
+}
+function dlLeagueReach(name,pos){
+  let st=null;
+  try{ st=JSON.parse(localStorage.getItem('delta_my_roster')||'null'); }catch(e){ return null; }
+  const L=st&&st.leagues; if(!L) return null;
+  const key=dlNearKey(name,pos), out={n:0,own:[],avail:[]};
+  for(const id in L){
+    const r=L[id];
+    if(!r||!Array.isArray(r.taken)) continue;
+    out.n++;
+    const nm=r.name||'League';
+    if((r.players||[]).indexOf(name)>-1) out.own.push(nm);
+    else if(r.taken.indexOf(name)<0&&(r.near||[]).indexOf(key)<0) out.avail.push(nm);
+  }
+  return out.n?out:null;
+}
+function dlLeagueReachText(r){
+  if(!r) return '';
+  if(r.n===1) return r.own.length?'On your roster':(r.avail.length?'Available in your league':'');
+  if(!r.own.length&&!r.avail.length) return 'Rostered in all '+r.n+' of your leagues';
+  if(!r.own.length) return 'Available in '+r.avail.length+' of '+r.n+' leagues';
+  return 'Owned in '+r.own.length+' of '+r.n+' leagues'+(r.avail.length?' \u00b7 Available in '+r.avail.length:'');
+}
+function dlLeagueReachTitle(r){
+  if(!r) return '';
+  const t=[];
+  if(r.own.length) t.push('Owned: '+r.own.join(', '));
+  if(r.avail.length) t.push('Available: '+r.avail.join(', '));
+  return t.join(' | ');
+}
+
 /* BOOT PREFETCH (9 Oct 2026). Both pages boot by awaiting seven loaders in turn,
    and each loader downloads its file and then processes it. The PROCESSING order
    matters (stats before contracts before overrides, g25 after the logs); the

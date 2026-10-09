@@ -300,7 +300,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-09b</span>
+    <span class="foot-build">2026-10-09c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -393,6 +393,8 @@ function buildHeroHTML(p) {
         ${ct ? `<span style="color:var(--fog)">Thru ${ct.end}${ct.end<=SEASON_YEAR?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
       </div>
       ${bgLine}
+      ${(function(){ const r=(typeof dlLeagueReach==='function')?dlLeagueReach(p.n,p.pos||p.p):null, t=dlLeagueReachText(r);
+         return t?'<div class="hero-bg" title="'+dlLeagueReachTitle(r).replace(/"/g,'&quot;')+'">'+t+'</div>':''; })()}
       <div class="hero-verdict">
         <span class="verdict-badge" style="color:${vc}">${vt}</span>
         <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>

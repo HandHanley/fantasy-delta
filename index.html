@@ -5815,7 +5815,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09e</span>
+  <span class="foot-build">2026-10-09f</span>
 </footer>
 
 
@@ -7836,25 +7836,64 @@ function myRosterRead(){
   try{ st=JSON.parse(localStorage.getItem(MY_ROSTER_LS)||'null'); }catch(e){}
   return (st&&st.leagues&&typeof st.leagues==='object')?st:{v:1,leagues:{}};
 }
-function myRosterSave(){
-  try{
-    if(!SLP.conn||!SLP.rosters) return;
-    const r=SLP.rosters.find(function(x){ return String(x.roster_id)===String(SLP.conn.rosterId); });
-    if(!r) return;
-    const names=[];
+/* One league's record. players: YOUR roster (Live reads this). taken: every DELTA player
+   rostered by anyone, yours included. near: look-alike keys (dlNearKey) for rostered
+   players DELTA could not match, so "available" can never be claimed on a name mismatch.
+   taken/near added 9 Oct 2026 for the across-leagues line (engine: dlLeagueReach). */
+function myRosterSaveFrom(leagueId,leagueName,rosters,myRid){
+  const idx=slpBuildDeltaIndex();
+  const mine=[], taken=[], near=[];
+  for(const r of (rosters||[])){
+    const isMine=String(r.roster_id)===String(myRid);
     for(const pid of (r.players||[])){
       const sp=SLP.players?SLP.players[pid]:null;
       if(!sp||!sp.n) continue;                                   // DEF / K / IDP are not in the trimmed map
-      const n=(SLP.match&&SLP.match[pid])||sp.n;                 // DELTA's spelling when matched
-      if(names.indexOf(n)<0) names.push(n);
+      const dn=idx[slpNorm(sp.n)]||null;                         // DELTA's spelling when matched (as slpRunMatch)
+      const n=dn||sp.n;
+      if(isMine&&mine.indexOf(n)<0) mine.push(n);
+      if(dn){ if(taken.indexOf(dn)<0) taken.push(dn); }
+      else{ const k=dlNearKey(sp.n,sp.p); if(k&&near.indexOf(k)<0) near.push(k); }
     }
-    const st=myRosterRead();
-    const keep={};
-    (slpStoreRead().leagues||[]).forEach(function(l){ keep[String(l.leagueId)]=1; });
-    for(const k in st.leagues) if(!keep[k]) delete st.leagues[k];
-    st.leagues[String(SLP.conn.leagueId)]={ name:SLP.conn.leagueName||'', players:names, ts:Date.now() };
-    localStorage.setItem(MY_ROSTER_LS,JSON.stringify(st));
+  }
+  const st=myRosterRead();
+  const keep={};
+  (slpStoreRead().leagues||[]).forEach(function(l){ keep[String(l.leagueId)]=1; });
+  for(const k in st.leagues) if(!keep[k]) delete st.leagues[k];
+  if(!keep[String(leagueId)]) return;
+  st.leagues[String(leagueId)]={ name:leagueName||'', players:mine, taken:taken, near:near, ts:Date.now() };
+  localStorage.setItem(MY_ROSTER_LS,JSON.stringify(st));
+}
+function myRosterSave(){
+  try{
+    if(!SLP.conn||!SLP.rosters) return;
+    myRosterSaveFrom(SLP.conn.leagueId,SLP.conn.leagueName,SLP.rosters,SLP.conn.rosterId);
+    setTimeout(myRosterRefreshOthers,1500);   // the other leagues, quietly
   }catch(e){ slpLog('roster-for-live save failed:',e); }
+}
+/* Your OTHER connected leagues, refreshed in the background so "available" is current
+   even for a league not opened lately. Only records older than 6 hours (or missing the
+   roster-wide list). Sleeper: one rosters call. MFL: the usual league set through the
+   relay. One league at a time; a failure leaves that league's last record alone. */
+let MR_BG_BUSY=false;
+const MR_BG_MAX_AGE=6*3600*1000;
+async function myRosterRefreshOthers(){
+  if(MR_BG_BUSY) return; MR_BG_BUSY=true;
+  try{
+    const leagues=(slpStoreRead().leagues||[]).slice();
+    for(const rec of leagues){
+      const id=String(rec.leagueId);
+      if(SLP.conn&&String(SLP.conn.leagueId)===id) continue;     // the open league saves itself
+      const have=myRosterRead().leagues[id];
+      if(have&&Array.isArray(have.taken)&&Date.now()-(have.ts||0)<MR_BG_MAX_AGE) continue;
+      try{
+        let rosters;
+        if(slpIsMfl(id)) rosters=(await mflLoadSet(id,rec.season)).rosters;
+        else{ await slpEnsurePlayers(); rosters=await slpFetch('/league/'+id+'/rosters'); }
+        myRosterSaveFrom(id,rec.leagueName,rosters||[],rec.rosterId);
+        slpLog('background roster refresh:',rec.leagueName||id);
+      }catch(e){ slpLog('background roster refresh failed for '+(rec.leagueName||id)+':',e); }
+    }
+  }finally{ MR_BG_BUSY=false; }
 }
 function myRosterForget(leagueId){
   try{
@@ -9383,11 +9422,7 @@ function faSetPos(v){ FA_POS=v; FA_SHOW=50; renderMyTeam(); }
 function faSetSort(v){ FA_SORT=v; FA_SHOW=50; renderMyTeam(); }
 function faMore(){ FA_SHOW+=50; renderMyTeam(); }
 function faToggle(name){ FA_OPEN=(FA_OPEN===name)?null:name; renderMyTeam(); }
-function faKey(name,pos){
-  const w=slpNorm(name).split(' ').filter(Boolean);
-  if(!w.length) return '';
-  return String(pos||'')+'|'+w[0].charAt(0)+'|'+w[w.length-1];
-}
+function faKey(name,pos){ return dlNearKey(name,pos); }   // one rule, shared with the across-leagues line
 function slpFreeAgents(){
   const owned=new Set();
   for(const r of (SLP.rosters||[]))
@@ -9459,7 +9494,10 @@ function renderSlpFA(){
         ? '<div class="dl-fa-list">'+beat.map(function(m){
             return '<div class="dl-fa-li"><span>'+m.n+'</span><span class="dl-fa-d">'+m.dsScore+' \u2192 '+p.dsScore+'</span></div>'; }).join('')+'</div>'
         : '<div class="dl-fa-d">No one: every '+p.pos+' you have outscores him.</div>');
+    const reach=(typeof dlLeagueReach==='function')?dlLeagueReach(p.n,p.pos):null;
+    const reachTxt=(reach&&reach.n>1)?dlLeagueReachText(reach):'';   // one league: it is this one
     return '<tr class="dl-fa-det"><td colspan="'+cols.length+'"><div class="dl-fa-box">'
+      +(reachTxt?'<div class="dl-fa-d" title="'+dlLeagueReachTitle(reach).replace(/"/g,'&quot;')+'">'+reachTxt+'</div>':'')
       +'<div style="width:100%">'+body+'</div>'
       +'<button type="button" class="set-pill" data-name="'+p.n+'" onclick="event.stopPropagation();openDeck(this.dataset.name)">Open Player Card</button>'
       +'</div></td></tr>';
