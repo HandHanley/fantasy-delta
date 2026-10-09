@@ -52,6 +52,13 @@ jobs:
       - name: Fetch FantasyCalc market values
         run: node scripts/fetch-market-values.js
 
+      # Market value history per league format for the player card (9 Oct 2026).
+      # Display only; folds tonight's data/market-values.json into
+      # data/market-history/<T>-<Q>.json. A failure leaves yesterday's files.
+      - name: Build market value history (player card)
+        continue-on-error: true
+        run: node scripts/build-market-history.js
+
       - name: Fetch scarcity-engine validation
         run: node scripts/fetch-scarcity-validation.js
 

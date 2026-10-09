@@ -92,6 +92,19 @@ a:hover{text-decoration:underline}
 .card-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fog-2);margin-bottom:10px}
 .card-sub{font-size:9px;color:var(--fog-2);font-weight:400;margin-top:2px}
 .dd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fog-2);margin-bottom:8px}
+.mk-pills{display:flex;gap:4px;flex-shrink:0}
+.mk-pill{font-size:10px;font-weight:700;padding:4px 9px;border-radius:10px;border:1px solid var(--line);background:var(--ink-2);color:var(--fog);cursor:pointer;white-space:nowrap;font-family:inherit}
+.mk-pill.on{color:var(--teal-br);border-color:var(--teal-br)}
+.mk-head{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;margin:10px 0 6px}
+.mk-now{font-size:22px;font-weight:800;color:var(--paper);font-variant-numeric:tabular-nums}
+.mk-chg{font-size:11.5px;color:var(--fog);font-variant-numeric:tabular-nums}
+.mk-rank{font-size:11px;color:var(--fog-2);margin-left:auto}
+/* Phones: the date+rank line always takes its own row, so pressing the chart (which adds
+   the date) never pushes the chart down under the finger. */
+@media (max-width:480px){ .mk-rank{flex-basis:100%;margin-left:0} }
+.mk-plot{position:relative;touch-action:pan-y;cursor:crosshair}
+.mk-foot{font-size:9.5px;color:var(--fog-2);margin-top:6px}
+.mk-wait{font-size:11px;color:var(--fog-2);padding:18px 0}
 @media(max-width:600px){.gl-tbl{font-size:9px!important}.gl-tbl th,.gl-tbl td{padding:2px 3px!important}
 /* game-log view tabs: 6 pills must hold ONE line. At default sizing the strip needs
    ~346px but a 402pt phone only gives 340px of card content, so "Trend" wrapped.
@@ -287,7 +300,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-09a</span>
+    <span class="foot-build">2026-10-09b</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1482,6 +1495,132 @@ function buildCollegeHTML(p) {
   return pills + ddCard + prodCard + pedCard + combCard + matesCard + glCard + postCard + foot;
 }
 
+// ── Market Value history (9 Oct 2026) ────────────────────────────────────────
+/* DISPLAY ONLY. The market's price for this player over time, in the reader's own
+   league format. Nothing scored reads it; it sits after Contract because both
+   answer "what does he cost" (owner, 9 Oct). Data: data/market-history/<T>-<Q>.json,
+   written nightly by scripts/build-market-history.js (backfilled from 9 Jun 2026).
+   That file is ~100 KB compressed, so it is fetched only when this card scrolls
+   into view, once per format per visit. Overall rank for any day is recomputed from
+   the file's whole board, so it matches the value shown for that day.
+   Press or hover on the chart: the headline becomes that day's value (a floating
+   tooltip covered the line whenever the line ran high, in the mock). */
+const MK = { files:{}, range:'all', hover:null, rows:null, name:null };
+function mkSetting(){ return (typeof leagueTeams!=='undefined'?leagueTeams:12)+'|'+(typeof qbFmt!=='undefined'?qbFmt:'sf'); }
+function mkLoad(setting){
+  if(!MK.files[setting])
+    MK.files[setting]=fetch('./data/market-history/'+setting.replace('|','-')+'.json',{cache:'no-cache'})
+      .then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
+  return MK.files[setting];
+}
+function mkSeries(hist,name){
+  if(!hist||!hist.players||!Array.isArray(hist.dates)) return null;
+  let key=null;
+  if(hist.players[name]) key=name;
+  else if(typeof FC_ALIASES!=='undefined'&&FC_ALIASES[name]&&hist.players[FC_ALIASES[name]]) key=FC_ALIASES[name];
+  else if(typeof fcNormIndex==='function'){ key=fcNormIndex(hist.players)[fcNorm(name)]||null; }
+  if(!key) return null;
+  const vals=hist.players[key];
+  return hist.dates.map(function(d,i){
+    const v=vals[i]; if(v==null) return {d:d,v:null,r:null};
+    let r=1; for(const n in hist.players){ const x=hist.players[n][i]; if(x!=null&&x>v) r++; }
+    return {d:d,v:v,r:r};
+  }).filter(function(x){ return x.v!=null; });
+}
+function mkMon(d){ const m=+d.slice(5,7), dd=+d.slice(8,10);
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]+' '+dd; }
+function mkFmt(n){ return Math.round(n).toLocaleString('en-US'); }
+function mkGeom(rows){
+  const W=340, H=150, padL=36, padR=12, padT=14, padB=22;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const vs=rows.map(function(x){ return x.v; });
+  let lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+  const span=Math.max(hi-lo,hi*0.06);              // a flat line still gets some room
+  lo=Math.max(0,lo-span*0.12); hi=hi+span*0.12;
+  return {W:W,H:H,padL:padL,padR:padR,padT:padT,padB:padB,plotW:plotW,plotH:plotH,lo:lo,hi:hi,
+    x:function(i){ return padL+(rows.length===1?0:(i/(rows.length-1))*plotW); },
+    y:function(v){ return padT+plotH-((v-lo)/(hi-lo))*plotH; }};
+}
+function buildMarketCardInner(){
+  const all=MK.rows;
+  if(!all||all.length<2) return null;
+  const rows=MK.range==='30'?all.slice(-30):all;
+  const first=rows[0], last=rows[rows.length-1];
+  const g=mkGeom(rows);
+  const raw=(g.hi-g.lo)/3, m=Math.pow(10,Math.floor(Math.log10(raw)));
+  const step=[1,2,2.5,5,10].map(function(k){ return k*m; }).find(function(s){ return s>=raw; });
+  const ticks=[]; for(let t=Math.ceil(g.lo/step)*step; t<=g.hi; t+=step) ticks.push(t);
+  const pts=rows.map(function(x,i){ return g.x(i).toFixed(1)+','+g.y(x.v).toFixed(1); });
+  const area='M '+g.x(0).toFixed(1)+','+(g.padT+g.plotH)+' L '+pts.join(' L ')+' L '+g.x(rows.length-1).toFixed(1)+','+(g.padT+g.plotH)+' Z';
+  const xl=[0];
+  rows.forEach(function(x,i){ if(i>0&&x.d.slice(8)==='01'&&i>rows.length*0.12&&i<rows.length*0.88) xl.push(i); });
+  xl.push(rows.length-1);
+  const hi_=MK.hover!=null?Math.max(0,Math.min(rows.length-1,MK.hover)):null;
+  const at=hi_!=null?rows[hi_]:last;
+  const d2=at.v-first.v, p2=first.v?(d2/first.v)*100:0;
+  const ar=d2>0?'\u25B2':d2<0?'\u25BC':'';
+  const kfmt=function(t){ return t>=1000?(t/1000).toFixed(t%1000?1:0)+'k':String(t); };
+  const pill=function(k,lbl){ return '<button type="button" class="mk-pill'+(MK.range===k?' on':'')+'" onclick="mkSetRange(\''+k+'\')">'+lbl+'</button>'; };
+  const dot=function(i){ return '<circle cx="'+g.x(i).toFixed(1)+'" cy="'+g.y(rows[i].v).toFixed(1)+'" r="4" fill="var(--teal-br)" stroke="var(--ink)" stroke-width="2"/>'; };
+  return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+    +'<div><div class="card-label" style="margin-bottom:2px">Market Value</div>'
+    +'<div class="card-sub">'+(typeof leagueTeams!=='undefined'?leagueTeams:12)+'-team '+(typeof qbFmt!=='undefined'&&qbFmt==='1qb'?'1QB':'superflex')
+    +' \u00B7 context only, never part of the DELTA Score</div></div>'
+    +'<div class="mk-pills">'+pill('30','30 Days')+pill('all','Since '+mkMon(all[0].d))+'</div></div>'
+    +'<div class="mk-head"><span class="mk-now">'+mkFmt(at.v)+'</span>'
+    +'<span class="mk-chg">'+ar+' '+mkFmt(Math.abs(d2))+' ('+(d2>=0?'+':'\u2212')+Math.abs(p2).toFixed(0)+'%) since '+mkMon(first.d)+'</span>'
+    +'<span class="mk-rank">'+(hi_!=null?'<b style="color:var(--paper)">'+mkMon(at.d)+'</b> \u00B7 ':'')+'#'+at.r+' overall</span></div>'
+    +'<div class="mk-plot" onpointermove="mkPoint(event)" onpointerdown="mkPoint(event)" onpointerleave="mkPoint(null)">'
+    +'<svg viewBox="0 0 '+g.W+' '+g.H+'" style="width:100%;display:block;overflow:visible" role="img" aria-label="Market value from '
+      +mkFmt(first.v)+' on '+mkMon(first.d)+' to '+mkFmt(last.v)+' on '+mkMon(last.d)+'">'
+    +ticks.map(function(t){ return '<line x1="'+g.padL+'" x2="'+(g.W-g.padR)+'" y1="'+g.y(t).toFixed(1)+'" y2="'+g.y(t).toFixed(1)+'" stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>'
+      +'<text x="'+(g.padL-6)+'" y="'+(g.y(t)+3).toFixed(1)+'" fill="var(--fog-2)" font-size="8" text-anchor="end">'+kfmt(t)+'</text>'; }).join('')
+    +xl.map(function(i){ return '<text x="'+g.x(i).toFixed(1)+'" y="'+(g.H-6)+'" fill="var(--fog-2)" font-size="8" text-anchor="'
+      +(i===0?'start':i===rows.length-1?'end':'middle')+'">'+mkMon(rows[i].d)+'</text>'; }).join('')
+    +'<path d="'+area+'" fill="var(--teal-br)" opacity="0.08"/>'
+    +'<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--teal-br)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
+    +(hi_!=null
+      ? '<line x1="'+g.x(hi_).toFixed(1)+'" x2="'+g.x(hi_).toFixed(1)+'" y1="'+g.padT+'" y2="'+(g.padT+g.plotH)+'" stroke="var(--fog-2)" stroke-width="1" stroke-dasharray="2,2" vector-effect="non-scaling-stroke"/>'+dot(hi_)
+      : dot(rows.length-1))
+    +'</svg></div>'
+    +'<div class="mk-foot">FantasyCalc trade-based value, saved nightly. Press or hover on the chart to see any day.</div>';
+}
+function mkPaint(){
+  const el=document.getElementById('mk-card'); if(!el) return;
+  const inner=buildMarketCardInner();
+  if(inner==null){ el.style.display='none'; return; }   // no history for this player: no card
+  el.innerHTML=inner;
+}
+function mkSetRange(k){ MK.range=k; MK.hover=null; mkPaint(); }
+function mkPoint(ev){
+  if(!ev){ if(MK.hover!=null){ MK.hover=null; mkPaint(); } return; }
+  const svg=ev.currentTarget.querySelector('svg'); if(!svg||!MK.rows) return;
+  const rows=MK.range==='30'?MK.rows.slice(-30):MK.rows;
+  const g=mkGeom(rows), b=svg.getBoundingClientRect();
+  const xv=(ev.clientX-b.left)/b.width*g.W;
+  const i=Math.max(0,Math.min(rows.length-1,Math.round((xv-g.padL)/g.plotW*(rows.length-1))));
+  if(i!==MK.hover){ MK.hover=i; mkPaint(); }
+}
+/* The card's shell goes into the page at once; its data arrives when it is scrolled to. */
+function buildMarketShellHTML(p){
+  MK.name=p.n; MK.rows=null; MK.hover=null;
+  return '<div class="card" id="mk-card"><div class="card-label">Market Value</div><div class="mk-wait">Loading price history\u2026</div></div>';
+}
+function mkWire(p){
+  const el=document.getElementById('mk-card'); if(!el) return;
+  const go=function(){
+    const setting=mkSetting();
+    mkLoad(setting).then(function(hist){
+      if(CUR_P!==p) return;
+      MK.rows=mkSeries(hist,p.n); mkPaint();
+    });
+  };
+  if(typeof IntersectionObserver==='function'){
+    const io=new IntersectionObserver(function(es){ if(es.some(function(e){ return e.isIntersecting; })){ io.disconnect(); go(); } },{rootMargin:'300px'});
+    io.observe(el);
+  } else go();
+}
+
 function _renderPlayerPage(p) {
   CUR_P = p;
   // A rookie with no college data has nowhere else to show his testing, so the combine
@@ -1514,6 +1653,7 @@ function _renderPlayerPage(p) {
     ${buildTDPctHTML(p)}
     ${buildEPAHTML(p)}
     ${buildContractHTML(p)}
+    ${buildMarketShellHTML(p)}
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
     ${(!hasCollege(p) && isRookie(p)) ? '<div id="combine-slot"></div>' : ''}
@@ -1523,6 +1663,7 @@ function _renderPlayerPage(p) {
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
   if(_TAB==='cfb'){ ensureCollegeData(p); loadCombine(); }
+  mkWire(p);   // Market Value card: data loads when it scrolls into view
   // Preseason · Now · Actual (shared engine helper). Needs the frozen file, fetched once.
   if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
     const el=document.getElementById('hero-pctx');
