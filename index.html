@@ -1314,7 +1314,12 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 /* Both lists can legitimately be empty — a clean sheet is a real answer, so it
    has to read as a deliberate line rather than a collapsed strip. */
 .dl-lb-none{color:var(--fog-2);font-size:11.5px;padding:6px 0}
-.dl-fa-over{font-size:10px;font-weight:700;color:var(--sky);margin-top:2px;white-space:nowrap}
+.dl-fa-box{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:6px 2px;font-size:12px;color:var(--paper);
+  position:sticky;left:0;max-width:calc(100vw - 48px)}   /* stays in view when the table scrolls sideways */
+.dl-fa-k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sky);margin-right:4px}
+.dl-fa-d{color:var(--fog);font-size:11px}
+tr.dl-fa-on td{background:var(--ink-2)}
+tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-fa-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .dl-lb-howrow{margin-top:11px}
 /* Build marker. --fog-2 is the dimmest text token and --mono makes it read as an
@@ -5808,7 +5813,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09b</span>
+  <span class="foot-build">2026-10-09c</span>
 </footer>
 
 
@@ -7694,7 +7699,7 @@ async function slpEnsurePlayers(force){
   if(!force){
     try{
       const c=JSON.parse(localStorage.getItem(SLP_LS_PLAYERS)||'null');
-      if(c&&c.v===2&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
+      if(c&&c.v===3&&c.ts&&(Date.now()-c.ts)<SLP_PLAYERS_TTL&&c.map){
         SLP.players=c.map; SLP_SLEEPER_DB=true;
         slpLog('player DB cache HIT:',Object.keys(c.map).length,'players, age',Math.round((Date.now()-c.ts)/3600000)+'h');
         return SLP.players;
@@ -7709,15 +7714,22 @@ async function slpEnsurePlayers(force){
   for(const id in all){
     total++;
     const pl=all[id];
-    if(!pl||!keep[pl.position]) continue;
+    if(!pl) continue;
+    /* Main position OR any fantasy position (9 Oct 2026). A two-way player can be
+       filed under his defensive position with WR among his fantasy_positions
+       (Travis Hunter, reported 9 Oct). Keeping only the main position dropped him
+       from the map, so his roster slot was invisible and Free Agents listed him as
+       available. Cache version 3 makes every device rebuild the map once. */
+    const pos=keep[pl.position]?pl.position:(pl.fantasy_positions||[]).find(function(x){ return keep[x]; });
+    if(!pos) continue;
     const nm=pl.full_name||((pl.first_name||'')+' '+(pl.last_name||'')).trim();
     if(!nm) continue;
-    map[id]={n:nm,p:pl.position,t:pl.team||null,a:(typeof pl.age==='number'?pl.age:null)};
+    map[id]={n:nm,p:pos,t:pl.team||null,a:(typeof pl.age==='number'?pl.age:null)};
   }
   SLP.players=map; SLP_SLEEPER_DB=true;
   slpLog('player DB fetched:',total,'total \u2192',Object.keys(map).length,'QB/RB/WR/TE kept');
   try{
-    const blob=JSON.stringify({v:2,ts:Date.now(),map});
+    const blob=JSON.stringify({v:3,ts:Date.now(),map});
     localStorage.setItem(SLP_LS_PLAYERS,blob);
     slpLog('player DB cached to localStorage ('+Math.round(blob.length/1024)+'KB)');
   }catch(e){ slpLog('player DB cache WRITE failed (quota?) \u2014 kept in memory only:',e); }
@@ -9363,11 +9375,12 @@ function renderSlpRoster(rid){
    SLP.unmatched, and his DELTA twin would otherwise look free. Any free agent with
    the same position, first initial and last name as one of those is held back and
    named under the table, so a wrong "available" can never be shown silently. */
-let FA_POS='ALL', FA_SORT='ds', FA_SHOW=50;
+let FA_POS='ALL', FA_SORT='ds', FA_SHOW=50, FA_OPEN=null;
 function slpViewFA(){ SLP.view='fa'; FA_SHOW=50; renderMyTeam(); }
 function faSetPos(v){ FA_POS=v; FA_SHOW=50; renderMyTeam(); }
 function faSetSort(v){ FA_SORT=v; FA_SHOW=50; renderMyTeam(); }
 function faMore(){ FA_SHOW+=50; renderMyTeam(); }
+function faToggle(name){ FA_OPEN=(FA_OPEN===name)?null:name; renderMyTeam(); }
 function faKey(name,pos){
   const w=slpNorm(name).split(' ').filter(Boolean);
   if(!w.length) return '';
@@ -9386,22 +9399,24 @@ function slpFreeAgents(){
   }
   return { list:list, held:held, owned:owned.size };
 }
-/* Your weakest player at each position, by DELTA Score: the bar a free agent has
-   to clear to be worth a roster spot. Unscored players are skipped. */
-function faWeakest(){
+/* Your scored players by position, lowest DELTA Score first: who a free agent
+   could replace. Shown only when a row is tapped (owner, 9 Oct: a line on every
+   row was too much). Unscored players are skipped. */
+function faMineByPos(){
   const mine=SLP.conn?SLP.conn.rosterId:null;
   const r=(SLP.rosters||[]).find(function(x){ return String(x.roster_id)===String(mine); });
   const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
-  const weak={};
+  const out={};
   for(const pid of ((r&&r.players)||[])){
     const dn=SLP.match?SLP.match[pid]:null, p=dn?byName[dn]:null;
     if(!p||p.dsScore==null) continue;
-    if(!weak[p.pos]||p.dsScore<weak[p.pos].dsScore) weak[p.pos]=p;
+    (out[p.pos]=out[p.pos]||[]).push(p);
   }
-  return weak;
+  for(const k in out) out[k].sort(function(a,b){ return a.dsScore-b.dsScore; });
+  return out;
 }
 function renderSlpFA(){
-  const fa=slpFreeAgents(), weak=faWeakest();
+  const fa=slpFreeAgents(), minePos=faMineByPos();
   const val=function(p){
     if(FA_SORT==='mkt') return p.ktcEff||0;
     if(FA_SORT==='ppg26'){ const v=ppgSoFar(p); return v==null?-1:v; }
@@ -9417,22 +9432,33 @@ function renderSlpFA(){
     +'<span style="font-size:11px;color:var(--fog)">'+list.length+' available</span>'
     +'<span style="flex:1"></span>'
     +'<select class="set-sel" style="width:auto;margin:0" aria-label="Sort free agents" onchange="faSetSort(this.value)">'
-      +opt('ds','DELTA Score')+opt('mkt','Market Value')+opt('ppg26','PPG ’26')+'</select>'
+      +opt('ds','DELTA Score')+opt('mkt','Market Value')+opt('ppg26','PPG \u201926')+'</select>'
     +mtMenuHTML()
     +'</div>'
     +'<div class="dl-fa-bar">'+pill('ALL','All')+pill('QB','QB')+pill('RB','RB')+pill('WR','WR')+pill('TE','TE')+'</div>';
   const cols=mtCols();
+  const teamShown=cols.some(function(c){ return c.k==='t'; });   // the Team column already says it
   const nameCell=function(p){
-    const w=weak[p.pos];
-    const over=(w&&p.dsScore!=null&&p.dsScore>w.dsScore)
-      ? '<div class="dl-fa-over">Over '+w.n+' (+'+(p.dsScore-w.dsScore)+')</div>' : '';
-    const teamShown=cols.some(function(c){ return c.k==='t'; });   // the Team column already says it
-    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+'</span>'+over+'</td>';
+    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+'</span></td>';
+  };
+  /* Tapping a row opens this under it: who on your roster he could replace, then the
+     way through to his card (which used to be the whole tap). */
+  const detail=function(p){
+    const beat=(p.dsScore==null)?[]:(minePos[p.pos]||[]).filter(function(m){ return m.dsScore<p.dsScore; }).slice(0,3);
+    const body=beat.length
+      ? '<span class="dl-fa-k">Could Replace</span> '+beat.map(function(m){
+          return m.n+' <span class="dl-fa-d">'+m.dsScore+' \u2192 '+p.dsScore+'</span>'; }).join(' \u00b7 ')
+      : '<span class="dl-fa-k">Could Replace</span> <span class="dl-fa-d">No one: every '+p.pos+' you have outscores him.</span>';
+    return '<tr class="dl-fa-det"><td colspan="'+cols.length+'"><div class="dl-fa-box">'
+      +'<div>'+body+'</div>'
+      +'<button type="button" class="set-pill" data-name="'+p.n+'" onclick="event.stopPropagation();openDeck(this.dataset.name)">Open Player Card</button>'
+      +'</div></td></tr>';
   };
   const rows=shown.map(function(p){
-    const x={p:p};
-    return '<tr class="dl-rk-row" data-name="'+p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
-      +cols.map(function(c){ return c.k==='n'?nameCell(p):c.m(x); }).join('')+'</tr>';
+    const x={p:p}, open=FA_OPEN===p.n;
+    return '<tr class="dl-rk-row'+(open?' dl-fa-on':'')+'" data-name="'+p.n+'" aria-expanded="'+open+'" onclick="faToggle(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+      +cols.map(function(c){ return c.k==='n'?nameCell(p):c.m(x); }).join('')+'</tr>'
+      +(open?detail(p):'');
   }).join('');
   const table=shown.length
     ? '<div class="dl-b-scroll"><table class="dtable dl-board dl-mt-tbl">'
@@ -9445,7 +9471,7 @@ function renderSlpFA(){
       +fa.held.join(', ')+'.</div>' : '';
   return bar+table+more+held
     +'<div class="dl-lb-none">Every player DELTA tracks ('+COMP.length+') who is not on a roster in this league. Taxi and reserve spots count as rostered. '
-    +'Players outside DELTA’s universe are not listed. “Over” compares DELTA Score with your lowest-scored player at that position.</div>';
+    +'Players outside DELTA\u2019s universe are not listed. Tap a player to see who on your roster he outscores.</div>';
 }
 
 function renderSlpBoard(){
