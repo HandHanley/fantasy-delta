@@ -1316,7 +1316,9 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-lb-none{color:var(--fog-2);font-size:11.5px;padding:6px 0}
 .dl-fa-box{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:6px 2px;font-size:12px;color:var(--paper);
   position:sticky;left:0;max-width:calc(100vw - 48px)}   /* stays in view when the table scrolls sideways */
-.dl-fa-k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sky);margin-right:4px}
+.dl-fa-k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sky);margin-bottom:5px}
+.dl-fa-list{display:flex;flex-direction:column;gap:4px;max-width:320px}
+.dl-fa-li{display:flex;justify-content:space-between;gap:14px}
 .dl-fa-d{color:var(--fog);font-size:11px}
 tr.dl-fa-on td{background:var(--ink-2)}
 tr.dl-fa-det td{background:var(--ink-2);border-top:0}
@@ -5813,7 +5815,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09c</span>
+  <span class="foot-build">2026-10-09d</span>
 </footer>
 
 
@@ -9445,12 +9447,14 @@ function renderSlpFA(){
      way through to his card (which used to be the whole tap). */
   const detail=function(p){
     const beat=(p.dsScore==null)?[]:(minePos[p.pos]||[]).filter(function(m){ return m.dsScore<p.dsScore; }).slice(0,3);
-    const body=beat.length
-      ? '<span class="dl-fa-k">Could Replace</span> '+beat.map(function(m){
-          return m.n+' <span class="dl-fa-d">'+m.dsScore+' \u2192 '+p.dsScore+'</span>'; }).join(' \u00b7 ')
-      : '<span class="dl-fa-k">Could Replace</span> <span class="dl-fa-d">No one: every '+p.pos+' you have outscores him.</span>';
+    // Stacked, one player per line, score change lined up on the right (owner, 9 Oct).
+    const body='<div class="dl-fa-k">Could Replace</div>'
+      +(beat.length
+        ? '<div class="dl-fa-list">'+beat.map(function(m){
+            return '<div class="dl-fa-li"><span>'+m.n+'</span><span class="dl-fa-d">'+m.dsScore+' \u2192 '+p.dsScore+'</span></div>'; }).join('')+'</div>'
+        : '<div class="dl-fa-d">No one: every '+p.pos+' you have outscores him.</div>');
     return '<tr class="dl-fa-det"><td colspan="'+cols.length+'"><div class="dl-fa-box">'
-      +'<div>'+body+'</div>'
+      +'<div style="width:100%">'+body+'</div>'
       +'<button type="button" class="set-pill" data-name="'+p.n+'" onclick="event.stopPropagation();openDeck(this.dataset.name)">Open Player Card</button>'
       +'</div></td></tr>';
   };
