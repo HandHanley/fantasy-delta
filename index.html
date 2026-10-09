@@ -5815,7 +5815,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09d</span>
+  <span class="foot-build">2026-10-09e</span>
 </footer>
 
 
@@ -9440,8 +9440,14 @@ function renderSlpFA(){
     +'<div class="dl-fa-bar">'+pill('ALL','All')+pill('QB','QB')+pill('RB','RB')+pill('WR','WR')+pill('TE','TE')+'</div>';
   const cols=mtCols();
   const teamShown=cols.some(function(c){ return c.k==='t'; });   // the Team column already says it
+  /* "Backup" on a quarterback today's depth chart lists behind a starter (QB_ROLES,
+     refreshed nightly). Display only (owner, 9 Oct): the Score rates past
+     production, so a former starter now sitting (Fields behind Mahomes) can top this
+     list; the tag says he is not playing. The Score is untouched. */
   const nameCell=function(p){
-    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+'</span></td>';
+    const bk=(p.pos==='QB'&&typeof QB_ROLES!=='undefined'&&QB_ROLES[p.n]&&QB_ROLES[p.n].role==='backup')
+      ? ' <span class="badge bn" title="Backup on today\u2019s depth chart'+(QB_ROLES[p.n].behind?' \u2014 behind '+QB_ROLES[p.n].behind:'')+'">Backup</span>' : '';
+    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+'</span>'+bk+'</td>';
   };
   /* Tapping a row opens this under it: who on your roster he could replace, then the
      way through to his card (which used to be the whole tap). */
