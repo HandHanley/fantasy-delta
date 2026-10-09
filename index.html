@@ -5805,7 +5805,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-08d</span>
+  <span class="foot-build">2026-10-08e</span>
 </footer>
 
 
@@ -7322,6 +7322,7 @@ function slpRemoveLeague(leagueId){
   if(!rec) return;
   if(!confirm('Remove "'+(rec.leagueName||leagueId)+'" from DELTA? Your '+slpPlatformName(leagueId)+' league is untouched.')) return;
   const st=slpStoreRemove(leagueId);
+  myRosterForget(leagueId);
   // Signed in: delete the row so the removal propagates instead of being
   // re-added by the next union merge from another device.
   try{ if(typeof DSYNC!=='undefined'&&typeof DSYNC.forgetLeague==='function') DSYNC.forgetLeague(leagueId); }catch(e){}
@@ -7807,6 +7808,45 @@ async function slpSelectTeam(rosterId,user){
 }
 
 // ── Matching: Sleeper player_id → DELTA RAW name ─────────────
+/* YOUR ROSTER FOR THE LIVE PAGE. Each time a league's rosters are matched, the
+   names on YOUR team are written to one small per-device key, so Live can show
+   your players without being told to star them. Names only: nothing scored, no
+   IDs, no other team's players. One record per league, pruned to the leagues
+   still connected. Per-device like every other display preference; not synced. */
+const MY_ROSTER_LS='delta_my_roster';
+function myRosterRead(){
+  let st=null;
+  try{ st=JSON.parse(localStorage.getItem(MY_ROSTER_LS)||'null'); }catch(e){}
+  return (st&&st.leagues&&typeof st.leagues==='object')?st:{v:1,leagues:{}};
+}
+function myRosterSave(){
+  try{
+    if(!SLP.conn||!SLP.rosters) return;
+    const r=SLP.rosters.find(function(x){ return String(x.roster_id)===String(SLP.conn.rosterId); });
+    if(!r) return;
+    const names=[];
+    for(const pid of (r.players||[])){
+      const sp=SLP.players?SLP.players[pid]:null;
+      if(!sp||!sp.n) continue;                                   // DEF / K / IDP are not in the trimmed map
+      const n=(SLP.match&&SLP.match[pid])||sp.n;                 // DELTA's spelling when matched
+      if(names.indexOf(n)<0) names.push(n);
+    }
+    const st=myRosterRead();
+    const keep={};
+    (slpStoreRead().leagues||[]).forEach(function(l){ keep[String(l.leagueId)]=1; });
+    for(const k in st.leagues) if(!keep[k]) delete st.leagues[k];
+    st.leagues[String(SLP.conn.leagueId)]={ name:SLP.conn.leagueName||'', players:names, ts:Date.now() };
+    localStorage.setItem(MY_ROSTER_LS,JSON.stringify(st));
+  }catch(e){ slpLog('roster-for-live save failed:',e); }
+}
+function myRosterForget(leagueId){
+  try{
+    if(leagueId==null){ localStorage.removeItem(MY_ROSTER_LS); return; }
+    const st=myRosterRead(); delete st.leagues[String(leagueId)];
+    localStorage.setItem(MY_ROSTER_LS,JSON.stringify(st));
+  }catch(e){}
+}
+
 function slpRunMatch(){
   const idx=slpBuildDeltaIndex();
   SLP.match={}; SLP.unmatched=[];
@@ -7829,6 +7869,7 @@ function slpRunMatch(){
     slpLog('UNMATCHED (not tracked OR name mismatch \u2014 add to FC_ALIASES if mismatch):');
     SLP.unmatched.forEach(function(u){ slpLog('  \u2022',u.n,'('+u.p,(u.t||'FA')+')','id='+u.id); });
   }
+  myRosterSave();
 }
 
 // ── Format auto-detection ────────────────────────────────────
@@ -7909,6 +7950,7 @@ function sleeperDisconnect(){
   slpLog('disconnecting ALL leagues (player DB cache kept)');
   try{ localStorage.removeItem(SLP_LS_LEAGUES); }catch(e){}
   try{ localStorage.removeItem(SLP_LS_CONN); }catch(e){}
+  myRosterForget(null);
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteSleeperDisconnect(); }catch(e){}
   SLP.conn=null; SLP.league=null; SLP.rosters=null; SLP.users=null;
   SLP.leagues=null; SLP.pendingUser=null; SLP.match=null; SLP.unmatched=[];

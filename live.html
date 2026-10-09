@@ -227,7 +227,21 @@ table.bx{width:100%;border-collapse:collapse;table-layout:fixed}
 .gain{position:absolute;top:0;bottom:0;background:rgba(234,240,244,.10)}
 .ball{position:absolute;top:0;bottom:0;width:4px;box-shadow:0 0 0 1px rgba(10,15,26,.55)}
 .togo{position:absolute;top:0;bottom:0;width:2px;background:var(--paper)}
-.fkey{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);
+/* Which way the ball is going: a small arrow just ahead of the ball, in paper so
+   it reads on every team colour. */
+.dirc{position:absolute;top:50%;width:0;height:0;margin-top:-5px;color:var(--paper);
+      border-top:5px solid transparent;border-bottom:5px solid transparent}
+.dirc.r{border-left:6px solid currentColor}
+.dirc.l{border-right:6px solid currentColor}
+.fyd{position:absolute;top:0;transform:translateX(-50%)}
+.drv{margin-top:9px;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--fog)}
+.drvk{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--fog-2);
+      text-transform:uppercase;margin-right:6px}
+/* Play tags are neutral on purpose: emerald, coral and topaz mean buy, sell, watch. */
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 5px}
+.ptag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--paper);border:1px solid var(--fog-2);border-radius:4px;padding:2px 5px}
+.fkey{position:relative;display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);
       font-size:9.5px;color:var(--fog-2);letter-spacing:.04em}
 
 /* The player card is DELTA's own page, opened in a sheet over the feed rather
@@ -695,7 +709,8 @@ const ADAPTERS = {
           return { id: p.id || null, text: p.text,
                    at: (p.clock && p.clock.displayValue) || '',
                    period: (p.period && p.period.number) || null,
-                   scoring: !!p.scoringPlay };
+                   scoring: !!p.scoringPlay, team: dteam,
+                   type: (p.type && p.type.text) || '' };
         });
         const entry = { id: d.id || null, team: dteam,
                         result: d.displayResult || d.result || '',
@@ -715,6 +730,8 @@ const ADAPTERS = {
       const plays = flat.slice(-6).reverse();
       found.lastPlay = plays.length;
       found.drives = drives.length;
+      found.driveDesc = drives.length ? (drives[drives.length - 1].desc || '(none)') : '(none)';
+      found.playTypes = flat.filter(function(p){ return p.type; }).length;
       const lastPlay = plays.length ? plays[0] : null;
       /* Team totals — plays, yards, time of possession. They say whether this is
          a game with volume in it, which says something about everyone playing in
@@ -975,6 +992,33 @@ async function getJSON(url, cache){
 
 function watched(name){ return S.watch.size > 0 && S.watch.has(normName(name)); }
 
+/* YOUR ROSTER, written by My Team each time it loads your team: names only, per
+   device, every connected league that has been opened on this device. NFL only,
+   there is no college roster. A star still means the watchlist; a roster player
+   simply shows up here, unstarred. */
+const MR_LS = 'delta_my_roster';
+function readMyRoster(league){
+  const out = new Set();
+  if(league === 'cfb') return out;
+  let st = null;
+  try{ st = JSON.parse(localStorage.getItem(MR_LS) || 'null'); }catch(e){ return out; }
+  const L = (st && st.leagues) || {};
+  for(const k in L){
+    const ps = L[k] && L[k].players;
+    if(!Array.isArray(ps)) continue;
+    for(const n of ps) if(typeof n === 'string' && n) out.add(normName(n));
+  }
+  return out;
+}
+function onRoster(name){ return !!(S.roster && S.roster.size && S.roster.has(normName(name))); }
+function yours(name){ return watched(name) || onRoster(name); }
+function yoursSet(){
+  const s = new Set(S.watch);
+  if(S.roster) S.roster.forEach(function(n){ s.add(n); });
+  return s;
+}
+function yoursTitle(){ return S.roster && S.roster.size ? 'Your Players' : 'Your Watchlist'; }
+
 function wkKey(w){ return w ? w.st + '-' + w.wk : ''; }
 function viewWeek(){ return S.wk[S.league] || S.cur[S.league]; }
 
@@ -1094,16 +1138,18 @@ async function loadLogs(){
    has done. College: both come from the college file the watchlist already uses. */
 function watchInGame(g){
   const out = [];
-  if(!S.watch.size) return out;
+  const want = S.league === 'nfl' ? yoursSet() : S.watch;
+  if(!want.size) return out;
   if(S.league === 'nfl'){
     if(!S.depth) return out;
     const codes = g.teams.map(function(t){ return teamCode(t.abbr); });
-    S.watch.forEach(function(n){
+    want.forEach(function(n){
       const d = S.depth[n];
       if(!d) return;
       const code = teamCode(d.team);
       if(codes.indexOf(code) < 0) return;
-      out.push({ name: d.name, team: code, pos: d.slot, stats: S.logs ? S.logs[n] : null });
+      out.push({ name: d.name, team: code, pos: d.slot, stats: S.logs ? S.logs[n] : null,
+                 star: S.watch.has(n) });
     });
   }else{
     if(!S.college) return out;
@@ -1111,7 +1157,7 @@ function watchInGame(g){
       (S.college[n] || []).forEach(function(p){
         const t = g.teams.filter(function(x){ return gameHasSchool({ teams:[x] }, p.tm); })[0];
         if(!t) return;
-        out.push({ name: p.name, team: t.abbr, pos: p.pos, stats: p.stats });
+        out.push({ name: p.name, team: t.abbr, pos: p.pos, stats: p.stats, star: true });
       });
     });
   }
@@ -1126,7 +1172,7 @@ function watchInGame(g){
    kept for the rest of the visit. */
 async function ensurePreData(){
   const g = findGame();
-  if(!g || g.state !== 'pre' || !S.watch.size) return;
+  if(!g || g.state !== 'pre' || !yoursSet().size) return;
   if(S.league === 'nfl'){
     if(S.depthState === 'idle') await loadDepth();
     if(S.depth && watchInGame(g).length && S.logsState === 'idle') await loadLogs();
@@ -1377,7 +1423,7 @@ function fieldPos(g){
   return { ball: ball, togo: togo, dir: dir, poss: teams[possIdx] };
 }
 
-function fieldBar(g){
+function fieldBar(g, sum){
   const f = fieldPos(g);
   if(!f) return '';
   const a = yd(f.ball);
@@ -1394,7 +1440,8 @@ function fieldBar(g){
     + '<div class="card" style="padding:12px 12px 10px">'
     + '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px">'
     + '<span style="font-weight:700;font-size:14px">' + esc(g.detail || '') + '</span>'
-    + '<span class="rec">' + esc((f.poss || {}).abbr || '') + ' ball</span></div>'
+    + '<span class="rec">' + (f.dir === 1 ? esc((f.poss || {}).abbr || '') + ' ball &#8594;'
+                                      : '&#8592; ' + esc((f.poss || {}).abbr || '') + ' ball') + '</span></div>'
     + '<div class="field">'
     + '<span class="ez" style="left:0;width:' + EZ + '%;background:' + teamColor(g.teams[0] || {}) + '"></span>'
     + '<span class="ez" style="right:0;width:' + EZ + '%;background:' + teamColor(g.teams[1] || {}) + '"></span>'
@@ -1402,9 +1449,64 @@ function fieldBar(g){
     + (w != null ? '<span class="gain" style="left:' + lo + '%;width:' + w + '%"></span>' : '')
     + (t != null ? '<span class="togo" style="left:' + t + '%"></span>' : '')
     + '<span class="ball" style="left:' + a + '%;background:' + possCol + '"></span>'
+    + '<span class="dirc ' + (f.dir === 1 ? 'r' : 'l') + '" style="left:calc(' + a + '%'
+        + (f.dir === 1 ? ' + 6px' : ' - 8px') + ')"></span>'
     + '</div>'
     + '<div class="fkey"><span>' + esc((g.teams[0] || {}).abbr || '') + '</span>'
-    + '<span>' + esc((g.teams[1] || {}).abbr || '') + '</span></div></div>';
+    + [20, 50, 80].map(function(y){
+        return '<span class="fyd" style="left:' + yd(y) + '%">' + (y > 50 ? 100 - y : y) + '</span>';
+      }).join('')
+    + '<span>' + esc((g.teams[1] || {}).abbr || '') + '</span></div>'
+    + driveLine(g, f, sum) + '</div>';
+}
+
+/* THIS DRIVE, from the drive summary the Plays tab already prints ("6 plays,
+   42 yards, 3:10"). Shown only while the game is live, only when the last drive
+   belongs to the team with the ball, and only when that text parses. The play
+   feed refreshes slower than the scoreline, so a drive that has just ended can
+   still be the last one listed; the team check keeps it from posing as current. */
+function driveLine(g, f, sum){
+  if(!sum || g.state !== 'in' || !f || !f.poss) return '';
+  const ds = sum.drives || [];
+  const d = ds.length ? ds[ds.length - 1] : null;
+  if(!d || !d.desc) return '';
+  if(teamCode(d.team) !== teamCode(f.poss.abbr)) return '';
+  const m = String(d.desc).match(/(\d+)\s*plays?\s*,\s*(-?\d+)\s*yards?(?:\s*,\s*(\d{1,2}:\d{2}))?/i);
+  if(!m) return '';
+  const bits = [m[1] + (m[1] === '1' ? ' Play' : ' Plays'),
+                m[2] + (Math.abs(+m[2]) === 1 ? ' Yd' : ' Yds')];
+  if(m[3]) bits.push(m[3]);
+  return '<div class="drv"><span class="drvk">This Drive</span>'
+    + bits.map(esc).join(' <span style="color:var(--fog-2)">&middot;</span> ') + '</div>';
+}
+
+/* WHAT KIND OF PLAY, read off the play's own sentence (the same words printed
+   under the tags), so a tag can never claim what the text does not say. */
+function playTags(p){
+  const t = String((p && p.text) || ''), ty = String((p && p.type) || '');
+  const out = [];
+  if(p && p.scoring){
+    if(/touchdown/i.test(t) || /touchdown/i.test(ty)) out.push('Touchdown');
+    else if(/field goal/i.test(t)) out.push('Field Goal');
+    else if(/safety/i.test(t)) out.push('Safety');
+    else out.push('Score');
+  }
+  const noPlay = /no play/i.test(t);
+  if(!noPlay){
+    if(/\bINTERCEPTED\b/i.test(t)) out.push('Turnover');
+    else{
+      const fr = t.match(/RECOVERED by ([A-Za-z]{2,4})-/);
+      if(/FUMBLES/i.test(t) && fr && p.team && teamCode(fr[1]) !== teamCode(p.team)) out.push('Turnover');
+    }
+  }
+  if(/PENALTY/.test(t) && !/declined/i.test(t)) out.push(noPlay ? 'Penalty, No Play' : 'Penalty');
+  if(!noPlay && !/punts|kicks|kickoff|onside/i.test(t) && out.indexOf('Touchdown') < 0){
+    const y = t.match(/for (\d+) yards?/i);
+    if(y && +y[1] >= 20) out.push('Big Play');
+  }
+  return out.length
+    ? '<div class="tags">' + out.map(function(x){ return '<span class="ptag">' + esc(x) + '</span>'; }).join('') + '</div>'
+    : '';
 }
 
 function titleFor(name){
@@ -1470,7 +1572,7 @@ function renderGame(){
   if(!g){ paint('<div class="empty">That game is no longer in the feed.</div>'); return; }
 
   const sum = S.game;
-  let html = heroBlock(g) + fieldBar(g);
+  let html = heroBlock(g) + fieldBar(g, S.game);
 
   // A finished game's "last play" is a kneel-down. Only show it while it moves.
   if(sum && sum.lastPlay && g.state === 'in'){
@@ -1478,7 +1580,7 @@ function renderGame(){
     html += '<div class="hd"><span>Last Play</span><span class="rule"></span></div>'
       + '<div class="card" style="padding:11px 13px">'
       + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
-      + '<div class="play">' + esc(sum.lastPlay.text) + '</div>'
+      + playTags(sum.lastPlay) + '<div class="play">' + esc(sum.lastPlay.text) + '</div>'
       + (older.length
           ? '<div class="prev"><button class="prevb" type="button" data-plays="1"'
             + ' aria-expanded="' + S.playsOpen + '">'
@@ -1488,7 +1590,7 @@ function renderGame(){
                 ? older.map(function(p){
                     return '<div class="pv">'
                       + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
-                      + '<div class="play">' + esc(p.text) + '</div></div>';
+                      + playTags(p) + '<div class="play">' + esc(p.text) + '</div></div>';
                   }).join('')
                 : '')
             + '</div>'
@@ -1593,7 +1695,7 @@ function renderPlays(){
       + '<div class="card">' + x.plays.map(function(p){
           return '<div class="rowb">'
             + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
-            + '<div class="play' + (p.scoring ? ' scored' : '') + '">' + esc(p.text) + '</div></div>';
+            + playTags(p) + '<div class="play' + (p.scoring ? ' scored' : '') + '">' + esc(p.text) + '</div></div>';
         }).join('') + '</div>';
   }).join(''));
 }
@@ -1649,7 +1751,7 @@ function watchlistBlock(sum){
   const hits = [], seen = {};
   for(const sec of sum.sections){
     for(const p of sec.players){
-      if(!watched(p.name)) continue;
+      if(!yours(p.name)) continue;
       const k = normName(p.name);
       if(seen[k] == null){ seen[k] = hits.length; hits.push({ p: p, lines: [], parts: [] }); }
       hits[seen[k]].lines.push(p.line);
@@ -1667,12 +1769,12 @@ function watchlistBlock(sum){
   const anyKicker = hits.some(function(h){
     return h.parts.some(function(x){ return x.unit === 'kick'; }); });
 
-  return '<div class="hd"><span>Your Watchlist &middot; ' + hits.length
+  return '<div class="hd"><span>' + yoursTitle() + ' &middot; ' + hits.length
     + '</span><span class="rule"></span></div><div class="card">'
     + hits.map(function(h){
         const kickOnly = h.parts.every(function(x){ return x.unit === 'kick'; });
         return '<div class="rowb"><div style="display:flex;align-items:baseline;gap:10px">'
-          + '<div class="nm" style="min-width:0"><span class="trk">&#9733;</span> '
+          + '<div class="nm" style="min-width:0">' + (watched(h.p.name) ? '<span class="trk">&#9733;</span> ' : '')
           + nameButton(h.p.name, ' <span class="pos">' + esc(h.p.team) + '</span>')
           + '</div>'
           + (kickOnly ? ''
@@ -1724,11 +1826,11 @@ function preview(g){
   const mine = watchInGame(g);
   if(mine.length){
     const waiting = S.league === 'nfl' && S.logsState === 'loading';
-    html += '<div class="hd"><span>Your Watchlist \u00b7 ' + mine.length
+    html += '<div class="hd"><span>' + yoursTitle() + ' \u00b7 ' + mine.length
       + '</span><span class="rule"></span></div><div class="card">'
       + mine.map(function(m){
           const line = seasonLine(m.stats);
-          return '<div class="rowb"><div class="nm"><span class="trk">&#9733;</span> '
+          return '<div class="rowb"><div class="nm">' + (m.star ? '<span class="trk">&#9733;</span> ' : '')
             + nameButton(m.name, ' <span class="pos">' + esc(m.team)
                 + (m.pos ? ' \u00b7 ' + esc(m.pos) : '') + '</span>')
             + '</div>'
@@ -1963,6 +2065,8 @@ function render(){
   // without this page being reloaded.
   S.watch = readWatchlist(S.league);
   S.fc.watchlist = S.watch.size;
+  S.roster = readMyRoster(S.league);
+  S.fc.roster = S.roster.size;
 
   if(S.league === 'cfb'){
     S.fc.watchSchools = watchSchools().length;
