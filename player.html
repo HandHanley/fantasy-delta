@@ -287,10 +287,11 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-08a</span>
+    <span class="foot-build">2026-10-09a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
+<script>/* start every boot download now; the loaders pick them up in order (delta-engine.js, BOOT PREFETCH) */ if(typeof dlPrefetchBoot==='function') dlPrefetchBoot();</script>
 <script src="delta-sync.js" defer></script>
 <script>
 /* Sync boot for the player page. No account UI here — this page only needs the

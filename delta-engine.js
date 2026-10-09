@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-08c';
+const DL_BUILD='2026-10-09a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -100,6 +100,44 @@ function dwToggle(n, ns){
 }
 function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
 let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle', GL_HAS_QS=false;
+/* BOOT PREFETCH (9 Oct 2026). Both pages boot by awaiting seven loaders in turn,
+   and each loader downloads its file and then processes it. The PROCESSING order
+   matters (stats before contracts before overrides, g25 after the logs); the
+   DOWNLOAD order never did. dlPrefetchBoot() starts every boot download at once,
+   and a loader's own request for the same address is handed that in-flight
+   response instead of starting a new one, so the files arrive together while the
+   chain still runs in today's order. Same addresses and options the loaders send,
+   so caching behaves exactly as before. One use per address: any later call
+   downloads fresh. Called only by the pages (index.html, player.html), never by
+   the Node scripts that also load this file. */
+const DL_PREFETCH = {};
+const DL_BOOT_FILES = [
+  ['./data/market-values.json', {cache:'no-cache'}],
+  ['./data/player-stats.json', {cache:'no-cache'}],
+  ['./data/player-contracts.json', {cache:'no-cache'}],
+  ['./data/ripple.json', {cache:'no-cache'}],
+  ['./data/injury-overrides.json', undefined],
+  ['./data/qb-starters.json', undefined],
+  ['./data/game-logs.json', {cache:'no-cache'}],
+  ['./data/start-profile-thresholds.json', {cache:'no-cache'}],
+];
+function dlPrefetchBoot(){
+  if(typeof fetch!=='function') return;
+  for(const [u,o] of DL_BOOT_FILES){
+    if(DL_PREFETCH[u]) continue;
+    try{
+      const p = o ? fetch(u,o) : fetch(u);
+      p.catch(function(){});          // a failure surfaces in the loader that awaits it
+      DL_PREFETCH[u] = p;
+    }catch(e){}
+  }
+}
+function dlFetch(u,o){
+  const p = DL_PREFETCH[u];
+  if(p){ delete DL_PREFETCH[u]; return p; }
+  return o ? fetch(u,o) : fetch(u);
+}
+
 async function ensureStartData(){
   if(START_DATA_STATE==='loaded'||START_DATA_STATE==='loading') return START_DATA_STATE;
   START_DATA_STATE='loading';
@@ -111,8 +149,8 @@ async function ensureStartData(){
 // {cache:'no-cache'} asks the browser to REVALIDATE instead: it sends the ETag, and an
 // unchanged file comes back as a 304 with no body. Same freshness guarantee, a fraction
 // of the bytes and round trips on repeat visits.
-      fetch('./data/game-logs.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('logs '+r.status)),
-      fetch('./data/start-profile-thresholds.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
+      dlFetch('./data/game-logs.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('logs '+r.status)),
+      dlFetch('./data/start-profile-thresholds.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject('thresh '+r.status)),
     ]);
     GAMELOGS=gl.games||{}; STARTLINES=th.lines||{};
     // QB start marks (qs) arrive with the 3 Oct pipeline. Without any, the QB blend keeps counting
@@ -5194,11 +5232,22 @@ const FC_ALIASES = {
 };
 
 
+/* The stats file is the same for every league format; only the PPG recompute
+   below depends on the format. A format change re-runs this function for that
+   recompute, and used to re-download ~786 KB to do it. The text from the first
+   good download is kept and re-parsed instead (a fresh parse, so the result is
+   exactly what a re-download gave). A page reload still downloads fresh. */
+let PS_TEXT = null;
 async function loadPlayerStats() {
   try {
-    const res = await fetch('./data/player-stats.json',{cache:'no-cache'});
-    if (!res.ok) return;
-    const data = await res.json();
+    let txt = PS_TEXT;
+    if (txt == null) {
+      const res = await dlFetch('./data/player-stats.json',{cache:'no-cache'});
+      if (!res.ok) return;
+      txt = await res.text();
+    }
+    const data = JSON.parse(txt);
+    if (data?.players) PS_TEXT = txt;
     if (!data?.players) return;
 
     PLAYER_STATS = data.players;
@@ -5417,7 +5466,7 @@ async function loadPlayerStats() {
 // ── LOADER ────────────────────────────────────────────────────────────────
 async function loadLiveMarketValues() {
   try {
-    const res = await fetch('./data/market-values.json',{cache:'no-cache'}); // cache-bust: bypass Pages CDN edge cache
+    const res = await dlFetch('./data/market-values.json',{cache:'no-cache'}); // cache-bust: bypass Pages CDN edge cache
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -5599,7 +5648,7 @@ async function loadLiveMarketValues() {
 // ── FRESHNESS INDICATOR ───────────────────────────────────────────────────
 async function loadPlayerContracts() {
   try {
-    const res = await fetch('./data/player-contracts.json',{cache:'no-cache'});
+    const res = await dlFetch('./data/player-contracts.json',{cache:'no-cache'});
     if (!res.ok) return; // non-fatal
     const data = await res.json();
     if (!data?.contracts) return;
@@ -5725,7 +5774,7 @@ async function loadPlayerContracts() {
    projections, and every name is logged so a typo is visible rather than silent. */
 async function loadQBStarters() {
   try {
-    const res = await fetch('./data/qb-starters.json');
+    const res = await dlFetch('./data/qb-starters.json');
     if (!res.ok) { QB_STARTERS = {}; return; }       // absent is normal — rule just won't fire
     const raw = await res.json();
     const out = {};
@@ -5752,7 +5801,7 @@ async function loadQBStarters() {
 
 async function loadInjuryOverrides() {
   try {
-    const res = await fetch('./data/injury-overrides.json');
+    const res = await dlFetch('./data/injury-overrides.json');
     if (!res.ok) { INJ_OUT = {}; return; }          // absent is normal
     const raw = await res.json();
     const out = {};
@@ -5779,7 +5828,7 @@ async function loadInjuryOverrides() {
 
 async function loadRipples() {
   try {
-    const res = await fetch('./data/ripple.json',{cache:'no-cache'});
+    const res = await dlFetch('./data/ripple.json',{cache:'no-cache'});
     if (!res.ok) throw new Error('ripple '+res.status);
     const data = await res.json();
     const arr = Array.isArray(data) ? data : (data.ripples || []);

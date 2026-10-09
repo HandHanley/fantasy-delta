@@ -2082,6 +2082,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 </div>
 
 <script src="delta-engine.js"></script>
+<script>/* start every boot download now; the loaders pick them up in order (delta-engine.js, BOOT PREFETCH) */ if(typeof dlPrefetchBoot==='function') dlPrefetchBoot();</script>
 <script src="delta-sync.js" defer></script>
 <script>
 function renderStartProfile(p){
@@ -5805,7 +5806,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-08e</span>
+  <span class="foot-build">2026-10-09a</span>
 </footer>
 
 
@@ -7752,7 +7753,7 @@ async function sleeperConnect(){
   }catch(e){
     slpLog('connect FAILED:',e);
     slpStatus('Connection failed: '+(e.message||e),true);
-  }finally{ SLP.busy=false; }
+  }finally{ SLP.busy=false; if(SLP.loaded) renderMyTeam(); }   // the roster drew while busy; draw it again now it is not (9 Oct 2026)
 }
 
 async function slpPickLeague(leagueId){
@@ -7760,7 +7761,7 @@ async function slpPickLeague(leagueId){
   SLP.busy=true;
   try{ await slpLoadLeague(leagueId,SLP.pendingUser); }
   catch(e){ slpLog('league load FAILED:',e); slpStatus('Could not load league: '+(e.message||e),true); }
-  finally{ SLP.busy=false; }
+  finally{ SLP.busy=false; if(SLP.loaded) renderMyTeam(); }
 }
 
 async function slpLoadLeague(leagueId,user){
