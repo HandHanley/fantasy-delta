@@ -92,6 +92,14 @@ jobs:
         continue-on-error: true
         run: node scripts/build-scorecard.js
 
+      # Depth charts for the player card's "who is ahead of him" and Live's pre-kickoff
+      # block (9 Oct 2026). Display only: feeds no score, projection or call. Until now
+      # nothing ran this, so the file sat at its 23 Aug camp snapshot all season. A
+      # failure writes nothing and the pages keep the last good file.
+      - name: Refresh depth charts (card, Live)
+        continue-on-error: true
+        run: python scripts/fetch-prospect-context.py --confirm --only depth
+
       - name: Commit updated data
         run: |
           git config user.name "DELTA Bot"

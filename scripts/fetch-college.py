@@ -48,6 +48,19 @@ KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
 YEAR  = int(os.environ.get("CFBD_YEAR")  or default_season())
 WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)   # highest week fetched; the loop runs 0..WEEKS
 PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
+
+def must_have_data(today=None):
+    """True from 8 Sep to 15 Jan for the season in progress (9 Oct 2026).
+
+    The two "nothing to build, exit cleanly" exits below exist for the off-season and
+    the weeks before kickoff. Inside this window rosters and games certainly exist, so
+    an empty answer means the API or the key failed -- and call() turns every failure
+    into an empty list. Exiting 0 then made the run green while the data silently
+    stopped moving. Inside the window those exits fail the run instead (-> email).
+    A backfill of a past season (CFBD_YEAR set) is never inside the window."""
+    d = today or datetime.date.today()
+    if YEAR != default_season(d): return False
+    return (d.month == 9 and d.day >= 8) or d.month in (10, 11, 12) or (d.month == 1 and d.day <= 15)
 # PROBE mode: answer one question — "does CFBD have the finished games yet?" — for
 # one or two API calls instead of ~29, and write nothing. Meant to be fired every
 # 20 minutes on a Saturday to measure how long after a final whistle the box score
@@ -189,6 +202,9 @@ with cfbd.ApiClient(cfg) as api:
     # present but nothing joins) still errors loudly further down.
     if not roster:
         print(f"\n  Season {YEAR} has no FBS roster yet — not underway (or API returned nothing).")
+        if must_have_data():
+            print(f"::error title=College fetch returned no rosters::Season {YEAR} is in progress, so this is an API or key failure, not the off-season. Existing files left untouched.")
+            sys.exit(1)
         print(f"  Nothing to build. Leaving the existing current-season file untouched; exiting cleanly.")
         sys.exit(0)
     usage  = call("GET /player/usage", players_api.get_player_usage, year=YEAR)
@@ -411,6 +427,9 @@ with cfbd.ApiClient(cfg) as api:
         if sum(MATCH.values()) == 0:
             # Rosters exist but no game stat rows yet — season is between roster release and
             # week 1. Nothing to build; skip cleanly rather than fail or overwrite good data.
+            if must_have_data():
+                print(f"::error title=College fetch returned no games::Season {YEAR} is in progress, so this is an API failure, not a pre-season gap. Existing files left untouched.")
+                sys.exit(1)
             print(f"    Season {YEAR} has rosters but no games played yet — nothing to build. Exiting cleanly.")
             sys.exit(0)
         # Game rows exist but none joined to the roster index -> a genuine join bug. Alert.

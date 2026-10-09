@@ -48,11 +48,17 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # For workflow_run: only deploy if the data job actually succeeded.
-    # (Always deploy for direct pushes / manual dispatch.)
+    # For workflow_run: deploy whether the data job passed OR failed (9 Oct 2026).
+    # The nightly commits its data FIRST and runs its alarms (Engine Audit, QB depth
+    # check) AFTER, so a red run usually means "fresh data, plus an alarm" — and the
+    # alarm already emails. Deploying only on success held that fresh data back: the
+    # 5 Oct nightly failed its check and the site stayed stale until a manual re-run.
+    # If a job failed before committing, this re-publishes unchanged files: harmless.
+    # Cancelled or skipped runs still do nothing.
     if: >
       github.event_name != 'workflow_run' ||
-      github.event.workflow_run.conclusion == 'success'
+      github.event.workflow_run.conclusion == 'success' ||
+      github.event.workflow_run.conclusion == 'failure'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url || steps.retry.outputs.page_url }}
