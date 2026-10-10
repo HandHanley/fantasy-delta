@@ -4161,6 +4161,7 @@ function renderScorecard(){
   const t100=d.rules.top_pool?' <span class="dl-sc-tag">TOP '+d.rules.top_pool+'</span>':'';
   const tops='<div class="dl-sc-grid"><div><h3 class="dl-sc-h">Closest Preseason Calls'+t100+'</h3>'+top(d.closest||[],0)+'</div>'
     +'<div><h3 class="dl-sc-h">Farthest Off'+t100+'</h3>'+top(d.farthest||[],1)+'</div></div>'
+    +((d.left_out||[]).length?'<div class="dl-sc-legend">Left out: '+d.left_out.map(x=>scEsc(x.n)+' ('+scEsc(x.why)+')').join(', ')+'</div>':'')
     +'<div class="dl-sc-legend"><span><span class="dl-sc-dir up"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 L9.5 9 L0.5 9 Z" fill="currentColor"></path></svg></span>Scored more than projected</span>'
     +'<span><span class="dl-sc-dir dn"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 L9.5 1 L0.5 1 Z" fill="currentColor"></path></svg></span>Scored less</span>'
     +'<span><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>Projected</span>'
@@ -4200,6 +4201,7 @@ function renderScorecard(){
     +'<b>One player is noise</b> \u2014 like a batting average, the headline numbers are what DELTA stands on. '
     +'Scoring: '+scEsc(d.basis)+'. Players: '+scEsc(d.rules.graded)+'. A live snapshot reads for real once '+d.rules.ready_at+'+ players have '+d.rules.min_games_after+'+ games after it. '
     +'Closest and farthest are drawn from the top '+(d.rules.top_pool||100)+' players by market value at the freeze (#rank shown). '
+    +'Players out for the season are left out of those two lists, since their numbers can never change; they still count everywhere else. '
     +'The preseason numbers here are a running preview; the official grade is the Accuracy Ledger in February.</div></details>'
     +'<div class="dl-sc-grid">'+pre+liv+'</div>'+tops
     +'<h3 class="dl-sc-h">Players</h3><div class="controls"><select onchange="scSetPos(this.value)" aria-label="Position">'
@@ -5816,7 +5818,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09g</span>
+  <span class="foot-build">2026-10-10a</span>
 </footer>
 
 

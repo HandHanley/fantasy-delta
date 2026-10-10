@@ -25,6 +25,10 @@
  *  - Closest / farthest: frozen projection vs this season so far, drawn only from
  *    the top 100 players by market value AT THE FREEZE (all positions; fixed before
  *    any game, so no hindsight), 3+ games once 100+ graded players have 3, else 2+.
+ *    Players on data/injury-overrides.json (out for the season) are left out of these two
+ *    lists and named underneath (owner, 10 Oct 2026): a season-ender's number can never
+ *    move again, so he would hold a slot all year. Display only: he stays in the
+ *    headline, the snapshots and the player table exactly as before.
  *  - QB yardstick (owner, 3 Oct 2026): every photo records the ruler its QB projections used —
  *    'played' (every game played; all photos before QB points per start) or 'full_start'
  *    (engine 2026-10-03a on: a QB's projection is points per FULL start). In a 'full_start'
@@ -58,7 +62,7 @@ for (const a of args) if (a.startsWith('--') && !known.has(a)) { console.error(`
 // ── headless engine: the freeze script's boot chain, reading files from dataRoot ──
 async function bootEngine(dataRoot, maxWeek) {
   const src = fs.readFileSync(path.join(ROOT, 'delta-engine.js'), 'utf8') + `
-;globalThis.__H__={ get COMP(){return COMP}, gamefp, get SEASON(){return SEASON_YEAR}, get BUILD(){return DL_BUILD}, get PERSTART(){ return typeof QB_PS!=='undefined' && !!(QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS); },
+;globalThis.__H__={ get COMP(){return COMP}, gamefp, get SEASON(){return SEASON_YEAR}, get BUILD(){return DL_BUILD}, get INJ(){ return typeof INJ_OUT!=='undefined' && INJ_OUT ? INJ_OUT : {}; }, get PERSTART(){ return typeof QB_PS!=='undefined' && !!(QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS); },
   set:(t,q,f)=>{ leagueTeams=t; qbFmt=q; scoringFmt=f; }, recompute:()=>applyMarketForSetting(),
   boot:async()=>{ await loadLiveMarketValues(); await loadPlayerStats(); await loadPlayerContracts();
     await loadRipples();
@@ -202,7 +206,9 @@ async function main() {
   const minTop = three ? 3 : 2;
   // overall market rank at the freeze (value desc, name breaks ties) — fixed before any game
   const mktRank = {}; names.slice().sort((a, b) => (FZ[b].mkt || 0) - (FZ[a].mkt || 0) || a.localeCompare(b)).forEach((n, i) => { mktRank[n] = i + 1; });
-  const pool = withNow.filter((p) => p.sofarG >= minTop && mktRank[p.n] <= TOP_POOL)
+  const inPool = withNow.filter((p) => p.sofarG >= minTop && mktRank[p.n] <= TOP_POOL);
+  const leftOut = inPool.filter((p) => H.INJ[p.n]).map((p) => ({ n: p.n, why: 'out for the season' }));
+  const pool = inPool.filter((p) => !H.INJ[p.n])
     .map((p) => ({ n: p.n, pos: p.pos, t: p.t, r: mktRank[p.n], pre: r2(p.pre), sofar: r2(p.sofar), g: p.sofarG, off: r2(p.pre - p.sofar) }));
   pool.sort((a, b) => Math.abs(a.off) - Math.abs(b.off) || a.n.localeCompare(b.n));
   const closest = pool.slice(0, TOP_N), farthest = pool.slice(-TOP_N).reverse();
@@ -216,11 +222,11 @@ async function main() {
              min_games_after: MIN_G_AFTER, ready_at: MIN_READY, top_min_games: minTop, top_pool: TOP_POOL,
              metric: 'MAE (average miss, points per game); RMSE secondary — ledger Test 1',
              qb_yardstick: "each photo's own ruler: 'played' = every game played; 'full_start' = QB rows on full starts only (3 Oct 2026)" },
-    frozen, graded, closest, farthest,
+    frozen, graded, closest, farthest, left_out: leftOut,
     players: names.map((n) => round(P[n])).filter((p) => p.sofarG >= 1),
     snapshots: snaps,
   };
-  console.log(`[SCORECARD] through Week ${through} · frozen ${JSON.stringify(frozen)} · snapshots ${graded.map((g) => `W${g.week}:n${g.n}${g.ready ? '' : '(early)'}`).join(' ') || 'none'} · players ${out.players.length}`);
+  console.log(`[SCORECARD] through Week ${through} · frozen ${JSON.stringify(frozen)} · snapshots ${graded.map((g) => `W${g.week}:n${g.n}${g.ready ? '' : '(early)'}`).join(' ') || 'none'} · players ${out.players.length} · left out of closest/farthest: ${leftOut.map((x) => x.n).join(', ') || 'none'}`);
   if (flag('--dry-run')) { console.log('[SCORECARD] --dry-run: nothing written'); return; }
   fs.writeFileSync(OUT, JSON.stringify(out));
   console.log(`[SCORECARD] wrote ${path.relative(ROOT, OUT)} (${(fs.statSync(OUT).size / 1024).toFixed(0)} KB)`);
