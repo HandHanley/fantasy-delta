@@ -5753,6 +5753,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
+  <div id="audit-untracked"></div>
 </div>
 
 <!-- Site footer -->
@@ -5815,7 +5816,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-09f</span>
+  <span class="foot-build">2026-10-09g</span>
 </footer>
 
 
@@ -6960,6 +6961,26 @@ function initEngineAudit(){
   if(!DELTA_DEV) return;
   dlUnlock('audit');
   loadScarcityValidation();
+  loadUntrackedMarket();
+}
+/* Market players DELTA does not track (scripts/untracked-market.js, nightly). A list
+   for the owner to decide on, not an alarm: adding a player shifts rankings, so it
+   stays a human call. Display only (9 Oct 2026). */
+async function loadUntrackedMarket(){
+  const host=document.getElementById('audit-untracked'); if(!host) return;
+  let d=null;
+  try{ const r=await fetch('./data/untracked-market.json',{cache:'no-cache'}); if(r.ok) d=await r.json(); }catch(e){}
+  if(!d||!Array.isArray(d.players)){ host.innerHTML=''; return; }
+  const fmt=function(n){ return Number(n||0).toLocaleString('en-US'); };
+  host.innerHTML='<div class="section-label" style="margin-top:22px">Market Players DELTA Doesn'+"\u2019"+'t Track</div>'
+    +'<div style="font-size:11px;color:var(--fog-2);margin:-4px 0 8px">'+d.count+' QB/RB/WR/TE priced by FantasyCalc ('+d.setting.replace('|','-team ').replace('sf','superflex').replace('1qb','1QB')
+    +') with no match among DELTA'+"\u2019"+'s '+d.universe+' players. Updated '+String(d.generated).slice(0,10)+'.</div>'
+    +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Rank</th><th class="dl-b-r">Value</th><th class="dl-b-r">30 Days</th></tr></thead><tbody>'
+    +d.players.slice(0,25).map(function(p){
+      return '<tr><td class="pname"><span class="dl-b-pn">'+p.n+'</span><span class="dl-b-tp">'+p.pos+' '+(p.team||'FA')+'</span></td>'
+        +'<td class="dl-b-r">'+(p.rank||'-')+'</td><td class="dl-b-r">'+fmt(p.value)+'</td>'
+        +'<td class="dl-b-r">'+(p.trend30>0?'+':'')+fmt(p.trend30)+'</td></tr>'; }).join('')
+    +'</tbody></table></div>';
 }
 let SCARV = null;
 async function loadScarcityValidation(){
@@ -9728,6 +9749,7 @@ async function bootDelta(){
   initEngineAudit();
   try{ initCollege(); }catch(e){ console.warn("college init failed",e); }
   if(typeof renderAll==='function') renderAll();
+  if(typeof dlShowLoadNotice==='function') dlShowLoadNotice();
 }
 /* 'complete' means the load event already fired and the listener would never
    run; the two branches are mutually exclusive, so boot cannot double-fire.

@@ -47,7 +47,9 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install polars pyarrow pandas --quiet
-          pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' --quiet
+          # Pinned (9 Oct 2026) to the commit that was working: September's silent depth-chart
+          # fallback came from an upstream column rename landing unannounced. Bump on purpose.
+          pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy@e7e87b2ef626b8672279db25432b1554ee13348a' --quiet
 
       - name: Fetch FantasyCalc market values
         run: node scripts/fetch-market-values.js
@@ -58,6 +60,12 @@ jobs:
       - name: Build market value history (player card)
         continue-on-error: true
         run: node scripts/build-market-history.js
+
+      # Market players DELTA does not track, for the ?dev=1 Engine Audit panel (9 Oct 2026).
+      # A list for the owner to decide on; nothing scored reads it.
+      - name: List untracked market players (Engine Audit)
+        continue-on-error: true
+        run: node scripts/untracked-market.js
 
       - name: Fetch scarcity-engine validation
         run: node scripts/fetch-scarcity-validation.js

@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-09b';
+const DL_BUILD='2026-10-09c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -145,6 +145,29 @@ function dlLeagueReachTitle(r){
   return t.join(' | ');
 }
 
+/* DATA THAT DID NOT LOAD (9 Oct 2026). Every boot loader already carries on when its
+   file is missing or broken, falling back to the numbers built into this file, which
+   is right, but it did so silently, so a reader could be looking at stale figures with
+   no way to know. Loaders now note the failure here; the pages show one small,
+   dismissible line (dlShowLoadNotice). Files whose absence is normal (injury and QB
+   starter overrides) are noted only when they fail outright, not when they are absent. */
+const DL_LOAD_FAIL = [];
+function dlNoteFail(what){ if(DL_LOAD_FAIL.indexOf(what)<0) DL_LOAD_FAIL.push(what); }
+function dlShowLoadNotice(){
+  if(!DL_LOAD_FAIL.length||typeof document==='undefined'||!document.body) return;
+  if(document.getElementById('dl-load-notice')) return;
+  const el=document.createElement('div');
+  el.id='dl-load-notice'; el.setAttribute('role','status');
+  el.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:99980;'
+    +'max-width:520px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;'
+    +'padding:10px 38px 10px 12px;font-size:12px;line-height:1.45;color:var(--fog)';
+  el.innerHTML='Some data didn'+"\u2019"+'t load ('+DL_LOAD_FAIL.join(', ')+'), so a few numbers may be out of date. Refresh to try again.'
+    +'<button type="button" aria-label="Dismiss" style="position:absolute;top:6px;right:8px;background:none;border:0;'
+    +'color:var(--fog-2);font-size:18px;line-height:1;cursor:pointer;padding:4px">\u00d7</button>';
+  el.querySelector('button').onclick=function(){ el.remove(); };
+  document.body.appendChild(el);
+}
+
 /* BOOT PREFETCH (9 Oct 2026). Both pages boot by awaiting seven loaders in turn,
    and each loader downloads its file and then processes it. The PROCESSING order
    matters (stats before contracts before overrides, g25 after the logs); the
@@ -233,7 +256,7 @@ async function ensureStartData(){
       if(zeroed.length) console.log('[DELTA] 2025 zeroed (logs and stats agree he did not play): '+zeroed.join(', '));
       if(synced) console.log('[DELTA] g25 synced from game logs for '+synced+' players');
     }
-  }catch(e){ console.warn('[DELTA] Start Profile data load failed:',e); START_DATA_STATE='error'; }
+  }catch(e){ dlNoteFail('game logs'); console.warn('[DELTA] Start Profile data load failed:',e); START_DATA_STATE='error'; }
   return START_DATA_STATE;
 }
 function gamefp(g,pos,fmt){
@@ -2781,40 +2804,6 @@ const PICKS=[
   {n:'2028 Late 3rd Round Pick',k:1935,ip:true,hidden:true}
 ];
 
-const DC={
-  ARI:{QB:['Jacoby Brissett'],RB:['Trey Benson'],WR:['Marvin Harrison Jr.'],TE:['Trey McBride']},
-  ATL:{QB:['Michael Penix Jr.','Tua Tagovailoa'],RB:['Bijan Robinson'],WR:['Drake London'],TE:['Kyle Pitts']},
-  BAL:{QB:['Lamar Jackson'],RB:['Derrick Henry'],WR:['Zay Flowers'],TE:['Mark Andrews']},
-  BUF:{QB:['Josh Allen'],RB:['James Cook'],WR:["D.J. Moore",'Khalil Shakir'],TE:['Dalton Kincaid']},
-  CAR:{QB:['Bryce Young'],RB:['Chuba Hubbard'],WR:['Tetairoa McMillan','Jalen Coker'],TE:[]},
-  CHI:{QB:['Caleb Williams'],RB:["D'Andre Swift",'Kyle Monangai'],WR:['Rome Odunze','Luther Burden'],TE:['Colston Loveland']},
-  CIN:{QB:['Joe Burrow'],RB:['Chase Brown'],WR:["Ja'Marr Chase",'Tee Higgins'],TE:[]},
-  CLE:{QB:['Shedeur Sanders'],RB:['Quinshon Judkins','Dylan Sampson'],WR:[],TE:['Harold Fannin Jr.']},
-  DAL:{QB:['Dak Prescott'],RB:['Javonte Williams'],WR:['CeeDee Lamb','George Pickens'],TE:['Jake Ferguson']},
-  DEN:{QB:['Bo Nix'],RB:['J.K. Dobbins','RJ Harvey'],WR:['Courtland Sutton','Jaylen Waddle'],TE:['Evan Engram']},
-  DET:{QB:['Jared Goff'],RB:['Jahmyr Gibbs'],WR:['Amon-Ra St. Brown','Jameson Williams'],TE:['Sam LaPorta']},
-  GB:{QB:['Jordan Love'],RB:['Josh Jacobs'],WR:['Christian Watson','Matthew Golden'],TE:['Tucker Kraft']},
-  HOU:{QB:['C.J. Stroud'],RB:['David Montgomery','Woody Marks'],WR:['Nico Collins','Jayden Higgins'],TE:['Dalton Schultz']},
-  IND:{QB:['Daniel Jones'],RB:['Jonathan Taylor'],WR:['Alec Pierce','Josh Downs'],TE:['Tyler Warren']},
-  JAC:{QB:['Trevor Lawrence'],RB:['Bhayshul Tuten'],WR:['Brian Thomas Jr.','Jakobi Meyers','Parker Washington'],TE:['Brenton Strange']},
-  KC:{QB:['Patrick Mahomes'],RB:['Kenneth Walker III'],WR:['Rashee Rice','Xavier Worthy'],TE:['Travis Kelce']},
-  LV:{QB:['Kirk Cousins'],RB:['Ashton Jeanty'],WR:[],TE:['Brock Bowers']},
-  LAC:{QB:['Justin Herbert'],RB:['Omarion Hampton'],WR:['Ladd McConkey','Quentin Johnston','Tre Harris'],TE:['Oronde Gadsden']},
-  LAR:{QB:['Matthew Stafford'],RB:['Kyren Williams','Blake Corum'],WR:['Puka Nacua','Davante Adams'],TE:[]},
-  MIA:{QB:['Malik Willis'],RB:["De'Von Achane",'Jaylen Wright','Ollie Gordon'],WR:[],TE:[]},
-  MIN:{QB:['Kyler Murray','J.J. McCarthy'],RB:['Aaron Jones','Jordan Mason'],WR:['Justin Jefferson','Jordan Addison'],TE:['T.J. Hockenson']},
-  NE:{QB:['Drake Maye'],RB:['Rhamondre Stevenson','TreVeyon Henderson'],WR:['Romeo Doubs'],TE:['Hunter Henry']},
-  NO:{QB:['Tyler Shough'],RB:['Travis Etienne','Alvin Kamara'],WR:['Chris Olave'],TE:['Juwan Johnson']},
-  NYG:{QB:['Jaxson Dart'],RB:['Cam Skattebo'],WR:['Malik Nabers'],TE:['Isaiah Likely']},
-  NYJ:{QB:['Geno Smith'],RB:['Breece Hall','Braelon Allen'],WR:['Garrett Wilson'],TE:['Mason Taylor']},
-  PHI:{QB:['Jalen Hurts'],RB:['Saquon Barkley'],WR:['A.J. Brown','DeVonta Smith'],TE:['Dallas Goedert']},
-  PIT:{QB:['Mason Rudolph'],RB:['Jaylen Warren','Rico Dowdle'],WR:['DK Metcalf','Michael Pittman Jr.'],TE:['Pat Freiermuth']},
-  SF:{QB:['Brock Purdy'],RB:['Christian McCaffrey','Isaac Guerendo'],WR:['Mike Evans','Ricky Pearsall'],TE:['George Kittle']},
-  SEA:{QB:['Sam Darnold'],RB:['Zach Charbonnet'],WR:['Jaxon Smith-Njigba'],TE:['AJ Barner']},
-  TB:{QB:['Baker Mayfield'],RB:['Bucky Irving','Kenneth Gainwell'],WR:['Emeka Egbuka'],TE:['Cade Otton']},
-  TEN:{QB:['Cam Ward'],RB:['Tony Pollard','Tyjae Spears'],WR:["Wan'Dale Robinson",'Elic Ayomanor'],TE:['Gunnar Helm']},
-  WAS:{QB:['Jayden Daniels'],RB:['Jacory Croskey-Merritt','Rachaad White'],WR:['Terry McLaurin'],TE:['Chigoziem Okonkwo']},
-};
 
 // Ripple display entries {n,d,reason,delta}. Populated from data/ripple.json by
 // loadRipples() — the SAME file that builds RP, so display and math share one
@@ -5288,7 +5277,7 @@ async function loadPlayerStats() {
     let txt = PS_TEXT;
     if (txt == null) {
       const res = await dlFetch('./data/player-stats.json',{cache:'no-cache'});
-      if (!res.ok) return;
+      if (!res.ok) { dlNoteFail('player stats'); return; }
       txt = await res.text();
     }
     const data = JSON.parse(txt);
@@ -5504,6 +5493,7 @@ async function loadPlayerStats() {
     if (typeof renderRankings === 'function') renderRankings();
     console.log(`[DELTA] Player stats loaded: ${Object.keys(PLAYER_STATS).length} players, ${updated} PPG values updated`);
   } catch(e) {
+    dlNoteFail('player stats');
     console.warn('[DELTA] Could not load player stats:', e.message);
   }
 }
@@ -5686,6 +5676,7 @@ async function loadLiveMarketValues() {
   } catch (err) {
     // Show error in badge so we can debug
     console.warn('[DELTA] Could not load live market values:', err.message);
+    dlNoteFail('market values');
     if (typeof showDataFreshness === 'function') showDataFreshness(new Date().toISOString(), -1);
   }
 }
@@ -5694,7 +5685,7 @@ async function loadLiveMarketValues() {
 async function loadPlayerContracts() {
   try {
     const res = await dlFetch('./data/player-contracts.json',{cache:'no-cache'});
-    if (!res.ok) return; // non-fatal
+    if (!res.ok) { dlNoteFail('contracts'); return; } // non-fatal
     const data = await res.json();
     if (!data?.contracts) return;
 
@@ -5795,6 +5786,7 @@ async function loadPlayerContracts() {
       if (typeof renderRankings === 'function') renderRankings();
     }
   } catch(e) {
+    dlNoteFail('contracts');
     console.warn('[DELTA] Could not load contracts:', e.message);
   }
 }
@@ -5839,6 +5831,7 @@ async function loadQBStarters() {
       if (typeof renderRankings === 'function') renderRankings();
     }
   } catch (e) {
+    dlNoteFail('QB starters');
     console.warn('[DELTA] Could not load QB starters (rule inactive):', e.message);
     QB_STARTERS = {};
   }
@@ -5866,6 +5859,7 @@ async function loadInjuryOverrides() {
       if (typeof renderRankings === 'function') renderRankings();
     }
   } catch (e) {
+    dlNoteFail('injury overrides');
     console.warn('[DELTA] Could not load injury overrides (none applied):', e.message);
     INJ_OUT = {};
   }
@@ -5892,6 +5886,7 @@ async function loadRipples() {
       if (typeof renderRankings === 'function') renderRankings();
     }
   } catch(e) {
+    dlNoteFail('ripple effects');
     console.warn('[DELTA] Could not load ripples (none applied):', e.message);
   }
 }

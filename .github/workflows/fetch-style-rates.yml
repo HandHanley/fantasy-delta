@@ -23,7 +23,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy' polars pyarrow pandas --quiet
+        run: pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy@e7e87b2ef626b8672279db25432b1554ee13348a' polars pyarrow pandas --quiet
 
       - name: Fetch style rates
         run: python scripts/fetch-style-rates.py

@@ -300,7 +300,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-09c</span>
+    <span class="foot-build">2026-10-09d</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1725,6 +1725,7 @@ if (!PLAYER_NAME) {
       if (!p) { showError(`Player not found: <strong>${PLAYER_NAME}</strong>`); return; }
       MV_CENTER = computeMvCenter(); // population median + price-taper fit — same as renderAll() in index.html
       renderPlayerPage(p);
+      if (typeof dlShowLoadNotice === 'function') dlShowLoadNotice();   // any file that did not load (9 Oct 2026)
     })
     .catch(e => showError('Failed to load player data. ' + e.message));
 }

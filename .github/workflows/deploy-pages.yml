@@ -72,6 +72,18 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      # Cache-busting (9 Oct 2026). The pages load delta-engine.js and delta-sync.js by a
+      # fixed address, so for a few minutes after a deploy a phone could pair a new page
+      # with the old engine (or the reverse). The PUBLISHED copy gets ?v=<this commit> on
+      # those two script tags; the repo files are untouched. Nothing to bump by hand.
+      - name: Stamp script versions
+        run: |
+          v="$(git rev-parse --short HEAD)"
+          for f in index.html player.html cfb-player.html; do
+            sed -i -E "s#src=\"(delta-engine|delta-sync)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
+          done
+          grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:
