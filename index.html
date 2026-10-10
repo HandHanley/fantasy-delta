@@ -658,6 +658,16 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,
     font-size:16px !important; padding-top:3px !important; padding-bottom:3px !important;
     line-height:1.15 !important}
 }
+/* Tap targets (B6, 10 Oct 2026): on a phone the nav tabs were 19px tall and the format
+   chips 17px, below the 24px accessibility floor and easy to miss with a thumb. Tabs and the
+   section switcher get real padding (the pill grows); the small chips keep their look and get
+   an invisible 8px hit area above and below instead. Touch screens only. */
+@media (pointer:coarse){
+  .tab,.about-tab{padding-top:10px;padding-bottom:10px}
+  .seg-btn{padding-top:10px;padding-bottom:10px}
+  .rk-chip{position:relative}
+  .rk-chip::after{content:'';position:absolute;inset:-8px -2px}
+}
 /* Placeholders were rendering lighter than the select text beside them. */
 input::placeholder, textarea::placeholder{color:var(--fog-2);opacity:1;font-size:12px}
 @media (pointer:coarse){
@@ -1510,7 +1520,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 </div>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
   <div style="position:relative;flex:1;max-width:280px">
-    <input id="deck-search" type="text" placeholder="Find any player, NFL or college"
+    <input id="deck-search" aria-label="Find Any Player" type="text" placeholder="Find any player, NFL or college"
       oninput="deckSearchInput()"
       onkeydown="deckSearchKey(event)"
       class="dl-search"
@@ -1609,7 +1619,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       </select>
     </div>
     <div class="set-sec">OPEN DELTA TO</div>
-    <select id="landing-pref" class="set-sel" onchange="setLandingPref(this.value)">
+    <select id="landing-pref" aria-label="Landing Page" class="set-sel" onchange="setLandingPref(this.value)">
       <option value="last">Where I left off</option>
       <optgroup label="NFL">
         <option value="rankings">Rankings (default)</option>
@@ -1644,7 +1654,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <div id="dsync-signed-out" style="display:none">
         <div style="font-size:10.5px;color:var(--fog-2);line-height:1.5;margin-bottom:8px">Sign in to sync your settings and watchlist across devices.</div>
         <button class="set-pill" onclick="dsyncGoogle()" style="width:100%;justify-content:center;margin-bottom:6px">Continue with Google</button>
-        <input id="dsync-email" type="email" placeholder="you@example.com" class="set-sel" style="margin-bottom:6px" autocomplete="email">
+        <input id="dsync-email" aria-label="Email" type="email" placeholder="you@example.com" class="set-sel" style="margin-bottom:6px" autocomplete="email">
         <button class="set-pill" onclick="dsyncEmail()" style="width:100%;justify-content:center">Email me a link</button>
       </div>
       <div id="dsync-signed-in" style="display:none">
@@ -1676,7 +1686,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
        position pills below write to it, and renderRankings() + deckStar() keep reading it
        exactly as before, so the filter swap is presentation-only. Same pattern the scoring
        and league selects already use. -->
-  <div style="display:none"><select id="scoring-fmt" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select><select id="pos-rank" onchange="renderRankings()">
+  <div style="display:none"><select id="scoring-fmt" aria-label="Scoring Format" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" aria-label="League Size" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" aria-label="QB Format" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select><select id="pos-rank" aria-label="Position" onchange="renderRankings()">
       <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select></div>
@@ -1753,8 +1763,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   </div>
 
   <div class="ctl-row">
-    <input type="text" id="s-rank" class="fld-8" placeholder="Filter these rankings" oninput="renderRankings()">
-    <select id="sort-rank" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)"></select>
+    <input type="text" id="s-rank" aria-label="Filter Rankings" class="fld-8" placeholder="Filter these rankings" oninput="renderRankings()">
+    <select id="sort-rank" aria-label="Sort Rankings" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)"></select>
     <div class="dl-rk-colwrap">
       <button type="button" class="dl-rk-colbtn" id="rk-col-btn" aria-expanded="false" aria-controls="rk-col-menu" onclick="rkMenuToggle(event)">
         <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true">
@@ -1823,12 +1833,12 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 
 <div id="panel-projections" class="panel">
   <div class="controls">
-    <input type="text" id="s-proj" placeholder="Search..." oninput="renderProj()">
-    <select id="pos-proj" onchange="renderProj()">
+    <input type="text" id="s-proj" aria-label="Search Projections" placeholder="Search..." oninput="renderProj()">
+    <select id="pos-proj" aria-label="Position" onchange="renderProj()">
       <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="sort-proj" onchange="projSort=this.value;projSortDir=1;renderProj()">
+    <select id="sort-proj" aria-label="Sort Projections" onchange="projSort=this.value;projSortDir=1;renderProj()">
       <option value="proj">Proj PPG</option><option value="ceil">Ceiling</option>
       <option value="floor">Floor</option><option value="gap">Model gap</option>
     </select>
@@ -1853,18 +1863,18 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 <div id="slp-trade-assist"></div>
   <div class="tc-settings">
     <div class="selgroup">
-    <select id="trade-scoring-fmt" onchange="applyTradeScoring()" class="sel-sm">
+    <select id="trade-scoring-fmt" aria-label="Scoring Format" onchange="applyTradeScoring()" class="sel-sm">
       <option value="half_tep">0.5PPR + TE Prem</option>
       <option value="half">0.5 PPR</option>
       <option value="full_tep">Full PPR + TE Prem</option>
       <option value="full">Full PPR</option>
       <option value="std">Standard</option>
     </select>
-      <select id="lg-teams-trade" onchange="applyLeagueSettings('trade')" data-tip="League size" class="sel-sm">
+      <select id="lg-teams-trade" aria-label="League Size" onchange="applyLeagueSettings('trade')" data-tip="League size" class="sel-sm">
       <option value="8">8-team</option><option value="10">10-team</option>
       <option value="12" selected>12-team</option><option value="14">14-team</option>
     </select>
-      <select id="lg-qb-trade" onchange="applyLeagueSettings('trade')" data-tip="QB format" class="sel-sm">
+      <select id="lg-qb-trade" aria-label="QB Format" onchange="applyLeagueSettings('trade')" data-tip="QB format" class="sel-sm">
       <option value="sf" selected>Superflex</option><option value="1qb">1-QB</option>
     </select>
     </div>
@@ -1897,32 +1907,32 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <div class="trade-grid" id="trade-grid">
     <!-- Side A -->
     <div class="trade-side" id="trade-col-a">
-      <div class="ts-hd">Team A<select class="win-sel" onchange="setWindow('a',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
-      <div class="search-wrap"><input id="srch-a" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
+      <div class="ts-hd">Team A<select class="win-sel" aria-label="Team A Window" onchange="setWindow('a',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="search-wrap"><input id="srch-a" aria-label="Team A: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-a">—</span></div>
       <div class="total-row model"><span>Model value</span><span id="mod-a">—</span></div>
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
-      <div class="ts-hd">Team B<select class="win-sel" onchange="setWindow('b',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
-      <div class="search-wrap"><input id="srch-b" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
+      <div class="ts-hd">Team B<select class="win-sel" aria-label="Team B Window" onchange="setWindow('b',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="search-wrap"><input id="srch-b" aria-label="Team B: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-b">—</span></div>
       <div class="total-row model"><span>Model value</span><span id="mod-b">—</span></div>
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
-      <div class="ts-hd">Team C<select class="win-sel" onchange="setWindow('c',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
-      <div class="search-wrap"><input id="srch-c" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
+      <div class="ts-hd">Team C<select class="win-sel" aria-label="Team C Window" onchange="setWindow('c',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="search-wrap"><input id="srch-c" aria-label="Team C: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-c">—</span></div>
       <div class="total-row model"><span>Model value</span><span id="mod-c">—</span></div>
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
-      <div class="ts-hd">Team D<select class="win-sel" onchange="setWindow('d',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
-      <div class="search-wrap"><input id="srch-d" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
+      <div class="ts-hd">Team D<select class="win-sel" aria-label="Team D Window" onchange="setWindow('d',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
+      <div class="search-wrap"><input id="srch-d" aria-label="Team D: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-d">—</span></div>
       <div class="total-row model"><span>Model value</span><span id="mod-d">—</span></div>
@@ -1935,9 +1945,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     <div class="cmp-row">
       <span class="cmp-label">⇄ Player Compare</span>
       <div class="cmp-pair">
-      <input id="cmp-a" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()">
+      <input id="cmp-a" aria-label="Player A" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()">
       <span class="cmp-vs">vs</span>
-      <input id="cmp-b" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()">
+      <input id="cmp-b" aria-label="Player B" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()">
       </div>
     </div>
     <datalist id="cmp-names"></datalist>
@@ -1963,15 +1973,15 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     </div>
   </div>
   <div class="controls">
-    <select id="pos-epa" onchange="renderEPA()">
+    <select id="pos-epa" aria-label="Position" onchange="renderEPA()">
       <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
       <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="sort-epa" onchange="setSortEPA(this.value)">
+    <select id="sort-epa" aria-label="Sort EPA Insights" onchange="setSortEPA(this.value)">
       <option value="epaSc">EPA score</option>
       <option value="ef">Efficiency</option><option value="ktc">Mkt Val</option>
     </select>
-    <input type="text" id="s-epa" placeholder="Search..." oninput="renderEPA()" style="width:140px">
+    <input type="text" id="s-epa" aria-label="Search EPA Insights" placeholder="Search..." oninput="renderEPA()" style="width:140px">
   </div>
   <div class="dl-b-scroll"><table class="dtable dl-board">
     <thead><tr>
@@ -1987,26 +1997,26 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 <div id="panel-ripple" class="panel">
   <div class="info-box">Value changes from offseason moves — sorted by magnitude.</div>
   <div class="controls" style="margin-bottom:.75rem">
-    <input type="text" id="s-ripple" placeholder="Search player..." oninput="renderRipple()">
+    <input type="text" id="s-ripple" aria-label="Search Ripple Effects" placeholder="Search player..." oninput="renderRipple()">
   </div>
   <div id="ripple-body"></div>
 </div>
 
 <div id="panel-contracts" class="panel">
   <div class="controls">
-    <input type="text" id="s-contracts" placeholder="Search player..." oninput="renderContracts()">
-    <select id="pos-contracts" onchange="renderContracts()">
+    <input type="text" id="s-contracts" aria-label="Search Contracts" placeholder="Search player..." oninput="renderContracts()">
+    <select id="pos-contracts" aria-label="Position" onchange="renderContracts()">
       <option value="ALL">All Positions</option>
       <option value="QB">QB</option><option value="WR">WR</option>
       <option value="RB">RB</option><option value="TE">TE</option>
     </select>
-    <select id="status-contracts" onchange="renderContracts()">
+    <select id="status-contracts" aria-label="Contract Status" onchange="renderContracts()">
       <option value="ALL">All Status</option>
       <option value="locked">■ Locked Up</option>
       <option value="walkyr">⚠ Walk Year</option>
       <option value="expiring">◷ Expiring Soon</option>
     </select>
-    <select id="sort-contracts" onchange="setSortContracts(this.value)">
+    <select id="sort-contracts" aria-label="Sort Contracts" onchange="setSortContracts(this.value)">
       <option value="aav">Sort: AAV ↓</option>
       <option value="end">Sort: Yrs Left ↑</option>
       <option value="total">Sort: Total Value ↓</option>
@@ -2037,14 +2047,14 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
      because it never renders. Revisit after the ledger resolves. -->
   <div class="section-label">Search and edit any player</div>
   <div class="edit-search-wrap">
-    <input id="edit-search" placeholder="Search player..." oninput="doEditSearch()">
+    <input id="edit-search" aria-label="Search Player To Edit" placeholder="Search player..." oninput="doEditSearch()">
     <div id="edit-results" class="edit-results" style="display:none"></div>
   </div>
   <div id="edit-card-wrap" style="display:none">
     <div class="edit-card">
       <div id="edit-card-title" style="font-size:14px;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--line)">Player</div>
       <div class="edit-row"><label>New team</label>
-        <select id="edit-team"><option value="">— no change —</option>
+        <select id="edit-team" aria-label="Team"><option value="">— no change —</option>
           <option>ARI</option><option>ATL</option><option>BAL</option><option>BUF</option><option>CAR</option>
           <option>CHI</option><option>CIN</option><option>CLE</option><option>DAL</option><option>DEN</option>
           <option>DET</option><option>GB</option><option>HOU</option><option>IND</option><option>JAC</option>
@@ -2055,28 +2065,28 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
         </select>
       </div>
       <div class="edit-row"><label>System score override</label>
-        <select id="edit-sys"><option value="">— team default —</option>
+        <select id="edit-sys" aria-label="Offensive System"><option value="">— team default —</option>
           <option value="85">85 — elite</option><option value="75">75 — strong</option>
           <option value="65">65 — solid</option><option value="55">55 — average</option>
           <option value="45">45 — below avg</option><option value="35">35 — weak</option>
         </select>
       </div>
       <div class="edit-row"><label>OC continuity</label>
-        <select id="edit-cont"><option value="">— team default —</option>
+        <select id="edit-cont" aria-label="Continuity"><option value="">— team default —</option>
           <option value="1.0">Same OC 3-4yr</option><option value="0.75">Stable 2yr</option>
           <option value="0.55">New known OC</option><option value="0.35">New w/ history</option>
           <option value="0.20">New unknown</option>
         </select>
       </div>
       <div class="edit-row"><label>Injury flag</label>
-        <select id="edit-inj">
+        <select id="edit-inj" aria-label="Injury">
           <option value="1.0">Healthy</option><option value="0.85">Minor concern</option>
           <option value="0.70">Significant risk</option><option value="0.50">Doubtful</option>
           <option value="0.0">Out / DNR</option>
         </select>
       </div>
-      <div class="edit-row"><label>Override Mkt Val</label><input id="edit-ktc" placeholder="e.g. 6500"></div>
-      <div class="edit-row"><label>Notes</label><input id="edit-notes" placeholder="e.g. traded, WR1"></div>
+      <div class="edit-row"><label>Override Mkt Val</label><input id="edit-ktc" aria-label="Override Market Value" placeholder="e.g. 6500"></div>
+      <div class="edit-row"><label>Notes</label><input id="edit-notes" aria-label="Notes" placeholder="e.g. traded, WR1"></div>
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:.5rem">
         <button class="apply-btn" onclick="applyOV()">Apply</button>
         <button class="reset-btn" onclick="resetOV()">Reset</button>
@@ -2292,13 +2302,20 @@ function rkParseMoves(text){
   for(const r of rows){ if(new Date(r.date)<=want) prev=r; }
   if(prev===last) return null;
   const out=[];
+  /* The log is keyed by FantasyCalc's spelling ('DJ Moore'); DELTA's is 'D.J. Moore'.
+     Match the way the engine does (exact, FC_ALIASES, fcNorm) and carry DELTA's name,
+     so the position shows, the card opens the right player and the 7d column finds him
+     (10 Oct 2026: DJ Moore showed no position and a blank 7d). */
+  const byFc={};
+  COMP.forEach(x=>{ byFc[x.n]=x; const al=(typeof FC_ALIASES!=='undefined')&&FC_ALIASES[x.n];
+    if(al) byFc[al]=x; const k=fcNorm(x.n); if(!('~'+k in byFc)) byFc['~'+k]=x; });
   for(const name in last.players){
     const a=last.players[name], b=prev.players[name];
     if(!a||!b||a[1]>150||!b[0]) continue;
     const chg=Math.round((a[0]/b[0]-1)*1000)/10;
     if(!chg) continue;
-    const p=COMP.find(x=>x.n===name);
-    out.push({n:name,pos:p?p.pos:'',now:a[0],chg:chg});
+    const p=byFc[name]||byFc['~'+fcNorm(name)];
+    out.push({n:p?p.n:name,pos:p?p.pos:'',now:a[0],chg:chg});
   }
   if(!out.length) return null;
   // The 7d column needs every player, not just the eight shown as movers.
@@ -5609,7 +5626,7 @@ document.addEventListener('click', function(e) {
       <div id="slp-title" style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
       <div id="slp-intro" style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="text" id="slp-input" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')slpConnectClick()">
+        <input type="text" id="slp-input" aria-label="Sleeper Username Or League ID" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')slpConnectClick()">
         <button onclick="slpConnectClick()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
       </div>
       <div id="slp-status" style="font-size:11px;color:var(--fog);margin-top:9px;min-height:14px"></div>
@@ -5653,9 +5670,9 @@ document.addEventListener('click', function(e) {
     <button class="set-pill" data-ppos="TE" onclick="ptSetPos('TE')">TE</button>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
-    <input id="pt-q" oninput="renderPortal()" placeholder="Search name or school…"
+    <input id="pt-q" aria-label="Search Transfer Portal" oninput="renderPortal()" placeholder="Search name or school…"
       style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:180px">
-    <select id="pt-move" onchange="renderPortal()" class="set-sel" style="margin-bottom:0;width:auto">
+    <select id="pt-move" aria-label="Portal Move Type" onchange="renderPortal()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="">Any move</option>
       <option value="up">Stepped up to Power 4</option>
       <option value="down">Dropped from Power 4</option>
@@ -5687,7 +5704,7 @@ document.addEventListener('click', function(e) {
       <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">College Tracking</div>
       <div style="font-size:11px;color:var(--fog-2);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
         <span id="cfb-season-label"></span>
-        <select id="cfb-season" onchange="cfbSetSeason(this.value)" style="display:none;font-family:var(--mono);
+        <select id="cfb-season" aria-label="College Season" onchange="cfbSetSeason(this.value)" style="display:none;font-family:var(--mono);
           font-size:10.5px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);
           border-radius:6px;padding:2px 5px"></select>
       </div>
@@ -5710,9 +5727,9 @@ document.addEventListener('click', function(e) {
     <button class="set-pill" data-cpos="WATCH" onclick="cfbSetPos('WATCH')">Watchlist</button>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
-    <input id="cfb-q" oninput="renderCollege()" placeholder="Search players…"
+    <input id="cfb-q" aria-label="Search College Players" oninput="renderCollege()" placeholder="Search players…"
       style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
-    <select id="cfb-sort" onchange="cfbSortFromDropdown(this.value)" class="set-sel" style="margin-bottom:0;width:auto">
+    <select id="cfb-sort" aria-label="Sort College Players" onchange="cfbSortFromDropdown(this.value)" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="scout">Scout order (pedigree + level + production)</option>
       <option value="mover">Weekly movers (last 3 vs prior 3)</option>
       <option value="pr">Production (position rank)</option>
@@ -5736,7 +5753,7 @@ document.addEventListener('click', function(e) {
       <option value="Sun Belt">Sun Belt</option><option value="Mid-American">MAC</option>
       <option value="Conference USA">C-USA</option><option value="FBS Independents">Independents</option>
     </select>
-    <select id="cfb-cls" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
+    <select id="cfb-cls" aria-label="Class" onchange="renderCollege()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="">Any class</option>
       <option value="ELIG">Draft-eligible (Y3+)</option>
       <option value="BREAK">Breakout (Y1–Y2, top 30 at pos)</option><option value="1">Freshman</option><option value="2">Sophomore</option>
@@ -5818,7 +5835,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10a</span>
+  <span class="foot-build">2026-10-10b</span>
 </footer>
 
 
