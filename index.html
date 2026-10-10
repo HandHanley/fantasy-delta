@@ -5870,7 +5870,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10c</span>
+  <span class="foot-build">2026-10-10d</span>
 </footer>
 
 
@@ -9611,7 +9611,10 @@ function renderSlpFA(){
 // The players named are the ones that COULD be involved, not a proposed trade
 // (owner: no copy saying so). Cornerstones are left out on both sides: the
 // league's top 2-per-team by market value (24 in a 12-team league) and each
-// team's own two most valuable players. Asks list buy-tagged players first and
+// team's own two most valuable players. A floor too (owner, 10 Oct): anyone outside
+// the market's top 16-per-team (160 in a 10-team league) is too small to move, so
+// neither side lists him -- Higbee and Burks were showing as offers. A card left with
+// no names at all is dropped. Asks list buy-tagged players first and
 // sells last; offers the reverse, and only from players beyond your starters at
 // that position (the league's own fixed slots), so it never guts a lineup.
 // Display only: reads the same tags and values as every other view.
@@ -9639,6 +9642,7 @@ function slpTradePartners(){
   });
   const own2={}; Object.keys(squad).forEach(function(k){ squad[k].slice(0,2).forEach(function(p){ own2[p.n]=1; }); });
   const corner=function(p){ return mRank[p.n]<=2*N || !!own2[p.n]; };
+  const tooSmall=function(p){ return !(mRank[p.n]<=16*N); };
   const fixed=slpLineupSlots().fixed;
   const thinAt=function(r){ return POS.filter(function(p){ return r.pos[p].rank>N-third; })
     .sort(function(x,y){ return r.pos[y].rank-r.pos[x].rank; }); };
@@ -9648,7 +9652,7 @@ function slpTradePartners(){
     const per=positions.slice(0,2).map(function(pos){
       let pl=(squad[String(rid)]||[]).filter(function(p){ return p.pos===pos; });
       if(spareOnly) pl=pl.slice(fixed[pos]||1);
-      pl=pl.filter(function(p){ return !corner(p); });
+      pl=pl.filter(function(p){ return !corner(p) && !tooSmall(p); });
       return pl.slice().sort(function(a,b){ const ta=ord[slpTagText(a)], tb=ord[slpTagText(b)];
         return (ta==null?2:ta)-(tb==null?2:tb); });     // stable: market value breaks ties
     });
@@ -9669,7 +9673,7 @@ function slpTradePartners(){
     return { r:r, give:give, get:get, win:win(r),
       ask:choose(r.rosterId,get,ASK,false), offer:choose(me.rosterId,give,OFFER,true),
       score:(give.length&&get.length?100:0)+gap };
-  }).filter(function(f){ return f.give.length||f.get.length; })
+  }).filter(function(f){ return (f.give.length||f.get.length) && (f.ask.length||f.offer.length); })
     .sort(function(a,b){ return b.score-a.score || a.r.team.localeCompare(b.r.team); });
   return { me:me, N:N, fits:fits };
 }
@@ -9680,7 +9684,7 @@ function renderSlpPartners(){
   const me=d.me, POS=['QB','RB','WR','TE'];
   const head='<div class="dl-tp-title">Best Trade Partners</div>'
     +'<p class="dl-tp-sub">Teams that are thin where you\u2019re deep, and deep where you\u2019re thin. '
-    +'Each team\u2019s two best players, and the league\u2019s top '+(2*d.N)+', are left out as untouchable.</p>';
+    +'Each team\u2019s two best players and the league\u2019s top '+(2*d.N)+' are left out as untouchable, and anyone outside the top '+(16*d.N)+' as too small to move.</p>';
   if(!d.fits.length) return head+'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin.</div>';
   const tagCls=function(t){ return /buy/.test(t)?'buy':/sell/.test(t)?'sell':'hold'; };
   const pl=function(p){
