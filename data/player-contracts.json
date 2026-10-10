@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-09T18:52:10.905315+00:00",
+  "fetched": "2026-10-10T17:54:57.458804+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -2267,8 +2267,8 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 0.35,
-      "total": 0.35,
+      "aav": 0.4,
+      "total": 0.4,
       "guaranteed": 0.0,
       "is_active": true
     },
@@ -2813,7 +2813,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -3092,16 +3092,6 @@
       "guaranteed": 0.55,
       "is_active": true
     },
-    "Devin Neal": {
-      "team": "Vikings",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 0.25,
-      "total": 0.25,
-      "guaranteed": 0.0,
-      "is_active": true
-    },
     "LeQuint Allen": {
       "team": "Jaguars",
       "year_signed": 2025,
@@ -3133,12 +3123,12 @@
       "is_active": true
     },
     "Robert Henry": {
-      "team": "Commanders",
+      "team": "Seahawks",
       "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 0.25,
-      "total": 0.25,
+      "years": 2,
+      "end_year": 2027,
+      "aav": 0.97,
+      "total": 1.94,
       "guaranteed": 0.0,
       "is_active": true
     },
@@ -3323,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "Browns",
+      "team": "CLE/LAC",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
