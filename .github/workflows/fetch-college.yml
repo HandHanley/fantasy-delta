@@ -123,6 +123,11 @@ jobs:
       - name: Rebuild college index
         run: node scripts/build-college-index.js
 
+      # Player cards for cfb-player.html (10 Oct 2026). The nightly rebuilds them too;
+      # building here keeps the committed set in step with the season files.
+      - name: Build college player cards
+        run: node scripts/build-cfb-cards.js
+
       - name: Commit if changed
         run: |
           git config user.name  "github-actions[bot]"
@@ -134,7 +139,7 @@ jobs:
           # added by hand. If the index builder gains another output, add it HERE too.
           git add data/college-players*.json data/college-portal*.json \
                   data/college-index.json data/college-index-names.json \
-                  data/college-seasons.json
+                  data/college-seasons.json data/cfb-cards
           if git diff --staged --quiet; then
             echo "no change"
           else

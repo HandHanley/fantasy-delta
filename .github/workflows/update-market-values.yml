@@ -115,6 +115,15 @@ jobs:
         continue-on-error: true
         run: python scripts/fetch-prospect-context.py --confirm --only depth
 
+      # College player cards (10 Oct 2026, B4): one ~8 KB file per bucket of players
+      # for cfb-player.html, built from the college season files. Rebuilt every night
+      # so whatever deploys always matches the season files beside it; unchanged data
+      # writes identical files. Display only. On failure the page falls back to the
+      # full season download, so this must never block the nightly.
+      - name: Build college player cards
+        continue-on-error: true
+        run: node scripts/build-cfb-cards.js
+
       - name: Commit updated data
         run: |
           git config user.name "DELTA Bot"
