@@ -1354,6 +1354,41 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 }
 
 
+/* -- Trade Partners (10 Oct 2026) ------------------------------------------
+   Cards, one per team that fits a trade. Prefixed dl-tp-; nothing shared is restyled.
+   Signal colours only on the tags (emerald buy, coral sell). Position boxes that
+   make the fit use teal, the brand accent, not a signal. */
+.dl-tp-seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;margin:2px 0 14px}
+.dl-tp-seg button{flex:1;padding:8px 4px;border:none;border-radius:7px;background:transparent;color:var(--fog);
+  font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.dl-tp-seg button.on{background:var(--teal-tint);color:var(--teal-br)}
+.dl-tp-title{font-size:14px;font-weight:800;color:var(--paper)}
+.dl-tp-sub{font-size:11.5px;color:var(--fog);margin:3px 0 12px;line-height:1.45}
+.dl-tp-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:10px;max-width:560px}
+.dl-tp-hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dl-tp-tm{font-weight:800;font-size:14px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl-tp-win{font-size:10px;font-weight:700;color:var(--sky);background:var(--sky-tint);padding:2px 8px;border-radius:10px;white-space:nowrap}
+.dl-tp-sw{font-size:12.5px;color:var(--fog);margin:6px 0 10px}
+.dl-tp-sw b{color:var(--paper)}
+.dl-tp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px}
+.dl-tp-rs{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:5px 6px;display:flex;flex-direction:column;gap:1px;font-size:10px;color:var(--fog-2);min-width:0}
+.dl-tp-rs b{font-size:11px;color:var(--fog)}
+.dl-tp-rs.on{border-color:var(--teal-br)}
+.dl-tp-rs.on b{color:var(--teal-br)}
+.dl-tp-lab{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fog-2);margin:10px 0 3px}
+.dl-tp-pl{display:flex;align-items:center;gap:7px;padding:6px 0;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer}
+.dl-tp-pl:hover .dl-tp-pn{color:var(--teal-br)}
+.dl-tp-pn{font-weight:700;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-tp-pm{color:var(--fog-2);font-size:11px;flex:1;white-space:nowrap}
+.dl-tp-tg{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:9px;white-space:nowrap}
+.dl-tp-tg.buy{color:var(--emerald);background:var(--emerald-tint)}
+.dl-tp-tg.sell{color:var(--coral);background:var(--coral-tint)}
+.dl-tp-tg.hold{color:var(--fog);background:var(--ink-2)}
+.dl-tp-cta{margin-top:10px;width:100%;padding:9px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;
+  color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
+.dl-tp-cta:hover{background:var(--teal-soft)}
+.dl-tp-more{background:none;border:none;padding:4px 0;color:var(--sky);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
+
 /* ── League Trade Ledger ──────────────────────────────────────
    All new classes, prefixed dl-lg-. Nothing here restyles a shared class and
    nothing sits inside a media query — checked at brace depth 0 so these apply
@@ -5835,7 +5870,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10b</span>
+  <span class="foot-build">2026-10-10c</span>
 </footer>
 
 
@@ -8608,7 +8643,7 @@ function renderSlpSubNav(){
     // the line-break spacer went with the pills it used to separate
     +'<div class="dl-mt-row dl-mt-analysis">'
     +(mine!=null?analysisPill(myActive,'slpViewRoster('+JSON.stringify(mine).replace(/"/g,"&quot;")+')','My Roster'):'')
-    +analysisPill(boardActive,'slpShowBoard()','Trade Targets')
+    +analysisPill(boardActive,'slpShowBoard()','Trade Partners')
     +analysisPill(SLP.view==='fa','slpViewFA()','Free Agents')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'':analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger'))
@@ -9562,7 +9597,131 @@ function renderSlpFA(){
     +'Players outside DELTA\u2019s universe are not listed. Tap a player to see who on your roster he outscores.</div>';
 }
 
+// \u2500\u2500 Trade Partners (10 Oct 2026, owner design) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// Which teams in this league fit a trade with you: thin where you are deep, deep
+// where you are thin. Built on the Power Rankings position ranks (slpTeamValues),
+// so "deep" and "thin" mean exactly what the QB/RB/WR/TE rank columns there say.
+//
+//   thin  = bottom third of the league at a position (12 teams: 9th or worse)
+//   spare = top half at that position (12 teams: 6th or better)
+//   You can GIVE where they are thin and you can spare; you can GET where you are
+//   thin and they can spare. A team that fits both ways ranks above one that fits
+//   one way; within each, bigger rank gaps rank higher.
+//
+// The players named are the ones that COULD be involved, not a proposed trade
+// (owner: no copy saying so). Cornerstones are left out on both sides: the
+// league's top 2-per-team by market value (24 in a 12-team league) and each
+// team's own two most valuable players. Asks list buy-tagged players first and
+// sells last; offers the reverse, and only from players beyond your starters at
+// that position (the league's own fixed slots), so it never guts a lineup.
+// Display only: reads the same tags and values as every other view.
+let SLP_TP_TAB='partners', SLP_TP_ALL=false;
+function slpTpTab(t){ SLP_TP_TAB=t; renderMyTeam(); }
+function slpTpMore(){ SLP_TP_ALL=!SLP_TP_ALL; renderMyTeam(); }
+function slpTpOrd(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+function slpTradePartners(){
+  const rows=slpTeamValues();
+  if(!rows||!SLP.conn) return null;
+  const meId=String(SLP.conn.rosterId);
+  const me=rows.find(function(r){ return String(r.rosterId)===meId; });
+  if(!me) return null;
+  const N=rows.length, POS=['QB','RB','WR','TE'];
+  const third=Math.ceil(N/3), half=Math.ceil(N/2);
+  const mk=function(p){ return (p.kMkt!=null?p.kMkt:p.k)||0; };
+  const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
+  const mRank={}; COMP.slice().sort(function(a,b){ return mk(b)-mk(a); }).forEach(function(p,i){ mRank[p.n]=i+1; });
+  const squad={};
+  (SLP.rosters||[]).forEach(function(r){
+    const pl=[]; (r.players||[]).forEach(function(pid){ const dn=SLP.match?SLP.match[pid]:null; if(dn&&byName[dn]) pl.push(byName[dn]); });
+    pl.sort(function(a,b){ return mk(b)-mk(a); });
+    squad[String(r.roster_id)]=pl;
+  });
+  const own2={}; Object.keys(squad).forEach(function(k){ squad[k].slice(0,2).forEach(function(p){ own2[p.n]=1; }); });
+  const corner=function(p){ return mRank[p.n]<=2*N || !!own2[p.n]; };
+  const fixed=slpLineupSlots().fixed;
+  const thinAt=function(r){ return POS.filter(function(p){ return r.pos[p].rank>N-third; })
+    .sort(function(x,y){ return r.pos[y].rank-r.pos[x].rank; }); };
+  const ASK={'strong buy':0,'buy':1,'hold':2,'sell':3,'strong sell':4};
+  const OFFER={'strong sell':0,'sell':1,'hold':2,'buy':3,'strong buy':4};
+  const choose=function(rid,positions,ord,spareOnly){
+    const per=positions.slice(0,2).map(function(pos){
+      let pl=(squad[String(rid)]||[]).filter(function(p){ return p.pos===pos; });
+      if(spareOnly) pl=pl.slice(fixed[pos]||1);
+      pl=pl.filter(function(p){ return !corner(p); });
+      return pl.slice().sort(function(a,b){ const ta=ord[slpTagText(a)], tb=ord[slpTagText(b)];
+        return (ta==null?2:ta)-(tb==null?2:tb); });     // stable: market value breaks ties
+    });
+    const out=[];
+    if(per.length===1) out.push.apply(out, per[0].slice(0,2));
+    else {
+      per.forEach(function(l){ if(l[0]) out.push(l[0]); });
+      per.forEach(function(l){ l.forEach(function(p){ if(out.length<2&&out.indexOf(p)<0) out.push(p); }); });
+    }
+    return out;
+  };
+  const win=function(r){ return r.rankWin<=third?'Contending':r.rankWin>N-third?'Rebuilding':'Middle Of The Pack'; };
+  const fits=rows.filter(function(r){ return r!==me; }).map(function(r){
+    const give=thinAt(r).filter(function(p){ return me.pos[p].rank<=half; });
+    const get=thinAt(me).filter(function(p){ return r.pos[p].rank<=half; });
+    const gap=give.reduce(function(a,p){ return a+r.pos[p].rank-me.pos[p].rank; },0)
+             +get.reduce(function(a,p){ return a+me.pos[p].rank-r.pos[p].rank; },0);
+    return { r:r, give:give, get:get, win:win(r),
+      ask:choose(r.rosterId,get,ASK,false), offer:choose(me.rosterId,give,OFFER,true),
+      score:(give.length&&get.length?100:0)+gap };
+  }).filter(function(f){ return f.give.length||f.get.length; })
+    .sort(function(a,b){ return b.score-a.score || a.r.team.localeCompare(b.r.team); });
+  return { me:me, N:N, fits:fits };
+}
+
+function renderSlpPartners(){
+  const d=slpTradePartners();
+  if(!d) return '<div class="dl-lb-none">Pick your team in this league to see trade partners.</div>';
+  const me=d.me, POS=['QB','RB','WR','TE'];
+  const head='<div class="dl-tp-title">Best Trade Partners</div>'
+    +'<p class="dl-tp-sub">Teams that are thin where you\u2019re deep, and deep where you\u2019re thin. '
+    +'Each team\u2019s two best players, and the league\u2019s top '+(2*d.N)+', are left out as untouchable.</p>';
+  if(!d.fits.length) return head+'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin.</div>';
+  const tagCls=function(t){ return /buy/.test(t)?'buy':/sell/.test(t)?'sell':'hold'; };
+  const pl=function(p){
+    const t=slpTagText(p), lab=(t&&t!=='no data')?t.replace(/\b\w/g,function(c){ return c.toUpperCase(); }):'';
+    return '<div class="dl-tp-pl" data-name="'+slpEsc(p.n)+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+      +'<span class="dl-tp-pn">'+slpEsc(p.n)+'</span><span class="dl-tp-pm">'+slpEsc(p.pos)+' \u00b7 '+slpEsc(p.t||'FA')+'</span>'
+      +(lab?'<span class="dl-tp-tg '+tagCls(t)+'">'+lab+'</span>':'')+'</div>';
+  };
+  const swap=function(f){
+    const g=f.give.join(' + '), h=f.get.join(' + ');
+    if(g&&h) return 'Your <b>'+g+'</b> depth for their <b>'+h+'</b> depth';
+    if(h) return 'They\u2019re deep at <b>'+h+'</b>, where you\u2019re thin';
+    return 'You\u2019re deep at <b>'+g+'</b>, where they\u2019re thin';
+  };
+  const card=function(f){
+    const r=f.r;
+    const strip=POS.map(function(p){
+      const on=f.give.indexOf(p)>=0||f.get.indexOf(p)>=0;
+      return '<div class="dl-tp-rs'+(on?' on':'')+'"><b>'+p+'</b><span>You '+slpTpOrd(me.pos[p].rank)+'</span><span>Them '+slpTpOrd(r.pos[p].rank)+'</span></div>';
+    }).join('');
+    return '<div class="dl-tp-card">'
+      +'<div class="dl-tp-hd"><span class="dl-tp-tm">'+slpEsc(r.team)+'</span><span class="dl-tp-win">'+f.win+'</span></div>'
+      +'<div class="dl-tp-sw">'+swap(f)+'</div>'
+      +'<div class="dl-tp-strip">'+strip+'</div>'
+      +(f.ask.length?'<div class="dl-tp-lab">Ask About</div>'+f.ask.map(pl).join(''):'')
+      +(f.offer.length?'<div class="dl-tp-lab">Could Offer</div>'+f.offer.map(pl).join(''):'')
+      +'<button class="dl-tp-cta" onclick="slpTradeWith('+slpEsc(JSON.stringify(r.rosterId))+')">Open In Trade Calc</button>'
+      +'</div>';
+  };
+  const shown=SLP_TP_ALL?d.fits:d.fits.slice(0,3), more=d.fits.length-3;
+  return head+shown.map(card).join('')
+    +(more>0?'<button class="dl-tp-more" onclick="slpTpMore()">'+(SLP_TP_ALL?'Show Fewer Teams':'Show '+more+' More Team'+(more===1?'':'s'))+'</button>':'');
+}
+
 function renderSlpBoard(){
+  const seg='<div class="dl-tp-seg" role="tablist">'
+    +'<button role="tab" aria-selected="'+(SLP_TP_TAB==='partners')+'" class="'+(SLP_TP_TAB==='partners'?'on':'')+'" onclick="slpTpTab(\'partners\')">Partners</button>'
+    +'<button role="tab" aria-selected="'+(SLP_TP_TAB!=='partners')+'" class="'+(SLP_TP_TAB!=='partners'?'on':'')+'" onclick="slpTpTab(\'lists\')">All Buys &amp; Sells</button></div>';
+  return seg+(SLP_TP_TAB==='partners'?renderSlpPartners():renderSlpLists());
+}
+function renderSlpLists(){
   const mine=SLP.conn?SLP.conn.rosterId:null;
   const byName={}; COMP.forEach(function(p){ byName[p.n]=p; });
   const labelByRid={}; (SLP.rosters||[]).forEach(function(r){ labelByRid[r.roster_id]=slpTeamLabel(r); });
