@@ -1603,7 +1603,6 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="trade" data-sec="nfl" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
-  <button data-tab="ripple" data-sec="nfl" class="tab" onclick="showTab('ripple',this)">Ripple Effects</button>
   <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
@@ -1664,7 +1663,6 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
         <option value="rankings">Rankings (default)</option>
         <option value="projections">Projections</option>
         <option value="epa">EPA Insights</option>
-        <option value="ripple">Ripple Effects</option>
         <option value="contracts">Contracts</option>
         <option value="trade">Trade Calc</option>
       </optgroup>
@@ -2033,6 +2031,11 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 </div>
 
 
+<!-- NOT IN THE NAV since 10 Oct 2026 (owner): a fixed offseason list, last updated 7 Aug, and every
+     ripple already shows on that player's own page. Removed from the tab row, SEC_TABS, DL_TABS and
+     the landing choices; an old ?tab=ripple link lands on Rankings. The panel and renderRipple() are
+     kept so it can come back for the offseason by re-adding those four. Ripples still feed
+     projections through the engine (RP); nothing scored changed. -->
 <div id="panel-ripple" class="panel">
   <div class="info-box">Value changes from offseason moves — sorted by magnitude.</div>
   <div class="controls" style="margin-bottom:.75rem">
@@ -3959,6 +3962,9 @@ function rkSyncPos(){
 function dlPref(k,v){ if(v===undefined){ try{return localStorage.getItem(k);}catch(e){return null;} } try{localStorage.setItem(k,v);}catch(e){} }
 function settingsInit(){
   const sel=document.getElementById('landing-pref');
+  // Ripple Effects left the nav on 10 Oct 2026; a device that chose it as its landing page
+  // is moved to Rankings so the setting never shows blank.
+  if(dlPref('delta_landing')==='ripple') dlPref('delta_landing','rankings');
   if(sel) sel.value=dlPref('delta_landing')||'rankings';
   dlThemeApply(dlPref('delta_theme')||'teal');
   const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
@@ -4003,7 +4009,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','projections','scorecard','trade','epa','ripple','contracts','audit'],
+const SEC_TABS={ nfl:['rankings','projections','scorecard','trade','epa','contracts','audit'],
                  cfb:['college','portal','bigboard','rookies'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
@@ -4055,7 +4061,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','scorecard','trade','epa','ripple','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','projections','scorecard','trade','epa','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -5889,7 +5895,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10g</span>
+  <span class="foot-build">2026-10-10h</span>
 </footer>
 
 
