@@ -93,6 +93,10 @@ a:hover{text-decoration:underline}
 .bs{background:var(--ink-2);color:var(--emerald)}
 .bi{background:var(--ink-2);color:var(--sky)}
 .bn{background:var(--line);color:var(--fog)}
+/* Rookie Hold marker (10 Oct 2026): a small boxed R before "hold", so a rookie's group-level
+   Hold never reads as an individual verdict. Text stays "hold" for every reader of the tag. */
+.badge.bnr::before{content:'R';display:inline-block;font-size:.78em;font-weight:800;line-height:1.15;
+  margin-right:4px;padding:0 3px;border:1px solid currentColor;border-radius:3px;vertical-align:1px}
 .bw{background:var(--ink-2);color:var(--topaz)}
 .bd{background:var(--ink-2);color:var(--coral-bri)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
@@ -307,7 +311,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-10b</span>
+    <span class="foot-build">2026-10-10c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -403,7 +407,7 @@ function buildHeroHTML(p) {
       ${(function(){ const r=(typeof dlLeagueReach==='function')?dlLeagueReach(p.n,p.pos||p.p):null, t=dlLeagueReachText(r);
          return t?'<div class="hero-bg" title="'+dlLeagueReachTitle(r).replace(/"/g,'&quot;')+'">'+t+'</div>':''; })()}
       <div class="hero-verdict">
-        <span class="verdict-badge" style="color:${vc}">${vt}</span>
+        <span class="verdict-badge" style="color:${vc}"${dlRookieHold(p)?` title="${DL_ROOKIE_HOLD_TIP}"`:''}>${vt}${dlRookieHold(p)?' \u00b7 rookie':''}</span>
         <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>
       </div>
       <div id="hero-pctx" style="margin-top:6px"></div>

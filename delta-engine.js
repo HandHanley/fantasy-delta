@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-09c';
+const DL_BUILD='2026-10-10a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5000,11 +5000,19 @@ function verdictRatio(p){
   const mkt12=(OV[p.n]&&OV[p.n].ktc!=null)?OV[p.n].ktc:p.k;
   return mvAssetBase(p)/Math.max(mkt12,1);
 }
+/* Rookie Hold (10 Oct 2026, owner). A player with no NFL season on record (in practice the
+   2026 rookies, a few undrafted players and three 2025 picks who never played) has no DELTA
+   view: his model value is market x age curve. Ungated, that ratio would read 0 buys,
+   41 holds and 37 sells, correlated 0.74 with age -- an artefact, not a judgement. What the
+   evidence DOES support is the market's price: seven pre-registered rookie studies found the
+   market prices draft slot, early production and the second-year dip about right. So the
+   call is Hold, marked as a rookie hold (.bnr) so it never reads as an individual verdict.
+   It becomes a normal call once he has a season on record. Same gate as before, so model
+   value, centering (line ~3519) and every score are untouched. */
+function dlRookieHold(p){ return ((p.g25||0)+(p.g24||0)+(p.g23||0))===0; }
+const DL_ROOKIE_HOLD_TIP='No NFL season on record yet. In every test DELTA has run, the market has priced players like this about right, so DELTA holds until he has a full season on record.';
 function vTag(p){
-  // No games across all tracked seasons = no signal
-  // Selling a no-data player is bad advice regardless of model gap
-  const totalG=(p.g25||0)+(p.g24||0)+(p.g23||0);
-  if(totalG===0) return'<span class="badge bn" title="No NFL data yet">no data</span>';
+  if(dlRookieHold(p)) return'<span class="badge bn bnr" title="'+DL_ROOKIE_HOLD_TIP+'">hold</span>';
   const r=verdictRatio(p);
   // ── One ladder for every position (Aug 2026) ──
   // A "strong" tag is a declarative call urging the user to act, so it has to be
@@ -6154,8 +6162,8 @@ function buildReadHTML(p){
   const proof=ds>=72?'elite':ds>=62?'strong':ds>=52?'solid':ds>=42?'middling':'thin';
   const proofClr=ds>=72?'var(--emerald)':ds>=62?'var(--emerald)':ds>=52?'var(--sky)':ds>=42?'var(--topaz)':'var(--coral)';
   let read,clr;
-  if(verdict==='no data'){
-    read='No NFL Production Yet';
+  if(dlRookieHold(p)){
+    read='Rookie Hold \u00b7 No Season On Record Yet';
     clr='var(--fog)';
   } else {
     const pct=Math.round((verdictRatio(p)-1)*100);

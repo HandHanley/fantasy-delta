@@ -502,6 +502,10 @@ tr:hover td{background:var(--ink-2)}
 .bw{background:var(--coral-tint);color:var(--coral)}
 .bd{background:rgba(224,87,69,.20);color:var(--coral-bri)}
 .bn{background:var(--line);color:var(--fog)}
+/* Rookie Hold marker (10 Oct 2026): a small boxed R before "hold", so a rookie's group-level
+   Hold never reads as an individual verdict. Text stays "hold" for every reader of the tag. */
+.badge.bnr::before{content:'R';display:inline-block;font-size:.78em;font-weight:800;line-height:1.15;
+  margin-right:4px;padding:0 3px;border:1px solid currentColor;border-radius:3px;vertical-align:1px}
 .bt{background:var(--topaz-tint);color:var(--topaz)}
 .bar-wrap{background:var(--line)}
 
@@ -5885,7 +5889,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10f</span>
+  <span class="foot-build">2026-10-10g</span>
 </footer>
 
 
@@ -9715,7 +9719,7 @@ function renderSlpPartners(){
   if(!d.fits.length) return head+'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin.</div>';
   const tagCls=function(t){ return /buy/.test(t)?'buy':/sell/.test(t)?'sell':'hold'; };
   const pl=function(p){
-    const t=slpTagText(p), lab=(t&&t!=='no data')?t.replace(/\b\w/g,function(c){ return c.toUpperCase(); }):'';
+    const t=slpTagText(p), lab=dlRookieHold(p)?'Rookie Hold':(t&&t!=='no data')?t.replace(/\b\w/g,function(c){ return c.toUpperCase(); }):'';
     return '<div class="dl-tp-pl" data-name="'+slpEsc(p.n)+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
       +'<span class="dl-tp-pn">'+slpEsc(p.n)+'</span><span class="dl-tp-pm">'+slpEsc(p.pos)+' \u00b7 '+slpEsc(p.t||'FA')+'</span>'
       +(lab?'<span class="dl-tp-tg '+tagCls(t)+'">'+lab+'</span>':'')+'</div>';
