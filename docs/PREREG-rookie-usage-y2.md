@@ -101,3 +101,23 @@ study is about how much a player who sticks will score, not whether he sticks).
 ## Amendments
 
 *(none)*
+
+## Result (10 October 2026) — NOT SHOWN. The study ends at the training step.
+
+Run once, `python3 scripts/rookie-usage-y2-study.py --run`, against this file as committed in `a90cdfe`
+(sha256 prefix `4596f4acbaddae23`). Nothing above this section was changed after the run.
+
+**Chosen on training: v = 0.** Per §4, the study ends there and the test classes were never graded.
+
+| v (share of "points so far" replaced by playing time) | Training error, year-two PPG (2018–2021 classes) |
+|---|---|
+| 0.0 (today's rookie projection) | **3.380** |
+| 0.2 | 3.398 |
+| 0.5 | 3.450 |
+| 1.0 (playing time only) | 3.605 |
+
+Every step toward playing time made the year-two forecast **worse**, steadily, with no dip anywhere on the grid.
+
+**What it says:** for a rookie who sticks into year two, his early points already carry what his early targets and
+carries say about his year two, and more. Playing time is not a hidden signal the points miss. The rookie Hold stays;
+this lead is closed on the 2018–2021 classes, and the 2022–2024 classes remain unseen for this question.
