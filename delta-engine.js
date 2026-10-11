@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-10a';
+const DL_BUILD='2026-10-10b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -1148,6 +1148,9 @@ const COMP_IDX={
 };
 // Players exempt from own-team competition (they ARE the alpha)
 const DRAFT_PICKS={
+  // Baked 10 Oct 2026 (nflverse draft_picks: CAR, 2026 Rd3 #83). The nightly feed matched him to
+  // the 1998 Chris Brazzell; the feed is fixed, and this entry also anchors the namesake guard.
+  'Chris Brazzell II':{y:2026,r:3,p:83},
   'Aaron Rodgers':{y:2005,r:1,p:24},
   'Andrew Luck':{y:2012,r:1,p:1},
   'Andy Dalton':{y:2011,r:2,p:35},
@@ -5382,6 +5385,11 @@ async function loadPlayerStats() {
         // is 3+ off, the baked entry wins.
         const baked = DRAFT_PICKS[name];
         if (baked && Math.abs((v.y||0) - (baked.y||0)) > 3) { rejected++; continue; }
+        // Age guard (10 Oct 2026): a draft year that would make him younger than 19 on
+        // draft day is a namesake, whatever the feed says (Chris Brazzell II, 23, was
+        // matched to the 1998 Chris Brazzell; no baked entry existed to catch it).
+        const rawP = (typeof RAW !== 'undefined') ? RAW.find(function(x){ return x && x.n === name; }) : null;
+        if (rawP && rawP.a && v.y && (rawP.a - (CUR_DRAFT_YR - v.y)) < 19) { rejected++; continue; }
         DRAFT_PICKS[name] = { y: v.y, r: v.r, p: v.p }; n++;
       }
       if (n) console.log('[DELTA] ' + n + ' draft-capital entries from pipeline');

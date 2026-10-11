@@ -1170,12 +1170,21 @@ def fetch_draft_and_college(delta_names, meta):
         'Zonovan Knight':    'Bam Knight',
     }
     def _match(raw, delta_names):
+        # Exact spelling first, then the normalized form. norm() strips Jr./II, so a
+        # son and his namesake father collide ('Chris Brazzell II' 2026 vs 'Chris
+        # Brazzell' 1998). The old setdefault() kept whichever nflverse listed first --
+        # the FATHER, since picks run oldest first -- despite the comment below saying
+        # newest wins (10 Oct 2026: Brazzell II read as a 1998 6th-rounder; Pittman Jr.
+        # and Harrison Jr. had the same bad match, hidden by the engine's baked guard).
+        # On a normalized collision the most recent draft year now wins.
         rawnorm = {}
         for k in raw:
-            rawnorm.setdefault(norm(k), k)
+            nk = norm(k); prev = rawnorm.get(nk)
+            if prev is None or (raw[k].get('y') or 0) > (raw[prev].get('y') or 0):
+                rawnorm[nk] = k
         out = {}
         for dn in delta_names:
-            hit = rawnorm.get(norm(dn))
+            hit = dn if dn in raw else rawnorm.get(norm(dn))
             if hit is None and dn in DRAFT_ALIASES:
                 hit = rawnorm.get(norm(DRAFT_ALIASES[dn]))
             if hit is not None:
