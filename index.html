@@ -4330,7 +4330,10 @@ function countUp(el, target, duration=600) {
    notice; a CSS fix is not an entry. `tab` is optional — when set, that tab carries
    a dot until the reader opens it. `arm` does the same for a section button that is
    not a tab (Live, which leaves for its own page): the dot sits on [data-arm], and
-   tapping that button retires it before the page changes.
+   tapping that button retires it before the page changes. `pill` is for a view inside
+   My Team (10 Oct 2026): the dot sits on the My Team section button AND on that
+   view's pill, and only opening the view (or this panel) retires it -- opening My Team
+   alone does not, because the thing to find is one tap further in.
    Set `quiet:true` for anything that shipped a while ago: it still lists, but it
    raises no bar and no dot.
 
@@ -4342,6 +4345,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-10-partners', d:'10 Oct 2026', t:'Trade Partners', pill:'partners',
+   b:"Which teams in your league should you actually call? Trade Partners finds the teams that are thin where you're deep and deep where you're thin, then names players worth asking about and players you could offer, leaving out the untouchable stars and the players too small to move. One tap loads both rosters into the Trade Calc. My Team &rsaquo; Trade Partners."},
   {id:'2026-09-26-scorecard', d:'26 Sep 2026', t:'Scorecard', tab:'scorecard',
    b:"How accurate is DELTA? Every projection graded against real 2026 games, only on games played after it was made, with the closest calls and the biggest misses."},
   {id:'2026-09-21-live', d:'21 Sep 2026', t:'Live Scores', arm:'live',
@@ -4408,6 +4413,10 @@ function dlNewsPaint(){
     if(n.tab){ const b=dlTabBtn(n.tab); if(b) dotOn(b); }
     // An arm lives in BOTH switchers (phone bar and desktop row); dot each.
     if(n.arm) document.querySelectorAll('[data-arm="'+n.arm+'"]').forEach(dotOn);
+    if(n.pill){
+      document.querySelectorAll('.seg-btn[data-sec="me"],.eb-btn[data-sec="me"]').forEach(dotOn);
+      document.querySelectorAll('[data-news-pill="'+n.pill+'"]').forEach(dotOn);
+    }
   });
 }
 /* Tapping an arm retires its entry. Called from the button's own onclick BEFORE it
@@ -4415,6 +4424,12 @@ function dlNewsPaint(){
    though this page is about to be replaced. */
 function dlNewsSeenArm(id){
   const hit=dlNewsUnseen().filter(n=>n.arm===id);
+  if(!hit.length) return;
+  dlNewsSave((dlNewsSeen()||[]).concat(hit.map(n=>n.id)));
+}
+/* Opening the view inside My Team retires a `pill` entry. */
+function dlNewsSeenPill(id){
+  const hit=dlNewsUnseen().filter(n=>n.pill===id);
   if(!hit.length) return;
   dlNewsSave((dlNewsSeen()||[]).concat(hit.map(n=>n.id)));
 }
@@ -5870,7 +5885,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10d</span>
+  <span class="foot-build">2026-10-10e</span>
 </footer>
 
 
@@ -8239,7 +8254,7 @@ function slpTagText(p){
 }
 
 function slpViewRoster(rid){ SLP.view='rosters'; SLP.viewRosterId=rid; renderMyTeam(); }
-function slpShowBoard(){ SLP.view='board'; renderMyTeam(); }
+function slpShowBoard(){ SLP.view='board'; if(typeof dlNewsSeenPill==='function') dlNewsSeenPill('partners'); renderMyTeam(); }
 
 // ── League power rankings ────────────────────────────────────
 // Roster value = the sum of DELTA's MODEL value for every player, plus future
@@ -8630,8 +8645,8 @@ function renderSlpSubNav(){
      at. They share the team-pill row, so they need to read as a different KIND of
      thing: one shared style (sky, emerald when active, on the raised surface)
      marks them as a pair and separates them from the roster pills. */
-  const analysisPill=function(on,fn,label){
-    return '<button onclick="'+fn+'" style="font-size:10.5px;font-weight:'+(on?'800':'700')
+  const analysisPill=function(on,fn,label,news){
+    return '<button'+(news?' data-news-pill="'+news+'"':'')+' onclick="'+fn+'" style="font-size:10.5px;font-weight:'+(on?'800':'700')
       +';padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2)'
       +';color:'+(on?'var(--emerald)':'var(--sky)')+';cursor:pointer;white-space:nowrap">'+label+'</button>';
   };
@@ -8643,7 +8658,7 @@ function renderSlpSubNav(){
     // the line-break spacer went with the pills it used to separate
     +'<div class="dl-mt-row dl-mt-analysis">'
     +(mine!=null?analysisPill(myActive,'slpViewRoster('+JSON.stringify(mine).replace(/"/g,"&quot;")+')','My Roster'):'')
-    +analysisPill(boardActive,'slpShowBoard()','Trade Partners')
+    +analysisPill(boardActive,'slpShowBoard()','Trade Partners','partners')
     +analysisPill(SLP.view==='fa','slpViewFA()','Free Agents')
     +analysisPill(powerActive,'slpViewPower()','Power Rankings')
     +(slpIsMfl(SLP.conn&&SLP.conn.leagueId)?'':analysisPill(SLP.view==='ledger','slpViewLedger()','Trade Ledger'))
@@ -9300,6 +9315,8 @@ function renderMyTeam(){
                              :SLP.view==='power'?renderSlpPower()
                              :SLP.view==='ledger'?renderSlpLedger()
                              :renderSlpRoster(SLP.viewRosterId));
+  // The Trade Partners pill was just redrawn; put its What's New dot back if unread.
+  if(typeof dlNewsPaint==='function') dlNewsPaint();
 }
 
 /* \u2500\u2500 MY TEAM ROSTER COLUMNS (8 Oct 2026, from a user request) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
