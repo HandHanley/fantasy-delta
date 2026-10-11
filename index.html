@@ -5885,7 +5885,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10e</span>
+  <span class="foot-build">2026-10-10f</span>
 </footer>
 
 
@@ -6950,6 +6950,16 @@ function renderPortal(){
       +'Transfer data isn\u2019t available yet. The weekly pipeline writes <code>data/college-portal.json</code>.</div>';
     return;
   }
+  /* From 1 Dec the pipeline switches to next season's portal (owner, 10 Oct 2026), so
+     early December shows a list that is empty or nearly so. Say which portal it is, and
+     say plainly when nothing has been recorded, so that reads as a window not yet open
+     rather than a broken feed. */
+  const yr=PT.season?PT.season+' Portal \u00b7 ':'';
+  if(!(PT.players||[]).length){
+    host.innerHTML='<div style="font-size:12px;color:var(--fog-2);border:1px solid var(--line);border-radius:8px;padding:16px">'
+      +'No transfers recorded for the '+(PT.season?PT.season+' ':'')+'portal yet. The list fills in once the window opens.</div>';
+    return;
+  }
   const gv=id=>{const e=document.getElementById(id);return e?e.value:'';};
   const q=(gv('pt-q')||'').toLowerCase().trim(), mv=gv('pt-move');
   const rows=PT.players.filter(p=>{
@@ -6968,7 +6978,7 @@ function renderPortal(){
     +'background:'+col+'-tint);color:var('+col+');white-space:nowrap">'+txt+'</span>';
   const MOVE={ up:['\u2191 to P4','var(--sky)'], down:['\u2193 from P4','var(--coral)'],
                fcs:['\u2191 from FCS','var(--sky)'], lateral:['\u2192 lateral','var(--fog-2)'] };
-  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
+  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+yr+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
     +'<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
     +'<th>Player</th><th data-tip="Origin school above, destination below.">Transfer</th>'
     +'<th data-tip="Level change. Power 4 = SEC, Big Ten, Big 12, ACC. Measured on the 2025 season, P4 players reached the NFL at roughly twice the rate of Group of 5 players.">Move</th>'

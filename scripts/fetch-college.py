@@ -47,7 +47,21 @@ def default_season(today=None):
 KEY   = (os.environ.get("CFBD_API_KEY") or "").strip()
 YEAR  = int(os.environ.get("CFBD_YEAR")  or default_season())
 WEEKS = int(os.environ.get("CFBD_WEEKS") or 16)   # highest week fetched; the loop runs 0..WEEKS
-PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or YEAR)
+def default_portal_year(today=None):
+    """Which portal list to show (10 Oct 2026, owner: swap, no side-by-side).
+
+    CFBD files a winter transfer under the season he moves INTO: the January 2026
+    window is portal year 2026. The season in progress (YEAR) stays 2026 until
+    August 2027, so keying the portal to YEAR would miss the January 2027 window
+    entirely. From 1 December, once the regular season is over, the list moves to
+    next season's portal and stays there until the new season starts in August.
+    A backfill of a past season (CFBD_YEAR set) keeps that season's own portal.
+    CFBD_PORTAL_YEAR still overrides everything."""
+    d = today or datetime.date.today()
+    if YEAR != default_season(d): return YEAR
+    return YEAR + 1 if (d.month == 12 or d.month < 8) else YEAR
+
+PORTAL_YEAR = int(os.environ.get("CFBD_PORTAL_YEAR") or default_portal_year())
 
 def must_have_data(today=None):
     """True from 8 Sep to 15 Jan for the season in progress (9 Oct 2026).
