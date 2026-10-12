@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-12T11:05:02.582617+00:00",
+  "fetched": "2026-10-12T21:46:57.936098+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -1053,7 +1053,7 @@
       "is_active": true
     },
     "Jaylen Waddle": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1293,7 +1293,7 @@
       "is_active": true
     },
     "Marvin Harrison Jr.": {
-      "team": "Cardinals",
+      "team": "HOU/ARI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1493,7 +1493,7 @@
       "is_active": true
     },
     "Devaughn Vele": {
-      "team": "DEN/NO",
+      "team": "NO/DEN",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2713,7 +2713,7 @@
       "is_active": true
     },
     "Kaytron Allen": {
-      "team": "Commanders",
+      "team": "WAS/MIA",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -2813,7 +2813,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "MIA/DEN",
+      "team": "DEN/MIA",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -3082,6 +3082,16 @@
       "guaranteed": 0.42,
       "is_active": true
     },
+    "Jam Miller": {
+      "team": "Falcons",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.25,
+      "total": 0.25,
+      "guaranteed": 0.0,
+      "is_active": true
+    },
     "Emanuel Wilson": {
       "team": "Seahawks",
       "year_signed": 2026,
@@ -3212,16 +3222,6 @@
       "guaranteed": 4.44,
       "is_active": true
     },
-    "Emari Demercado": {
-      "team": "KC/DAL",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 1.25,
-      "total": 1.25,
-      "guaranteed": 0.55,
-      "is_active": true
-    },
     "Ty Johnson": {
       "team": "Bills",
       "year_signed": 2025,
@@ -3313,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "CLE/LAC",
+      "team": "Browns",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
@@ -3590,6 +3590,16 @@
       "aav": 1.57,
       "total": 6.29,
       "guaranteed": 1.22,
+      "is_active": true
+    },
+    "Odell Beckham": {
+      "team": "Vikings",
+      "year_signed": 2026,
+      "years": 1,
+      "end_year": 2026,
+      "aav": 0.41,
+      "total": 0.41,
+      "guaranteed": 0.0,
       "is_active": true
     },
     "Andrei Iosivas": {
