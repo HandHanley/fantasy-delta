@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-10b';
+const DL_BUILD='2026-10-12a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -4725,7 +4725,7 @@ function dsOpportunity(p) {
   const noData = p.ppg25===0 && p.ppg24===0 && p.ppg23===0;
   const noNFL = p.g25===0;
   const { pick, year } = dsDraftInfo(p.n);
-  const expW = dsExpWeight(year);
+  const expW = dsExpWeight(year != null && p._rollover ? year - 1 : year);   // a year more experience at the roll
   // Draft-capital opportunity is CAPPED BELOW what a proven starter can earn (max 19 of 33).
   // PHILOSOPHY: pedigree earns a strong opportunity FLOOR, but the full max is reserved for
   // players who've DEMONSTRATED elite usage. Unproven potential < proven production.
@@ -4755,7 +4755,7 @@ function dsOpportunity(p) {
     // (Allen, Daniels), 5-7/g real rushing QB (Hurts, Maye, Dart, Lamar, Herbert),
     // 4-5/g moderate mobility (Mahomes, Caleb), <4/g pocket passer/scrambler (no
     // bonus beyond the base — their rushing is incidental and already in their PPG).
-    const rushPG = rushG > 0 ? rushAtt / rushG : 0;
+    const rushPG = p._qbRushPG != null ? p._qbRushPG : (rushG > 0 ? rushAtt / rushG : 0);
     const rushPts = rushPG >= 7 ? 13 : rushPG >= 5 ? 9 : rushPG >= 4 ? 6 : 3;
     // QB ROLE FLAG (pipeline-emitted, conservative): the flat 18 baseline treats
     // every QB with NFL data as a starter — backups (Fields-behind-Mahomes) were
@@ -4770,7 +4770,7 @@ function dsOpportunity(p) {
     const seat = (QB_ROLES_SCORE[p.n] && QB_ROLES_SCORE[p.n].role === 'backup') ? 9 : 18;
     baseOpp = (noData && !noNFL) ? 13 : ((noNFL ? 14 : seat) + rushPts);
   } else {
-    const oppSc = getOppScore(p.n, pos);
+    const oppSc = p._opp26 != null ? p._opp26 : getOppScore(p.n, pos);
     baseOpp = (oppSc == null) ? (noNFL ? 14 : 13) : (((oppSc - 30) / 69) * 29 + 4);
   }
 
@@ -4800,7 +4800,7 @@ function dsCont(p) {
   // Base 2025 (last completed season) so yrs counts remaining seasons
   // including the current 2026 season. Thresholds shifted +1 vs old base 2026
   // so all contract scores remain identical — only display changes.
-  const yrs = c.end - (SEASON_YEAR - 1);
+  const yrs = c.end - (SEASON_YEAR - 1) - (p._rollover ? 1 : 0);   // one season fewer at the roll
   return yrs>=5?10:yrs===4?9:yrs===3?7:yrs===2?6:5;
 }
 
@@ -4828,6 +4828,9 @@ function dsYouthMult(age) {
    already, and a rookie with no NFL games stays on the rookie path, as at the roll.
    Measured 8 Oct at 12-team SF: Pearsall 55 -> 48, Higgins 52 -> 44; nobody else. */
 function dsProductionNow(p, pos) {
+  // The end-of-season projection (dsEndOfSeason) has already rolled the seasons forward,
+  // so the season-ender shift below must not be applied a second time.
+  if (p._rollover) return dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p, true);
   const out = (typeof INJ_OUT !== 'undefined' && INJ_OUT && INJ_OUT[p.n]) && (p.g25 || 0) > 0;
   if (!out) return dsProduction(p.ppg25||0, p.ppg24||0, p.ppg23||0, p.g25||0, pos, p, true);
   const q = Object.assign({}, p, { ppgH25: undefined, ppgH24: p.ppgH25, ppgH23: p.ppgH24 });
@@ -4890,6 +4893,58 @@ function calcDynastyScore(p) {
   }
   if (noNFL) total = Math.min(DS_ROOKIE_CAP, total);
   return Math.round(total);
+}
+
+/* ── END-OF-SEASON SCORE — DISPLAY ONLY (owner, 12 Oct 2026) ─────────────────
+   What his DELTA Score would be at the offseason roll if this season's pace holds.
+   The live Score does not move in-season (owner, 9 Oct); this is the projection card
+   on the player page ("End Of 2026"), and NOTHING scored reads it: not rankings,
+   calls, model value, the scorecard or the freeze.
+   Built by running the real calcDynastyScore on rolled-forward inputs:
+     production  this season = (games played x PPG so far + games left x his projection)
+                 / all games; last season and the one before shift back one slot
+     games       played + left on his schedule (0 left once he is on the season-ender list)
+     opportunity this season's usage (the Alpha / Workhorse number the card shows) once he
+                 has 3+ games; a QB's rushing attempts per game from this season the same way
+     contract    one season fewer; experience one season more; age +1
+   All PPGs are in the league's own format (marked with ppgH so dsProduction does not
+   convert them again). Returns null until the game logs are loaded. */
+function dsEndOfSeason(p){
+  if (!p || typeof GAMELOGS === 'undefined' || !GAMELOGS) return null;
+  const pos = p.pos || p.p || 'WR';
+  let G = 0, pts = 0, left = 0, car = 0;
+  for (const r of (GAMELOGS[p.n] || [])) {
+    if (r.s !== SEASON_YEAR) continue;
+    if (r.up) { left++; continue; }
+    if (r.dnp) continue;
+    G++; pts += gamefp(r, pos, scoringFmt); car += (+r.car || 0);
+  }
+  /* A confirmed season-ender is recorded at the roll as a FULL ZERO season (the rule
+     dsProductionNow already applies today), not as a short season: a 3-game year would
+     otherwise be down-weighted as "injury-disrupted" and his Score would jump (Achane
+     74 -> 86 in the first build). His opportunity stays on last season's usage, as the
+     live Score does (what the roll does to a missed season's opportunity is backlog R9). */
+  const out = !!(p.outForSeason || (typeof INJ_OUT !== 'undefined' && INJ_OUT && INJ_OUT[p.n]));
+  if (out) { G = 0; pts = 0; left = 0; }
+  const rest = (typeof getAdjProj === 'function') ? getAdjProj(p) : (p.proj || 0);
+  const games = G + left;
+  const ppg = games ? (pts + left * rest) / games : 0;
+  let opp26 = null, rushPG = null, oppGames = 0;
+  if (out) { /* last season's usage */ }
+  else if (pos === 'QB') { if (G >= 3) { rushPG = car / G; oppGames = G; } }
+  else if (typeof opportunitySoFar === 'function') {
+    const o = opportunitySoFar(p.n, pos);
+    if (o && o.g >= 3) { opp26 = o.sc; oppGames = o.g; }
+  }
+  const q = Object.assign({}, p, {
+    a: (p.a || 22) + 1,
+    ppg25: ppg, ppgH25: ppg,
+    ppg24: p.ppg25 || 0, ppgH24: p.ppgH25,
+    ppg23: p.ppg24 || 0, ppgH23: p.ppgH24,
+    g25: games, _rollover: true, _opp26: opp26, _qbRushPG: rushPG
+  });
+  return { score: calcDynastyScore(q), played: G, left: left, ppg: ppg, oppGames: oppGames, out: out,
+           oppFrom: (opp26 != null || rushPG != null) ? SEASON_YEAR : SEASON_YEAR - 1 };
 }
 
 function dsColor(score) {

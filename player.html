@@ -311,7 +311,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-10c</span>
+    <span class="foot-build">2026-10-12a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -453,7 +453,7 @@ function slLiveStats(name) {
     .filter(g => String(g.s) === y && !g.up && !g.dnp);
   if (!rows.length) return null;
   const sum = f => rows.reduce((a, g) => a + (+g[f] || 0), 0);
-  return { games: rows.length, pass_yds: sum('py'), pass_td: sum('pt'), pass_int: sum('pi'),
+  return { games: rows.length, pass_att: sum('pa'), pass_yds: sum('py'), pass_td: sum('pt'), pass_int: sum('pi'),
            rush_att: sum('car'), rush_yds: sum('ry'), rush_td: sum('rt'),
            targets: sum('tgt'), rec: sum('rec'), rec_yds: sum('rey'), rec_td: sum('ret'),
            fum_lost: sum('fl') };
@@ -566,11 +566,32 @@ function buildDSTrajectoryHTML(p) {
     calcDynastyScore({ ...p, a: age, ppg25: r1 || 0, ppg24: r2 || 0, ppg23: r3 || 0, g25: games });
 
   const ds2024 = at((p.a || 22) - 1, p.ppg24, p.ppg23, 0,        p.g24 || 16);
-  const ds2026 = at((p.a || 22) + 1, p.proj || p.ppg25, p.ppg25, p.ppg24, p.g25 || 0);
+  /* END OF 2026 (owner, 12 Oct 2026). Was the projection alone, with his 2025 game count
+     and 2025 usage. Now dsEndOfSeason() in the engine: games played this season plus his
+     projection for the games left, this season's usage once he has 3+ games, contract one
+     season on. Display only; the live Score holds in-season. It needs the game logs and
+     this season's usage, both loaded lazily, so the card re-draws once they land. */
+  const eos = (typeof dsEndOfSeason === 'function') ? dsEndOfSeason(p) : null;
+  if (typeof ensureSeasonSoFar === 'function' && SEASON_SO_FAR_STATE !== 'ok' && SEASON_SO_FAR_STATE !== 'failed') {
+    ensureSeasonSoFar().then(() => {
+      const h = document.getElementById('ds-arc');
+      if (h && h.dataset.n === p.n) h.outerHTML = buildDSTrajectoryHTML(p);
+    });
+  }
+  const ds2026 = eos ? eos.score : at((p.a || 22) + 1, p.proj || p.ppg25, p.ppg25, p.ppg24, p.g25 || 0);
 
   const dsC = dsColor(ds);
   const d4C = dsColor(ds2024);
   const d6C = dsColor(ds2026);
+  const yr = (typeof SEASON_YEAR !== 'undefined') ? SEASON_YEAR : 2026;
+  const eosNote = !eos ? `${yr} uses his projection`
+    : eos.out ? `End of ${yr}: out for the season, so ${yr} counts as missed`
+    : eos.played
+      ? `End of ${yr}: his ${eos.played} game${eos.played === 1 ? '' : 's'} so far plus his projection for the ${eos.left} left`
+      : `End of ${yr}: his projection for the ${eos.left} games left`;
+  const oppNote = !eos ? '' : eos.oppFrom === yr
+      ? ` · ${yr} ${p.pos === 'QB' ? 'rushing rate' : 'usage'} (${eos.oppGames} g)`
+      : ` · ${yr - 1} usage${eos.out ? '' : ' until he has 3 games'}`;
 
   const bar = (score, color) => `
     <div style="height:4px;background:var(--panel);border-radius:3px;overflow:hidden;margin-bottom:4px">
@@ -591,18 +612,18 @@ function buildDSTrajectoryHTML(p) {
     return `<div style="font-size:18px;color:${c};padding-top:18px;flex-shrink:0">${sym}</div>`;
   };
 
-  return `<div class="card">
+  return `<div class="card" id="ds-arc" data-n="${String(p.n).replace(/"/g, '&quot;')}">
     <div class="card-label" style="margin-bottom:2px">DELTA Score Arc</div>
-    <div class="card-sub" style="margin-bottom:14px">Estimated 2024 · Current 2025 · Projected 2026</div>
+    <div class="card-sub" style="margin-bottom:14px">Estimated 2024 · Today, built on seasons through ${yr - 1} · End of ${yr} if this pace holds</div>
     <div style="display:flex;align-items:flex-start;gap:8px">
       ${pt('2024 est', ds2024, d4C, 'approx')}
       ${arr(ds2024, ds)}
-      ${pt('2025', ds, dsC, 'current')}
+      ${pt('Today', ds, dsC, 'through ' + (yr - 1))}
       ${arr(ds, ds2026)}
-      ${pt('2026 proj', ds2026, d6C, 'if proj holds')}
+      ${pt('End Of ' + yr, ds2026, d6C, 'if pace holds')}
     </div>
-    <div style="font-size:9px;color:var(--fog-2);margin-top:10px;text-align:center">
-      2024 uses age−1 and prior production · opportunity &amp; contract approximated from current values
+    <div style="font-size:9px;color:var(--fog-2);margin-top:10px;text-align:center;line-height:1.5">
+      ${eosNote}${oppNote} · contract one season on<br>2024 uses age−1 and prior production
     </div>
   </div>`;
 }
@@ -614,7 +635,12 @@ function buildProductionHTML(p) {
     { yr: '2023', ppg: p.ppg23 || 0, g: p.g23 || null },
     { yr: '2024', ppg: p.ppg24 || 0, g: p.g24 || null },
     { yr: '2025', ppg: p.ppg25 || 0, g: p.g25 || null },
-  ].filter(y => y.ppg > 0);
+  ];
+  // The season in progress, from the game logs, in the league's own format (owner, 12 Oct).
+  // Lighter bar and "(so far)" in the table: a part season is not a finished one.
+  const t26 = (typeof seasonTally === 'function' && typeof GAMELOGS !== 'undefined' && GAMELOGS) ? seasonTally(p) : null;
+  if (t26 && t26.g) years.push({ yr: String(SEASON_YEAR), ppg: t26.pts / t26.g, g: t26.g, partial: true });
+  years.splice(0, years.length, ...years.filter(y => y.ppg > 0));
   if (!years.length) return '';
 
   const posAvg = DS_AVG[p.pos] || 12;
@@ -629,19 +655,19 @@ function buildProductionHTML(p) {
   const bars = years.map(y => {
     const h = Math.max(8, Math.round((y.ppg / maxPpg) * barH));
     return `<div style="flex:1;display:flex;align-items:flex-end">
-      <div style="width:100%;height:${h}px;background:${ppgClr(y.ppg)};border-radius:2px 2px 0 0"></div>
+      <div style="width:100%;height:${h}px;background:${ppgClr(y.ppg)};border-radius:2px 2px 0 0${y.partial ? ';opacity:.5' : ''}"></div>
     </div>`;
   }).join('');
 
   const lbls = years.map(y =>
-    `<div style="flex:1;text-align:center;font-size:9px;color:var(--fog-2)">${y.yr.slice(2)}</div>`
+    `<div style="flex:1;text-align:center;font-size:9px;color:var(--fog-2)">${y.yr.slice(2)}${y.partial ? ' so far' : ''}</div>`
   ).join('');
 
   const tableRows = years.map(y => {
     const diff = (y.ppg - posAvg).toFixed(1);
     const dc = diff > 0 ? 'var(--emerald)' : diff < 0 ? 'var(--coral-bri)' : 'var(--fog)';
     return `<tr>
-      <td>${y.yr}</td>
+      <td>${y.yr}${y.partial ? ' <span style="color:var(--fog-2)">(so far)</span>' : ''}</td>
       <td style="color:${ppgClr(y.ppg)};font-weight:600">${y.ppg.toFixed(1)}</td>
       <td style="color:var(--fog)">${y.g != null && y.g > 0 ? y.g : '—'}</td>
       <td style="color:${dc}">${diff > 0 ? '+' : ''}${diff}</td>
@@ -680,6 +706,11 @@ function buildTDPctHTML(p) {
     const att = (s && +s.pass_att) || 0, td = (s && +s.pass_td) || 0;
     return { yr: y, v: att >= 100 ? (100 * td / att) : 0, att };   // 100-att floor: a cameo has no meaningful rate
   }).filter(x => x.v > 0);
+  // The season in progress (owner, 12 Oct 2026): same 100-attempt floor. It is the latest
+  // bar, so the note below compares it with his baseline; the baseline stays on finished
+  // seasons only.
+  const live = (typeof slLiveStats === 'function') ? slLiveStats(p.n) : null;
+  if (live && live.pass_att >= 100) rows.push({ yr: String(SEASON_YEAR), v: 100 * live.pass_td / live.pass_att, att: live.pass_att, partial: true });
   if (!rows.length) return '';
 
   let cTd = 0, cAtt = 0;
@@ -704,7 +735,7 @@ function buildTDPctHTML(p) {
   const bars = rows.map(x => `<div style="flex:1;display:flex;align-items:flex-end;justify-content:center">
       <div style="width:100%;border-radius:3px 3px 0 0;background:${clr(x.v)};height:${Math.max(8, Math.round(x.v / maxV * barH))}px"></div>
     </div>`).join('');
-  const lbls = rows.map(x => `<div style="flex:1;text-align:center;font-size:9px;color:var(--fog-2)">'${x.yr.slice(2)}</div>`).join('');
+  const lbls = rows.map(x => `<div style="flex:1;text-align:center;font-size:9px;color:var(--fog-2)">'${x.yr.slice(2)}${x.partial ? ' so far' : ''}</div>`).join('');
 
   let note = '';
   if (Math.abs(gap) >= HOT && rows.length >= 2) {
@@ -833,6 +864,35 @@ function buildStartProfileCard(p) {
   </div>`;
 }
 
+// ── Usage rows (2025 and the season so far) ─────────────────────────────────
+function usageRowsHTML(st, isWR, teamGames) {
+  const tg = teamGames || 17, k = 17 / tg;          // red-zone colours on a 17-game pace
+  const tgtS = st.target_share || 0;
+  const airS = st.air_yds_share || 0;
+  const rzT = st.rz_targets, rzC = st.rz_carries;
+  const rzT17 = rzT != null ? rzT * k : null, rzC17 = rzC != null ? rzC * k : null;
+  const row = ([l,v,c]) => `<div class="bdr-row"><span style="color:var(--fog)">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`;
+  if (isWR) {
+    return [
+      ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.28?'var(--emerald)':tgtS>=.20?'var(--sky)':tgtS>=.14?'var(--topaz)':'var(--coral)'],
+      ['Air yards share', (airS*100).toFixed(1)+'%', airS>=.38?'var(--emerald)':airS>=.28?'var(--sky)':airS>=.18?'var(--topaz)':'var(--coral)'],
+      ['RZ targets', rzT!=null?rzT:'—', rzT17>=18?'var(--emerald)':rzT17>=12?'var(--sky)':rzT17>=7?'var(--topaz)':'var(--coral)'],
+    ].map(row).join('');
+  }
+  const g = st.games || tg;
+  const rsRaw = st.rush_share || 0;
+  // rush_share is the player's carries over the TEAM's games, so it is diluted by games he
+  // missed; dividing back by his share of team games gives his per-game role when active.
+  const rsAdj = Math.min(1, rsRaw * (tg / g));
+  const rsLabel = g < tg ? `Rush share/game · ${g}g` : 'Rush share';
+  return [
+    [rsLabel, (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'var(--emerald)':rsAdj>=.40?'var(--sky)':rsAdj>=.25?'var(--topaz)':'var(--coral)'],
+    ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.18?'var(--emerald)':tgtS>=.12?'var(--sky)':tgtS>=.08?'var(--topaz)':'var(--coral)'],
+    ['RZ carries', rzC!=null?rzC:'—', rzC17>=55?'var(--emerald)':rzC17>=35?'var(--sky)':rzC17>=20?'var(--topaz)':'var(--coral)'],
+    ['RZ targets', rzT!=null?rzT:'—', rzT17>=12?'var(--emerald)':rzT17>=7?'var(--sky)':rzT17>=3?'var(--topaz)':'var(--coral)'],
+  ].map(row).join('');
+}
+
 // ── Opportunity ───────────────────────────────────────────────────────────────
 function buildOpportunityHTML(p) {
   const oppSc = getOppScore(p.n, p.pos);
@@ -856,40 +916,30 @@ function buildOpportunityHTML(p) {
   const tier = oppSc>=88?(isWR?'Elite alpha':'Elite workhorse'):oppSc>=75?'Clear starter':oppSc>=60?'Role player':'Committee/specialist';
   const sysClr = p.sys>=70?'var(--emerald)':p.sys>=55?'var(--sky)':p.sys>=40?'var(--topaz)':'var(--coral)';
 
-  let usageRows = '';
-  if (st25) {
-    const tgtS = st25.target_share || 0;
-    const airS = st25.air_yds_share || 0;
-    const rzT = st25.rz_targets;
-    const rzC = st25.rz_carries;
-    if (isWR) {
-      usageRows = [
-        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.28?'var(--emerald)':tgtS>=.20?'var(--sky)':tgtS>=.14?'var(--topaz)':'var(--coral)'],
-        ['Air yards share', (airS*100).toFixed(1)+'%', airS>=.38?'var(--emerald)':airS>=.28?'var(--sky)':airS>=.18?'var(--topaz)':'var(--coral)'],
-        ['RZ targets', rzT!=null?rzT:'—', rzT>=18?'var(--emerald)':rzT>=12?'var(--sky)':rzT>=7?'var(--topaz)':'var(--coral)'],
-      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:var(--fog)">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
-    } else {
-      const g = st25.games || 17;
-      const rsRaw = st25.rush_share || 0;
-      // Apply same 17/g adjustment used in workhorse score — rush_share in the pipeline
-      // is a season total ratio (player carries / team carries), so it's diluted by missed
-      // games. Adjusted value reflects true per-game role intensity when active.
-      const rsAdj = Math.min(1, rsRaw * (17 / g));
-      const rsLabel = g < 17 ? `Rush share/game · ${g}g` : 'Rush share';
-      usageRows = [
-        [rsLabel, (rsAdj*100).toFixed(1)+'%', rsAdj>=.55?'var(--emerald)':rsAdj>=.40?'var(--sky)':rsAdj>=.25?'var(--topaz)':'var(--coral)'],
-        ['Target share', (tgtS*100).toFixed(1)+'%', tgtS>=.18?'var(--emerald)':tgtS>=.12?'var(--sky)':tgtS>=.08?'var(--topaz)':'var(--coral)'],
-        ['RZ carries', rzC!=null?rzC:'—', rzC>=55?'var(--emerald)':rzC>=35?'var(--sky)':rzC>=20?'var(--topaz)':'var(--coral)'],
-        ['RZ targets', rzT!=null?rzT:'—', rzT>=12?'var(--emerald)':rzT>=7?'var(--sky)':rzT>=3?'var(--topaz)':'var(--coral)'],
-      ].map(([l,v,c])=>`<div class="bdr-row"><span style="color:var(--fog)">${l}</span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('');
-    }
+  // 2025 and the season so far share one row builder (owner, 12 Oct 2026). A part season
+  // is put on the same footing first: shares are already per team game; red-zone counts are
+  // coloured on a 17-game pace (the thresholds are full-season numbers) but shown as counted.
+  let usageRows = st25 ? usageRowsHTML(st25, isWR, 17) : '';
+  const yrNow = (typeof SEASON_YEAR !== 'undefined') ? SEASON_YEAR : 2026;
+  const u26 = () => {
+    const r = (typeof SEASON_SO_FAR !== 'undefined' && SEASON_SO_FAR && SEASON_SO_FAR.players) ? SEASON_SO_FAR.players[p.n] : null;
+    if (!r || !r.games || !r.team_games) return '';
+    return '<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fog);margin:10px 0 2px">'
+      + yrNow + ' Usage So Far \u00b7 ' + r.games + ' g</div>' + usageRowsHTML(r, isWR, r.team_games);
+  };
+  let usage26 = '';
+  if (typeof SEASON_SO_FAR_STATE !== 'undefined' && SEASON_SO_FAR_STATE === 'ok') usage26 = u26();
+  else if (typeof ensureSeasonSoFar === 'function') {
+    ensureSeasonSoFar().then(() => { const h = document.getElementById('usage26'); if (h && h.dataset.n === p.n) h.innerHTML = u26(); });
   }
+  usage26 = '<div id="usage26" data-n="' + String(p.n).replace(/"/g, '&quot;') + '">' + usage26 + '</div>';
 
   return `<div class="card">
     <div class="card-label" style="margin-bottom:10px">Opportunity Score</div>
     ${oppTiles(p, oppSc, scC, tier)}
     ${usageRows ? '<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fog);margin:4px 0 2px">2025 Usage</div>' : ''}
     ${usageRows}
+    ${usage26}
     <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--panel)">
       ${buildSchemeHTML(p)}
     </div>
