@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-11T18:10:09.121039+00:00",
+  "fetched": "2026-10-12T11:04:59.246070+00:00",
   "seasons": [
     2022,
     2023,
@@ -25945,7 +25945,7 @@
     "Carson Beck": {
       "role": "backup",
       "behind": "Jacoby Brissett",
-      "source": "depth-chart"
+      "source": "incumbency-2025"
     },
     "Drew Allar": {
       "role": "backup",
@@ -25970,7 +25970,7 @@
     "Jalen Milroe": {
       "role": "backup",
       "behind": "Sam Darnold",
-      "source": "depth-chart"
+      "source": "incumbency-2025"
     },
     "Will Howard": {
       "role": "backup",
@@ -26164,7 +26164,7 @@
     "source": "depth-chart",
     "reason": "ok",
     "teams": 32,
-    "snapshot": "2026-10-11T13:56:31Z",
+    "snapshot": "2026-10-12T06:02:14Z",
     "in_season": true
   },
   "qb_start_splits": {
@@ -27062,7 +27062,7 @@
     "Matthew Golden": "GB",
     "Ricky Pearsall": "SF",
     "Mike Evans": "SF",
-    "Marvin Harrison Jr.": "ARI",
+    "Marvin Harrison Jr.": "HOU",
     "Garrett Wilson": "NYJ",
     "Xavier Worthy": "KC",
     "Keon Coleman": "BUF",
@@ -27352,6 +27352,10 @@
       "status": "IR",
       "body_part": "Knee - Meniscus"
     },
+    "Michael Penix Jr.": {
+      "status": "Questionable",
+      "body_part": "Ribs"
+    },
     "Saquon Barkley": {
       "status": "Out",
       "body_part": "Hamstring"
@@ -27373,15 +27377,19 @@
       "body_part": "Quadriceps"
     },
     "TreVeyon Henderson": {
-      "status": "Questionable",
-      "body_part": "Leg"
+      "status": "Out",
+      "body_part": "Ankle"
     },
     "Zach Charbonnet": {
       "status": "PUP",
       "body_part": "Knee - ACL"
     },
-    "David Montgomery": {
+    "Quinshon Judkins": {
       "status": "Questionable",
+      "body_part": "Lower Leg"
+    },
+    "David Montgomery": {
+      "status": "Out",
       "body_part": "Groin"
     },
     "Kyle Monangai": {
@@ -27395,6 +27403,10 @@
     "Aaron Jones": {
       "status": "Questionable",
       "body_part": "Leg"
+    },
+    "Ollie Gordon": {
+      "status": "Questionable",
+      "body_part": "Undisclosed"
     },
     "Isaac Guerendo": {
       "status": "PUP",
@@ -27424,10 +27436,6 @@
       "status": "IR",
       "body_part": "Abdomen"
     },
-    "Zay Flowers": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "A.J. Brown": {
       "status": "IR",
       "body_part": "Ankle"
@@ -27448,10 +27456,6 @@
       "status": "IR",
       "body_part": "Heel"
     },
-    "Ladd McConkey": {
-      "status": "Questionable",
-      "body_part": "Foot"
-    },
     "Quentin Johnston": {
       "status": "Out",
       "body_part": "Chest"
@@ -27462,6 +27466,10 @@
     },
     "Jordan Addison": {
       "status": "Out",
+      "body_part": "Hamstring"
+    },
+    "Tre Harris": {
+      "status": "Questionable",
       "body_part": "Hamstring"
     },
     "Jayden Higgins": {
@@ -27483,6 +27491,10 @@
     "Jalen Coker": {
       "status": "Out",
       "body_part": "Quadriceps"
+    },
+    "Deebo Samuel": {
+      "status": "Out",
+      "body_part": "Hamstring"
     },
     "Stefon Diggs": {
       "status": "Out",
@@ -27507,10 +27519,6 @@
     "T.J. Hockenson": {
       "status": "Out",
       "body_part": "Concussion"
-    },
-    "Charlie Kolar": {
-      "status": "Questionable",
-      "body_part": "Forearm"
     },
     "Christian Kirk": {
       "status": "IR",
@@ -27540,10 +27548,6 @@
       "status": "Out",
       "body_part": "Ankle"
     },
-    "George Holani": {
-      "status": "Questionable",
-      "body_part": "Ribs"
-    },
     "David Njoku": {
       "status": "IR",
       "body_part": "Lower Leg"
@@ -27564,6 +27568,10 @@
       "status": "IR",
       "body_part": "Hamstring"
     },
+    "Kenyon Sadiq": {
+      "status": "Out",
+      "body_part": "Concussion"
+    },
     "KC Concepcion": {
       "status": "Out",
       "body_part": "Concussion"
@@ -27581,6 +27589,10 @@
       "body_part": "Hamstring"
     },
     "Marlin Klein": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
+    "Carson Beck": {
       "status": "Out",
       "body_part": "Coach's Decision"
     },
@@ -27628,6 +27640,10 @@
       "status": "Out",
       "body_part": "Coach's Decision"
     },
+    "Elijah Sarratt": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
     "Brenen Thompson": {
       "status": "Out",
       "body_part": "Quadriceps"
@@ -27635,6 +27651,10 @@
     "Justin Joly": {
       "status": "Out",
       "body_part": "Concussion"
+    },
+    "Jalen Milroe": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
     },
     "Will Howard": {
       "status": "Out",
@@ -27668,6 +27688,10 @@
       "status": "IR",
       "body_part": "Ankle"
     },
+    "Robert Henry": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
     "Roman Hemby": {
       "status": "Out",
       "body_part": "Coach's Decision"
@@ -27688,9 +27712,17 @@
       "status": "Out",
       "body_part": "Coach's Decision"
     },
+    "Raheim Sanders": {
+      "status": "Questionable",
+      "body_part": "Hip"
+    },
     "Jack Endries": {
       "status": "Out",
       "body_part": "Coach's Decision"
+    },
+    "Matt Hibner": {
+      "status": "Questionable",
+      "body_part": "Hand"
     },
     "John Michael Gyllenborg": {
       "status": "IR",
@@ -27739,6 +27771,10 @@
     "KeAndre Lambert-Smith": {
       "status": "IR",
       "body_part": "Hamstring"
+    },
+    "Roman Wilson": {
+      "status": "Out",
+      "body_part": "Finger"
     },
     "Mack Hollins": {
       "status": "IR",
