@@ -1377,7 +1377,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-tp-win{font-size:10px;font-weight:700;color:var(--sky);background:var(--sky-tint);padding:2px 8px;border-radius:10px;white-space:nowrap}
 .dl-tp-sw{font-size:12.5px;color:var(--fog);margin:6px 0 10px}
 .dl-tp-sw b{color:var(--paper)}
-.dl-tp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px}
+.dl-tp-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:6px}
 .dl-tp-rs{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:5px 6px;display:flex;flex-direction:column;gap:1px;font-size:10px;color:var(--fog-2);min-width:0}
 .dl-tp-rs b{font-size:11px;color:var(--fog)}
 .dl-tp-rs.on{border-color:var(--teal-br)}
@@ -1385,6 +1385,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-tp-lab{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fog-2);margin:10px 0 3px}
 .dl-tp-pl{display:flex;align-items:center;gap:7px;padding:6px 0;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer}
 .dl-tp-pl:hover .dl-tp-pn{color:var(--teal-br)}
+.dl-tp-pl.dl-tp-pk{cursor:default}
+.dl-tp-pl.dl-tp-pk:hover .dl-tp-pn{color:var(--paper)}
 .dl-tp-pn{font-weight:700;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dl-tp-pm{color:var(--fog-2);font-size:11px;flex:1;white-space:nowrap}
 .dl-tp-tg{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:9px;white-space:nowrap}
@@ -5898,7 +5900,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-13a</span>
+  <span class="foot-build">2026-10-13b</span>
 </footer>
 
 
@@ -9705,17 +9707,50 @@ function slpTradePartners(){
     return out;
   };
   const win=function(r){ return r.rankWin<=third?'Contending':r.rankWin>N-third?'Rebuilding':'Middle Of The Pack'; };
+  /* DRAFT PICKS (owner, 13 Oct 2026). A rebuilding team wants picks; a contender pays
+     them for help now. Pick capital is the Power Rankings pick value (rows.pickMarket),
+     ranked across the league.
+       You can GIVE picks   when they are Rebuilding and your pick capital is top half.
+       You can GET picks    when they are Contending, their pick capital is top half,
+                            and you are not contending yourself.
+     When the pick angle is the only fit on one side, the players on that side are
+     veterans (27+, proven, outside the cornerstone and floor rules): what a rebuild
+     sells and a contender buys. Two picks shown per side, most valuable first. */
+  const pickRank={};
+  rows.slice().sort(function(a,b){ return (b.pickMarket||0)-(a.pickMarket||0); })
+    .forEach(function(r,i){ pickRank[String(r.rosterId)]=i+1; });
+  const pickList=function(rid){
+    return slpPickInventory(rid).map(function(pk){
+      const tier=slpPickTier(pk.from, pk.season), v=slpPickValue(pk.season, pk.round, tier);
+      return { season:pk.season, round:pk.round, from:pk.from,
+               tier:(parseInt(pk.season,10)===slpTierSeason()?tier:null), v:v?v.market:0 };
+    }).filter(function(x){ return x.v>0; }).sort(function(a,b){ return b.v-a.v; }).slice(0,2);
+  };
+  const vets=function(rid){
+    return (squad[String(rid)]||[]).filter(function(p){ return (p.a||0)>=27 && !corner(p) && !tooSmall(p); })
+      .sort(function(a,b){ return (b.proj||0)-(a.proj||0); }).slice(0,2);
+  };
+  const myWin=win(me), myPR=pickRank[String(me.rosterId)];
   const fits=rows.filter(function(r){ return r!==me; }).map(function(r){
     const give=thinAt(r).filter(function(p){ return me.pos[p].rank<=half; });
     const get=thinAt(me).filter(function(p){ return r.pos[p].rank<=half; });
     const gap=give.reduce(function(a,p){ return a+r.pos[p].rank-me.pos[p].rank; },0)
              +get.reduce(function(a,p){ return a+me.pos[p].rank-r.pos[p].rank; },0);
-    return { r:r, give:give, get:get, win:win(r),
-      ask:choose(r.rosterId,get,ASK,false), offer:choose(me.rosterId,give,OFFER,true),
-      score:(give.length&&get.length?100:0)+gap };
-  }).filter(function(f){ return (f.give.length||f.get.length) && (f.ask.length||f.offer.length); })
+    const w=win(r), pr=pickRank[String(r.rosterId)];
+    const giveP = w==='Rebuilding' && myPR<=half;
+    const getP  = w==='Contending' && pr<=half && myWin!=='Contending';
+    let ask=choose(r.rosterId,get,ASK,false), offer=choose(me.rosterId,give,OFFER,true);
+    if(giveP && !get.length) ask=vets(r.rosterId);       // a rebuild sells its veterans
+    if(getP && !give.length) offer=vets(me.rosterId);    // a contender buys them
+    const twoWay=(give.length||giveP||(getP&&offer.length)) && (get.length||getP||(giveP&&ask.length));
+    return { r:r, give:give, get:get, win:w, giveP:giveP, getP:getP, pr:pr,
+      ask:ask, offer:offer,
+      myPicks: giveP ? pickList(me.rosterId) : [], theirPicks: getP ? pickList(r.rosterId) : [],
+      score:(give.length&&get.length?100:0)+(twoWay?50:0)+gap+(giveP||getP?3:0) };
+  }).filter(function(f){ return (f.give.length||f.get.length||f.giveP||f.getP)
+      && (f.ask.length||f.offer.length||f.myPicks.length||f.theirPicks.length); })
     .sort(function(a,b){ return b.score-a.score || a.r.team.localeCompare(b.r.team); });
-  return { me:me, N:N, fits:fits };
+  return { me:me, N:N, fits:fits, myPR:myPR };
 }
 
 function renderSlpPartners(){
@@ -9724,6 +9759,7 @@ function renderSlpPartners(){
   const me=d.me, POS=['QB','RB','WR','TE'];
   const head='<div class="dl-tp-title">Best Trade Partners</div>'
     +'<p class="dl-tp-sub">Teams that are thin where you\u2019re deep, and deep where you\u2019re thin. '
+    +'Picks count too: rebuilding teams want them, contenders pay them. '
     +'Each team\u2019s two best players and the league\u2019s top '+(2*d.N)+' are left out as untouchable, and anyone outside the top '+(16*d.N)+' as too small to move.</p>';
   if(!d.fits.length) return head+'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin.</div>';
   const tagCls=function(t){ return /buy/.test(t)?'buy':/sell/.test(t)?'sell':'hold'; };
@@ -9735,22 +9771,41 @@ function renderSlpPartners(){
   };
   const swap=function(f){
     const g=f.give.join(' + '), h=f.get.join(' + ');
-    if(g&&h) return 'Your <b>'+g+'</b> depth for their <b>'+h+'</b> depth';
+    const gp=[], tp=[];
+    if(g) gp.push('<b>'+g+'</b> depth');
+    if(f.giveP) gp.push('<b>picks</b>');
+    if(f.getP && !g && f.offer.length) gp.push('<b>veterans</b>');
+    if(h) tp.push('<b>'+h+'</b> depth');
+    if(f.getP) tp.push('<b>picks</b>');
+    if(f.giveP && !h && f.ask.length) tp.push('<b>veterans</b>');
+    if(gp.length&&tp.length) return 'Your '+gp.join(' and ')+' for their '+tp.join(' and ');
     if(h) return 'They\u2019re deep at <b>'+h+'</b>, where you\u2019re thin';
-    return 'You\u2019re deep at <b>'+g+'</b>, where they\u2019re thin';
+    if(g) return 'You\u2019re deep at <b>'+g+'</b>, where they\u2019re thin';
+    return f.giveP ? 'They\u2019re rebuilding and you have <b>picks</b> to spare'
+                   : 'They\u2019re contending with <b>picks</b> to spend';
+  };
+  const pk=function(x){
+    const via=String(x.from)===String(x.own) ? ''
+      : String(x.from)===String(SLP.conn&&SLP.conn.rosterId) ? ' \u00b7 via You'
+      : (function(){ const rr=slpRosterById(x.from); return rr?' \u00b7 via '+slpEsc(slpTeamLabel(rr)):''; })();
+    return '<div class="dl-tp-pl dl-tp-pk"><span class="dl-tp-pn">'+x.season+' '+slpOrd(x.round)+'</span>'
+      +'<span class="dl-tp-pm">'+(x.tier?x.tier:'Pick')+via+'</span></div>';
   };
   const card=function(f){
     const r=f.r;
     const strip=POS.map(function(p){
       const on=f.give.indexOf(p)>=0||f.get.indexOf(p)>=0;
       return '<div class="dl-tp-rs'+(on?' on':'')+'"><b>'+p+'</b><span>You '+slpTpOrd(me.pos[p].rank)+'</span><span>Them '+slpTpOrd(r.pos[p].rank)+'</span></div>';
-    }).join('');
+    }).join('')
+      +'<div class="dl-tp-rs'+(f.giveP||f.getP?' on':'')+'"><b>Picks</b><span>You '+slpTpOrd(d.myPR)+'</span><span>Them '+slpTpOrd(f.pr)+'</span></div>';
+    const mine=f.myPicks.map(function(x){ return pk(Object.assign({own:me.rosterId},x)); }).join('');
+    const theirs=f.theirPicks.map(function(x){ return pk(Object.assign({own:r.rosterId},x)); }).join('');
     return '<div class="dl-tp-card">'
       +'<div class="dl-tp-hd"><span class="dl-tp-tm">'+slpEsc(r.team)+'</span><span class="dl-tp-win">'+f.win+'</span></div>'
       +'<div class="dl-tp-sw">'+swap(f)+'</div>'
       +'<div class="dl-tp-strip">'+strip+'</div>'
-      +(f.ask.length?'<div class="dl-tp-lab">Ask About</div>'+f.ask.map(pl).join(''):'')
-      +(f.offer.length?'<div class="dl-tp-lab">Could Offer</div>'+f.offer.map(pl).join(''):'')
+      +(f.ask.length||theirs?'<div class="dl-tp-lab">Ask About</div>'+f.ask.map(pl).join('')+theirs:'')
+      +(f.offer.length||mine?'<div class="dl-tp-lab">Could Offer</div>'+f.offer.map(pl).join('')+mine:'')
       +'<button class="dl-tp-cta" onclick="slpTradeWith('+slpEsc(JSON.stringify(r.rosterId))+')">Open In Trade Calc</button>'
       +'</div>';
   };
