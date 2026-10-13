@@ -1368,7 +1368,10 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-tp-seg button.on{background:var(--teal-tint);color:var(--teal-br)}
 .dl-tp-title{font-size:14px;font-weight:800;color:var(--paper)}
 .dl-tp-sub{font-size:11.5px;color:var(--fog);margin:3px 0 12px;line-height:1.45}
-.dl-tp-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:10px;max-width:560px}
+.dl-tp-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px;min-width:0}
+/* Desktop (owner, 13 Oct): one 560px column left the right side of the screen empty. The cards
+   now flow into as many columns as fit (three on a laptop, one on a phone), tops aligned. */
+.dl-tp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;align-items:start;margin-bottom:10px}
 .dl-tp-hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .dl-tp-tm{font-weight:800;font-size:14px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dl-tp-win{font-size:10px;font-weight:700;color:var(--sky);background:var(--sky-tint);padding:2px 8px;border-radius:10px;white-space:nowrap}
@@ -5895,7 +5898,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-10h</span>
+  <span class="foot-build">2026-10-13a</span>
 </footer>
 
 
@@ -9752,7 +9755,7 @@ function renderSlpPartners(){
       +'</div>';
   };
   const shown=SLP_TP_ALL?d.fits:d.fits.slice(0,3), more=d.fits.length-3;
-  return head+shown.map(card).join('')
+  return head+'<div class="dl-tp-grid">'+shown.map(card).join('')+'</div>'
     +(more>0?'<button class="dl-tp-more" onclick="slpTpMore()">'+(SLP_TP_ALL?'Show Fewer Teams':'Show '+more+' More Team'+(more===1?'':'s'))+'</button>':'');
 }
 
