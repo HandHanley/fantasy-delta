@@ -382,6 +382,12 @@ with cfbd.ApiClient(cfg) as api:
     TEAM_RET = collections.Counter()   # (team) -> season receiving TDs, all players (Dominator denom)
     TEAM_RY  = collections.Counter()   # (team) -> season rushing YARDS, all players (rush-Dominator denom)
     TEAM_RT  = collections.Counter()   # (team) -> season rushing TDs, all players (rush-Dominator denom)
+    # PER-GAME team totals (13 Oct 2026, Role Score / college Role Changes): the same box
+    # scores, kept by game instead of only summed for the season. (team, week) -> carries,
+    # receptions, receiving yards, all players. No extra API calls. Written onto each
+    # player's game row as tc / tr / ty so the app can compute his share of that game.
+    # Note: college box scores count sacks as QB carries, so tc includes them.
+    TEAM_G = collections.defaultdict(collections.Counter)
     # Range starts at ZERO. Week 0 is a real CFBD designation, not a media label:
     # the season-opening slate (the Dublin game, the other late-August openers) is
     # filed under week 0, a week before "week 1". Looping from 1 dropped those games
@@ -417,6 +423,7 @@ with cfbd.ApiClient(cfg) as api:
                                     elif ck == "ret": TEAM_RET[tname] += s
                                     elif ck == "ry":  TEAM_RY[tname]  += s
                                     elif ck == "rt":  TEAM_RT[tname]  += s
+                                    if ck in ("car", "rec", "rey"): TEAM_G[(tname, wk)][ck] += s
                                 except (TypeError, ValueError): pass
                             aid = g(ath, "id")
                             v = by_id.get(str(aid)) if aid is not None else None
@@ -429,6 +436,7 @@ with cfbd.ApiClient(cfg) as api:
                                 MATCH["by_id"] += 1
                             if v is None: continue
                             row = v["g"].setdefault(wk, {"w": wk, "opp": opp})
+                            row.setdefault("_t", tname)   # which team's totals this game uses; removed before emit
                             row[ck] = g(ath, "stat")
 
     tot = sum(MATCH.values()) or 1
@@ -458,6 +466,18 @@ TEAM_REY_TOTAL = dict(TEAM_REY)   # Dominator denominator: team season receiving
 TEAM_RET_TOTAL = dict(TEAM_RET)   # Dominator denominator: team season receiving TDs
 TEAM_RY_TOTAL  = dict(TEAM_RY)    # rush-Dominator denominator: team season rushing yards
 TEAM_RT_TOTAL  = dict(TEAM_RT)    # rush-Dominator denominator: team season rushing TDs
+
+# Per-game team totals onto each game row (see TEAM_G). A week the team total is missing or
+# zero writes nothing, so the app treats that game as "share unknown", never as 0%.
+_tg_rows = 0
+for v in ply.values():
+    for row in v["g"].values():
+        t = TEAM_G.get((row.pop("_t", None), row.get("w")))
+        if not t: continue
+        for src, dst in (("car", "tc"), ("rec", "tr"), ("rey", "ty")):
+            if t.get(src, 0) > 0: row[dst] = int(t[src])
+        _tg_rows += 1
+print(f"  per-game team totals written on {_tg_rows:,} player-game rows")
 
 # Team talent percentile (0-1) across all FBS teams with 247 talent data — the dDOM
 # competition-strength axis. Median team lands at ~0.5 (=> no dDOM adjustment).
