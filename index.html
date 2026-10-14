@@ -4718,6 +4718,12 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-14-roles', d:'14 Oct 2026', t:'Role Changes', tab:'roles',
+   b:"Who is on the field more, and less, than early in the season. Every running back, receiver and tight end whose share of his team's snaps has moved, with the week-by-week line so you can see the shape. Facts, not calls. NFL &rsaquo; Role Changes."},
+  {id:'2026-10-14-cfbroles', d:'14 Oct 2026', t:'College Role Changes', tab:'cfbroles',
+   b:"The same idea for college, built on a new Role Score: how much of his team's offense goes through a player each game. Includes New To A Big Role, the players who have just become someone worth knowing. Power 4 by default. College &rsaquo; Role Changes."},
+  {id:'2026-10-14-tidy', d:'14 Oct 2026', t:'A Tidier Menu', tab:'rankings',
+   b:"Fewer tabs, nothing removed. Projections, EPA Insights and Contracts are now views of Rankings: use the View switch above the board. Trade Calc has moved to My Team, beside Trade Partners. Prospects is now the 2026 class on the Big Board."},
   {id:'2026-10-10-partners', d:'10 Oct 2026', t:'Trade Partners', pill:'partners',
    b:"Which teams in your league should you actually call? Trade Partners finds the teams that are thin where you're deep and deep where you're thin, then names players worth asking about and players you could offer, leaving out the untouchable stars and the players too small to move. One tap loads both rosters into the Trade Calc. My Team &rsaquo; Trade Partners."},
   {id:'2026-09-26-scorecard', d:'26 Sep 2026', t:'Scorecard', tab:'scorecard',
@@ -4783,7 +4789,11 @@ function dlNewsPaint(){
     b.appendChild(dot);
   };
   un.forEach(function(n){
-    if(n.tab){ const b=dlTabBtn(n.tab); if(b) dotOn(b); }
+    if(n.tab){ const b=dlTabBtn(n.tab); if(b) dotOn(b);
+      // A tab in another section also dots that section's button (14 Oct 2026), or a reader
+      // on NFL would never see that College has something new. Retires with the tab's entry.
+      const sec=typeof SEC_OF!=='undefined'&&SEC_OF[n.tab];
+      if(sec && sec!=='nfl') document.querySelectorAll('.seg-btn[data-sec="'+sec+'"],.eb-btn[data-sec="'+sec+'"]').forEach(function(x){ if(!x.classList.contains('dl-nw-hastab')) dotOn(x); }); }
     // An arm lives in BOTH switchers (phone bar and desktop row); dot each.
     if(n.arm) document.querySelectorAll('[data-arm="'+n.arm+'"]').forEach(dotOn);
     if(n.pill){
@@ -6273,7 +6283,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-14c</span>
+  <span class="foot-build">2026-10-14d</span>
 </footer>
 
 
