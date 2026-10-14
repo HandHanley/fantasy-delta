@@ -1442,6 +1442,25 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-rc-none{font-size:12px;color:var(--fog-2);padding:10px 0}
 .dl-rc-how{margin-top:18px;border-top:1px solid var(--line);padding-top:10px;font-size:11px;color:var(--fog-2);line-height:1.5}
 .dl-rc-how b{color:var(--fog)}
+
+/* College Role Changes (14 Oct 2026): the NFL board's cards plus a position switch,
+   a Power 4 / All Schools switch and a New To A Big Role section. Prefixed dl-crc-. */
+.dl-crc-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.dl-crc-ctl .dl-rc-chips{margin:0}
+.dl-crc-pos{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.dl-crc-pos button{padding:7px 18px;border:none;border-radius:7px;background:transparent;color:var(--fog);font-family:inherit;
+  font-size:11.5px;font-weight:700;cursor:pointer}
+.dl-crc-pos button.on{background:var(--teal-tint);color:var(--teal-br)}
+.dl-crc-hd{display:flex;justify-content:space-between;gap:8px;align-items:center;min-width:0}
+.dl-crc-bb{font-size:9.5px;font-weight:800;color:var(--sky);background:var(--sky-tint);padding:2px 7px;border-radius:9px;white-space:nowrap}
+.dl-crc-conf{color:var(--fog)}
+.dl-crc-sec{display:flex;justify-content:space-between;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper);margin:0 0 4px}
+.dl-crc-sec span{color:var(--fog-2);font-family:var(--mono);letter-spacing:0;font-weight:500}
+.dl-crc-secsub{font-size:11.5px;color:var(--fog);margin:0 0 9px}
+.dl-crc-new{margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.dl-crc-new .dl-rc-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+@media(max-width:700px){ .dl-crc-new .dl-rc-grid{grid-template-columns:1fr} }
 @media(max-width:700px){
   .dl-rc-seg{display:flex}
   .dl-rc-cols{display:block}
@@ -1664,6 +1683,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
   <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
+  <button data-tab="cfbroles" data-sec="cfb" class="tab" onclick="showTab('cfbroles',this)">Role Changes</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
   <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
@@ -1728,6 +1748,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       </optgroup>
       <optgroup label="College">
         <option value="college">College Rankings</option>
+        <option value="cfbroles">College Role Changes</option>
         <option value="portal">Transfer Portal</option>
         <option value="bigboard">Big Board</option>
         <option value="rookies">Prospects</option>
@@ -4072,7 +4093,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','projections','roles','scorecard','trade','epa','contracts','audit'],
-                 cfb:['college','portal','bigboard','rookies'],
+                 cfb:['college','cfbroles','portal','bigboard','rookies'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
@@ -4123,7 +4144,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -4323,6 +4344,71 @@ function renderRoles(){
     +'moves of '+RC_MIN_MOVE+' points or more. Bars are his share of the offense\u2019s snaps each week, the last three in colour. Quarterbacks are left out.</div>';
 }
 
+/* ── COLLEGE ROLE CHANGES (14 Oct 2026) ─────────────────────────────────────
+   Draws data/college-roles.json, built by scripts/build-college-roles.js in the college
+   workflow (all the maths lives there). Role Score = share of his team's offense per game,
+   0-100; early = middle of first three games, recent = middle of last three. Power 4 by
+   default with an All Schools switch (owner, 14 Oct). Facts, never a call. */
+let CRC_DATA=null, CRC_LOADING=null, CRC_POS='WR', CRC_P4=true, CRC_SIDE='up', CRC_ALL={};
+function crcCard(x,dir){
+  const n=x.wk.length;
+  const bars=x.wk.map((w,i)=>'<div class="dl-rc-bc"><div class="dl-rc-b'+(i>=n-3?' '+dir:'')+'" style="height:'+Math.max(2,w[1])+'%"><span>'+w[1]+'</span></div><i>W'+w[0]+'</i></div>').join('');
+  const lines=(x.lines||[]).map(l=>rcEsc(l[0])+' <b>'+l[1]+'% \u2192 '+l[2]+'%</b>').join(' &nbsp;\u00b7&nbsp; ');
+  return '<div class="dl-rc-card" data-name="'+rcEsc(x.n)+'" onclick="location.href=cfbNflHref(this.dataset.name)">'
+    +'<div class="dl-crc-hd"><div class="dl-rc-nm">'+rcEsc(x.n)+'</div>'+(x.bb?'<span class="dl-crc-bb">Big Board #'+x.bb+'</span>':'')+'</div>'
+    +'<div class="dl-rc-meta">'+x.pos+' \u00b7 '+rcEsc(x.tm)+(x.cls?' \u00b7 '+x.cls:'')+(x.p4?'':' \u00b7 <span class="dl-crc-conf">'+rcEsc(x.conf)+'</span>')+'</div>'
+    +'<div class="dl-rc-big">'+x.e+'<span class="ar">\u2192</span><span class="'+dir+'">'+x.r+'</span></div>'
+    +'<div class="dl-rc-of">Role Score, early vs his last three games</div>'
+    +'<div class="dl-rc-bars" role="img" aria-label="Role Score by week: '+x.wk.map(w=>'Week '+w[0]+' '+w[1]).join(', ')+'">'+bars+'</div>'
+    +(lines?'<div class="dl-rc-sub">'+lines+'</div>':'')+'</div>';
+}
+function crcSet(k,v){ if(k==='pos'){ CRC_POS=v; CRC_ALL={}; } if(k==='p4'){ CRC_P4=v; CRC_ALL={}; } if(k==='side') CRC_SIDE=v; if(k==='all') CRC_ALL[v]=true; renderCfbRoles(); }
+function openCfbRolesTab(){
+  const root=document.getElementById('crc-root'); if(!root) return;
+  if(CRC_DATA){ renderCfbRoles(); return; }
+  root.innerHTML='<div class="dl-rc-none">Loading college Role Changes\u2026</div>';
+  if(!CRC_LOADING) CRC_LOADING=fetch('./data/college-roles.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():Promise.reject('college-roles '+r.status))
+    .then(d=>{ CRC_DATA=d; renderCfbRoles(); })
+    .catch(e=>{ console.warn('cfbroles',e); CRC_LOADING=null;
+      root.innerHTML='<div class="dl-rc-none">College Role Changes could not load. Try again in a moment.</div>'; });
+}
+function renderCfbRoles(){
+  const root=document.getElementById('crc-root'), d=CRC_DATA; if(!root||!d) return;
+  const S=(d.pos&&d.pos[CRC_POS])||{new:[],up:[],dn:[]};
+  const f=L=>(L||[]).filter(x=>!CRC_P4||x.p4);
+  const nw=f(S.new), up=f(S.up), dn=f(S.dn);
+  const phone=!!(window.matchMedia&&window.matchMedia('(max-width:700px)').matches);   // shorter lists on a phone
+  const lim=(k,dflt)=>CRC_ALL[k]?Infinity:(phone?4:dflt);
+  const more=(k,L,show)=>L.length>show?'<button type="button" class="dl-rc-more" onclick="crcSet(\'all\',\''+k+'\')">Show all '+L.length+'</button>':'';
+  const plural=n=>n+(n===1?' player':' players');
+  const col=(L,dir,lab)=>{ const show=lim(dir,6);
+    return '<div class="dl-rc-col'+(CRC_SIDE===dir?' on':'')+'"><div class="dl-rc-colh '+dir+'">'+lab+'<span>'+plural(L.length)+'</span></div>'
+      +(L.length?'<div class="dl-rc-grid">'+L.slice(0,show).map(x=>crcCard(x,dir)).join('')+'</div>':'<div class="dl-rc-none">No one yet.</div>')+more(dir,L,show)+'</div>'; };
+  const posName={RB:'running backs',WR:'receivers',TE:'tight ends'}[CRC_POS];
+  const showN=lim('new',8);
+  const how=CRC_POS==='RB'
+    ?'For a running back it is mostly his share of the team\u2019s carries, plus his share of its catches; 100 is about half the carries.'
+    :CRC_POS==='WR'?'For a receiver it is his share of the team\u2019s catches and of its receiving yards; 100 is about a third of the catches and 40% of the yards.'
+    :'For a tight end it is his share of the team\u2019s catches and of its receiving yards; 100 is about a quarter of each.';
+  root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
+    +'<div class="dl-rc-intro">Who is getting more, and less, of his team\u2019s offense than early in the season.</div>'
+    +'<div class="dl-crc-ctl"><div class="dl-crc-pos" role="tablist" aria-label="Position">'+['RB','WR','TE'].map(v=>'<button type="button" role="tab" class="'+(CRC_POS===v?'on':'')+'" aria-selected="'+(CRC_POS===v)+'" onclick="crcSet(\'pos\',\''+v+'\')">'+v+'</button>').join('')+'</div>'
+    +'<div class="dl-rc-chips" role="group" aria-label="Schools">'
+      +'<button type="button" class="dl-rc-chip'+(CRC_P4?' on':'')+'" aria-pressed="'+CRC_P4+'" onclick="crcSet(\'p4\',true)">Power 4</button>'
+      +'<button type="button" class="dl-rc-chip'+(!CRC_P4?' on':'')+'" aria-pressed="'+(!CRC_P4)+'" onclick="crcSet(\'p4\',false)">All Schools</button></div></div>'
+    +'<div class="dl-crc-new"><div class="dl-crc-sec">New To A Big Role<span>'+plural(nw.length)+'</span></div>'
+    +'<div class="dl-crc-secsub">Now among the top quarter of '+posName+' for Role Score. Weren\u2019t early this season, or last season.</div>'
+    +(nw.length?'<div class="dl-rc-grid">'+nw.slice(0,showN).map(x=>crcCard(x,'up')).join('')+'</div>':'<div class="dl-rc-none">No one yet.</div>')+more('new',nw,showN)+'</div>'
+    +'<div class="dl-rc-seg" role="tablist" aria-label="Direction">'
+      +'<button type="button" role="tab" class="up'+(CRC_SIDE==='up'?' on':'')+'" aria-selected="'+(CRC_SIDE==='up')+'" onclick="crcSet(\'side\',\'up\')">Playing More \u00b7 '+up.length+'</button>'
+      +'<button type="button" role="tab" class="dn'+(CRC_SIDE==='dn'?' on':'')+'" aria-selected="'+(CRC_SIDE==='dn')+'" onclick="crcSet(\'side\',\'dn\')">Playing Less \u00b7 '+dn.length+'</button></div>'
+    +'<div class="dl-rc-cols">'+col(up,'up','Playing More')+col(dn,'dn','Playing Less')+'</div>'
+    +'<div class="dl-rc-how"><b>Role Score</b> is how much of his team\u2019s offense goes through him in a game, 0 to 100. '+how
+    +' Early is the middle of his first three games, Recent the middle of his last three, so one odd game can\u2019t move it on its own; college games still swing more than NFL games, and the bars show it. '
+    +(d.min_games||5)+'+ games; moves of '+(d.min_move||20)+' or more. Big Board players always count; players outside the Power 4 count once they reach the top quarter.</div>';
+}
+
 function scSetSort(v){ SC_SORT=v; renderScorecard(); }
 function scSetPos(v){ SC_POS=v; renderScorecard(); }
 function renderScorecard(){
@@ -4444,6 +4530,7 @@ function showTab(id,el,skipSection){
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
+  if(id==='cfbroles' && typeof openCfbRolesTab==='function'){ try{ openCfbRolesTab(); }catch(e){ console.warn('cfbroles',e); } }
   if(id==='portal' && typeof openPortalTab==='function'){ try{ openPortalTab(); }catch(e){ console.warn('portal',e); } }
   if(id==='watchlist' && typeof openWatchlistTab==='function'){ try{ openWatchlistTab(); }catch(e){ console.warn('watchlist',e); } }
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
@@ -5858,6 +5945,8 @@ document.addEventListener('click', function(e) {
     <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2DD4BF" flood-opacity="0.35"/>
   </filter>
 </defs></svg>
+<div id="panel-cfbroles" class="panel"><div id="crc-root"></div></div>
+
 <div id="panel-portal" class="panel">
   <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Who moved, and what changed</div></div></div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
@@ -6036,7 +6125,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-13c</span>
+  <span class="foot-build">2026-10-14a</span>
 </footer>
 
 
