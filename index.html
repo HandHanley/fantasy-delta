@@ -1699,7 +1699,6 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="cfbroles" data-sec="cfb" class="tab" onclick="showTab('cfbroles',this)">Role Changes</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
-  <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
@@ -1764,7 +1763,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
         <option value="cfbroles">College Role Changes</option>
         <option value="portal">Transfer Portal</option>
         <option value="bigboard">Big Board</option>
-        <option value="rookies">Prospects</option>
+        <option value="rookies">Big Board · 2026 Drafted</option>
       </optgroup>
       <optgroup label="My Team">
         <option value="myteam">Roster</option>
@@ -2781,6 +2780,32 @@ function rkPaintView(render){
   if(!render) return;
   if(ct){ if(typeof renderContracts==='function') renderContracts(); }
   else if(typeof renderRankings==='function' && typeof COMP!=='undefined' && COMP.length) renderRankings();
+}
+
+/* ── BIG BOARD CLASSES (14 Oct 2026, owner) ────────────────────────────────
+   "board" = the live consensus board for the next class (devy-board.json); "drafted" = the class
+   just drafted, with DELTA's Prospect Scores (PROSPECTS_2026), formerly the Prospects tab. */
+let BB_CLASS='board';
+function dlTabAlias(id){
+  if(id==='rankings' && typeof rkViewAlias==='function') return rkViewAlias();
+  if(id==='bigboard' && BB_CLASS==='drafted') return 'rookies';
+  return id;
+}
+function bbSetClass(c){
+  BB_CLASS=c==='drafted'?'drafted':'board';
+  try{ syncTabUrl(dlTabAlias('bigboard')); dlPref('delta_lasttab',dlTabAlias('bigboard')); }catch(e){}
+  bbPaintClass();
+}
+function bbPaintClass(){
+  const d=BB_CLASS==='drafted', $=id=>document.getElementById(id);
+  document.querySelectorAll('#bb-classes button').forEach(b=>{ const on=b.dataset.bbc===BB_CLASS; b.classList.toggle('on',on); b.setAttribute('aria-selected',on?'true':'false'); });
+  if(typeof DEVY!=='undefined' && DEVY && DEVY.class && $('bb-class-cur')) $('bb-class-cur').textContent=DEVY.class;
+  if($('bb-board')) $('bb-board').hidden=d;
+  if($('bb-about')) $('bb-about').style.display=d?'none':'';
+  if($('bb-drafted')) $('bb-drafted').hidden=!d;
+  if($('devy-title')) $('devy-title').textContent=d?'2026 Class \u00b7 Prospect Scores':'Consensus Big Board';
+  if(d){ if(typeof renderProspects==='function') renderProspects(); }
+  else if(typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
 }
 
 function rkCols(){
@@ -4189,12 +4214,13 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','roles','scorecard','audit'],
-                 cfb:['college','cfbroles','portal','bigboard','rookies'],
+                 cfb:['college','cfbroles','portal','bigboard'],
                  me: ['myteam','trade','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
 // The three old NFL tabs are now views of Rankings (14 Oct 2026); their ids still link there.
 ['projections','epa','contracts'].forEach(id=>SEC_OF[id]='nfl');
+SEC_OF.rookies='cfb';   // Prospects is the Big Board's drafted class now (14 Oct 2026)
 // Engine Audit stays gated behind ?dev; College is public — a visible College section
 // already announces itself, so hiding its contents bought nothing.
 const DL_LOCKED=new Set(['audit']);
@@ -4254,6 +4280,7 @@ function applyLanding(){
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
   }
   if(target && RK_VIEW_OF[target]){ rkSetView(RK_VIEW_OF[target],{noUrl:true,noRender:true}); target='rankings'; }
+  if(target==='rookies'){ BB_CLASS='drafted'; target='bigboard'; }
   if(target&&DL_TABS.indexOf(target)>=0){
     const b=dlTabBtn(target);
     if(b){
@@ -4285,7 +4312,7 @@ function applyLanding(){
       try{
         const active = document.querySelector('.tab.active');
         let id = active && active.dataset ? active.dataset.tab : null;
-        if(id==='rankings') id = rkViewAlias();
+        if(id) id = dlTabAlias(id);
         if(id){
           const u = new URL(location.href);
           if(u.searchParams.get('tab') !== id){
@@ -4321,6 +4348,7 @@ window.addEventListener('popstate', function(ev){
     const id = (ev.state && ev.state.tab) || new URLSearchParams(location.search).get('tab');
     if(!id || typeof DL_TABS==='undefined' || DL_TABS.indexOf(id)<0) return;
     if(id==='rankings') rkSetView('dyn',{noUrl:true,noRender:true});   // back to the plain board
+    if(id==='bigboard') BB_CLASS='board';
     const b = dlTabBtn(id);
     const was = _urlSyncReady; _urlSyncReady = false;   // do not re-push while restoring
     showTab(id, b);
@@ -4604,6 +4632,7 @@ function renderScorecard(){
     +'<tbody>'+(rows||'<tr><td colspan="9" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
 }
 function showTab(id,el,skipSection){
+  if(id==='rookies'){ BB_CLASS='drafted'; id='bigboard'; el=dlTabBtn('bigboard'); }   // old Prospects id
   if(typeof RK_VIEW_OF!=='undefined' && RK_VIEW_OF[id]){        // an old tab id: Rankings, in that view
     rkSetView(RK_VIEW_OF[id],{noUrl:true,noRender:true}); id='rankings'; el=dlTabBtn('rankings');
   }
@@ -4613,10 +4642,10 @@ function showTab(id,el,skipSection){
     setSection(SEC_OF[id], id); return;
   }
   try{
-    if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id==='rankings'?rkViewAlias():id);
+    if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',dlTabAlias(id));
     if(SEC_OF[id]) dlPref('delta_lasttab2_'+SEC_OF[id],id);
   }catch(e){}
-  syncTabUrl(id==='rankings'?rkViewAlias():id);
+  syncTabUrl(dlTabAlias(id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pnl=document.getElementById('panel-'+id); if(pnl) pnl.classList.add('active');
@@ -4632,7 +4661,7 @@ function showTab(id,el,skipSection){
   if(id==='contracts')renderContracts();
   if(id==='scorecard')openScorecardTab();
   if(id==='roles' && typeof openRolesTab==='function'){ try{ openRolesTab(); }catch(e){ console.warn('roles',e); } }
-  if(id==='rookies')renderProspects();   // default to ALL instead of blank
+  if(id==='bigboard'){ try{ bbPaintClass(); }catch(e){} }
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
   if(id==='myteam' && typeof openMyTeamTab==='function')openMyTeamTab();
@@ -5501,7 +5530,7 @@ function getPosColor(pos) {
 }
 
 function filterRookies(pos, btn) {
-  document.querySelectorAll('.pos-filter-btn').forEach(b=>b.classList.remove('active'));
+  (btn.parentElement||document).querySelectorAll('.pos-filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderRookieBoard(pos);
 }
@@ -5787,7 +5816,16 @@ document.addEventListener('click', function(e) {
     </div>
   </div>
 
-  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">
+  <!-- CLASS SWITCH (14 Oct 2026, owner): Prospects was its own tab for the class just drafted.
+       It is the Big Board's previous class now. ?tab=rookies still lands here, on that class. -->
+  <div class="dl-rk-views" id="bb-classes">
+    <span class="dl-rk-views-l">Class</span>
+    <div class="dl-rk-vseg" role="tablist" aria-label="Draft Class">
+      <button type="button" role="tab" data-bbc="board" class="on" aria-selected="true" onclick="bbSetClass('board')"><span id="bb-class-cur">2027</span> · Big Board</button>
+      <button type="button" role="tab" data-bbc="drafted" aria-selected="false" onclick="bbSetClass('drafted')">2026 · Drafted</button>
+    </div>
+  </div>
+  <details class="cfb-about" id="bb-about"><summary>About</summary><div class="cfb-about-body">
   <div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     If you are not going to comb through 900 college players, start here. The order is the
     <strong style="color:var(--sky)">consensus big board</strong>, compiled by hand from publicly published boards.
@@ -5841,12 +5879,7 @@ document.addEventListener('click', function(e) {
     }
     @media(min-width:1250px){ .bb-mid{gap:26px} }
   </style>
-  <div id="devy-filters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
-  <div id="devy-body"><div style="color:var(--fog-2);font-size:12px;padding:10px 0">Loading…</div></div>
-</div>
-
-<div id="panel-rookies" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
+  <div id="bb-drafted" hidden>
 
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body"><div style="background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--fog);line-height:1.6">
     <strong style="color:var(--sky)">DELTA Prospect Score</strong> — Pre-landing model using draft capital (40pts), consensus big board tier (30pts), age/dynasty runway (20pts), and combine athleticism (10pts). Landing spot will significantly alter final dynasty value. Scores update automatically when draft picks are confirmed.
@@ -5859,6 +5892,15 @@ document.addEventListener('click', function(e) {
     <button class="pos-filter-btn" onclick="filterRookies('TE',this)">TE</button>
   </div>
   <div id="rookie-board"></div>
+  </div>
+  <div id="bb-board">
+  <div id="devy-filters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
+  <div id="devy-body"><div style="color:var(--fog-2);font-size:12px;padding:10px 0">Loading…</div></div>
+  </div>
+</div>
+
+<div id="panel-rookies" class="panel">
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
 </div>
 
 <!-- About DELTA modal -->
@@ -6231,7 +6273,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-14b</span>
+  <span class="foot-build">2026-10-14c</span>
 </footer>
 
 
