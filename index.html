@@ -1398,6 +1398,59 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-tp-cta:hover{background:var(--teal-soft)}
 .dl-tp-more{background:none;border:none;padding:4px 0;color:var(--sky);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
 
+/* -- Role Changes (13 Oct 2026) --------------------------------------------
+   Who is on the field more, and less, than early in the season. Facts, never a call:
+   the market already prices playing time (backlog 5.3), so no emerald or coral here.
+   Direction uses the Scorecard's pair: sky = more, violet = less. Prefixed dl-rc-. */
+.dl-rc-title{font-size:15px;font-weight:800;color:var(--paper)}
+.dl-rc-intro{font-size:12.5px;color:var(--fog);margin:3px 0 12px;line-height:1.45}
+.dl-rc-chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.dl-rc-chip{font-size:11px;font-weight:700;color:var(--fog);border:1px solid var(--line);border-radius:14px;padding:6px 12px;
+  background:transparent;font-family:inherit;cursor:pointer}
+.dl-rc-chip.on{color:var(--paper);border-color:var(--fog-2)}
+.dl-rc-seg{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;margin-bottom:12px}
+.dl-rc-seg button{flex:1;padding:8px 4px;border:none;border-radius:7px;background:transparent;color:var(--fog);
+  font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.dl-rc-seg button.on.up{background:var(--sky-tint);color:var(--sky)}
+.dl-rc-seg button.on.dn{background:var(--violet-tint);color:var(--violet)}
+.dl-rc-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.dl-rc-colh{display:flex;justify-content:space-between;align-items:baseline;font-size:10px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;margin:0 0 8px}
+.dl-rc-colh.up{color:var(--sky)}
+.dl-rc-colh.dn{color:var(--violet)}
+.dl-rc-colh span{color:var(--fog-2);font-family:var(--mono);letter-spacing:0;font-weight:500}
+.dl-rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.dl-rc-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0;cursor:pointer}
+.dl-rc-card:hover .dl-rc-nm{color:var(--teal-br)}
+.dl-rc-nm{font-weight:800;font-size:13.5px;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-rc-meta{font-weight:600;font-size:11px;color:var(--fog-2);margin-top:1px}
+.dl-rc-big{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--paper);margin:7px 0 0;line-height:1.1}
+.dl-rc-big .ar{color:var(--fog-2);font-weight:400;margin:0 3px}
+.dl-rc-big .up{color:var(--sky)}
+.dl-rc-big .dn{color:var(--violet)}
+.dl-rc-of{font-size:11px;color:var(--fog-2);margin-top:2px}
+.dl-rc-bars{display:flex;gap:4px;height:62px;align-items:flex-end;padding-top:13px;margin-top:4px}
+.dl-rc-bc{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.dl-rc-b{background:var(--line);border-radius:3px 3px 0 0;position:relative;min-height:2px}
+.dl-rc-b.up{background:var(--sky)}
+.dl-rc-b.dn{background:var(--violet)}
+.dl-rc-b span{position:absolute;top:-13px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;color:var(--fog-2)}
+.dl-rc-bc i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--fog-2);text-align:center;margin-top:3px}
+.dl-rc-sub{font-size:11px;color:var(--fog-2);margin-top:7px}
+.dl-rc-sub b{color:var(--fog);font-family:var(--mono);font-weight:500}
+.dl-rc-more{background:none;border:none;padding:8px 0 0;color:var(--sky);font-weight:700;font-size:12px;font-family:inherit;cursor:pointer}
+.dl-rc-none{font-size:12px;color:var(--fog-2);padding:10px 0}
+.dl-rc-how{margin-top:18px;border-top:1px solid var(--line);padding-top:10px;font-size:11px;color:var(--fog-2);line-height:1.5}
+.dl-rc-how b{color:var(--fog)}
+@media(max-width:700px){
+  .dl-rc-seg{display:flex}
+  .dl-rc-cols{display:block}
+  .dl-rc-col{display:none}
+  .dl-rc-col.on{display:block}
+  .dl-rc-colh{display:none}
+  .dl-rc-grid{grid-template-columns:1fr}
+}
+
 /* ── League Trade Ledger ──────────────────────────────────────
    All new classes, prefixed dl-lg-. Nothing here restyles a shared class and
    nothing sits inside a media query — checked at brace depth 0 so these apply
@@ -1605,6 +1658,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button data-tab="projections" data-sec="nfl" class="tab" onclick="showTab('projections',this)">Projections</button>
+  <button data-tab="roles" data-sec="nfl" class="tab" onclick="showTab('roles',this)">Role Changes</button>
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="trade" data-sec="nfl" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
@@ -1667,6 +1721,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <optgroup label="NFL">
         <option value="rankings">Rankings (default)</option>
         <option value="projections">Projections</option>
+        <option value="roles">Role Changes</option>
         <option value="epa">EPA Insights</option>
         <option value="contracts">Contracts</option>
         <option value="trade">Trade Calc</option>
@@ -1898,6 +1953,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     <tbody id="proj-body"></tbody>
   </table></div>
 </div>
+
+<div id="panel-roles" class="panel"><div id="rc-root"></div></div>
 
 <div id="panel-scorecard" class="panel"><div id="sc-root"></div></div>
 
@@ -4014,7 +4071,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','projections','scorecard','trade','epa','contracts','audit'],
+const SEC_TABS={ nfl:['rankings','projections','roles','scorecard','trade','epa','contracts','audit'],
                  cfb:['college','portal','bigboard','rookies'],
                  me: ['myteam','watchlist'] };
 const SEC_OF={};
@@ -4066,7 +4123,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','scorecard','trade','epa','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -4188,6 +4245,84 @@ function scDb(pre,act,max){
     +'<line x1="'+x(pre)+'" y1="7" x2="'+x(act)+'" y2="7" stroke="'+c+'" stroke-width="3"></line>'
     +'<circle class="pj" cx="'+x(pre)+'" cy="7" r="4"></circle><circle cx="'+x(act)+'" cy="7" r="4.5" fill="'+c+'"></circle></svg>';
 }
+/* ── ROLE CHANGES (13 Oct 2026) ─────────────────────────────────────────────
+   Share of the offense's snaps, early in the season vs now, from game-logs.json (snp).
+   Early = median of his first three games, Recent = median of his last three, so a single
+   odd game (an injury exit, a blowout) cannot put a player on the board by itself.
+   Only games for his CURRENT team count (a traded player starts over), 5+ of them.
+   QBs left out (owner, 13 Oct): a QB's snap share is all or nothing.
+   A move of 15+ points of snap share is shown. Facts, never a call (backlog 5.3). */
+const RC_MIN_GAMES=5, RC_MIN_MOVE=15, RC_SHOW=6;
+let RC_POS='ALL', RC_SIDE='up', RC_ALL={up:false,dn:false};
+function rcEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function rcMed(a){ const b=a.slice().sort((x,y)=>x-y), m=b.length>>1; return b.length%2?b[m]:(b[m-1]+b[m])/2; }
+function rcRows(){
+  if(typeof GAMELOGS==='undefined'||!GAMELOGS) return [];
+  const byN={}; (typeof COMP!=='undefined'?COMP:[]).forEach(p=>byN[p.n]=p);
+  const out=[];
+  for(const n in GAMELOGS){
+    const p=byN[n]; if(!p||['RB','WR','TE'].indexOf(p.pos)<0) continue;
+    let g=GAMELOGS[n].filter(x=>x.s===SEASON_YEAR&&!x.up&&!x.dnp&&x.snp!=null).sort((a,b)=>a.w-b.w);
+    if(!g.length) continue;
+    let cur=null; for(let i=g.length-1;i>=0;i--){ if(g[i].tm){ cur=g[i].tm; break; } }
+    g=g.filter(x=>(x.tm||cur)===cur);
+    if(g.length<RC_MIN_GAMES) continue;
+    const E=g.slice(0,3), R=g.slice(-3);
+    const e=Math.round(100*rcMed(E.map(x=>x.snp))), r=Math.round(100*rcMed(R.map(x=>x.snp)));
+    let sub='';
+    if(p.pos==='RB'){
+      const t=G=>Math.round(rcMed(G.map(x=>(x.car||0)+(x.tgt||0))));
+      sub='Touches a game <b>'+t(E)+' \u2192 '+t(R)+'</b>';
+    } else {
+      const sh=G=>{ const v=G.filter(x=>x.tt).map(x=>x.tgt/x.tt); return v.length?Math.round(100*rcMed(v)):null; };
+      const a=sh(E), b=sh(R); if(a!=null&&b!=null) sub='Target share <b>'+a+'% \u2192 '+b+'%</b>';
+    }
+    out.push({n, pos:p.pos, tm:cur||p.t||'', e, r, ch:r-e, sub, wk:g.map(x=>[x.w,Math.round(100*x.snp)])});
+  }
+  return out;
+}
+function rcCard(x){
+  const dir=x.ch>0?'up':'dn', n=x.wk.length;
+  const bars=x.wk.map((w,i)=>'<div class="dl-rc-bc"><div class="dl-rc-b'+(i>=n-3?' '+dir:'')+'" style="height:'+Math.max(2,w[1])+'%"><span>'+w[1]+'</span></div><i>W'+w[0]+'</i></div>').join('');
+  return '<div class="dl-rc-card" data-name="'+rcEsc(x.n)+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
+    +'<div class="dl-rc-nm">'+rcEsc(x.n)+'</div><div class="dl-rc-meta">'+x.pos+' \u00b7 '+rcEsc(x.tm)+'</div>'
+    +'<div class="dl-rc-big">'+x.e+'%<span class="ar">\u2192</span><span class="'+dir+'">'+x.r+'%</span></div>'
+    +'<div class="dl-rc-of">of his team\u2019s snaps, early vs his last three games</div>'
+    +'<div class="dl-rc-bars" role="img" aria-label="Snap share by week: '+x.wk.map(w=>'Week '+w[0]+' '+w[1]+'%').join(', ')+'">'+bars+'</div>'
+    +(x.sub?'<div class="dl-rc-sub">'+x.sub+'</div>':'')+'</div>';
+}
+function rcSetPos(v){ RC_POS=v; RC_ALL={up:false,dn:false}; renderRoles(); }
+function rcSetSide(v){ RC_SIDE=v; renderRoles(); }
+function rcShowAll(v){ RC_ALL[v]=true; renderRoles(); }
+function openRolesTab(){
+  const root=document.getElementById('rc-root'); if(!root) return;
+  if(typeof START_DATA_STATE!=='undefined'&&START_DATA_STATE==='loaded'){ renderRoles(); return; }
+  root.innerHTML='<div class="dl-rc-none">Loading this season\u2019s games\u2026</div>';
+  ensureStartData().then(()=>renderRoles()).catch(()=>{ root.innerHTML='<div class="dl-rc-none">Game data could not load. Try again in a moment.</div>'; });
+}
+function renderRoles(){
+  const root=document.getElementById('rc-root'); if(!root) return;
+  const all=rcRows().filter(x=>RC_POS==='ALL'||x.pos===RC_POS);
+  const up=all.filter(x=>x.ch>=RC_MIN_MOVE).sort((a,b)=>b.ch-a.ch||a.n.localeCompare(b.n));
+  const dn=all.filter(x=>x.ch<=-RC_MIN_MOVE).sort((a,b)=>a.ch-b.ch||a.n.localeCompare(b.n));
+  const col=(L,dir,lab)=>{
+    const lim=RC_ALL[dir]?L.length:RC_SHOW;
+    return '<div class="dl-rc-col'+(RC_SIDE===dir?' on':'')+'"><div class="dl-rc-colh '+dir+'">'+lab+'<span>'+L.length+(L.length===1?' player':' players')+'</span></div>'
+      +(L.length?'<div class="dl-rc-grid">'+L.slice(0,lim).map(rcCard).join('')+'</div>':'<div class="dl-rc-none">No one yet.</div>')
+      +(L.length>lim?'<button type="button" class="dl-rc-more" onclick="rcShowAll(\''+dir+'\')">Show all '+L.length+'</button>':'')+'</div>';
+  };
+  root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
+    +'<div class="dl-rc-intro">Who is on the field more, and less, than early in the season.</div>'
+    +'<div class="dl-rc-chips" role="group" aria-label="Position">'+['ALL','RB','WR','TE'].map(v=>'<button type="button" class="dl-rc-chip'+(RC_POS===v?' on':'')+'" aria-pressed="'+(RC_POS===v)+'" onclick="rcSetPos(\''+v+'\')">'+(v==='ALL'?'All':v)+'</button>').join('')+'</div>'
+    +'<div class="dl-rc-seg" role="tablist" aria-label="Direction">'
+      +'<button type="button" role="tab" class="up'+(RC_SIDE==='up'?' on':'')+'" aria-selected="'+(RC_SIDE==='up')+'" onclick="rcSetSide(\'up\')">Playing More \u00b7 '+up.length+'</button>'
+      +'<button type="button" role="tab" class="dn'+(RC_SIDE==='dn'?' on':'')+'" aria-selected="'+(RC_SIDE==='dn')+'" onclick="rcSetSide(\'dn\')">Playing Less \u00b7 '+dn.length+'</button></div>'
+    +'<div class="dl-rc-cols">'+col(up,'up','Playing More')+col(dn,'dn','Playing Less')+'</div>'
+    +'<div class="dl-rc-how"><b>How it\u2019s measured.</b> Early is the middle of his first three games, Recent the middle of his last three, '
+    +'so one odd game (an injury exit, a blowout) can\u2019t put a player here on its own. Players with '+RC_MIN_GAMES+'+ games for their current team; '
+    +'moves of '+RC_MIN_MOVE+' points or more. Bars are his share of the offense\u2019s snaps each week, the last three in colour. Quarterbacks are left out.</div>';
+}
+
 function scSetSort(v){ SC_SORT=v; renderScorecard(); }
 function scSetPos(v){ SC_POS=v; renderScorecard(); }
 function renderScorecard(){
@@ -4304,6 +4439,7 @@ function showTab(id,el,skipSection){
      && typeof COMP!=='undefined' && COMP.length){ try{ renderRankings(); }catch(e){ console.warn('rankings',e); } }
   if(id==='contracts')renderContracts();
   if(id==='scorecard')openScorecardTab();
+  if(id==='roles' && typeof openRolesTab==='function'){ try{ openRolesTab(); }catch(e){ console.warn('roles',e); } }
   if(id==='rookies')renderProspects();   // default to ALL instead of blank
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -5900,7 +6036,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-13b</span>
+  <span class="foot-build">2026-10-13c</span>
 </footer>
 
 
