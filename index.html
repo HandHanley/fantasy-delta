@@ -1442,6 +1442,23 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-rc-none{font-size:12px;color:var(--fog-2);padding:10px 0}
 .dl-rc-how{margin-top:18px;border-top:1px solid var(--line);padding-top:10px;font-size:11px;color:var(--fog-2);line-height:1.5}
 .dl-rc-how b{color:var(--fog)}
+/* Rankings views (14 Oct 2026). Same segmented look as the section switcher, a size up so it
+   reads as a choice of board rather than a filter. */
+.dl-rk-views{display:flex;align-items:center;gap:10px;margin:.3rem 0 .7rem;flex-wrap:wrap}
+.dl-rk-views-l{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--fog-2)}
+.dl-rk-vseg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.dl-rk-vseg button{padding:7px 14px;border:none;border-radius:7px;background:transparent;color:var(--fog);font-family:inherit;
+  font-size:11.5px;font-weight:700;cursor:pointer}
+.dl-rk-vseg button.on{background:var(--teal-tint);color:var(--teal-br)}
+.dl-rk-vseg button:hover:not(.on){color:var(--paper)}
+.dl-rk-vseg button:focus-visible{outline:2px solid var(--teal-br);outline-offset:-2px}
+.dl-rk-vsub{font-size:11.5px;color:var(--fog);margin:-.25rem 0 .8rem}
+@media(max-width:600px){
+  .dl-rk-views{gap:6px}
+  .dl-rk-views-l{display:none}
+  .dl-rk-vseg{display:flex;width:100%}
+  .dl-rk-vseg button{flex:1;padding:9px 2px}
+}
 
 /* College Role Changes (14 Oct 2026): the NFL board's cards plus a position switch,
    a Power 4 / All Schools switch and a New To A Big Role section. Prefixed dl-crc-. */
@@ -1676,18 +1693,15 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 </div>
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
-  <button data-tab="projections" data-sec="nfl" class="tab" onclick="showTab('projections',this)">Projections</button>
   <button data-tab="roles" data-sec="nfl" class="tab" onclick="showTab('roles',this)">Role Changes</button>
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
-  <button data-tab="trade" data-sec="nfl" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
-  <button data-tab="epa" data-sec="nfl" class="tab" onclick="showTab('epa',this)">EPA Insights</button>
-  <button data-tab="contracts" data-sec="nfl" class="tab" onclick="showTab('contracts',this)">Contracts</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="cfbroles" data-sec="cfb" class="tab" onclick="showTab('cfbroles',this)">Role Changes</button>
   <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
   <button data-tab="rookies" data-sec="cfb" class="tab" onclick="showTab('rookies',this)">Prospects</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
+  <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <span class="tab-right">
@@ -1740,11 +1754,10 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <option value="last">Where I left off</option>
       <optgroup label="NFL">
         <option value="rankings">Rankings (default)</option>
-        <option value="projections">Projections</option>
+        <option value="projections">Rankings · Projections</option>
+        <option value="epa">Rankings · Efficiency</option>
+        <option value="contracts">Rankings · Contracts</option>
         <option value="roles">Role Changes</option>
-        <option value="epa">EPA Insights</option>
-        <option value="contracts">Contracts</option>
-        <option value="trade">Trade Calc</option>
       </optgroup>
       <optgroup label="College">
         <option value="college">College Rankings</option>
@@ -1755,6 +1768,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       </optgroup>
       <optgroup label="My Team">
         <option value="myteam">Roster</option>
+        <option value="trade">Trade Calc</option>
         <option value="watchlist">Watchlist</option>
       </optgroup>
     </select>
@@ -1880,7 +1894,22 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     </div>
   </div>
 
-  <div class="ctl-row">
+  <!-- RANKINGS VIEWS (14 Oct 2026, owner): Projections, EPA Insights and Contracts were separate
+       NFL tabs showing this same board with other columns. They are views of it now. A view
+       never touches the reader's own saved columns (those stay with Dynasty, per device). -->
+  <div class="dl-rk-views">
+    <span class="dl-rk-views-l">View</span>
+    <div class="dl-rk-vseg" role="tablist" aria-label="Rankings View">
+      <button type="button" role="tab" data-rkv="dyn" class="on" aria-selected="true" onclick="rkSetView('dyn')">Dynasty</button>
+      <button type="button" role="tab" data-rkv="proj" aria-selected="false" onclick="rkSetView('proj')">Projections</button>
+      <button type="button" role="tab" data-rkv="eff" aria-selected="false" onclick="rkSetView('eff')">Efficiency</button>
+      <button type="button" role="tab" data-rkv="ct" aria-selected="false" onclick="rkSetView('ct')">Contracts</button>
+    </div>
+  </div>
+  <div class="dl-rk-vsub" id="rk-vsub" hidden></div>
+  <div id="rk-eff-host" hidden></div>
+  <div id="rk-ct-host" hidden></div>
+  <div class="ctl-row" id="rk-ctl">
     <input type="text" id="s-rank" aria-label="Filter Rankings" class="fld-8" placeholder="Filter these rankings" oninput="renderRankings()">
     <select id="sort-rank" aria-label="Sort Rankings" class="set-sel" style="margin-bottom:0;width:auto" onchange="setSortRDropdown(this.value)"></select>
     <div class="dl-rk-colwrap">
@@ -2592,6 +2621,15 @@ const RK_COLS=[
   tip:"Points per game in the 2024 season, adjusted for your current scoring format.",
   fn:(p,R)=>`<td class="dl-b-r">${p.ppg24>0?p.ppg24.toFixed(1):'-'}</td>`},
 
+ {k:'e25', off:true, al:'r', lbl:"EPA'25", full:"EPA Per Play '25", sort:p=>p.e25||0,
+  tip:'How much scoring value he added on each play in 2025. Positive = better than an average play.',
+  fn:(p,R)=>rkEpaYr(p.e25,p.pos)},
+ {k:'e24', off:true, al:'r', lbl:"EPA'24", full:"EPA Per Play '24", sort:p=>p.e24||0,
+  tip:'The same for 2024.', fn:(p,R)=>rkEpaYr(p.e24,p.pos)},
+ {k:'e23', off:true, al:'r', lbl:"EPA'23", full:"EPA Per Play '23", sort:p=>p.e23||0,
+  tip:'The same for 2023.', fn:(p,R)=>rkEpaYr(p.e23,p.pos)},
+ {k:'e22', off:true, al:'r', lbl:"EPA'22", full:"EPA Per Play '22", sort:p=>p.e22||0,
+  tip:'The same for 2022.', fn:(p,R)=>rkEpaYr(p.e22,p.pos)},
  {k:'epaSc', al:'c', lbl:'EPA', full:'EPA Per Play', sort:'epaSc', mob:false,
   tip:"Per-play efficiency grade. Positive = above average. Used alongside raw production to find players whose counting stats flatter or undersell their true value.",
   fn:(p,R)=>`<td class="dl-b-c">${eTag(p.epaSc,p.epaFl,p.epaFr)}${(p.epaTr==='up'||p.epaTr==='down')?' '+tH(p.epaTr):''}</td>`},
@@ -2692,7 +2730,64 @@ const RK_MQ = window.matchMedia('(max-width:600px)');
 /* The Efficiency columns read data/efficiency.json, fetched only when one of them is on. */
 let _rkEffAsked=false;
 function rkEffLoad(){ if(_rkEffAsked) return; _rkEffAsked=true; ensureEfficiency().then(()=>{ if(typeof renderRankings==='function') renderRankings(); }); }
-function rkCols(){ const set=rkColsGet(rkDev()); return RK_COLS.filter(c=>set.indexOf(c.k)>-1); }
+/* ── RANKINGS VIEWS (14 Oct 2026, owner) ─────────────────────────────────────
+   Dynasty is the board as it always was, with the reader's own saved columns. Projections and
+   Efficiency are fixed column sets on the same board; Contracts shows the old Contracts table.
+   The old tab ids (projections / epa / contracts) still work everywhere a tab id is used:
+   ?tab= links, the landing setting, "where I left off", and the back button. */
+const RK_VIEWS={
+  dyn: {alias:'rankings',    sub:''},
+  proj:{alias:'projections', sub:'Projected points per game, the range around it, and how often he hits.',
+        d:['ds','n','a','proj','floor','ceil','ci','miss','hit','elite','ktc','mv','pct','tag'], m:['n','proj','floor','ceil','hit','tag'], sort:'proj'},
+  eff: {alias:'epa',         sub:'How much each play is worth, not just the totals.',
+        d:['ds','ktc','n','a','e25','e24','e23','e22','epaSc','eff','effd','tag'], m:['n','e25','e24','epaSc','tag'], sort:'epaSc'},
+  ct:  {alias:'contracts',   sub:'Salary, years left and walk years, with DELTA\u2019s contract read beside each.'}
+};
+const RK_VIEW_OF={projections:'proj', epa:'eff', contracts:'ct'};
+let RK_VIEW='dyn', RK_DYN_SORT=null;
+function rkEpaYr(v,pos){
+  const t=pos==='QB'?.08:pos==='RB'?0:1.8;
+  if(!v) return '<td class="dl-b-r" style="color:var(--fog-2)">-</td>';
+  return '<td class="dl-b-r" style="color:'+(v>t?'var(--sky)':v<-t?'var(--violet)':'var(--paper)')+'">'+(v>0?'+':'')+v.toFixed(2)+'</td>';
+}
+function rkViewAlias(){ return (RK_VIEWS[RK_VIEW]||RK_VIEWS.dyn).alias; }
+function rkSetView(v,opt){
+  opt=opt||{};
+  if(!RK_VIEWS[v]) v='dyn';
+  if(RK_VIEW==='dyn' && v!=='dyn') RK_DYN_SORT=[sortK,sortDir];
+  if(RK_VIEWS[v].sort){ sortK=RK_VIEWS[v].sort; sortDir=-1; }
+  else if(v==='dyn' && RK_DYN_SORT && RK_VIEW!=='dyn'){ sortK=RK_DYN_SORT[0]; sortDir=RK_DYN_SORT[1]; }
+  RK_VIEW=v;
+  if(!opt.noUrl){ try{ syncTabUrl(rkViewAlias()); dlPref('delta_lasttab',rkViewAlias()); }catch(e){} }
+  rkPaintView(!opt.noRender);
+}
+function rkPaintView(render){
+  const v=RK_VIEW, V=RK_VIEWS[v], dyn=v==='dyn', ct=v==='ct', $=id=>document.getElementById(id);
+  document.querySelectorAll('.dl-rk-vseg button').forEach(b=>{ const on=b.dataset.rkv===v; b.classList.toggle('on',on); b.setAttribute('aria-selected',on?'true':'false'); });
+  const sub=$('rk-vsub'); if(sub){ sub.textContent=V.sub; sub.hidden=!V.sub; }
+  const show=(el,on)=>{ if(el) el.style.display=on?'':'none'; };
+  const panel=$('panel-rankings'); if(!panel) return;
+  show(panel.querySelector('.dl-rk-block'), dyn);          // price map, lists and Market Moves: the Dynasty board only
+  show($('rk-lists'), dyn);
+  show(panel.querySelector('.dl-rk-colwrap'), dyn);        // the reader's own columns belong to Dynasty
+  show($('rk-ctl'), !ct); show($('rk-pos-row'), !ct);
+  const tbl=$('rank-body'); show(tbl&&tbl.closest('.dl-b-scroll'), !ct);
+  show(panel.querySelector('.dl-rk-howrow'), !ct); if(ct){ const h=$('rk-how'); if(h) h.setAttribute('hidden',''); }
+  // Efficiency carries the EPA explainer; Contracts carries the old Contracts table. Moved, not copied.
+  const eh=$('rk-eff-host');
+  if(eh){ if(!eh.childElementCount){ const ex=$('epa-explain'); if(ex){ const btn=ex.previousElementSibling; if(btn&&btn.tagName==='BUTTON') eh.appendChild(btn); eh.appendChild(ex); } } eh.hidden=v!=='eff'; }
+  const ch=$('rk-ct-host');
+  if(ch){ if(ct && !ch.childElementCount){ const cp=$('panel-contracts'); if(cp) while(cp.firstChild) ch.appendChild(cp.firstChild); } ch.hidden=!ct; }
+  if(!render) return;
+  if(ct){ if(typeof renderContracts==='function') renderContracts(); }
+  else if(typeof renderRankings==='function' && typeof COMP!=='undefined' && COMP.length) renderRankings();
+}
+
+function rkCols(){
+  const V=typeof RK_VIEWS!=='undefined'&&RK_VIEWS[RK_VIEW];
+  const set=(V&&V.d)?V[rkDev()]:rkColsGet(rkDev());
+  return RK_COLS.filter(c=>set.indexOf(c.k)>-1);
+}
 /* ── Column picker (reskin step 5) ────────────────────────────────────────
    Desktop and phone keep separate saved sets. Someone who trims their phone
    view should not find their laptop view rearranged, and a phone that
@@ -2790,6 +2885,7 @@ function renderRankings(){
   /* Age filter removed with the Option C header — it was the only panel carrying one, and
      Age is still available as a sort, which covers the same need without a permanent control. */
   let data=COMP.filter(p=>(pos==='WL'?dwHas(p.n):(pos==='ALL'||p.pos===pos))&&p.n.toLowerCase().includes(q));
+  if(RK_VIEW==='eff') data=data.filter(p=>p.epaSc!==1.0||p.epaFl);
   RK_GL={};
   rkFillSortMenu();
   renderRkLists();
@@ -4092,11 +4188,13 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','projections','roles','scorecard','trade','epa','contracts','audit'],
+const SEC_TABS={ nfl:['rankings','roles','scorecard','audit'],
                  cfb:['college','cfbroles','portal','bigboard','rookies'],
-                 me: ['myteam','watchlist'] };
+                 me: ['myteam','trade','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
+// The three old NFL tabs are now views of Rankings (14 Oct 2026); their ids still link there.
+['projections','epa','contracts'].forEach(id=>SEC_OF[id]='nfl');
 // Engine Audit stays gated behind ?dev; College is public — a visible College section
 // already announces itself, so hiding its contents bought nothing.
 const DL_LOCKED=new Set(['audit']);
@@ -4108,7 +4206,7 @@ function dlTabBtn(id){ return document.querySelector('.tab[data-tab="'+id+'"]');
 function dlHome(e){
   if(e && (e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)) return true;
   if(e) e.preventDefault();
-  try{ setSection('nfl','rankings'); }catch(err){ return true; }
+  try{ rkSetView('dyn',{noUrl:true,noRender:true}); setSection('nfl','rankings'); }catch(err){ return true; }
   try{ window.scrollTo(0,0); }catch(err){}
   return false;
 }
@@ -4155,6 +4253,7 @@ function applyLanding(){
     const pref=dlPref('delta_landing');
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
   }
+  if(target && RK_VIEW_OF[target]){ rkSetView(RK_VIEW_OF[target],{noUrl:true,noRender:true}); target='rankings'; }
   if(target&&DL_TABS.indexOf(target)>=0){
     const b=dlTabBtn(target);
     if(b){
@@ -4185,7 +4284,8 @@ function applyLanding(){
       // Reflect the tab we actually landed on, without adding a history entry.
       try{
         const active = document.querySelector('.tab.active');
-        const id = active && active.dataset ? active.dataset.tab : null;
+        let id = active && active.dataset ? active.dataset.tab : null;
+        if(id==='rankings') id = rkViewAlias();
         if(id){
           const u = new URL(location.href);
           if(u.searchParams.get('tab') !== id){
@@ -4220,6 +4320,7 @@ window.addEventListener('popstate', function(ev){
   try{
     const id = (ev.state && ev.state.tab) || new URLSearchParams(location.search).get('tab');
     if(!id || typeof DL_TABS==='undefined' || DL_TABS.indexOf(id)<0) return;
+    if(id==='rankings') rkSetView('dyn',{noUrl:true,noRender:true});   // back to the plain board
     const b = dlTabBtn(id);
     const was = _urlSyncReady; _urlSyncReady = false;   // do not re-push while restoring
     showTab(id, b);
@@ -4503,16 +4604,19 @@ function renderScorecard(){
     +'<tbody>'+(rows||'<tr><td colspan="9" class="txt">No players yet.</td></tr>')+'</tbody></table></div>';
 }
 function showTab(id,el,skipSection){
+  if(typeof RK_VIEW_OF!=='undefined' && RK_VIEW_OF[id]){        // an old tab id: Rankings, in that view
+    rkSetView(RK_VIEW_OF[id],{noUrl:true,noRender:true}); id='rankings'; el=dlTabBtn('rankings');
+  }
   // A tab in another section switches the section first; setSection calls back with
   // skipSection=true, so this can recurse at most once.
   if(!skipSection && typeof SEC_OF!=='undefined' && SEC_OF[id] && SEC_OF[id]!==DL_SECTION){
     setSection(SEC_OF[id], id); return;
   }
   try{
-    if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id);
+    if(DL_TABS.indexOf(id)>=0) dlPref('delta_lasttab',id==='rankings'?rkViewAlias():id);
     if(SEC_OF[id]) dlPref('delta_lasttab2_'+SEC_OF[id],id);
   }catch(e){}
-  syncTabUrl(id);
+  syncTabUrl(id==='rankings'?rkViewAlias():id);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pnl=document.getElementById('panel-'+id); if(pnl) pnl.classList.add('active');
@@ -4521,7 +4625,9 @@ function showTab(id,el,skipSection){
   // below. Without this, arriving on the tab from a deep link or the back
   // button shows whatever happened to be rendered last — which is nothing,
   // if the tab was never opened in this page's lifetime.
-  if(id==='rankings' && typeof renderRankings==='function'
+  if(id==='rankings'){ try{ rkPaintView(false); }catch(e){} }
+  if(id==='rankings' && RK_VIEW==='ct'){ try{ renderContracts(); }catch(e){ console.warn('contracts',e); } }
+  else if(id==='rankings' && typeof renderRankings==='function'
      && typeof COMP!=='undefined' && COMP.length){ try{ renderRankings(); }catch(e){ console.warn('rankings',e); } }
   if(id==='contracts')renderContracts();
   if(id==='scorecard')openScorecardTab();
@@ -6125,7 +6231,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-14a</span>
+  <span class="foot-build">2026-10-14b</span>
 </footer>
 
 
