@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Every relative path on this page resolves from the site root (16 Oct 2026). The page swaps its
+     address to the short share link /p/<slug>/ once it loads; without this line, files fetched after
+     that (market chart, college data) would be looked for under /p/<slug>/ and fail. -->
+<base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DELTA · Player Profile</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
@@ -71,6 +75,11 @@ a:hover{text-decoration:underline}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .nav-back{font-size:12px;color:var(--fog);display:flex;align-items:center;gap:5px;transition:color .15s}
 .nav-back:hover{color:var(--paper);text-decoration:none}
+/* Share (16 Oct 2026): opens the phone's share menu, or copies the short link on a computer. */
+.nav-share{display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;font-weight:700;color:var(--teal-br);
+  background:var(--teal-soft);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+.nav-share:hover{border-color:var(--teal-br)}
+.nav-share:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 /* Tap targets (B6, 10 Oct 2026): invisible 8-10px hit area on the small links and season
    buttons, touch screens only, so nothing moves visually. */
 @media (pointer:coarse){
@@ -286,7 +295,11 @@ a{color:var(--teal-br)}
       <span style="font-family:var(--geo);font-weight:700;font-size:16px;letter-spacing:3.5px;text-transform:uppercase;color:var(--paper)">DELTA</span>
       
     </a>
-    <a class="nav-back" href="index.html" onclick="return goBack(event)">← Back</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button type="button" class="nav-share" id="nav-share" onclick="dlShare()" aria-label="Share this player">
+        <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V2M5 5l3-3 3 3"/><path d="M3 8v5.5h10V8"/></svg><span id="nav-share-t">Share</span></button>
+      <a class="nav-back" href="index.html" onclick="return goBack(event)">← Back</a>
+    </div>
   </nav>
   <div id="state-loading" class="state-msg">Loading player data…</div>
   <div id="state-error" class="state-msg" style="display:none"></div>
@@ -311,7 +324,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-12a</span>
+    <span class="foot-build">2026-10-16a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1250,7 +1263,9 @@ function buildCombineHTML(p) {
 function goBack(e) {
   try {
     const ref = document.referrer;
-    if (ref && new URL(ref).origin === location.origin && history.length > 1) {
+    // A share link's hand-off page (/p/<slug>/) is not a DELTA page the reader came from:
+    // stepping back from it leaves the site, so treat it like an outside link (16 Oct 2026).
+    if (ref && new URL(ref).origin === location.origin && !/^\/p\//.test(new URL(ref).pathname) && history.length > 1) {
       e.preventDefault(); history.back(); return false;
     }
   } catch (err) { /* malformed referrer — fall through to the plain link */ }
@@ -1733,6 +1748,39 @@ function _renderPlayerPage(p) {
     if(el) el.innerHTML=projContextHTML(p);   // no link (owner, 26 Sep: too much on the card)
   }).catch(()=>{});
   document.title = p.n + ' — DELTA';
+  dlShareReady(p);
+}
+
+/* ── SHARE + SHORT LINK (16 Oct 2026, owner) ──────────────────────────────────
+   scripts/build-share-pages.js writes /p/<slug>/ for every NFL player each night: a tiny page whose
+   own title and description make a link preview show the player, which this page cannot do
+   (preview robots run no script). data/share-pages.json says which short links exist. Once it
+   loads, the address bar shows the short link, so an ordinary copy of the address gets the good
+   preview too; the <base href="/"> in the head keeps every later file load working. Only when the
+   address carries nothing but the name, so test flags (?dev=1 and the like) are left alone. */
+let SHARE_URL = null;
+function dlShareReady(p){
+  fetch('data/share-pages.json', { cache: 'no-cache' })
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      const slug = j && j.players && j.players[p.n];
+      if (!slug) return;
+      const path = (j.base || '/p/') + slug + '/';
+      SHARE_URL = location.origin + path;
+      const extra = [...new URLSearchParams(location.search).keys()].filter(k => k !== 'name' && k !== 'player');
+      if (!extra.length && /\/player\.html$/.test(location.pathname)) {
+        try { history.replaceState(history.state, '', path); } catch (e) {}
+      }
+    }).catch(() => {});
+}
+function dlShare(){
+  const url = SHARE_URL || location.href;
+  const title = (PLAYER_NAME || 'DELTA') + ' \u2014 DELTA';
+  if (navigator.share) { navigator.share({ title: title, url: url }).catch(() => {}); return; }
+  const t = document.getElementById('nav-share-t');
+  const done = () => { if (t) { t.textContent = 'Link Copied'; setTimeout(() => { t.textContent = 'Share'; }, 2000); } };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(() => { window.prompt('Copy this link:', url); });
+  else window.prompt('Copy this link:', url);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
