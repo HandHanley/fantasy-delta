@@ -6283,7 +6283,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-14d</span>
+  <span class="foot-build">2026-10-17a</span>
 </footer>
 
 
@@ -10114,7 +10114,7 @@ function slpTradePartners(){
       .sort(function(a,b){ return (b.proj||0)-(a.proj||0); }).slice(0,2);
   };
   const myWin=win(me), myPR=pickRank[String(me.rosterId)];
-  const fits=rows.filter(function(r){ return r!==me; }).map(function(r){
+  const all=rows.filter(function(r){ return r!==me; }).map(function(r){
     const give=thinAt(r).filter(function(p){ return me.pos[p].rank<=half; });
     const get=thinAt(me).filter(function(p){ return r.pos[p].rank<=half; });
     const gap=give.reduce(function(a,p){ return a+r.pos[p].rank-me.pos[p].rank; },0)
@@ -10130,10 +10130,19 @@ function slpTradePartners(){
       ask:ask, offer:offer,
       myPicks: giveP ? pickList(me.rosterId) : [], theirPicks: getP ? pickList(r.rosterId) : [],
       score:(give.length&&get.length?100:0)+(twoWay?50:0)+gap+(giveP||getP?3:0) };
-  }).filter(function(f){ return (f.give.length||f.get.length||f.giveP||f.getP)
-      && (f.ask.length||f.offer.length||f.myPicks.length||f.theirPicks.length); })
-    .sort(function(a,b){ return b.score-a.score || a.r.team.localeCompare(b.r.team); });
-  return { me:me, N:N, fits:fits, myPR:myPR };
+  });
+  /* EVERY TEAM GETS A CARD (owner, 17 Oct 2026): a 10-team league showed 8 of 9 when expanded,
+     because a team with no fit, or a fit with nobody nameable, was dropped without a word. The
+     owner uses the cards to pull any team into the Trade Calc, so the rest now follow the fits,
+     alphabetically, with a plain card. `angle` = a fit exists but only untouchables or players
+     too small to move would fill it. */
+  const isFit=function(f){ return (f.give.length||f.get.length||f.giveP||f.getP)
+      && (f.ask.length||f.offer.length||f.myPicks.length||f.theirPicks.length); };
+  const fits=all.filter(isFit).sort(function(a,b){ return b.score-a.score || a.r.team.localeCompare(b.r.team); });
+  const rest=all.filter(function(f){ return !isFit(f); }).map(function(f){
+      f.angle=!!(f.give.length||f.get.length||f.giveP||f.getP); return f; })
+    .sort(function(a,b){ return a.r.team.localeCompare(b.r.team); });
+  return { me:me, N:N, fits:fits, rest:rest, myPR:myPR };
 }
 
 function renderSlpPartners(){
@@ -10144,7 +10153,8 @@ function renderSlpPartners(){
     +'<p class="dl-tp-sub">Teams that are thin where you\u2019re deep, and deep where you\u2019re thin. '
     +'Picks count too: rebuilding teams want them, contenders pay them. '
     +'Each team\u2019s two best players and the league\u2019s top '+(2*d.N)+' are left out as untouchable, and anyone outside the top '+(16*d.N)+' as too small to move.</p>';
-  if(!d.fits.length) return head+'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin.</div>';
+  const total=d.fits.length+d.rest.length;
+  if(!total) return head+'<div class="dl-lb-none">There are no other teams in this league to trade with.</div>';
   const tagCls=function(t){ return /buy/.test(t)?'buy':/sell/.test(t)?'sell':'hold'; };
   const pl=function(p){
     const t=slpTagText(p), lab=dlRookieHold(p)?'Rookie Hold':(t&&t!=='no data')?t.replace(/\b\w/g,function(c){ return c.toUpperCase(); }):'';
@@ -10185,15 +10195,22 @@ function renderSlpPartners(){
     const theirs=f.theirPicks.map(function(x){ return pk(Object.assign({own:r.rosterId},x)); }).join('');
     return '<div class="dl-tp-card">'
       +'<div class="dl-tp-hd"><span class="dl-tp-tm">'+slpEsc(r.team)+'</span><span class="dl-tp-win">'+f.win+'</span></div>'
-      +'<div class="dl-tp-sw">'+swap(f)+'</div>'
+      +'<div class="dl-tp-sw">'+(f.fit===false
+        ? (f.angle ? 'A fit, but only their stars or players too small to move would fill it' : 'No clear fit right now')
+        : swap(f))+'</div>'
       +'<div class="dl-tp-strip">'+strip+'</div>'
       +(f.ask.length||theirs?'<div class="dl-tp-lab">Ask About</div>'+f.ask.map(pl).join('')+theirs:'')
       +(f.offer.length||mine?'<div class="dl-tp-lab">Could Offer</div>'+f.offer.map(pl).join('')+mine:'')
       +'<button class="dl-tp-cta" onclick="slpTradeWith('+slpEsc(JSON.stringify(r.rosterId))+')">Open In Trade Calc</button>'
       +'</div>';
   };
-  const shown=SLP_TP_ALL?d.fits:d.fits.slice(0,3), more=d.fits.length-3;
-  return head+'<div class="dl-tp-grid">'+shown.map(card).join('')+'</div>'
+  d.rest.forEach(function(f){ f.fit=false; });
+  const top=d.fits.slice(0,3), more=total-top.length;
+  const grid=function(list){ return list.length?'<div class="dl-tp-grid">'+list.map(card).join('')+'</div>':''; };
+  const body=SLP_TP_ALL
+    ? grid(d.fits)+(d.rest.length?'<div class="dl-tp-lab">Every Other Team</div>'+grid(d.rest):'')
+    : (top.length?grid(top):'<div class="dl-lb-none">No clear fits right now \u2014 no team is thin where you\u2019re deep and deep where you\u2019re thin. Every team is still below.</div>');
+  return head+body
     +(more>0?'<button class="dl-tp-more" onclick="slpTpMore()">'+(SLP_TP_ALL?'Show Fewer Teams':'Show '+more+' More Team'+(more===1?'':'s'))+'</button>':'');
 }
 
