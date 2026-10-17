@@ -137,6 +137,8 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .tm-l{display:flex;align-items:center;gap:9px;min-width:0}
 .spine{width:3px;height:20px;border-radius:2px;flex:none}
 .abbr{font-weight:800;font-size:15px;letter-spacing:-.01em}
+/* College poll rank before the team, small and quiet so the abbreviation still leads. */
+.rk{font-family:var(--mono);font-weight:500;font-size:.72em;color:var(--fog);margin-right:5px;vertical-align:1px}
 .nick{font-size:11.5px;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rec{font-family:var(--mono);font-size:10px;color:var(--fog)}
 .dot{color:var(--sky);font-size:10px}
@@ -420,7 +422,13 @@ const ADAPTERS = {
           if(ball) possAbbr = abbr;
           // loc / full / short are only for FINDING a team — search, and matching
           // a watchlisted player's school. Nothing draws them.
+          /* AP / CFP rank (17 Oct 2026, owner): college only. The scoreboard gives
+             curatedRank.current, 99 when unranked; the game-detail header gives rank.
+             Anything outside 1-25 is treated as unranked, so a missing field shows nothing. */
+          const rkRaw = (c.curatedRank && c.curatedRank.current != null) ? c.curatedRank.current : c.rank;
+          const rk = parseInt(rkRaw, 10);
           return { abbr: abbr, nick: t.name || '', loc: t.location || '',
+                   rank: (rk >= 1 && rk <= 25) ? rk : null,
                    full: t.displayName || '', short: t.shortDisplayName || '',
                    score: c.score == null ? null : String(c.score),
                    record: rec, leaders: leaders, color: t.color || null, altColor: t.alternateColor || null,
@@ -1205,10 +1213,11 @@ function gameIsFeatured(id){
 }
 
 /* ── rendering ─────────────────────────────────────────────────────────── */
+function rankTag(t){ return t && t.rank ? '<span class="rk">' + t.rank + '</span>' : ''; }
 function teamRow(t, lead, big){
   return '<div class="tm"><div class="tm-l">'
     + '<span class="spine" style="background:' + teamColor(t) + '"></span>'
-    + '<span class="abbr">' + esc(t.abbr) + '</span>'
+    + '<span class="abbr">' + rankTag(t) + esc(t.abbr) + '</span>'
     + (t.nick ? '<span class="nick">' + esc(t.nick) + '</span>' : '')
     + (t.record ? '<span class="rec">' + esc(t.record) + '</span>' : '')
     + (t.hasBall ? '<span class="dot">&#9679;</span>' : '')
@@ -1265,7 +1274,7 @@ function gameCard(g){
     return '<button class="g" type="button" data-id="' + esc(g.id) + '">' + colourBar(g.teams)
       + '<div class="pre"><div style="display:flex;align-items:center;gap:10px">'
       + '<span class="spine" style="height:34px;background:' + teamColor(g.teams[0] || {}) + '"></span><div>'
-      + g.teams.map(function(t){ return '<div class="pre-t">' + esc(t.abbr) + '</div>'; }).join('')
+      + g.teams.map(function(t){ return '<div class="pre-t">' + rankTag(t) + esc(t.abbr) + '</div>'; }).join('')
       + '</div></div><span class="rec">' + esc(whenText(g)) + '</span></div></button>';
   }
   const live = g.state === 'in', li = leadIndex(g.teams);
