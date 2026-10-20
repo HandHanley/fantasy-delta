@@ -138,6 +138,8 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .spine{width:3px;height:20px;border-radius:2px;flex:none}
 .abbr{font-weight:800;font-size:15px;letter-spacing:-.01em}
 /* College poll rank before the team, small and quiet so the abbreviation still leads. */
+.dd{color:var(--fog)}
+.dd.late{color:var(--paper);font-weight:700}
 .rk{font-family:var(--mono);font-weight:500;font-size:.72em;color:var(--fog);margin-right:5px;vertical-align:1px}
 .nick{font-size:11.5px;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rec{font-family:var(--mono);font-size:10px;color:var(--fog)}
@@ -730,8 +732,13 @@ const ADAPTERS = {
         if(!d) continue;
         const dteam = (d.team && (d.team.abbreviation || d.team.displayName)) || '';
         const dplays = (d.plays || []).filter(function(p){ return p && p.text; }).map(function(p){
+          /* Down and distance at the snap (owner, 19 Oct 2026): play.start carries
+             downDistanceText ("3rd & 4 at SF 17"). Kickoffs and extra points have no
+             down (start.down 0 or absent), so they get none. */
+          const st = p.start || {};
+          const dd = (st.down >= 1 && (st.downDistanceText || st.shortDownDistanceText)) || '';
           return { id: p.id || null, text: p.text,
-                   at: (p.clock && p.clock.displayValue) || '',
+                   at: (p.clock && p.clock.displayValue) || '', dd: String(dd), down: st.down || 0,
                    period: (p.period && p.period.number) || null,
                    scoring: !!p.scoringPlay, team: dteam,
                    type: (p.type && p.type.text) || '' };
@@ -1213,6 +1220,14 @@ function gameIsFeatured(id){
 }
 
 /* ── rendering ─────────────────────────────────────────────────────────── */
+/* Clock, then down and distance: "13:43 · 3rd & 4 at SF 17". Third and fourth downs are
+   brighter, because that is the snap a reader is looking for. */
+function playWhen(p, margin){
+  if(!p || (!p.at && !p.dd)) return '';
+  const dd = p.dd ? '<span class="dd' + (p.down >= 3 ? ' late' : '') + '">' + esc(p.dd) + '</span>' : '';
+  return '<div class="sub" style="margin:' + margin + '">' + esc(p.at || '')
+    + (p.at && dd ? ' &middot; ' : '') + dd + '</div>';
+}
 function rankTag(t){ return t && t.rank ? '<span class="rk">' + t.rank + '</span>' : ''; }
 function teamRow(t, lead, big){
   return '<div class="tm"><div class="tm-l">'
@@ -1604,7 +1619,7 @@ function renderGame(){
     const older = (sum.plays || []).slice(1);
     html += '<div class="hd"><span>Last Play</span><span class="rule"></span></div>'
       + '<div class="card" style="padding:11px 13px">'
-      + (sum.lastPlay.at ? '<div class="sub" style="margin:0 0 5px">' + esc(sum.lastPlay.at) + '</div>' : '')
+      + playWhen(sum.lastPlay, '0 0 5px')
       + playTags(sum.lastPlay) + '<div class="play">' + esc(sum.lastPlay.text) + '</div>'
       + (older.length
           ? '<div class="prev"><button class="prevb" type="button" data-plays="1"'
@@ -1614,7 +1629,7 @@ function renderGame(){
             + (S.playsOpen
                 ? older.map(function(p){
                     return '<div class="pv">'
-                      + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
+                      + playWhen(p, '0 0 3px')
                       + playTags(p) + '<div class="play">' + esc(p.text) + '</div></div>';
                   }).join('')
                 : '')
@@ -1719,7 +1734,7 @@ function renderPlays(){
       + (d.desc ? '<div class="fine" style="margin:-4px 2px 8px">' + esc(d.desc) + '</div>' : '')
       + '<div class="card">' + x.plays.map(function(p){
           return '<div class="rowb">'
-            + (p.at ? '<div class="sub" style="margin:0 0 3px">' + esc(p.at) + '</div>' : '')
+            + playWhen(p, '0 0 3px')
             + playTags(p) + '<div class="play' + (p.scoring ? ' scored' : '') + '">' + esc(p.text) + '</div></div>';
         }).join('') + '</div>';
   }).join(''));
