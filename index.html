@@ -1547,6 +1547,13 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-lg-res{font-family:var(--mono);font-size:13px;color:var(--sky)}
 .dl-lg-res.dl-lg-even{color:var(--fog)}
 .dl-lg-note{color:var(--fog-2);font-size:10.5px;margin:7px 12px 0;line-height:1.45}
+.dl-lg-acts{display:flex;gap:8px;margin:10px 12px 0}
+.dl-lg-act{flex:1;padding:8px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;
+  color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
+.dl-lg-act:hover{background:var(--teal-soft)}
+.dl-lg-from{font-size:11.5px;color:var(--fog);border:1px solid var(--line);border-radius:6px;padding:7px 10px;margin-bottom:.6rem;line-height:1.5}
+.dl-lg-from b{color:var(--paper);font-weight:700}
+.dl-lg-from span{display:block}
 .dl-lg-load,.dl-lg-err,.dl-lg-empty{color:var(--fog);font-size:13px;padding:1rem 12px}
 .dl-lg-err{color:var(--coral)}
 .dl-lg-prog{color:var(--fog-2);font-size:11.5px;margin-top:6px;line-height:1.5}
@@ -3709,25 +3716,28 @@ function setTradeTeams(n){
 // League settings from a link are applied SESSION-ONLY — they sync the UI and rebuild
 // the market baseline but never call saveLeaguePrefs, so opening a friend's 14-team
 // 1QB trade doesn't silently overwrite your own saved league defaults.
+function tradeLinkFor(payload){
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  return location.origin+location.pathname+'?trade='+b64;
+}
 function tradeShareLink(){
   const sides={a:sA,b:sB,c:sC,d:sD};
   const payload={v:1,t:tradeTeams,
     s:ACTIVE_SIDES().map(id=>sides[id].map(p=>tradeTeams>2?[p.n,p.to||null]:[p.n])),
     w:ACTIVE_SIDES().map(id=>teamWindow[id]),
     L:{f:scoringFmt,n:leagueTeams,q:qbFmt}};
-  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  return location.origin+location.pathname+'?trade='+b64;
+  return tradeLinkFor(payload);
 }
-function shareTradeLink(btn){
-  const url=tradeShareLink();
+function dlShareUrl(url,btn,title){
   const done=()=>{ if(btn){ const t=btn.textContent; btn.textContent='Copied \u2713';
     setTimeout(()=>{btn.textContent=t;},1800); } };
-  if(navigator.share){ navigator.share({title:'DELTA Trade',url}).catch(()=>{}); return; }
+  if(navigator.share){ navigator.share({title:title||'DELTA Trade',url}).catch(()=>{}); return; }
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(url).then(done).catch(()=>{ window.prompt('Copy this link:',url); });
   } else { window.prompt('Copy this link:',url); }
 }
+function shareTradeLink(btn){ dlShareUrl(tradeShareLink(),btn,'DELTA Trade'); }
 function loadTradeFromUrl(){
   const raw=new URLSearchParams(location.search).get('trade');
   if(!raw) return;
@@ -3736,6 +3746,14 @@ function loadTradeFromUrl(){
     const b64=raw.replace(/-/g,'+').replace(/_/g,'/');
     o=JSON.parse(decodeURIComponent(escape(atob(b64))));
   }catch(e){ console.warn('trade link decode failed',e); return; }
+  loadTradePayload(o);
+}
+/* Loads a decoded trade payload into the calculator. Used by ?trade= links and by
+   the League Trade Ledger's Open In Trade Calc. `x` (optional) is the ledger
+   context — date, league, managers — shown as one line above the verdict; it lives
+   in the verdict area on purpose, so it disappears once the trade is edited and
+   has become a counter. Every field in it came from a URL: validate and escape. */
+function loadTradePayload(o){
   if(!o||o.v!==1||!Array.isArray(o.s)) return;
   // league settings: session-only (globals + UI sync + market rebuild, no pref save)
   if(o.L){
@@ -3775,6 +3793,27 @@ function loadTradeFromUrl(){
       +missing.length+' asset'+(missing.length>1?'s':'')+' from this link couldn\u2019t be matched (renamed or no longer tracked): '
       +missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>');
   }
+  const ctx=tradeCtxHtml(o.x,act.length);
+  if(ctx){ const va=document.getElementById('verdict-area'); if(va) va.insertAdjacentHTML('afterbegin',ctx); }
+}
+function tradeCtxHtml(x,n){
+  if(!x||typeof x!=='object') return '';
+  const esc=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const bits=[];
+  const d=Number(x.d);
+  if(isFinite(d)&&d>0){
+    const dt=new Date(d);
+    bits.push('Traded '+dt.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()]+' '+dt.getFullYear());
+  }
+  if(typeof x.lg==='string'&&x.lg.trim()) bits.push(esc(x.lg.trim().slice(0,80)));
+  if(!bits.length) return '';
+  const teams=Array.isArray(x.m)
+    ? x.m.slice(0,n).map((m,i)=>(typeof m==='string'&&m.trim())?'ABCD'[i]+': '+esc(m.trim().slice(0,40)):null).filter(Boolean)
+    : [];
+  return '<div class="dl-lg-from"><b>'+bits.join(' \u00b7 ')+'</b>'
+    +(teams.length?'<span>'+teams.join(' \u00b7 ')+'</span>':'')
+    +(x.fa?'<span>FAAB not included</span>':'')
+    +(Number(x.du)>0?'<span>'+Math.min(9,Number(x.du)|0)+' duplicate pick'+(Number(x.du)>1?'s':'')+' not shown \u2014 the calc holds one of each</span>':'')+'</div>';
 }
 
 function clearAllTrade(){
@@ -6283,7 +6322,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-21a</span>
+  <span class="foot-build">2026-10-21b</span>
 </footer>
 
 
@@ -9316,7 +9355,8 @@ function slpBuildLedger(seasons){
       const all={};
       Object.keys(r2u).forEach(function(r){ all[r]=r2u[r].u; });
       trades.push({id:x.transaction_id,season:s.season,leg:x.leg,created:x.created,
-        counter:!!(x.settings&&x.settings.is_counter),teams:teams,users:users,rosters:all});
+        counter:!!(x.settings&&x.settings.is_counter),teams:teams,users:users,rosters:all,
+        from:x.drops||{}});   // player id -> roster that SENT him; the Trade Calc share needs the giver
     });
   });
   trades.sort(function(a,b){ return b.created-a.created; });
@@ -9579,6 +9619,88 @@ function slpLedgerMark(n,q){
   return e.slice(0,i)+'<span class="dl-lg-hit">'+e.slice(i,i+q.length)+'</span>'+e.slice(i+q.length);
 }
 
+/* ── Ledger -> Trade Calc (21 Oct 2026, owner: Option A) ─────────────────────
+   A Ledger block holds what each team RECEIVED; a Trade Calc side holds what
+   each team GIVES. So every asset goes to its sender's side, pointed at its
+   receiver. Sender: Sleeper's drops for players, previous_owner_id for picks.
+   Priced at today's values in the reader's format, like the Ledger itself — the
+   link answers "how does this look now" and invites a counter, not "who won".
+   The calc has four sides, so a five-team trade gets no buttons. FAAB has no
+   place in the calc and is named instead. */
+function slpLedgerTradeById(id){
+  const st=slpLedgerState();
+  if(!st.data) return null;
+  return st.data.trades.find(function(t){ return String(t.id)===String(id); })||null;
+}
+function slpLedgerPayload(t){
+  if(!t||!t.teams) return null;
+  const rosters=Object.keys(t.teams).map(Number).sort(function(a,b){ return a-b; });
+  const n=rosters.length;
+  if(n<2||n>4) return null;
+  const ids=['a','b','c','d'], idx={};
+  rosters.forEach(function(r,i){ idx[r]=i; });
+  const byName={}, byNorm={};
+  COMP.forEach(function(p){ byName[p.n]=p; byNorm[slpNorm(p.n)]=p; });
+  const canon=function(nm){ const c=byName[nm]||byNorm[slpNorm(nm)]; return c?c.n:nm; };
+  const valuer=slpLedgerValuer();
+  const s=rosters.map(function(){ return []; });
+  let placed=true, faab=false, dup=0;
+  const giverOf=function(raw,recv){
+    const g=Number(raw);
+    if(idx[g]!=null&&g!==recv) return g;
+    if(n===2) return rosters[0]===recv?rosters[1]:rosters[0];
+    return null;
+  };
+  const put=function(giver,recv,name){
+    if(giver==null){ placed=false; return; }
+    const side=s[idx[giver]];
+    // The calc keys assets by name, so it cannot hold the same pick twice (two "2027 Mid
+    // 2nd" from one sender). Count it so the link says so instead of dropping it silently.
+    if(side.some(function(e){ return e[0]===name; })){ dup++; return; }
+    side.push(n>2?[name,ids[idx[recv]]]:[name]);
+  };
+  rosters.forEach(function(r){
+    const blk=t.teams[r];
+    blk.players.forEach(function(pid){
+      put(giverOf(t.from&&t.from[pid],r), r, canon(valuer(pid).n));
+    });
+    blk.picks.forEach(function(pk){
+      // A future pick goes in under the calc's own round name ("2027 1st"). The tiered
+      // names ("2027 Mid 1st Round Pick") are hidden assets the calc cannot hold, and the
+      // calc has no tiers, so the tier does not travel; the plain round is what a person
+      // would add by hand.
+      const nm=pk.became ? canon(pk.became) : pk.season+' '+slpOrd(pk.round);
+      put(giverOf(pk.from,r), r, nm);
+    });
+    if(blk.faab&&blk.faab.length) faab=true;
+  });
+  if(!placed) return null;
+  const x={d:t.created, lg:(SLP.league&&SLP.league.name)||'',
+           m:rosters.map(function(r){ return slpLedgerMgr(t.users[r]); })};
+  if(faab) x.fa=1;
+  if(dup) x.du=dup;
+  return {v:1,t:n,s:s,w:rosters.map(function(){ return 'neutral'; }),
+          L:{f:scoringFmt,n:leagueTeams,q:qbFmt},x:x};
+}
+function slpLedgerOpen(id){
+  const o=slpLedgerPayload(slpLedgerTradeById(id));
+  if(!o) return;
+  if(typeof clearAllTrade==='function') clearAllTrade();
+  loadTradePayload(o);
+}
+function slpLedgerShare(id,btn){
+  const o=slpLedgerPayload(slpLedgerTradeById(id));
+  if(!o) return;
+  dlShareUrl(tradeLinkFor(o),btn,'DELTA Trade');
+}
+function slpLedgerActs(t){
+  if(!slpLedgerPayload(t)) return '';
+  const id=slpEsc(JSON.stringify(String(t.id)));
+  return '<div class="dl-lg-acts">'
+    +'<button class="dl-lg-act" onclick="slpLedgerOpen('+id+')">Open In Trade Calc</button>'
+    +'<button class="dl-lg-act" onclick="slpLedgerShare('+id+',this)">Share</button></div>';
+}
+
 function slpLedgerCards(rows){
   if(!rows.length) return '<div class="dl-lg-empty">No trades match.</div>';
   const valuer=slpLedgerValuer();
@@ -9628,6 +9750,7 @@ function slpLedgerCards(rows){
       +split
       +'<div class="dl-lg-mg"><span class="dl-lg-lbl">Value today</span>'+margin+'</div>'
       +(unpriced?'<div class="dl-lg-note">'+unpriced+' asset'+(unpriced===1?'':'s')+' no longer priced</div>':'')
+      +slpLedgerActs(t)
       +'</div>';
   }).join('');
 }
