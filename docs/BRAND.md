@@ -132,6 +132,11 @@ themes, categories, or decoration** — doing so invents a signal that isn't the
 | `--sky` | `#6BB6E0` | information, comparison-B, draft-eligibility highlight |
 | `--violet` | `#9B8AF0` | chart series |
 
+**Direction without a call** (Oct 2026): when something went up or down but DELTA is not saying buy or sell,
+use **sky for up / more** and **violet for down / less**, never emerald and coral. In use on the Scorecard
+(scored more / less than projected), Role Changes (playing more / less) and the per-season EPA columns.
+Emerald and coral there would read as a buy or sell call that does not exist.
+
 ### Tints
 Low-alpha versions so chips sit correctly on `--ink`:
 `--emerald-tint` `--coral-tint` `--topaz-tint` `--teal-tint` `--teal-soft`
