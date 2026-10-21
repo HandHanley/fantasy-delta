@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-12a';
+const DL_BUILD='2026-10-21a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6060,13 +6060,6 @@ function buildDSBreakdownHTML(p){
     +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
-
-// ── RETIRED: AUTHORED READS AND SCOUT REPORTS (removed 8 Oct 2026) ────────────
-// The Read is numbers only since 3 Oct and the Scouting Report was removed the same day;
-// data/reads.json, data/scout-reports.json and the code that loaded them are gone. This
-// no-op stays so a page cached from before this deploy, which still calls loadReads() in
-// its boot chain, keeps working. Safe to delete once no boot chain anywhere calls it.
-function loadReads(){ return Promise.resolve(); }
 
 // ── SCHEME / SYSTEM CONTEXT ─────────────────────────────────────────────────
 // Shared explainer for the Offensive System Score: what the number means, the

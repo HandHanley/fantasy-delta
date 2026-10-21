@@ -6283,7 +6283,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-17a</span>
+  <span class="foot-build">2026-10-21a</span>
 </footer>
 
 
@@ -8097,6 +8097,10 @@ async function slpLoadSet(leagueId,season){
   return {league:res[0], rosters:res[1]||[], users:res[2]||[], tradedPicks:res[3]||[], pickList:null};
 }
 function slpApplySet(set){
+  /* New league data means the old pick tiers are void. slpTeamValues() rebuilds them
+     before every read, but if it throws the old league's tiers used to survive and
+     price this league's picks; cleared, slpPickTier() falls back to Mid. (21 Oct 2026) */
+  SLP._pickTiers=null;
   SLP.league=set.league; SLP.rosters=set.rosters||[]; SLP.users=set.users||[];
   SLP.tradedPicks=set.tradedPicks||[]; SLP.pickList=set.pickList||null;
 }

@@ -12,12 +12,18 @@ on:
     # GitHub also starts scheduled runs 30-140 min late (observed in nflverse's own
     # run history), so every slot below carries slack rather than chasing a kickoff.
     #
+    # 07:20 UTC daily — 00:20 MST (moved from 13:20 on 21 Oct 2026). GitHub started the
+    # 13:20 slot 3-8 HOURS late through 9-21 Oct (16:30-21:46 UTC), not the 30-140 min noted
+    # above, so data reached the site late morning Arizona. Starting six hours earlier moves
+    # that window to roughly 03:30-08:30 MST. Even on time, 07:20 sits after the 06:00 UTC
+    # snap build, which already holds the previous night's games.
+    # Original note for the 13:20 slot, kept for the reasoning:
     # 13:20 UTC daily — 06:20 MST. The old 06:00 UTC collided with the 06:00 UTC snap
     # cron, so the nightly always read snaps that were six hours stale. 13:20 lands
     # after the previous evening's stats build AND after the 06:00/12:00 snap builds,
     # which covers Thursday night (Fri run), Sunday night (Mon run) and Monday night
     # (Tue run) with no extra workflow.
-    - cron: '20 13 * * *'
+    - cron: '20 7 * * *'
     # 03:20 UTC Monday — 20:20 MST Sunday. The Sunday day games. Their stats build
     # fires 22:03 and 00:07 UTC and their snaps land on the 00:00 UTC cycle, so this
     # is the earliest point all of it is complete. Pulls Sunday's box scores forward
