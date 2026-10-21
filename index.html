@@ -189,6 +189,14 @@ tr:hover td{background:var(--panel)}
 .adjline{font-size:10px;margin-bottom:6px;line-height:1.7}
 .adj-up{color:var(--emerald)}.adj-warn{color:var(--topaz)}.adj-none{color:var(--fog-2)}
 .mods{font-family:var(--mono);font-size:9px;color:var(--fog-2);margin-left:4px}
+.vbadge{white-space:normal}
+.vsub{font-size:12px;color:var(--fog);margin-top:6px}
+.breakdown-row .mods{display:block;margin:2px 0 0}
+.dl-tc-sub{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)}
+.dl-tc-acts{display:flex;gap:8px;margin-top:.85rem}
+.dl-tc-act{flex:1;padding:8px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;
+  color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
+.dl-tc-act:hover{background:var(--teal-soft)}
 #gap-filler{margin-top:.6rem}
 .cmp-sec{margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1.1rem}
 .cmp-row{display:flex;align-items:center;gap:10px}
@@ -3334,11 +3342,14 @@ function recalcTrade(){
     // Winner = the team that GIVES less and RECEIVES more; say so with numbers
     const winT=mA<mB?'Team A':'Team B';
     const wGive=(mA<mB?mA:mB).toLocaleString(), wRecv=(mA<mB?mB:mA).toLocaleString();
-    const winClause=` — gives up ${wGive}, receives ${wRecv}`;
-    if(pct<=3){verdict='Essentially even — personal preference decides';vc='bi';}
-    else if(pct<=8){verdict=`Slight edge — ${winT}${winClause}`;vc='bi';}
-    else if(pct<=15){verdict=`Clear winner — ${winT}${winClause}`;vc=mA<mB?'bs':'bd';}
-    else{verdict=`Decisive advantage — ${winT}${winClause}`;vc=mA<mB?'bs':'bd';}
+    // Badge stays short; the numbers go on their own line. The badge does not wrap
+    // (.badge is nowrap) and the old one-line sentence ran off a phone (21 Oct 2026).
+    const winSub=`${winT} gives up ${wGive}, receives ${wRecv}`;
+    let vsub;
+    if(pct<=3){verdict='Essentially Even';vsub='Personal preference decides';vc='bi';}
+    else if(pct<=8){verdict=`Slight Edge \u00b7 ${winT}`;vsub=winSub;vc='bi';}
+    else if(pct<=15){verdict=`Clear Winner \u00b7 ${winT}`;vsub=winSub;vc=mA<mB?'bs':'bd';}
+    else{verdict=`Decisive Advantage \u00b7 ${winT}`;vsub=winSub;vc=mA<mB?'bs':'bd';}
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
     // Build adjustment breakdown
@@ -3380,6 +3391,7 @@ function recalcTrade(){
       <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
       <div class="vcentre">
         <span class="badge b${vc} vbadge">${verdict}</span>
+        <div class="vsub">${vsub}</div>
         ${pct>8?`<div class="vgap">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
       </div>
       ${windowFraming()}
@@ -3389,10 +3401,10 @@ function recalcTrade(){
           <div class="section-label">Team A gives up</div>
           <div class="adjline">${breakdownA}</div>
           ${v4.sideA.detail.map(playerRowA).join('')}
-          <div class="breakdown-row" style="border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)">
-            <span>Pre-concentration subtotal</span>
+          ${v4.sideA.concM>1.001?`<div class="breakdown-row dl-tc-sub">
+            <span>Before Concentration Bonus</span>
             <span>${v4.sideA.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
-          </div>
+          </div>`:''}
           <div class="breakdown-row" style="font-weight:600">
             <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mA.toLocaleString()}</span>
@@ -3400,12 +3412,12 @@ function recalcTrade(){
         </div>
         <div>
           <div class="section-label">Team B gives up</div>
-          <div style="font-size:10px;margin-bottom:6px;line-height:1.6">${breakdownB}</div>
+          <div class="adjline">${breakdownB}</div>
           ${v4.sideB.detail.map(playerRowA).join('')}
-          <div class="breakdown-row" style="border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-size:10px;color:var(--fog-2)">
-            <span>Pre-concentration subtotal</span>
+          ${v4.sideB.concM>1.001?`<div class="breakdown-row dl-tc-sub">
+            <span>Before Concentration Bonus</span>
             <span>${v4.sideB.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
-          </div>
+          </div>`:''}
           <div class="breakdown-row" style="font-weight:600">
             <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mB.toLocaleString()}</span>
@@ -3413,7 +3425,7 @@ function recalcTrade(){
         </div>
       </div>
 
-      ${pct>3?`<div style="text-align:center;margin-top:.85rem"><button onclick="toggleGapFiller()" style="font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--sky);cursor:pointer">⇄ ${gapFillerOpen?'Hide gap-filler':'Bridge the gap'}</button></div>`:''}`;
+      <div class="dl-tc-acts" id="dl-tc-acts">${pct>3?`<button class="dl-tc-act" onclick="toggleGapFiller()">⇄ ${gapFillerOpen?'Hide Gap Filler':'Bridge The Gap'}</button>`:''}</div>`;
   } else {
     // Multi-team verdict — per-asset routing makes RECEIVES computable:
     // each team's net = value routed TO them − value they give away.
@@ -3496,10 +3508,11 @@ function recalcTrade(){
   if(gapFillerOpen) renderGapFiller();
   // share row: regenerated from LIVE state on every click, so it always reflects the
   // trade as displayed even after edits (the address bar may hold a stale inbound link)
-  document.getElementById('verdict-area').insertAdjacentHTML('beforeend',
-    '<div style="text-align:center;margin-top:.85rem"><button onclick="shareTradeLink(this)" '
-    +'style="font-size:11px;font-weight:600;padding:5px 16px;border-radius:6px;border:1px solid var(--teal-br);'
-    +'background:transparent;color:var(--teal-br);cursor:pointer">Share this trade</button></div>');
+  // Shares a row with Bridge The Gap when the two-team verdict drew one.
+  const shareBtn='<button class="dl-tc-act" onclick="shareTradeLink(this)">Share This Trade</button>';
+  const acts=document.getElementById('dl-tc-acts');
+  if(acts) acts.insertAdjacentHTML('beforeend',shareBtn);
+  else document.getElementById('verdict-area').insertAdjacentHTML('beforeend','<div class="dl-tc-acts">'+shareBtn+'</div>');
 }
 
 // ── Player Compare (v1: two players, winner pips, model-value edge) ─────────
@@ -6322,7 +6335,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-21b</span>
+  <span class="foot-build">2026-10-21c</span>
 </footer>
 
 
