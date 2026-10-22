@@ -1100,6 +1100,8 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 .dl-bb-rank{flex-shrink:0;width:28px;text-align:center;font-family:var(--mono);
   font-size:13px;font-weight:800;color:var(--fog-2)}
 .dl-bb-name{font-weight:700;font-size:13px;line-height:1.25}
+.dl-bb-link{cursor:pointer}
+.dl-bb-link .dl-bb-name{text-decoration:underline dotted;text-underline-offset:2px}
 .dl-bb-meta{display:block;font-size:10.5px;color:var(--fog-2);margin-top:4px}
 .dl-bb-note{display:block;font-size:9.5px;color:var(--fog-2);margin-top:3px}
 .dl-bb-warn{display:block;font-size:9.5px;color:var(--topaz);margin-top:3px}
@@ -5895,8 +5897,9 @@ document.addEventListener('click', function(e) {
     <strong style="color:var(--sky)">dDOM</strong> is his share of team production, adjusted for who he played,
     as a percentile at his position. For reference, players who went in round 1 sat around the 90th percentile in
     their final college season; day-2 picks around the 80th; undrafted players around the 41st.
-    <strong style="color:var(--sky)">PPA</strong> is per-play efficiency on the same basis — shown because it is
-    interesting, not because it predicts the draft, which on its own it barely does.<br><br>
+    <strong style="color:var(--sky)">PPA</strong> is how much each of his plays moved his team closer to scoring,
+    ranked the same way. It measures efficiency rather than volume, and on its own says little about where a
+    player gets drafted — dDOM says more.<br><br>
     <strong style="color:var(--topaz)">Early in a season these swing hard.</strong> Three or four games is almost
     no sample and one big afternoon can move a player fifty places, so games played is shown on every row.<br><br>
     Consensus tiers are context only — they feed no DELTA score, no percentile and no ranking, exactly like
@@ -6335,7 +6338,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-21c</span>
+  <span class="foot-build">2026-10-21d</span>
 </footer>
 
 
@@ -6578,7 +6581,8 @@ function renderDevy(){
     }
     html+='<div class="bb-row">'
       +'<span data-tip="His position on the consensus big board, compiled by hand from publicly published boards. Where the draft community ranks him — not a DELTA rating." class="dl-bb-rank">'+r.rank+'</span>'
-      +'<span class="bb-who">'
+      +(pr?'<span class="bb-who dl-bb-link" data-name="'+String(r.cfbName||r.n).replace(/"/g,'&quot;')+'" onclick="devyOpenCard(this.dataset.name)">'
+          :'<span class="bb-who">')
         +'<span class="dl-bb-name">'+r.n+mv+'</span>'
         +'<span class="dl-bb-meta">'
           +(pr&&pr.stars?'<span class="bb-stars">'+'★'.repeat(pr.stars)+'</span>':'')
@@ -6600,7 +6604,7 @@ function renderDevy(){
         +'<span class="dl-bb-pct" style="color:'+col(pr&&pr.dd)+'">'
           +((pr&&pr.dd!=null)?pr.dd:'–')+'<span class="dl-bb-pctlbl" data-tip="His share of his team\'s production, adjusted for who he played, as a percentile against others at his position. Players drafted in round 1 sat near the 90th percentile in their final college season; day-2 picks near the 80th; undrafted near the 41st.">dDOM</span></span>'
         +'<span class="dl-bb-pct" style="color:'+col(pr&&pr.ppa)+'">'
-          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span class="dl-bb-pctlbl" data-tip="Predicted points added per play, as a percentile at his position. Shown because it is interesting, not because it predicts the draft — on its own it barely does.">PPA</span></span>'
+          +((pr&&pr.ppa!=null)?pr.ppa:'–')+'<span class="dl-bb-pctlbl" data-tip="How much each of his plays moved his team closer to scoring, as a percentile at his position. It measures efficiency, not volume. On its own it says little about where he will be drafted — dDOM says more.">PPA</span></span>'
       +'</span></div>';
   }
   // The class label lives here now rather than in the title. It is provenance,
@@ -6613,6 +6617,18 @@ function renderDevy(){
     +(meta?'<div class="dl-bb-foot">'+meta+'</div>':'');
 }
 function devySetPos(p,el){ _devyPos=p; renderDevy(); }
+/* Big Board name -> the same college quick-look card the College tabs open. That card
+   reads the College tab's data, which the Big Board does not load, so load it first
+   (ensureCollege returns at once while a load is in flight, hence the wait). A player
+   missing from the season the College tab is showing opens his full college page. */
+async function devyOpenCard(name){
+  try{
+    await ensureCollege();
+    for(let i=0;i<100&&CFB_STATE==='loading';i++) await new Promise(r=>setTimeout(r,100));
+  }catch(e){}
+  if(CFB&&CFB.players&&CFB.players.some(x=>x.n===name)) openCfbCard(name);
+  else location.href=cfbNflHref(name);
+}
 
 async function openCollegeTab(){
   const host=document.getElementById('cfb-body');
