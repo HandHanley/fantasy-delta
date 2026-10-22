@@ -66,10 +66,6 @@ tr:hover td{background:var(--panel)}
   .tc-row>span{width:100%}
   .tc-wrap{flex:1;min-width:0}
   .tc-btn{flex:1;padding:5px 8px;font-size:10px;white-space:nowrap}
-  /* compare: label on its own line, then [A] vs [B] across one row */
-  .cmp-row{flex-direction:column;align-items:stretch;gap:8px}
-  .cmp-label{align-self:flex-start;white-space:normal}
-  .cmp-in{max-width:none;min-width:0;font-size:11.5px;padding:6px 9px}
 
   .trade-grid{grid-template-columns:1fr}
   body{padding:.5rem}
@@ -198,18 +194,6 @@ tr:hover td{background:var(--panel)}
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-tc-act:hover{background:var(--teal-soft)}
 #gap-filler{margin-top:.6rem}
-.cmp-sec{margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1.1rem}
-.cmp-row{display:flex;align-items:center;gap:10px}
-/* The two inputs and the "vs" shrink as one unit. Previously each input carried
-   flex:1 AND min-width:150px in the same wrapping row, so the second input wrapped
-   to its own line and "vs" was stranded at the right edge. */
-.cmp-pair{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.cmp-label{font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
-.cmp-in{flex:1 1 0;min-width:0;background:var(--ink-2);border:1px solid var(--line);
-  border-radius:4px;color:var(--paper);font-family:inherit;font-size:12px;padding:7px 10px}
-.cmp-in:focus{outline:2px solid var(--teal-br);outline-offset:1px}
-.cmp-vs{color:var(--fog-2);font-size:11px;flex:0 0 auto}
-#cmp-out{margin-top:.9rem}
 .send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--paper);cursor:pointer;margin-top:.75rem}
 .send-btn:hover{background:var(--line)}
 .section-label{font-size:10px;font-weight:600;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
@@ -1567,6 +1551,113 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-lg-from{font-size:11.5px;color:var(--fog);border:1px solid var(--line);border-radius:6px;padding:7px 10px;margin-bottom:.6rem;line-height:1.5}
 .dl-lg-from b{color:var(--paper);font-weight:700}
 .dl-lg-from span{display:block}
+/* Compare tab (22 Oct 2026). One colour per player via --cp-c / --cp-t: teal, sky, violet,
+   none of them a signal colour. The leader of a row is a soft teal box, never emerald. */
+.dl-cp-wrap{max-width:760px;margin:0 auto}
+.dl-cp-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.dl-cp-slot{position:relative;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--cp-c);
+  border-radius:12px;padding:20px 8px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;min-height:94px;min-width:0;font-family:inherit;color:var(--paper)}
+.dl-cp-empty{border:1.5px dashed var(--cp-c);background:transparent;color:var(--cp-c);font-weight:800;font-size:12px;cursor:pointer}
+.dl-cp-empty:hover{background:var(--cp-t)}
+.dl-cp-plus{font-size:22px;line-height:1;font-weight:400}
+.dl-cp-x{position:absolute;top:2px;right:2px;width:30px;height:30px;border:0;background:none;color:var(--fog);font-size:13px;cursor:pointer}
+.dl-cp-sn{font-weight:800;font-size:13px;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+.dl-cp-sm{font-size:11px;color:var(--fog);white-space:nowrap}
+.dl-cp-sds{font-family:var(--mono);font-size:20px;font-weight:700}
+.dl-cp-lbl{display:block;font-size:12px;color:var(--fog);margin-bottom:6px}
+.dl-cp-sw{margin-bottom:12px}
+.dl-cp-in{width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--panel);color:var(--paper);outline:none}
+.dl-cp-in:focus{border-color:var(--teal-br)}
+.dl-cp-drop{display:none;margin-top:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dl-cp-drop.open{display:block}
+.dl-cp-opt{width:100%;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:10px 12px;border:0;
+  border-bottom:1px solid var(--line);background:transparent;color:var(--paper);text-align:left;font-family:inherit;cursor:pointer}
+.dl-cp-opt:last-child{border-bottom:0}
+.dl-cp-opt:hover{background:var(--teal-soft)}
+.dl-cp-on{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dl-cp-on b{font-size:14px}
+.dl-cp-on span{font-size:11.5px;color:var(--fog)}
+.dl-cp-od{font-family:var(--mono);font-size:14px}
+.dl-cp-none{padding:10px 12px;font-size:12px;color:var(--fog)}
+.dl-cp-note{font-size:12px;color:var(--fog);text-align:center;margin:0 0 12px}
+.dl-cp-go{width:100%;min-height:46px;border-radius:10px;border:0;background:var(--teal-br);color:var(--ink);
+  font-family:inherit;font-weight:800;font-size:14px;cursor:pointer}
+.dl-cp-go:disabled{background:var(--line);color:var(--fog);cursor:default}
+.dl-cp-top{display:flex;margin-bottom:10px}
+.dl-cp-edit{border:1px solid var(--line);background:transparent;color:var(--fog);font-family:inherit;font-weight:700;
+  font-size:12px;padding:8px 12px;border-radius:8px;cursor:pointer}
+.dl-cp-cards,.dl-cp-grid{display:grid;gap:8px}
+.dl-cp-g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dl-cp-g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.dl-cp-card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--cp-c);border-radius:12px;
+  padding:10px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.dl-cp-av{position:relative;width:44px;height:44px;border-radius:50%;background:var(--cp-t);color:var(--cp-c);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:0 0 auto}
+.dl-cp-av i{font-style:normal}
+.dl-cp-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dl-cp-nm{border:0;background:none;color:var(--paper);font-family:inherit;font-weight:800;font-size:13px;line-height:1.2;padding:0;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;overflow-wrap:anywhere}
+.dl-cp-ds{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;margin-top:2px}
+.dl-cp-dsl{font-size:9.5px;color:var(--fog);letter-spacing:.05em}
+.dl-cp-sec{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 12px;margin-top:12px}
+.dl-cp-sec h3{margin:0 0 6px;font-size:15px;font-weight:800;color:var(--paper)}
+.dl-cp-sub{margin:-3px 0 10px;font-size:12px;color:var(--fog)}
+.dl-cp-row{padding:8px 0;border-top:1px solid var(--line)}
+.dl-cp-rl{font-size:12px;color:var(--fog);margin-bottom:6px}
+.dl-cp-v{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px;border-radius:6px;
+  border:1px solid transparent;font-family:var(--mono);font-size:15px;color:var(--fog);text-align:center;min-width:0}
+.dl-cp-v.word{font-family:var(--sans);font-size:13px}
+.dl-cp-v b{font-weight:inherit}
+.dl-cp-v small{font-family:var(--sans);font-size:11px;color:var(--fog);font-weight:400}
+.dl-cp-v sup{font-family:var(--sans);font-size:9px;color:var(--sky);margin-left:2px}
+.dl-cp-v.lead{background:var(--teal-soft);border-color:var(--teal-tint);color:var(--paper);font-weight:700}
+.dl-cp-na{color:var(--fog-2)}
+.dl-cp-nw{white-space:nowrap}
+.dl-cp-nw b{color:var(--paper)}
+.dl-cp-part{display:flex;flex-direction:column;gap:5px;margin-top:12px}
+.dl-cp-ph{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700}
+.dl-cp-ph span{color:var(--fog);font-weight:400}
+.dl-cp-bar{display:flex;align-items:center;gap:8px}
+.dl-cp-tr{flex:1;height:8px;background:var(--ink-2);border-radius:4px;overflow:hidden}
+.dl-cp-fl{display:block;height:100%;border-radius:4px}
+.dl-cp-bv{width:36px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--fog)}
+.dl-cp-bv.lead{color:var(--paper);font-weight:700}
+.dl-cp-sp{display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.dl-cp-sph{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--fog)}
+.dl-cp-sph b{color:var(--cp-c)}
+.dl-cp-sph .lead{color:var(--paper);font-weight:700}
+.dl-cp-sph em{font-style:normal;font-weight:400;color:var(--fog)}
+.dl-cp-spb{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--ink-2)}
+.dl-cp-key{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--fog)}
+.dl-cp-key span{display:flex;align-items:center;gap:5px}
+.dl-cp-key i{width:9px;height:9px;border-radius:2px}
+.dl-cp-yrs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:end;margin-top:6px}
+.dl-cp-yr{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.dl-cp-cols{display:flex;align-items:flex-end;gap:3px;height:128px}
+.dl-cp-col{display:flex;flex-direction:column;align-items:center;gap:2px}
+.dl-cp-col em{font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--fog)}
+.dl-cp-col em.lead{color:var(--paper);font-weight:700}
+.dl-cp-col i{display:block;width:16px;border-radius:3px 3px 0 0}
+.dl-cp-yl{font-size:12px;font-weight:700}
+.dl-cp-yg{font-size:10.5px;color:var(--fog);white-space:nowrap}
+.dl-cp-mk svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.dl-cp-leg{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px 8px;margin-top:12px;font-size:12px;align-items:baseline}
+.dl-cp-leg .h{color:var(--fog);text-align:right}
+.dl-cp-leg .n{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.dl-cp-leg .n i{width:10px;height:3px;border-radius:2px;flex:0 0 auto}
+.dl-cp-leg .v{font-family:var(--mono);text-align:right}
+.dl-cp-acts{display:flex;gap:8px;margin-top:14px}
+.dl-cp-act{flex:1;min-height:44px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;color:var(--teal-br);
+  font-family:inherit;font-weight:800;font-size:13px;cursor:pointer}
+.dl-cp-act:hover{background:var(--teal-soft)}
+.dl-cp-pair{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.dl-cp-pair:empty{display:none}
+.dl-cp-pair p{margin:0 0 8px;font-size:12.5px;color:var(--fog)}
+.dl-cp-pair div{display:flex;flex-direction:column;gap:6px}
+.dl-cp-deck{flex:1;padding:8px 0;font-size:11px;font-weight:700;color:var(--teal-br);background:transparent;
+  border:1px solid var(--teal-br);border-radius:8px;font-family:inherit;cursor:pointer}
 .dl-lg-load,.dl-lg-err,.dl-lg-empty{color:var(--fog);font-size:13px;padding:1rem 12px}
 .dl-lg-err{color:var(--coral)}
 .dl-lg-prog{color:var(--fog-2);font-size:11.5px;margin-top:6px;line-height:1.5}
@@ -1713,6 +1804,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 </div>
 <div class="tabs" style="position:relative">
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
+  <button data-tab="compare" data-sec="nfl" class="tab" onclick="showTab('compare',this)">Compare</button>
   <button data-tab="roles" data-sec="nfl" class="tab" onclick="showTab('roles',this)">Role Changes</button>
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
@@ -1776,6 +1868,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
         <option value="projections">Rankings · Projections</option>
         <option value="epa">Rankings · Efficiency</option>
         <option value="contracts">Rankings · Contracts</option>
+        <option value="compare">Compare</option>
         <option value="roles">Role Changes</option>
       </optgroup>
       <optgroup label="College">
@@ -2023,6 +2116,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   </table></div>
 </div>
 
+<div id="panel-compare" class="panel"><div id="cp-root"></div></div>
+
 <div id="panel-roles" class="panel"><div id="rc-root"></div></div>
 
 <div id="panel-scorecard" class="panel"><div id="sc-root"></div></div>
@@ -2108,20 +2203,6 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   </div>
   <div id="verdict-area"></div>
   <div id="gap-filler"></div>
-
-  <div class="cmp-sec">
-    <div class="cmp-row">
-      <span class="cmp-label">⇄ Player Compare</span>
-      <div class="cmp-pair">
-      <input id="cmp-a" aria-label="Player A" class="cmp-in" list="cmp-names" placeholder="Player A" onfocus="cmpFill()" oninput="renderCompare()">
-      <span class="cmp-vs">vs</span>
-      <input id="cmp-b" aria-label="Player B" class="cmp-in" list="cmp-names" placeholder="Player B" onfocus="cmpFill()" oninput="renderCompare()">
-      </div>
-    </div>
-    <datalist id="cmp-names"></datalist>
-    </div>
-    <div id="cmp-out"></div>
-  </div>
 </div>
 
 <div id="panel-epa" class="panel">
@@ -3520,71 +3601,384 @@ function recalcTrade(){
   else document.getElementById('verdict-area').insertAdjacentHTML('beforeend','<div class="dl-tc-acts">'+shareBtn+'</div>');
 }
 
-// ── Player Compare (v1: two players, winner pips, model-value edge) ─────────
-// Lives with the trade calc because "should I move X for Y" is when you want
-// it. Deliberately NO second verdict engine — the model-value edge is the
-// summary; buy/sell stays the trade calc's job.
-function cmpFill(){
-  const dl=document.getElementById('cmp-names');
-  if(!dl||dl.children.length||typeof COMP==='undefined') return;
-  dl.innerHTML=COMP.map(p=>'<option value="'+p.n.replace(/"/g,'&quot;')+'">').join('');
-}
-function cmpFind(id){
-  const v=(document.getElementById(id)||{}).value||'';
-  return COMP.find(p=>p.n===v)||null;
-}
-function renderCompare(){
-  const host=document.getElementById('cmp-out'); if(!host) return;
-  const a=cmpFind('cmp-a'), b=cmpFind('cmp-b');
-  if(!a||!b){ host.innerHTML=''; return; }
-  if(a.n===b.n){ host.innerHTML='<div style="font-size:11px;color:var(--fog)">Pick two different players.</div>'; return; }
+// ── Compare tab (22 Oct 2026, owner) ─────────────────────────────────────────
+/* Up to three NFL players side by side, its own NFL tab. Pick players, then tap
+   Compare: nothing draws until asked (owner: a comparison that fires the moment two
+   names are in is half-built noise). DISPLAY ONLY. Every number here is one the site
+   already shows somewhere else (rankings, the player card, the Market Value card);
+   there is deliberately no second verdict engine, and no "who wins" line.
+   The leader of each row gets a soft teal box. The old box used a green dot, but
+   green means Buy on this site.
+   Replaces the Trade Calc's compare box, whose native <datalist> of 409 names froze
+   iPhones when the field was tapped (owner report, 22 Oct; Chrome was fine). This
+   uses DELTA's own dropdown, like every other search on the site. */
+const CP_MAX=3;
+const CP_COL=['var(--teal-br)','var(--sky)','var(--violet)'];
+const CP_TINT=['var(--teal-tint)','var(--sky-tint)','var(--violet-tint)'];
+const CP={slots:[null,null,null],view:'pick',init:false,tok:0,mk:{}};
+function cpEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function cpP(n){ return (n&&typeof COMP!=='undefined')?(COMP.find(p=>p.n===n)||null):null; }
+function cpPicked(){ return CP.slots.map(cpP).filter(Boolean); }
+function cpFirst(n){ const w=String(n).split(' '); return w.length>1?w[0]:''; }
+function cpLast(n){ const w=String(n).split(' '); return w.length>1?w.slice(1).join(' '):String(n); }
+function cpOrd(n){ const s=n%100; return n+((s>10&&s<14)?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th')); }
+function cpPos(p){ return p.pos||p.p||''; }
 
-  const glA=glOf(a), glB=glOf(b);
-  const ctA=CONTRACTS.find(c=>c.n===a.n), ctB=CONTRACTS.find(c=>c.n===b.n);
-  const ctTxt=(p,ct)=>ct?String(ct.end)+(fifthYearNote(p,ct)?' <span style="color:var(--sky)" title="'+fifthYearNote(p,ct)+'">+opt</span>':''):null;
-  const rk=p=>isNFLRookie(p);   // engine's rookie check (handles zero-seeded rookies too)
+// ?cmp=Name|Name|Name opens the comparison straight away; one name opens the picker with
+// him in the first slot. Read once, on the first visit to the tab.
+function cpFromUrl(){
+  try{
+    const raw=new URLSearchParams(location.search).get('cmp'); if(!raw) return;
+    const ok=raw.split('|').map(s=>s.trim()).filter(n=>cpP(n)).slice(0,CP_MAX);
+    if(!ok.length) return;
+    CP.slots=[0,1,2].map(i=>ok[i]||null);
+    CP.view=ok.length>=2?'results':'pick';
+  }catch(e){}
+}
+// The address bar carries the comparison while results show, so a refresh or a copied
+// address lands on the same three players. replaceState: no extra Back step.
+function cpSyncUrl(){
+  try{
+    const u=new URL(location.href), names=cpPicked().map(p=>p.n);
+    if(CP.view==='results'&&names.length>=2) u.searchParams.set('cmp',names.join('|'));
+    else u.searchParams.delete('cmp');
+    if(u.href!==location.href) history.replaceState(history.state,'',u);
+  }catch(e){}
+}
+function cpLink(){
+  // Apostrophes encoded too (D'Andre Swift): some chat apps end a link at a bare '.
+  return location.origin+location.pathname+'?tab=compare&cmp='
+    +encodeURIComponent(cpPicked().map(p=>p.n).join('|')).replace(/'/g,'%27');
+}
+function openCompareTab(){
+  if(!CP.init){ CP.init=true; cpFromUrl(); }
+  renderCompareTab();
+}
+function renderCompareTab(){
+  const host=document.getElementById('cp-root'); if(!host) return;
+  if(typeof COMP==='undefined'||!COMP.length){ host.innerHTML='<div class="dl-cp-note">Loading players…</div>'; return; }
+  // A name no longer in the universe drops out; the rest close up so colours stay in order.
+  const keep=CP.slots.filter(n=>cpP(n));
+  CP.slots=[0,1,2].map(i=>keep[i]||null);
+  if(CP.view==='results'&&keep.length<2) CP.view='pick';
+  host.innerHTML=CP.view==='results'?cpResultsHtml():cpPickHtml();
+  if(CP.view==='results') cpFillAsync();
+  cpSyncUrl();
+}
 
-  // rows: [label, displayA, displayB, numA, numB, higherWins]
-  const rows=[
-    ['DELTA Score', a.dsScore, b.dsScore, a.dsScore, b.dsScore, true],
-    ['Start Profile',
-      glA?glA.hit+'% hit · '+glA.elite+'% elite <span style="color:var(--fog-2)">('+glA.g+' gm)</span>':null,
-      glB?glB.hit+'% hit · '+glB.elite+'% elite <span style="color:var(--fog-2)">('+glB.g+' gm)</span>':null,
-      glA?glA.hit:null, glB?glB.hit:null, true],
-    ['Age', a.a.toFixed(1), b.a.toFixed(1), a.a, b.a, false],
-    ['Contract', ctTxt(a,ctA), ctTxt(b,ctB), ctA?ctA.end:null, ctB?ctB.end:null, true],
-    ['Projected PPG', getAdjProj(a).toFixed(1), getAdjProj(b).toFixed(1), getAdjProj(a), getAdjProj(b), true],
-    ['2025 PPG', rk(a)?null:(a.ppg25||0).toFixed(1), rk(b)?null:(b.ppg25||0).toFixed(1), rk(a)?null:a.ppg25, rk(b)?null:b.ppg25, true],
-    [(a.pos==='RB'||b.pos==='RB')?'Alpha / Workhorse':'Alpha Score',
-      a.oppSc!=null?a.oppSc:null, b.oppSc!=null?b.oppSc:null, a.oppSc, b.oppSc, true],
-  ];
-  const pip='<span style="color:var(--emerald);margin-right:4px">\u25cf</span>';
-  const cell=(disp,me,other,hi)=>{
-    if(disp==null) return '<span style="color:var(--fog-2)">\u2014</span>';
-    const win=me!=null&&other!=null&&me!==other&&((hi&&me>other)||(!hi&&me<other));
-    return (win?pip:'')+disp;
+// ── Picking ──
+function cpPickHtml(){
+  const n=cpPicked().length;
+  const slots=CP.slots.map((name,i)=>{
+    const p=cpP(name), sty=' style="--cp-c:'+CP_COL[i]+';--cp-t:'+CP_TINT[i]+'"';
+    if(!p) return '<button type="button" class="dl-cp-slot dl-cp-empty"'+sty+' onclick="cpFocus()">'
+      +'<span class="dl-cp-plus">+</span><span>Add Player</span></button>';
+    return '<div class="dl-cp-slot"'+sty+'>'
+      +'<button type="button" class="dl-cp-x" aria-label="Remove '+cpEsc(p.n)+'" data-i="'+i+'" onclick="cpRemove(+this.dataset.i)">✕</button>'
+      +'<span class="dl-cp-sn">'+cpEsc(cpLast(p.n))+'</span>'
+      +'<span class="dl-cp-sm">'+cpEsc(cpPos(p))+' · '+cpEsc(p.t)+'</span>'
+      +'<span class="dl-cp-sds" style="color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'—')+'</span></div>';
+  }).join('');
+  const search=n>=CP_MAX
+    ? '<div class="dl-cp-note">3 of 3 players · tap ✕ to swap one out</div>'
+    : '<label class="dl-cp-lbl" for="cp-search">'+(n?'Add another player':'Add a player')+' · any position</label>'
+      +'<div class="dl-cp-sw"><input id="cp-search" class="dl-cp-in" autocomplete="off" spellcheck="false" placeholder="Search players…"'
+      +' oninput="cpSearch()" onkeydown="cpKey(event)"><div id="cp-drop" class="dl-cp-drop"></div></div>';
+  return '<div class="dl-cp-wrap"><div class="dl-cp-slots">'+slots+'</div>'+search
+    +'<button type="button" class="dl-cp-go"'+(n<2?' disabled':'')+' onclick="cpGo()">'
+    +(n<2?'Pick At Least Two Players':'Compare '+n+' Players')+'</button></div>';
+}
+function cpSearch(){
+  const inp=document.getElementById('cp-search'), drop=document.getElementById('cp-drop');
+  if(!inp||!drop) return;
+  const q=inp.value.toLowerCase().trim();
+  if(q.length<2){ drop.innerHTML=''; drop.classList.remove('open'); return; }
+  const have=new Set(CP.slots.filter(Boolean));
+  const m=COMP.filter(p=>!have.has(p.n)&&p.n.toLowerCase().indexOf(q)>=0)
+    .sort((a,b)=>(b.ktcEff||0)-(a.ktcEff||0)).slice(0,8);
+  drop.innerHTML=m.length
+    ? m.map(p=>'<button type="button" class="dl-cp-opt" data-n="'+cpEsc(p.n)+'" onclick="cpAdd(this.dataset.n)">'
+        +'<span class="dl-cp-on"><b>'+cpEsc(p.n)+'</b><span>'+cpEsc(cpPos(p))+' · '+cpEsc(p.t)+' · '+Math.floor(p.a||0)+'</span></span>'
+        +'<span class="dl-cp-od" style="color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'—')+'</span>'
+        +vTag(p)+'</button>').join('')
+    : '<div class="dl-cp-none">No player matches “'+cpEsc(inp.value.trim())+'”</div>';
+  drop.classList.add('open');
+}
+function cpKey(e){
+  if(e.key!=='Enter') return;
+  const f=document.querySelector('#cp-drop .dl-cp-opt'); if(f){ e.preventDefault(); f.click(); }
+}
+function cpFocus(){ const s=document.getElementById('cp-search'); if(s) s.focus(); }
+function cpAdd(name){
+  const i=CP.slots.indexOf(null);
+  if(i<0||!cpP(name)||CP.slots.indexOf(name)>=0) return;
+  CP.slots[i]=name; renderCompareTab();
+  if(cpPicked().length<CP_MAX) cpFocus();
+}
+function cpRemove(i){ CP.slots[i]=null; renderCompareTab(); }
+function cpGo(){
+  if(cpPicked().length<2) return;
+  CP.view='results'; renderCompareTab();
+  const r=document.getElementById('cp-root');
+  if(r&&r.getBoundingClientRect().top<0) r.scrollIntoView({block:'start'});
+}
+function cpEdit(){ CP.view='pick'; renderCompareTab(); }
+// From a player's pop-up: a new comparison with him in the first slot.
+function cpStartWith(name){
+  if(!cpP(name)) return;
+  try{ if(typeof closeDeckNow==='function') closeDeckNow(); }catch(e){}
+  CP.init=true; CP.slots=[name,null,null]; CP.view='pick';
+  showTab('compare',dlTabBtn('compare'));
+  setTimeout(cpFocus,60);
+}
+
+// ── Results ──
+function cpLead(vals,dir){
+  const ok=vals.filter(v=>v!=null&&isFinite(v));
+  if(!dir||ok.length<2) return vals.map(()=>false);
+  const best=dir>0?Math.max.apply(null,ok):Math.min.apply(null,ok);
+  const worst=dir>0?Math.min.apply(null,ok):Math.max.apply(null,ok);
+  if(best===worst) return vals.map(()=>false);
+  return vals.map(v=>v!=null&&v===best);
+}
+// One row: label above, one cell per player. vals decide the leader, disp is what shows.
+function cpRow(label,disp,vals,dir,g,word){
+  const L=cpLead(vals,dir);
+  return '<div class="dl-cp-row"><div class="dl-cp-rl">'+label+'</div><div class="dl-cp-grid '+g+'">'
+    +disp.map((d,i)=>'<span class="dl-cp-v'+(word?' word':'')+(L[i]?' lead':'')+'">'
+      +(d==null?'<span class="dl-cp-na">—</span>':d)+'</span>').join('')+'</div></div>';
+}
+function cpSec(title,sub,body){
+  return '<section class="dl-cp-sec"><h3>'+title+'</h3>'+(sub?'<p class="dl-cp-sub">'+sub+'</p>':'')+body+'</section>';
+}
+function cpRank(p){
+  const pos=cpPos(p);
+  const list=COMP.filter(x=>cpPos(x)===pos).sort((a,b)=>(b.dsScore||0)-(a.dsScore||0));
+  const i=list.indexOf(p); return i<0?null:i+1;
+}
+// Same arithmetic as buildDSBreakdownHTML (the player card), so the bars match the card.
+function cpParts(p){
+  const pos=cpPos(p)||'WR', age=p.a||22;
+  const scar=scarcity(pos,leagueTeams,qbFmt)||1, mult=dsYouthMult(age);
+  return {
+    age:(dsAge(age,pos)/25)*15,
+    prod:Math.min(45,(dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p,true)/32)*45*mult)*scar,
+    opp:(dsOpportunity(p)/33)*30,
+    con:dsCont(p)
   };
-  const body=rows.filter(r=>r[1]!=null||r[2]!=null).map(r=>
-    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--ink-2);font-size:11.5px;align-items:baseline">'
-    +'<span style="color:var(--fog);font-size:10px">'+r[0]+'</span>'
-    +'<span>'+cell(r[1],r[3],r[4],r[5])+'</span>'
-    +'<span>'+cell(r[2],r[4],r[3],r[5])+'</span></div>'
-  ).join('');
-
-  const mvA=mvAsset(a), mvB=mvAsset(b);
-  const lead=mvA===mvB?null:(mvA>mvB?a:b);
-  const edge=lead?Math.round(Math.abs(mvA-mvB)/Math.min(mvA,mvB)*100):0;
-  const name=(p,id)=>'<span onclick="openDeckNewTab(event,\''+p.n.replace(/'/g,"\\'")+'\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;font-weight:700;font-size:12px">'+p.n+' \u2197</span>'
-    +'<div style="font-size:9px;color:var(--fog)">'+p.pos+' \u00b7 '+p.t+'</div>';
-  host.innerHTML=
-    '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;padding-bottom:6px">'
-    +'<span></span><div>'+name(a)+'</div><div>'+name(b)+'</div></div>'
-    +body
-    +'<div style="margin-top:9px;font-size:11.5px;color:var(--fog)">Model value: '
-    +mvA.toLocaleString()+' vs '+mvB.toLocaleString()
-    +(lead?' \u2014 <b style="color:var(--emerald)">'+lead.n+' +'+edge+'%</b>':' \u2014 dead even')
-    +'<span style="color:var(--fog-2);font-size:9.5px"> \u00b7 model\u2019s asset pricing at your league settings \u2014 the trade calc renders the verdict</span></div>';
 }
+function cpSnap(p){
+  const rows=((typeof GAMELOGS!=='undefined'&&GAMELOGS&&GAMELOGS[p.n])||[])
+    .filter(r=>r.s===SEASON_YEAR&&!r.up&&!r.dnp&&r.snp!=null);
+  return rows.length?rows.reduce((a,r)=>a+r.snp,0)/rows.length:null;
+}
+function cpResultsHtml(){
+  const ps=cpPicked(), n=ps.length, g='dl-cp-g'+n;
+  const posSet=new Set(ps.map(cpPos)), onePos=posSet.size===1?ps.map(cpPos)[0]:null;
+
+  const cards='<div class="dl-cp-cards '+g+'">'+ps.map((p,i)=>{
+    const hs=(typeof HEADSHOTS!=='undefined'&&HEADSHOTS[p.n])||'';
+    const ini=String(p.n).split(/\s+/).map(w=>w.charAt(0)).join('').slice(0,2).toUpperCase();
+    return '<div class="dl-cp-card" style="--cp-c:'+CP_COL[i]+';--cp-t:'+CP_TINT[i]+'">'
+      +'<span class="dl-cp-av"><i>'+cpEsc(ini)+'</i>'+(hs?'<img src="'+cpEsc(hs)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</span>'
+      +'<button type="button" class="dl-cp-nm" data-n="'+cpEsc(p.n)+'" onclick="openDeck(this.dataset.n)">'
+        +(cpFirst(p.n)?cpEsc(cpFirst(p.n))+'<br>':'')+cpEsc(cpLast(p.n))+'</button>'
+      +'<span class="dl-cp-sm">'+cpEsc(cpPos(p))+' · '+cpEsc(p.t)+' · '+Math.floor(p.a||0)+'</span>'
+      +'<span class="dl-cp-ds" style="color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'—')+'</span>'
+      +'<span class="dl-cp-dsl">DELTA SCORE</span>'+vTag(p)+'</div>';
+  }).join('')+'</div>';
+
+  // The Basics
+  const mkt=ps.map(p=>p.ktcEff>0?p.ktcEff:null);
+  const mv=ps.map(p=>{ const v=(p.mv!=null)?p.mv:mvAsset(p); return v>0?v:null; });
+  const rk=ps.map(cpRank);
+  const pj=ps.map(p=>{ const v=getAdjProj(p); return v>0?v:null; });
+  const age=ps.map(p=>p.a||null);
+  const ct=ps.map(p=>(typeof CONTRACTS!=='undefined'?CONTRACTS.find(c=>c.n===p.n):null)||null);
+  const fmtN=v=>v==null?null:Math.round(v).toLocaleString();
+  const basics=
+     cpRow('Market Value',mkt.map(fmtN),mkt,1,g)
+    +cpRow('Model Value',mv.map(fmtN),mv,1,g)
+    +cpRow(onePos?'Rank Among '+onePos+'s · By DELTA Score':'Rank At Position · By DELTA Score',
+       rk.map((r,i)=>r?cpEsc(cpPos(ps[i]))+r:null),rk,-1,g)
+    +cpRow('Projected PPG · Rest Of Season',pj.map(v=>v==null?null:v.toFixed(1)),pj,1,g)
+    +cpRow('Age',age.map(v=>v==null?null:v.toFixed(1)),age,-1,g)
+    +cpRow('Contract Runs Through',ct.map((c,i)=>{
+        if(!c||!c.end) return null;
+        const opt=(typeof fifthYearNote==='function')&&fifthYearNote(ps[i],c);
+        return '<b>'+c.end+(opt?'<sup title="'+cpEsc(opt)+'">+opt</sup>':'')+'</b>'
+          +(c.aav>0?'<small>$'+(c.aav/1e6).toFixed(1)+'M / yr</small>':'');
+      }),ct.map(c=>c&&c.end?c.end:null),1,g);
+
+  // What makes up the DELTA Score
+  const parts=ps.map(cpParts);
+  const partBlock=(key,label,max,dec)=>{
+    const vals=parts.map(x=>x[key]), L=cpLead(vals,1);
+    return '<div class="dl-cp-part"><div class="dl-cp-ph">'+label+'<span>out of '+max+'</span></div>'
+      +vals.map((v,i)=>'<div class="dl-cp-bar"><span class="dl-cp-tr"><span class="dl-cp-fl" style="width:'
+        +Math.max(0,Math.min(100,v/max*100)).toFixed(1)+'%;background:'+CP_COL[i]+'"></span></span>'
+        +'<span class="dl-cp-bv'+(L[i]?' lead':'')+'">'+(dec?v.toFixed(1):Math.round(v))+'</span></div>').join('')+'</div>';
+  };
+  const score=partBlock('prod','Production',45,true)+partBlock('opp','Opportunity',30,true)
+    +partBlock('age','Age',15,true)+partBlock('con','Contract',10,false);
+
+  // Start Profile
+  const sps=ps.map(p=>computeStartProfile(p.n,cpPos(p)));
+  const spL=cpLead(sps.map(s=>s?s.hitPct:null),1);
+  const sp=sps.map((s,i)=>'<div class="dl-cp-sp" style="--cp-c:'+CP_COL[i]+'">'
+    +'<div class="dl-cp-sph"><b>'+cpEsc(cpLast(ps[i].n))+'</b>'
+    +(s?'<span class="'+(spL[i]?'lead':'')+'">'+s.hitPct+'% hit · '+s.elitePct+'% elite <em>('+s.n+' g)</em></span>'
+       :'<span>No games on record</span>')+'</div>'
+    +(s?'<div class="dl-cp-spb"><span style="width:'+s.missPct+'%;background:var(--coral)"></span>'
+       +'<span style="width:'+s.hitOnlyPct+'%;background:var(--sky)"></span>'
+       +'<span style="width:'+s.elitePct+'%;background:var(--emerald)"></span></div>':'')+'</div>').join('')
+    +'<div class="dl-cp-key"><span><i style="background:var(--coral)"></i>Miss</span>'
+    +'<span><i style="background:var(--sky)"></i>Hit</span><span><i style="background:var(--emerald)"></i>Elite</span></div>';
+
+  // Points per game by season: the three completed seasons, then this one so far
+  const yrs=[SEASON_YEAR-3,SEASON_YEAR-2,SEASON_YEAR-1,SEASON_YEAR];
+  const tallies=ps.map(p=>seasonTally(p));
+  const cellPG=(p,y,i)=>{
+    if(y===SEASON_YEAR){ const t=tallies[i]; return {v:t.g?t.pts/t.g:null,g:t.g||0}; }
+    const k=String(y).slice(2), g0=p['g'+k], v=p['ppg'+k];
+    return {v:(g0>0&&v>0)?v:null,g:g0>0?g0:0};
+  };
+  const grid=yrs.map(y=>ps.map((p,i)=>cellPG(p,y,i)));
+  const top=Math.max(10,...grid.flat().map(c=>c.v||0));
+  const seasons='<div class="dl-cp-yrs">'+yrs.map((y,yi)=>{
+    const L=cpLead(grid[yi].map(c=>c.v),1);
+    return '<div class="dl-cp-yr"><div class="dl-cp-cols">'+grid[yi].map((c,i)=>'<div class="dl-cp-col">'
+        +'<em class="'+(L[i]?'lead':'')+'">'+(c.v==null?'—':c.v.toFixed(1))+'</em>'
+        +'<i style="height:'+(c.v==null?0:Math.max(2,c.v/top*104)).toFixed(0)+'px;background:'+CP_COL[i]+(y===SEASON_YEAR?';opacity:.85':'')+'"></i></div>').join('')
+      +'</div><span class="dl-cp-yl">'+y+'</span>'
+      +'<span class="dl-cp-yg">'+grid[yi].map(c=>c.g||'–').join(' · ')+' g</span></div>';
+  }).join('')+'</div>';
+
+  // This season
+  const so=tallies.map(t=>t.g?t.pts/t.g:null);
+  const snap=ps.map(cpSnap);
+  const eff=ps.map(p=>{
+    const r=(typeof effRec==='function')?effRec(p.n):null;
+    if(!r||r.sofar==null) return null;
+    const pos=cpPos(p), tier=effTier(pos,r.sofar,r.n||0,'season_min');
+    if(!tier) return null;
+    return {tier:tier,pct:effPct(pos,r.sofar),pos:pos};
+  });
+  const effLabel=onePos&&typeof EFF_MEASURE!=='undefined'?'Efficiency · '+EFF_MEASURE[onePos]:'Efficiency · Each Player’s Own Measure';
+  const eos=ps.map(p=>{ try{ return (typeof dsEndOfSeason==='function')?dsEndOfSeason(p):null; }catch(e){ return null; } });
+  const season=
+     cpRow('Points Per Game So Far',so.map((v,i)=>v==null?null:'<b>'+v.toFixed(1)+'</b><small>'+tallies[i].g+' game'+(tallies[i].g===1?'':'s')+'</small>'),so,1,g)
+    +cpRow('Share Of Snaps',snap.map(v=>v==null?null:Math.round(v*100)+'%'),snap,1,g)
+    +cpRow(effLabel,eff.map(e=>e?'<b>'+e.tier+'</b>'+(e.pct!=null?'<small>'+cpOrd(e.pct)+' pct'+(onePos?'':' · '+cpEsc(e.pos))+'</small>':''):null),
+       eff.map(e=>e&&e.pct!=null?e.pct:null),1,g,true)
+    +cpRow('DELTA Score · Now → End Of '+SEASON_YEAR+' If Pace Holds',
+       eos.map((e,i)=>e&&e.score!=null?'<span class="dl-cp-nw">'+(ps[i].dsScore!=null?ps[i].dsScore:'—')+' → <b>'+e.score+'</b></span>':null),
+       eos.map(e=>e&&e.score!=null?e.score:null),1,g);
+
+  const acts='<div class="dl-cp-acts"><button type="button" class="dl-cp-act" onclick="cpToCalc()">Open In Trade Calc</button>'
+    +'<button type="button" class="dl-cp-act" onclick="cpShare(this)">Share</button></div><div id="cp-pair" class="dl-cp-pair"></div>';
+
+  return '<div class="dl-cp-wrap"><div class="dl-cp-top"><button type="button" class="dl-cp-edit" onclick="cpEdit()">← Edit Players</button></div>'
+    +cards
+    +cpSec('The Basics','',basics)
+    +cpSec('What Makes Up The DELTA Score','The four parts, each against its maximum',score)
+    +cpSec('Start Profile','Each player’s last 34 games played',sp)
+    +cpSec('Points Per Game By Season','Your scoring format · games played under each season',seasons)
+    +cpSec('This Season','',season)
+    +cpSec('Market Value Since June','Your league’s market, every night',
+       '<div id="cp-mk" class="dl-cp-mk"><div class="dl-cp-note">Loading market history…</div></div>')
+    +acts+'</div>';
+}
+
+// ── Market history (same files as the player page's Market Value card) ──
+function cpMkLoad(setting){
+  if(!CP.mk[setting])
+    CP.mk[setting]=fetch('./data/market-history/'+setting+'.json',{cache:'no-cache'})
+      .then(r=>r.ok?r.json():null).catch(()=>null);
+  return CP.mk[setting];
+}
+function cpMkSeries(h,name){
+  if(!h||!h.players||!Array.isArray(h.dates)) return null;
+  let key=null;
+  if(h.players[name]) key=name;
+  else if(typeof FC_ALIASES!=='undefined'&&FC_ALIASES[name]&&h.players[FC_ALIASES[name]]) key=FC_ALIASES[name];
+  else if(typeof fcNormIndex==='function'&&typeof fcNorm==='function') key=fcNormIndex(h.players)[fcNorm(name)]||null;
+  return key?h.players[key]:null;
+}
+function cpMarketHtml(h){
+  const ps=cpPicked();
+  const ser=ps.map(p=>cpMkSeries(h,p.n));
+  if(!h||!h.dates||h.dates.length<2||!ser.some(Boolean))
+    return '<div class="dl-cp-note">Market history isn’t available for this league setting.</div>';
+  const N=h.dates.length, all=[];
+  ser.forEach(s=>{ if(s) s.forEach(v=>{ if(v!=null) all.push(v); }); });
+  let lo=Math.min.apply(null,all), hi=Math.max.apply(null,all);
+  const span=Math.max(hi-lo,hi*0.06); lo=Math.max(0,lo-span*0.08); hi=hi+span*0.08;
+  const W=340,H=150,pl=36,pr=6,pt=8,pb=20,pw=W-pl-pr,ph=H-pt-pb;
+  const X=i=>pl+(i/(N-1))*pw, Y=v=>pt+ph-((v-lo)/(hi-lo))*ph;
+  const raw=(hi-lo)/3, m=Math.pow(10,Math.floor(Math.log10(raw)));
+  const step=[1,2,2.5,5,10].map(k=>k*m).find(s=>s>=raw);
+  const kf=t=>t>=1000?(t/1000).toFixed(t%1000?1:0)+'k':String(Math.round(t));
+  let svg='';
+  for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step)
+    svg+='<line x1="'+pl+'" y1="'+Y(t).toFixed(1)+'" x2="'+(W-pr)+'" y2="'+Y(t).toFixed(1)+'" style="stroke:var(--line);stroke-width:1"></line>'
+      +'<text x="'+(pl-5)+'" y="'+(Y(t)+3).toFixed(1)+'" text-anchor="end" style="fill:var(--fog);font-size:9px;font-family:var(--mono)">'+kf(t)+'</text>';
+  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  h.dates.forEach((d,i)=>{ if(d.slice(8)==='01'&&i>N*0.06&&i<N*0.94)
+    svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle" style="fill:var(--fog);font-size:9.5px;font-family:var(--sans)">'+mon[+d.slice(5,7)-1]+'</text>'; });
+  // Draw back to front so the first player's line sits on top.
+  for(let i=ser.length-1;i>=0;i--){
+    const s=ser[i]; if(!s) continue;
+    let d='', pen=false;
+    s.forEach((v,j)=>{ if(v==null){ pen=false; return; } d+=(pen?' L':' M')+X(j).toFixed(1)+','+Y(v).toFixed(1); pen=true; });
+    svg+='<path d="'+d.trim()+'" style="fill:none;stroke:'+CP_COL[i]+';stroke-width:2;stroke-linejoin:round"></path>';
+  }
+  const pctFrom=(s,back)=>{
+    if(!s) return null;
+    let last=null; for(let j=N-1;j>=0;j--) if(s[j]!=null){ last=j; break; }
+    if(last==null) return null;
+    let a=null;
+    if(back==null){ for(let j=0;j<N;j++) if(s[j]!=null){ a=s[j]; break; } }
+    else{ for(let j=Math.max(0,last-back);j<=last;j++) if(s[j]!=null){ a=s[j]; break; } }
+    return a?((s[last]-a)/a)*100:null;
+  };
+  const fp=v=>v==null?'—':(v>0.5?'+':v<-0.5?'−':'')+Math.abs(Math.round(v))+'%';
+  const d0=h.dates[0], since=mon[+d0.slice(5,7)-1]+' '+(+d0.slice(8,10));
+  const leg='<div class="dl-cp-leg"><span></span><span class="h">Since '+since+'</span><span class="h">Last 30 Days</span>'
+    +ps.map((p,i)=>'<span class="n"><i style="background:'+CP_COL[i]+'"></i>'+cpEsc(cpLast(p.n))+'</span>'
+      +'<span class="v">'+fp(pctFrom(ser[i],null))+'</span><span class="v">'+fp(pctFrom(ser[i],30))+'</span>').join('')+'</div>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Market value of each player over time">'+svg+'</svg>'+leg;
+}
+// Efficiency and market history load on demand; the comparison draws first and
+// fills in. A token stops a slow answer from writing into a newer comparison.
+function cpFillAsync(){
+  const tok=++CP.tok;
+  if(typeof ensureEfficiency==='function'&&!EFF&&EFF_STATE!=='failed'){
+    ensureEfficiency().then(()=>{ if(tok===CP.tok&&CP.view==='results'&&EFF) renderCompareTab(); });
+  }
+  cpMkLoad(leagueTeams+'-'+qbFmt).then(h=>{
+    if(tok!==CP.tok) return;
+    const el=document.getElementById('cp-mk'); if(el) el.innerHTML=cpMarketHtml(h);
+  });
+}
+
+// ── Actions ──
+function cpToCalc(){
+  const ps=cpPicked();
+  if(ps.length===2){ cpCalcPair(0,1); return; }
+  const box=document.getElementById('cp-pair'); if(!box) return;
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const pairs=[[0,1],[0,2],[1,2]].filter(x=>ps[x[1]]);
+  box.innerHTML='<p>The Trade Calc takes two players. Which two?</p><div>'
+    +pairs.map(x=>'<button type="button" class="dl-cp-act" onclick="cpCalcPair('+x[0]+','+x[1]+')">'
+      +cpEsc(cpLast(ps[x[0]].n))+' + '+cpEsc(cpLast(ps[x[1]].n))+'</button>').join('')+'</div>';
+}
+function cpCalcPair(i,j){
+  const ps=cpPicked(); if(!ps[i]||!ps[j]) return;
+  if(typeof clearAllTrade==='function') clearAllTrade();
+  loadTradePayload({v:1,t:2,s:[[[ps[i].n]],[[ps[j].n]]],w:['neutral','neutral']});
+}
+function cpShare(btn){ dlShareUrl(cpLink(),btn,'DELTA Compare'); }
 
 // ── Gap-filler (on-demand) ───────────────────────────────────
 // Suggests the single asset that best evens an uneven 2-team trade. When a
@@ -4270,7 +4664,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','roles','scorecard','audit'],
+const SEC_TABS={ nfl:['rankings','compare','roles','scorecard','audit'],
                  cfb:['college','cfbroles','portal','bigboard'],
                  me: ['myteam','trade','watchlist'] };
 const SEC_OF={};
@@ -4325,13 +4719,14 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
   // which switched the section itself. Do not override it.
   if(params.get('trade')) return;
   let target=params.get('tab');                       // manifest shortcuts / deep links
+  if(!target && params.get('cmp')) target='compare';  // a shared comparison
   if(!target){
     const pref=dlPref('delta_landing');
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
@@ -4718,6 +5113,7 @@ function showTab(id,el,skipSection){
   if(id==='contracts')renderContracts();
   if(id==='scorecard')openScorecardTab();
   if(id==='roles' && typeof openRolesTab==='function'){ try{ openRolesTab(); }catch(e){ console.warn('roles',e); } }
+  if(id==='compare' && typeof openCompareTab==='function'){ try{ openCompareTab(); }catch(e){ console.warn('compare',e); } }
   if(id==='bigboard'){ try{ bbPaintClass(); }catch(e){} }
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -4775,6 +5171,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-22-compare', d:'22 Oct 2026', t:'Compare Players', tab:'compare',
+   b:"Line up two or three players side by side: DELTA Score and what it is made of, Start Profile, points by season, this season so far, and how the market has moved since June. Pick your players, then tap Compare. Also on every player pop-up. NFL &rsaquo; Compare."},
   {id:'2026-10-14-roles', d:'14 Oct 2026', t:'Role Changes', tab:'roles',
    b:"Who is on the field more, and less, than early in the season. Every running back, receiver and tight end whose share of his team's snaps has moved, with the week-by-week line so you can see the shape. Facts, not calls. NFL &rsaquo; Role Changes."},
   {id:'2026-10-14-cfbroles', d:'14 Oct 2026', t:'College Role Changes', tab:'cfbroles',
@@ -5071,8 +5469,12 @@ function renderDeck(p){
     // Full Profile: a full-width button closing the header, instead of a pill floating mid-card.
     const fpb=document.createElement('a'); fpb.id='dd-fullpage';
     fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.title='Open full page'; fpb.textContent='Open Full Profile \u2192';
-    fpb.style.cssText='display:block;text-align:center;margin-top:12px;padding:8px 0;font-size:11px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:8px';
-    more.appendChild(fpb);
+    fpb.style.cssText='flex:1;display:block;text-align:center;padding:8px 0;font-size:11px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:8px';
+    // Compare (22 Oct 2026): a new comparison with this player in the first slot.
+    const cmpb=document.createElement('button'); cmpb.type='button'; cmpb.className='dl-cp-deck';
+    cmpb.textContent='Compare'; cmpb.onclick=function(){ cpStartWith(p.n); };
+    const actRow=document.createElement('div'); actRow.style.cssText='display:flex;gap:8px;margin-top:12px';
+    actRow.appendChild(cmpb); actRow.appendChild(fpb); more.appendChild(actRow);
     // Preseason · Now · Actual: needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
       const el=document.getElementById('dd-pctx'); if(!el||el.dataset.name!==p.n) return;
@@ -6341,7 +6743,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-21e</span>
+  <span class="foot-build">2026-10-22a</span>
 </footer>
 
 
