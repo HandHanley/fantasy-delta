@@ -405,6 +405,9 @@ tr:hover td{background:var(--panel)}
   width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
   transform:translateY(16px);transition:transform .2s;position:relative}
 .about-overlay.open .about-card{transform:translateY(0)}
+/* A scroll that reaches the end of a pop-up stops there instead of carrying on into the
+   page behind it. Applies to every pop-up built on these two classes. */
+.about-overlay,.about-card{overscroll-behavior:contain}
 .about-section{margin-bottom:1.1rem}
 .about-heading{font-size:11px;font-weight:700;color:var(--paper);letter-spacing:.05em;
   text-transform:uppercase;margin-bottom:.45rem}
@@ -6338,7 +6341,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-21d</span>
+  <span class="foot-build">2026-10-21e</span>
 </footer>
 
 
@@ -6958,7 +6961,10 @@ function renderCollege(){
 // a game log is what you actually watch during a season.
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCfbCard(); });
 function closeCfbCard(){
-  const o=document.getElementById('cfb-overlay'); if(o) o.classList.remove('open');
+  const o=document.getElementById('cfb-overlay');
+  // Unlock only if it was open: Escape calls this on every page, and an unconditional
+  // unlock would release the NFL pop-up's lock underneath it.
+  if(o&&o.classList.contains('open')){ o.classList.remove('open'); document.body.style.overflow=''; }
 }
 // ── dDOM: DELTA's competition-adjusted production, as a 0-100 WITHIN-POSITION percentile ──
 // The raw base differs by position (WR/TE dominator, RB rush dominator, QB ANY/A) and lives
@@ -7152,6 +7158,9 @@ function openCfbCard(name){
       +'Regular season only. QB rushing is net of sacks, per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
     +'</div>';
   document.getElementById('cfb-overlay').classList.add('open');
+  // Lock the page behind, as openDeck() does for the NFL card. Without it a swipe on the
+  // card scrolled the board underneath (owner, 21 Oct 2026, from the Big Board).
+  document.body.style.overflow='hidden';
   cfbFillTrajectory(p);
   cfbFillGameLog(p);
 }
