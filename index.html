@@ -416,6 +416,12 @@ tr:hover td{background:var(--panel)}
   /* support hues for categorical/info needs (not signals): info & comparison-B → sky, chart series → violet */
   --sky:#6BB6E0;    --sky-tint:rgba(107,182,224,.14);  --sky-dp:#134e7a;
   --violet:#9B8AF0; --violet-tint:rgba(155,138,240,.14);
+  /* Compare tab: player one's colour, FIXED. Themes repaint --teal-br, so a player drawn in
+     it turned violet on the Violet theme (same as player three) and sky on Sky (same as
+     player two). Players two and three use --sky and --violet, which no theme touches.
+     The row-leader box is neutral for the same reason: it must not follow the accent. */
+  --cp-1:#2DD4BF; --cp-1-tint:rgba(45,212,191,.14);
+  --cp-lead:rgba(234,240,244,.07); --cp-lead-bd:rgba(234,240,244,.18);
   --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
   --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
   --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
@@ -1612,7 +1618,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-cp-v b{font-weight:inherit}
 .dl-cp-v small{font-family:var(--sans);font-size:11px;color:var(--fog);font-weight:400}
 .dl-cp-v sup{font-family:var(--sans);font-size:9px;color:var(--sky);margin-left:2px}
-.dl-cp-v.lead{background:var(--teal-soft);border-color:var(--teal-tint);color:var(--paper);font-weight:700}
+.dl-cp-v.lead{background:var(--cp-lead);border-color:var(--cp-lead-bd);color:var(--paper);font-weight:700}
 .dl-cp-na{color:var(--fog-2)}
 .dl-cp-nw{white-space:nowrap}
 .dl-cp-nw b{color:var(--paper)}
@@ -3613,8 +3619,9 @@ function recalcTrade(){
    iPhones when the field was tapped (owner report, 22 Oct; Chrome was fine). This
    uses DELTA's own dropdown, like every other search on the site. */
 const CP_MAX=3;
-const CP_COL=['var(--teal-br)','var(--sky)','var(--violet)'];
-const CP_TINT=['var(--teal-tint)','var(--sky-tint)','var(--violet-tint)'];
+// Fixed per player in EVERY theme (22 Oct 2026, owner): never --teal-br, which themes repaint.
+const CP_COL=['var(--cp-1)','var(--sky)','var(--violet)'];
+const CP_TINT=['var(--cp-1-tint)','var(--sky-tint)','var(--violet-tint)'];
 const CP={slots:[null,null,null],view:'pick',init:false,tok:0,mk:{}};
 function cpEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function cpP(n){ return (n&&typeof COMP!=='undefined')?(COMP.find(p=>p.n===n)||null):null; }
@@ -6743,7 +6750,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-22a</span>
+  <span class="foot-build">2026-10-22b</span>
 </footer>
 
 
