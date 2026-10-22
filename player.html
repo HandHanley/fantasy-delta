@@ -79,6 +79,9 @@ a:hover{text-decoration:underline}
 .nav-share{display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;font-weight:700;color:var(--teal-br);
   background:var(--teal-soft);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
 .nav-share:hover{border-color:var(--teal-br)}
+/* Compare (22 Oct 2026, owner: small, not prominent): plain text like Back, opens the Compare
+   tab with this player in slot one. */
+.nav-cmp{font-weight:600}
 .nav-share:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 /* Tap targets (B6, 10 Oct 2026): invisible 8-10px hit area on the small links and season
    buttons, touch screens only, so nothing moves visually. */
@@ -298,6 +301,7 @@ a{color:var(--teal-br)}
     <div style="display:flex;align-items:center;gap:14px">
       <button type="button" class="nav-share" id="nav-share" onclick="dlShare()" aria-label="Share this player">
         <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V2M5 5l3-3 3 3"/><path d="M3 8v5.5h10V8"/></svg><span id="nav-share-t">Share</span></button>
+      <a class="nav-back nav-cmp" id="nav-cmp" href="index.html?tab=compare" style="display:none">Compare</a>
       <a class="nav-back" href="index.html" onclick="return goBack(event)">← Back</a>
     </div>
   </nav>
@@ -324,7 +328,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-16a</span>
+    <span class="foot-build">2026-10-22a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1749,6 +1753,12 @@ function _renderPlayerPage(p) {
   }).catch(()=>{});
   document.title = p.n + ' — DELTA';
   dlShareReady(p);
+  dlCompareReady(p);
+}
+function dlCompareReady(p){
+  const a=document.getElementById('nav-cmp'); if(!a||!p||!p.n) return;
+  a.href='index.html?tab=compare&cmp='+encodeURIComponent(p.n).replace(/'/g,'%27');
+  a.style.display='';
 }
 
 /* ── SHARE + SHORT LINK (16 Oct 2026, owner) ──────────────────────────────────
