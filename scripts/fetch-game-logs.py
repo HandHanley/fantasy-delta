@@ -206,11 +206,41 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     swk = pick(s, 'week')
     osn = pick(s, 'offense_snaps')
     opc = pick(s, 'offense_pct')
+    stm = pick(s, 'team')
+    spo = pick(s, 'position')
     snap_lookup = {}
+    qb_pct = defaultdict(list)   # (season, week, team) -> [(norm_name, offense_pct)] for every QB who took a snap
     if s is not None and snc:
         for _, r in s.iterrows():
             key = (norm(r.get(snc)), int(_num(r, ssc)), int(_num(r, swk)))
-            snap_lookup[key] = {'snaps': _num(r, osn), 'pct': _num(r, opc)}
+            t_s = r.get(stm) if stm else None
+            t_s = t_s if isinstance(t_s, str) and t_s else None
+            snap_lookup[key] = {'snaps': _num(r, osn), 'pct': _num(r, opc), 'team': t_s}
+            if spo and t_s and r.get(spo) == 'QB':
+                qb_pct[(key[1], key[2], t_s)].append((key[0], _num(r, opc)))
+
+    # ── WHO STARTED AT QUARTERBACK (st) — 22 Oct 2026, owner ──────────────────────
+    # The QB Start Profile counts a game he STARTED, however short (an injury exit is
+    # still a start), or one he came off the bench and played 75%+ of the snaps in; a
+    # kneel-down or mop-up cameo does not count. The 75% half is applied in the engine;
+    # this marks the starts. Source: nflverse schedules' home_qb_name / away_qb_name.
+    # KNOWN FLAW in that source: after a QB change it can keep naming the previous starter
+    # for weeks (Daniels 2024 wks 9-13 listed as Mariota, who did not play). So the file's
+    # word is not taken when ANOTHER QB on the team played 95%+ of that game's snaps (Flacco
+    # 2024 wk 8: listed, 2% of snaps, Richardson 98%). Games he played most of count anyway
+    # through the 75% rule, so the file only decides short games.
+    # Not the same thing as qs (most pass attempts, 10+), which the per-start projection uses.
+    starter = {}
+    if sched_pdf is not None and len(sched_pdf) and 'home_qb_name' in sched_pdf.columns and 'away_qb_name' in sched_pdf.columns:
+        for _, r in sched_pdf.iterrows():
+            try:
+                season = int(_num(r, 'season')); week = int(_num(r, 'week'))
+            except Exception:
+                continue
+            for tcol, qcol in (('home_team', 'home_qb_name'), ('away_team', 'away_qb_name')):
+                t, q = r.get(tcol), r.get(qcol)
+                if isinstance(t, str) and t and isinstance(q, str) and q.strip():
+                    starter[(season, week, t)] = norm(q)
 
     def has_production(st):
         return any(st[k] for k in ('py','pt','pi','ry','rt','rec','rey','ret','fl','tp','rtd','pa','cmp','car','tgt'))
@@ -245,6 +275,12 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
             lead = team_lead.get((season, week, team))
             if lead and lead[1] == nkey and lead[0] >= 10:
                 rec_out['qs'] = 1   # his team's starting QB this game (most pass attempts, 10+)
+            # st: the schedule names him as his team's starting QB (see WHO STARTED above). A
+            # snap-only row carries no team in the stat feed, so the snap file's team stands in.
+            st_team = team if isinstance(team, str) and team else (snap or {}).get('team')
+            if st_team and starter.get((season, week, st_team)) == nkey:
+                if not any(n != nkey and p >= 0.95 for n, p in qb_pct.get((season, week, st_team), [])):
+                    rec_out['st'] = 1
             # tt = the player's team's TOTAL targets that week — the denominator the app
             # divides by for target share. Row-level like tm, so a trade tracks correctly.
             # Omitted when unknown/zero; the app falls back to raw target counts.
@@ -359,6 +395,7 @@ def main():
                  'count as misses. App computes fantasy points per scoring format. '
                  'Keys: s=season w=week snp=offense_pct py/pt/pi=pass yds/td/int '
                  'ry/rt=rush yds/td rec/rey/ret=rec/rec yds/rec td fl=fum lost tp=2pt rtd=ret/ST td. qs=1 when he was the starting QB (most pass attempts on his team, 10+). '
+                 'st=1 when the schedule names him his team\'s starting QB (not taken when another QB on his team played 95%+ of the snaps). '
                  'pa/cmp=pass att/comp car=carries tgt=targets. '
                  'opp=opponent h=1 home/0 away. tm=player own team that week. '
                  'tt=team TOTAL targets that week (target share = tgt/tt); omitted if unknown. up=1 marks an UPCOMING (unplayed) game; '

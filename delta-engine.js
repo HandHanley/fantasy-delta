@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-21a';
+const DL_BUILD='2026-10-22a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -99,7 +99,8 @@ function dwToggle(n, ns){
   return i<0;                                        // true = now watched
 }
 function dwCount(ns){ return ns ? dwList(ns).length : dwRaw().length; }
-let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle', GL_HAS_QS=false;
+let GAMELOGS=null, STARTLINES=null, GAMELOGS_MAX=null, START_DATA_STATE='idle', GL_HAS_QS=false, GL_HAS_ST=false;
+const QB_SP_SNAP=0.75;   // QB Start Profile: a bench appearance counts at this share of snaps (see qbSpCounts)
 /* ACROSS YOUR LEAGUES (9 Oct 2026). DISPLAY ONLY: reads the per-device record My Team
    writes (localStorage 'delta_my_roster': per connected league, your players, every
    DELTA player rostered by anyone in it, and look-alike keys for rostered players
@@ -224,6 +225,9 @@ async function ensureStartData(){
     // QB start marks (qs) arrive with the 3 Oct pipeline. Without any, the QB blend keeps counting
     // every game — older data files behave exactly as before.
     GL_HAS_QS=false; for(const k in GAMELOGS){ if(GAMELOGS[k].some(g=>g.qs)){ GL_HAS_QS=true; break; } }
+    // Starter marks (st, 22 Oct 2026) drive the QB Start Profile rule below. A file without any
+    // keeps every QB game in the profile, exactly as before.
+    GL_HAS_ST=false; for(const k in GAMELOGS){ if(GAMELOGS[k].some(g=>g.st)){ GL_HAS_ST=true; break; } }
     let mx=0; for(const k in GAMELOGS){ for(const g of GAMELOGS[k]){ if(g.s>mx) mx=g.s; } }
     GAMELOGS_MAX=mx; START_DATA_STATE='loaded';
     // ── g25 sync from game logs ──────────────────────────────
@@ -265,13 +269,27 @@ function gamefp(g,pos,fmt){
   return g.py*0.04 + g.pt*4 + g.pi*-2 + g.ry*0.1 + g.rt*6
        + g.rec*recAbs + g.rey*0.1 + g.ret*6 + g.fl*-2 + g.tp*2 + g.rtd*6;
 }
+/* QB START PROFILE RULE (owner, 21-22 Oct 2026). A quarterback's game counts toward his
+   Start Profile if he STARTED it, however short (an injury exit is still a start; the 3 Oct
+   rule stands), or if he came off the bench and played 75%+ of the snaps. A kneel-down or
+   mop-up cameo is not a start: Josh Allen's one-snap Week 18s were being scored as misses.
+   Shipped as a data correction, not a model change. Touches the Start Profile only: game
+   logs, PPG, the in-season blend and the per-start projection all read every game as before.
+   st comes from the pipeline (fetch-game-logs.py, WHO STARTED AT QUARTERBACK). Measured on
+   22 Oct live data: 33 of 65 QB profiles change, 8 projections move (all backups), calls
+   flip for Pickett (sell->buy), Flacco (sell->hold) and Jack Bech (buy->hold, through the
+   model-value recentring), no DELTA Score moves. Without st marks in the file, no change. */
+function qbSpCounts(g,pos){
+  if(pos!=='QB'||!GL_HAS_ST) return true;
+  return !!g.st || (g.snp||0)>=QB_SP_SNAP;
+}
 function computeStartProfile(name,pos,fmt){
   fmt=fmt||scoringFmt;   // optional: calcProj asks for its half PPR + TE premium basis; displays use the league's
   if(!GAMELOGS||!STARTLINES||!GAMELOGS[name]) return null;
   const line=STARTLINES[pos+'|'+fmt];   // league-invariant: game quality depends on position + scoring only
   if(!line) return null;
   const [hit,elite]=line;
-  const played=GAMELOGS[name].filter(g=>!g.up && !g.dnp)          // played games only — never score upcoming/DNP
+  const played=GAMELOGS[name].filter(g=>!g.up && !g.dnp && qbSpCounts(g,pos))   // played games only — never score upcoming/DNP
     .sort((a,b)=>(a.s-b.s)||((a.w||0)-(b.w||0)));
   const games=played.slice(-34);   // rolling window: most recent 34 games played (~two full seasons; rolls as the season unfolds)
   if(!games.length) return null;
