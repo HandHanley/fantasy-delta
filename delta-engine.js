@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-22a';
+const DL_BUILD='2026-10-22b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -272,7 +272,14 @@ function gamefp(g,pos,fmt){
 /* QB START PROFILE RULE (owner, 21-22 Oct 2026). A quarterback's game counts toward his
    Start Profile if he STARTED it, however short (an injury exit is still a start; the 3 Oct
    rule stands), or if he came off the bench and played 75%+ of the snaps. A kneel-down or
-   mop-up cameo is not a start: Josh Allen's one-snap Week 18s were being scored as misses.
+   mop-up cameo is not a start.
+   DECIDED 22 Oct (owner, option A): a PLANNED REST game is not a start either. Josh Allen's
+   one-snap Week 18s (2024, 2025), Maye and Stroud 2024 Week 18 are left out: the schedule
+   credits the backup, and nobody started him expecting a game. An INJURY EXIT is a start and
+   counts (Darnold 2026 Wk1 at 10% of snaps, Daniels 2024 Wk7, Hurts 2024 Wk16: 72 short
+   started games in the windows on 22 Oct). Rejected: counting "his team's starter going
+   in" (adds the rest games but also 5 backup cameos after a starter returned). No source we
+   can reach says who took the first snap, so do not reopen this without one.
    Shipped as a data correction, not a model change. Touches the Start Profile only: game
    logs, PPG, the in-season blend and the per-start projection all read every game as before.
    st comes from the pipeline (fetch-game-logs.py, WHO STARTED AT QUARTERBACK). Measured on
