@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-22b';
+const DL_BUILD='2026-10-22c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5093,9 +5093,29 @@ function verdictRatio(p){
    It becomes a normal call once he has a season on record. Same gate as before, so model
    value, centering (line ~3519) and every score are untouched. */
 function dlRookieHold(p){ return ((p.g25||0)+(p.g24||0)+(p.g23||0))===0; }
+/* Price floor for calls (owner, 22 Oct 2026). A player ranked below 300th by market value at
+   the call's own 12-team superflex anchor (p.k) shows a plain Hold: no mark, no copy (owner).
+   Down there a player is worth ~250 or less against ~10,000 for a star, nobody trades for him,
+   and a few points either way flipped the call (Pickett went sell->buy on 108->122). Measured
+   22 Oct: 54 of the 86 players ranked 301+ carried a Buy or Sell. Ranked on the anchor, like
+   the call itself, so it does not change with the reader's league settings. Display only:
+   model value, the gap and every score are untouched. Flicker at the call lines is accepted
+   (owner: "that's the market"). */
+const DL_CALL_RANK_FLOOR=300;
+let _dlFloorCache={first:null,len:0,cut:null};
+function dlCallFloorValue(){
+  if(typeof COMP==='undefined'||!COMP||!COMP.length) return null;
+  if(_dlFloorCache.first===COMP[0]&&_dlFloorCache.len===COMP.length) return _dlFloorCache.cut;   // COMP is rebuilt with new objects
+  const ks=COMP.map(x=>x.k||0).sort((a,b)=>b-a);
+  const cut=ks.length>DL_CALL_RANK_FLOOR?ks[DL_CALL_RANK_FLOOR-1]:null;   // the 300th price
+  _dlFloorCache={first:COMP[0],len:COMP.length,cut:cut};
+  return cut;
+}
+function dlBelowCallFloor(p){ const cut=dlCallFloorValue(); return cut!=null&&(p.k||0)<cut; }
 const DL_ROOKIE_HOLD_TIP='No NFL season on record yet. In every test DELTA has run, the market has priced players like this about right, so DELTA holds until he has a full season on record.';
 function vTag(p){
   if(dlRookieHold(p)) return'<span class="badge bn bnr" title="'+DL_ROOKIE_HOLD_TIP+'">hold</span>';
+  if(dlBelowCallFloor(p)) return'<span class="badge bn">hold</span>';   // price floor (see DL_CALL_RANK_FLOOR)
   const r=verdictRatio(p);
   // ── One ladder for every position (Aug 2026) ──
   // A "strong" tag is a declarative call urging the user to act, so it has to be

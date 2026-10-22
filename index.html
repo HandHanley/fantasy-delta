@@ -5848,10 +5848,11 @@ function deckSearchInput(){
       <span style="font-size:10px;color:var(--fog-2)">${yds} yds</span></div>`;
   }).join('');
   drop.innerHTML=matches.map((p,i)=>{
-    const mv=mvAsset(p);
-    const ratio=mv/Math.max(p.ktcEff,1);
-    const dotColor=ratio>=1.06?'var(--emerald)':ratio>=0.94?'var(--topaz)':'var(--coral)';
-    const dotLabel=ratio>=1.06?'Buy':ratio>=0.94?'Hold':'Sell';
+    // The call comes from vTag(), like everywhere else (22 Oct 2026). This used to work out its
+    // own label from the league-basis ratio, so it could disagree with the player's card.
+    const vt=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
+    const dotColor=/buy/.test(vt)?'var(--emerald)':/sell/.test(vt)?'var(--coral)':'var(--topaz)';
+    const dotLabel=/buy/.test(vt)?'Buy':/sell/.test(vt)?'Sell':'Hold';
     const dot=`<span style="font-size:9px;font-weight:700;color:${dotColor}">${dotLabel}</span>`;
     return`<div class="drop-item" data-name="${p.n}" data-idx="${i}"
       onclick="deckSearchSelect(this.dataset.name)"
@@ -6750,7 +6751,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-22b</span>
+  <span class="foot-build">2026-10-22c</span>
 </footer>
 
 
