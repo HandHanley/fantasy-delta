@@ -137,6 +137,11 @@ use **sky for up / more** and **violet for down / less**, never emerald and cora
 (scored more / less than projected), Role Changes (playing more / less) and the per-season EPA columns.
 Emerald and coral there would read as a buy or sell call that does not exist.
 
+**Players side by side** (Compare tab, 22 Oct 2026): player one `--cp-1` (`#2DD4BF`, a FIXED teal),
+player two `--sky`, player three `--violet`. Never `--teal-br` for a data series: themes repaint it,
+and on the Violet theme player one turned the same colour as player three (on Sky, the same as player
+two). The row-leader box uses neutral `--cp-lead` / `--cp-lead-bd` for the same reason.
+
 ### Tints
 Low-alpha versions so chips sit correctly on `--ink`:
 `--emerald-tint` `--coral-tint` `--topaz-tint` `--teal-tint` `--teal-soft`
@@ -166,7 +171,10 @@ misaligns and reads as sloppy.
   approved iconography: they inherit CSS color and never render as full-color
   glyphs on iOS. Prefer inline SVG for anything load-bearing.
 - **Accent themes** may recolor chrome only (`--teal-br`, `--teal`, and their
-  tints). Signal colors never change with the theme.
+  tints). Signal colors never change with the theme. **The corollary:** anything that
+  identifies DATA (a player's colour, a series, a highlight that belongs to a row) must
+  not use the accent tokens, because a theme will repaint it into something else on the
+  page. Check a new data colour under all six themes before shipping (22 Oct 2026).
 - **Tooltips** use `data-tip`. The hidden state must be `display:none`, not
   `visibility:hidden` — a hidden tooltip that still occupies layout overflows
   its table wrapper and spawns a phantom scrollbar.
