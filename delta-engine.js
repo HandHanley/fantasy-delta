@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-23a';
+const DL_BUILD='2026-10-23b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5798,6 +5798,9 @@ async function loadLiveMarketValues() {
 }
 
 // ── FRESHNESS INDICATOR ───────────────────────────────────────────────────
+/* Contracts whose end year needs a hand check (see CONTRACT_OVERRIDES). Shown on the
+   ?dev=1 Engine Audit panel; feeds no number. */
+let DL_CONTRACT_CHECK = [];
 async function loadPlayerContracts() {
   try {
     const res = await dlFetch('./data/player-contracts.json',{cache:'no-cache'});
@@ -5808,11 +5811,30 @@ async function loadPlayerContracts() {
     // Explicit overrides for cases where the pipeline formula still gives the wrong year.
     // Add entries here ONLY when Steve has personally confirmed the correct end year.
     // Everything else comes from the pipeline automatically.
+    // AN EXTENSION SIGNED WHILE THE ROOKIE DEAL STILL RUNS: OTC counts its years from the
+    // signing year, but they start AFTER the current deal (and the 5th-year option, if
+    // picked up). The feed is short by 1-2 years, and nothing in it says whether the
+    // option was exercised, so these are confirmed by hand. DL_CONTRACT_CHECK (below)
+    // lists any new one on the ?dev=1 Engine Audit panel until it is added here.
+    // A stale entry here BEATS the feed: Gibbs sat at 2027 for 11 weeks after his
+    // extension (Contract 6/10 instead of 10/10). Revisit entries when a player re-signs.
     const CONTRACT_OVERRIDES = {
-      'Jahmyr Gibbs': 2027,          // 5th-year option exercised — through 2027 (pipeline says 2026)
+      'Jahmyr Gibbs': 2030,          // 3 yrs after the 2027 option (Aug 2026) — Lions: "through the 2030 season"
       'Jameson Williams': 2029,      // extension signed — locked through 2029 (pipeline stale)
       'Josh Allen':    2030,  // year_signed=2025 new deal — OTC correct, no +1 needed (handled by rule below too)
       'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
+      // 2026 extensions on running rookie deals, confirmed by Steve 23 Oct 2026 (reported end
+      // year where one was found; otherwise rookie deal / option year + new years):
+      'Bijan Robinson':     2030,  // 3 yrs after the 2027 option — AP: "locked up through 2030"
+      'Jaxon Smith-Njigba': 2031,  // 4 yrs — Fox 13: "through the 2031 season"
+      'Zay Flowers':        2031,  // 4 yrs after the 2027 option (Ravens: option already picked up)
+      'Chris Olave':        2030,  // 4 yrs from 2027 — CBS: "through the 2030 season"
+      'Tucker Kraft':       2030,  // 4 yrs — NFL.com: "extension through 2030"
+      'Jayden Reed':        2029,  // 3 yrs — NFP: "signed through 2029"
+      'Brenton Strange':    2029,  // 3 yrs after the rookie deal (2026)
+      'Michael Mayer':      2029,  // 3 yrs after the rookie deal (2026)
+      'Michael Wilson':     2029,  // 3 yrs after the rookie deal (2026)
+      'Chris Rodriguez':    2028,  // 2 yrs after the rookie deal (2026)
     };
 
     /* VOIDED CONTRACTS — the feed is stale in a way no formula can detect.
@@ -5827,6 +5849,7 @@ async function loadPlayerContracts() {
     };
 
     let updated = 0, added = 0, voided = 0;
+    DL_CONTRACT_CHECK = [];
     for (const player of RAW) {
       if (!player || !player.n) continue;
 
@@ -5859,7 +5882,19 @@ async function loadPlayerContracts() {
       const dpk = (typeof DRAFT_PICKS !== 'undefined') && DRAFT_PICKS[player.n];
       const isRookieDeal = dpk && c.year_signed === dpk.y;
       const isOldExtension = isVet && !isRookieDeal && (c.years || 0) > 1 && (c.year_signed || 0) < 2025;
+      // Extension signed while the rookie deal was still running (last rookie season is
+      // draft year + 3; a first-rounder's option year is + 4). The feed's end year is then
+      // too early. Flag it for a hand check unless it is already confirmed above.
       const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isOldExtension ? c.end_year + 1 : c.end_year);
+      // Listed only when the likely year differs from the one DELTA will use (the +1 rule
+      // above already corrects many older extensions).
+      if (dpk && !isRookieDeal && isVet && (c.years || 0) > 1 && !(player.n in CONTRACT_OVERRIDES)
+          && (c.year_signed || 0) <= dpk.y + (dpk.r === 1 ? 4 : 3)) {
+        const runsTo = Math.max(c.year_signed - 1, dpk.y + 3), opt = dpk.y + 4;
+        const likely = (dpk.r === 1 && c.year_signed <= opt ? opt : runsTo) + c.years;
+        if (likely !== pipeEnd) DL_CONTRACT_CHECK.push({ n: player.n, signed: c.year_signed, years: c.years,
+          uses: pipeEnd, likely, round: dpk.r });
+      }
 
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {

@@ -6945,6 +6945,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-audit" class="panel">
   <div class="section-label">Scarcity Engine Audit</div>
   <div id="audit-body"><div style="color:var(--fog);padding:1rem">Loading…</div></div>
+  <div id="audit-contracts"></div>
   <div id="audit-untracked"></div>
 </div>
 
@@ -7008,7 +7009,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23c</span>
+  <span class="foot-build">2026-10-23d</span>
 </footer>
 
 
@@ -8182,7 +8183,26 @@ function initEngineAudit(){
   if(!DELTA_DEV) return;
   dlUnlock('audit');
   loadScarcityValidation();
+  renderContractCheck();
   loadUntrackedMarket();
+}
+/* Contract end years to check by hand (DL_CONTRACT_CHECK, built by loadPlayerContracts in
+   the engine). An extension signed while the rookie deal still runs is counted short by the
+   feed; "Likely" assumes the new years start after the rookie deal and any option year,
+   which a declined option or an undrafted deal breaks — so it is a prompt, never applied.
+   Confirmed years go into CONTRACT_OVERRIDES and the player drops off this list. */
+function renderContractCheck(){
+  const host=document.getElementById('audit-contracts'); if(!host) return;
+  const L=(typeof DL_CONTRACT_CHECK!=='undefined'&&Array.isArray(DL_CONTRACT_CHECK))?DL_CONTRACT_CHECK:[];
+  const head='<div class="section-label" style="margin-top:22px">Contract End Years To Check</div>';
+  if(!L.length){ host.innerHTML=head+'<div style="font-size:11px;color:var(--fog-2)">None. Every extension signed during a rookie deal has a confirmed end year.</div>'; return; }
+  host.innerHTML=head
+    +'<div style="font-size:11px;color:var(--fog-2);margin:-4px 0 8px">'+L.length+' extension'+(L.length===1?'':'s')+' signed while a rookie deal was still running. The feed counts the new years from the signing year; Likely counts them after the rookie deal and option year. Confirm each, then add it to CONTRACT_OVERRIDES in delta-engine.js.</div>'
+    +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Signed</th><th class="dl-b-r">New Years</th><th class="dl-b-r">DELTA Uses</th><th class="dl-b-r">Likely</th></tr></thead><tbody>'
+    +L.slice().sort((a,b)=>a.n<b.n?-1:1).map(function(x){
+      return '<tr><td class="pname"><span class="dl-b-pn">'+x.n+'</span><span class="dl-b-tp">Rd '+x.round+'</span></td>'
+        +'<td class="dl-b-r">'+x.signed+'</td><td class="dl-b-r">'+x.years+'</td><td class="dl-b-r">'+x.uses+'</td><td class="dl-b-r">'+x.likely+'</td></tr>'; }).join('')
+    +'</tbody></table></div>';
 }
 /* Market players DELTA does not track (scripts/untracked-market.js, nightly). A list
    for the owner to decide on, not an alarm: adding a player shifts rankings, so it
