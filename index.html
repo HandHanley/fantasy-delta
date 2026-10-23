@@ -4176,8 +4176,8 @@ function tcMulti(){
 }
 
 // ── Trade image (22 Oct 2026, owner) ─────────────────────────────────────────
-/* Share Image: the trade on screen drawn as a picture for a league chat, sent with the
-   trade link (owner: the link is what brings people in). Every number comes from the same
+/* Share Image: the trade on screen drawn as a picture for a league chat — the picture
+   only (owner, 23 Oct 2026: Share Link already sends the link). Every number comes from the same
    helpers the verdict uses (calcAdjustedSide / tcVerdict2 for two teams, tcMulti for three
    or four), so the picture cannot disagree with the page. Colours are read from :root at
    draw time (zero hex here). Team colours are the calculator's own and never the accent:
@@ -4326,8 +4326,8 @@ async function drawTradeImage(){
   g.textAlign='right'; g.fillStyle=C.url; g.font='700 24px '+F.sans; g.fillText('fantasydelta.com',W-P,y+44);
   return cv;
 }
-/* Phone: the share sheet with the picture and the link. Computer (no file sharing):
-   download the picture and copy the link. */
+/* Phone: the share sheet with the picture alone (no title or text: some chat apps send
+   those as a separate message). Computer (no file sharing): download the picture. */
 async function shareTradeImage(btn){
   const label=btn?btn.textContent:'';
   const say=(t)=>{ if(btn){ btn.textContent=t; setTimeout(()=>{btn.textContent=label;},2200); } };
@@ -4336,19 +4336,16 @@ async function shareTradeImage(btn){
     const cv=await drawTradeImage();
     const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
     if(!blob) throw new Error('no image');
-    const link=tradeShareLink();
     const file=new File([blob],'delta-trade.png',{type:'image/png'});
     if(btn) btn.disabled=false;
     if(navigator.canShare&&navigator.canShare({files:[file]})){
       if(btn) btn.textContent=label;
-      try{ await navigator.share({files:[file],title:'DELTA Trade',text:link}); }catch(e){}
+      try{ await navigator.share({files:[file]}); }catch(e){}
       return;
     }
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='delta-trade.png';
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-    let copied=false;
-    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(link); copied=true; } }catch(e){}
-    say(copied?'Saved · Link Copied':'Image Saved');
+    say('Image Saved');
   }catch(e){
     if(btn) btn.disabled=false;
     say('Couldn’t Make Image');
@@ -5385,7 +5382,7 @@ function countUp(el, target, duration=600) {
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
   {id:'2026-10-22-tradeimg', d:'22 Oct 2026', t:'Share A Trade As A Picture', tab:'trade',
-   b:"Share Image under any Trade Calc verdict turns the trade into a picture for your league chat, with the link to open it in DELTA. Works for two, three and four-team trades. Trades opened from your League Trade Ledger can show manager names or hide them. My Team &rsaquo; Trade Calc."},
+   b:"Share Image under any Trade Calc verdict turns the trade into a picture for your league chat. Works for two, three and four-team trades. Trades opened from your League Trade Ledger can show manager names or hide them. My Team &rsaquo; Trade Calc."},
   {id:'2026-10-22-compare', d:'22 Oct 2026', t:'Compare Players', tab:'compare',
    b:"Line up two or three players side by side: DELTA Score and what it is made of, Start Profile, points by season, this season so far, and how the market has moved since June. Pick your players, then tap Compare. Also on every player pop-up. NFL &rsaquo; Compare."},
   {id:'2026-10-14-roles', d:'14 Oct 2026', t:'Role Changes', tab:'roles',
@@ -6959,7 +6956,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-22d</span>
+  <span class="foot-build">2026-10-23a</span>
 </footer>
 
 
