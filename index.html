@@ -193,6 +193,15 @@ tr:hover td{background:var(--panel)}
 .dl-tc-act{flex:1;padding:8px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-tc-act:hover{background:var(--teal-soft)}
+.dl-tc-act:disabled{opacity:.6;cursor:default}
+/* Verdict badge (22 Oct 2026): coloured by the winning team's side colour. The old markup
+   asked for .bbs/.bbi/.bbd, which never existed, so the badge always drew uncoloured. */
+.vbadge.vb-even{background:var(--line);color:var(--paper)}
+.vbadge.vb-a{background:var(--emerald-tint);color:var(--emerald-bri)}
+.vbadge.vb-b{background:var(--sky-tint);color:var(--sky)}
+/* Ledger trades: keep or hide manager names on the share image (per device). */
+.dl-lg-from label.dl-tc-names{display:flex;align-items:center;gap:7px;margin-top:5px;color:var(--fog);cursor:pointer}
+.dl-tc-names input{accent-color:var(--teal-br);width:15px;height:15px;margin:0}
 #gap-filler{margin-top:.6rem}
 .send-btn{padding:7px 14px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--paper);cursor:pointer;margin-top:.75rem}
 .send-btn:hover{background:var(--line)}
@@ -3381,6 +3390,7 @@ function applyTradeScoring(){
 }
 
 function recalcTrade(){
+  TC_CTX=null;   // a redraw is an edit: the ledger note (and its names) goes with it
   const SIDES=[
     {id:'a',arr:sA,color:'var(--emerald)',label:'Team A'},
     {id:'b',arr:sB,color:'var(--sky)',label:'Team B'},
@@ -3430,18 +3440,8 @@ function recalcTrade(){
     document.getElementById('mod-b').textContent=mB>0?mB.toLocaleString():'—';
     const tot=mA+mB||1;const pA=Math.round(mA/tot*100);
     const diff=Math.abs(mA-mB);const pct=Math.round(diff/Math.max(mA,mB,1)*100);
-    let verdict,vc;
-    // Winner = the team that GIVES less and RECEIVES more; say so with numbers
-    const winT=mA<mB?'Team A':'Team B';
-    const wGive=(mA<mB?mA:mB).toLocaleString(), wRecv=(mA<mB?mB:mA).toLocaleString();
-    // Badge stays short; the numbers go on their own line. The badge does not wrap
-    // (.badge is nowrap) and the old one-line sentence ran off a phone (21 Oct 2026).
-    const winSub=`${winT} gives up ${wGive}, receives ${wRecv}`;
-    let vsub;
-    if(pct<=3){verdict='Essentially Even';vsub='Personal preference decides';vc='bi';}
-    else if(pct<=8){verdict=`Slight Edge \u00b7 ${winT}`;vsub=winSub;vc='bi';}
-    else if(pct<=15){verdict=`Clear Winner \u00b7 ${winT}`;vsub=winSub;vc=mA<mB?'bs':'bd';}
-    else{verdict=`Decisive Advantage \u00b7 ${winT}`;vsub=winSub;vc=mA<mB?'bs':'bd';}
+    // Wording lives in tcVerdict2(), shared with the share image (22 Oct 2026).
+    const V2=tcVerdict2(mA,mB,'Team A','Team B'), verdict=V2.head, vsub=V2.sub;
     const nA=sA.map(x=>x.n).join(', ')||'nothing';
     const nB=sB.map(x=>x.n).join(', ')||'nothing';
     // Build adjustment breakdown
@@ -3482,7 +3482,7 @@ function recalcTrade(){
       </div>
       <div class="vbar-outer"><div class="vbar-a" style="width:${pA}%"></div><div class="vbar-b" style="width:${100-pA}%"></div><div class="vmid"></div></div>
       <div class="vcentre">
-        <span class="badge b${vc} vbadge">${verdict}</span>
+        <span class="badge vbadge ${V2.cls}">${verdict}</span>
         <div class="vsub">${vsub}</div>
         ${pct>8?`<div class="vgap">Gap: ${pct}% · ${diff.toLocaleString()} pts</div>`:''}
       </div>
@@ -3521,24 +3521,12 @@ function recalcTrade(){
   } else {
     // Multi-team verdict — per-asset routing makes RECEIVES computable:
     // each team's net = value routed TO them − value they give away.
-    const adjResults = totals.map(t => ({ ...t, adjResult: calcSingleSideAdjusted(t.arr) }));
+    // Shared with the share image (22 Oct 2026): tcMulti() is the one place this is computed.
+    const M = tcMulti(), adjResults = M.rows;
     adjResults.forEach(t => {
       document.getElementById('mod-'+t.id).textContent = t.adjResult.total > 0 ? t.adjResult.total.toLocaleString() : '—';
     });
-    // bundle of assets each team RECEIVES (same adjustment engine, so the two
-    // sides of every ledger use identical math)
-    const allAssets = totals.flatMap(t => t.arr.map(a => ({...a, from:t.id, to:a.to||defaultDest(t.id)})));
-    adjResults.forEach(t => {
-      const incoming = allAssets.filter(a => a.to === t.id);
-      t.recv = calcSingleSideAdjusted(incoming);
-      t.recvNames = incoming.map(a => a.n).join(', ') || 'nothing';
-      t.net = t.recv.total - t.adjResult.total;
-    });
-    const sorted = [...adjResults].sort((a,b) => b.net - a.net);   // highest net wins
-    const winner = sorted[0];
-    const spread = winner.net - sorted[sorted.length-1].net;
-    const scale = Math.max(...adjResults.map(t => Math.max(t.recv.total, t.adjResult.total)), 1);
-    const allEqual = spread / Math.max(scale, 1) < 0.05;
+    const sorted = M.sorted, winner = M.winner, allEqual = M.allEqual;
     const promptText = adjResults.map(t => `${t.label} receives ${t.recvNames} (value ${t.recv.total.toLocaleString()}) and gives up value ${t.adjResult.total.toLocaleString()}`).join('; ');
     const buildBadge = r => {
       const b = [];
@@ -3601,7 +3589,8 @@ function recalcTrade(){
   // share row: regenerated from LIVE state on every click, so it always reflects the
   // trade as displayed even after edits (the address bar may hold a stale inbound link)
   // Shares a row with Bridge The Gap when the two-team verdict drew one.
-  const shareBtn='<button class="dl-tc-act" onclick="shareTradeLink(this)">Share This Trade</button>';
+  const shareBtn='<button class="dl-tc-act" onclick="shareTradeLink(this)">Share Link</button>'
+    +'<button class="dl-tc-act" onclick="shareTradeImage(this)">Share Image</button>';
   const acts=document.getElementById('dl-tc-acts');
   if(acts) acts.insertAdjacentHTML('beforeend',shareBtn);
   else document.getElementById('verdict-area').insertAdjacentHTML('beforeend','<div class="dl-tc-acts">'+shareBtn+'</div>');
@@ -4157,6 +4146,214 @@ function dlShareUrl(url,btn,title){
   } else { window.prompt('Copy this link:',url); }
 }
 function shareTradeLink(btn){ dlShareUrl(tradeShareLink(),btn,'DELTA Trade'); }
+
+/* Two-team verdict wording, used by the page and the share image. Winner = the team that
+   GIVES less and RECEIVES more. Badge stays short; the numbers go on their own line. */
+function tcVerdict2(mA,mB,la,lb){
+  const diff=Math.abs(mA-mB), pct=Math.round(diff/Math.max(mA,mB,1)*100);
+  if(pct<=3) return {head:'Essentially Even',sub:'Personal preference decides',win:null,pct,cls:'vb-even'};
+  const win=mA<mB?'a':'b', T=win==='a'?la:lb;
+  const head=(pct<=8?'Slight Edge':pct<=15?'Clear Winner':'Decisive Advantage')+' \u00b7 '+T;
+  return {head, sub:T+' gives up '+Math.min(mA,mB).toLocaleString()+', receives '+Math.max(mA,mB).toLocaleString(), win, pct, cls:'vb-'+win};
+}
+/* Three- and four-team verdict: each team's net = value routed TO it minus value it gives
+   away, both through calcSingleSideAdjusted. Used by the page and the share image. */
+function tcMulti(){
+  const SIDES=[{id:'a',arr:sA,color:'var(--emerald)',label:'Team A'},{id:'b',arr:sB,color:'var(--sky)',label:'Team B'},
+    {id:'c',arr:sC,color:'var(--violet)',label:'Team C'},{id:'d',arr:sD,color:'var(--topaz)',label:'Team D'}].slice(0,tradeTeams);
+  const rows=SIDES.map((t,idx)=>({...t, idx, adjResult:calcSingleSideAdjusted(t.arr)}));
+  const allAssets=SIDES.flatMap(t=>t.arr.map(a=>({...a, from:t.id, to:a.to||defaultDest(t.id)})));
+  rows.forEach(t=>{
+    const incoming=allAssets.filter(a=>a.to===t.id);
+    t.recv=calcSingleSideAdjusted(incoming);
+    t.recvNames=incoming.map(a=>a.n).join(', ')||'nothing';
+    t.net=t.recv.total-t.adjResult.total;
+  });
+  const sorted=[...rows].sort((a,b)=>b.net-a.net), winner=sorted[0];
+  const spread=winner.net-sorted[sorted.length-1].net;
+  const scale=Math.max(...rows.map(t=>Math.max(t.recv.total,t.adjResult.total)),1);
+  return {rows, sorted, winner, winnerIdx:winner.idx, allEqual:spread/Math.max(scale,1)<0.05};
+}
+
+// ── Trade image (22 Oct 2026, owner) ─────────────────────────────────────────
+/* Share Image: the trade on screen drawn as a picture for a league chat, sent with the
+   trade link (owner: the link is what brings people in). Every number comes from the same
+   helpers the verdict uses (calcAdjustedSide / tcVerdict2 for two teams, tcMulti for three
+   or four), so the picture cannot disagree with the page. Colours are read from :root at
+   draw time (zero hex here). Team colours are the calculator's own and never the accent:
+   the picture must look the same whoever's theme made it. A trade opened from the League
+   Trade Ledger carries manager names (TC_CTX) until it is edited; the "Show Manager Names"
+   switch in that note, remembered per device, swaps them for Team A/B and drops the league
+   name. */
+let TC_CTX=null;
+const TI_NAMES_KEY='delta_ti_names';
+function tiNamesOn(){ return dlPref(TI_NAMES_KEY)!=='0'; }
+function tiSetNames(on){ dlPref(TI_NAMES_KEY,on?'1':'0'); }
+function tiTok(n){ return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim(); }
+function tiLabels(){
+  const L=['Team A','Team B','Team C','Team D'];
+  if(TC_CTX&&Array.isArray(TC_CTX.m)&&tiNamesOn())
+    TC_CTX.m.forEach((m,i)=>{ if(i<4&&typeof m==='string'&&m.trim()) L[i]=m.trim().slice(0,40); });
+  return L;
+}
+function tiFmtLine(){
+  const f={half_tep:'Half PPR + TE Premium',half:'Half PPR',std:'Standard',full:'Full PPR',full_tep:'Full PPR + TE Premium'}[scoringFmt]||scoringFmt;
+  return leagueTeams+'-Team '+(qbFmt==='sf'?'Superflex':'1QB')+' · '+f;
+}
+function tiDate(d){ return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear(); }
+function tiMarkImage(){
+  const svg=document.querySelector('svg.dl-mark'); if(!svg) return Promise.resolve(null);
+  let s=new XMLSerializer().serializeToString(svg);
+  if(s.indexOf('xmlns=')<0) s=s.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
+  s=s.replace('<svg','<svg width="128" height="128"');
+  return new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null);
+    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s); });
+}
+function tiFit(g,t,max){ t=String(t); if(g.measureText(t).width<=max) return t;
+  while(t.length>1&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; }
+function tiRound(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function tiSpace(g,px){ if('letterSpacing' in g) g.letterSpacing=px+'px'; }
+function tiMeta(p){
+  if(!p||p.ip) return 'Draft pick';
+  const s=p.dsScore!=null?Math.round(p.dsScore):null;
+  return [(p.pos||p.p),(p.t&&p.t!=='FA'?p.t:'Free agent'),s!=null?'DELTA Score '+s:null].filter(Boolean).join(' · ');
+}
+/* Lays the picture out as a list of blocks, measures it, then draws it, so the canvas is
+   exactly as tall as the trade needs. */
+async function drawTradeImage(){
+  const C={ink:tiTok('ink'),panel:tiTok('panel'),line:tiTok('line'),paper:tiTok('paper'),fog:tiTok('fog'),fog2:tiTok('fog-2'),
+    url:tiTok('cp-1'),team:[tiTok('emerald'),tiTok('sky'),tiTok('violet'),tiTok('topaz')]};
+  const F={sans:tiTok('sans'),mono:tiTok('mono'),geo:tiTok('geo')};
+  try{ await document.fonts.ready; }catch(e){}
+  const L=tiLabels(), act=ACTIVE_SIDES(), sides={a:sA,b:sB,c:sC,d:sD};
+  const W=1080, P=64, multi=tradeTeams>2;
+  const rowH=multi?84:96;
+  const find=(n)=>{ for(const id of act){ const p=sides[id].find(x=>x.n===n); if(p) return p; } return null; };
+  // ── content ──
+  let head, sub, bar=null, board=null, blocks=[];
+  if(!multi){
+    const v4=calcAdjustedSide(sA,sB), mA=v4.sideA.total, mB=v4.sideB.total, V=tcVerdict2(mA,mB,L[0],L[1]);
+    head=V.head; sub=V.sub; bar={mA,mB};
+    head={t:V.head,c:V.win==='a'?C.team[0]:V.win==='b'?C.team[1]:C.paper};
+    [[v4.sideA,0],[v4.sideB,1]].forEach(([sd,i])=>blocks.push({title:L[i]+' Gives Up',col:C.team[i],
+      groups:[{rows:sd.detail.map(d=>({n:d.name,v:Math.round(d.adj),p:find(d.name)})),conc:sd.concM,total:sd.total}]}));
+  } else {
+    const M=tcMulti();
+    head={t:M.allEqual?'Balanced Multi-Team Trade':L[M.winnerIdx]+' Comes Out Ahead',c:M.allEqual?C.paper:C.team[M.winnerIdx]};
+    sub=M.allEqual?'Every team gets about what it gives':'Net '+(M.winner.net>0?'+':'')+M.winner.net.toLocaleString()+' · what a team gets minus what it gives';
+    board=M.sorted.map(t=>({lab:L[t.idx],col:C.team[t.idx],give:t.adjResult.total,get:t.recv.total,net:t.net}));
+    // Each asset shown once, under the team that GETS it; what each team gives is the board's
+    // "gives" figure. Listing both doubled a four-team picture to ~4,800 px.
+    M.rows.forEach(t=>blocks.push({title:L[t.idx]+' Gets',col:C.team[t.idx],net:t.net,groups:[
+      {rows:t.recv.detail.map(d=>({n:d.name,v:Math.round(d.adj),p:find(d.name)})),conc:t.recv.concM,total:t.recv.total}]}));
+  }
+  const showCtx=TC_CTX&&tiNamesOn();
+  const ctxBits=[];
+  if(TC_CTX&&Number(TC_CTX.d)>0) ctxBits.push('Traded '+tiDate(new Date(Number(TC_CTX.d))));
+  if(showCtx&&typeof TC_CTX.lg==='string'&&TC_CTX.lg.trim()) ctxBits.push(TC_CTX.lg.trim().slice(0,60));
+  // ── measure ──
+  const verdictH=multi?150+board.length*66+20:250;
+  let H=P+96+(ctxBits.length?56:0)+40+verdictH;
+  blocks.forEach(b=>{ H+=28+92; b.groups.forEach(gr=>{ H+=(gr.label?52:0)+Math.max(1,gr.rows.length)*rowH+(gr.conc>1.001?56:0)+70; }); });
+  H+=40+90;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
+  g.fillStyle=C.ink; g.fillRect(0,0,W,H); g.textBaseline='middle';
+  // ── header ──
+  const mark=await tiMarkImage(); if(mark) g.drawImage(mark,P-6,P-6,84,84);
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='700 40px '+F.geo; tiSpace(g,9); g.fillText('DELTA',P+92,P+36); tiSpace(g,0);
+  g.textAlign='right'; g.fillStyle=C.fog; g.font='700 24px '+F.mono; tiSpace(g,3); g.fillText('TRADE VERDICT',W-P,P+22); tiSpace(g,0);
+  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText('Valued '+tiDate(new Date()),W-P,P+56);
+  let y=P+96;
+  if(ctxBits.length){ g.textAlign='left'; g.fillStyle=C.fog; g.font='600 26px '+F.sans; g.fillText(tiFit(g,ctxBits.join(' · '),W-2*P),P,y+28); y+=56; }
+  y+=40;
+  // ── verdict card ──
+  tiRound(g,P,y,W-2*P,verdictH-20,22); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+  g.textAlign='center'; g.fillStyle=head.c; g.font='800 50px '+F.sans; g.fillText(tiFit(g,head.t,W-2*P-60),W/2,y+66);
+  g.fillStyle=C.fog; g.font='600 27px '+F.sans; g.fillText(tiFit(g,sub,W-2*P-60),W/2,y+116);
+  if(bar){
+    const bx=P+40, bw=W-2*P-80, by=y+160, pA=bar.mA/((bar.mA+bar.mB)||1);
+    tiRound(g,bx,by,bw,22,11); g.save(); g.clip();
+    g.fillStyle=C.team[0]; g.fillRect(bx,by,bw*pA,22); g.fillStyle=C.team[1]; g.fillRect(bx+bw*pA,by,bw*(1-pA),22); g.restore();
+    g.fillStyle=C.ink; g.fillRect(bx+bw/2-2,by-4,4,30);
+    g.font='700 22px '+F.mono; g.textAlign='left'; g.fillStyle=C.team[0]; g.fillText(tiFit(g,L[0],bw/2-160)+'  '+bar.mA.toLocaleString(),bx,by+52);
+    g.textAlign='right'; g.fillStyle=C.team[1]; g.fillText(bar.mB.toLocaleString()+'  '+tiFit(g,L[1],bw/2-160),bx+bw,by+52);
+  } else {
+    let ry=y+160; const maxAbs=Math.max(1,...board.map(t=>Math.abs(t.net)));
+    const rx=P+40, rw=W-2*P-80, mid=rx+rw*0.62, half=rw*0.18;
+    board.forEach(t=>{
+      g.textAlign='left'; g.fillStyle=t.col; g.font='800 28px '+F.sans; g.fillText(tiFit(g,t.lab,rw*0.42),rx,ry+14);
+      g.fillStyle=C.fog2; g.font='600 20px '+F.sans; g.fillText('gives '+t.give.toLocaleString()+' · gets '+t.get.toLocaleString(),rx,ry+44);
+      g.fillStyle=C.line; g.fillRect(mid-half,ry+24,half*2,4);
+      const w=Math.abs(t.net)/maxAbs*half; g.fillStyle=t.col; if(t.net>0) g.fillRect(mid,ry+18,w,16); else if(t.net<0) g.fillRect(mid-w,ry+18,w,16);
+      g.fillStyle=C.fog2; g.fillRect(mid-1,ry+12,2,28);
+      g.textAlign='right'; g.fillStyle=C.paper; g.font='700 28px '+F.mono; g.fillText((t.net>0?'+':'')+t.net.toLocaleString(),rx+rw,ry+26);
+      ry+=66;
+    });
+  }
+  y+=verdictH;
+  // ── blocks ──
+  blocks.forEach(b=>{
+    y+=28;
+    g.textAlign='left'; g.fillStyle=b.col; g.font='800 30px '+F.sans; g.fillText(tiFit(g,b.title,W-2*P-280),P,y+30);
+    g.textAlign='right'; g.font='700 20px '+F.sans;
+    if(b.net!=null){ g.fillStyle=C.paper; g.font='700 28px '+F.mono; g.fillText('Net '+(b.net>0?'+':'')+b.net.toLocaleString(),W-P,y+30); }
+    else { g.fillStyle=C.fog2; tiSpace(g,1); g.fillText('DELTA VALUE',W-P,y+32); tiSpace(g,0); }
+    g.fillStyle=b.col; g.fillRect(P,y+58,W-2*P,3);
+    y+=92;
+    b.groups.forEach(gr=>{
+      if(gr.label){ g.textAlign='left'; g.fillStyle=C.fog; g.font='800 22px '+F.sans; tiSpace(g,2); g.fillText(gr.label.toUpperCase(),P,y+30); tiSpace(g,0); y+=52; }
+      if(!gr.rows.length){ g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 26px '+F.sans; g.fillText('Nothing',P,y+rowH/2-6); y+=rowH; }
+      gr.rows.forEach((r,i)=>{
+        g.textAlign='left'; g.fillStyle=C.paper; g.font='700 '+(multi?30:34)+'px '+F.sans; g.fillText(tiFit(g,r.n,W-2*P-240),P,y+(multi?28:34));
+        g.fillStyle=C.fog; g.font='600 '+(multi?21:24)+'px '+F.sans; g.fillText(tiFit(g,tiMeta(r.p),W-2*P-240),P,y+(multi?60:70));
+        g.textAlign='right'; g.fillStyle=C.paper; g.font='700 '+(multi?30:34)+'px '+F.mono; g.fillText(r.v.toLocaleString(),W-P,y+(multi?42:46));
+        if(i<gr.rows.length-1){ g.fillStyle=C.line; g.fillRect(P,y+rowH-6,W-2*P,2); }
+        y+=rowH;
+      });
+      g.fillStyle=C.line; g.fillRect(P,y+4,W-2*P,2);
+      if(gr.conc>1.001){
+        g.textAlign='left'; g.fillStyle=C.fog; g.font='600 24px '+F.sans; g.fillText('Concentration Bonus',P,y+44);
+        g.textAlign='right'; g.font='700 26px '+F.mono; g.fillText('×'+gr.conc.toFixed(2),W-P,y+44); y+=56;
+      }
+      g.textAlign='left'; g.fillStyle=C.fog; g.font='700 26px '+F.sans; g.fillText('Total',P,y+46);
+      g.textAlign='right'; g.fillStyle=b.col; g.font='700 32px '+F.mono; g.fillText(gr.total.toLocaleString(),W-P,y+46);
+      y+=70;
+    });
+  });
+  // ── footer ──
+  y+=40; g.fillStyle=C.line; g.fillRect(P,y,W-2*P,2);
+  g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText(tiFmtLine(),P,y+44);
+  g.textAlign='right'; g.fillStyle=C.url; g.font='700 24px '+F.sans; g.fillText('fantasydelta.com',W-P,y+44);
+  return cv;
+}
+/* Phone: the share sheet with the picture and the link. Computer (no file sharing):
+   download the picture and copy the link. */
+async function shareTradeImage(btn){
+  const label=btn?btn.textContent:'';
+  const say=(t)=>{ if(btn){ btn.textContent=t; setTimeout(()=>{btn.textContent=label;},2200); } };
+  if(btn){ btn.disabled=true; btn.textContent='Making Image…'; }
+  try{
+    const cv=await drawTradeImage();
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+    if(!blob) throw new Error('no image');
+    const link=tradeShareLink();
+    const file=new File([blob],'delta-trade.png',{type:'image/png'});
+    if(btn) btn.disabled=false;
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      if(btn) btn.textContent=label;
+      try{ await navigator.share({files:[file],title:'DELTA Trade',text:link}); }catch(e){}
+      return;
+    }
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='delta-trade.png';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    let copied=false;
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(link); copied=true; } }catch(e){}
+    say(copied?'Saved · Link Copied':'Image Saved');
+  }catch(e){
+    if(btn) btn.disabled=false;
+    say('Couldn’t Make Image');
+  }
+}
 function loadTradeFromUrl(){
   const raw=new URLSearchParams(location.search).get('trade');
   if(!raw) return;
@@ -4184,6 +4381,13 @@ function loadTradePayload(o){
     ['lg-qb','lg-qb-trade'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=qbFmt;});
     if(typeof applyMarketForSetting==='function') applyMarketForSetting();
   }
+  /* A loaded trade REPLACES what is in the calculator (22 Oct 2026). renderAll() runs once
+     while the page is still being read, on baked numbers, and loads ?trade= then; the real
+     render after the data arrives loaded it again, found every name "already there" and kept
+     the baked copies. A shared link showed Josh Allen at DELTA Score 89 / market 9,997 (site:
+     98 / 11,008) and a different verdict from the same trade built by hand. The Ledger and
+     Compare already cleared first; now every caller gets it. */
+  if(typeof clearAllTrade==='function') clearAllTrade();
   const n=Math.min(4,Math.max(2,o.t||2));
   setTradeTeams(n);
   const act=ACTIVE_SIDES(), sides={a:sA,b:sB,c:sC,d:sD};
@@ -4213,7 +4417,8 @@ function loadTradePayload(o){
       +missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>');
   }
   const ctx=tradeCtxHtml(o.x,act.length);
-  if(ctx){ const va=document.getElementById('verdict-area'); if(va) va.insertAdjacentHTML('afterbegin',ctx); }
+  if(ctx){ const va=document.getElementById('verdict-area'); if(va) va.insertAdjacentHTML('afterbegin',ctx);
+    TC_CTX={d:o.x.d, lg:o.x.lg, m:Array.isArray(o.x.m)?o.x.m.slice(0,act.length).map(m=>typeof m==='string'?m.slice(0,40):''):null}; }
 }
 function tradeCtxHtml(x,n){
   if(!x||typeof x!=='object') return '';
@@ -4231,6 +4436,7 @@ function tradeCtxHtml(x,n){
     : [];
   return '<div class="dl-lg-from"><b>'+bits.join(' \u00b7 ')+'</b>'
     +(teams.length?'<span>'+teams.join(' \u00b7 ')+'</span>':'')
+    +(teams.length?'<label class="dl-tc-names"><input type="checkbox"'+(tiNamesOn()?' checked':'')+' onchange="tiSetNames(this.checked)">Manager Names On Share Image</label>':'')
     +(x.fa?'<span>FAAB not included</span>':'')
     +(Number(x.du)>0?'<span>'+Math.min(9,Number(x.du)|0)+' duplicate pick'+(Number(x.du)>1?'s':'')+' not shown \u2014 the calc holds one of each</span>':'')+'</div>';
 }
@@ -5178,6 +5384,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-22-tradeimg', d:'22 Oct 2026', t:'Share A Trade As A Picture', tab:'trade',
+   b:"Share Image under any Trade Calc verdict turns the trade into a picture for your league chat, with the link to open it in DELTA. Works for two, three and four-team trades. Trades opened from your League Trade Ledger can show manager names or hide them. My Team &rsaquo; Trade Calc."},
   {id:'2026-10-22-compare', d:'22 Oct 2026', t:'Compare Players', tab:'compare',
    b:"Line up two or three players side by side: DELTA Score and what it is made of, Start Profile, points by season, this season so far, and how the market has moved since June. Pick your players, then tap Compare. Also on every player pop-up. NFL &rsaquo; Compare."},
   {id:'2026-10-14-roles', d:'14 Oct 2026', t:'Role Changes', tab:'roles',
@@ -6751,7 +6959,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-22c</span>
+  <span class="foot-build">2026-10-22d</span>
 </footer>
 
 
