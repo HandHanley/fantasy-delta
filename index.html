@@ -3880,7 +3880,8 @@ function cpResultsHtml(){
        eos.map(e=>e&&e.score!=null?e.score:null),1,g);
 
   const acts='<div class="dl-cp-acts"><button type="button" class="dl-cp-act" onclick="cpToCalc()">Open In Trade Calc</button>'
-    +'<button type="button" class="dl-cp-act" onclick="cpShare(this)">Share</button></div><div id="cp-pair" class="dl-cp-pair"></div>';
+    +'<button type="button" class="dl-cp-act" onclick="cpShare(this)">Share Link</button>'
+    +'<button type="button" class="dl-cp-act" onclick="cpShareImage(this)">Share Image</button></div><div id="cp-pair" class="dl-cp-pair"></div>';
 
   return '<div class="dl-cp-wrap"><div class="dl-cp-top"><button type="button" class="dl-cp-edit" onclick="cpEdit()">← Edit Players</button></div>'
     +cards
@@ -3983,6 +3984,88 @@ function cpCalcPair(i,j){
   loadTradePayload({v:1,t:2,s:[[[ps[i].n]],[[ps[j].n]]],w:['neutral','neutral']});
 }
 function cpShare(btn){ dlShareUrl(cpLink(),btn,'DELTA Compare'); }
+/* Compare picture (23 Oct 2026, owner): two or three players, the numbers the Compare tab
+   shows, through the engine's share-image kit (dlImg*). Model value is mvAsset() live, the
+   number the page displays. The market chart is left out: too fine to read in a chat. */
+async function drawCompareImage(){
+  const ps=cpPicked(); if(ps.length<2) throw new Error('need two');
+  const C=dlImgColors(), F=dlImgFonts(), W=1080, P=64, n=ps.length;
+  const col=CP_COL.map(v=>dlImgColorOf(v,C));
+  const colW=(W-2*P)/n, cx=i=>P+colW*i+colW/2;
+  const rows=[];
+  const fmtN=v=>v==null?'—':Math.round(v).toLocaleString();
+  const mkt=ps.map(p=>p.ktcEff>0?p.ktcEff:null), mv=ps.map(p=>{const v=mvAsset(p);return v>0?v:null;});
+  const pj=ps.map(p=>{const v=getAdjProj(p);return v>0?v:null;}), age=ps.map(p=>p.a||null), rk=ps.map(dlPosRank);
+  const tl=ps.map(seasonTally), so=tl.map(t=>t.g?t.pts/t.g:null);
+  rows.push({l:'Market Value',d:mkt.map(fmtN),v:mkt,dir:1});
+  rows.push({l:'Model Value',d:mv.map(fmtN),v:mv,dir:1});
+  rows.push({l:'Rank At Position · By DELTA Score',d:rk.map((r,i)=>r?(ps[i].pos||ps[i].p)+r:'—'),v:rk,dir:-1});
+  rows.push({l:'Projected PPG · Rest Of Season',d:pj.map(v=>v==null?'—':v.toFixed(1)),v:pj,dir:1});
+  rows.push({l:'Points Per Game · '+SEASON_YEAR+' So Far',d:so.map((v,i)=>v==null?'—':v.toFixed(1)),s:tl.map(t=>t.g?t.g+' game'+(t.g===1?'':'s'):''),v:so,dir:1});
+  rows.push({l:'Age',d:age.map(v=>v==null?'—':v.toFixed(1)),v:age,dir:-1});
+  const parts=ps.map(dlScoreParts);
+  const PARTS=[['prod','Production',45],['opp','Opportunity',30],['age','Age',15],['con','Contract',10]];
+  const sps=ps.map(p=>computeStartProfile(p.n,p.pos||p.p));
+  // measure
+  const cardH=300, rowH=104, partH=34+n*38+18, spH=n*92+70;
+  const H=P+96+40+cardH+40+ 70+rows.length*rowH + 40+70+PARTS.length*partH + 40+70+spH + 40+DL_IMG_FOOT;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
+  let y=await dlImgStart(g,W,P,C,F,'PLAYER COMPARISON'); y+=40;
+  // cards
+  ps.forEach((p,i)=>{
+    const x=P+colW*i+8, w=colW-16;
+    dlImgRound(g,x,y,w,cardH,20); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+    g.save(); dlImgRound(g,x,y,w,cardH,20); g.clip(); g.fillStyle=col[i]; g.fillRect(x,y,w,8); g.restore();
+    g.textAlign='center'; g.fillStyle=C.fog; g.font='700 26px '+F.sans;
+    const first=cpFirst(p.n), last=cpLast(p.n);
+    g.fillText(dlImgFit(g,first,w-30),cx(i),y+50);
+    g.fillStyle=C.paper; g.font='800 '+(n===3?36:42)+'px '+F.sans; g.fillText(dlImgFit(g,last,w-30),cx(i),y+92);
+    g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText((p.pos||p.p)+' · '+p.t+' · '+Math.floor(p.a||0),cx(i),y+130);
+    g.fillStyle=dlImgColorOf(dsColor(p.dsScore),C); g.font='800 84px '+F.mono; g.fillText(p.dsScore!=null?p.dsScore:'—',cx(i),y+190);
+    g.fillStyle=C.fog2; g.font='700 18px '+F.sans; dlImgSpace(g,2); g.fillText('DELTA SCORE',cx(i),y+238); dlImgSpace(g,0);
+    const call=dlImgCall(p,C); g.fillStyle=call.col; g.font='800 26px '+F.sans; g.fillText(call.t||'—',cx(i),y+272);
+  });
+  y+=cardH+40;
+  const sec=(t)=>{ g.textAlign='left'; g.fillStyle=C.paper; g.font='800 32px '+F.sans; g.fillText(t,P,y+30); g.fillStyle=C.line; g.fillRect(P,y+60,W-2*P,2); y+=70; };
+  sec('The Basics');
+  rows.forEach(r=>{
+    g.textAlign='center'; g.fillStyle=C.fog; g.font='700 21px '+F.sans; g.fillText(r.l,W/2,y+20);
+    const L=cpLead(r.v,r.dir);
+    r.d.forEach((d,i)=>{
+      if(L[i]){ dlImgRound(g,P+colW*i+20,y+38,colW-40,56,12); g.fillStyle=C.lead; g.fill(); g.strokeStyle=C.leadBd; g.lineWidth=2; g.stroke(); }
+      g.fillStyle=C.paper; g.font='700 34px '+F.mono; g.fillText(d,cx(i),y+(r.s?60:66));
+      if(r.s&&r.s[i]){ g.fillStyle=C.fog2; g.font='600 17px '+F.sans; g.fillText(r.s[i],cx(i),y+86); }
+    });
+    y+=rowH;
+  });
+  y+=40; sec('What Makes Up The DELTA Score');
+  PARTS.forEach(([k,lab,max])=>{
+    g.textAlign='left'; g.fillStyle=C.fog; g.font='700 22px '+F.sans; g.fillText(lab,P,y+16);
+    g.textAlign='right'; g.fillStyle=C.fog2; g.font='600 19px '+F.sans; g.fillText('out of '+max,W-P,y+16);
+    const vals=parts.map(x=>x[k]), L=cpLead(vals,1);
+    vals.forEach((v,i)=>{
+      const by=y+34+i*38, bx=P, bw=W-2*P-110;
+      dlImgRound(g,bx,by+6,bw,18,9); g.fillStyle=C.line; g.fill();
+      const fw=Math.max(0,Math.min(1,v/max))*bw; if(fw>0){ dlImgRound(g,bx,by+6,Math.max(fw,18),18,9); g.fillStyle=col[i]; g.fill(); }
+      g.textAlign='right'; g.fillStyle=L[i]?C.paper:C.fog; g.font=(L[i]?'800':'600')+' 26px '+F.mono; g.fillText(k==='con'?Math.round(v):v.toFixed(1),W-P,by+16);
+    });
+    y+=partH;
+  });
+  y+=40; sec('Start Profile · Last 34 Games Played');
+  sps.forEach((s,i)=>{
+    g.textAlign='left'; g.fillStyle=col[i]; g.font='800 28px '+F.sans; g.fillText(dlImgFit(g,ps[i].n,W-2*P-420),P,y+20);
+    g.textAlign='right'; g.fillStyle=C.paper; g.font='700 24px '+F.sans;
+    g.fillText(s?s.hitPct+'% hit · '+s.elitePct+'% elite  ('+s.n+' g)':'No games on record',W-P,y+20);
+    if(s) dlImgStartBar(g,P,y+44,W-2*P,22,s,C);
+    y+=92;
+  });
+  g.textAlign='left'; g.font='600 20px '+F.sans; let kx=P;
+  [['Miss',C.coral],['Hit',C.sky],['Elite',C.emerald]].forEach(([t,c])=>{ g.fillStyle=c; g.fillRect(kx,y+14,18,18); g.fillStyle=C.fog; g.fillText(t,kx+28,y+24); kx+=130; });
+  y+=70;
+  y+=40; dlImgFooter(g,W,P,C,F,y);
+  return cv;
+}
+function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.png',btn); }
 
 // ── Gap-filler (on-demand) ───────────────────────────────────
 // Suggests the single asset that best evens an uneven 2-team trade. When a
@@ -4197,30 +4280,12 @@ let TC_CTX=null;
 const TI_NAMES_KEY='delta_ti_names';
 function tiNamesOn(){ return dlPref(TI_NAMES_KEY)!=='0'; }
 function tiSetNames(on){ dlPref(TI_NAMES_KEY,on?'1':'0'); }
-function tiTok(n){ return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim(); }
 function tiLabels(){
   const L=['Team A','Team B','Team C','Team D'];
   if(TC_CTX&&Array.isArray(TC_CTX.m)&&tiNamesOn())
     TC_CTX.m.forEach((m,i)=>{ if(i<4&&typeof m==='string'&&m.trim()) L[i]=m.trim().slice(0,40); });
   return L;
 }
-function tiFmtLine(){
-  const f={half_tep:'Half PPR + TE Premium',half:'Half PPR',std:'Standard',full:'Full PPR',full_tep:'Full PPR + TE Premium'}[scoringFmt]||scoringFmt;
-  return leagueTeams+'-Team '+(qbFmt==='sf'?'Superflex':'1QB')+' · '+f;
-}
-function tiDate(d){ return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear(); }
-function tiMarkImage(){
-  const svg=document.querySelector('svg.dl-mark'); if(!svg) return Promise.resolve(null);
-  let s=new XMLSerializer().serializeToString(svg);
-  if(s.indexOf('xmlns=')<0) s=s.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
-  s=s.replace('<svg','<svg width="128" height="128"');
-  return new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null);
-    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s); });
-}
-function tiFit(g,t,max){ t=String(t); if(g.measureText(t).width<=max) return t;
-  while(t.length>1&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; }
-function tiRound(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
-function tiSpace(g,px){ if('letterSpacing' in g) g.letterSpacing=px+'px'; }
 function tiMeta(p){
   if(!p||p.ip) return 'Draft pick';
   const s=p.dsScore!=null?Math.round(p.dsScore):null;
@@ -4229,9 +4294,9 @@ function tiMeta(p){
 /* Lays the picture out as a list of blocks, measures it, then draws it, so the canvas is
    exactly as tall as the trade needs. */
 async function drawTradeImage(){
-  const C={ink:tiTok('ink'),panel:tiTok('panel'),line:tiTok('line'),paper:tiTok('paper'),fog:tiTok('fog'),fog2:tiTok('fog-2'),
-    url:tiTok('cp-1'),team:[tiTok('emerald'),tiTok('sky'),tiTok('violet'),tiTok('topaz')]};
-  const F={sans:tiTok('sans'),mono:tiTok('mono'),geo:tiTok('geo')};
+  const C={ink:dlImgTok('ink'),panel:dlImgTok('panel'),line:dlImgTok('line'),paper:dlImgTok('paper'),fog:dlImgTok('fog'),fog2:dlImgTok('fog-2'),
+    url:dlImgTok('cp-1'),team:[dlImgTok('emerald'),dlImgTok('sky'),dlImgTok('violet'),dlImgTok('topaz')]};
+  const F={sans:dlImgTok('sans'),mono:dlImgTok('mono'),geo:dlImgTok('geo')};
   try{ await document.fonts.ready; }catch(e){}
   const L=tiLabels(), act=ACTIVE_SIDES(), sides={a:sA,b:sB,c:sC,d:sD};
   const W=1080, P=64, multi=tradeTeams>2;
@@ -4257,7 +4322,7 @@ async function drawTradeImage(){
   }
   const showCtx=TC_CTX&&tiNamesOn();
   const ctxBits=[];
-  if(TC_CTX&&Number(TC_CTX.d)>0) ctxBits.push('Traded '+tiDate(new Date(Number(TC_CTX.d))));
+  if(TC_CTX&&Number(TC_CTX.d)>0) ctxBits.push('Traded '+dlImgDate(new Date(Number(TC_CTX.d))));
   if(showCtx&&typeof TC_CTX.lg==='string'&&TC_CTX.lg.trim()) ctxBits.push(TC_CTX.lg.trim().slice(0,60));
   // ── measure ──
   const verdictH=multi?150+board.length*66+20:250;
@@ -4267,29 +4332,29 @@ async function drawTradeImage(){
   const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
   g.fillStyle=C.ink; g.fillRect(0,0,W,H); g.textBaseline='middle';
   // ── header ──
-  const mark=await tiMarkImage(); if(mark) g.drawImage(mark,P-6,P-6,84,84);
-  g.textAlign='left'; g.fillStyle=C.paper; g.font='700 40px '+F.geo; tiSpace(g,9); g.fillText('DELTA',P+92,P+36); tiSpace(g,0);
-  g.textAlign='right'; g.fillStyle=C.fog; g.font='700 24px '+F.mono; tiSpace(g,3); g.fillText('TRADE VERDICT',W-P,P+22); tiSpace(g,0);
-  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText('Valued '+tiDate(new Date()),W-P,P+56);
+  const mark=await dlImgMark(); if(mark) g.drawImage(mark,P-6,P-6,84,84);
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='700 40px '+F.geo; dlImgSpace(g,9); g.fillText('DELTA',P+92,P+36); dlImgSpace(g,0);
+  g.textAlign='right'; g.fillStyle=C.fog; g.font='700 24px '+F.mono; dlImgSpace(g,3); g.fillText('TRADE VERDICT',W-P,P+22); dlImgSpace(g,0);
+  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText('Valued '+dlImgDate(new Date()),W-P,P+56);
   let y=P+96;
-  if(ctxBits.length){ g.textAlign='left'; g.fillStyle=C.fog; g.font='600 26px '+F.sans; g.fillText(tiFit(g,ctxBits.join(' · '),W-2*P),P,y+28); y+=56; }
+  if(ctxBits.length){ g.textAlign='left'; g.fillStyle=C.fog; g.font='600 26px '+F.sans; g.fillText(dlImgFit(g,ctxBits.join(' · '),W-2*P),P,y+28); y+=56; }
   y+=40;
   // ── verdict card ──
-  tiRound(g,P,y,W-2*P,verdictH-20,22); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
-  g.textAlign='center'; g.fillStyle=head.c; g.font='800 50px '+F.sans; g.fillText(tiFit(g,head.t,W-2*P-60),W/2,y+66);
-  g.fillStyle=C.fog; g.font='600 27px '+F.sans; g.fillText(tiFit(g,sub,W-2*P-60),W/2,y+116);
+  dlImgRound(g,P,y,W-2*P,verdictH-20,22); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+  g.textAlign='center'; g.fillStyle=head.c; g.font='800 50px '+F.sans; g.fillText(dlImgFit(g,head.t,W-2*P-60),W/2,y+66);
+  g.fillStyle=C.fog; g.font='600 27px '+F.sans; g.fillText(dlImgFit(g,sub,W-2*P-60),W/2,y+116);
   if(bar){
     const bx=P+40, bw=W-2*P-80, by=y+160, pA=bar.mA/((bar.mA+bar.mB)||1);
-    tiRound(g,bx,by,bw,22,11); g.save(); g.clip();
+    dlImgRound(g,bx,by,bw,22,11); g.save(); g.clip();
     g.fillStyle=C.team[0]; g.fillRect(bx,by,bw*pA,22); g.fillStyle=C.team[1]; g.fillRect(bx+bw*pA,by,bw*(1-pA),22); g.restore();
     g.fillStyle=C.ink; g.fillRect(bx+bw/2-2,by-4,4,30);
-    g.font='700 22px '+F.mono; g.textAlign='left'; g.fillStyle=C.team[0]; g.fillText(tiFit(g,L[0],bw/2-160)+'  '+bar.mA.toLocaleString(),bx,by+52);
-    g.textAlign='right'; g.fillStyle=C.team[1]; g.fillText(bar.mB.toLocaleString()+'  '+tiFit(g,L[1],bw/2-160),bx+bw,by+52);
+    g.font='700 22px '+F.mono; g.textAlign='left'; g.fillStyle=C.team[0]; g.fillText(dlImgFit(g,L[0],bw/2-160)+'  '+bar.mA.toLocaleString(),bx,by+52);
+    g.textAlign='right'; g.fillStyle=C.team[1]; g.fillText(bar.mB.toLocaleString()+'  '+dlImgFit(g,L[1],bw/2-160),bx+bw,by+52);
   } else {
     let ry=y+160; const maxAbs=Math.max(1,...board.map(t=>Math.abs(t.net)));
     const rx=P+40, rw=W-2*P-80, mid=rx+rw*0.62, half=rw*0.18;
     board.forEach(t=>{
-      g.textAlign='left'; g.fillStyle=t.col; g.font='800 28px '+F.sans; g.fillText(tiFit(g,t.lab,rw*0.42),rx,ry+14);
+      g.textAlign='left'; g.fillStyle=t.col; g.font='800 28px '+F.sans; g.fillText(dlImgFit(g,t.lab,rw*0.42),rx,ry+14);
       g.fillStyle=C.fog2; g.font='600 20px '+F.sans; g.fillText('gives '+t.give.toLocaleString()+' · gets '+t.get.toLocaleString(),rx,ry+44);
       g.fillStyle=C.line; g.fillRect(mid-half,ry+24,half*2,4);
       const w=Math.abs(t.net)/maxAbs*half; g.fillStyle=t.col; if(t.net>0) g.fillRect(mid,ry+18,w,16); else if(t.net<0) g.fillRect(mid-w,ry+18,w,16);
@@ -4302,18 +4367,18 @@ async function drawTradeImage(){
   // ── blocks ──
   blocks.forEach(b=>{
     y+=28;
-    g.textAlign='left'; g.fillStyle=b.col; g.font='800 30px '+F.sans; g.fillText(tiFit(g,b.title,W-2*P-280),P,y+30);
+    g.textAlign='left'; g.fillStyle=b.col; g.font='800 30px '+F.sans; g.fillText(dlImgFit(g,b.title,W-2*P-280),P,y+30);
     g.textAlign='right'; g.font='700 20px '+F.sans;
     if(b.net!=null){ g.fillStyle=C.paper; g.font='700 28px '+F.mono; g.fillText('Net '+(b.net>0?'+':'')+b.net.toLocaleString(),W-P,y+30); }
-    else { g.fillStyle=C.fog2; tiSpace(g,1); g.fillText('DELTA VALUE',W-P,y+32); tiSpace(g,0); }
+    else { g.fillStyle=C.fog2; dlImgSpace(g,1); g.fillText('DELTA VALUE',W-P,y+32); dlImgSpace(g,0); }
     g.fillStyle=b.col; g.fillRect(P,y+58,W-2*P,3);
     y+=92;
     b.groups.forEach(gr=>{
-      if(gr.label){ g.textAlign='left'; g.fillStyle=C.fog; g.font='800 22px '+F.sans; tiSpace(g,2); g.fillText(gr.label.toUpperCase(),P,y+30); tiSpace(g,0); y+=52; }
+      if(gr.label){ g.textAlign='left'; g.fillStyle=C.fog; g.font='800 22px '+F.sans; dlImgSpace(g,2); g.fillText(gr.label.toUpperCase(),P,y+30); dlImgSpace(g,0); y+=52; }
       if(!gr.rows.length){ g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 26px '+F.sans; g.fillText('Nothing',P,y+rowH/2-6); y+=rowH; }
       gr.rows.forEach((r,i)=>{
-        g.textAlign='left'; g.fillStyle=C.paper; g.font='700 '+(multi?30:34)+'px '+F.sans; g.fillText(tiFit(g,r.n,W-2*P-240),P,y+(multi?28:34));
-        g.fillStyle=C.fog; g.font='600 '+(multi?21:24)+'px '+F.sans; g.fillText(tiFit(g,tiMeta(r.p),W-2*P-240),P,y+(multi?60:70));
+        g.textAlign='left'; g.fillStyle=C.paper; g.font='700 '+(multi?30:34)+'px '+F.sans; g.fillText(dlImgFit(g,r.n,W-2*P-240),P,y+(multi?28:34));
+        g.fillStyle=C.fog; g.font='600 '+(multi?21:24)+'px '+F.sans; g.fillText(dlImgFit(g,tiMeta(r.p),W-2*P-240),P,y+(multi?60:70));
         g.textAlign='right'; g.fillStyle=C.paper; g.font='700 '+(multi?30:34)+'px '+F.mono; g.fillText(r.v.toLocaleString(),W-P,y+(multi?42:46));
         if(i<gr.rows.length-1){ g.fillStyle=C.line; g.fillRect(P,y+rowH-6,W-2*P,2); }
         y+=rowH;
@@ -4330,35 +4395,12 @@ async function drawTradeImage(){
   });
   // ── footer ──
   y+=40; g.fillStyle=C.line; g.fillRect(P,y,W-2*P,2);
-  g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText(tiFmtLine(),P,y+44);
+  g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText(dlImgFmtLine(),P,y+44);
   g.textAlign='right'; g.fillStyle=C.url; g.font='700 24px '+F.sans; g.fillText('fantasydelta.com',W-P,y+44);
   return cv;
 }
-/* Phone: the share sheet with the picture alone (no title or text: some chat apps send
-   those as a separate message). Computer (no file sharing): download the picture. */
-async function shareTradeImage(btn){
-  const label=btn?btn.textContent:'';
-  const say=(t)=>{ if(btn){ btn.textContent=t; setTimeout(()=>{btn.textContent=label;},2200); } };
-  if(btn){ btn.disabled=true; btn.textContent='Making Image…'; }
-  try{
-    const cv=await drawTradeImage();
-    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
-    if(!blob) throw new Error('no image');
-    const file=new File([blob],'delta-trade.png',{type:'image/png'});
-    if(btn) btn.disabled=false;
-    if(navigator.canShare&&navigator.canShare({files:[file]})){
-      if(btn) btn.textContent=label;
-      try{ await navigator.share({files:[file]}); }catch(e){}
-      return;
-    }
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='delta-trade.png';
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-    say('Image Saved');
-  }catch(e){
-    if(btn) btn.disabled=false;
-    say('Couldn’t Make Image');
-  }
-}
+/* Phone: the share sheet with the picture alone; computer: download (dlImgShare, engine). */
+function shareTradeImage(btn){ return dlImgShare(drawTradeImage,'delta-trade.png',btn); }
 function loadTradeFromUrl(){
   const raw=new URLSearchParams(location.search).get('trade');
   if(!raw) return;
@@ -5389,6 +5431,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-23-pics', d:'23 Oct 2026', t:'Comparisons And Players As Pictures', tab:'compare',
+   b:"Share Image now works on Compare too, and on every player page (tap Share). Two or three players side by side, or one player's card in brief, ready for your league chat. NFL &rsaquo; Compare, or any player page."},
   {id:'2026-10-22-tradeimg', d:'22 Oct 2026', t:'Share A Trade As A Picture', tab:'trade',
    b:"Share Image under any Trade Calc verdict turns the trade into a picture for your league chat. Works for two, three and four-team trades. Trades opened from your League Trade Ledger can show manager names or hide them. My Team &rsaquo; Trade Calc."},
   {id:'2026-10-22-compare', d:'22 Oct 2026', t:'Compare Players', tab:'compare',
@@ -6964,7 +7008,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23b</span>
+  <span class="foot-build">2026-10-23c</span>
 </footer>
 
 

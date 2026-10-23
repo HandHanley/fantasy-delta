@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-22c';
+const DL_BUILD='2026-10-23a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6291,4 +6291,105 @@ function buildReadHTML(p){
     +barFor(rankMv,'var(--violet)','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
     +barFor(rankMk,'var(--sky)','MARKET PRICE',mk.toLocaleString())
     +'</div>';
+}
+
+/* ── SHARE IMAGES: shared drawing kit (23 Oct 2026) ──────────────────────────────
+   Used by the Trade Calc, Compare (index.html) and the player page (player.html). Browser
+   only, and only on a tap: nothing here runs at load, so the Node tools that load this
+   file never touch it. Colours are read from :root at draw time (zero hex here); the
+   brand mark is the page's own SVG, drawn as an image. Photos are deliberately left out:
+   headshots come from other sites, and drawing one would block the picture from saving. */
+function dlImgTok(n){ return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim(); }
+function dlImgColors(){
+  const t=dlImgTok;
+  return {ink:t('ink'),panel:t('panel'),line:t('line'),paper:t('paper'),fog:t('fog'),fog2:t('fog-2'),url:t('cp-1'),
+    emerald:t('emerald'),coral:t('coral'),sky:t('sky'),violet:t('violet'),topaz:t('topaz'),lead:t('cp-lead'),leadBd:t('cp-lead-bd')};
+}
+function dlImgFonts(){ return {sans:dlImgTok('sans'),mono:dlImgTok('mono'),geo:dlImgTok('geo')}; }
+function dlImgFit(g,t,max){ t=String(t); if(g.measureText(t).width<=max) return t;
+  while(t.length>1&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; }
+function dlImgRound(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function dlImgSpace(g,px){ if('letterSpacing' in g) g.letterSpacing=px+'px'; }
+function dlImgDate(d){ return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear(); }
+function dlImgFmtLine(){
+  const f={half_tep:'Half PPR + TE Premium',half:'Half PPR',std:'Standard',full:'Full PPR',full_tep:'Full PPR + TE Premium'}[scoringFmt]||scoringFmt;
+  return leagueTeams+'-Team '+(qbFmt==='sf'?'Superflex':'1QB')+' · '+f;
+}
+/* The solid brand mark from whichever page this is (index: svg.dl-mark; player page: the
+   nav logo). Its gradient is fixed by BRAND.md, so drawing the page's own copy is exact. */
+function dlImgMark(){
+  const svg=[...document.querySelectorAll('svg[viewBox="0 0 128 128"]')].find(s=>s.querySelector('linearGradient')&&s.querySelector('path[fill^="url("]'));
+  if(!svg) return Promise.resolve(null);
+  // Comments go: player.html's mark carries one mentioning "--teal-br", and a double dash
+  // inside a comment is invalid XML, so the image silently failed to load.
+  let s=new XMLSerializer().serializeToString(svg).replace(/<!--[\s\S]*?-->/g,'');
+  s=s.replace(/^<svg[^>]*>/,'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">');
+  return new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null);
+    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s); });
+}
+/* Canvas of width W painted ink, with the DELTA header drawn. Returns the y below it. */
+async function dlImgStart(g,W,P,C,F,kind){
+  try{ await document.fonts.ready; }catch(e){}
+  g.fillStyle=C.ink; g.fillRect(0,0,W,g.canvas.height); g.textBaseline='middle';
+  const mark=await dlImgMark(); if(mark) g.drawImage(mark,P-6,P-6,84,84);
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='700 40px '+F.geo; dlImgSpace(g,9); g.fillText('DELTA',P+92,P+36); dlImgSpace(g,0);
+  g.textAlign='right'; g.fillStyle=C.fog; g.font='700 24px '+F.mono; dlImgSpace(g,3); g.fillText(kind,W-P,P+22); dlImgSpace(g,0);
+  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText('Valued '+dlImgDate(new Date()),W-P,P+56);
+  return P+96;
+}
+function dlImgFooter(g,W,P,C,F,y){
+  g.fillStyle=C.line; g.fillRect(P,y,W-2*P,2);
+  g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText(dlImgFmtLine(),P,y+44);
+  g.textAlign='right'; g.fillStyle=C.url; g.font='700 24px '+F.sans; g.fillText('fantasydelta.com',W-P,y+44);
+}
+const DL_IMG_FOOT=90;
+/* The call as plain words + its signal colour, read from vTag so it can never differ. */
+function dlImgCall(p,C){
+  const hold=typeof dlRookieHold==='function'&&dlRookieHold(p);
+  const m=(vTag(p)||'').match(/>([a-z ]+)<\/span>/); const t=hold?'rookie hold':(m?m[1]:'');
+  const col=/buy/.test(t)?C.emerald:/sell/.test(t)?C.coral:C.fog;
+  return {t:t.replace(/\b[a-z]/g,c=>c.toUpperCase()),col};
+}
+function dlImgColorOf(v,C){ // a token string like 'var(--sky)' → colour
+  const m=String(v).match(/var\(--([a-z0-9-]+)\)/); return m?dlImgTok(m[1]):v;
+}
+/* Phone: share sheet with the picture alone. Computer: download it. */
+async function dlImgShare(cvPromise,fileName,btn){
+  const label=btn?btn.textContent:'';
+  const say=(t)=>{ if(btn){ btn.textContent=t; setTimeout(()=>{btn.textContent=label;},2200); } };
+  if(btn){ btn.disabled=true; btn.textContent='Making Image…'; }
+  try{
+    const cv=await cvPromise();
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+    if(!blob) throw new Error('no image');
+    const file=new File([blob],fileName,{type:'image/png'});
+    if(btn){ btn.disabled=false; btn.textContent=label; }
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file]}); }catch(e){}
+      return;
+    }
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fileName;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    say('Image Saved');
+  }catch(e){ if(btn) btn.disabled=false; say('Couldn’t Make Image'); }
+}
+/* The four DELTA Score parts, same arithmetic as buildDSBreakdownHTML (the card's bars). */
+function dlScoreParts(p){
+  const pos=p.pos||p.p||'WR', age=p.a||22;
+  const scar=scarcity(pos,leagueTeams,qbFmt)||1, mult=dsYouthMult(age);
+  return {prod:Math.min(45,(dsProduction(p.ppg25||0,p.ppg24||0,p.ppg23||0,p.g25||0,pos,p,true)/32)*45*mult)*scar,
+    opp:(dsOpportunity(p)/33)*30, age:(dsAge(age,pos)/25)*15, con:dsCont(p)};
+}
+function dlPosRank(p){
+  const pos=p.pos||p.p; const list=COMP.filter(x=>(x.pos||x.p)===pos).sort((a,b)=>(b.dsScore||0)-(a.dsScore||0));
+  const i=list.indexOf(p); return i<0?null:i+1;
+}
+/* Start Profile bar: miss / hit / elite. The last segment runs to the end of the bar, because
+   the three rounded percentages can add up to 99 and leave a sliver of track showing. */
+function dlImgStartBar(g,x,y,w,h,s,C){
+  g.save(); dlImgRound(g,x,y,w,h,h/2); g.clip();
+  g.fillStyle=C.line; g.fillRect(x,y,w,h);
+  const segs=[[s.missPct,C.coral],[s.hitOnlyPct,C.sky],[s.elitePct,C.emerald]].filter(z=>z[0]>0);
+  let cx=x; segs.forEach(([pc,c],i)=>{ const sw=i===segs.length-1?x+w-cx:w*pc/100; g.fillStyle=c; g.fillRect(cx,y,sw,h); cx+=sw; });
+  g.restore();
 }

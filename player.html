@@ -83,6 +83,14 @@ a:hover{text-decoration:underline}
    tab with this player in slot one. */
 .nav-cmp{font-weight:600}
 .nav-share:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+/* Share menu (23 Oct 2026, owner: keep the top row as it was): Share opens two choices. */
+.nav-sh-wrap{position:relative}
+.nav-sh-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:152px;padding:4px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.nav-sh-menu[hidden]{display:none}
+.nav-sh-menu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;font-weight:700;color:var(--paper);
+  background:transparent;border:0;border-radius:7px;padding:10px 12px;cursor:pointer}
+.nav-sh-menu button:hover,.nav-sh-menu button:focus-visible{background:var(--teal-soft);color:var(--teal-br);outline:none}
 /* Tap targets (B6, 10 Oct 2026): invisible 8-10px hit area on the small links and season
    buttons, touch screens only, so nothing moves visually. */
 @media (pointer:coarse){
@@ -218,6 +226,10 @@ a:hover{text-decoration:underline}
   /* support hues for categorical/info needs (not signals): info & comparison-B → sky, chart series → violet */
   --sky:#6BB6E0;    --sky-tint:rgba(107,182,224,.14);  --sky-dp:#134e7a;
   --violet:#9B8AF0; --violet-tint:rgba(155,138,240,.14);
+  /* Fixed teal + neutral lead box, same values as index.html. Share images draw with them;
+     --teal-br follows the accent theme, and a picture must look the same in every theme. */
+  --cp-1:#2DD4BF; --cp-1-tint:rgba(45,212,191,.14);
+  --cp-lead:rgba(234,240,244,.07); --cp-lead-bd:rgba(234,240,244,.18);
   --sans:'Nunito Sans','Avenir Next',system-ui,'Segoe UI',sans-serif;
   --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
   --geo:'Century Gothic','Futura','Questrial','Josefin Sans','Nunito Sans',sans-serif;
@@ -299,8 +311,14 @@ a{color:var(--teal-br)}
       
     </a>
     <div style="display:flex;align-items:center;gap:14px">
-      <button type="button" class="nav-share" id="nav-share" onclick="dlShare()" aria-label="Share this player">
+      <span class="nav-sh-wrap">
+      <button type="button" class="nav-share" id="nav-share" onclick="dlShareMenu(event)" aria-label="Share this player" aria-haspopup="true" aria-expanded="false" aria-controls="nav-sh-menu">
         <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V2M5 5l3-3 3 3"/><path d="M3 8v5.5h10V8"/></svg><span id="nav-share-t">Share</span></button>
+      <span class="nav-sh-menu" id="nav-sh-menu" role="menu" hidden>
+        <button type="button" role="menuitem" onclick="dlSharePick('link')">Share Link</button>
+        <button type="button" role="menuitem" onclick="dlSharePick('image')">Share Image</button>
+      </span>
+      </span>
       <a class="nav-back nav-cmp" id="nav-cmp" href="index.html?tab=compare" style="display:none">Compare</a>
       <a class="nav-back" href="index.html" onclick="return goBack(event)">← Back</a>
     </div>
@@ -328,7 +346,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-22a</span>
+    <span class="foot-build">2026-10-23a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1791,6 +1809,82 @@ function dlShare(){
   const done = () => { if (t) { t.textContent = 'Link Copied'; setTimeout(() => { t.textContent = 'Share'; }, 2000); } };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(() => { window.prompt('Copy this link:', url); });
   else window.prompt('Copy this link:', url);
+}
+
+function dlShareMenuSet(open){
+  const m=document.getElementById('nav-sh-menu'), b=document.getElementById('nav-share');
+  if(!m||!b) return; m.hidden=!open; b.setAttribute('aria-expanded',open?'true':'false');
+}
+function dlShareMenu(e){
+  if(e) e.stopPropagation();
+  const m=document.getElementById('nav-sh-menu'); dlShareMenuSet(!!(m&&m.hidden));
+}
+function dlSharePick(kind){
+  dlShareMenuSet(false);
+  if(kind==='link') return dlShare();
+  const p=COMP.find(x=>x.n===PLAYER_NAME); if(!p) return;
+  const slug=String(p.n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return dlImgShare(()=>drawPlayerImage(p),'delta-'+(slug||'player')+'.png',document.getElementById('nav-share-t'));
+}
+document.addEventListener('click',e=>{ const w=e.target&&e.target.closest?e.target.closest('.nav-sh-wrap'):null; if(!w) dlShareMenuSet(false); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') dlShareMenuSet(false); });
+/* Player picture (23 Oct 2026, owner): the card in brief, through the engine's share-image
+   kit (dlImg*). Model value is mvAsset() live: p.mv on this page is the pre-calibration copy
+   and is not what the page shows (3,356 vs 3,772 for Chase Brown on 23 Oct). */
+async function drawPlayerImage(p){
+  const C=dlImgColors(), F=dlImgFonts(), W=1080, P=64;
+  const pos=p.pos||p.p, call=dlImgCall(p,C), rk=dlPosRank(p), parts=dlScoreParts(p);
+  const pj=getAdjProj(p), tl=seasonTally(p), so=tl.g?tl.pts/tl.g:null;
+  const mv=mvAsset(p), sp=computeStartProfile(p.n,pos);
+  const H=P+96+40+150+40+300+40+70+4*76+40+70+130+40+70+100+40+DL_IMG_FOOT;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
+  let y=await dlImgStart(g,W,P,C,F,'PLAYER CARD'); y+=40;
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 72px '+F.sans; g.fillText(dlImgFit(g,p.n,W-2*P),P,y+50);
+  g.fillStyle=C.fog; g.font='600 30px '+F.sans;
+  g.fillText([pos,p.t&&p.t!=='FA'?p.t:'Free agent','Age '+(p.a||0).toFixed(1)].join(' · '),P,y+118);
+  y+=150+40;
+  // score + call panel
+  dlImgRound(g,P,y,W-2*P,300,22); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+  const half=(W-2*P)/2;
+  g.textAlign='center'; g.fillStyle=dlImgColorOf(dsColor(p.dsScore),C); g.font='800 140px '+F.mono; g.fillText(p.dsScore!=null?p.dsScore:'—',P+half/2,y+130);
+  g.fillStyle=C.fog2; g.font='700 22px '+F.sans; dlImgSpace(g,3); g.fillText('DELTA SCORE',P+half/2,y+222); dlImgSpace(g,0);
+  if(rk){ g.fillStyle=C.fog; g.font='700 26px '+F.sans; g.fillText(pos+rk+' by DELTA Score',P+half/2,y+262); }
+  g.fillStyle=C.line; g.fillRect(P+half,y+40,2,220);
+  g.fillStyle=call.col; g.font='800 56px '+F.sans; g.fillText(call.t||'—',P+half*1.5,y+110);
+  g.fillStyle=C.fog2; g.font='700 22px '+F.sans; dlImgSpace(g,3); g.fillText("DELTA'S CALL",P+half*1.5,y+160); dlImgSpace(g,0);
+  g.fillStyle=C.paper; g.font='700 30px '+F.mono; g.fillText((pj>0?pj.toFixed(1):'—')+' PPG',P+half*1.5,y+222);
+  g.fillStyle=C.fog2; g.font='700 20px '+F.sans; g.fillText('Projected \u00b7 Rest Of Season',P+half*1.5,y+262);
+  y+=300+40;
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 32px '+F.sans; g.fillText('What Makes Up The Score',P,y+30); g.fillStyle=C.line; g.fillRect(P,y+60,W-2*P,2); y+=70;
+  [['prod','Production',45],['opp','Opportunity',30],['age','Age',15],['con','Contract',10]].forEach(([k,lab,max])=>{
+    const v=parts[k];
+    g.textAlign='left'; g.fillStyle=C.fog; g.font='700 24px '+F.sans; g.fillText(lab,P,y+22);
+    g.textAlign='right'; g.fillStyle=C.paper; g.font='700 26px '+F.mono; g.fillText((k==='con'?Math.round(v):v.toFixed(1))+' / '+max,W-P,y+22);
+    const bw=W-2*P; dlImgRound(g,P,y+44,bw,16,8); g.fillStyle=C.line; g.fill();
+    const fw=Math.max(0,Math.min(1,v/max))*bw; if(fw>0){ dlImgRound(g,P,y+44,Math.max(fw,16),16,8); g.fillStyle=C.url; g.fill(); }
+    y+=76;
+  });
+  y+=40;
+  // numbers row
+  const cells=[['Market Value',p.ktcEff>0?Math.round(p.ktcEff).toLocaleString():'—',''],['Model Value',mv>0?Math.round(mv).toLocaleString():'—',''],
+    [SEASON_YEAR+' PPG',so!=null?so.toFixed(1):'—',tl.g?tl.g+' game'+(tl.g===1?'':'s'):'']];
+  const cw=(W-2*P)/3;
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 32px '+F.sans; g.fillText('The Numbers',P,y+30); g.fillStyle=C.line; g.fillRect(P,y+60,W-2*P,2); y+=70;
+  cells.forEach(([l,v,s],i)=>{ const x=P+cw*i+cw/2; g.textAlign='center';
+    g.fillStyle=C.fog; g.font='700 22px '+F.sans; g.fillText(l,x,y+24);
+    g.fillStyle=C.paper; g.font='700 42px '+F.mono; g.fillText(v,x,y+74);
+    if(s){ g.fillStyle=C.fog2; g.font='600 18px '+F.sans; g.fillText(s,x,y+112); } });
+  y+=130+40;
+  // start profile
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 32px '+F.sans; g.fillText('Start Profile \u00b7 Last 34 Games',P,y+30); g.fillStyle=C.line; g.fillRect(P,y+60,W-2*P,2); y+=70;
+  if(sp){
+    g.textAlign='left'; g.fillStyle=C.paper; g.font='700 28px '+F.sans; g.fillText(sp.hitPct+'% hit \u00b7 '+sp.elitePct+'% elite \u00b7 '+sp.missPct+'% miss',P,y+22);
+    g.textAlign='right'; g.fillStyle=C.fog2; g.font='600 22px '+F.sans; g.fillText(sp.n+' games',W-P,y+22);
+    dlImgStartBar(g,P,y+48,W-2*P,24,sp,C);
+  } else { g.textAlign='left'; g.fillStyle=C.fog2; g.font='600 26px '+F.sans; g.fillText('No games on record yet',P,y+22); }
+  y+=100;
+  y+=40; dlImgFooter(g,W,P,C,F,y);
+  return cv;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
