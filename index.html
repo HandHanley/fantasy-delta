@@ -106,14 +106,18 @@ tr:hover td{background:var(--panel)}
 .tc-btn:hover{background:var(--teal-soft);color:var(--paper);border-color:var(--fog-2)}
 .tc-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 .tc-active,.tc-active:hover{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
-.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-.trade-grid.three-col{grid-template-columns:1fr 1fr 1fr}
-.trade-grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
+.trade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
+.trade-grid.three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
+.trade-grid.four-col{grid-template-columns:repeat(4,minmax(0,1fr))}
+.trade-grid>*{min-width:0}   /* columns may shrink below a long name; it ellipsizes (23 Oct 2026) */
 /* Mobile: stack ALL trade sides into one column (2/3/4-team). Placed AFTER the
    base + three/four-col rules so it actually wins on source order — the earlier
    @media rule was being overridden by these, leaving 3-4 columns as slivers. */
 @media(max-width:600px){
-  .trade-grid,.trade-grid.three-col,.trade-grid.four-col{grid-template-columns:1fr;gap:10px}
+  /* minmax(0,…) lets a column shrink below its content (23 Oct 2026): a long name in a
+     3-4 team side pushed the card to 366 px on a 360 px phone. Names ellipsize instead. */
+  .trade-grid,.trade-grid.three-col,.trade-grid.four-col{grid-template-columns:minmax(0,1fr);gap:10px}
+  .trade-side{min-width:0}
   /* Stacked, but tightened so two teams fit a screen instead of one. */
   .ts-hd{padding:8px 11px;font-size:11.5px}
   .win-sel{font-size:9px;padding:1px 4px}
@@ -194,6 +198,10 @@ tr:hover td{background:var(--panel)}
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-tc-act:hover{background:var(--teal-soft)}
 .dl-tc-act:disabled{opacity:.6;cursor:default}
+/* 3-4 team "Gives Up" breakdown: one column per team on wide screens, two per row on a
+   phone. Base and phone rule kept adjacent, base first (§10d trap 7). */
+.dl-tc-mgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:.75rem;margin-bottom:.75rem}
+@media(max-width:600px){.dl-tc-mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Verdict badge (22 Oct 2026): coloured by the winning team's side colour. The old markup
    asked for .bbs/.bbi/.bbd, which never existed, so the badge always drew uncoloured. */
 .vbadge.vb-even{background:var(--line);color:var(--paper)}
@@ -3563,7 +3571,7 @@ function recalcTrade(){
       </div>
       <div class="mt-note">Net = what a team receives minus what it gives up. Route each asset with the → selector on its row.</div>
       ${windowFraming()}
-      <div style="display:grid;grid-template-columns:repeat(${tradeTeams},1fr);gap:.75rem;margin-bottom:.75rem">
+      <div class="dl-tc-mgrid" style="--n:${tradeTeams}">
         ${adjResults.map(t=>`
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem">${t.label} GIVES UP</div>
@@ -6956,7 +6964,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23a</span>
+  <span class="foot-build">2026-10-23b</span>
 </footer>
 
 
