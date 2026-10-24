@@ -198,6 +198,47 @@ tr:hover td{background:var(--panel)}
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-tc-act:hover{background:var(--teal-soft)}
 .dl-tc-act:disabled{opacity:.6;cursor:default}
+/* Mock Draft (24 Oct 2026). Chips and buttons are page chrome (accent); the board is .dl-board. */
+.dl-md-wrap{max-width:760px}
+.dl-md-head h2{font-size:20px;font-weight:800;color:var(--paper);margin:0 0 4px;letter-spacing:-.3px}
+.dl-md-head p{font-size:12px;color:var(--fog);margin:0 0 14px}
+.dl-md-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-bottom:12px}
+.dl-md-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.dl-md-row+.dl-md-row{border-top:1px solid var(--line)}
+.dl-md-rl{flex:0 0 74px;font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.05em;text-transform:uppercase;padding-top:8px}
+.dl-md-chips{display:flex;flex-wrap:wrap;gap:6px}
+.dl-md-chip{font:inherit;font-size:12.5px;font-weight:700;min-width:38px;min-height:32px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fog);cursor:pointer}
+.dl-md-chip.sm{min-width:0;padding:4px 9px;font-size:11.5px}
+.dl-md-chip.on{border-color:var(--teal-br);color:var(--teal-br);background:var(--teal-soft)}
+.dl-md-go{display:block;width:100%;min-height:46px;border-radius:10px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;cursor:pointer;margin:6px 0 10px}
+.dl-md-note,.dl-md-hint{font-size:11.5px;color:var(--fog-2);margin:4px 0 10px;line-height:1.5}
+.dl-md-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.dl-md-link{font:inherit;font-size:12px;font-weight:700;color:var(--fog);background:none;border:0;padding:6px 0;cursor:pointer}
+.dl-md-status{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px}
+.dl-md-status b{font-size:15px;color:var(--paper)}
+.dl-md-status span{font-family:var(--mono);font-size:12px;color:var(--fog)}
+.dl-md-status.on{border-color:var(--teal-br)}
+.dl-md-status.on b{color:var(--teal-br)}
+.dl-md-sec{margin-bottom:14px}
+.dl-md-sec h3{font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.dl-md-log{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.dl-md-log li{display:flex;align-items:baseline;gap:10px;padding:7px 12px;font-size:12.5px;border-top:1px solid var(--line)}
+.dl-md-log li:first-child{border-top:0}
+.dl-md-log b{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--fog);flex:0 0 36px}
+.dl-md-log span{flex:1;min-width:0;color:var(--paper);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-log em{font-style:normal;font-size:11px;color:var(--fog-2);flex:0 0 22px}
+.dl-md-log i{font-style:normal;font-size:11px;color:var(--fog);flex:0 0 56px;text-align:right}
+.dl-md-log li.me{background:var(--row-hi)}
+.dl-md-log li.me i{color:var(--teal-br);font-weight:700}
+.dl-md-tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:6px}
+.dl-md-tr.pick{cursor:pointer}
+.dl-md-tr.sel td{background:var(--teal-soft)}
+.dl-md-rk{color:var(--fog-2);font-family:var(--mono)}
+.dl-md-tbl td,.dl-md-tbl th{white-space:nowrap}
+.dl-md-odds{display:inline-block;min-width:44px;font-family:var(--mono);border-radius:4px;padding:1px 5px;
+  background:linear-gradient(90deg,var(--teal-tint) var(--w),transparent var(--w))}
+.dl-md-act{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.dl-md-act .dl-md-go{box-shadow:0 8px 24px rgba(0,0,0,.45);margin:0}
 /* 3-4 team "Gives Up" breakdown: one column per team on wide screens, two per row on a
    phone. Base and phone rule kept adjacent, base first (§10d trap 7). */
 .dl-tc-mgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:.75rem;margin-bottom:.75rem}
@@ -1839,6 +1880,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
+  <button data-tab="mock" data-sec="me" class="tab" onclick="showTab('mock',this)">Mock Draft</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <span class="tab-right">
@@ -1907,6 +1949,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <optgroup label="My Team">
         <option value="myteam">Roster</option>
         <option value="trade">Trade Calc</option>
+        <option value="mock">Mock Draft</option>
         <option value="watchlist">Watchlist</option>
       </optgroup>
     </select>
@@ -2147,6 +2190,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 <div id="panel-roles" class="panel"><div id="rc-root"></div></div>
 
 <div id="panel-scorecard" class="panel"><div id="sc-root"></div></div>
+
+<div id="panel-mock" class="panel"><div id="md-root"></div></div>
 
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
@@ -4070,6 +4115,236 @@ async function drawCompareImage(){
 }
 function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.png',btn); }
 
+// ── Mock Draft (24 Oct 2026, owner) ─────────────────────────────────────────
+/* Phase 1 of the rookie draft assistant. One rookie class (data/mock-draft-<class>.json,
+   built by scripts/build-mock-draft-pool.py: market values fixed on a date), any league
+   shape. The board is in MARKET order (owner); DELTA is a lens you switch on: Score, NFL
+   draft slot, DELTA's rookie-year baseline (rookieBaseline), college production
+   percentile, 40 time.
+   BOTS pick by market value x random noise x a soft brake on doubling up at a position.
+   The noise is fitted to the owner's league's real 2026 rookie draft against the market on
+   draft day (26 Apr 2026): round 1 took a player about 1.8 places below best available on
+   average, rounds 2-3 about 7.3. Sigma 0.15 in round 1 and 0.6 after reproduces 1.78 and
+   7.1. One draft of 30 picks: a sensible starting point, not a measurement.
+   ODDS: the share of MD_SIMS simulated drafts in which a player is still there at your next
+   pick (when you are on the clock: at your pick after this one, if you pass on him).
+   Display only: nothing here feeds any other number on the site. */
+const MD_CLASS=2026, MD_SIG1=0.15, MD_SIG2=0.6, MD_FLOOR=150, MD_SIMS=400;
+const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,lensData:null,lensLoad:null};
+function mdEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function mdLoad(){
+  if(!MD.load) MD.load=fetch('./data/mock-draft-'+MD_CLASS+'.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():null).then(j=>{ MD.pool=(j&&Array.isArray(j.players)&&j.players.length>=20)?j:null; return MD.pool; })
+    .catch(()=>null);
+  return MD.load;
+}
+function mdDefaults(){
+  // A connected league suggests its own shape; otherwise the reader's league size.
+  let teams=leagueTeams||12, rounds=teams<=10?3:4;
+  try{ if(typeof SLP!=='undefined'&&SLP&&SLP.league){
+    const t=SLP.league.total_rosters; if(t>=8&&t<=16) teams=t;
+    const dr=SLP.league.settings&&SLP.league.settings.draft_rounds; if(dr>=2&&dr<=6) rounds=dr; } }catch(e){}
+  const c={teams:teams,rounds:rounds,type:'linear',slot:1};
+  let saved=null; try{ saved=JSON.parse(dlPref('delta_md_cfg')||'null'); }catch(e){}
+  if(saved&&typeof saved==='object'){
+    ['teams','rounds','slot'].forEach(k=>{ if(Number.isInteger(saved[k])) c[k]=saved[k]; });
+    if(saved.type==='snake'||saved.type==='linear') c.type=saved.type;
+  }
+  c.teams=Math.min(16,Math.max(4,c.teams)); c.rounds=Math.min(6,Math.max(1,c.rounds));
+  c.slot=Math.min(Math.max(1,c.slot),c.teams);
+  return c;
+}
+// Every pick in order: r = round (0-based), i = pick in round (0-based), t = team slot (0-based).
+function mdOrder(c){
+  const o=[];
+  for(let r=0;r<c.rounds;r++) for(let i=0;i<c.teams;i++)
+    o.push({r:r,i:i,t:(c.type==='snake'&&r%2===1)?c.teams-1-i:i});
+  return o;
+}
+function mdLabel(o){ return (o.r+1)+'.'+String(o.i+1).padStart(2,'0'); }
+function mdGauss(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function mdTeamPos(picks,t){ const c={}; picks.forEach(x=>{ if(x.t===t){ const ps=MD.pool.players[x.pi].pos; c[ps]=(c[ps]||0)+1; } }); return c; }
+function mdBotChoice(avail,teamPos,round){
+  const P=MD.pool.players, sig=round===0?MD_SIG1:MD_SIG2;
+  let best=-1,bs=-Infinity;
+  for(const i of avail){
+    const p=P[i], n=teamPos[p.pos]||0, brake=n===0?1:n===1?0.92:n===2?0.8:0.6;
+    const s=Math.max(p.v,MD_FLOOR)*Math.exp(sig*mdGauss())*brake;
+    if(s>bs){ bs=s; best=i; }
+  }
+  return best;
+}
+function mdAvail(){ const taken=new Set(MD.picks.map(x=>x.pi)); return MD.pool.players.map((_,i)=>i).filter(i=>!taken.has(i)); }
+function mdNextMine(from){ const o=mdOrder(MD.cfg); for(let k=from;k<o.length;k++) if(o[k].t===MD.cfg.slot-1) return k; return -1; }
+function mdRunBots(){
+  const o=mdOrder(MD.cfg);
+  while(MD.picks.length<o.length){
+    const k=MD.picks.length, s=o[k];
+    if(s.t===MD.cfg.slot-1) break;
+    const av=mdAvail(); if(!av.length) break;
+    MD.picks.push({k:k,t:s.t,pi:mdBotChoice(av,mdTeamPos(MD.picks,s.t),s.r)});
+  }
+}
+// Chance each available player is still there at your next pick (or, when you are on
+// the clock, at your pick after this one if you pass on him).
+function mdOdds(){
+  const o=mdOrder(MD.cfg), k0=MD.picks.length, mine=MD.cfg.slot-1;
+  const onClock=k0<o.length&&o[k0].t===mine;
+  const target=mdNextMine(onClock?k0+1:k0);
+  if(target<0) return null;
+  const start=onClock?k0+1:k0, base=mdAvail(), cnt=new Map(base.map(i=>[i,0]));
+  const teamPos0={}; for(let t=0;t<MD.cfg.teams;t++) teamPos0[t]=mdTeamPos(MD.picks,t);
+  for(let s=0;s<MD_SIMS;s++){
+    const av=new Set(base), tp={}; for(const t in teamPos0) tp[t]=Object.assign({},teamPos0[t]);
+    for(let k=start;k<target;k++){
+      const ch=mdBotChoice(av,tp[o[k].t],o[k].r); if(ch<0) break;
+      av.delete(ch); const ps=MD.pool.players[ch].pos; tp[o[k].t][ps]=(tp[o[k].t][ps]||0)+1;
+    }
+    av.forEach(i=>cnt.set(i,cnt.get(i)+1));
+  }
+  const res={}; cnt.forEach((v,i)=>{ res[i]=v/MD_SIMS; });
+  return {target:target,label:mdLabel(o[target]),pass:onClock,res:res};
+}
+function mdStart(){
+  MD.picks=[]; MD.sel=null;
+  try{ dlPref('delta_md_cfg',JSON.stringify(MD.cfg)); }catch(e){}
+  mdRunBots(); MD.odds=mdOdds(); mdRender();
+}
+function mdSet(k,v){
+  if(!MD.cfg) MD.cfg=mdDefaults();
+  MD.cfg[k]=v; if(k==='teams') MD.cfg.slot=Math.min(MD.cfg.slot,v);
+  mdRenderSetup();
+}
+function mdEditSettings(){ MD.picks=[]; MD.cfg=Object.assign({},MD.cfg); MD.running=false; mdRenderSetup(); }
+function mdSelect(pi){
+  const o=mdOrder(MD.cfg); if(MD.picks.length>=o.length||o[MD.picks.length].t!==MD.cfg.slot-1) return;
+  MD.sel=(MD.sel===pi)?null:pi; mdRender();
+}
+function mdDraft(){
+  if(MD.sel==null) return;
+  const o=mdOrder(MD.cfg), k=MD.picks.length;
+  if(k>=o.length||o[k].t!==MD.cfg.slot-1) return;
+  if(MD.picks.some(x=>x.pi===MD.sel)) return;
+  MD.picks.push({k:k,t:o[k].t,pi:MD.sel,me:true}); MD.sel=null;
+  mdRunBots(); MD.odds=mdOdds(); mdRender();
+}
+function mdSetPos(p){ MD.pos=p; mdRender(); }
+function mdSetLens(on){
+  MD.lens=!!on;
+  if(MD.lens&&!MD.lensData&&!MD.lensLoad){
+    MD.lensLoad=Promise.all([
+      fetch('./data/college-index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch('./data/combine.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null)
+    ]).then(([ci,cb])=>{ MD.lensData={ci:(ci&&ci.players)||{},cb:(cb&&cb.players)||{}}; mdRender(); });
+  }
+  mdRender();
+}
+// The DELTA lens for one player: every value is one the site shows elsewhere.
+function mdLens(p){
+  const out={ds:null,slot:null,base:null,col:null,forty:null};
+  const c=(typeof COMP!=='undefined')?COMP.find(x=>x.n===p.n):null;
+  if(c&&c.dsScore!=null) out.ds=c.dsScore;
+  try{ const di=(typeof dsDraftInfo==='function')?dsDraftInfo(p.n):null; if(di&&di.pick!=null) out.slot=di.pick; }catch(e){}   // overall NFL pick
+  try{ if(typeof rookieBaseline==='function'){ const b=rookieBaseline({n:p.n,p:p.pos}); if(b>0) out.base=b; } }catch(e){}
+  const L=MD.lensData;
+  if(L){
+    const seasons=L.ci[p.n]; if(seasons){ const ks=Object.keys(seasons).sort(); for(let j=ks.length-1;j>=0;j--){ const v=seasons[ks[j]]&&seasons[ks[j]]._ddomPct; if(v!=null){ out.col=v; break; } } }
+    const cb=L.cb[p.n]; if(cb&&cb.forty) out.forty=cb.forty;
+  }
+  return out;
+}
+function mdPct(v){ if(v==null) return null; const n=Math.round(v<=1?v*100:v); return n+(n%100>10&&n%100<14?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th')); }
+function openMockDraft(){
+  const root=document.getElementById('md-root'); if(!root) return;
+  if(!MD.pool){ root.innerHTML='<div class="dl-md-note">Loading the rookie class…</div>';
+    mdLoad().then(p=>{ if(!p){ root.innerHTML='<div class="dl-md-note">The rookie class didn’t load. Try again in a moment.</div>'; return; } openMockDraft(); }); return; }
+  if(!MD.cfg) MD.cfg=mdDefaults();
+  if(MD.picks.length||MD.running) mdRender(); else mdRenderSetup();
+}
+function mdChips(key,vals,cur,lab){
+  return '<div class="dl-md-row"><span class="dl-md-rl">'+lab+'</span><div class="dl-md-chips">'
+    +vals.map(v=>{ const val=(typeof v==='object')?v.v:v, txt=(typeof v==='object')?v.t:v;
+      return '<button type="button" class="dl-md-chip'+(cur===val?' on':'')+'" onclick="mdSet(\''+key+'\','+(typeof val==='string'?'\''+val+'\'':val)+')">'+txt+'</button>'; }).join('')
+    +'</div></div>';
+}
+function mdRenderSetup(){
+  const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
+  const c=MD.cfg||(MD.cfg=mdDefaults());
+  const slots=[]; for(let s=1;s<=c.teams;s++) slots.push(s);
+  root.innerHTML='<div class="dl-md-wrap">'
+    +'<div class="dl-md-head"><h2>Mock Draft</h2><p>'+MD.pool['class']+' Rookie Class · Market Prices From '+mdEsc(mdDay(MD.pool.priced))+'</p></div>'
+    +'<div class="dl-md-card">'
+    +mdChips('teams',[8,10,12,14],c.teams,'Teams')
+    +mdChips('rounds',[2,3,4,5],c.rounds,'Rounds')
+    +mdChips('type',[{v:'linear',t:'Linear'},{v:'snake',t:'Snake'}],c.type,'Order')
+    +mdChips('slot',slots,c.slot,'Your Pick')
+    +'</div>'
+    +'<button type="button" class="dl-md-go" onclick="MD.running=true;mdStart()">Start Draft</button>'
+    +'<p class="dl-md-note">Bots draft by market value, with about as much variation as a real league showed.</p>'
+    +'</div>';
+}
+function mdDay(iso){ const d=new Date(String(iso)+'T12:00:00Z'); if(isNaN(d)) return iso||''; return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+d.getUTCFullYear(); }
+function mdRender(){
+  const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
+  const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, k=MD.picks.length, done=k>=o.length||!mdAvail().length;
+  const mine=c.slot-1, onClock=!done&&o[k].t===mine;
+  const team=t=>t===mine?'You':'Team '+(t+1);
+  const pickRow=x=>{ const p=P[x.pi]; return '<li'+(x.me?' class="me"':'')+'><b>'+mdLabel(o[x.k])+'</b><span>'+mdEsc(p.n)+'</span><em>'+p.pos+'</em><i>'+team(x.t)+'</i></li>'; };
+  // picks since your previous pick (what happened while you waited)
+  let lastMine=-1; for(let j=MD.picks.length-1;j>=0;j--){ if(MD.picks[j].me){ lastMine=j; break; } }
+  const since=MD.picks.slice(lastMine+1);
+  const myPicks=MD.picks.filter(x=>x.me);
+  let status;
+  if(done) status='<div class="dl-md-status done"><b>Draft Complete</b><span>'+myPicks.length+' pick'+(myPicks.length===1?'':'s')+' for you</span></div>';
+  else if(onClock) status='<div class="dl-md-status on"><b>You’re On The Clock</b><span>Pick '+mdLabel(o[k])+'</span></div>';
+  else status='<div class="dl-md-status"><b>Pick '+mdLabel(o[k])+'</b><span>'+team(o[k].t)+'</span></div>';
+  const sinceHtml=since.length?'<div class="dl-md-sec"><h3>'+(myPicks.length?'Since Your Last Pick':'Before Your First Pick')+'</h3><ol class="dl-md-log">'+since.map(pickRow).join('')+'</ol></div>':'';
+  // board
+  const av=mdAvail().sort((a,b)=>P[b].v-P[a].v||(P[a].n<P[b].n?-1:1));
+  const rank=new Map(av.map((i,j)=>[i,j+1]));
+  const list=av.filter(i=>MD.pos==='All'||P[i].pos===MD.pos);
+  const od=MD.odds;
+  const oddsHead=od?(od.pass?'If You Pass · '+od.label:'At '+od.label):'';
+  let head,rows;
+  if(!MD.lens){
+    head='<th class="dl-b-r">#</th><th>Player</th><th class="dl-b-r">Value</th>'+(od?'<th class="dl-b-r">'+oddsHead+'</th>':'');
+    rows=list.map(i=>{ const p=P[i], pr=od&&od.res[i]!=null?od.res[i]:null;
+      return '<tr class="dl-md-tr'+(onClock?' pick':'')+(MD.sel===i?' sel':'')+'" '+(onClock?'onclick="mdSelect('+i+')"':'')+'>'
+        +'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>'
+        +'<td><span class="dl-b-pn">'+mdEsc(p.n)+'</span><span class="dl-b-tp">'+p.pos+'</span></td>'
+        +'<td class="dl-b-r">'+(p.v>0?p.v.toLocaleString():'—')+'</td>'
+        +(od?'<td class="dl-b-r"><span class="dl-md-odds" style="--w:'+Math.round((pr||0)*100)+'%">'+(pr==null?'—':Math.round(pr*100)+'%')+'</span></td>':'')
+        +'</tr>'; }).join('');
+  } else {
+    head='<th class="dl-b-r">#</th><th>Player</th><th class="dl-b-r">Score</th><th class="dl-b-r">NFL Pick</th><th class="dl-b-r">Rookie PPG</th><th class="dl-b-r">College</th><th class="dl-b-r">40</th>';
+    rows=list.map(i=>{ const p=P[i], L=mdLens(p);
+      return '<tr class="dl-md-tr'+(onClock?' pick':'')+(MD.sel===i?' sel':'')+'" '+(onClock?'onclick="mdSelect('+i+')"':'')+'>'
+        +'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>'
+        +'<td><span class="dl-b-pn">'+mdEsc(p.n)+'</span><span class="dl-b-tp">'+p.pos+'</span></td>'
+        +'<td class="dl-b-r">'+(L.ds!=null?'<b style="color:'+dsColor(L.ds)+'">'+L.ds+'</b>':'—')+'</td>'
+        +'<td class="dl-b-r">'+(L.slot!=null?'#'+L.slot:'—')+'</td>'
+        +'<td class="dl-b-r">'+(L.base!=null?L.base.toFixed(1):'—')+'</td>'
+        +'<td class="dl-b-r">'+(L.col!=null?mdPct(L.col):(MD.lensData?'—':'…'))+'</td>'
+        +'<td class="dl-b-r">'+(L.forty?L.forty.toFixed(2):(MD.lensData?'—':'…'))+'</td></tr>'; }).join('');
+  }
+  const board=done?'':'<div class="dl-md-sec"><div class="dl-md-tools">'
+      +'<div class="dl-md-chips">'+['Market','DELTA Lens'].map((t,j)=>'<button type="button" class="dl-md-chip'+((j===1)===MD.lens?' on':'')+'" onclick="mdSetLens('+(j===1)+')">'+t+'</button>').join('')+'</div>'
+      +'<div class="dl-md-chips">'+['All','QB','RB','WR','TE'].map(t=>'<button type="button" class="dl-md-chip sm'+(MD.pos===t?' on':'')+'" onclick="mdSetPos(\''+t+'\')">'+t+'</button>').join('')+'</div>'
+      +'</div>'
+      +(MD.lens?'<p class="dl-md-hint">Ranked by market. Score is the DELTA Score; NFL Pick is overall; Rookie PPG is DELTA’s rookie-year baseline from that pick; College is his production percentile in his last college season.</p>'
+        :(od?'<p class="dl-md-hint">'+(od.pass?'Chance each player is still there at your next pick ('+od.label+') if you pass on him now.':'Chance each player is still there when you pick at '+od.label+'.')+'</p>':''))
+      +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-tbl"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  const action=(onClock&&MD.sel!=null)?'<div class="dl-md-act"><button type="button" class="dl-md-go" onclick="mdDraft()">Draft '+mdEsc(P[MD.sel].n)+'</button></div>':'';
+  const mineHtml=myPicks.length?'<div class="dl-md-sec"><h3>Your Picks</h3><ol class="dl-md-log mine">'+myPicks.map(pickRow).join('')+'</ol></div>':'';
+  const all=done?'<div class="dl-md-sec"><h3>Full Draft</h3><ol class="dl-md-log">'+MD.picks.map(pickRow).join('')+'</ol></div>':'';
+  root.innerHTML='<div class="dl-md-wrap">'
+    +'<div class="dl-md-top"><button type="button" class="dl-md-link" onclick="mdEditSettings()">← Settings</button>'
+    +'<button type="button" class="dl-md-link" onclick="mdStart()">Restart</button></div>'
+    +status+(done?mineHtml+all:sinceHtml+mineHtml+board)+action
+    +(done?'<button type="button" class="dl-md-go" onclick="mdStart()">Draft Again</button>':'')
+    +'</div>';
+}
+
 // ── Gap-filler (on-demand) ───────────────────────────────────
 // Suggests the single asset that best evens an uneven 2-team trade. When a
 // Sleeper trade is loaded, candidates are limited to the light side's actual
@@ -4938,7 +5213,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','compare','roles','scorecard','audit'],
                  cfb:['college','cfbroles','portal','bigboard'],
-                 me: ['myteam','trade','watchlist'] };
+                 me: ['myteam','trade','mock','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
 // The three old NFL tabs are now views of Rankings (14 Oct 2026); their ids still link there.
@@ -4991,7 +5266,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -5386,6 +5661,7 @@ function showTab(id,el,skipSection){
   if(id==='scorecard')openScorecardTab();
   if(id==='roles' && typeof openRolesTab==='function'){ try{ openRolesTab(); }catch(e){ console.warn('roles',e); } }
   if(id==='compare' && typeof openCompareTab==='function'){ try{ openCompareTab(); }catch(e){ console.warn('compare',e); } }
+  if(id==='mock' && typeof openMockDraft==='function'){ try{ openMockDraft(); }catch(e){ console.warn('mock',e); } }
   if(id==='bigboard'){ try{ bbPaintClass(); }catch(e){} }
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -7021,7 +7297,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23f</span>
+  <span class="foot-build">2026-10-24a</span>
 </footer>
 
 
