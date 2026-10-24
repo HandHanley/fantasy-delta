@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-23T12:42:34.803746+00:00",
+  "fetched": "2026-10-24T12:06:08.658486+00:00",
   "note": "Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.",
   "contracts": {
     "Josh Allen": {
@@ -253,7 +253,7 @@
       "is_active": true
     },
     "J.J. McCarthy": {
-      "team": "NYG/MIN",
+      "team": "MIN/NYG",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -833,7 +833,7 @@
       "is_active": true
     },
     "Tank Bigsby": {
-      "team": "PHI/JAX",
+      "team": "JAX/PHI",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -1053,7 +1053,7 @@
       "is_active": true
     },
     "Jaylen Waddle": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2024,
       "years": 3,
       "end_year": 2026,
@@ -1293,7 +1293,7 @@
       "is_active": true
     },
     "Marvin Harrison Jr.": {
-      "team": "ARI/HOU",
+      "team": "HOU/ARI",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -1893,7 +1893,7 @@
       "is_active": true
     },
     "Elijah Higgins": {
-      "team": "MIA/ARI",
+      "team": "ARI/MIA",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -1977,8 +1977,8 @@
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
-      "aav": 0.3,
-      "total": 0.3,
+      "aav": 0.35,
+      "total": 0.35,
       "guaranteed": 0.0,
       "is_active": true
     },
@@ -2033,7 +2033,7 @@
       "is_active": true
     },
     "Adonai Mitchell": {
-      "team": "NYJ/IND",
+      "team": "IND/NYJ",
       "year_signed": 2024,
       "years": 4,
       "end_year": 2027,
@@ -2063,7 +2063,7 @@
       "is_active": true
     },
     "Kayshon Boutte": {
-      "team": "NE/HOU",
+      "team": "HOU/NE",
       "year_signed": 2023,
       "years": 4,
       "end_year": 2026,
@@ -2703,7 +2703,7 @@
       "is_active": true
     },
     "Kaytron Allen": {
-      "team": "MIA/WAS",
+      "team": "WAS/MIA",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -2803,7 +2803,7 @@
       "is_active": true
     },
     "Justin Joly": {
-      "team": "DEN/MIA",
+      "team": "MIA/DEN",
       "year_signed": 2026,
       "years": 4,
       "end_year": 2029,
@@ -3042,16 +3042,6 @@
       "guaranteed": 0.16,
       "is_active": true
     },
-    "Jaydon Blue": {
-      "team": "Eagles",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 1.0,
-      "total": 1.0,
-      "guaranteed": 0.0,
-      "is_active": true
-    },
     "Seth McGowan": {
       "team": "Colts",
       "year_signed": 2026,
@@ -3172,16 +3162,6 @@
       "guaranteed": 0.13,
       "is_active": true
     },
-    "Najee Harris": {
-      "team": "Giants",
-      "year_signed": 2026,
-      "years": 1,
-      "end_year": 2026,
-      "aav": 1.22,
-      "total": 1.22,
-      "guaranteed": 0.0,
-      "is_active": true
-    },
     "Malik Davis": {
       "team": "Cowboys",
       "year_signed": 2025,
@@ -3253,7 +3233,7 @@
       "is_active": true
     },
     "Jerome Ford": {
-      "team": "Cardinals",
+      "team": "ARI/MIN",
       "year_signed": 2026,
       "years": 1,
       "end_year": 2026,
@@ -3333,7 +3313,7 @@
       "is_active": true
     },
     "Raheim Sanders": {
-      "team": "CLE/LAC",
+      "team": "Browns",
       "year_signed": 2025,
       "years": 3,
       "end_year": 2027,
