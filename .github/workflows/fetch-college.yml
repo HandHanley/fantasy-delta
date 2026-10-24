@@ -96,8 +96,11 @@ jobs:
         with:
           node-version: "20"
 
+      # Pinned 24 Oct 2026, as nflreadpy is: an unpinned client can change what the script reads
+      # with no change here. 5.33.0 is what the 20 and 24 Oct runs used (its roster model is the
+      # same as 5.32.1's, so it did not cause the class-1 feed - see fetch-college.py). Bump on purpose.
       - name: Install CFBD client
-        run: pip install --quiet cfbd
+        run: pip install --quiet cfbd==5.33.0
 
       - name: Build college dataset
         env:
@@ -143,7 +146,8 @@ jobs:
           # list, so every run since it was introduced rebuilt it in CI and then threw
           # it away — the committed copy has been frozen since the day it was first
           # added by hand. If the index builder gains another output, add it HERE too.
-          git add data/college-players*.json data/college-portal*.json \
+          # college-classes-YYYY.json: class standing the script remembers for the season (24 Oct 2026).
+          git add data/college-players*.json data/college-portal*.json data/college-classes*.json \
                   data/college-index.json data/college-index-names.json \
                   data/college-seasons.json data/cfb-cards data/college-roles.json
           if git diff --staged --quiet; then

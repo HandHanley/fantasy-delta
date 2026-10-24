@@ -108,6 +108,10 @@ KEYMAP = {
 OUT      = f"data/college-players-{YEAR}.json"
 OUT_CURR = "data/college-players.json"   # alias the app loads by default
 PREV_FILE = f"data/college-players-{YEAR-1}.json"
+# Class standing recorded for the season, by athlete id (24 Oct 2026; see "class standing").
+CLASS_FILE = f"data/college-classes-{YEAR}.json"
+CLASS_TEAM_SHARE = 0.9   # one class holding this share of a team's listed players = that team's classes are broken
+CLASS_TEAM_MIN = 15      # ...judged only on teams with at least this many skill players listed
 
 if not KEY:
     print("ERROR: CFBD_API_KEY not set"); sys.exit(1)
@@ -304,6 +308,66 @@ with cfbd.ApiClient(cfg) as api:
             "g": {}, "prod": 0.0, "usg": None,
         }
     print(f"\n  FBS skill players on rosters: {len(ply):,}")
+
+    # ---- class standing: guard against a broken roster feed (24 Oct 2026) ----
+    # From the 20 Oct run, CFBD's 2026 rosters listed EVERY player as class 1 (the 18 Oct run had
+    # the usual spread, roughly a quarter to a third per class). Nothing changed on our side: the
+    # cfbd client's roster model is the same in 5.32.1 and 5.33.0, so the feed itself changed.
+    # Class is the sanity check on the recruiting match below (a recruit year must fit the class),
+    # so every 2023-or-earlier recruit lost his stars and recruiting year, and the College tab
+    # showed every player as Y1 with an empty Draft-eligible filter. Two protections, so a feed
+    # that breaks for only some teams or some players is caught too:
+    #  1. TEAM BY TEAM: if CLASS_TEAM_SHARE (90%) or more of a team's listed skill players share
+    #     one class, that team's classes are not believed. A real roster never looks like that.
+    #  2. PLAYER BY PLAYER: a class cannot go DOWN within a season. Classes recorded for the
+    #     season live in CLASS_FILE (seeded 24 Oct from the 18 Oct run); a listed class lower
+    #     than the recorded one is not believed.
+    # A player whose class is not believed takes his recorded class or, with none, an estimate
+    # from his recruiting year after the match below (season - recruit year + 1: exact for 74%
+    # of the 18 Oct classes, and nearly every miss is a redshirt shown one year older; season -
+    # recruit year scored 57%). With the memory seeded, that estimate is only ever needed for a
+    # player first seen after 18 Oct. Only believed and recorded classes are written back, never
+    # estimates, so a guess never overrules a later healthy feed.
+    class_mem = {}
+    try:
+        with open(CLASS_FILE) as f:
+            class_mem = {str(k): int(c) for k, c in (json.load(f).get("classes") or {}).items()}
+        print(f"  class memory: {CLASS_FILE} ({len(class_mem):,} players)")
+    except FileNotFoundError:
+        print(f"  class memory: none yet ({CLASS_FILE})")
+    except Exception as e:
+        print(f"  class memory: {CLASS_FILE} unreadable ({e}) - continuing without it")
+    def _cls_int(c):
+        try: return int(c) if c is not None else None
+        except (TypeError, ValueError): return None
+    by_team = collections.defaultdict(collections.Counter)
+    for v in ply.values():
+        c = _cls_int(v["cls"])
+        if c is not None: by_team[v["tm"]][c] += 1
+    bad_teams = {t for t, c in by_team.items()
+                 if sum(c.values()) >= CLASS_TEAM_MIN and max(c.values()) >= CLASS_TEAM_SHARE * sum(c.values())}
+    listed_all = collections.Counter()
+    for c in by_team.values(): listed_all.update(c)
+    print("  class as listed: " + " | ".join(f"{k}: {listed_all[k]:,}" for k in sorted(listed_all)))
+    CLASS_SRC = collections.Counter()
+    for v in ply.values():
+        listed = None if v["tm"] in bad_teams else _cls_int(v["cls"])
+        mem = class_mem.get(str(v["id"])) if v.get("id") is not None else None
+        if listed is not None and (mem is None or listed >= mem):
+            v["cls"], v["cls_src"] = listed, "listed"
+        elif mem is not None:
+            v["cls"], v["cls_src"] = mem, "recorded"
+        else:
+            v["cls"], v["cls_src"] = None, "unknown"      # estimated after the recruiting match
+        CLASS_SRC[v["cls_src"]] += 1
+    if bad_teams:
+        print(f"  !! CLASS FEED BROKEN for {len(bad_teams)} of {len(by_team)} teams "
+              f"({CLASS_TEAM_SHARE:.0%}+ of a team's players listed in one class)")
+        print(f"::warning title=College classes not believed::CFBD listed {CLASS_TEAM_SHARE:.0%}+ of the players "
+              f"in one class for {len(bad_teams)} of {len(by_team)} teams. Recorded classes used where known, "
+              f"recruiting-year estimates otherwise.")
+    print(f"  class used: listed {CLASS_SRC['listed']:,} | recorded {CLASS_SRC['recorded']:,}"
+          f" | to estimate {CLASS_SRC['unknown']:,}")
     # Join indexes. Athlete ID is authoritative; (name, team) is the fallback for
     # rows where an ID is missing. A silent join failure here would zero out every
     # production number and quietly hand the whole universe to the pedigree door,
@@ -363,6 +427,13 @@ with cfbd.ApiClient(cfg) as api:
           f" | by name+position {tier['name+pos']:,}")
     print(f"    rejected: {tier['ambiguous']:,} ambiguous name+pos, "
           f"{tier['implausible']:,} class-year implausible  ({len(ambiguous):,} ambiguous keys)")
+    # Class still unknown (feed not believed, nothing recorded): estimate from the recruiting year.
+    _est = 0
+    for v in ply.values():
+        if v["cls"] is None and v.get("cls_src") == "unknown" and v.get("rcls"):
+            v["cls"] = max(1, min(4, YEAR - int(v["rcls"]) + 1)); v["cls_src"] = "estimated"; _est += 1
+    if CLASS_SRC["unknown"]:
+        print(f"  class estimated from the recruiting year: {_est:,} | left unknown: {CLASS_SRC['unknown'] - _est:,}")
 
     # ---- season usage share (context column, never the ranking) ----
     for u in usage:
@@ -742,6 +813,20 @@ if YEAR >= CURRENT_SEASON:
 else:
     print(f"  skipped {OUT_CURR} alias (backfill season {YEAR} < current {CURRENT_SEASON})")
 
+# Class memory for the season (see "class standing"): believed and recorded classes only.
+_mem = dict(class_mem)
+for v in ply.values():
+    if v.get("id") is not None and v.get("cls_src") in ("listed", "recorded") and v["cls"] is not None:
+        _mem[str(v["id"])] = int(v["cls"])
+with open(CLASS_FILE, "w") as f:
+    json.dump({"season": YEAR,
+               "note": ("Class standing by CFBD athlete id, as last believed for this season: written by "
+                        "fetch-college.py, read back when CFBD's roster feed is not believed (a team listed "
+                        "90%+ in one class, or a class lower than recorded here). Estimates are never "
+                        "written here. Seeded 24 Oct 2026 from the 18 Oct run, the last before the feed broke."),
+               "classes": dict(sorted(_mem.items()))}, f, separators=(",", ":"))
+print(f"  wrote {CLASS_FILE}: {len(_mem):,} players")
+
 # ── transfer portal ────────────────────────────────────────────────────────
 # Filtered to skill positions landing at an FBS school — an FCS-bound transfer is not
 # a dynasty event. Origin/destination competition tiers travel with each row so the UI
@@ -782,7 +867,7 @@ print(f"  level moves: {up:,} up to Power-4 | {down:,} down from Power-4")
 
 print(f"  API calls used: {CALLS}")
 n = len(out["players"]) or 1
-for fld, label in (("ageEst", "age estimate"), ("stars", "recruit stars"),
+for fld, label in (("cls", "class"), ("ageEst", "age estimate"), ("stars", "recruit stars"),
                    ("rsh", "reception share"), ("usg", "usage share")):
     have = sum(1 for p in out["players"] if p.get(fld) is not None)
     print(f"  coverage: {label:<16} {have:>4}/{n} ({have/n*100:.0f}%)")
