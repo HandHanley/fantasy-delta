@@ -231,8 +231,10 @@ tr:hover td{background:var(--panel)}
 .dl-md-log li.me{background:var(--row-hi)}
 .dl-md-log li.me i{color:var(--teal-br);font-weight:700}
 .dl-md-tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:6px}
-.dl-md-tr.pick{cursor:pointer}
-.dl-md-tr.sel td{background:var(--teal-soft)}
+.dl-md-dcell{width:1%}
+.dl-md-dbtn{font:inherit;font-size:11px;font-weight:800;line-height:1;color:var(--ink);background:var(--teal-br);border:0;border-radius:6px;
+  padding:6px 8px;cursor:pointer;white-space:nowrap}
+.dl-md-dbtn:active{transform:scale(.96)}
 .dl-md-rk{color:var(--fog-2);font-family:var(--mono)}
 .dl-md-tbl td,.dl-md-tbl th{white-space:nowrap}
 .dl-md-odds{display:inline-block;min-width:44px;font-family:var(--mono);border-radius:4px;padding:1px 5px;
@@ -4232,11 +4234,11 @@ function mdLoad(){
       const src=(j&&j.players)||{};
       const ps=Object.keys(src).map(n=>{ const p=src[n]||{};
         return {n:n,pos:p.pos,rank:p.rank,school:p.school||'',cfb:p.cfbName||n,
-                mp:p.mockPick||null,mt:p.mockTeam||null,v:0}; })
+                np:p.nflPick||null,nt:p.nflTeam||null,nv:p.nflVia||null,v:0}; })
         .filter(p=>['QB','RB','WR','TE'].indexOf(p.pos)>=0&&p.rank>0)
         .sort((a,b)=>a.rank-b.rank);
       MD.pool=ps.length>=20?{'class':j['class'],generated:j.generated,source:j.source||'NFL Mock Draft Database',
-        boardDate:j.boardDate||j.generated,mockSource:j.mockSource||null,mockAsOf:j.mockAsOf||null,players:ps}:null;
+        boardDate:j.boardDate||j.generated,orderAsOf:(j.draftOrder&&j.draftOrder.asOf)||null,players:ps}:null;
       return MD.pool; })
     .catch(()=>null);
   return MD.load;
@@ -4477,16 +4479,13 @@ function mdSet(k,v){
 function mdSetMode(m){ mdStop(); MD.mode=(m==='league')?'league':'custom'; try{ dlPref('delta_md_mode',MD.mode); }catch(e){} MD.cfg=null; mdRenderSetup(); }
 function mdSetLgType(t){ mdStop(); if(MD.lgInfo) MD.lgInfo=Object.assign({},MD.lgInfo,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
 function mdEditSettings(){ mdStop(); MD.picks=[]; MD.running=false; MD.sel=null; MD.fresh=-1; if(MD.cfg&&MD.cfg.league) MD.cfg=null; mdRenderSetup(); }
-function mdSelect(pi){
-  const c=MD.cfg, o=mdOrder(c); if(MD.picks.length>=o.length||o[MD.picks.length].t!==mdMine(c)) return;
-  MD.sel=(MD.sel===pi)?null:pi; mdRender();
-}
-function mdDraft(){
-  if(MD.sel==null) return;
+// Your pick: one tap on the Draft button beside a name (owner, 24 Oct: replaced tap-to-select
+// and a separate confirm button).
+function mdDraftNow(pi){
   const c=MD.cfg, o=mdOrder(c), k=MD.picks.length;
   if(k>=o.length||o[k].t!==mdMine(c)) return;
-  if(MD.picks.some(x=>x.pi===MD.sel)) return;
-  MD.picks.push({k:k,t:o[k].t,pi:MD.sel,me:true}); MD.sel=null; MD.fresh=k;
+  if(!MD.pool.players[pi]||MD.picks.some(x=>x.pi===pi)) return;
+  MD.picks.push({k:k,t:o[k].t,pi:pi,me:true}); MD.sel=null; MD.fresh=k;
   mdGo();
 }
 function mdSetPos(p){ MD.pos=p; mdRender(); }
@@ -4654,25 +4653,30 @@ function mdRender(){
   const list=av.filter(i=>MD.pos==='All'||P[i].pos===MD.pos);
   const od=MD.odds, adp=MD.adp;
   const oddsHead=od?(od.pass?'If You Pass · '+od.label:'At '+od.label):'';
+  // under the name: school, then the NFL team holding the pick that matches his board rank
   const nameCell=p=>'<td class="pname"><span class="dl-b-pn">'+mdEsc(p.n)+'</span><span class="dl-b-tp">'+p.pos+'</span>'
-    +'<span class="dl-md-sub">'+mdEsc(p.school)+(p.mt?' · Mock: '+mdEsc(p.mt)+' #'+p.mp:'')+'</span></td>';
-  const rowOpen=i=>'<tr class="dl-md-tr'+(onClock?' pick':'')+(MD.sel===i?' sel':'')+'" '+(onClock?'onclick="mdSelect('+i+')"':'')+'>';
+    +'<span class="dl-md-sub">'+mdEsc(p.school)+(p.nt?' · '+mdEsc(p.nt)+' #'+p.np:'')+'</span></td>';
+  const rowOpen=()=>'<tr class="dl-md-tr">';
+  // first column: the Draft button on your turn, the player's place in the bots' order otherwise
+  const firstCell=i=>onClock?'<td class="dl-md-dcell"><button type="button" class="dl-md-dbtn" onclick="mdDraftNow('+i+')">Draft</button></td>'
+    :'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>';
+  const firstHead=onClock?'<th></th>':'<th class="dl-b-r">#</th>';
   let head,rows;
   if(!MD.lens){
-    head='<th class="dl-b-r">#</th><th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">Avg Pick</th>'+(od?'<th class="dl-b-r">'+oddsHead+'</th>':'');
+    head=firstHead+'<th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">Avg Pick</th>'+(od?'<th class="dl-b-r">'+oddsHead+'</th>':'');
     rows=list.map(i=>{ const p=P[i], pr=od&&od.res[i]!=null?od.res[i]:null, ak=adp?adp[i]:null;
       return rowOpen(i)
-        +'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>'+nameCell(p)
+        +firstCell(i)+nameCell(p)
         +'<td class="dl-b-r">'+p.rank+'</td>'
         +'<td class="dl-b-r dl-md-adp">'+(ak!=null&&o[ak]?mdLabel(o[ak]):'—')+'</td>'
         +(od?'<td class="dl-b-r"><span class="dl-md-odds" style="--w:'+Math.round((pr||0)*100)+'%">'+(pr==null?'—':Math.round(pr*100)+'%')+'</span></td>':'')
         +'</tr>'; }).join('');
   } else {
     const wait=MD.lensData?'—':'…';
-    head='<th class="dl-b-r">#</th><th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">dDOM</th><th class="dl-b-r">PPA</th><th class="dl-b-r">Recruit</th>';
+    head=firstHead+'<th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">dDOM</th><th class="dl-b-r">PPA</th><th class="dl-b-r">Recruit</th>';
     rows=list.map(i=>{ const p=P[i], L=MD.lensData?mdLens(p):{};
       return rowOpen(i)
-        +'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>'+nameCell(p)
+        +firstCell(i)+nameCell(p)
         +'<td class="dl-b-r">'+p.rank+'</td>'
         +'<td class="dl-b-r">'+(L.dd!=null?L.dd:wait)+'</td>'
         +'<td class="dl-b-r">'+(L.ppa!=null?L.ppa:wait)+'</td>'
@@ -4684,15 +4688,14 @@ function mdRender(){
       +'</div>'
       +(MD.lens?'<p class="dl-md-hint">Same order. dDOM is his share of his team’s production, adjusted for opponents, and PPA his efficiency, each a percentile (0–100) at his position in the '+((MD.lensData&&MD.lensData.year)||'latest')+' season. Recruit is his high-school star rating.</p>'
         :'<p class="dl-md-hint">Board: '+mdEsc(MD.pool.source)+' rank, '+mdDayShort(MD.pool.boardDate)
-          +(MD.pool.mockAsOf?' · Mock: '+mdEsc(MD.pool.mockSource||'NFL Mock Draft Database')+', '+mdDayShort(MD.pool.mockAsOf):'')
+          +(MD.pool.orderAsOf?' · Team: who holds that NFL pick ('+mdDayShort(MD.pool.orderAsOf)+' order)':'')
           +' · Avg Pick: '+MD_SIMS+' practice drafts'
           +(od?' · Last column: chance he’s still there at '+od.label+(od.pass?' if you pass':''):'')+'</p>')
       +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-tbl"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-  // the bar pinned to the bottom of the screen: the Draft button when you have chosen, a nudge when
-  // you are on the clock, and otherwise the latest pick — so you can follow along from the board
+  // the bar pinned to the bottom of the screen: a reminder when you are on the clock, otherwise
+  // the latest pick — so you can follow along from the board
   let action='';
-  if(onClock&&MD.sel!=null) action='<div class="dl-md-act"><button type="button" class="dl-md-go" onclick="mdDraft()">Draft '+mdEsc(P[MD.sel].n)+'</button></div>';
-  else if(onClock) action='<div class="dl-md-act"><div class="dl-md-pill on">You’re On The Clock · '+mdLabel(o[k])+' · Tap A Player</div></div>';
+  if(onClock) action='<div class="dl-md-act"><div class="dl-md-pill on">You’re On The Clock · '+mdLabel(o[k])+'</div></div>';
   else if(!done&&MD.fresh>=0&&MD.picks[MD.fresh]){ const x=MD.picks[MD.fresh], p=P[x.pi];
     action='<div class="dl-md-act"><div class="dl-md-pill new"><b>'+mdLabel(o[x.k])+'</b><span>'+mdEsc(p.n)+' '+p.pos+'</span><i>'+mdEsc(mdName(c,x.t))+'</i></div></div>'; }
   const mineHtml=myPicks.length?'<div class="dl-md-sec"><h3>Your Picks</h3><ol class="dl-md-log mine">'+myPicks.map(pickRow).join('')+'</ol></div>':'';
