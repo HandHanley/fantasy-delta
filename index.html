@@ -232,7 +232,7 @@ tr:hover td{background:var(--panel)}
 .dl-md-log li.me i{color:var(--teal-br);font-weight:700}
 .dl-md-tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:6px}
 .dl-md-dcell{width:1%}
-.dl-md-dbtn{font:inherit;font-size:11px;font-weight:800;line-height:1;color:var(--ink);background:var(--teal-br);border:0;border-radius:6px;
+.dl-md-dbtn{font:inherit;font-family:var(--sans);font-size:11px;font-weight:800;line-height:1;color:var(--ink);background:var(--teal-br);border:0;border-radius:6px;
   padding:6px 8px;cursor:pointer;white-space:nowrap}
 .dl-md-dbtn:active{transform:scale(.96)}
 .dl-md-rk{color:var(--fog-2);font-family:var(--mono)}
@@ -4206,7 +4206,10 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
    BOTS pick by value x random noise x a soft brake on doubling up at a position x team need.
    Noise is fitted to the owner's league's real 2026 rookie draft against the market on draft
    day: round 1 took a player about 1.8 places below best available, rounds 2-3 about 7.3.
-   Sigma 0.15 in round 1 and 0.6 after reproduces that.
+   Re-fitted 24 Oct on the PFN board (89 players, needs on, his league's order): sigma 0.13 in
+   round 1 and 0.29 after gives 1.85 and 7.4 (1,500 drafts). The first fit, 0.15 / 0.6, was on
+   2026 market prices; on board-derived values 0.6 strayed 14.5 places in rounds 2-3, twice the
+   league — the board's values are smoother than real prices, so less noise matches it.
    NEED (My League only) is Power Rankings' position ranks: the weakest team at a position
    gets up to +6% on players there in round 1 and +12% after, the strongest the same off.
    Small on purpose. It can swap two players who are close; it cannot move a clear 1.01.
@@ -4214,7 +4217,7 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
    ODDS: the share of MD_SIMS simulated drafts in which a player is still there at your next
    pick (when you are on the clock: at your pick after this one, if you pass on him).
    Display only: nothing here feeds any other number on the site. */
-const MD_SIG1=0.15, MD_SIG2=0.6, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NEED2=0.12;
+const MD_SIG1=0.13, MD_SIG2=0.29, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NEED2=0.12;
 const MD_POSF={sf:{QB:1.8,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
 const MD_CURVE_A=8232, MD_CURVE_B=-0.442;
 const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,
