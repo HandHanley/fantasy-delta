@@ -101,7 +101,17 @@ jobs:
           path: ~/.cache/ms-playwright
           key: pw-chromium-1.56.1
 
+      # The pages' TEXT preview (title, description) is rebuilt here too, from the same engine and
+      # data the pictures use (23 Oct 2026). The nightly also builds them, but a fix landing
+      # between nightlies left Gibbs's text at "Score 92" under a picture reading 96. If this
+      # step fails, the pictures step is skipped, so text and picture can never disagree.
+      - name: Player link-preview text
+        id: sharepages
+        continue-on-error: true
+        run: node scripts/build-share-pages.js
+
       - name: Player link-preview pictures
+        if: steps.sharepages.outcome == 'success'
         continue-on-error: true
         timeout-minutes: 10
         env:
