@@ -121,6 +121,27 @@ jobs:
           "$PW_DIR/node_modules/.bin/playwright" install --with-deps chromium
           node scripts/build-share-images.js .
 
+      # PREVIEW (24 Oct 2026, owner): work held back from live — the mock-draft branch — published at
+      # /preview/ so the owner can test it on his phone with his real league, settings and sign-in (same
+      # site, so the same storage). Unlinked, noindex, and robots.txt keeps crawlers out. It is built here,
+      # from main's deploy, so the github-pages environment only ever deploys main; after pushing to the
+      # branch, dispatch this workflow to refresh it. Safe to fail: the site deploys without it.
+      # Remove this step (and the robots.txt line) once the branch is merged.
+      - name: Preview copy of the mock-draft branch
+        continue-on-error: true
+        run: |
+          set -e
+          git fetch --no-tags --depth=1 origin mock-draft
+          v="$(git rev-parse --short FETCH_HEAD)"
+          rm -rf preview && mkdir preview
+          git archive FETCH_HEAD | tar -x -C preview
+          rm -rf preview/.github preview/scripts preview/study preview/supabase preview/p preview/docs preview/data/fixtures
+          for f in preview/*.html; do
+            sed -i -E "s#src=\"(delta-engine|delta-sync)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
+            sed -i 's#<head>#<head><meta name="robots" content="noindex,nofollow">#' "$f"
+          done
+          echo "preview: /preview/ from mock-draft ${v}, $(grep -o 'foot-build">[^<]*' preview/index.html)"
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:
