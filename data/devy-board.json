@@ -3,8 +3,11 @@
  "class": 2027,
  "source": "PFN Industry Consensus",
  "boardDate": "2026-10-24",
- "mockSource": "NFL Mock Draft Database",
- "mockAsOf": "2026-10-21",
+ "draftOrder": {
+  "picks": 257,
+  "asOf": "2026-10-24",
+  "sha": "40efeb6965ea"
+ },
  "note": "Consensus big-board position for skill-position prospects, compiled by hand from publicly published boards. Stored as a rank plus a coarse tier; the tier is what the platform shows, because this far out a tier stays true for weeks while an exact rank is stale in days. CONTEXT ONLY \u2014 feeds no score, no percentile and no ranking, exactly like market value on the NFL side.",
  "tiers": {
   "T1": "Top 10 overall",
@@ -34,8 +37,9 @@
    "cfbName": "Jeremiah Smith",
    "prevRank": null,
    "move": null,
-   "mockPick": 1,
-   "mockTeam": "LAC"
+   "nflPick": 1,
+   "nflTeam": "LAC",
+   "nflVia": null
   },
   "Charlie Becker": {
    "rank": 5,
@@ -45,8 +49,9 @@
    "cfbName": "Charlie Becker",
    "prevRank": null,
    "move": null,
-   "mockPick": 24,
-   "mockTeam": "NE"
+   "nflPick": 5,
+   "nflTeam": "WAS",
+   "nflVia": null
   },
   "Cam Coleman": {
    "rank": 6,
@@ -56,8 +61,9 @@
    "cfbName": "Cam Coleman",
    "prevRank": null,
    "move": null,
-   "mockPick": 14,
-   "mockTeam": "ATL"
+   "nflPick": 6,
+   "nflTeam": "NYJ",
+   "nflVia": "DAL"
   },
   "Arch Manning": {
    "rank": 9,
@@ -67,8 +73,9 @@
    "cfbName": "Arch Manning",
    "prevRank": null,
    "move": null,
-   "mockPick": 2,
-   "mockTeam": "MIA"
+   "nflPick": 9,
+   "nflTeam": "NYJ",
+   "nflVia": "IND"
   },
   "Drew Mestemaker": {
    "rank": 12,
@@ -78,8 +85,9 @@
    "cfbName": "Drew Mestemaker",
    "prevRank": null,
    "move": null,
-   "mockPick": 22,
-   "mockTeam": "PIT"
+   "nflPick": 12,
+   "nflTeam": "NO",
+   "nflVia": null
   },
   "Jadan Baugh": {
    "rank": 13,
@@ -89,8 +97,9 @@
    "cfbName": "Jadan Baugh",
    "prevRank": null,
    "move": null,
-   "mockPick": 25,
-   "mockTeam": "JAC"
+   "nflPick": 13,
+   "nflTeam": "NYJ",
+   "nflVia": null
   },
   "Dante Moore": {
    "rank": 15,
@@ -100,8 +109,9 @@
    "cfbName": "Dante Moore",
    "prevRank": null,
    "move": null,
-   "mockPick": 10,
-   "mockTeam": "ARI"
+   "nflPick": 15,
+   "nflTeam": "LV",
+   "nflVia": null
   },
   "Jamari Johnson": {
    "rank": 16,
@@ -111,8 +121,9 @@
    "cfbName": "Jamari Johnson",
    "prevRank": null,
    "move": null,
-   "mockPick": 17,
-   "mockTeam": "CIN"
+   "nflPick": 16,
+   "nflTeam": "SEA",
+   "nflVia": null
   },
   "Trinidad Chambliss": {
    "rank": 20,
@@ -122,8 +133,9 @@
    "cfbName": "Trinidad Chambliss",
    "prevRank": null,
    "move": null,
-   "mockPick": 11,
-   "mockTeam": "CLE"
+   "nflPick": 20,
+   "nflTeam": "CAR",
+   "nflVia": null
   },
   "Trey'Dez Green": {
    "rank": 22,
@@ -133,8 +145,9 @@
    "cfbName": "Trey'Dez Green",
    "prevRank": null,
    "move": null,
-   "mockPick": 20,
-   "mockTeam": "CAR"
+   "nflPick": 22,
+   "nflTeam": "BAL",
+   "nflVia": null
   },
   "CJ Carr": {
    "rank": 23,
@@ -144,8 +157,9 @@
    "cfbName": "CJ Carr",
    "prevRank": null,
    "move": null,
-   "mockPick": 9,
-   "mockTeam": "NYJ"
+   "nflPick": 23,
+   "nflTeam": "PIT",
+   "nflVia": null
   },
   "Nick Marsh": {
    "rank": 27,
@@ -155,8 +169,9 @@
    "cfbName": "Nick Marsh",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 27,
+   "nflTeam": "DAL",
+   "nflVia": "GB"
   },
   "Kewan Lacy": {
    "rank": 33,
@@ -166,8 +181,9 @@
    "cfbName": "Kewan Lacy",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 33,
+   "nflTeam": "LAC",
+   "nflVia": null
   },
   "Deuce Alexander": {
    "rank": 42,
@@ -177,8 +193,9 @@
    "cfbName": "Deuce Alexander",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 42,
+   "nflTeam": "LAR",
+   "nflVia": null
   },
   "Austin Simmons": {
    "rank": 43,
@@ -188,8 +205,9 @@
    "cfbName": "Austin Simmons",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 43,
+   "nflTeam": "NO",
+   "nflVia": null
   },
   "Darian Mensah": {
    "rank": 44,
@@ -199,8 +217,9 @@
    "cfbName": "Darian Mensah",
    "prevRank": null,
    "move": null,
-   "mockPick": 6,
-   "mockTeam": "NYJ"
+   "nflPick": 44,
+   "nflTeam": "NYJ",
+   "nflVia": null
   },
   "KJ Duff": {
    "rank": 46,
@@ -210,8 +229,9 @@
    "cfbName": "KJ Duff",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 46,
+   "nflTeam": "DAL",
+   "nflVia": null
   },
   "Luke Reynolds": {
    "rank": 57,
@@ -221,8 +241,9 @@
    "cfbName": "Luke Reynolds",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 57,
+   "nflTeam": "CLE",
+   "nflVia": null
   },
   "Ryan Coleman-Williams": {
    "rank": 59,
@@ -232,8 +253,9 @@
    "cfbName": "Ryan Coleman-Williams",
    "prevRank": null,
    "move": null,
-   "mockPick": 31,
-   "mockTeam": "KC"
+   "nflPick": 59,
+   "nflTeam": "JAC",
+   "nflVia": null
   },
   "Ahmad Hardy": {
    "rank": 61,
@@ -243,8 +265,9 @@
    "cfbName": "Ahmad Hardy",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 61,
+   "nflTeam": "BUF",
+   "nflVia": null
   },
   "Junior Sherrill": {
    "rank": 62,
@@ -254,8 +277,9 @@
    "cfbName": "Junior Sherrill",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 62,
+   "nflTeam": "MIN",
+   "nflVia": null
   },
   "Mario Craver": {
    "rank": 70,
@@ -265,8 +289,9 @@
    "cfbName": "Mario Craver",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 70,
+   "nflTeam": "MIN",
+   "nflVia": "PHI"
   },
   "LaNorris Sellers": {
    "rank": 78,
@@ -276,8 +301,9 @@
    "cfbName": "LaNorris Sellers",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 78,
+   "nflTeam": "HOU",
+   "nflVia": null
   },
   "Chris Marshall": {
    "rank": 80,
@@ -287,8 +313,9 @@
    "cfbName": "Chris Marshall",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 80,
+   "nflTeam": "SEA",
+   "nflVia": null
   },
   "Jayden Maiava": {
    "rank": 82,
@@ -298,8 +325,9 @@
    "cfbName": "Jayden Maiava",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 82,
+   "nflTeam": "CIN",
+   "nflVia": null
   },
   "Bryant Wesco Jr.": {
    "rank": 87,
@@ -309,8 +337,9 @@
    "cfbName": "Bryant Wesco Jr.",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 87,
+   "nflTeam": "BAL",
+   "nflVia": null
   },
   "Terrance Carter Jr.": {
    "rank": 90,
@@ -320,8 +349,9 @@
    "cfbName": "Terrance Carter Jr.",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 90,
+   "nflTeam": "JAC",
+   "nflVia": null
   },
   "LJ Martin": {
    "rank": 95,
@@ -331,8 +361,9 @@
    "cfbName": "LJ Martin",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 95,
+   "nflTeam": "KC",
+   "nflVia": null
   },
   "Brendan Sorsby": {
    "rank": 103,
@@ -342,8 +373,9 @@
    "cfbName": null,
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 103,
+   "nflTeam": "MIA",
+   "nflVia": null
   },
   "Cooper Barkate": {
    "rank": 105,
@@ -353,8 +385,9 @@
    "cfbName": "Cooper Barkate",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 105,
+   "nflTeam": "TEN",
+   "nflVia": null
   },
   "Omarion Miller": {
    "rank": 106,
@@ -364,8 +397,9 @@
    "cfbName": "Omarion Miller",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 106,
+   "nflTeam": "WAS",
+   "nflVia": null
   },
   "Lawson Luckie": {
    "rank": 108,
@@ -375,8 +409,9 @@
    "cfbName": "Lawson Luckie",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 108,
+   "nflTeam": "ARI",
+   "nflVia": null
   },
   "Wyatt Young": {
    "rank": 109,
@@ -386,8 +421,9 @@
    "cfbName": "Wyatt Young",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 109,
+   "nflTeam": "LAR",
+   "nflVia": null
   },
   "Mark Fletcher Jr.": {
    "rank": 110,
@@ -397,8 +433,9 @@
    "cfbName": "Mark Fletcher Jr.",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 110,
+   "nflTeam": "NO",
+   "nflVia": null
   },
   "Rocky Beers": {
    "rank": 111,
@@ -408,8 +445,9 @@
    "cfbName": "Rocky Beers",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 111,
+   "nflTeam": "NYJ",
+   "nflVia": null
   },
   "Drake Lindsey": {
    "rank": 112,
@@ -419,8 +457,9 @@
    "cfbName": null,
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 112,
+   "nflTeam": "ATL",
+   "nflVia": null
   },
   "Mike Matthews": {
    "rank": 114,
@@ -430,8 +469,9 @@
    "cfbName": "Mike Matthews",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 114,
+   "nflTeam": "HOU",
+   "nflVia": null
   },
   "Isaac Brown": {
    "rank": 126,
@@ -441,8 +481,9 @@
    "cfbName": "Isaac Brown",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 126,
+   "nflTeam": "JAC",
+   "nflVia": null
   },
   "Reed Harris": {
    "rank": 128,
@@ -452,8 +493,9 @@
    "cfbName": "Reed Harris",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 128,
+   "nflTeam": "GB",
+   "nflVia": null
   },
   "Peter Clarke": {
    "rank": 131,
@@ -463,8 +505,9 @@
    "cfbName": "Peter Clarke",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 131,
+   "nflTeam": "CAR",
+   "nflVia": "MIN"
   },
   "Jeremiah Hasley": {
    "rank": 133,
@@ -474,8 +517,9 @@
    "cfbName": "Jeremiah Hasley",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 133,
+   "nflTeam": "SF",
+   "nflVia": null
   },
   "Amare Thomas": {
    "rank": 135,
@@ -485,8 +529,9 @@
    "cfbName": "Amare Thomas",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 135,
+   "nflTeam": "SEA",
+   "nflVia": null
   },
   "Hollywood Smothers": {
    "rank": 138,
@@ -496,8 +541,9 @@
    "cfbName": "Hollywood Smothers",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 138,
+   "nflTeam": "LAC",
+   "nflVia": null
   },
   "Ryan Wingo": {
    "rank": 139,
@@ -507,8 +553,9 @@
    "cfbName": "Ryan Wingo",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 139,
+   "nflTeam": "MIA",
+   "nflVia": null
   },
   "Nico Iamaleava": {
    "rank": 140,
@@ -518,8 +565,9 @@
    "cfbName": "Nico Iamaleava",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 140,
+   "nflTeam": "TEN",
+   "nflVia": null
   },
   "Cayden Lee": {
    "rank": 144,
@@ -529,8 +577,9 @@
    "cfbName": "Cayden Lee",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 144,
+   "nflTeam": "LAR",
+   "nflVia": null
   },
   "Devin McCuin": {
    "rank": 150,
@@ -540,8 +589,9 @@
    "cfbName": "Devin McCuin",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 150,
+   "nflTeam": "PHI",
+   "nflVia": null
   },
   "Jelani Thurman": {
    "rank": 151,
@@ -551,8 +601,9 @@
    "cfbName": "Jelani Thurman",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 151,
+   "nflTeam": "IND",
+   "nflVia": null
   },
   "DJ Vonnahme": {
    "rank": 154,
@@ -562,8 +613,9 @@
    "cfbName": "DJ Vonnahme",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 154,
+   "nflTeam": "PHI",
+   "nflVia": "NE"
   },
   "Keshaun Singleton": {
    "rank": 158,
@@ -573,8 +625,9 @@
    "cfbName": "Keshaun Singleton",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 158,
+   "nflTeam": "DET",
+   "nflVia": null
   },
   "Jordan Faison": {
    "rank": 161,
@@ -584,8 +637,9 @@
    "cfbName": "Jordan Faison",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 161,
+   "nflTeam": "PHI",
+   "nflVia": "BAL"
   },
   "Raleek Brown": {
    "rank": 162,
@@ -595,8 +649,9 @@
    "cfbName": "Raleek Brown",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 162,
+   "nflTeam": "CLE",
+   "nflVia": null
   },
   "Isaiah Sategna III": {
    "rank": 165,
@@ -606,8 +661,9 @@
    "cfbName": "Isaiah Sategna III",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 165,
+   "nflTeam": "NE",
+   "nflVia": "CHI"
   },
   "Ethan Davis": {
    "rank": 167,
@@ -617,8 +673,9 @@
    "cfbName": "Ethan Davis",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 167,
+   "nflTeam": "MIN",
+   "nflVia": null
   },
   "T.J. Moore": {
    "rank": 169,
@@ -628,8 +685,9 @@
    "cfbName": "T.J. Moore",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 169,
+   "nflTeam": "SF",
+   "nflVia": null
   },
   "Justice Haynes": {
    "rank": 171,
@@ -639,8 +697,9 @@
    "cfbName": "Justice Haynes",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 171,
+   "nflTeam": "GB",
+   "nflVia": null
   },
   "Nate Frazier": {
    "rank": 176,
@@ -650,8 +709,9 @@
    "cfbName": "Nate Frazier",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 176,
+   "nflTeam": "KC",
+   "nflVia": null
   },
   "Nyck Harbor": {
    "rank": 178,
@@ -661,8 +721,9 @@
    "cfbName": "Nyck Harbor",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 178,
+   "nflTeam": "BAL",
+   "nflVia": null
   },
   "Julian Sayin": {
    "rank": 181,
@@ -672,8 +733,9 @@
    "cfbName": "Julian Sayin",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 181,
+   "nflTeam": "TB",
+   "nflVia": null
   },
   "Lee Beebe Jr.": {
    "rank": 182,
@@ -683,8 +745,9 @@
    "cfbName": "Lee Beebe Jr.",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 182,
+   "nflTeam": "TEN",
+   "nflVia": null
   },
   "Sam Leavitt": {
    "rank": 183,
@@ -694,8 +757,9 @@
    "cfbName": "Sam Leavitt",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 183,
+   "nflTeam": "WAS",
+   "nflVia": null
   },
   "Eric Singleton Jr.": {
    "rank": 187,
@@ -705,8 +769,9 @@
    "cfbName": "Eric Singleton Jr.",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 187,
+   "nflTeam": "ATL",
+   "nflVia": null
   },
   "Evan Stewart": {
    "rank": 189,
@@ -716,8 +781,9 @@
    "cfbName": "Evan Stewart",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 189,
+   "nflTeam": "HOU",
+   "nflVia": null
   },
   "Wayshawn Parker": {
    "rank": 190,
@@ -727,8 +793,9 @@
    "cfbName": "Wayshawn Parker",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 190,
+   "nflTeam": "NYJ",
+   "nflVia": "PHI"
   },
   "Duce Robinson": {
    "rank": 197,
@@ -738,8 +805,9 @@
    "cfbName": "Duce Robinson",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 197,
+   "nflTeam": "NYG",
+   "nflVia": null
   },
   "Walker Eget": {
    "rank": 198,
@@ -749,8 +817,9 @@
    "cfbName": "Walker Eget",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 198,
+   "nflTeam": "DET",
+   "nflVia": null
   },
   "DeSean Bishop": {
    "rank": 199,
@@ -760,8 +829,9 @@
    "cfbName": "DeSean Bishop",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 199,
+   "nflTeam": "CAR",
+   "nflVia": null
   },
   "Benjamin Brahmer": {
    "rank": 200,
@@ -771,8 +841,9 @@
    "cfbName": "Benjamin Brahmer",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 200,
+   "nflTeam": "DEN",
+   "nflVia": null
   },
   "Carlos Hernandez": {
    "rank": 203,
@@ -782,8 +853,9 @@
    "cfbName": "Carlos Hernandez",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 203,
+   "nflTeam": "GB",
+   "nflVia": null
   },
   "Jaden Craig": {
    "rank": 207,
@@ -793,8 +865,9 @@
    "cfbName": "Jaden Craig",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 207,
+   "nflTeam": "BUF",
+   "nflVia": null
   },
   "Collin Dixon": {
    "rank": 221,
@@ -804,8 +877,9 @@
    "cfbName": "Collin Dixon",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 221,
+   "nflTeam": "LAC",
+   "nflVia": null
   },
   "Braylon Staley": {
    "rank": 222,
@@ -815,8 +889,9 @@
    "cfbName": "Braylon Staley",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 222,
+   "nflTeam": "PIT",
+   "nflVia": "MIA"
   },
   "Andrew Rappleyea": {
    "rank": 228,
@@ -826,8 +901,9 @@
    "cfbName": "Andrew Rappleyea",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 228,
+   "nflTeam": "ATL",
+   "nflVia": null
   },
   "CJ Bailey": {
    "rank": 233,
@@ -837,8 +913,9 @@
    "cfbName": "CJ Bailey",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 233,
+   "nflTeam": "ARI",
+   "nflVia": null
   },
   "Willie Rodriguez": {
    "rank": 235,
@@ -848,8 +925,9 @@
    "cfbName": "Willie Rodriguez",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 235,
+   "nflTeam": "BUF",
+   "nflVia": "LV"
   },
   "Darius Taylor": {
    "rank": 238,
@@ -859,8 +937,9 @@
    "cfbName": "Darius Taylor",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 238,
+   "nflTeam": "CIN",
+   "nflVia": null
   },
   "Brett Norfleet": {
    "rank": 242,
@@ -870,8 +949,9 @@
    "cfbName": null,
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 242,
+   "nflTeam": "BAL",
+   "nflVia": null
   },
   "Anthony Evans III": {
    "rank": 247,
@@ -881,8 +961,9 @@
    "cfbName": "Anthony Evans III",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 247,
+   "nflTeam": "GB",
+   "nflVia": null
   },
   "Jayce Brown": {
    "rank": 249,
@@ -892,8 +973,9 @@
    "cfbName": "Jayce Brown",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 249,
+   "nflTeam": "BUF",
+   "nflVia": null
   },
   "Griffin Wilde": {
    "rank": 250,
@@ -903,8 +985,9 @@
    "cfbName": "Griffin Wilde",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": 250,
+   "nflTeam": "NE",
+   "nflVia": "MIN"
   },
   "Ian Strong": {
    "rank": 258,
@@ -914,8 +997,9 @@
    "cfbName": "Ian Strong",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Josh Hoover": {
    "rank": 259,
@@ -925,8 +1009,9 @@
    "cfbName": "Josh Hoover",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Marcellous Hawkins": {
    "rank": 261,
@@ -936,8 +1021,9 @@
    "cfbName": null,
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Tony Diaz": {
    "rank": 262,
@@ -947,8 +1033,9 @@
    "cfbName": "Tony Diaz",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "John Mateer": {
    "rank": 267,
@@ -958,8 +1045,9 @@
    "cfbName": "John Mateer",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Bryson Washington": {
    "rank": 272,
@@ -969,8 +1057,9 @@
    "cfbName": "Bryson Washington",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Nic Anderson": {
    "rank": 273,
@@ -980,8 +1069,9 @@
    "cfbName": "Nic Anderson",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Jamal Roberts": {
    "rank": 274,
@@ -991,8 +1081,9 @@
    "cfbName": "Jamal Roberts",
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   },
   "Javonnie Gibson": {
    "rank": 276,
@@ -1002,8 +1093,9 @@
    "cfbName": null,
    "prevRank": null,
    "move": null,
-   "mockPick": null,
-   "mockTeam": null
+   "nflPick": null,
+   "nflTeam": null,
+   "nflVia": null
   }
  }
 }

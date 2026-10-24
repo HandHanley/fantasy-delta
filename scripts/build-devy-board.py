@@ -27,6 +27,13 @@ Input format: tolerant. It reads the raw copy-paste from a board page — markdo
 stray vote counts, blank lines and all. A line is a player when it has a name, a
 position and a school; anything else is skipped and reported.
 
+THE NFL DRAFT ORDER (24 Oct 2026, owner)
+  data/nfl-draft-order-raw.txt holds a pasted full NFL draft order (pick, team, "XXX From ..."
+  for a traded pick). Each player's board rank is matched to the pick with the same number, so
+  the board's #9 is shown going to whoever holds pick 9. That is the draft if every team took
+  the best player left on the board — not a prediction of who picks whom — and it lines every
+  player up with a team with no third source. Ranks past the last pick get no team.
+
 Usage:
   python3 scripts/build-devy-board.py --dry-run
   python3 scripts/build-devy-board.py --confirm
@@ -35,6 +42,7 @@ Usage:
 import os, re, sys, json, glob, unicodedata, datetime
 
 RAW_IN      = 'data/big-board-raw.txt'
+ORDER_IN    = 'data/nfl-draft-order-raw.txt'
 OUT         = 'data/devy-board.json'
 HIST_DIR    = 'data/board-history'
 SKILL       = {'QB', 'RB', 'WR', 'TE'}
@@ -63,8 +71,7 @@ def tier_of(rank):
 
 TIER_LABEL = {'T1': 'Top 10 overall', 'T2': 'Round 1', 'T3': 'Round 2', 'T4': 'Round 3+'}
 POS_RE = r'(QB|RB|WR|TE|OT|IOL|OL|C|G|EDGE|DL|DT|DE|LB|ILB|OLB|CB|S|DB|K|P|LS|ATH|FB)'
-# Consensus mock-draft slot on the school line: [#1LAC](...consensus-mock-draft...).
-MOCK_RE = r'\[#\s*(\d{1,3})\s*([A-Z]{2,3})\]\([^)]*mock-draft'
+
 
 
 def parse(text):
@@ -89,7 +96,6 @@ def parse(text):
         if re.fullmatch(r'\d{1,3}', s):          # a bare number is the board rank
             rank = int(s); continue
         name = None
-        mock_pick = mock_team = None
         m = re.match(r'\[([^\]]+)\]\(', s)       # [Name](url)
         if m:
             name = m.group(1).strip()
@@ -101,12 +107,6 @@ def parse(text):
                     pos = pm.group(1)
                     school = (pm.group(2) or '').strip(' ,|')
                     consumed.add(i + 1)           # do not report it as an unparsed line
-                    # The same line carries the consensus MOCK slot when he has one:
-                    # [#1LAC](.../consensus-mock-draft-2027). Round 1 only, so most rows
-                    # have none, and that is the honest answer for them.
-                    mm = re.search(MOCK_RE, nxt)
-                    if mm:
-                        mock_pick, mock_team = int(mm.group(1)), mm.group(2)
             if pos is None:
                 continue                          # this was the school link, not the player
         else:
@@ -117,8 +117,7 @@ def parse(text):
             name, pos, school = pm.group(2).strip(), pm.group(3), pm.group(4).strip()
         if not name or rank is None:
             continue
-        out.append({'rank': rank, 'n': name, 'pos': pos, 'school': school or None,
-                    'mockPick': mock_pick, 'mockTeam': mock_team})
+        out.append({'rank': rank, 'n': name, 'pos': pos, 'school': school or None})
         rank = None
     # keep the best (lowest) rank if a name somehow appears twice
     best = {}
@@ -140,6 +139,60 @@ def board_meta(text):
     if not meta['source'] and 'nflmockdraftdatabase.com' in text:
         meta['source'] = NFLMDD
     return meta
+
+
+TEAM_CODE = {   # the names a pasted order uses -> DELTA's team codes (fetch-player-stats.py DELTA_TEAMS)
+    'arizona': 'ARI', 'atlanta': 'ATL', 'baltimore': 'BAL', 'buffalo': 'BUF', 'carolina': 'CAR',
+    'chicago': 'CHI', 'cincinnati': 'CIN', 'cleveland': 'CLE', 'dallas': 'DAL', 'denver': 'DEN',
+    'detroit': 'DET', 'greenbay': 'GB', 'houston': 'HOU', 'indianapolis': 'IND', 'jacksonville': 'JAC',
+    'kansascity': 'KC', 'lachargers': 'LAC', 'losangeleschargers': 'LAC', 'larams': 'LAR',
+    'losangelesrams': 'LAR', 'lasvegas': 'LV', 'miami': 'MIA', 'minnesota': 'MIN', 'newengland': 'NE',
+    'neworleans': 'NO', 'nygiants': 'NYG', 'newyorkgiants': 'NYG', 'nyjets': 'NYJ', 'newyorkjets': 'NYJ',
+    'philadelphia': 'PHI', 'pittsburgh': 'PIT', 'sanfrancisco': 'SF', 'seattle': 'SEA', 'tampabay': 'TB',
+    'tennessee': 'TEN', 'washington': 'WAS'}
+CODES = set(TEAM_CODE.values()) | {'JAX'}
+
+
+def team_code(s):
+    k = re.sub(r'[^a-z]', '', str(s or '').lower())
+    if k in TEAM_CODE: return TEAM_CODE[k]
+    u = str(s or '').strip().upper()
+    if u in CODES: return 'JAC' if u == 'JAX' else u
+    return None
+
+
+def parse_draft_order(text):
+    """[{pick, round, team, via}] from a pasted NFL draft order:
+        1st Round / 1 / LA Chargers / 2 / Miami / ... / 6 / NY Jets / "  DAL From Dallas"
+    A pick line, the team holding it on the next line, and for a traded pick a line naming the
+    team it came from. Returns (picks, problems); any problem means the order is not used."""
+    picks, problems, rnd, cur = [], [], None, None
+    for ln in text.splitlines():
+        s = ln.strip()
+        if not s: continue
+        m = re.match(r'^(\d)(?:st|nd|rd|th) round$', s, re.I)
+        if m: rnd = int(m.group(1)); continue
+        if re.fullmatch(r'\d{1,3}', s):
+            cur = {'pick': int(s), 'round': rnd, 'team': None, 'via': None}; picks.append(cur); continue
+        m = re.match(r'^([A-Z]{2,3}) from (.+)$', s, re.I)
+        if m and cur and cur['team']:
+            cur['via'] = team_code(m.group(2)) or team_code(m.group(1))
+            if not cur['via']: problems.append(f"pick {cur['pick']}: unknown team in {s!r}")
+            continue
+        if cur and cur['team'] is None:
+            cur['team'] = team_code(s)
+            if not cur['team']: problems.append(f"pick {cur['pick']}: unknown team {s!r}")
+            continue
+        # headings and anything else are ignored, but not silently when they sit inside the list
+        if cur: problems.append(f'unexpected line after pick {cur["pick"]}: {s[:50]!r}')
+    nums = [p['pick'] for p in picks]
+    if nums != list(range(1, len(nums) + 1)):
+        problems.append('pick numbers do not run 1, 2, 3 ... without a gap')
+    if len(picks) < 32:
+        problems.append(f'only {len(picks)} picks - not a full draft order')
+    if any(p['team'] is None for p in picks):
+        problems.append('a pick has no team')
+    return picks, problems
 
 
 def newest_college_file():
@@ -231,21 +284,27 @@ def main():
     if prev and meta['source'] != prev_source:
         print(f"  board source changed ({prev_source} -> {meta['source']}): movement starts fresh this week")
         prev = {}
-    # The NFL team in the consensus MOCK comes only from an NFL Mock Draft Database paste. A
-    # board from elsewhere keeps the last ones on file, with their date, rather than dropping them.
-    mock_as_of, mock_source = None, None
-    if any(r.get('mockPick') for r in skill):
-        mock_as_of, mock_source = meta['boardDate'] or datetime.date.today().isoformat(), meta['source']
-    elif prev_payload.get('players'):
-        pm = {norm(k): v for k, v in prev_payload['players'].items() if v.get('mockPick')}
-        for r in skill:
-            v = pm.get(norm(r['n']))
-            if v: r['mockPick'], r['mockTeam'] = v.get('mockPick'), v.get('mockTeam')
-        if pm:
-            mock_as_of = prev_payload.get('mockAsOf') or prev_payload.get('generated')
-            mock_source = prev_payload.get('mockSource') or NFLMDD
-            print(f"  consensus mock slots carried from the previous board ({mock_source}, {mock_as_of}): "
-                  f"{sum(1 for r in skill if r.get('mockPick'))} players")
+    # The NFL draft order: board rank N -> whoever holds pick N (see the header). A bad paste
+    # is reported and the order left out, never half-used; a missing file is simply no teams.
+    order_meta = None
+    if os.path.exists(ORDER_IN):
+        order_text = open(ORDER_IN, encoding='utf-8').read()
+        order, problems = parse_draft_order(order_text)
+        if problems:
+            print(f'  NFL draft order NOT USED - {len(problems)} problem(s) in {ORDER_IN}:')
+            for pr in problems[:8]: print('     ', pr)
+        else:
+            import hashlib
+            sha = hashlib.sha1(json.dumps([[p['pick'], p['team'], p['via']] for p in order]).encode()).hexdigest()[:12]
+            prev_order = prev_payload.get('draftOrder') or {}
+            as_of = prev_order.get('asOf') if prev_order.get('sha') == sha else datetime.date.today().isoformat()
+            by_pick = {p['pick']: p for p in order}
+            for r in skill:
+                p = by_pick.get(r['rank'])
+                if p: r['nflPick'], r['nflTeam'], r['nflVia'] = p['pick'], p['team'], p['via']
+            order_meta = {'picks': len(order), 'asOf': as_of, 'sha': sha}
+            print(f"  NFL draft order: {len(order)} picks (as of {as_of}); team for "
+                  f"{sum(1 for r in skill if r.get('nflTeam'))} of {len(skill)} skill players")
     risers = fallers = new = 0
     for r in skill:
         p = prev.get(norm(r['n']))
@@ -260,17 +319,14 @@ def main():
     players = {r['n']: {'rank': r['rank'], 'pos': r['pos'], 'school': r['school'],
                         'tier': tier_of(r['rank']), 'cfbName': r.get('cfbName'),
                         'prevRank': r.get('prevRank'), 'move': r.get('move'),
-                        'mockPick': r.get('mockPick'), 'mockTeam': r.get('mockTeam')}
+                        'nflPick': r.get('nflPick'), 'nflTeam': r.get('nflTeam'), 'nflVia': r.get('nflVia')}
                for r in skill}
-    print(f'  consensus mock slot on file for {sum(1 for r in skill if r.get("mockPick"))} of {len(skill)}'
-          ' skill players (the mock is one round deep)')
     payload = {
         'generated': datetime.date.today().isoformat(),
         'class': draft_class,
         'source': meta['source'],
         'boardDate': meta['boardDate'],
-        'mockSource': mock_source,
-        'mockAsOf': mock_as_of,
+        'draftOrder': order_meta,
         'note': ('Consensus big-board position for skill-position prospects, compiled by hand '
                  'from publicly published boards. Stored as a rank plus a coarse tier; the tier '
                  'is what the platform shows, because this far out a tier stays true for weeks '
