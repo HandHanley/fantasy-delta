@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-23b';
+const DL_BUILD='2026-10-23c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5835,6 +5835,29 @@ async function loadPlayerContracts() {
       'Michael Mayer':      2029,  // 3 yrs after the rookie deal (2026)
       'Michael Wilson':     2029,  // 3 yrs after the rookie deal (2026)
       'Chris Rodriguez':    2028,  // 2 yrs after the rookie deal (2026)
+      // Earlier extensions on running rookie deals / RFA tenders, from the Engine Audit list;
+      // each checked against a report and confirmed by Steve 23 Oct 2026. Most were a year short
+      // (the +1 rule only covers deals signed before 2025, and not first-rounders' option years).
+      'Justin Herbert':     2029,  // CBS: "through the 2029 season"
+      'Joe Burrow':         2029,  // Bengals.com: "through 2029"
+      'Trevor Lawrence':    2030,  // "signed with Jaguars through 2030"
+      'Brock Purdy':        2030,  // five-year extension, "contract until 2030"
+      "Ja'Marr Chase":      2029,  // Bengals.com: "four-year contract extension through the 2029 season"
+      'Garrett Wilson':     2030,  // AP: through 2030 (5th-year option picked up first)
+      'Trey McBride':       2029,  // AP: "keeping him with team through 2029"
+      'Jake Ferguson':      2029,  // CBS: "through the 2029 season"
+      'Khalil Shakir':      2029,  // Bills.com: "extension through 2029"
+      'James Cook':         2029,  // Bills.com: "through the 2029 season"
+      'Kyren Williams':     2028,  // Rams.com: "through 2028"
+      "De'Von Achane":      2030,  // PFT: new-money years 2027-2030
+      'DeVonta Smith':      2028,  // "Eagles extend WR DeVonta Smith through 2028 season"
+      'Jaylen Waddle':      2028,  // "signed with Miami through the 2028 season"
+      'Rashod Bateman':     2029,  // "tacks onto his current deal ... through the 2029 season"
+      'Darnell Washington': 2030,  // 4 yrs, cap schedule runs to 2030
+      'Jalen Coker':        2029,  // NFL Network: "in Charlotte through 2029" (undrafted: rule guessed 2030)
+      'Jaylen Warren':      2027,  // NFL.com: "under contract through 2027" (on top of his 2025 tender)
+      'Jordan Mason':       2026,  // new 2-yr deal in 2025 replaced his tender; free agent next March (feed right)
+      'Jahan Dotson':       2027,  // 2-yr free-agent deal with ATL in 2026 (feed right; option was declined)
     };
 
     /* VOIDED CONTRACTS — the feed is stale in a way no formula can detect.
