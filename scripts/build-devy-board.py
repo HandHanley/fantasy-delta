@@ -62,6 +62,8 @@ def tier_of(rank):
 
 TIER_LABEL = {'T1': 'Top 10 overall', 'T2': 'Round 1', 'T3': 'Round 2', 'T4': 'Round 3+'}
 POS_RE = r'(QB|RB|WR|TE|OT|IOL|OL|C|G|EDGE|DL|DT|DE|LB|ILB|OLB|CB|S|DB|K|P|LS|ATH|FB)'
+# Consensus mock-draft slot on the school line: [#1LAC](...consensus-mock-draft...).
+MOCK_RE = r'\[#\s*(\d{1,3})\s*([A-Z]{2,3})\]\([^)]*mock-draft'
 
 
 def parse(text):
@@ -86,6 +88,7 @@ def parse(text):
         if re.fullmatch(r'\d{1,3}', s):          # a bare number is the board rank
             rank = int(s); continue
         name = None
+        mock_pick = mock_team = None
         m = re.match(r'\[([^\]]+)\]\(', s)       # [Name](url)
         if m:
             name = m.group(1).strip()
@@ -97,6 +100,12 @@ def parse(text):
                     pos = pm.group(1)
                     school = (pm.group(2) or '').strip(' ,|')
                     consumed.add(i + 1)           # do not report it as an unparsed line
+                    # The same line carries the consensus MOCK slot when he has one:
+                    # [#1LAC](.../consensus-mock-draft-2027). Round 1 only, so most rows
+                    # have none, and that is the honest answer for them.
+                    mm = re.search(MOCK_RE, nxt)
+                    if mm:
+                        mock_pick, mock_team = int(mm.group(1)), mm.group(2)
             if pos is None:
                 continue                          # this was the school link, not the player
         else:
@@ -107,7 +116,8 @@ def parse(text):
             name, pos, school = pm.group(2).strip(), pm.group(3), pm.group(4).strip()
         if not name or rank is None:
             continue
-        out.append({'rank': rank, 'n': name, 'pos': pos, 'school': school or None})
+        out.append({'rank': rank, 'n': name, 'pos': pos, 'school': school or None,
+                    'mockPick': mock_pick, 'mockTeam': mock_team})
         rank = None
     # keep the best (lowest) rank if a name somehow appears twice
     best = {}
@@ -211,8 +221,11 @@ def main():
 
     players = {r['n']: {'rank': r['rank'], 'pos': r['pos'], 'school': r['school'],
                         'tier': tier_of(r['rank']), 'cfbName': r.get('cfbName'),
-                        'prevRank': r.get('prevRank'), 'move': r.get('move')}
+                        'prevRank': r.get('prevRank'), 'move': r.get('move'),
+                        'mockPick': r.get('mockPick'), 'mockTeam': r.get('mockTeam')}
                for r in skill}
+    print(f'  consensus mock slot on file for {sum(1 for r in skill if r.get("mockPick"))} of {len(skill)}'
+          ' skill players (the mock is one round deep)')
     payload = {
         'generated': datetime.date.today().isoformat(),
         'class': draft_class,
