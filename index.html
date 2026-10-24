@@ -239,6 +239,13 @@ tr:hover td{background:var(--panel)}
   background:linear-gradient(90deg,var(--teal-tint) var(--w),transparent var(--w))}
 .dl-md-act{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
 .dl-md-act .dl-md-go{box-shadow:0 8px 24px rgba(0,0,0,.45);margin:0}
+.dl-md-pill{display:flex;align-items:baseline;justify-content:center;gap:8px;min-height:40px;padding:10px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--paper);font-size:12.5px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.dl-md-pill b{font-family:var(--mono);font-weight:600;color:var(--fog)}
+.dl-md-pill span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-pill i{font-style:normal;font-weight:500;color:var(--fog);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-pill.on{border-color:var(--teal-br);color:var(--teal-br)}
+.dl-md-pill.new{animation:dlMdIn .6s ease-out}
 /* My League mode (24 Oct 2026): league card, round-1 order, the line under a name. */
 .dl-md-sub{display:block;font-size:10.5px;color:var(--fog-2);font-weight:500;margin-top:1px}
 .dl-md-tbl .dl-md-sub{max-width:190px;overflow:hidden;text-overflow:ellipsis}
@@ -255,6 +262,36 @@ tr:hover td{background:var(--panel)}
 .dl-md-warn{font-size:12px;color:var(--paper);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--fog);border-radius:8px;padding:8px 10px;margin:0 0 10px;line-height:1.5}
 .dl-md-adp{font-family:var(--mono);color:var(--fog)}
 .dl-md-share{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:14px}
+/* Live draft (24 Oct 2026): the bots' clock card, the Latest Picks feed, Reach / Value tags. */
+.dl-md-clock{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px}
+.dl-md-ck-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dl-md-ck-pk{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--paper)}
+.dl-md-ck-lbl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-br)}
+.dl-md-ck-team{font-size:15px;font-weight:800;color:var(--paper);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-ck-sub{font-size:11.5px;color:var(--fog);margin-top:2px}
+.dl-md-ck-bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin:10px 0}
+.dl-md-ck-bar i{display:block;height:100%;width:0;background:var(--teal-br);animation:dlMdClock linear forwards}
+.dl-md-ck-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dl-md-ck-sp{display:inline-flex;gap:6px;margin-left:auto}
+.dl-md-ck-you{font-size:11.5px;color:var(--fog-2);margin-top:9px}
+.dl-md-feed{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;height:186px;overflow-y:auto;overscroll-behavior:contain}
+.dl-md-feed li{display:flex;align-items:baseline;gap:8px;padding:8px 12px;font-size:12.5px;border-top:1px solid var(--line)}
+.dl-md-feed li:first-child{border-top:0}
+.dl-md-feed b{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--fog);flex:0 0 36px}
+.dl-md-feed span{flex:1;min-width:0;color:var(--paper);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-feed em{font-style:normal;font-size:11px;color:var(--fog-2);flex:0 0 22px}
+.dl-md-feed i{font-style:normal;font-size:11px;color:var(--fog);flex:0 1 34%;min-width:50px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-feed li.me{background:var(--row-hi)}
+.dl-md-feed li.me i{color:var(--teal-br);font-weight:700}
+.dl-md-feed li.new{animation:dlMdIn .6s ease-out}
+.dl-md-feed li.dl-md-empty{color:var(--fog-2);font-size:12px}
+.dl-md-tag{flex:0 0 auto;align-self:center;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;
+  border-radius:4px;padding:1px 5px;background:transparent;border:1px solid currentColor}
+.dl-md-tag.v{color:var(--sky)}
+.dl-md-tag.r{color:var(--violet)}
+@keyframes dlMdIn{from{opacity:0;transform:translateY(-6px);background:var(--teal-tint)}to{opacity:1;transform:none}}
+@keyframes dlMdClock{from{width:0}to{width:100%}}
+@media (prefers-reduced-motion:reduce){.dl-md-feed li.new,.dl-md-pill.new,.dl-md-ck-bar i{animation:none}}
 .dl-md-share .dl-tc-act{flex:0 0 auto;padding:9px 18px}
 .dl-md-share label.dl-tc-names{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--fog);cursor:pointer}
 /* 3-4 team "Gives Up" breakdown: one column per team on wide screens, two per row on a
@@ -4148,16 +4185,19 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
      carry no standings here.
    CUSTOM: any league shape, for readers with no league connected.
 
-   THE PLAYERS: the consensus big board (data/devy-board.json, pasted about weekly), skill
-   positions only. The board ranks for the NFL draft, where QBs are worth more and RBs less
-   than in fantasy, so a board spot is turned into fantasy terms by position first:
-       fantasy spot = board rank x position factor  (WR 1, RB 0.4, TE 1.75, QB 1.25 SF / 3.3 1QB)
+   THE PLAYERS: the consensus big board (data/devy-board.json; since 24 Oct 2026 PFN's Industry
+   Consensus CSV, skill positions only, via scripts/board-from-csv.py). The board ranks for the
+   NFL draft, where QBs are worth more and RBs less than in fantasy, so a board spot is turned
+   into fantasy terms by position first:
+       fantasy spot = board rank x position factor  (WR 1, RB 0.4, TE 1.75, QB 1.8 SF / 3.3 1QB)
        bot value    = 8232 x fantasy spot ^ -0.442
-   The factors come from two independent fits that agree: the 26 Apr 2026 draft-day market
-   (FantasyCalc 12-team superflex, NFL pick against value: RB 0.34, TE 1.69, QB 1.24) and
-   Fantasy Football Calculator rookie ADP for 2021-23 and 2025 (1QB, 140 players: RB 0.46,
-   TE 1.82, QB 3.28). RB and TE are the average of the two; QB is each fit in its own format.
-   The curve is the same 2026 market, one slope for every position. So the board sets the
+   RB and TE: the average of two independent fits that agree — the 26 Apr 2026 draft-day market
+   (FantasyCalc 12-team superflex, NFL pick against value: RB 0.34, TE 1.69) and Fantasy Football
+   Calculator rookie ADP for 2021-23 and 2025 (1QB, 140 players: RB 0.46, TE 1.82).
+   QB, superflex: the owner's league's own rookie drafts 2024-26 (90 picks: QB 1.78 — 2.35, 1.53,
+   1.98 by year; RB 0.40 there too). The market said 1.24; the owner asked for more caution on
+   QBs ("we all already have a lot of QBs"), and his league's drafts back him. 1QB: the FFC fit
+   (3.28). The curve is the 2026 market, one slope for every position. So the board sets the
    order WITHIN a position, and history sets what each position is worth at a board spot. The
    value is a bot's working number and is never shown as a price.
 
@@ -4173,10 +4213,18 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
    pick (when you are on the clock: at your pick after this one, if you pass on him).
    Display only: nothing here feeds any other number on the site. */
 const MD_SIG1=0.15, MD_SIG2=0.6, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NEED2=0.12;
-const MD_POSF={sf:{QB:1.25,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
+const MD_POSF={sf:{QB:1.8,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
 const MD_CURVE_A=8232, MD_CURVE_B=-0.442;
 const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,
-          lensData:null,lensLoad:null,mode:null,lgInfo:null,running:false,_wait:null,_waitN:0};
+          lensData:null,lensLoad:null,mode:null,lgInfo:null,running:false,_wait:null,_waitN:0,
+          auto:false,paused:false,held:false,timer:null,fresh:-1,speed:null};
+/* LIVE DRAFT (24 Oct 2026, owner: "see the bots making the picks in real time"). The bots pick
+   one at a time, MD_PACE apart, each pick landing at the top of the Latest Picks list, until it
+   is your pick or the draft is over. Pause, Skip To My Pick and a Normal / Fast speed (saved
+   per device). It only runs while the tab is showing: switching away holds it, and coming back
+   carries on. The picks themselves are the same mdBotChoice() calls as before; only the timing
+   is new. */
+const MD_PACE={normal:1100,fast:350};
 function mdEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function mdLoad(){
   if(!MD.load) MD.load=fetch('./data/devy-board.json',{cache:'no-cache'})
@@ -4187,7 +4235,8 @@ function mdLoad(){
                 mp:p.mockPick||null,mt:p.mockTeam||null,v:0}; })
         .filter(p=>['QB','RB','WR','TE'].indexOf(p.pos)>=0&&p.rank>0)
         .sort((a,b)=>a.rank-b.rank);
-      MD.pool=ps.length>=20?{'class':j['class'],generated:j.generated,players:ps}:null;
+      MD.pool=ps.length>=20?{'class':j['class'],generated:j.generated,source:j.source||'NFL Mock Draft Database',
+        boardDate:j.boardDate||j.generated,mockSource:j.mockSource||null,mockAsOf:j.mockAsOf||null,players:ps}:null;
       return MD.pool; })
     .catch(()=>null);
   return MD.load;
@@ -4385,19 +4434,49 @@ function mdAdp(){
   }
   return at.map(a=>{ if(a.length<=mid) return null; a.sort((x,y)=>x-y); return a[mid]; });
 }
+function mdPace(){ return MD_PACE[mdSpeed()]||MD_PACE.normal; }
+function mdSpeed(){ if(!MD.speed){ const v=dlPref('delta_md_speed'); MD.speed=(v==='fast')?'fast':'normal'; } return MD.speed; }
+function mdStop(){ clearTimeout(MD.timer); MD.timer=null; MD.auto=false; MD.paused=false; MD.held=false; }
+function mdBotsTurn(){ const c=MD.cfg, o=mdOrder(c), k=MD.picks.length; return k<o.length&&o[k].t!==mdMine(c)&&mdAvail().length>0; }
+// Start the bots after a pick of yours (or the first pick), or hand straight back if it is yours.
+function mdGo(){
+  clearTimeout(MD.timer); MD.timer=null; MD.held=false;
+  MD.auto=mdBotsTurn(); MD.paused=false;
+  MD.odds=mdOdds(); mdRender();
+  if(MD.auto) MD.timer=setTimeout(mdStep,mdPace());
+}
+function mdStep(){
+  clearTimeout(MD.timer); MD.timer=null;
+  if(!MD.auto||MD.paused) return;
+  const pnl=document.getElementById('panel-mock');
+  if(pnl&&!pnl.classList.contains('active')){ MD.held=true; return; }   // resumes on return
+  if(!mdBotsTurn()){ MD.auto=false; MD.odds=mdOdds(); mdRender(); return; }
+  const c=MD.cfg, o=mdOrder(c), k=MD.picks.length, s=o[k];
+  MD.picks.push({k:k,t:s.t,pi:mdBotChoice(mdAvail(),mdTeamPos(MD.picks,s.t),s.r,mdNeed(c,s.t))});
+  MD.fresh=k; MD.auto=mdBotsTurn(); MD.odds=mdOdds(); mdRender();
+  if(MD.auto) MD.timer=setTimeout(mdStep,mdPace());
+}
+function mdSkip(){ clearTimeout(MD.timer); MD.timer=null; MD.auto=false; MD.paused=false; mdRunBots(); MD.fresh=MD.picks.length-1; MD.odds=mdOdds(); mdRender(); }
+function mdPause(){ MD.paused=true; clearTimeout(MD.timer); MD.timer=null; mdRender(); }
+function mdResume(){ if(!MD.auto) return; MD.paused=false; mdRender(); MD.timer=setTimeout(mdStep,Math.min(400,mdPace())); }
+function mdSetSpeed(v){ MD.speed=(v==='fast')?'fast':'normal'; try{ dlPref('delta_md_speed',MD.speed); }catch(e){}
+  if(MD.auto&&!MD.paused){ clearTimeout(MD.timer); mdRender(); MD.timer=setTimeout(mdStep,mdPace()); } else mdRender(); }
 function mdStart(){
-  MD.picks=[]; MD.sel=null; MD.running=true;
+  mdStop(); MD.picks=[]; MD.sel=null; MD.running=true; MD.fresh=-1;
   if(!MD.cfg.league){ try{ dlPref('delta_md_cfg',JSON.stringify({teams:MD.cfg.teams,rounds:MD.cfg.rounds,type:MD.cfg.type,slot:MD.cfg.slot})); }catch(e){} }
-  mdPrice(); MD.adp=mdAdp(); mdRunBots(); MD.odds=mdOdds(); mdRender();
+  mdPrice(); MD.adp=mdAdp(); mdGo();
+  // Start sits at the foot of the setup screen: bring the clock into view
+  const root=document.getElementById('md-root');
+  if(root){ const top=root.getBoundingClientRect().top; if(top<0) window.scrollTo({top:Math.max(0,window.scrollY+top-12)}); }
 }
 function mdSet(k,v){
   if(!MD.cfg||MD.cfg.league) MD.cfg=mdDefaults();
   MD.cfg[k]=v; if(k==='teams') MD.cfg.slot=Math.min(MD.cfg.slot,v);
   mdRenderSetup();
 }
-function mdSetMode(m){ MD.mode=(m==='league')?'league':'custom'; try{ dlPref('delta_md_mode',MD.mode); }catch(e){} MD.cfg=null; mdRenderSetup(); }
-function mdSetLgType(t){ if(MD.lgInfo) MD.lgInfo=Object.assign({},MD.lgInfo,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
-function mdEditSettings(){ MD.picks=[]; MD.running=false; MD.sel=null; if(MD.cfg&&MD.cfg.league) MD.cfg=null; mdRenderSetup(); }
+function mdSetMode(m){ mdStop(); MD.mode=(m==='league')?'league':'custom'; try{ dlPref('delta_md_mode',MD.mode); }catch(e){} MD.cfg=null; mdRenderSetup(); }
+function mdSetLgType(t){ mdStop(); if(MD.lgInfo) MD.lgInfo=Object.assign({},MD.lgInfo,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
+function mdEditSettings(){ mdStop(); MD.picks=[]; MD.running=false; MD.sel=null; MD.fresh=-1; if(MD.cfg&&MD.cfg.league) MD.cfg=null; mdRenderSetup(); }
 function mdSelect(pi){
   const c=MD.cfg, o=mdOrder(c); if(MD.picks.length>=o.length||o[MD.picks.length].t!==mdMine(c)) return;
   MD.sel=(MD.sel===pi)?null:pi; mdRender();
@@ -4407,8 +4486,8 @@ function mdDraft(){
   const c=MD.cfg, o=mdOrder(c), k=MD.picks.length;
   if(k>=o.length||o[k].t!==mdMine(c)) return;
   if(MD.picks.some(x=>x.pi===MD.sel)) return;
-  MD.picks.push({k:k,t:o[k].t,pi:MD.sel,me:true}); MD.sel=null;
-  mdRunBots(); MD.odds=mdOdds(); mdRender();
+  MD.picks.push({k:k,t:o[k].t,pi:MD.sel,me:true}); MD.sel=null; MD.fresh=k;
+  mdGo();
 }
 function mdSetPos(p){ MD.pos=p; mdRender(); }
 // The DELTA lens reads the Big Board tab's own production numbers (devyProdFor): dDOM and
@@ -4448,8 +4527,12 @@ function openMockDraft(){
   // Standings move every week: an unstarted league draft is rebuilt from today's data.
   if(!MD.running&&!MD.picks.length&&MD.cfg&&MD.cfg.league) MD.cfg=null;
   // A draft from a league that is no longer the active one is stale: back to setup.
-  if(MD.cfg&&MD.cfg.league&&SLP&&SLP.league&&MD.cfg.leagueId!==SLP.league.league_id){ MD.cfg=null; MD.picks=[]; MD.running=false; }
-  if(MD.picks.length||MD.running) mdRender(); else mdRenderSetup();
+  if(MD.cfg&&MD.cfg.league&&SLP&&SLP.league&&MD.cfg.leagueId!==SLP.league.league_id){ mdStop(); MD.cfg=null; MD.picks=[]; MD.running=false; }
+  if(MD.picks.length||MD.running){
+    mdRender();
+    // the bots were mid-run when the tab was left: carry on from where they stopped
+    if(MD.auto&&MD.held&&!MD.paused){ MD.held=false; clearTimeout(MD.timer); MD.timer=setTimeout(mdStep,500); }
+  } else mdRenderSetup();
 }
 function mdChips(key,vals,cur,lab,fn){
   fn=fn||'mdSet';
@@ -4459,6 +4542,7 @@ function mdChips(key,vals,cur,lab,fn){
       return '<button type="button" class="dl-md-chip'+(cur===val?' on':'')+'" onclick="'+fn+'('+(fn==='mdSet'?'\''+key+'\',':'')+arg+')">'+txt+'</button>'; }).join('')
     +'</div></div>';
 }
+function mdDayShort(iso){ const t=mdDay(iso); return t.replace(/ \d{4}$/,''); }
 function mdDay(iso){ const d=new Date(String(iso)+'T12:00:00Z'); if(isNaN(d)) return iso||''; return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+d.getUTCFullYear(); }
 function mdNeedText(c,t){
   const nd=mdNeed(c,t); if(!nd) return '';
@@ -4520,7 +4604,7 @@ function mdRenderSetup(){
   const modes=(block===null||block==='loading')
     ?'<div class="dl-md-card">'+mdChips('mode',[{v:'league',t:'My League'},{v:'custom',t:'Custom'}],mode,'Draft','mdSetMode')+'</div>':'';
   root.innerHTML='<div class="dl-md-wrap">'
-    +'<div class="dl-md-head"><h2>Mock Draft</h2><p>'+MD.pool['class']+' Rookie Class · Consensus Big Board From '+mdEsc(mdDay(MD.pool.generated))+'</p></div>'
+    +'<div class="dl-md-head"><h2>Mock Draft</h2><p>'+MD.pool['class']+' Rookie Class · '+mdEsc(MD.pool.source)+' Big Board, '+mdEsc(mdDay(MD.pool.boardDate))+'</p></div>'
     +modes+body+short
     +'<button type="button" class="dl-md-go" onclick="mdStart()">Start Draft</button>'
     +(note?'<p class="dl-md-note">'+note+'</p>':'')
@@ -4531,17 +4615,39 @@ function mdRender(){
   const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
   const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, k=MD.picks.length, done=k>=o.length||!mdAvail().length;
   const mine=mdMine(c), onClock=!done&&o[k].t===mine;
+  // Reach / Value: taken well before or after where he usually goes (Avg Pick). Neutral colours —
+  // a draft-room aside, not a DELTA call.
+  const tagOf=x=>{ const a=MD.adp?MD.adp[x.pi]:null; if(a==null) return '';
+    const T=Math.max(3,Math.round(c.teams*0.4));
+    return x.k<=a-T?'<mark class="dl-md-tag r">Reach</mark>':(x.k>=a+T?'<mark class="dl-md-tag v">Value</mark>':''); };
   const pickRow=x=>{ const p=P[x.pi], pk=o[x.k];
-    return '<li'+(x.me?' class="me"':'')+'><b>'+mdLabel(pk)+'</b><span>'+mdEsc(p.n)+'</span><em>'+p.pos+'</em><i>'+mdEsc(mdName(c,x.t))+'</i></li>'; };
-  let lastMine=-1; for(let j=MD.picks.length-1;j>=0;j--){ if(MD.picks[j].me){ lastMine=j; break; } }
-  const since=MD.picks.slice(lastMine+1);
+    return '<li class="'+(x.me?'me':'')+(x.k===MD.fresh&&!done?' new':'')+'"><b>'+mdLabel(pk)+'</b><span>'+mdEsc(p.n)+'</span><em>'+p.pos+'</em>'+tagOf(x)+'<i>'+mdEsc(mdName(c,x.t))+'</i></li>'; };
   const myPicks=MD.picks.filter(x=>x.me);
+  const nextMine=mdNextMine(onClock?k+1:k);
   let status;
   if(done) status='<div class="dl-md-status done"><b>Draft Complete</b><span>'+myPicks.length+' pick'+(myPicks.length===1?'':'s')+' for you</span></div>';
-  else if(onClock) status='<div class="dl-md-status on"><b>You’re On The Clock</b><span>Pick '+mdLabel(o[k])+'</span></div>';
-  else { const via=o[k].o!==o[k].t?' (via '+mdName(c,o[k].o)+')':'', nt=mdNeedText(c,o[k].t);
-    status='<div class="dl-md-status"><b>Pick '+mdLabel(o[k])+'</b><span>'+mdEsc(mdName(c,o[k].t)+via)+(nt?' · '+nt:'')+'</span></div>'; }
-  const sinceHtml=since.length?'<div class="dl-md-sec"><h3>'+(myPicks.length?'Since Your Last Pick':'Before Your First Pick')+'</h3><ol class="dl-md-log">'+since.map(pickRow).join('')+'</ol></div>':'';
+  else if(onClock) status='<div class="dl-md-status on"><b>You’re On The Clock</b><span>Pick '+mdLabel(o[k])+(nextMine>=0?' · next '+mdLabel(o[nextMine]):'')+'</span></div>';
+  else {
+    // the bots' clock: who is picking, a bar that runs for the pause before the pick, and controls
+    const via=o[k].o!==o[k].t?' (via '+mdName(c,o[k].o)+')':'', nt=mdNeedText(c,o[k].t), live=MD.auto&&!MD.paused;
+    const toMe=nextMine>=0?nextMine-k:-1;
+    status='<div class="dl-md-clock">'
+      +'<div class="dl-md-ck-row"><span class="dl-md-ck-pk">'+mdLabel(o[k])+'</span><span class="dl-md-ck-lbl">'+(live?'On The Clock':(MD.auto?'Paused':'Up Next'))+'</span></div>'
+      +'<div class="dl-md-ck-team">'+mdEsc(mdName(c,o[k].t)+via)+'</div>'
+      +(nt?'<div class="dl-md-ck-sub">'+nt+'</div>':'')
+      +'<div class="dl-md-ck-bar">'+(live?'<i style="animation-duration:'+mdPace()+'ms"></i>':'')+'</div>'
+      +'<div class="dl-md-ck-ctl">'
+        +(MD.auto?'<button type="button" class="dl-md-chip sm" onclick="'+(MD.paused?'mdResume()':'mdPause()')+'">'+(MD.paused?'Resume':'Pause')+'</button>'
+          :'<button type="button" class="dl-md-chip sm on" onclick="mdGo()">Continue</button>')
+        +'<button type="button" class="dl-md-chip sm" onclick="mdSkip()">'+(toMe>0?'Skip To My Pick':'Skip To The End')+'</button>'
+        +'<span class="dl-md-ck-sp">'+[['normal','Normal'],['fast','Fast']].map(([v,t])=>'<button type="button" class="dl-md-chip sm'+(mdSpeed()===v?' on':'')+'" onclick="mdSetSpeed(\''+v+'\')">'+t+'</button>').join('')+'</span>'
+      +'</div>'
+      +'<div class="dl-md-ck-you">'+(toMe>0?'Your pick: '+mdLabel(o[nextMine])+' · '+toMe+' pick'+(toMe===1?'':'s')+' away':'You have no more picks in this draft.')+'</div>'
+      +'</div>';
+  }
+  // every pick so far, newest first, in a box of fixed height so the board below never jumps
+  const feed='<div class="dl-md-sec"><h3>Latest Picks</h3><ol class="dl-md-feed">'
+    +(MD.picks.length?MD.picks.slice().reverse().map(pickRow).join(''):'<li class="dl-md-empty">Picks show up here as they’re made.</li>')+'</ol></div>';
   // board, in the bots' order (fantasy-adjusted), with the board rank beside it
   const av=mdAvail().sort((a,b)=>P[b].v-P[a].v||P[a].rank-P[b].rank);
   const rank=new Map(av.map((i,j)=>[i,j+1]));
@@ -4577,10 +4683,18 @@ function mdRender(){
       +'<div class="dl-md-chips">'+['All','QB','RB','WR','TE'].map(t=>'<button type="button" class="dl-md-chip sm'+(MD.pos===t?' on':'')+'" onclick="mdSetPos(\''+t+'\')">'+t+'</button>').join('')+'</div>'
       +'</div>'
       +(MD.lens?'<p class="dl-md-hint">Same order. dDOM is his share of his team’s production, adjusted for opponents, and PPA his efficiency, each a percentile (0–100) at his position in the '+((MD.lensData&&MD.lensData.year)||'latest')+' season. Recruit is his high-school star rating.</p>'
-        :'<p class="dl-md-hint">Board is his spot on the consensus NFL big board. Avg Pick is where he went across '+MD_SIMS+' practice drafts.'
-          +(od?' '+(od.pass?'The last column is the chance he’s still there at your next pick ('+od.label+') if you pass on him now.':'The last column is the chance he’s still there when you pick at '+od.label+'.'):'')+'</p>')
+        :'<p class="dl-md-hint">Board: '+mdEsc(MD.pool.source)+' rank, '+mdDayShort(MD.pool.boardDate)
+          +(MD.pool.mockAsOf?' · Mock: '+mdEsc(MD.pool.mockSource||'NFL Mock Draft Database')+', '+mdDayShort(MD.pool.mockAsOf):'')
+          +' · Avg Pick: '+MD_SIMS+' practice drafts'
+          +(od?' · Last column: chance he’s still there at '+od.label+(od.pass?' if you pass':''):'')+'</p>')
       +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-tbl"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-  const action=(onClock&&MD.sel!=null)?'<div class="dl-md-act"><button type="button" class="dl-md-go" onclick="mdDraft()">Draft '+mdEsc(P[MD.sel].n)+'</button></div>':'';
+  // the bar pinned to the bottom of the screen: the Draft button when you have chosen, a nudge when
+  // you are on the clock, and otherwise the latest pick — so you can follow along from the board
+  let action='';
+  if(onClock&&MD.sel!=null) action='<div class="dl-md-act"><button type="button" class="dl-md-go" onclick="mdDraft()">Draft '+mdEsc(P[MD.sel].n)+'</button></div>';
+  else if(onClock) action='<div class="dl-md-act"><div class="dl-md-pill on">You’re On The Clock · '+mdLabel(o[k])+' · Tap A Player</div></div>';
+  else if(!done&&MD.fresh>=0&&MD.picks[MD.fresh]){ const x=MD.picks[MD.fresh], p=P[x.pi];
+    action='<div class="dl-md-act"><div class="dl-md-pill new"><b>'+mdLabel(o[x.k])+'</b><span>'+mdEsc(p.n)+' '+p.pos+'</span><i>'+mdEsc(mdName(c,x.t))+'</i></div></div>'; }
   const mineHtml=myPicks.length?'<div class="dl-md-sec"><h3>Your Picks</h3><ol class="dl-md-log mine">'+myPicks.map(pickRow).join('')+'</ol></div>':'';
   let all='';
   if(done){ for(let r=0;r<c.rounds;r++){ const rp=MD.picks.filter(x=>o[x.k].r===r); if(rp.length) all+='<div class="dl-md-sec"><h3>Round '+(r+1)+'</h3><ol class="dl-md-log">'+rp.map(pickRow).join('')+'</ol></div>'; } }
@@ -4589,7 +4703,7 @@ function mdRender(){
   root.innerHTML='<div class="dl-md-wrap">'
     +'<div class="dl-md-top"><button type="button" class="dl-md-link" onclick="mdEditSettings()">← Settings</button>'
     +'<button type="button" class="dl-md-link" onclick="mdStart()">Restart</button></div>'
-    +status+(done?share+mineHtml+all:sinceHtml+mineHtml+board)+action
+    +status+(done?share+mineHtml+all:feed+mineHtml+board)+action
     +(done?'<button type="button" class="dl-md-go" onclick="mdStart()">Draft Again</button>':'')
     +'</div>';
 }
@@ -4601,7 +4715,7 @@ async function drawMockImage(){
   const rounds=[]; for(let r=0;r<c.rounds;r++){ const rp=MD.picks.filter(x=>o[x.k].r===r); if(rp.length) rounds.push(rp); }
   const H=PAD+96+130+rounds.reduce((h,rp)=>h+RHEAD+Math.ceil(rp.length/2)*RH+GAP,0)+40+DL_IMG_FOOT;
   const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
-  let y=await dlImgStart(g,W,PAD,C,F,'MOCK DRAFT','Board From '+mdDay(MD.pool.generated));
+  let y=await dlImgStart(g,W,PAD,C,F,'MOCK DRAFT','Board From '+mdDay(MD.pool.boardDate));
   g.textAlign='left'; g.fillStyle=C.paper; g.font='800 46px '+F.sans;
   g.fillText(dlImgFit(g,c.league?(anon?'Rookie Mock Draft':c.leagueName):'Rookie Mock Draft',W-2*PAD),PAD,y+34);
   g.fillStyle=C.fog; g.font='600 24px '+F.sans;
@@ -7585,7 +7699,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-24b</span>
+  <span class="foot-build">2026-10-24c</span>
 </footer>
 
 

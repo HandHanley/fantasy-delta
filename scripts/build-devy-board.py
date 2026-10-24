@@ -40,6 +40,7 @@ HIST_DIR    = 'data/board-history'
 SKILL       = {'QB', 'RB', 'WR', 'TE'}
 COLLEGE_DIR = 'data'
 MIN_PLAYERS = 20          # below this the paste is almost certainly truncated or malformed
+NFLMDD      = 'NFL Mock Draft Database'
 
 
 def norm(s):
@@ -83,7 +84,7 @@ def parse(text):
         if i in consumed:
             continue
         s = ln.strip()
-        if not s:
+        if not s or s.startswith('#'):            # blank, or a '# source:' style header line
             continue
         if re.fullmatch(r'\d{1,3}', s):          # a bare number is the board rank
             rank = int(s); continue
@@ -125,6 +126,20 @@ def parse(text):
         k = norm(r['n'])
         if k not in best or r['rank'] < best[k]['rank']: best[k] = r
     return sorted(best.values(), key=lambda r: r['rank']), skipped
+
+
+def board_meta(text):
+    """Where a paste came from. A converted CSV carries '# source:' and '# board date:' header
+    lines (scripts/board-from-csv.py writes them); a browser paste from NFL Mock Draft Database
+    carries that site's links. Every board before 24 Oct 2026 came from there."""
+    meta = {'source': None, 'boardDate': None}
+    for ln in text.splitlines():
+        m = re.match(r'\s*#\s*(source|board date)\s*:\s*(.+?)\s*$', ln, re.I)
+        if m:
+            meta['source' if m.group(1).lower() == 'source' else 'boardDate'] = m.group(2)
+    if not meta['source'] and 'nflmockdraftdatabase.com' in text:
+        meta['source'] = NFLMDD
+    return meta
 
 
 def newest_college_file():
@@ -201,13 +216,36 @@ def main():
         print('  no college season files found — skipping the match step')
 
     # movement against the previous snapshot
-    prev = {}
+    meta = board_meta(text)
+    print(f"  source: {meta['source'] or 'unknown'}" + (f"  (board date {meta['boardDate']})" if meta['boardDate'] else ''))
+    prev, prev_payload = {}, {}
     if os.path.exists(OUT):
         try:
-            prev = {norm(k): v.get('rank') for k, v in
-                    (json.load(open(OUT)).get('players') or {}).items()}
+            prev_payload = json.load(open(OUT))
+            prev = {norm(k): v.get('rank') for k, v in (prev_payload.get('players') or {}).items()}
         except Exception:
             pass
+    # A rank on one site's board is not comparable with a rank on another's, so a change of
+    # source starts movement afresh instead of printing arrows that are only the switch.
+    prev_source = prev_payload.get('source') or (NFLMDD if prev else None)
+    if prev and meta['source'] != prev_source:
+        print(f"  board source changed ({prev_source} -> {meta['source']}): movement starts fresh this week")
+        prev = {}
+    # The NFL team in the consensus MOCK comes only from an NFL Mock Draft Database paste. A
+    # board from elsewhere keeps the last ones on file, with their date, rather than dropping them.
+    mock_as_of, mock_source = None, None
+    if any(r.get('mockPick') for r in skill):
+        mock_as_of, mock_source = meta['boardDate'] or datetime.date.today().isoformat(), meta['source']
+    elif prev_payload.get('players'):
+        pm = {norm(k): v for k, v in prev_payload['players'].items() if v.get('mockPick')}
+        for r in skill:
+            v = pm.get(norm(r['n']))
+            if v: r['mockPick'], r['mockTeam'] = v.get('mockPick'), v.get('mockTeam')
+        if pm:
+            mock_as_of = prev_payload.get('mockAsOf') or prev_payload.get('generated')
+            mock_source = prev_payload.get('mockSource') or NFLMDD
+            print(f"  consensus mock slots carried from the previous board ({mock_source}, {mock_as_of}): "
+                  f"{sum(1 for r in skill if r.get('mockPick'))} players")
     risers = fallers = new = 0
     for r in skill:
         p = prev.get(norm(r['n']))
@@ -229,6 +267,10 @@ def main():
     payload = {
         'generated': datetime.date.today().isoformat(),
         'class': draft_class,
+        'source': meta['source'],
+        'boardDate': meta['boardDate'],
+        'mockSource': mock_source,
+        'mockAsOf': mock_as_of,
         'note': ('Consensus big-board position for skill-position prospects, compiled by hand '
                  'from publicly published boards. Stored as a rank plus a coarse tier; the tier '
                  'is what the platform shows, because this far out a tier stays true for weeks '
