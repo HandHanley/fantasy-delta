@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-23e';
+const DL_BUILD='2026-10-24a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6393,14 +6393,15 @@ function dlImgMark(){
   return new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null);
     im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s); });
 }
-/* Canvas of width W painted ink, with the DELTA header drawn. Returns the y below it. */
-async function dlImgStart(g,W,P,C,F,kind){
+/* Canvas of width W painted ink, with the DELTA header drawn. Returns the y below it.
+   sub replaces the 'Valued <today>' line (the Mock Draft names its board date instead). */
+async function dlImgStart(g,W,P,C,F,kind,sub){
   try{ await document.fonts.ready; }catch(e){}
   g.fillStyle=C.ink; g.fillRect(0,0,W,g.canvas.height); g.textBaseline='middle';
   const mark=await dlImgMark(); if(mark) g.drawImage(mark,P-6,P-6,84,84);
   g.textAlign='left'; g.fillStyle=C.paper; g.font='700 40px '+F.geo; dlImgSpace(g,9); g.fillText('DELTA',P+92,P+36); dlImgSpace(g,0);
   g.textAlign='right'; g.fillStyle=C.fog; g.font='700 24px '+F.mono; dlImgSpace(g,3); g.fillText(kind,W-P,P+22); dlImgSpace(g,0);
-  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText('Valued '+dlImgDate(new Date()),W-P,P+56);
+  g.fillStyle=C.fog2; g.font='500 22px '+F.mono; g.fillText(sub||('Valued '+dlImgDate(new Date())),W-P,P+56);
   return P+96;
 }
 function dlImgFooter(g,W,P,C,F,y){

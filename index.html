@@ -198,6 +198,104 @@ tr:hover td{background:var(--panel)}
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-tc-act:hover{background:var(--teal-soft)}
 .dl-tc-act:disabled{opacity:.6;cursor:default}
+/* Mock Draft (24 Oct 2026). Chips and buttons are page chrome (accent); the board is .dl-board. */
+.dl-md-wrap{max-width:760px}
+.dl-md-head h2{font-size:20px;font-weight:800;color:var(--paper);margin:0 0 4px;letter-spacing:-.3px}
+.dl-md-head p{font-size:12px;color:var(--fog);margin:0 0 14px}
+.dl-md-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-bottom:12px}
+.dl-md-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.dl-md-row+.dl-md-row{border-top:1px solid var(--line)}
+.dl-md-rl{flex:0 0 74px;font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.05em;text-transform:uppercase;padding-top:8px}
+.dl-md-chips{display:flex;flex-wrap:wrap;gap:6px}
+.dl-md-chip{font:inherit;font-size:12.5px;font-weight:700;min-width:38px;min-height:32px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fog);cursor:pointer}
+.dl-md-chip.sm{min-width:0;padding:4px 9px;font-size:11.5px}
+.dl-md-chip.on{border-color:var(--teal-br);color:var(--teal-br);background:var(--teal-soft)}
+.dl-md-go{display:block;width:100%;min-height:46px;border-radius:10px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;cursor:pointer;margin:6px 0 10px}
+.dl-md-note,.dl-md-hint{font-size:11.5px;color:var(--fog-2);margin:4px 0 10px;line-height:1.5}
+.dl-md-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.dl-md-link{font:inherit;font-size:12px;font-weight:700;color:var(--fog);background:none;border:0;padding:6px 0;cursor:pointer}
+.dl-md-status{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px}
+.dl-md-status b{font-size:15px;color:var(--paper)}
+.dl-md-status span{font-family:var(--mono);font-size:12px;color:var(--fog)}
+.dl-md-status.on{border-color:var(--teal-br)}
+.dl-md-status.on b{color:var(--teal-br)}
+.dl-md-sec{margin-bottom:14px}
+.dl-md-sec h3{font-size:10.5px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.dl-md-log{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.dl-md-log li{display:flex;align-items:baseline;gap:10px;padding:7px 12px;font-size:12.5px;border-top:1px solid var(--line)}
+.dl-md-log li:first-child{border-top:0}
+.dl-md-log b{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--fog);flex:0 0 36px}
+.dl-md-log span{flex:1;min-width:0;color:var(--paper);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-log em{font-style:normal;font-size:11px;color:var(--fog-2);flex:0 0 22px}
+.dl-md-log i{font-style:normal;font-size:11px;color:var(--fog);flex:0 1 38%;min-width:56px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-log li.me{background:var(--row-hi)}
+.dl-md-log li.me i{color:var(--teal-br);font-weight:700}
+.dl-md-tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:6px}
+.dl-md-dcell{width:1%}
+.dl-md-dbtn{font:inherit;font-family:var(--sans);font-size:11px;font-weight:800;line-height:1;color:var(--ink);background:var(--teal-br);border:0;border-radius:6px;
+  padding:6px 8px;cursor:pointer;white-space:nowrap}
+.dl-md-dbtn:active{transform:scale(.96)}
+.dl-md-rk{color:var(--fog-2);font-family:var(--mono)}
+.dl-md-tbl td,.dl-md-tbl th{white-space:nowrap}
+.dl-md-odds{display:inline-block;min-width:44px;font-family:var(--mono);border-radius:4px;padding:1px 5px;
+  background:linear-gradient(90deg,var(--teal-tint) var(--w),transparent var(--w))}
+.dl-md-act{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.dl-md-act .dl-md-go{box-shadow:0 8px 24px rgba(0,0,0,.45);margin:0}
+.dl-md-pill{display:flex;align-items:baseline;justify-content:center;gap:8px;min-height:40px;padding:10px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--paper);font-size:12.5px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.dl-md-pill b{font-family:var(--mono);font-weight:600;color:var(--fog)}
+.dl-md-pill span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-pill i{font-style:normal;font-weight:500;color:var(--fog);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-pill.on{border-color:var(--teal-br);color:var(--teal-br)}
+.dl-md-pill.new{animation:dlMdIn .6s ease-out}
+/* My League mode (24 Oct 2026): league card, round-1 order, the line under a name. */
+.dl-md-sub{display:block;font-size:10.5px;color:var(--fog-2);font-weight:500;margin-top:1px}
+.dl-md-tbl .dl-md-sub{max-width:190px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){.dl-md-tbl .dl-md-sub{max-width:150px}}
+@media(max-width:400px){.dl-md-tbl td.pname{white-space:normal;min-width:118px}}
+.dl-md-lg{display:flex;flex-direction:column;gap:2px;padding:10px 0 4px}
+.dl-md-lg b{font-size:15px;color:var(--paper)}
+.dl-md-lg span{font-size:12px;color:var(--fog)}
+.dl-md-otbl td,.dl-md-otbl th{white-space:nowrap}
+.dl-md-otbl .dl-md-tn{color:var(--paper);font-weight:600}
+.dl-md-otbl tr.me td{background:var(--row-hi)}
+.dl-md-mine{font-size:12.5px;color:var(--fog);padding:10px 0 8px}
+.dl-md-mine b{color:var(--teal-br);font-family:var(--mono)}
+.dl-md-warn{font-size:12px;color:var(--paper);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--fog);border-radius:8px;padding:8px 10px;margin:0 0 10px;line-height:1.5}
+.dl-md-adp{font-family:var(--mono);color:var(--fog)}
+.dl-md-share{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:14px}
+/* Live draft (24 Oct 2026): the bots' clock card, the Latest Picks feed, Reach / Value tags. */
+.dl-md-clock{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px}
+.dl-md-ck-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dl-md-ck-pk{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--paper)}
+.dl-md-ck-lbl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-br)}
+.dl-md-ck-team{font-size:15px;font-weight:800;color:var(--paper);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-ck-sub{font-size:11.5px;color:var(--fog);margin-top:2px}
+.dl-md-ck-bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin:10px 0}
+.dl-md-ck-bar i{display:block;height:100%;width:0;background:var(--teal-br);animation:dlMdClock linear forwards}
+.dl-md-ck-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dl-md-ck-sp{display:inline-flex;gap:6px;margin-left:auto}
+.dl-md-ck-you{font-size:11.5px;color:var(--fog-2);margin-top:9px}
+.dl-md-feed{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;height:186px;overflow-y:auto;overscroll-behavior:contain}
+.dl-md-feed li{display:flex;align-items:baseline;gap:8px;padding:8px 12px;font-size:12.5px;border-top:1px solid var(--line)}
+.dl-md-feed li:first-child{border-top:0}
+.dl-md-feed b{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--fog);flex:0 0 36px}
+.dl-md-feed span{flex:1;min-width:0;color:var(--paper);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-feed em{font-style:normal;font-size:11px;color:var(--fog-2);flex:0 0 22px}
+.dl-md-feed i{font-style:normal;font-size:11px;color:var(--fog);flex:0 1 34%;min-width:50px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-md-feed li.me{background:var(--row-hi)}
+.dl-md-feed li.me i{color:var(--teal-br);font-weight:700}
+.dl-md-feed li.new{animation:dlMdIn .6s ease-out}
+.dl-md-feed li.dl-md-empty{color:var(--fog-2);font-size:12px}
+.dl-md-tag{flex:0 0 auto;align-self:center;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;
+  border-radius:4px;padding:1px 5px;background:transparent;border:1px solid currentColor}
+.dl-md-tag.v{color:var(--sky)}
+.dl-md-tag.r{color:var(--violet)}
+@keyframes dlMdIn{from{opacity:0;transform:translateY(-6px);background:var(--teal-tint)}to{opacity:1;transform:none}}
+@keyframes dlMdClock{from{width:0}to{width:100%}}
+@media (prefers-reduced-motion:reduce){.dl-md-feed li.new,.dl-md-pill.new,.dl-md-ck-bar i{animation:none}}
+.dl-md-share .dl-tc-act{flex:0 0 auto;padding:9px 18px}
+.dl-md-share label.dl-tc-names{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--fog);cursor:pointer}
 /* 3-4 team "Gives Up" breakdown: one column per team on wide screens, two per row on a
    phone. Base and phone rule kept adjacent, base first (§10d trap 7). */
 .dl-tc-mgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:.75rem;margin-bottom:.75rem}
@@ -1839,6 +1937,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
+  <button data-tab="mock" data-sec="me" class="tab" onclick="showTab('mock',this)">Mock Draft</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <span class="tab-right">
@@ -1907,6 +2006,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <optgroup label="My Team">
         <option value="myteam">Roster</option>
         <option value="trade">Trade Calc</option>
+        <option value="mock">Mock Draft</option>
         <option value="watchlist">Watchlist</option>
       </optgroup>
     </select>
@@ -2147,6 +2247,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 <div id="panel-roles" class="panel"><div id="rc-root"></div></div>
 
 <div id="panel-scorecard" class="panel"><div id="sc-root"></div></div>
+
+<div id="panel-mock" class="panel"><div id="md-root"></div></div>
 
 <div id="panel-trade" class="panel">
 <div id="slp-trade-assist"></div>
@@ -4070,6 +4172,622 @@ async function drawCompareImage(){
 }
 function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.png',btn); }
 
+// ── Mock Draft (24 Oct 2026, owner; My League mode added the same day) ────────────────
+/* The rookie draft assistant's mock draft. Two modes.
+   MY LEAGUE (a connected Sleeper league): the league's NEXT rookie draft as it stands today.
+     Order = current standings, worst record first; equal records go to the LOWER Max PF
+     (Sleeper's roster settings.ppts), then the lower points for. Every pick sits with whoever
+     owns it now (traded_picks), so it is the real draft, not a template. Read fresh every
+     time the tab opens, so it moves week to week on its own. Once the league renews for the
+     next season (status pre_draft), the order is the one the league set in Sleeper
+     (/draft slot_to_roster_id) or, until it does, LAST season's final standings. With no
+     games at all (a startup league before Week 1) it falls back to Proj PPG and says so.
+     Playoff results are NOT applied (the owner's league puts its six playoff teams at 5-10 by
+     the bracket); an in-season mock uses standings for every team. Sleeper only: MFL rosters
+     carry no standings here.
+   CUSTOM: any league shape, for readers with no league connected.
+
+   THE PLAYERS: the consensus big board (data/devy-board.json; since 24 Oct 2026 PFN's Industry
+   Consensus CSV, skill positions only, via scripts/board-from-csv.py). The board ranks for the
+   NFL draft, where QBs are worth more and RBs less than in fantasy, so a board spot is turned
+   into fantasy terms by position first:
+       fantasy spot = board rank x position factor  (WR 1, RB 0.4, TE 1.75, QB 1.8 SF / 3.3 1QB)
+       bot value    = 8232 x fantasy spot ^ -0.442
+   RB and TE: the average of two independent fits that agree — the 26 Apr 2026 draft-day market
+   (FantasyCalc 12-team superflex, NFL pick against value: RB 0.34, TE 1.69) and Fantasy Football
+   Calculator rookie ADP for 2021-23 and 2025 (1QB, 140 players: RB 0.46, TE 1.82).
+   QB, superflex: the owner's league's own rookie drafts 2024-26 (90 picks: QB 1.78 — 2.35, 1.53,
+   1.98 by year; RB 0.40 there too). The market said 1.24; the owner asked for more caution on
+   QBs ("we all already have a lot of QBs"), and his league's drafts back him. 1QB: the FFC fit
+   (3.28). The curve is the 2026 market, one slope for every position. So the board sets the
+   order WITHIN a position, and history sets what each position is worth at a board spot. The
+   value is a bot's working number and is never shown as a price.
+
+   BOTS pick by value x random noise x a soft brake on doubling up at a position x team need.
+   Noise is fitted to the owner's league's real 2026 rookie draft against the market on draft
+   day: round 1 took a player about 1.8 places below best available, rounds 2-3 about 7.3.
+   Re-fitted 24 Oct on the PFN board (89 players, needs on, his league's order): sigma 0.13 in
+   round 1 and 0.29 after gives 1.85 and 7.4 (1,500 drafts). The first fit, 0.15 / 0.6, was on
+   2026 market prices; on board-derived values 0.6 strayed 14.5 places in rounds 2-3, twice the
+   league — the board's values are smoother than real prices, so less noise matches it.
+   NEED (My League only) is Power Rankings' position ranks: the weakest team at a position
+   gets up to +6% on players there in round 1 and +12% after, the strongest the same off.
+   Small on purpose. It can swap two players who are close; it cannot move a clear 1.01.
+   AVG PICK: the median pick across MD_SIMS all-bot drafts, run once when the draft starts.
+   REACH / VALUE (re-ruled 24 Oct: the owner saw five Reaches and nothing else in round 2, then
+   four Values and nothing else in round 3). Measured against the player's OWN spread in those
+   same practice drafts. Reach: fewer than 1 in 10 had taken him by this pick. Value: 9 in 10 had
+   taken him before it. Either way at least 2 picks from his Avg Pick (a player who usually goes
+   undrafted counts as after the last pick). The first rule, 4 picks either side of Avg Pick,
+   ignored that spread: 4 picks is a big move in round 1, where the bots stay close to the board,
+   and routine in rounds 2-3, where they stray ~7 places as the league does; and a player who
+   usually goes undrafted could never be a Reach. On the owner's league (1,000 drafts, this code)
+   it tagged 8.8 of 30 picks, round 2 averaging 3.9 Reaches to 1.0 Value and round 3 2.4 Values
+   to 0.9 Reaches; his draft was that shape at full strength (both rounds at once: 1 draft in 80).
+   This rule: 3.9 Reaches and 0.9 Values a draft, each an unusual pick for that player. Reaches
+   outnumber Values by nature: a Reach is one player jumping the queue by a lot, while the
+   players he jumps each slip a place or two, which is not unusual for any one of them.
+   ODDS: the share of MD_SIMS simulated drafts in which a player is still there at your next
+   pick (when you are on the clock: at your pick after this one, if you pass on him).
+   Display only: nothing here feeds any other number on the site. */
+const MD_SIG1=0.13, MD_SIG2=0.29, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NEED2=0.12;
+const MD_POSF={sf:{QB:1.8,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
+const MD_CURVE_A=8232, MD_CURVE_B=-0.442;
+const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,adpAt:null,
+          lensData:null,lensLoad:null,mode:null,lgInfo:null,running:false,_wait:null,_waitN:0,
+          auto:false,paused:false,held:false,timer:null,fresh:-1,speed:null};
+/* LIVE DRAFT (24 Oct 2026, owner: "see the bots making the picks in real time"). The bots pick
+   one at a time, MD_PACE apart, each pick landing at the top of the Latest Picks list, until it
+   is your pick or the draft is over. Pause, Skip To My Pick and a Normal / Fast speed (saved
+   per device). It only runs while the tab is showing: switching away holds it, and coming back
+   carries on. The picks themselves are the same mdBotChoice() calls as before; only the timing
+   is new. */
+const MD_PACE={normal:1100,fast:350};
+function mdEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function mdLoad(){
+  if(!MD.load) MD.load=fetch('./data/devy-board.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():null).then(j=>{
+      const src=(j&&j.players)||{};
+      const ps=Object.keys(src).map(n=>{ const p=src[n]||{};
+        return {n:n,pos:p.pos,rank:p.rank,school:p.school||'',cfb:p.cfbName||n,
+                np:p.nflPick||null,nt:p.nflTeam||null,nv:p.nflVia||null,v:0}; })
+        .filter(p=>['QB','RB','WR','TE'].indexOf(p.pos)>=0&&p.rank>0)
+        .sort((a,b)=>a.rank-b.rank);
+      MD.pool=ps.length>=20?{'class':j['class'],generated:j.generated,source:j.source||'NFL Mock Draft Database',
+        boardDate:j.boardDate||j.generated,orderAsOf:(j.draftOrder&&j.draftOrder.asOf)||null,players:ps}:null;
+      return MD.pool; })
+    .catch(()=>null)
+    // a failed load must not stick: the next open (or Try Again) fetches afresh
+    .then(p=>{ if(!p) MD.load=null; return p; });
+  return MD.load;
+}
+// Board rank -> the bots' working value, in the reader's QB format (see the header).
+function mdValue(p){
+  const f=(MD_POSF[qbFmt==='1qb'?'1qb':'sf']||MD_POSF.sf)[p.pos]||1;
+  return Math.round(MD_CURVE_A*Math.pow(Math.max(1,p.rank*f),MD_CURVE_B));
+}
+function mdPrice(){ if(MD.pool) MD.pool.players.forEach(p=>{ p.v=mdValue(p); }); }
+function mdDefaults(){
+  // A connected league suggests its own shape; otherwise the reader's league size.
+  let teams=leagueTeams||12, rounds=teams<=10?3:4;
+  try{ if(typeof SLP!=='undefined'&&SLP&&SLP.league){
+    const t=SLP.league.total_rosters; if(t>=8&&t<=16) teams=t;
+    const dr=SLP.league.settings&&SLP.league.settings.draft_rounds; if(dr>=2&&dr<=6) rounds=dr; } }catch(e){}
+  const c={league:false,teams:teams,rounds:rounds,type:'linear',slot:1};
+  let saved=null; try{ saved=JSON.parse(dlPref('delta_md_cfg')||'null'); }catch(e){}
+  if(saved&&typeof saved==='object'){
+    ['teams','rounds','slot'].forEach(k=>{ if(Number.isInteger(saved[k])) c[k]=saved[k]; });
+    if(saved.type==='snake'||saved.type==='linear') c.type=saved.type;
+  }
+  c.teams=Math.min(16,Math.max(4,c.teams)); c.rounds=Math.min(6,Math.max(1,c.rounds));
+  c.slot=Math.min(Math.max(1,c.slot),c.teams);
+  return c;
+}
+
+// ── My League: the real next draft ──
+// Why My League can't run, or null when it can. The reasons are shown on the setup screen.
+function mdLeagueBlock(){
+  if(typeof SLP==='undefined'||!SLP||!SLP.conn) return 'none';
+  if(!SLP.loaded||!SLP.league||!Array.isArray(SLP.rosters)||!SLP.rosters.length) return 'loading';
+  if(slpIsMfl(SLP.league.league_id)) return 'mfl';
+  if(MD.pool&&mdDraftSeason(SLP.league)!==parseInt(MD.pool['class'],10)) return 'season';
+  return null;
+}
+// In season (or done) the next rookie draft is next year's; a renewed league that has not
+// drafted yet is drafting this year.
+function mdDraftSeason(lg){ const s=parseInt(lg.season,10); return (lg.status==='pre_draft'||lg.status==='drafting')?s:s+1; }
+function mdMaxPF(r){ const s=(r&&r.settings)||{}; return (s.ppts||0)+(s.ppts_decimal||0)/100; }
+function mdPF(r){ const s=(r&&r.settings)||{}; return (s.fpts||0)+(s.fpts_decimal||0)/100; }
+function mdGames(r){ const s=(r&&r.settings)||{}; return (s.wins||0)+(s.losses||0)+(s.ties||0); }
+function mdWinPct(r){ const s=(r&&r.settings)||{}, g=mdGames(r); return g?((s.wins||0)+0.5*(s.ties||0))/g:0; }
+function mdRecord(r){ const s=(r&&r.settings)||{}; return (s.wins||0)+'-'+(s.losses||0)+((s.ties||0)?'-'+s.ties:''); }
+// Need per team and position, -1 (strongest in the league) to +1 (weakest), from the same
+// position ranks Power Rankings shows. Null when the rosters cannot be valued.
+function mdNeeds(rosters){
+  let tv=null; try{ tv=slpTeamValues(); }catch(e){ tv=null; }
+  if(!tv||!tv.length) return rosters.map(()=>null);
+  const N=tv.length, by={}; tv.forEach(t=>{ by[String(t.rosterId)]=t; });
+  return rosters.map(r=>{ const t=by[String(r.roster_id)]; if(!t) return null; const o={};
+    ['QB','RB','WR','TE'].forEach(p=>{ const rk=t.pos&&t.pos[p]&&t.pos[p].rank; o[p]=(rk&&N>1)?(rk-(N+1)/2)/((N-1)/2):0; });
+    return o; });
+}
+function mdLeagueCfg(info){
+  const lg=SLP.league, season=mdDraftSeason(lg), type=info.type;
+  let rs=SLP.rosters.slice(), basis=null, src={};
+  const byId={}; rs.forEach(r=>{ byId[String(r.roster_id)]=r; src[String(r.roster_id)]=r; });
+  const N=rs.length;
+  // 1. The order the league set itself (a renewed league, before its rookie draft).
+  const sl=info.slots;
+  if(Array.isArray(sl)&&sl.length===N&&sl.every(id=>byId[String(id)])&&new Set(sl.map(String)).size===N){
+    rs=sl.map(id=>byId[String(id)]); basis='set';
+  } else {
+    // 2. Renewed but not set yet: last season's final standings. Roster ids carry over.
+    if(Array.isArray(info.prev)&&info.prev.length){
+      const pv={}; info.prev.forEach(r=>{ pv[String(r.roster_id)]=r; });
+      if(rs.every(r=>pv[String(r.roster_id)]&&mdGames(pv[String(r.roster_id)])>0)){ src=pv; basis='last'; }
+    }
+    // 3. This season's standings; 4. before Week 1, Proj PPG.
+    if(!basis) basis=rs.some(r=>mdGames(r)>0)?'standings':'projected';
+    if(basis==='projected'){
+      const wn={}; try{ (slpTeamValues()||[]).forEach(t=>{ wn[String(t.rosterId)]=t.winNow||0; }); }catch(e){}
+      rs.sort((a,b)=>((wn[String(a.roster_id)]||0)-(wn[String(b.roster_id)]||0))||(a.roster_id-b.roster_id));
+    } else {
+      const S=r=>src[String(r.roster_id)];
+      rs.sort((a,b)=>(mdWinPct(S(a))-mdWinPct(S(b)))||(mdMaxPF(S(a))-mdMaxPF(S(b)))||(mdPF(S(a))-mdPF(S(b)))||(a.roster_id-b.roster_id));
+    }
+  }
+  const idx={}; rs.forEach((r,i)=>{ idx[String(r.roster_id)]=i; });
+  const rounds=Math.min(6,Math.max(1,parseInt(lg.settings&&lg.settings.draft_rounds,10)||3));
+  const traded=(SLP.tradedPicks||[]).filter(t=>String(t.season)===String(season));
+  const picks=[];
+  for(let r=0;r<rounds;r++) for(let i=0;i<N;i++){
+    const slot=(type==='snake'&&r%2===1)?N-1-i:i, orig=rs[slot];
+    const t=traded.find(x=>parseInt(x.round,10)===r+1&&String(x.roster_id)===String(orig.roster_id));
+    const owner=(t&&idx[String(t.owner_id)]!=null)?idx[String(t.owner_id)]:slot;
+    picks.push({r:r,i:i,o:slot,t:owner});
+  }
+  const mine=SLP.conn&&idx[String(SLP.conn.rosterId)]!=null?idx[String(SLP.conn.rosterId)]:-1;
+  const rec=r=>src[String(r.roster_id)];
+  return {league:true,leagueId:lg.league_id,leagueName:lg.name||'Your League',season:season,
+    teams:N,rounds:rounds,type:type,picks:picks,mine:mine,
+    names:rs.map(r=>slpTeamLabel(r)),recs:rs.map(r=>({rec:mdRecord(rec(r)),mpf:mdMaxPF(rec(r)),pf:mdPF(rec(r))})),
+    needs:mdNeeds(rs),basis:basis,
+    week:(lg.settings&&lg.settings.last_scored_leg)||null,
+    maxPF:rs.some(r=>mdMaxPF(rec(r))>0)};
+}
+/* What the order needs from Sleeper beyond the loaded league, fetched once per league:
+   linear or snake (the league's last draft; the upcoming one once it exists), and, for a
+   renewed league before its rookie draft, the order it set (/draft) or, failing that, last
+   season's final rosters (/league/<previous>/rosters) for the standings. */
+function mdLeagueInfo(){
+  const lg=SLP.league, id=lg.league_id;
+  if(MD.lgInfo&&MD.lgInfo.id===id) return Promise.resolve(MD.lgInfo);
+  const pre=lg.status==='pre_draft'||lg.status==='drafting';
+  const info={id:id,type:'linear',read:false,slots:null,prev:null};
+  const jobs=[slpFetch('/league/'+id+'/drafts').then(list=>{
+    const ds=(Array.isArray(list)?list:[]).filter(d=>d&&(d.type==='snake'||d.type==='linear'))
+      .sort((a,b)=>(parseInt(b.season,10)||0)-(parseInt(a.season,10)||0)||(b.start_time||0)-(a.start_time||0));
+    if(ds.length&&!info.fromDraft){ info.type=ds[0].type; info.read=true; }
+  }).catch(()=>{})];
+  if(pre&&lg.draft_id) jobs.push(slpFetch('/draft/'+lg.draft_id).then(d=>{
+    if(!d) return;
+    if(d.type==='snake'||d.type==='linear'){ info.type=d.type; info.read=true; info.fromDraft=true; }
+    const st=d.slot_to_roster_id;
+    if(st&&typeof st==='object'){ const ks=Object.keys(st).filter(k=>st[k]!=null).sort((a,b)=>a-b); if(ks.length) info.slots=ks.map(k=>st[k]); }
+  }).catch(()=>{}));
+  if(pre&&lg.previous_league_id) jobs.push(slpFetch('/league/'+lg.previous_league_id+'/rosters').then(rs=>{ if(Array.isArray(rs)&&rs.length) info.prev=rs; }).catch(()=>{}));
+  return Promise.all(jobs).then(()=>{ MD.lgInfo=info; return info; });
+}
+
+// Every pick in order: r = round (0-based), i = pick in round (0-based), o = the draft slot
+// it comes from, t = the team that holds it (0-based, in draft-slot order).
+function mdOrder(c){
+  if(c.league) return c.picks;
+  const o=[];
+  for(let r=0;r<c.rounds;r++) for(let i=0;i<c.teams;i++){
+    const s=(c.type==='snake'&&r%2===1)?c.teams-1-i:i; o.push({r:r,i:i,o:s,t:s}); }
+  return o;
+}
+function mdMine(c){ return c.league?c.mine:c.slot-1; }
+function mdName(c,t,anon){
+  if(t===mdMine(c)) return 'You';
+  return (c.league&&!anon)?c.names[t]:'Team '+(t+1);
+}
+function mdNeed(c,t){ return (c.league&&c.needs)?c.needs[t]:null; }
+function mdLabel(o){ return (o.r+1)+'.'+String(o.i+1).padStart(2,'0'); }
+function mdGauss(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function mdTeamPos(picks,t){ const c={}; picks.forEach(x=>{ if(x.t===t){ const ps=MD.pool.players[x.pi].pos; c[ps]=(c[ps]||0)+1; } }); return c; }
+function mdBotChoice(avail,teamPos,round,need){
+  const P=MD.pool.players, sig=round===0?MD_SIG1:MD_SIG2, w=round===0?MD_NEED1:MD_NEED2;
+  let best=-1,bs=-Infinity;
+  for(const i of avail){
+    const p=P[i], n=teamPos[p.pos]||0, brake=n===0?1:n===1?0.92:n===2?0.8:0.6;
+    const nd=need&&need[p.pos]?1+w*need[p.pos]:1;
+    const s=Math.max(p.v,MD_FLOOR)*Math.exp(sig*mdGauss())*brake*nd;
+    if(s>bs){ bs=s; best=i; }
+  }
+  return best;
+}
+function mdAvail(){ const taken=new Set(MD.picks.map(x=>x.pi)); return MD.pool.players.map((_,i)=>i).filter(i=>!taken.has(i)); }
+function mdNextMine(from){ const c=MD.cfg, o=mdOrder(c), me=mdMine(c); for(let k=from;k<o.length;k++) if(o[k].t===me) return k; return -1; }
+function mdRunBots(){
+  const c=MD.cfg, o=mdOrder(c), me=mdMine(c);
+  while(MD.picks.length<o.length){
+    const k=MD.picks.length, s=o[k];
+    if(s.t===me) break;
+    const av=mdAvail(); if(!av.length) break;
+    MD.picks.push({k:k,t:s.t,pi:mdBotChoice(av,mdTeamPos(MD.picks,s.t),s.r,mdNeed(c,s.t))});
+  }
+}
+// Chance each available player is still there at your next pick (or, when you are on
+// the clock, at your pick after this one if you pass on him).
+function mdOdds(){
+  const c=MD.cfg, o=mdOrder(c), k0=MD.picks.length, mine=mdMine(c);
+  const onClock=k0<o.length&&o[k0].t===mine;
+  const target=mdNextMine(onClock?k0+1:k0);
+  if(target<0) return null;
+  const start=onClock?k0+1:k0, base=mdAvail(), cnt=new Map(base.map(i=>[i,0]));
+  const teamPos0={}; for(let t=0;t<c.teams;t++) teamPos0[t]=mdTeamPos(MD.picks,t);
+  for(let s=0;s<MD_SIMS;s++){
+    const av=new Set(base), tp={}; for(const t in teamPos0) tp[t]=Object.assign({},teamPos0[t]);
+    for(let k=start;k<target;k++){
+      const ch=mdBotChoice(av,tp[o[k].t],o[k].r,mdNeed(c,o[k].t)); if(ch<0) break;
+      av.delete(ch); const ps=MD.pool.players[ch].pos; tp[o[k].t][ps]=(tp[o[k].t][ps]||0)+1;
+    }
+    av.forEach(i=>cnt.set(i,cnt.get(i)+1));
+  }
+  const res={}; cnt.forEach((v,i)=>{ res[i]=v/MD_SIMS; });
+  return {target:target,label:mdLabel(o[target]),pass:onClock,res:res};
+}
+// Where each player usually goes: the median pick over MD_SIMS all-bot drafts of the whole
+// order (you included, drafting for your own needs). A player left on the board in half the
+// drafts or more has no median pick, and shows a dash. Also returns every pick each player was
+// taken at in those drafts, sorted, for the Reach / Value test (mdTag).
+function mdAdp(){
+  const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, at=P.map(()=>[]), mid=Math.floor((MD_SIMS-1)/2);
+  for(let s=0;s<MD_SIMS;s++){
+    const av=new Set(P.map((_,i)=>i)), tp={};
+    for(let k=0;k<o.length&&av.size;k++){
+      const t=o[k].t; if(!tp[t]) tp[t]={};
+      const ch=mdBotChoice(av,tp[t],o[k].r,mdNeed(c,t)); if(ch<0) break;
+      av.delete(ch); at[ch].push(k); tp[t][P[ch].pos]=(tp[t][P[ch].pos]||0)+1;
+    }
+  }
+  at.forEach(a=>a.sort((x,y)=>x-y));
+  return {med:at.map(a=>a.length<=mid?null:a[mid]),at:at};
+}
+// Reach ('r'), Value ('v') or nothing (''), for a pick made: see REACH / VALUE in the header.
+function mdTag(x){
+  const at=MD.adpAt&&MD.adpAt[x.pi]; if(!at) return '';
+  const m=MD.adp?MD.adp[x.pi]:null, mm=m==null?mdOrder(MD.cfg).length:m;
+  let by=0, before=0; for(const v of at){ if(v<=x.k) by++; if(v<x.k) before++; }
+  if(by<0.1*MD_SIMS&&x.k<=mm-2) return 'r';
+  if(before>=0.9*MD_SIMS&&x.k>=mm+2) return 'v';
+  return '';
+}
+function mdPace(){ return MD_PACE[mdSpeed()]||MD_PACE.normal; }
+function mdSpeed(){ if(!MD.speed){ const v=dlPref('delta_md_speed'); MD.speed=(v==='fast')?'fast':'normal'; } return MD.speed; }
+function mdStop(){ clearTimeout(MD.timer); MD.timer=null; MD.auto=false; MD.paused=false; MD.held=false; }
+function mdBotsTurn(){ const c=MD.cfg, o=mdOrder(c), k=MD.picks.length; return k<o.length&&o[k].t!==mdMine(c)&&mdAvail().length>0; }
+// Start the bots after a pick of yours (or the first pick), or hand straight back if it is yours.
+function mdGo(){
+  clearTimeout(MD.timer); MD.timer=null; MD.held=false;
+  MD.auto=mdBotsTurn(); MD.paused=false;
+  MD.odds=mdOdds(); mdRender();
+  if(MD.auto) MD.timer=setTimeout(mdStep,mdPace());
+}
+function mdStep(){
+  clearTimeout(MD.timer); MD.timer=null;
+  if(!MD.auto||MD.paused) return;
+  const pnl=document.getElementById('panel-mock');
+  if(pnl&&!pnl.classList.contains('active')){ MD.held=true; return; }   // resumes on return
+  if(!mdBotsTurn()){ MD.auto=false; MD.odds=mdOdds(); mdRender(); return; }
+  const c=MD.cfg, o=mdOrder(c), k=MD.picks.length, s=o[k];
+  MD.picks.push({k:k,t:s.t,pi:mdBotChoice(mdAvail(),mdTeamPos(MD.picks,s.t),s.r,mdNeed(c,s.t))});
+  MD.fresh=k; MD.auto=mdBotsTurn(); MD.odds=mdOdds(); mdRender();
+  if(MD.auto) MD.timer=setTimeout(mdStep,mdPace());
+}
+function mdSkip(){ clearTimeout(MD.timer); MD.timer=null; MD.auto=false; MD.paused=false; mdRunBots(); MD.fresh=MD.picks.length-1; MD.odds=mdOdds(); mdRender(); }
+function mdPause(){ MD.paused=true; clearTimeout(MD.timer); MD.timer=null; mdRender(); }
+function mdResume(){ if(!MD.auto) return; MD.paused=false; mdRender(); MD.timer=setTimeout(mdStep,Math.min(400,mdPace())); }
+function mdSetSpeed(v){ MD.speed=(v==='fast')?'fast':'normal'; try{ dlPref('delta_md_speed',MD.speed); }catch(e){}
+  if(MD.auto&&!MD.paused){ clearTimeout(MD.timer); mdRender(); MD.timer=setTimeout(mdStep,mdPace()); } else mdRender(); }
+function mdStart(){
+  mdStop(); MD.picks=[]; MD.sel=null; MD.running=true; MD.fresh=-1;
+  if(!MD.cfg.league){ try{ dlPref('delta_md_cfg',JSON.stringify({teams:MD.cfg.teams,rounds:MD.cfg.rounds,type:MD.cfg.type,slot:MD.cfg.slot})); }catch(e){} }
+  mdPrice(); const ad=mdAdp(); MD.adp=ad.med; MD.adpAt=ad.at; mdGo();
+  // Start sits at the foot of the setup screen: bring the clock into view
+  const root=document.getElementById('md-root');
+  if(root){ const top=root.getBoundingClientRect().top; if(top<0) window.scrollTo({top:Math.max(0,window.scrollY+top-12)}); }
+}
+function mdSet(k,v){
+  if(!MD.cfg||MD.cfg.league) MD.cfg=mdDefaults();
+  MD.cfg[k]=v; if(k==='teams') MD.cfg.slot=Math.min(MD.cfg.slot,v);
+  mdRenderSetup();
+}
+function mdSetMode(m){ mdStop(); MD.mode=(m==='league')?'league':'custom'; try{ dlPref('delta_md_mode',MD.mode); }catch(e){} MD.cfg=null; mdRenderSetup(); }
+function mdSetLgType(t){ mdStop(); if(MD.lgInfo) MD.lgInfo=Object.assign({},MD.lgInfo,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
+function mdEditSettings(){ mdStop(); MD.picks=[]; MD.running=false; MD.sel=null; MD.fresh=-1; if(MD.cfg&&MD.cfg.league) MD.cfg=null; mdRenderSetup(); }
+// Your pick: one tap on the Draft button beside a name (owner, 24 Oct: replaced tap-to-select
+// and a separate confirm button).
+function mdDraftNow(pi){
+  const c=MD.cfg, o=mdOrder(c), k=MD.picks.length;
+  if(k>=o.length||o[k].t!==mdMine(c)) return;
+  if(!MD.pool.players[pi]||MD.picks.some(x=>x.pi===pi)) return;
+  MD.picks.push({k:k,t:o[k].t,pi:pi,me:true}); MD.sel=null; MD.fresh=k;
+  mdGo();
+}
+function mdSetPos(p){ MD.pos=p; mdRender(); }
+// The DELTA Read view ("lens" in the code; the owner renamed it from DELTA Lens on 24 Oct) reads
+// the Big Board tab's own production numbers (devyProdFor): dDOM and PPA percentiles from the
+// newest college season, and the recruiting stars.
+function mdSetLens(on){
+  MD.lens=!!on;
+  if(MD.lens&&!MD.lensData&&!MD.lensLoad){
+    MD.lensLoad=(async()=>{
+      try{
+        if(typeof DEVY_PROD!=='undefined'&&!DEVY_PROD){
+          const yrs=(await cfbHistorySeasons((typeof CFB!=='undefined'&&CFB&&CFB.seasons)||[])).slice().sort((a,b)=>b-a);
+          for(const y of yrs){ const pool=await cfbLoadSeason(y); if(pool&&pool.length){ DEVY_PROD={year:y,pool:pool}; break; } }
+        }
+      }catch(e){}
+      MD.lensData={year:(typeof DEVY_PROD!=='undefined'&&DEVY_PROD)?DEVY_PROD.year:null}; mdRender();
+    })();
+  }
+  mdRender();
+}
+function mdLens(p){
+  let pr=null; try{ pr=(typeof devyProdFor==='function')?devyProdFor(p.cfb||p.n):null; }catch(e){ pr=null; }
+  return {dd:pr?pr.dd:null,ppa:pr?pr.ppa:null,stars:pr?pr.stars:null};
+}
+function openMockDraft(){
+  const root=document.getElementById('md-root'); if(!root) return;
+  clearTimeout(MD._wait);
+  if(!MD.pool){ root.innerHTML='<div class="dl-md-note">Loading the big board…</div>';
+    mdLoad().then(p=>{ if(!p){ root.innerHTML='<div class="dl-md-note">The big board didn’t load.</div>'
+      +'<button type="button" class="dl-md-go" onclick="openMockDraft()">Try Again</button>'; return; } openMockDraft(); }); return; }
+  // A saved league still loading: wait for it (up to ~20 s) rather than open in Custom.
+  const pnl=document.getElementById('panel-mock');
+  if(typeof SLP!=='undefined'&&SLP&&SLP.conn&&!SLP.loaded&&SLP.busy&&MD._waitN<50&&!MD.running){
+    MD._waitN++; root.innerHTML='<div class="dl-md-note">Loading your league…</div>';
+    if(!pnl||pnl.classList.contains('active')) MD._wait=setTimeout(openMockDraft,400);
+    return;
+  }
+  MD._waitN=0; mdPrice();
+  // Standings move every week: an unstarted league draft is rebuilt from today's data.
+  if(!MD.running&&!MD.picks.length&&MD.cfg&&MD.cfg.league) MD.cfg=null;
+  // A draft from a league that is no longer the active one is stale: back to setup.
+  if(MD.cfg&&MD.cfg.league&&SLP&&SLP.league&&MD.cfg.leagueId!==SLP.league.league_id){ mdStop(); MD.cfg=null; MD.picks=[]; MD.running=false; }
+  if(MD.picks.length||MD.running){
+    mdRender();
+    // the bots were mid-run when the tab was left: carry on from where they stopped
+    if(MD.auto&&MD.held&&!MD.paused){ MD.held=false; clearTimeout(MD.timer); MD.timer=setTimeout(mdStep,500); }
+  } else mdRenderSetup();
+}
+function mdChips(key,vals,cur,lab,fn){
+  fn=fn||'mdSet';
+  return '<div class="dl-md-row"><span class="dl-md-rl">'+lab+'</span><div class="dl-md-chips">'
+    +vals.map(v=>{ const val=(typeof v==='object')?v.v:v, txt=(typeof v==='object')?v.t:v;
+      const arg=(typeof val==='string'?'\''+val+'\'':val);
+      return '<button type="button" class="dl-md-chip'+(cur===val?' on':'')+'" onclick="'+fn+'('+(fn==='mdSet'?'\''+key+'\',':'')+arg+')">'+txt+'</button>'; }).join('')
+    +'</div></div>';
+}
+function mdDayShort(iso){ const t=mdDay(iso); return t.replace(/ \d{4}$/,''); }
+function mdDay(iso){ const d=new Date(String(iso)+'T12:00:00Z'); if(isNaN(d)) return iso||''; return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+d.getUTCFullYear(); }
+function mdNeedText(c,t){
+  const nd=mdNeed(c,t); if(!nd) return '';
+  const top=['QB','RB','WR','TE'].filter(p=>nd[p]>=0.5).sort((a,b)=>nd[b]-nd[a]).slice(0,2);
+  return top.length?'Needs '+top.join(', '):'';
+}
+function mdRenderSetup(){
+  const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
+  const block=mdLeagueBlock();
+  let mode=MD.mode||dlPref('delta_md_mode')||'league';
+  if(mode==='league'&&block) mode='custom';
+  MD.mode=mode;
+  let body='', note='';
+  if(mode==='league'){
+    if(!MD.lgInfo||MD.lgInfo.id!==SLP.league.league_id){
+      root.innerHTML='<div class="dl-md-note">Reading your league’s draft…</div>';
+      mdLeagueInfo().then(()=>{ if(!MD.running) mdRenderSetup(); }); return;
+    }
+    if(!MD.cfg||!MD.cfg.league) MD.cfg=mdLeagueCfg(MD.lgInfo);
+    const c=MD.cfg, o=mdOrder(c);
+    const tie=' Teams with the same record go by '+(c.maxPF?'Max PF':'points for')+', lower first.';
+    const head={standings:'Order is the standings'+(c.week?' after Week '+c.week:'')+', worst record first.'+tie+' It updates as the season goes.',
+      last:'Order is last season’s final standings, worst record first.'+tie+' Playoff results aren’t counted, so check it against your league’s rules.',
+      set:'This is the order your league set in Sleeper.',
+      projected:'No games played yet, so the order is Proj PPG from Power Rankings, weakest lineup first, until Week 1 is scored.'}[c.basis];
+    const showRec=c.basis==='standings'||c.basis==='last';
+    const rows=o.filter(x=>x.r===0).map(x=>{
+      const rec=c.recs[x.o], traded=x.t!==x.o;
+      return '<tr'+(x.t===c.mine?' class="me"':'')+'><td class="dl-md-rk">'+mdLabel(x)+'</td>'
+        +'<td class="pname"><span class="dl-md-tn">'+mdEsc(x.o===c.mine?'You':c.names[x.o])+'</span>'
+        +(traded?'<span class="dl-md-sub">Owned by '+mdEsc(x.t===c.mine?'You':c.names[x.t])+'</span>':'')+'</td>'
+        +'<td class="dl-b-r">'+(showRec?rec.rec:'—')+'</td>'
+        +'<td class="dl-b-r">'+(showRec?(c.maxPF?rec.mpf:rec.pf).toFixed(1):'—')+'</td></tr>'; }).join('');
+    const minePicks=o.filter(x=>x.t===c.mine).map(mdLabel);
+    body='<div class="dl-md-card">'
+      +'<div class="dl-md-lg"><b>'+mdEsc(c.leagueName)+'</b><span>'+c.season+' Rookie Draft · '+c.teams+' Teams · '+c.rounds+' Round'+(c.rounds===1?'':'s')+'</span></div>'
+      +mdChips('type',[{v:'linear',t:'Linear'},{v:'snake',t:'Snake'}],c.type,'Order','mdSetLgType')
+      +'<p class="dl-md-hint">'+head+(MD.lgInfo.read&&!MD.lgInfo.set?' Linear or snake comes from your league’s '+(MD.lgInfo.fromDraft?'draft settings':'last draft')+'.':'')+'</p>'
+      +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-otbl"><thead><tr><th>Pick</th><th>Round 1</th><th class="dl-b-r">Record</th><th class="dl-b-r">'+(c.maxPF?'Max PF':'PF')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<div class="dl-md-mine">'+(minePicks.length?'Your Picks: <b>'+minePicks.join(' · ')+'</b>':'You don’t hold a '+c.season+' pick. The bots will make every pick.')+'</div>'
+      +'</div>';
+  } else {
+    if(!MD.cfg||MD.cfg.league) MD.cfg=mdDefaults();
+    const c=MD.cfg, slots=[]; for(let s=1;s<=c.teams;s++) slots.push(s);
+    body='<div class="dl-md-card">'
+      +mdChips('teams',[8,10,12,14],c.teams,'Teams')
+      +mdChips('rounds',[2,3,4,5],c.rounds,'Rounds')
+      +mdChips('type',[{v:'linear',t:'Linear'},{v:'snake',t:'Snake'}],c.type,'Order')
+      +mdChips('slot',slots,c.slot,'Your Pick')
+      +'</div>';
+    if(block==='loading') note='Your league is still loading. Pick My League again in a moment.';
+    else if(block==='mfl') note='My League works with Sleeper leagues for now. MFL standings aren’t read yet.';
+    else if(block==='season') note='Your league’s next draft isn’t the '+MD.pool['class']+' class, so it runs as Custom.';
+    else if(block==='none') note='Connect your Sleeper league on My Team to mock your real draft, with every traded pick.';
+  }
+  const need=MD.cfg.teams*MD.cfg.rounds, have=MD.pool.players.length;
+  const short=need>have?'<p class="dl-md-warn">The board has '+have+' fantasy players and this draft has '+need+' picks, so it ends early. A deeper board paste fixes it.</p>'
+    :(need>have-6?'<p class="dl-md-warn">The board has '+have+' fantasy players for '+need+' picks, so the last picks have little to choose from.</p>':'');
+  const modes=(block===null||block==='loading')
+    ?'<div class="dl-md-card">'+mdChips('mode',[{v:'league',t:'My League'},{v:'custom',t:'Custom'}],mode,'Draft','mdSetMode')+'</div>':'';
+  root.innerHTML='<div class="dl-md-wrap">'
+    +'<div class="dl-md-head"><h2>Mock Draft</h2><p>'+MD.pool['class']+' Rookie Class · '+mdEsc(MD.pool.source)+' Big Board, '+mdEsc(mdDay(MD.pool.boardDate))+'</p></div>'
+    +modes+body+short
+    +'<button type="button" class="dl-md-go" onclick="mdStart()">Start Draft</button>'
+    +(note?'<p class="dl-md-note">'+note+'</p>':'')
+    +'<p class="dl-md-note">Players come from the consensus big board, adjusted for fantasy by position. Bots draft with about as much variation as a real league showed'+(mode==='league'?', leaning slightly toward their team’s needs':'')+'.</p>'
+    +'</div>';
+}
+function mdRender(){
+  const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
+  const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, k=MD.picks.length, done=k>=o.length||!mdAvail().length;
+  const mine=mdMine(c), onClock=!done&&o[k].t===mine;
+  // Reach / Value: an unusual pick for that player (mdTag). Neutral colours — a draft-room aside,
+  // not a DELTA call.
+  const tagOf=x=>{ const t=mdTag(x);
+    return t==='r'?'<mark class="dl-md-tag r">Reach</mark>':(t==='v'?'<mark class="dl-md-tag v">Value</mark>':''); };
+  const pickRow=x=>{ const p=P[x.pi], pk=o[x.k];
+    return '<li class="'+(x.me?'me':'')+(x.k===MD.fresh&&!done?' new':'')+'"><b>'+mdLabel(pk)+'</b><span>'+mdEsc(p.n)+'</span><em>'+p.pos+'</em>'+tagOf(x)+'<i>'+mdEsc(mdName(c,x.t))+'</i></li>'; };
+  const myPicks=MD.picks.filter(x=>x.me);
+  const nextMine=mdNextMine(onClock?k+1:k);
+  let status;
+  if(done) status='<div class="dl-md-status done"><b>Draft Complete</b><span>'+myPicks.length+' pick'+(myPicks.length===1?'':'s')+' for you</span></div>';
+  else if(onClock) status='<div class="dl-md-status on"><b>You’re On The Clock</b><span>Pick '+mdLabel(o[k])+(nextMine>=0?' · next '+mdLabel(o[nextMine]):'')+'</span></div>';
+  else {
+    // the bots' clock: who is picking, a bar that runs for the pause before the pick, and controls
+    const via=o[k].o!==o[k].t?' (via '+mdName(c,o[k].o)+')':'', nt=mdNeedText(c,o[k].t), live=MD.auto&&!MD.paused;
+    const toMe=nextMine>=0?nextMine-k:-1;
+    status='<div class="dl-md-clock">'
+      +'<div class="dl-md-ck-row"><span class="dl-md-ck-pk">'+mdLabel(o[k])+'</span><span class="dl-md-ck-lbl">'+(live?'On The Clock':(MD.auto?'Paused':'Up Next'))+'</span></div>'
+      +'<div class="dl-md-ck-team">'+mdEsc(mdName(c,o[k].t)+via)+'</div>'
+      +(nt?'<div class="dl-md-ck-sub">'+nt+'</div>':'')
+      +'<div class="dl-md-ck-bar">'+(live?'<i style="animation-duration:'+mdPace()+'ms"></i>':'')+'</div>'
+      +'<div class="dl-md-ck-ctl">'
+        +(MD.auto?'<button type="button" class="dl-md-chip sm" onclick="'+(MD.paused?'mdResume()':'mdPause()')+'">'+(MD.paused?'Resume':'Pause')+'</button>'
+          :'<button type="button" class="dl-md-chip sm on" onclick="mdGo()">Continue</button>')
+        +'<button type="button" class="dl-md-chip sm" onclick="mdSkip()">'+(toMe>0?'Skip To My Pick':'Skip To The End')+'</button>'
+        +'<span class="dl-md-ck-sp">'+[['normal','Normal'],['fast','Fast']].map(([v,t])=>'<button type="button" class="dl-md-chip sm'+(mdSpeed()===v?' on':'')+'" onclick="mdSetSpeed(\''+v+'\')">'+t+'</button>').join('')+'</span>'
+      +'</div>'
+      +'<div class="dl-md-ck-you">'+(toMe>0?'Your pick: '+mdLabel(o[nextMine])+' · '+toMe+' pick'+(toMe===1?'':'s')+' away':'You have no more picks in this draft.')+'</div>'
+      +'</div>';
+  }
+  // every pick so far, newest first, in a box of fixed height so the board below never jumps
+  const feed='<div class="dl-md-sec"><h3>Latest Picks</h3><ol class="dl-md-feed">'
+    +(MD.picks.length?MD.picks.slice().reverse().map(pickRow).join(''):'<li class="dl-md-empty">Picks show up here as they’re made.</li>')+'</ol></div>';
+  // board, in the bots' order (fantasy-adjusted), with the board rank beside it
+  const av=mdAvail().sort((a,b)=>P[b].v-P[a].v||P[a].rank-P[b].rank);
+  const rank=new Map(av.map((i,j)=>[i,j+1]));
+  const list=av.filter(i=>MD.pos==='All'||P[i].pos===MD.pos);
+  const od=MD.odds, adp=MD.adp;
+  const oddsHead=od?(od.pass?'If You Pass · '+od.label:'At '+od.label):'';
+  // under the name: school, then the NFL team holding the pick that matches his board rank
+  const nameCell=p=>'<td class="pname"><span class="dl-b-pn">'+mdEsc(p.n)+'</span><span class="dl-b-tp">'+p.pos+'</span>'
+    +'<span class="dl-md-sub">'+mdEsc(p.school)+(p.nt?' · '+mdEsc(p.nt)+' #'+p.np:'')+'</span></td>';
+  const rowOpen=()=>'<tr class="dl-md-tr">';
+  // first column: the Draft button on your turn, the player's place in the bots' order otherwise
+  const firstCell=i=>onClock?'<td class="dl-md-dcell"><button type="button" class="dl-md-dbtn" onclick="mdDraftNow('+i+')">Draft</button></td>'
+    :'<td class="dl-b-r dl-md-rk">'+rank.get(i)+'</td>';
+  const firstHead=onClock?'<th></th>':'<th class="dl-b-r">#</th>';
+  let head,rows;
+  if(!MD.lens){
+    head=firstHead+'<th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">Avg Pick</th>'+(od?'<th class="dl-b-r">'+oddsHead+'</th>':'');
+    rows=list.map(i=>{ const p=P[i], pr=od&&od.res[i]!=null?od.res[i]:null, ak=adp?adp[i]:null;
+      return rowOpen(i)
+        +firstCell(i)+nameCell(p)
+        +'<td class="dl-b-r">'+p.rank+'</td>'
+        +'<td class="dl-b-r dl-md-adp">'+(ak!=null&&o[ak]?mdLabel(o[ak]):'—')+'</td>'
+        +(od?'<td class="dl-b-r"><span class="dl-md-odds" style="--w:'+Math.round((pr||0)*100)+'%">'+(pr==null?'—':Math.round(pr*100)+'%')+'</span></td>':'')
+        +'</tr>'; }).join('');
+  } else {
+    const wait=MD.lensData?'—':'…';
+    head=firstHead+'<th>Player</th><th class="dl-b-r">Board</th><th class="dl-b-r">dDOM</th><th class="dl-b-r">PPA</th><th class="dl-b-r">Recruit</th>';
+    rows=list.map(i=>{ const p=P[i], L=MD.lensData?mdLens(p):{};
+      return rowOpen(i)
+        +firstCell(i)+nameCell(p)
+        +'<td class="dl-b-r">'+p.rank+'</td>'
+        +'<td class="dl-b-r">'+(L.dd!=null?L.dd:wait)+'</td>'
+        +'<td class="dl-b-r">'+(L.ppa!=null?L.ppa:wait)+'</td>'
+        +'<td class="dl-b-r">'+(L.stars?L.stars+'★':wait)+'</td></tr>'; }).join('');
+  }
+  const board=done?'':'<div class="dl-md-sec"><div class="dl-md-tools">'
+      +'<div class="dl-md-chips">'+['Board','DELTA Read'].map((t,j)=>'<button type="button" class="dl-md-chip'+((j===1)===MD.lens?' on':'')+'" onclick="mdSetLens('+(j===1)+')">'+t+'</button>').join('')+'</div>'
+      +'<div class="dl-md-chips">'+['All','QB','RB','WR','TE'].map(t=>'<button type="button" class="dl-md-chip sm'+(MD.pos===t?' on':'')+'" onclick="mdSetPos(\''+t+'\')">'+t+'</button>').join('')+'</div>'
+      +'</div>'
+      +(MD.lens?'<p class="dl-md-hint">Same order. dDOM is his share of his team’s production, adjusted for opponents, and PPA his efficiency, each a percentile (0–100) at his position in the '+((MD.lensData&&MD.lensData.year)||'latest')+' season. Recruit is his high-school star rating.</p>'
+        :'<p class="dl-md-hint">Board: '+mdEsc(MD.pool.source)+' rank, '+mdDayShort(MD.pool.boardDate)
+          +(MD.pool.orderAsOf?' · Team: who holds that NFL pick ('+mdDayShort(MD.pool.orderAsOf)+' order)':'')
+          +' · Avg Pick: '+MD_SIMS+' practice drafts'
+          +(od?' · Last column: chance he’s still there at '+od.label+(od.pass?' if you pass':''):'')+'</p>')
+      +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-tbl"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  // the bar pinned to the bottom of the screen: a reminder when you are on the clock, otherwise
+  // the latest pick — so you can follow along from the board
+  let action='';
+  if(onClock) action='<div class="dl-md-act"><div class="dl-md-pill on">You’re On The Clock · '+mdLabel(o[k])+'</div></div>';
+  else if(!done&&MD.fresh>=0&&MD.picks[MD.fresh]){ const x=MD.picks[MD.fresh], p=P[x.pi];
+    action='<div class="dl-md-act"><div class="dl-md-pill new"><b>'+mdLabel(o[x.k])+'</b><span>'+mdEsc(p.n)+' '+p.pos+'</span><i>'+mdEsc(mdName(c,x.t))+'</i></div></div>'; }
+  const mineHtml=myPicks.length?'<div class="dl-md-sec"><h3>Your Picks</h3><ol class="dl-md-log mine">'+myPicks.map(pickRow).join('')+'</ol></div>':'';
+  let all='';
+  if(done){ for(let r=0;r<c.rounds;r++){ const rp=MD.picks.filter(x=>o[x.k].r===r); if(rp.length) all+='<div class="dl-md-sec"><h3>Round '+(r+1)+'</h3><ol class="dl-md-log">'+rp.map(pickRow).join('')+'</ol></div>'; } }
+  const share=done?'<div class="dl-md-share"><button type="button" class="dl-tc-act" onclick="mdShareImage(this)">Share Image</button>'
+      +(c.league?'<label class="dl-tc-names"><input type="checkbox"'+(tiNamesOn()?' checked':'')+' onchange="tiSetNames(this.checked)">Manager Names On Share Image</label>':'')+'</div>':'';
+  root.innerHTML='<div class="dl-md-wrap">'
+    +'<div class="dl-md-top"><button type="button" class="dl-md-link" onclick="mdEditSettings()">← Settings</button>'
+    +'<button type="button" class="dl-md-link" onclick="mdStart()">Restart</button></div>'
+    +status+(done?share+mineHtml+all:feed+mineHtml+board)+action
+    +(done?'<button type="button" class="dl-md-go" onclick="mdStart()">Draft Again</button>':'')
+    +'</div>';
+}
+// ── Share image: the whole draft as one picture (same kit as the Trade Calc) ──
+async function drawMockImage(){
+  const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, anon=c.league&&!tiNamesOn();
+  const C=dlImgColors(), F=dlImgFonts(), W=1200, PAD=60, GAP=24, RH=84, RHEAD=58;
+  const colW=(W-2*PAD-GAP)/2;
+  const rounds=[]; for(let r=0;r<c.rounds;r++){ const rp=MD.picks.filter(x=>o[x.k].r===r); if(rp.length) rounds.push(rp); }
+  const H=PAD+96+130+rounds.reduce((h,rp)=>h+RHEAD+Math.ceil(rp.length/2)*RH+GAP,0)+40+DL_IMG_FOOT;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
+  let y=await dlImgStart(g,W,PAD,C,F,'MOCK DRAFT','Board From '+mdDay(MD.pool.boardDate));
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 46px '+F.sans;
+  g.fillText(dlImgFit(g,c.league?(anon?'Rookie Mock Draft':c.leagueName):'Rookie Mock Draft',W-2*PAD),PAD,y+34);
+  g.fillStyle=C.fog; g.font='600 24px '+F.sans;
+  g.fillText(MD.pool['class']+' Rookie Class · '+c.teams+' Teams · '+c.rounds+' Round'+(c.rounds===1?'':'s')+' · '+(c.type==='snake'?'Snake':'Linear')+' · '+dlImgDate(new Date()),PAD,y+84);
+  y+=130;
+  rounds.forEach((rp,ri)=>{
+    g.textAlign='left'; g.fillStyle=C.fog; g.font='700 22px '+F.mono; dlImgSpace(g,3);
+    g.fillText('ROUND '+(o[rp[0].k].r+1),PAD,y+24); dlImgSpace(g,0);
+    g.fillStyle=C.line; g.fillRect(PAD+150,y+24,W-2*PAD-150,2);
+    y+=RHEAD;
+    const half=Math.ceil(rp.length/2);
+    rp.forEach((x,j)=>{
+      const col=j<half?0:1, row=j<half?j:j-half, cx=PAD+col*(colW+GAP), cy=y+row*RH;
+      const p=P[x.pi], tx=cx+100, room=colW-100-16;
+      if(x.me){ g.fillStyle=C.lead; dlImgRound(g,cx,cy+5,colW,RH-10,12); g.fill(); g.strokeStyle=C.leadBd; g.lineWidth=2; g.stroke(); }
+      g.textAlign='left'; g.fillStyle=C.fog; g.font='600 22px '+F.mono; g.fillText(mdLabel(o[x.k]),cx+16,cy+RH/2);
+      // Reach / Value (owner, 24 Oct): the page's outlined tag, at the right end of line 2, so a
+      // long name on line 1 keeps its full width
+      const tg=mdTag(x); let tagW=0;
+      if(tg){ const tt=tg==='r'?'REACH':'VALUE', tc=tg==='r'?C.violet:C.sky;
+        g.font='800 17px '+F.sans; dlImgSpace(g,1); tagW=Math.ceil(g.measureText(tt).width)+20;
+        const px=cx+colW-16-tagW;
+        g.strokeStyle=tc; g.lineWidth=2; dlImgRound(g,px,cy+46,tagW,28,7); g.stroke();
+        g.fillStyle=tc; g.fillText(tt,px+10,cy+61); dlImgSpace(g,0); }
+      // line 1: player and position; line 2: the team that made the pick
+      g.font='600 20px '+F.sans; const pw=g.measureText(p.pos).width;
+      g.fillStyle=C.paper; g.font='700 27px '+F.sans;
+      const nm=dlImgFit(g,p.n,room-pw-12), nw=g.measureText(nm).width; g.fillText(nm,tx,cy+30);
+      g.fillStyle=C.fog2; g.font='600 20px '+F.sans; g.fillText(p.pos,tx+nw+10,cy+31);
+      g.fillStyle=x.me?C.paper:C.fog; g.font=(x.me?'700 ':'500 ')+'20px '+F.sans;
+      g.fillText(dlImgFit(g,mdName(c,x.t,anon),room-(tagW?tagW+16:0)),tx,cy+60);
+    });
+    y+=half*RH+GAP;
+  });
+  y+=40; dlImgFooter(g,W,PAD,C,F,y);
+  return cv;
+}
+function mdShareImage(btn){ return dlImgShare(drawMockImage,'delta-mock-draft.png',btn); }
+
 // ── Gap-filler (on-demand) ───────────────────────────────────
 // Suggests the single asset that best evens an uneven 2-team trade. When a
 // Sleeper trade is loaded, candidates are limited to the light side's actual
@@ -4938,7 +5656,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['rankings','compare','roles','scorecard','audit'],
                  cfb:['college','cfbroles','portal','bigboard'],
-                 me: ['myteam','trade','watchlist'] };
+                 me: ['myteam','trade','mock','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
 // The three old NFL tabs are now views of Rankings (14 Oct 2026); their ids still link there.
@@ -4991,7 +5709,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
+const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -5386,6 +6104,7 @@ function showTab(id,el,skipSection){
   if(id==='scorecard')openScorecardTab();
   if(id==='roles' && typeof openRolesTab==='function'){ try{ openRolesTab(); }catch(e){ console.warn('roles',e); } }
   if(id==='compare' && typeof openCompareTab==='function'){ try{ openCompareTab(); }catch(e){ console.warn('compare',e); } }
+  if(id==='mock' && typeof openMockDraft==='function'){ try{ openMockDraft(); }catch(e){ console.warn('mock',e); } }
   if(id==='bigboard'){ try{ bbPaintClass(); }catch(e){} }
   if(id==='bigboard' && typeof openDevyTab==='function'){ try{ openDevyTab(); }catch(e){ console.warn('bigboard',e); } }
   if(id==='audit' && typeof renderScarcityAudit==='function')renderScarcityAudit();
@@ -7021,7 +7740,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-24d</span>
+  <span class="foot-build">2026-10-24g</span>
 </footer>
 
 
