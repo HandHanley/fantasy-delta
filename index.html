@@ -4243,7 +4243,9 @@ function mdLoad(){
       MD.pool=ps.length>=20?{'class':j['class'],generated:j.generated,source:j.source||'NFL Mock Draft Database',
         boardDate:j.boardDate||j.generated,orderAsOf:(j.draftOrder&&j.draftOrder.asOf)||null,players:ps}:null;
       return MD.pool; })
-    .catch(()=>null);
+    .catch(()=>null)
+    // a failed load must not stick: the next open (or Try Again) fetches afresh
+    .then(p=>{ if(!p) MD.load=null; return p; });
   return MD.load;
 }
 // Board rank -> the bots' working value, in the reader's QB format (see the header).
@@ -4517,7 +4519,8 @@ function openMockDraft(){
   const root=document.getElementById('md-root'); if(!root) return;
   clearTimeout(MD._wait);
   if(!MD.pool){ root.innerHTML='<div class="dl-md-note">Loading the big board…</div>';
-    mdLoad().then(p=>{ if(!p){ root.innerHTML='<div class="dl-md-note">The big board didn’t load. Try again in a moment.</div>'; return; } openMockDraft(); }); return; }
+    mdLoad().then(p=>{ if(!p){ root.innerHTML='<div class="dl-md-note">The big board didn’t load.</div>'
+      +'<button type="button" class="dl-md-go" onclick="openMockDraft()">Try Again</button>'; return; } openMockDraft(); }); return; }
   // A saved league still loading: wait for it (up to ~20 s) rather than open in Custom.
   const pnl=document.getElementById('panel-mock');
   if(typeof SLP!=='undefined'&&SLP&&SLP.conn&&!SLP.loaded&&SLP.busy&&MD._waitN<50&&!MD.running){
@@ -7705,7 +7708,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-24e</span>
+  <span class="foot-build">2026-10-24f</span>
 </footer>
 
 
