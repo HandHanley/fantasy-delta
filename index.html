@@ -1571,6 +1571,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-lg-act{flex:1;padding:8px;border-radius:9px;border:1px solid var(--teal-br);background:transparent;
   color:var(--teal-br);font-weight:800;font-size:12px;font-family:inherit;cursor:pointer}
 .dl-lg-act:hover{background:var(--teal-soft)}
+.dl-lg-act:disabled{opacity:.6;cursor:default}
+.dl-lg-names{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--fog);margin:0 0 10px;cursor:pointer}
+.dl-lg-names input{accent-color:var(--teal-br);width:15px;height:15px;margin:0}
 .dl-lg-from{font-size:11.5px;color:var(--fog);border:1px solid var(--line);border-radius:6px;padding:7px 10px;margin-bottom:.6rem;line-height:1.5}
 .dl-lg-from b{color:var(--paper);font-weight:700}
 .dl-lg-from span{display:block}
@@ -4249,11 +4252,14 @@ function tcVerdict2(mA,mB,la,lb){
 }
 /* Three- and four-team verdict: each team's net = value routed TO it minus value it gives
    away, both through calcSingleSideAdjusted. Used by the page and the share image. */
-function tcMulti(){
-  const SIDES=[{id:'a',arr:sA,color:'var(--emerald)',label:'Team A'},{id:'b',arr:sB,color:'var(--sky)',label:'Team B'},
-    {id:'c',arr:sC,color:'var(--violet)',label:'Team C'},{id:'d',arr:sD,color:'var(--topaz)',label:'Team D'}].slice(0,tradeTeams);
+function tcMulti(st){
+  st=st||tcLive();
+  const S=st.s, ids=['a','b','c','d'].slice(0,st.n);
+  const SIDES=[{id:'a',arr:S.a,color:'var(--emerald)',label:'Team A'},{id:'b',arr:S.b,color:'var(--sky)',label:'Team B'},
+    {id:'c',arr:S.c,color:'var(--violet)',label:'Team C'},{id:'d',arr:S.d,color:'var(--topaz)',label:'Team D'}].slice(0,st.n);
+  const dest=id=>ids[(ids.indexOf(id)+1)%ids.length];   // same rule as defaultDest(), on this trade's teams
   const rows=SIDES.map((t,idx)=>({...t, idx, adjResult:calcSingleSideAdjusted(t.arr)}));
-  const allAssets=SIDES.flatMap(t=>t.arr.map(a=>({...a, from:t.id, to:a.to||defaultDest(t.id)})));
+  const allAssets=SIDES.flatMap(t=>t.arr.map(a=>({...a, from:t.id, to:a.to||dest(t.id)})));
   rows.forEach(t=>{
     const incoming=allAssets.filter(a=>a.to===t.id);
     t.recv=calcSingleSideAdjusted(incoming);
@@ -4280,10 +4286,14 @@ let TC_CTX=null;
 const TI_NAMES_KEY='delta_ti_names';
 function tiNamesOn(){ return dlPref(TI_NAMES_KEY)!=='0'; }
 function tiSetNames(on){ dlPref(TI_NAMES_KEY,on?'1':'0'); }
-function tiLabels(){
+/* The trade on the calculator, in the shape the drawing takes. A Ledger card builds the same
+   shape from its own trade (slpLedgerImage), so drawing never touches the calculator. */
+function tcLive(){ return {s:{a:sA,b:sB,c:sC,d:sD}, n:tradeTeams, ctx:TC_CTX}; }
+function tiLabels(ctx){
+  if(ctx===undefined) ctx=TC_CTX;
   const L=['Team A','Team B','Team C','Team D'];
-  if(TC_CTX&&Array.isArray(TC_CTX.m)&&tiNamesOn())
-    TC_CTX.m.forEach((m,i)=>{ if(i<4&&typeof m==='string'&&m.trim()) L[i]=m.trim().slice(0,40); });
+  if(ctx&&Array.isArray(ctx.m)&&tiNamesOn())
+    ctx.m.forEach((m,i)=>{ if(i<4&&typeof m==='string'&&m.trim()) L[i]=m.trim().slice(0,40); });
   return L;
 }
 function tiMeta(p){
@@ -4293,25 +4303,26 @@ function tiMeta(p){
 }
 /* Lays the picture out as a list of blocks, measures it, then draws it, so the canvas is
    exactly as tall as the trade needs. */
-async function drawTradeImage(){
+async function drawTradeImage(st){
+  st=st||tcLive();
   const C={ink:dlImgTok('ink'),panel:dlImgTok('panel'),line:dlImgTok('line'),paper:dlImgTok('paper'),fog:dlImgTok('fog'),fog2:dlImgTok('fog-2'),
     url:dlImgTok('cp-1'),team:[dlImgTok('emerald'),dlImgTok('sky'),dlImgTok('violet'),dlImgTok('topaz')]};
   const F={sans:dlImgTok('sans'),mono:dlImgTok('mono'),geo:dlImgTok('geo')};
   try{ await document.fonts.ready; }catch(e){}
-  const L=tiLabels(), act=ACTIVE_SIDES(), sides={a:sA,b:sB,c:sC,d:sD};
-  const W=1080, P=64, multi=tradeTeams>2;
+  const L=tiLabels(st.ctx), act=['a','b','c','d'].slice(0,st.n), sides=st.s, CTX=st.ctx;
+  const W=1080, P=64, multi=st.n>2;
   const rowH=multi?84:96;
   const find=(n)=>{ for(const id of act){ const p=sides[id].find(x=>x.n===n); if(p) return p; } return null; };
   // ── content ──
   let head, sub, bar=null, board=null, blocks=[];
   if(!multi){
-    const v4=calcAdjustedSide(sA,sB), mA=v4.sideA.total, mB=v4.sideB.total, V=tcVerdict2(mA,mB,L[0],L[1]);
+    const v4=calcAdjustedSide(sides.a,sides.b), mA=v4.sideA.total, mB=v4.sideB.total, V=tcVerdict2(mA,mB,L[0],L[1]);
     head=V.head; sub=V.sub; bar={mA,mB};
     head={t:V.head,c:V.win==='a'?C.team[0]:V.win==='b'?C.team[1]:C.paper};
     [[v4.sideA,0],[v4.sideB,1]].forEach(([sd,i])=>blocks.push({title:L[i]+' Gives Up',col:C.team[i],
       groups:[{rows:sd.detail.map(d=>({n:d.name,v:Math.round(d.adj),p:find(d.name)})),conc:sd.concM,total:sd.total}]}));
   } else {
-    const M=tcMulti();
+    const M=tcMulti(st);
     head={t:M.allEqual?'Balanced Multi-Team Trade':L[M.winnerIdx]+' Comes Out Ahead',c:M.allEqual?C.paper:C.team[M.winnerIdx]};
     sub=M.allEqual?'Every team gets about what it gives':'Net '+(M.winner.net>0?'+':'')+M.winner.net.toLocaleString()+' · what a team gets minus what it gives';
     board=M.sorted.map(t=>({lab:L[t.idx],col:C.team[t.idx],give:t.adjResult.total,get:t.recv.total,net:t.net}));
@@ -4320,10 +4331,11 @@ async function drawTradeImage(){
     M.rows.forEach(t=>blocks.push({title:L[t.idx]+' Gets',col:C.team[t.idx],net:t.net,groups:[
       {rows:t.recv.detail.map(d=>({n:d.name,v:Math.round(d.adj),p:find(d.name)})),conc:t.recv.concM,total:t.recv.total}]}));
   }
-  const showCtx=TC_CTX&&tiNamesOn();
+  const showCtx=CTX&&tiNamesOn();
   const ctxBits=[];
-  if(TC_CTX&&Number(TC_CTX.d)>0) ctxBits.push('Traded '+dlImgDate(new Date(Number(TC_CTX.d))));
-  if(showCtx&&typeof TC_CTX.lg==='string'&&TC_CTX.lg.trim()) ctxBits.push(TC_CTX.lg.trim().slice(0,60));
+  if(CTX&&Number(CTX.d)>0) ctxBits.push('Traded '+dlImgDate(new Date(Number(CTX.d))));
+  if(showCtx&&typeof CTX.lg==='string'&&CTX.lg.trim()) ctxBits.push(CTX.lg.trim().slice(0,60));
+  if(CTX&&CTX.fa) ctxBits.push('FAAB not counted');   // the calc has no FAAB; say so, as the page does
   // ── measure ──
   const verdictH=multi?150+board.length*66+20:250;
   let H=P+96+(ctxBits.length?56:0)+40+verdictH;
@@ -4465,7 +4477,7 @@ function loadTradePayload(o){
   }
   const ctx=tradeCtxHtml(o.x,act.length);
   if(ctx){ const va=document.getElementById('verdict-area'); if(va) va.insertAdjacentHTML('afterbegin',ctx);
-    TC_CTX={d:o.x.d, lg:o.x.lg, m:Array.isArray(o.x.m)?o.x.m.slice(0,act.length).map(m=>typeof m==='string'?m.slice(0,40):''):null}; }
+    TC_CTX={d:o.x.d, lg:o.x.lg, fa:!!o.x.fa, m:Array.isArray(o.x.m)?o.x.m.slice(0,act.length).map(m=>typeof m==='string'?m.slice(0,40):''):null}; }
 }
 function tradeCtxHtml(x,n){
   if(!x||typeof x!=='object') return '';
@@ -7009,7 +7021,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23d</span>
+  <span class="foot-build">2026-10-23e</span>
 </footer>
 
 
@@ -8194,9 +8206,16 @@ function initEngineAudit(){
 function renderContractCheck(){
   const host=document.getElementById('audit-contracts'); if(!host) return;
   const L=(typeof DL_CONTRACT_CHECK!=='undefined'&&Array.isArray(DL_CONTRACT_CHECK))?DL_CONTRACT_CHECK:[];
+  const ST=(typeof DL_CONTRACT_STALE!=='undefined'&&Array.isArray(DL_CONTRACT_STALE))?DL_CONTRACT_STALE:[];
   const head='<div class="section-label" style="margin-top:22px">Contract End Years To Check</div>';
-  if(!L.length){ host.innerHTML=head+'<div style="font-size:11px;color:var(--fog-2)">None. Every extension signed during a rookie deal has a confirmed end year.</div>'; return; }
-  host.innerHTML=head
+  /* Hand entries the feed has overtaken (a new deal since the entry was confirmed). */
+  const stale=!ST.length?'':'<div style="font-size:11px;color:var(--topaz);margin:0 0 8px">'+ST.length+' hand-entered end year'+(ST.length===1?' is':'s are')+' now earlier than the feed'+"\u2019"+'s, which usually means a new deal. Check, then update CONTRACT_OVERRIDES.</div>'
+    +'<div class="dl-b-scroll" style="margin-bottom:12px"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Hand Entry</th><th class="dl-b-r">Feed Now</th><th class="dl-b-r">Signed</th></tr></thead><tbody>'
+    +ST.slice().sort((a,b)=>a.n<b.n?-1:1).map(function(x){
+      return '<tr><td class="pname"><span class="dl-b-pn">'+x.n+'</span></td><td class="dl-b-r">'+x.uses+'</td><td class="dl-b-r">'+x.feedEnd+'</td><td class="dl-b-r">'+(x.signed||'-')+'</td></tr>'; }).join('')
+    +'</tbody></table></div>';
+  if(!L.length){ host.innerHTML=head+stale+'<div style="font-size:11px;color:var(--fog-2)">None'+(ST.length?' otherwise':'')+'. Every extension signed during a rookie deal has a confirmed end year'+(ST.length?'.':', and no hand entry is behind the feed.')+'</div>'; return; }
+  host.innerHTML=head+stale
     +'<div style="font-size:11px;color:var(--fog-2);margin:-4px 0 8px">'+L.length+' extension'+(L.length===1?'':'s')+' signed while a rookie deal was still running. The feed counts the new years from the signing year; Likely counts them after the rookie deal and option year. Confirm each, then add it to CONTRACT_OVERRIDES in delta-engine.js.</div>'
     +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Signed</th><th class="dl-b-r">New Years</th><th class="dl-b-r">DELTA Uses</th><th class="dl-b-r">Likely</th></tr></thead><tbody>'
     +L.slice().sort((a,b)=>a.n<b.n?-1:1).map(function(x){
@@ -10413,6 +10432,24 @@ function slpLedgerOpen(id){
   if(typeof clearAllTrade==='function') clearAllTrade();
   loadTradePayload(o);
 }
+/* Share Image from a Ledger card (23 Oct 2026, owner). The trade is drawn straight from its
+   payload: the calculator, its trade and the page the reader is on are all left alone. The
+   payload is priced at the reader's current settings, as the Ledger is, so no rebuild. */
+function slpLedgerImage(id,btn){
+  const o=slpLedgerPayload(slpLedgerTradeById(id));
+  if(!o) return;
+  const ids=['a','b','c','d'].slice(0,o.t), st={s:{a:[],b:[],c:[],d:[]}, n:o.t,
+    ctx:o.x?{d:o.x.d, lg:o.x.lg, fa:!!o.x.fa, m:Array.isArray(o.x.m)?o.x.m.slice(0,o.t):null}:null};
+  ids.forEach(function(id2,i){
+    (o.s[i]||[]).forEach(function(e){
+      const a=ASSETS.find(function(p){ return p.n===e[0]; });
+      if(a && !st.s[id2].some(function(x){ return x.n===a.n; }))
+        st.s[id2].push(Object.assign({},a,{to:o.t>2&&e[1]&&ids.indexOf(e[1])>=0&&e[1]!==id2?e[1]:null}));
+    });
+  });
+  return dlImgShare(function(){ return drawTradeImage(st); },'delta-trade.png',btn);
+}
+function slpLedgerNames(on){ tiSetNames(on); }
 function slpLedgerShare(id,btn){
   const o=slpLedgerPayload(slpLedgerTradeById(id));
   if(!o) return;
@@ -10423,7 +10460,8 @@ function slpLedgerActs(t){
   const id=slpEsc(JSON.stringify(String(t.id)));
   return '<div class="dl-lg-acts">'
     +'<button class="dl-lg-act" onclick="slpLedgerOpen('+id+')">Open In Trade Calc</button>'
-    +'<button class="dl-lg-act" onclick="slpLedgerShare('+id+',this)">Share</button></div>';
+    +'<button class="dl-lg-act" onclick="slpLedgerShare('+id+',this)">Share Link</button>'
+    +'<button class="dl-lg-act" onclick="slpLedgerImage('+id+',this)">Share Image</button></div>';
 }
 
 function slpLedgerCards(rows){
@@ -10524,6 +10562,7 @@ function renderSlpLedger(){
     +'value="'+slpEsc(f.q)+'" oninput="slpLedgerSearch(this)" '
     +'placeholder="Search a player \u2014 every trade he appears in"></div>'
     +'<div class="dl-lg-count" id="slp-ledger-count">'+slpLedgerCount(rows)+'</div>'
+    +'<label class="dl-lg-names"><input type="checkbox"'+(tiNamesOn()?' checked':'')+' onchange="slpLedgerNames(this.checked)">Manager Names On Share Images</label>'
     +'<div id="slp-ledger-list">'+slpLedgerCards(rows)+'</div>'
     +'<div class="dl-lg-foot">Every trade this league has made, priced on today\u2019s market at your '
     +'league settings. A pick from a draft that has happened is priced as the player it became. '

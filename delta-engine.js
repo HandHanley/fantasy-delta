@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-23c';
+const DL_BUILD='2026-10-23d';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5801,6 +5801,7 @@ async function loadLiveMarketValues() {
 /* Contracts whose end year needs a hand check (see CONTRACT_OVERRIDES). Shown on the
    ?dev=1 Engine Audit panel; feeds no number. */
 let DL_CONTRACT_CHECK = [];
+let DL_CONTRACT_STALE = [];   // hand entries the feed has overtaken (see loadPlayerContracts)
 async function loadPlayerContracts() {
   try {
     const res = await dlFetch('./data/player-contracts.json',{cache:'no-cache'});
@@ -5872,7 +5873,7 @@ async function loadPlayerContracts() {
     };
 
     let updated = 0, added = 0, voided = 0;
-    DL_CONTRACT_CHECK = [];
+    DL_CONTRACT_CHECK = []; DL_CONTRACT_STALE = [];
     for (const player of RAW) {
       if (!player || !player.n) continue;
 
@@ -5918,6 +5919,13 @@ async function loadPlayerContracts() {
         if (likely !== pipeEnd) DL_CONTRACT_CHECK.push({ n: player.n, signed: c.year_signed, years: c.years,
           uses: pipeEnd, likely, round: dpk.r });
       }
+      // A hand entry the feed has overtaken: the feed now runs LATER than the confirmed year,
+      // which is what a new deal looks like (Gibbs: entry 2027, feed 2028 after his August
+      // extension — the entry won for 11 weeks). The feed undercounts, never overcounts, so a
+      // later feed year means the entry is stale. Listed until the entry is updated.
+      if ((player.n in CONTRACT_OVERRIDES) && (c.end_year || 0) > CONTRACT_OVERRIDES[player.n])
+        DL_CONTRACT_STALE.push({ n: player.n, uses: CONTRACT_OVERRIDES[player.n], feedEnd: c.end_year,
+          signed: c.year_signed, years: c.years });
 
       const existing = CONTRACTS.find(x => x.n === player.n);
       if (existing) {
