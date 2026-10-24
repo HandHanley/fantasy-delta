@@ -84,6 +84,33 @@ jobs:
           done
           grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html
 
+      # Player link-preview pictures (23 Oct 2026). Draws p/<slug>/card.png for every NFL player
+      # with the engine's own drawing code in a real browser, and points each /p/<slug>/ page at
+      # its picture — in the PUBLISHED copy only; nothing is committed (the 409 pictures are
+      # ~33 MB). Playwright goes into the runner's temp folder, never into the site. Safe to
+      # fail: a page is only re-pointed after its picture is written, and the deploy carries on
+      # with the site-wide og-image.png for anything not drawn. Pinned version: bump on purpose.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-chromium-1.56.1
+
+      - name: Player link-preview pictures
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          PW_DIR: ${{ runner.temp }}/pw
+        run: |
+          npm install --prefix "$PW_DIR" --no-audit --no-fund --silent playwright@1.56.1
+          "$PW_DIR/node_modules/.bin/playwright" install --with-deps chromium
+          node scripts/build-share-images.js .
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:

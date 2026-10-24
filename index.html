@@ -7021,7 +7021,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23e</span>
+  <span class="foot-build">2026-10-23f</span>
 </footer>
 
 
@@ -11318,6 +11318,10 @@ async function bootDelta(){
   try{ initCollege(); }catch(e){ console.warn("college init failed",e); }
   if(typeof renderAll==='function') renderAll();
   if(typeof dlShowLoadNotice==='function') dlShowLoadNotice();
+  /* Boot is finished: every data file has been tried and the real render has run. Tools that
+     drive this page headlessly (scripts/build-share-images.js) wait for this, because ASSETS
+     already exists from the parse-time render on baked numbers long before the data lands. */
+  window.DL_BOOTED=true;
 }
 /* 'complete' means the load event already fired and the listener would never
    run; the two branches are mutually exclusive, so boot cannot double-fire.

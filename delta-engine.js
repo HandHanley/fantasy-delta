@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-23d';
+const DL_BUILD='2026-10-23e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6458,4 +6458,48 @@ function dlImgStartBar(g,x,y,w,h,s,C){
   const segs=[[s.missPct,C.coral],[s.hitOnlyPct,C.sky],[s.elitePct,C.emerald]].filter(z=>z[0]>0);
   let cx=x; segs.forEach(([pc,c],i)=>{ const sw=i===segs.length-1?x+w-cx:w*pc/100; g.fillStyle=c; g.fillRect(cx,y,sw,h); cx+=sw; });
   g.restore();
+}
+/* Link-preview picture: 1200 x 630, the shape chat apps show for a pasted link. Only things
+   that rarely change in-season (Score, rank, call, Score parts; no prices, no date), so a
+   preview stays true for weeks and crawlers' caches do little harm. */
+async function dlImgPlayerOG(p){
+  const C=dlImgColors(), F=dlImgFonts(), W=1200, H=630, P=60;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d');
+  try{ await document.fonts.ready; }catch(e){}
+  g.fillStyle=C.ink; g.fillRect(0,0,W,H); g.textBaseline='middle';
+  const pos=p.pos||p.p, call=dlImgCall(p,C), rk=dlPosRank(p), parts=dlScoreParts(p);
+  // header
+  const mark=await dlImgMark(); if(mark) g.drawImage(mark,P-4,P-10,64,64);
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='700 30px '+F.geo; dlImgSpace(g,7); g.fillText('DELTA',P+70,P+22); dlImgSpace(g,0);
+  g.textAlign='right'; g.fillStyle=C.url; g.font='700 24px '+F.sans; g.fillText('fantasydelta.com',W-P,P+22);
+  // name block
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 64px '+F.sans; g.fillText(dlImgFit(g,p.n,W-2*P),P,P+122);
+  g.fillStyle=C.fog; g.font='600 28px '+F.sans;
+  g.fillText([pos,p.t&&p.t!=='FA'?p.t:'Free agent','Age '+Math.floor(p.a||0)].join(' · '),P,P+178);
+  // left panel: score
+  const py=P+222, ph=H-py-P, lw=440;
+  dlImgRound(g,P,py,lw,ph,22); g.fillStyle=C.panel; g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+  // number + label in the top part, call | rank in a strip along the bottom
+  const cx=P+lw/2, stripY=py+ph-104;
+  g.textAlign='center'; g.fillStyle=dlImgColorOf(dsColor(p.dsScore),C); g.font='800 120px '+F.mono;
+  g.fillText(p.dsScore!=null?p.dsScore:'\u2014',cx,py+(stripY-py)/2-10);
+  g.fillStyle=C.fog2; g.font='700 17px '+F.sans; dlImgSpace(g,3); g.fillText('DELTA SCORE',cx,stripY-20); dlImgSpace(g,0);
+  g.fillStyle=C.line; g.fillRect(P+24,stripY,lw-48,2); g.fillRect(cx-1,stripY+18,2,68);
+  const fitSize=(t,max,start,min,wt,fam)=>{ let s=start; for(;s>min;s-=2){ g.font=wt+' '+s+'px '+fam; if(g.measureText(t).width<=max) break; } return s; };
+  const half=lw/2-28;
+  fitSize(call.t||'\u2014',half,34,18,'800',F.sans); g.fillStyle=call.col; g.fillText(call.t||'\u2014',P+lw/4,stripY+44);
+  g.fillStyle=C.fog2; g.font='700 15px '+F.sans; dlImgSpace(g,2); g.fillText('CALL',P+lw/4,stripY+80); dlImgSpace(g,0);
+  g.fillStyle=C.paper; g.font='700 32px '+F.mono; g.fillText(rk?pos+rk:'\u2014',P+lw*3/4,stripY+44);
+  g.fillStyle=C.fog2; g.font='700 15px '+F.sans; dlImgSpace(g,2); g.fillText('AT POSITION',P+lw*3/4,stripY+80); dlImgSpace(g,0);
+  // right: parts
+  const rx=P+lw+48, rw=W-P-rx; let y=py+6;
+  [['prod','Production',45],['opp','Opportunity',30],['age','Age',15],['con','Contract',10]].forEach(([k,lab,max])=>{
+    const v=parts[k];
+    g.textAlign='left'; g.fillStyle=C.fog; g.font='700 24px '+F.sans; g.fillText(lab,rx,y+16);
+    g.textAlign='right'; g.fillStyle=C.paper; g.font='700 24px '+F.mono; g.fillText((k==='con'?Math.round(v):v.toFixed(1))+' / '+max,rx+rw,y+16);
+    dlImgRound(g,rx,y+38,rw,14,7); g.fillStyle=C.line; g.fill();
+    const fw=Math.max(0,Math.min(1,v/max))*rw; if(fw>0){ dlImgRound(g,rx,y+38,Math.max(fw,14),14,7); g.fillStyle=C.url; g.fill(); }
+    y+=(ph-12)/4;
+  });
+  return cv;
 }
