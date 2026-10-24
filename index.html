@@ -4139,8 +4139,10 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
      Order = current standings, worst record first; equal records go to the LOWER Max PF
      (Sleeper's roster settings.ppts), then the lower points for. Every pick sits with whoever
      owns it now (traded_picks), so it is the real draft, not a template. Read fresh every
-     time the tab opens, so it moves week to week on its own. Before Week 1 is scored there
-     are no standings, so the order falls back to Proj PPG (weakest lineup first) and says so.
+     time the tab opens, so it moves week to week on its own. Once the league renews for the
+     next season (status pre_draft), the order is the one the league set in Sleeper
+     (/draft slot_to_roster_id) or, until it does, LAST season's final standings. With no
+     games at all (a startup league before Week 1) it falls back to Proj PPG and says so.
      Playoff results are NOT applied (the owner's league puts its six playoff teams at 5-10 by
      the bracket); an in-season mock uses standings for every team. Sleeper only: MFL rosters
      carry no standings here.
@@ -4174,7 +4176,7 @@ const MD_SIG1=0.15, MD_SIG2=0.6, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NE
 const MD_POSF={sf:{QB:1.25,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
 const MD_CURVE_A=8232, MD_CURVE_B=-0.442;
 const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,
-          lensData:null,lensLoad:null,mode:null,lgType:null,running:false,_wait:null,_waitN:0};
+          lensData:null,lensLoad:null,mode:null,lgInfo:null,running:false,_wait:null,_waitN:0};
 function mdEsc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function mdLoad(){
   if(!MD.load) MD.load=fetch('./data/devy-board.json',{cache:'no-cache'})
@@ -4240,19 +4242,32 @@ function mdNeeds(rosters){
     ['QB','RB','WR','TE'].forEach(p=>{ const rk=t.pos&&t.pos[p]&&t.pos[p].rank; o[p]=(rk&&N>1)?(rk-(N+1)/2)/((N-1)/2):0; });
     return o; });
 }
-function mdLeagueCfg(type){
-  const lg=SLP.league, season=mdDraftSeason(lg);
-  const rs=SLP.rosters.slice();
-  const played=rs.some(r=>mdGames(r)>0);
-  let wn=null;
-  if(played){
-    rs.sort((a,b)=>(mdWinPct(a)-mdWinPct(b))||(mdMaxPF(a)-mdMaxPF(b))||(mdPF(a)-mdPF(b))||(a.roster_id-b.roster_id));
+function mdLeagueCfg(info){
+  const lg=SLP.league, season=mdDraftSeason(lg), type=info.type;
+  let rs=SLP.rosters.slice(), basis=null, src={};
+  const byId={}; rs.forEach(r=>{ byId[String(r.roster_id)]=r; src[String(r.roster_id)]=r; });
+  const N=rs.length;
+  // 1. The order the league set itself (a renewed league, before its rookie draft).
+  const sl=info.slots;
+  if(Array.isArray(sl)&&sl.length===N&&sl.every(id=>byId[String(id)])&&new Set(sl.map(String)).size===N){
+    rs=sl.map(id=>byId[String(id)]); basis='set';
   } else {
-    wn={}; try{ (slpTeamValues()||[]).forEach(t=>{ wn[String(t.rosterId)]=t.winNow||0; }); }catch(e){}
-    rs.sort((a,b)=>((wn[String(a.roster_id)]||0)-(wn[String(b.roster_id)]||0))||(a.roster_id-b.roster_id));
+    // 2. Renewed but not set yet: last season's final standings. Roster ids carry over.
+    if(Array.isArray(info.prev)&&info.prev.length){
+      const pv={}; info.prev.forEach(r=>{ pv[String(r.roster_id)]=r; });
+      if(rs.every(r=>pv[String(r.roster_id)]&&mdGames(pv[String(r.roster_id)])>0)){ src=pv; basis='last'; }
+    }
+    // 3. This season's standings; 4. before Week 1, Proj PPG.
+    if(!basis) basis=rs.some(r=>mdGames(r)>0)?'standings':'projected';
+    if(basis==='projected'){
+      const wn={}; try{ (slpTeamValues()||[]).forEach(t=>{ wn[String(t.rosterId)]=t.winNow||0; }); }catch(e){}
+      rs.sort((a,b)=>((wn[String(a.roster_id)]||0)-(wn[String(b.roster_id)]||0))||(a.roster_id-b.roster_id));
+    } else {
+      const S=r=>src[String(r.roster_id)];
+      rs.sort((a,b)=>(mdWinPct(S(a))-mdWinPct(S(b)))||(mdMaxPF(S(a))-mdMaxPF(S(b)))||(mdPF(S(a))-mdPF(S(b)))||(a.roster_id-b.roster_id));
+    }
   }
   const idx={}; rs.forEach((r,i)=>{ idx[String(r.roster_id)]=i; });
-  const N=rs.length;
   const rounds=Math.min(6,Math.max(1,parseInt(lg.settings&&lg.settings.draft_rounds,10)||3));
   const traded=(SLP.tradedPicks||[]).filter(t=>String(t.season)===String(season));
   const picks=[];
@@ -4263,22 +4278,36 @@ function mdLeagueCfg(type){
     picks.push({r:r,i:i,o:slot,t:owner});
   }
   const mine=SLP.conn&&idx[String(SLP.conn.rosterId)]!=null?idx[String(SLP.conn.rosterId)]:-1;
+  const rec=r=>src[String(r.roster_id)];
   return {league:true,leagueId:lg.league_id,leagueName:lg.name||'Your League',season:season,
     teams:N,rounds:rounds,type:type,picks:picks,mine:mine,
-    names:rs.map(r=>slpTeamLabel(r)),recs:rs.map(r=>({rec:mdRecord(r),mpf:mdMaxPF(r),pf:mdPF(r)})),
-    needs:mdNeeds(rs),basis:played?'standings':'projected',
+    names:rs.map(r=>slpTeamLabel(r)),recs:rs.map(r=>({rec:mdRecord(rec(r)),mpf:mdMaxPF(rec(r)),pf:mdPF(rec(r))})),
+    needs:mdNeeds(rs),basis:basis,
     week:(lg.settings&&lg.settings.last_scored_leg)||null,
-    maxPF:rs.some(r=>mdMaxPF(r)>0)};
+    maxPF:rs.some(r=>mdMaxPF(rec(r))>0)};
 }
-// The type of the league's last draft (its rookie drafts, once it is past the startup).
-function mdLeagueType(){
-  const id=SLP.league.league_id;
-  if(MD.lgType&&MD.lgType.id===id) return Promise.resolve(MD.lgType);
-  return slpFetch('/league/'+id+'/drafts').then(list=>{
+/* What the order needs from Sleeper beyond the loaded league, fetched once per league:
+   linear or snake (the league's last draft; the upcoming one once it exists), and, for a
+   renewed league before its rookie draft, the order it set (/draft) or, failing that, last
+   season's final rosters (/league/<previous>/rosters) for the standings. */
+function mdLeagueInfo(){
+  const lg=SLP.league, id=lg.league_id;
+  if(MD.lgInfo&&MD.lgInfo.id===id) return Promise.resolve(MD.lgInfo);
+  const pre=lg.status==='pre_draft'||lg.status==='drafting';
+  const info={id:id,type:'linear',read:false,slots:null,prev:null};
+  const jobs=[slpFetch('/league/'+id+'/drafts').then(list=>{
     const ds=(Array.isArray(list)?list:[]).filter(d=>d&&(d.type==='snake'||d.type==='linear'))
       .sort((a,b)=>(parseInt(b.season,10)||0)-(parseInt(a.season,10)||0)||(b.start_time||0)-(a.start_time||0));
-    MD.lgType={id:id,type:ds.length?ds[0].type:'linear',read:!!ds.length}; return MD.lgType;
-  }).catch(()=>{ MD.lgType={id:id,type:'linear',read:false}; return MD.lgType; });
+    if(ds.length&&!info.fromDraft){ info.type=ds[0].type; info.read=true; }
+  }).catch(()=>{})];
+  if(pre&&lg.draft_id) jobs.push(slpFetch('/draft/'+lg.draft_id).then(d=>{
+    if(!d) return;
+    if(d.type==='snake'||d.type==='linear'){ info.type=d.type; info.read=true; info.fromDraft=true; }
+    const st=d.slot_to_roster_id;
+    if(st&&typeof st==='object'){ const ks=Object.keys(st).filter(k=>st[k]!=null).sort((a,b)=>a-b); if(ks.length) info.slots=ks.map(k=>st[k]); }
+  }).catch(()=>{}));
+  if(pre&&lg.previous_league_id) jobs.push(slpFetch('/league/'+lg.previous_league_id+'/rosters').then(rs=>{ if(Array.isArray(rs)&&rs.length) info.prev=rs; }).catch(()=>{}));
+  return Promise.all(jobs).then(()=>{ MD.lgInfo=info; return info; });
 }
 
 // Every pick in order: r = round (0-based), i = pick in round (0-based), o = the draft slot
@@ -4367,7 +4396,7 @@ function mdSet(k,v){
   mdRenderSetup();
 }
 function mdSetMode(m){ MD.mode=(m==='league')?'league':'custom'; try{ dlPref('delta_md_mode',MD.mode); }catch(e){} MD.cfg=null; mdRenderSetup(); }
-function mdSetLgType(t){ if(MD.lgType) MD.lgType=Object.assign({},MD.lgType,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
+function mdSetLgType(t){ if(MD.lgInfo) MD.lgInfo=Object.assign({},MD.lgInfo,{type:t==='snake'?'snake':'linear',set:true}); MD.cfg=null; mdRenderSetup(); }
 function mdEditSettings(){ MD.picks=[]; MD.running=false; MD.sel=null; if(MD.cfg&&MD.cfg.league) MD.cfg=null; mdRenderSetup(); }
 function mdSelect(pi){
   const c=MD.cfg, o=mdOrder(c); if(MD.picks.length>=o.length||o[MD.picks.length].t!==mdMine(c)) return;
@@ -4444,28 +4473,30 @@ function mdRenderSetup(){
   MD.mode=mode;
   let body='', note='';
   if(mode==='league'){
-    if(!MD.lgType||MD.lgType.id!==SLP.league.league_id){
+    if(!MD.lgInfo||MD.lgInfo.id!==SLP.league.league_id){
       root.innerHTML='<div class="dl-md-note">Reading your league’s draft…</div>';
-      mdLeagueType().then(()=>{ if(!MD.running) mdRenderSetup(); }); return;
+      mdLeagueInfo().then(()=>{ if(!MD.running) mdRenderSetup(); }); return;
     }
-    if(!MD.cfg||!MD.cfg.league) MD.cfg=mdLeagueCfg(MD.lgType.type);
+    if(!MD.cfg||!MD.cfg.league) MD.cfg=mdLeagueCfg(MD.lgInfo);
     const c=MD.cfg, o=mdOrder(c);
-    const head=c.basis==='standings'
-      ?'Order is the standings'+(c.week?' after Week '+c.week:'')+', worst record first. Teams with the same record go by '
-        +(c.maxPF?'Max PF':'points for')+', lower first. It updates as the season goes.'
-      :'No games played yet, so the order is Proj PPG from Power Rankings, weakest lineup first, until Week 1 is scored.';
+    const tie=' Teams with the same record go by '+(c.maxPF?'Max PF':'points for')+', lower first.';
+    const head={standings:'Order is the standings'+(c.week?' after Week '+c.week:'')+', worst record first.'+tie+' It updates as the season goes.',
+      last:'Order is last season’s final standings, worst record first.'+tie+' Playoff results aren’t counted, so check it against your league’s rules.',
+      set:'This is the order your league set in Sleeper.',
+      projected:'No games played yet, so the order is Proj PPG from Power Rankings, weakest lineup first, until Week 1 is scored.'}[c.basis];
+    const showRec=c.basis==='standings'||c.basis==='last';
     const rows=o.filter(x=>x.r===0).map(x=>{
       const rec=c.recs[x.o], traded=x.t!==x.o;
       return '<tr'+(x.t===c.mine?' class="me"':'')+'><td class="dl-md-rk">'+mdLabel(x)+'</td>'
         +'<td class="pname"><span class="dl-md-tn">'+mdEsc(x.o===c.mine?'You':c.names[x.o])+'</span>'
         +(traded?'<span class="dl-md-sub">Owned by '+mdEsc(x.t===c.mine?'You':c.names[x.t])+'</span>':'')+'</td>'
-        +'<td class="dl-b-r">'+(c.basis==='standings'?rec.rec:'—')+'</td>'
-        +'<td class="dl-b-r">'+(c.basis==='standings'?(c.maxPF?rec.mpf:rec.pf).toFixed(1):'—')+'</td></tr>'; }).join('');
+        +'<td class="dl-b-r">'+(showRec?rec.rec:'—')+'</td>'
+        +'<td class="dl-b-r">'+(showRec?(c.maxPF?rec.mpf:rec.pf).toFixed(1):'—')+'</td></tr>'; }).join('');
     const minePicks=o.filter(x=>x.t===c.mine).map(mdLabel);
     body='<div class="dl-md-card">'
       +'<div class="dl-md-lg"><b>'+mdEsc(c.leagueName)+'</b><span>'+c.season+' Rookie Draft · '+c.teams+' Teams · '+c.rounds+' Round'+(c.rounds===1?'':'s')+'</span></div>'
       +mdChips('type',[{v:'linear',t:'Linear'},{v:'snake',t:'Snake'}],c.type,'Order','mdSetLgType')
-      +'<p class="dl-md-hint">'+head+(MD.lgType.read&&!MD.lgType.set?' Linear or snake comes from your league’s last draft.':'')+'</p>'
+      +'<p class="dl-md-hint">'+head+(MD.lgInfo.read&&!MD.lgInfo.set?' Linear or snake comes from your league’s '+(MD.lgInfo.fromDraft?'draft settings':'last draft')+'.':'')+'</p>'
       +'<div class="dl-b-scroll"><table class="dtable dl-board dl-md-otbl"><thead><tr><th>Pick</th><th>Round 1</th><th class="dl-b-r">Record</th><th class="dl-b-r">'+(c.maxPF?'Max PF':'PF')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
       +'<div class="dl-md-mine">'+(minePicks.length?'Your Picks: <b>'+minePicks.join(' · ')+'</b>':'You don’t hold a '+c.season+' pick. The bots will make every pick.')+'</div>'
       +'</div>';
