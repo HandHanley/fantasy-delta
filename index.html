@@ -7021,7 +7021,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-23f</span>
+  <span class="foot-build">2026-10-24d</span>
 </footer>
 
 
@@ -7293,8 +7293,9 @@ function renderDevy(){
   // The class label lives here now rather than in the title. It is provenance,
   // not navigation — and when a second class exists it becomes a pill instead,
   // without the title having to change again.
+  // The board names its source (since 24 Oct 2026, PFN's Industry Consensus; older files carry none).
   const meta=(DEVY.class?DEVY.class+' class':'')
-    +(DEVY.generated?((DEVY.class?' · ':'')+'board compiled '+DEVY.generated
+    +(DEVY.generated?((DEVY.class?' · ':'')+(DEVY.source?DEVY.source+' board, '+(DEVY.boardDate||DEVY.generated):'board compiled '+DEVY.generated)
       +(DEVY_PROD?(' · production from the '+DEVY_PROD.year+' season'):'')):'');
   host.innerHTML=(rows.length?html:'<div class="dl-bb-empty">No players at this position on the current board.</div>')
     +(meta?'<div class="dl-bb-foot">'+meta+'</div>':'');

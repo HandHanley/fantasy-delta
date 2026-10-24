@@ -7,6 +7,11 @@
 #   2. Select all, paste the current consensus big board over it, commit.
 #   3. This runs automatically on that commit. Nothing else to do.
 #
+# Since 24 Oct 2026 the board is PFN's Industry Consensus CSV: the owner sends it in chat and
+# scripts/board-from-csv.py turns it into data/big-board-raw.txt (skill players only). A pasted
+# full NFL draft order in data/nfl-draft-order-raw.txt is matched to it (board rank N -> the
+# team holding pick N); a commit to either file runs this.
+#
 # That is the whole weekly job — one paste. Parsing, the position filter, tiering, the
 # match against college data, and the week-over-week movement are all automated from there.
 #
@@ -25,6 +30,7 @@ on:
   push:
     paths:
       - 'data/big-board-raw.txt'
+      - 'data/nfl-draft-order-raw.txt'
   workflow_dispatch:
     inputs:
       draft_class:

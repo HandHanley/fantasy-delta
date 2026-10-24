@@ -27,6 +27,13 @@ Input format: tolerant. It reads the raw copy-paste from a board page — markdo
 stray vote counts, blank lines and all. A line is a player when it has a name, a
 position and a school; anything else is skipped and reported.
 
+THE NFL DRAFT ORDER (24 Oct 2026, owner)
+  data/nfl-draft-order-raw.txt holds a pasted full NFL draft order (pick, team, "XXX From ..."
+  for a traded pick). Each player's board rank is matched to the pick with the same number, so
+  the board's #9 is shown going to whoever holds pick 9. That is the draft if every team took
+  the best player left on the board — not a prediction of who picks whom — and it lines every
+  player up with a team with no third source. Ranks past the last pick get no team.
+
 Usage:
   python3 scripts/build-devy-board.py --dry-run
   python3 scripts/build-devy-board.py --confirm
@@ -35,11 +42,13 @@ Usage:
 import os, re, sys, json, glob, unicodedata, datetime
 
 RAW_IN      = 'data/big-board-raw.txt'
+ORDER_IN    = 'data/nfl-draft-order-raw.txt'
 OUT         = 'data/devy-board.json'
 HIST_DIR    = 'data/board-history'
 SKILL       = {'QB', 'RB', 'WR', 'TE'}
 COLLEGE_DIR = 'data'
 MIN_PLAYERS = 20          # below this the paste is almost certainly truncated or malformed
+NFLMDD      = 'NFL Mock Draft Database'
 
 
 def norm(s):
@@ -64,6 +73,7 @@ TIER_LABEL = {'T1': 'Top 10 overall', 'T2': 'Round 1', 'T3': 'Round 2', 'T4': 'R
 POS_RE = r'(QB|RB|WR|TE|OT|IOL|OL|C|G|EDGE|DL|DT|DE|LB|ILB|OLB|CB|S|DB|K|P|LS|ATH|FB)'
 
 
+
 def parse(text):
     """Pull (rank, name, pos, school) out of a pasted board.
 
@@ -81,7 +91,7 @@ def parse(text):
         if i in consumed:
             continue
         s = ln.strip()
-        if not s:
+        if not s or s.startswith('#'):            # blank, or a '# source:' style header line
             continue
         if re.fullmatch(r'\d{1,3}', s):          # a bare number is the board rank
             rank = int(s); continue
@@ -115,6 +125,74 @@ def parse(text):
         k = norm(r['n'])
         if k not in best or r['rank'] < best[k]['rank']: best[k] = r
     return sorted(best.values(), key=lambda r: r['rank']), skipped
+
+
+def board_meta(text):
+    """Where a paste came from. A converted CSV carries '# source:' and '# board date:' header
+    lines (scripts/board-from-csv.py writes them); a browser paste from NFL Mock Draft Database
+    carries that site's links. Every board before 24 Oct 2026 came from there."""
+    meta = {'source': None, 'boardDate': None}
+    for ln in text.splitlines():
+        m = re.match(r'\s*#\s*(source|board date)\s*:\s*(.+?)\s*$', ln, re.I)
+        if m:
+            meta['source' if m.group(1).lower() == 'source' else 'boardDate'] = m.group(2)
+    if not meta['source'] and 'nflmockdraftdatabase.com' in text:
+        meta['source'] = NFLMDD
+    return meta
+
+
+TEAM_CODE = {   # the names a pasted order uses -> DELTA's team codes (fetch-player-stats.py DELTA_TEAMS)
+    'arizona': 'ARI', 'atlanta': 'ATL', 'baltimore': 'BAL', 'buffalo': 'BUF', 'carolina': 'CAR',
+    'chicago': 'CHI', 'cincinnati': 'CIN', 'cleveland': 'CLE', 'dallas': 'DAL', 'denver': 'DEN',
+    'detroit': 'DET', 'greenbay': 'GB', 'houston': 'HOU', 'indianapolis': 'IND', 'jacksonville': 'JAC',
+    'kansascity': 'KC', 'lachargers': 'LAC', 'losangeleschargers': 'LAC', 'larams': 'LAR',
+    'losangelesrams': 'LAR', 'lasvegas': 'LV', 'miami': 'MIA', 'minnesota': 'MIN', 'newengland': 'NE',
+    'neworleans': 'NO', 'nygiants': 'NYG', 'newyorkgiants': 'NYG', 'nyjets': 'NYJ', 'newyorkjets': 'NYJ',
+    'philadelphia': 'PHI', 'pittsburgh': 'PIT', 'sanfrancisco': 'SF', 'seattle': 'SEA', 'tampabay': 'TB',
+    'tennessee': 'TEN', 'washington': 'WAS'}
+CODES = set(TEAM_CODE.values()) | {'JAX'}
+
+
+def team_code(s):
+    k = re.sub(r'[^a-z]', '', str(s or '').lower())
+    if k in TEAM_CODE: return TEAM_CODE[k]
+    u = str(s or '').strip().upper()
+    if u in CODES: return 'JAC' if u == 'JAX' else u
+    return None
+
+
+def parse_draft_order(text):
+    """[{pick, round, team, via}] from a pasted NFL draft order:
+        1st Round / 1 / LA Chargers / 2 / Miami / ... / 6 / NY Jets / "  DAL From Dallas"
+    A pick line, the team holding it on the next line, and for a traded pick a line naming the
+    team it came from. Returns (picks, problems); any problem means the order is not used."""
+    picks, problems, rnd, cur = [], [], None, None
+    for ln in text.splitlines():
+        s = ln.strip()
+        if not s: continue
+        m = re.match(r'^(\d)(?:st|nd|rd|th) round$', s, re.I)
+        if m: rnd = int(m.group(1)); continue
+        if re.fullmatch(r'\d{1,3}', s):
+            cur = {'pick': int(s), 'round': rnd, 'team': None, 'via': None}; picks.append(cur); continue
+        m = re.match(r'^([A-Z]{2,3}) from (.+)$', s, re.I)
+        if m and cur and cur['team']:
+            cur['via'] = team_code(m.group(2)) or team_code(m.group(1))
+            if not cur['via']: problems.append(f"pick {cur['pick']}: unknown team in {s!r}")
+            continue
+        if cur and cur['team'] is None:
+            cur['team'] = team_code(s)
+            if not cur['team']: problems.append(f"pick {cur['pick']}: unknown team {s!r}")
+            continue
+        # headings and anything else are ignored, but not silently when they sit inside the list
+        if cur: problems.append(f'unexpected line after pick {cur["pick"]}: {s[:50]!r}')
+    nums = [p['pick'] for p in picks]
+    if nums != list(range(1, len(nums) + 1)):
+        problems.append('pick numbers do not run 1, 2, 3 ... without a gap')
+    if len(picks) < 32:
+        problems.append(f'only {len(picks)} picks - not a full draft order')
+    if any(p['team'] is None for p in picks):
+        problems.append('a pick has no team')
+    return picks, problems
 
 
 def newest_college_file():
@@ -191,13 +269,42 @@ def main():
         print('  no college season files found — skipping the match step')
 
     # movement against the previous snapshot
-    prev = {}
+    meta = board_meta(text)
+    print(f"  source: {meta['source'] or 'unknown'}" + (f"  (board date {meta['boardDate']})" if meta['boardDate'] else ''))
+    prev, prev_payload = {}, {}
     if os.path.exists(OUT):
         try:
-            prev = {norm(k): v.get('rank') for k, v in
-                    (json.load(open(OUT)).get('players') or {}).items()}
+            prev_payload = json.load(open(OUT))
+            prev = {norm(k): v.get('rank') for k, v in (prev_payload.get('players') or {}).items()}
         except Exception:
             pass
+    # A rank on one site's board is not comparable with a rank on another's, so a change of
+    # source starts movement afresh instead of printing arrows that are only the switch.
+    prev_source = prev_payload.get('source') or (NFLMDD if prev else None)
+    if prev and meta['source'] != prev_source:
+        print(f"  board source changed ({prev_source} -> {meta['source']}): movement starts fresh this week")
+        prev = {}
+    # The NFL draft order: board rank N -> whoever holds pick N (see the header). A bad paste
+    # is reported and the order left out, never half-used; a missing file is simply no teams.
+    order_meta = None
+    if os.path.exists(ORDER_IN):
+        order_text = open(ORDER_IN, encoding='utf-8').read()
+        order, problems = parse_draft_order(order_text)
+        if problems:
+            print(f'  NFL draft order NOT USED - {len(problems)} problem(s) in {ORDER_IN}:')
+            for pr in problems[:8]: print('     ', pr)
+        else:
+            import hashlib
+            sha = hashlib.sha1(json.dumps([[p['pick'], p['team'], p['via']] for p in order]).encode()).hexdigest()[:12]
+            prev_order = prev_payload.get('draftOrder') or {}
+            as_of = prev_order.get('asOf') if prev_order.get('sha') == sha else datetime.date.today().isoformat()
+            by_pick = {p['pick']: p for p in order}
+            for r in skill:
+                p = by_pick.get(r['rank'])
+                if p: r['nflPick'], r['nflTeam'], r['nflVia'] = p['pick'], p['team'], p['via']
+            order_meta = {'picks': len(order), 'asOf': as_of, 'sha': sha}
+            print(f"  NFL draft order: {len(order)} picks (as of {as_of}); team for "
+                  f"{sum(1 for r in skill if r.get('nflTeam'))} of {len(skill)} skill players")
     risers = fallers = new = 0
     for r in skill:
         p = prev.get(norm(r['n']))
@@ -211,11 +318,15 @@ def main():
 
     players = {r['n']: {'rank': r['rank'], 'pos': r['pos'], 'school': r['school'],
                         'tier': tier_of(r['rank']), 'cfbName': r.get('cfbName'),
-                        'prevRank': r.get('prevRank'), 'move': r.get('move')}
+                        'prevRank': r.get('prevRank'), 'move': r.get('move'),
+                        'nflPick': r.get('nflPick'), 'nflTeam': r.get('nflTeam'), 'nflVia': r.get('nflVia')}
                for r in skill}
     payload = {
         'generated': datetime.date.today().isoformat(),
         'class': draft_class,
+        'source': meta['source'],
+        'boardDate': meta['boardDate'],
+        'draftOrder': order_meta,
         'note': ('Consensus big-board position for skill-position prospects, compiled by hand '
                  'from publicly published boards. Stored as a rank plus a coarse tier; the tier '
                  'is what the platform shows, because this far out a tier stays true for weeks '
