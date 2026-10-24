@@ -4214,13 +4214,26 @@ function cpShareImage(btn){ return dlImgShare(drawCompareImage,'delta-compare.pn
    gets up to +6% on players there in round 1 and +12% after, the strongest the same off.
    Small on purpose. It can swap two players who are close; it cannot move a clear 1.01.
    AVG PICK: the median pick across MD_SIMS all-bot drafts, run once when the draft starts.
+   REACH / VALUE (re-ruled 24 Oct: the owner saw five Reaches and nothing else in round 2, then
+   four Values and nothing else in round 3). Measured against the player's OWN spread in those
+   same practice drafts. Reach: fewer than 1 in 10 had taken him by this pick. Value: 9 in 10 had
+   taken him before it. Either way at least 2 picks from his Avg Pick (a player who usually goes
+   undrafted counts as after the last pick). The first rule, 4 picks either side of Avg Pick,
+   ignored that spread: 4 picks is a big move in round 1, where the bots stay close to the board,
+   and routine in rounds 2-3, where they stray ~7 places as the league does; and a player who
+   usually goes undrafted could never be a Reach. On the owner's league (1,000 drafts, this code)
+   it tagged 8.8 of 30 picks, round 2 averaging 3.9 Reaches to 1.0 Value and round 3 2.4 Values
+   to 0.9 Reaches; his draft was that shape at full strength (both rounds at once: 1 draft in 80).
+   This rule: 3.9 Reaches and 0.9 Values a draft, each an unusual pick for that player. Reaches
+   outnumber Values by nature: a Reach is one player jumping the queue by a lot, while the
+   players he jumps each slip a place or two, which is not unusual for any one of them.
    ODDS: the share of MD_SIMS simulated drafts in which a player is still there at your next
    pick (when you are on the clock: at your pick after this one, if you pass on him).
    Display only: nothing here feeds any other number on the site. */
 const MD_SIG1=0.13, MD_SIG2=0.29, MD_FLOOR=150, MD_SIMS=400, MD_NEED1=0.06, MD_NEED2=0.12;
 const MD_POSF={sf:{QB:1.8,RB:0.4,WR:1,TE:1.75},'1qb':{QB:3.3,RB:0.4,WR:1,TE:1.75}};
 const MD_CURVE_A=8232, MD_CURVE_B=-0.442;
-const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,
+const MD={pool:null,load:null,cfg:null,picks:[],lens:false,pos:'All',sel:null,odds:null,adp:null,adpAt:null,
           lensData:null,lensLoad:null,mode:null,lgInfo:null,running:false,_wait:null,_waitN:0,
           auto:false,paused:false,held:false,timer:null,fresh:-1,speed:null};
 /* LIVE DRAFT (24 Oct 2026, owner: "see the bots making the picks in real time"). The bots pick
@@ -4428,7 +4441,8 @@ function mdOdds(){
 }
 // Where each player usually goes: the median pick over MD_SIMS all-bot drafts of the whole
 // order (you included, drafting for your own needs). A player left on the board in half the
-// drafts or more has no median pick, and shows a dash.
+// drafts or more has no median pick, and shows a dash. Also returns every pick each player was
+// taken at in those drafts, sorted, for the Reach / Value test (mdTag).
 function mdAdp(){
   const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, at=P.map(()=>[]), mid=Math.floor((MD_SIMS-1)/2);
   for(let s=0;s<MD_SIMS;s++){
@@ -4439,7 +4453,17 @@ function mdAdp(){
       av.delete(ch); at[ch].push(k); tp[t][P[ch].pos]=(tp[t][P[ch].pos]||0)+1;
     }
   }
-  return at.map(a=>{ if(a.length<=mid) return null; a.sort((x,y)=>x-y); return a[mid]; });
+  at.forEach(a=>a.sort((x,y)=>x-y));
+  return {med:at.map(a=>a.length<=mid?null:a[mid]),at:at};
+}
+// Reach ('r'), Value ('v') or nothing (''), for a pick made: see REACH / VALUE in the header.
+function mdTag(x){
+  const at=MD.adpAt&&MD.adpAt[x.pi]; if(!at) return '';
+  const m=MD.adp?MD.adp[x.pi]:null, mm=m==null?mdOrder(MD.cfg).length:m;
+  let by=0, before=0; for(const v of at){ if(v<=x.k) by++; if(v<x.k) before++; }
+  if(by<0.1*MD_SIMS&&x.k<=mm-2) return 'r';
+  if(before>=0.9*MD_SIMS&&x.k>=mm+2) return 'v';
+  return '';
 }
 function mdPace(){ return MD_PACE[mdSpeed()]||MD_PACE.normal; }
 function mdSpeed(){ if(!MD.speed){ const v=dlPref('delta_md_speed'); MD.speed=(v==='fast')?'fast':'normal'; } return MD.speed; }
@@ -4471,7 +4495,7 @@ function mdSetSpeed(v){ MD.speed=(v==='fast')?'fast':'normal'; try{ dlPref('delt
 function mdStart(){
   mdStop(); MD.picks=[]; MD.sel=null; MD.running=true; MD.fresh=-1;
   if(!MD.cfg.league){ try{ dlPref('delta_md_cfg',JSON.stringify({teams:MD.cfg.teams,rounds:MD.cfg.rounds,type:MD.cfg.type,slot:MD.cfg.slot})); }catch(e){} }
-  mdPrice(); MD.adp=mdAdp(); mdGo();
+  mdPrice(); const ad=mdAdp(); MD.adp=ad.med; MD.adpAt=ad.at; mdGo();
   // Start sits at the foot of the setup screen: bring the clock into view
   const root=document.getElementById('md-root');
   if(root){ const top=root.getBoundingClientRect().top; if(top<0) window.scrollTo({top:Math.max(0,window.scrollY+top-12)}); }
@@ -4494,8 +4518,9 @@ function mdDraftNow(pi){
   mdGo();
 }
 function mdSetPos(p){ MD.pos=p; mdRender(); }
-// The DELTA lens reads the Big Board tab's own production numbers (devyProdFor): dDOM and
-// PPA percentiles from the newest college season, and the recruiting stars.
+// The DELTA Read view ("lens" in the code; the owner renamed it from DELTA Lens on 24 Oct) reads
+// the Big Board tab's own production numbers (devyProdFor): dDOM and PPA percentiles from the
+// newest college season, and the recruiting stars.
 function mdSetLens(on){
   MD.lens=!!on;
   if(MD.lens&&!MD.lensData&&!MD.lensLoad){
@@ -4620,11 +4645,10 @@ function mdRender(){
   const root=document.getElementById('md-root'); if(!root||!MD.pool) return;
   const c=MD.cfg, o=mdOrder(c), P=MD.pool.players, k=MD.picks.length, done=k>=o.length||!mdAvail().length;
   const mine=mdMine(c), onClock=!done&&o[k].t===mine;
-  // Reach / Value: taken well before or after where he usually goes (Avg Pick). Neutral colours —
-  // a draft-room aside, not a DELTA call.
-  const tagOf=x=>{ const a=MD.adp?MD.adp[x.pi]:null; if(a==null) return '';
-    const T=Math.max(3,Math.round(c.teams*0.4));
-    return x.k<=a-T?'<mark class="dl-md-tag r">Reach</mark>':(x.k>=a+T?'<mark class="dl-md-tag v">Value</mark>':''); };
+  // Reach / Value: an unusual pick for that player (mdTag). Neutral colours — a draft-room aside,
+  // not a DELTA call.
+  const tagOf=x=>{ const t=mdTag(x);
+    return t==='r'?'<mark class="dl-md-tag r">Reach</mark>':(t==='v'?'<mark class="dl-md-tag v">Value</mark>':''); };
   const pickRow=x=>{ const p=P[x.pi], pk=o[x.k];
     return '<li class="'+(x.me?'me':'')+(x.k===MD.fresh&&!done?' new':'')+'"><b>'+mdLabel(pk)+'</b><span>'+mdEsc(p.n)+'</span><em>'+p.pos+'</em>'+tagOf(x)+'<i>'+mdEsc(mdName(c,x.t))+'</i></li>'; };
   const myPicks=MD.picks.filter(x=>x.me);
@@ -4689,7 +4713,7 @@ function mdRender(){
         +'<td class="dl-b-r">'+(L.stars?L.stars+'★':wait)+'</td></tr>'; }).join('');
   }
   const board=done?'':'<div class="dl-md-sec"><div class="dl-md-tools">'
-      +'<div class="dl-md-chips">'+['Board','DELTA Lens'].map((t,j)=>'<button type="button" class="dl-md-chip'+((j===1)===MD.lens?' on':'')+'" onclick="mdSetLens('+(j===1)+')">'+t+'</button>').join('')+'</div>'
+      +'<div class="dl-md-chips">'+['Board','DELTA Read'].map((t,j)=>'<button type="button" class="dl-md-chip'+((j===1)===MD.lens?' on':'')+'" onclick="mdSetLens('+(j===1)+')">'+t+'</button>').join('')+'</div>'
       +'<div class="dl-md-chips">'+['All','QB','RB','WR','TE'].map(t=>'<button type="button" class="dl-md-chip sm'+(MD.pos===t?' on':'')+'" onclick="mdSetPos(\''+t+'\')">'+t+'</button>').join('')+'</div>'
       +'</div>'
       +(MD.lens?'<p class="dl-md-hint">Same order. dDOM is his share of his team’s production, adjusted for opponents, and PPA his efficiency, each a percentile (0–100) at his position in the '+((MD.lensData&&MD.lensData.year)||'latest')+' season. Recruit is his high-school star rating.</p>'
@@ -4741,13 +4765,21 @@ async function drawMockImage(){
       const p=P[x.pi], tx=cx+100, room=colW-100-16;
       if(x.me){ g.fillStyle=C.lead; dlImgRound(g,cx,cy+5,colW,RH-10,12); g.fill(); g.strokeStyle=C.leadBd; g.lineWidth=2; g.stroke(); }
       g.textAlign='left'; g.fillStyle=C.fog; g.font='600 22px '+F.mono; g.fillText(mdLabel(o[x.k]),cx+16,cy+RH/2);
+      // Reach / Value (owner, 24 Oct): the page's outlined tag, at the right end of line 2, so a
+      // long name on line 1 keeps its full width
+      const tg=mdTag(x); let tagW=0;
+      if(tg){ const tt=tg==='r'?'REACH':'VALUE', tc=tg==='r'?C.violet:C.sky;
+        g.font='800 17px '+F.sans; dlImgSpace(g,1); tagW=Math.ceil(g.measureText(tt).width)+20;
+        const px=cx+colW-16-tagW;
+        g.strokeStyle=tc; g.lineWidth=2; dlImgRound(g,px,cy+46,tagW,28,7); g.stroke();
+        g.fillStyle=tc; g.fillText(tt,px+10,cy+61); dlImgSpace(g,0); }
       // line 1: player and position; line 2: the team that made the pick
       g.font='600 20px '+F.sans; const pw=g.measureText(p.pos).width;
       g.fillStyle=C.paper; g.font='700 27px '+F.sans;
       const nm=dlImgFit(g,p.n,room-pw-12), nw=g.measureText(nm).width; g.fillText(nm,tx,cy+30);
       g.fillStyle=C.fog2; g.font='600 20px '+F.sans; g.fillText(p.pos,tx+nw+10,cy+31);
       g.fillStyle=x.me?C.paper:C.fog; g.font=(x.me?'700 ':'500 ')+'20px '+F.sans;
-      g.fillText(dlImgFit(g,mdName(c,x.t,anon),room),tx,cy+60);
+      g.fillText(dlImgFit(g,mdName(c,x.t,anon),room-(tagW?tagW+16:0)),tx,cy+60);
     });
     y+=half*RH+GAP;
   });
@@ -7708,7 +7740,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-24f</span>
+  <span class="foot-build">2026-10-24g</span>
 </footer>
 
 
