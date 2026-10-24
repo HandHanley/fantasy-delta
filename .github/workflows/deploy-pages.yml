@@ -126,21 +126,34 @@ jobs:
       # site, so the same storage). Unlinked, noindex, and robots.txt keeps crawlers out. It is built here,
       # from main's deploy, so the github-pages environment only ever deploys main; after pushing to the
       # branch, dispatch this workflow to refresh it. Safe to fail: the site deploys without it.
+      # What it holds: THE LIVE SITE AS COMMITTED (code and today's data) WITH THE BRANCH'S OWN CODE
+      # CHANGES ON TOP — the files the branch changed since it last met main. Never the branch's data/:
+      # that is a snapshot from its last merge, while the live data moves nightly and the weekly board is
+      # committed to main. So the test copy stays current without merging main into the branch.
       # Remove this step (and the robots.txt line) once the branch is merged.
       - name: Preview copy of the mock-draft branch
         continue-on-error: true
         run: |
-          set -e
-          git fetch --no-tags --depth=1 origin mock-draft
-          v="$(git rev-parse --short FETCH_HEAD)"
-          rm -rf preview && mkdir preview
-          git archive FETCH_HEAD | tar -x -C preview
-          rm -rf preview/.github preview/scripts preview/study preview/supabase preview/p preview/docs preview/data/fixtures
-          for f in preview/*.html; do
+          set -eo pipefail
+          refs="+refs/heads/main:refs/remotes/origin/main +refs/heads/mock-draft:refs/remotes/origin/mock-draft"
+          git fetch --no-tags --unshallow origin $refs 2>/dev/null || git fetch --no-tags origin $refs
+          br=origin/mock-draft
+          base="$(git merge-base HEAD "$br")"
+          v="$(git rev-parse --short HEAD)-$(git rev-parse --short "$br")"
+          keep=(-- . ':(exclude)data' ':(exclude).github' ':(exclude)scripts' ':(exclude)study' ':(exclude)supabase' ':(exclude)docs' ':(exclude)p')
+          T="$RUNNER_TEMP/delta-preview"; rm -rf "$T" preview; mkdir -p "$T"
+          git archive HEAD | tar -x -C "$T"
+          rm -rf "$T/.github" "$T/scripts" "$T/study" "$T/supabase" "$T/p" "$T/docs" "$T/data/fixtures"
+          git diff --name-only -z --no-renames --diff-filter=AM "$base" "$br" "${keep[@]}" |
+            while IFS= read -r -d '' f; do mkdir -p "$T/$(dirname "$f")"; git show "$br:$f" > "$T/$f"; echo "  from the branch: $f"; done
+          git diff --name-only -z --no-renames --diff-filter=D "$base" "$br" "${keep[@]}" |
+            while IFS= read -r -d '' f; do rm -f "$T/$f"; echo "  removed on the branch: $f"; done
+          for f in "$T"/*.html; do
             sed -i -E "s#src=\"(delta-engine|delta-sync)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
             sed -i 's#<head>#<head><meta name="robots" content="noindex,nofollow">#' "$f"
           done
-          echo "preview: /preview/ from mock-draft ${v}, $(grep -o 'foot-build">[^<]*' preview/index.html)"
+          mv "$T" preview
+          echo "preview: /preview/ = main + mock-draft code (${v}), $(grep -o 'foot-build">[^<]*' preview/index.html)"
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
