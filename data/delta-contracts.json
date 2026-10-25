@@ -1,5 +1,5 @@
 {
- "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. NOTHING ON THE SITE READS THIS FILE YET: the site keeps using the nflverse/OTC feed until the table is complete and the owner has seen a before-and-after list of every DELTA Score it would move. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran (new deal), extension (years added to a running deal; new years start after the old ones), franchise_tag, practice_squad, free_agent (no current contract: `end` null, which the Score treats as neutral). `option` (first-rounders only): `exercised` = the team picked up the fifth-year option and that year is counted in `end`; `available` = not decided yet, so `end` stops after year four and the page shows \"Fifth-Year Option Available\" with no date (owner, 25 Oct 2026: teams can decide any time in `window`, which is kept only so we know when to re-check); `declined` = no fifth year. A row with `pending` waits on the owner because it disagrees with the feed. Rows that agree with the feed went in without owner review (owner's rule, 25 Oct 2026).",
+ "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. NOTHING ON THE SITE READS THIS FILE YET: the site keeps using the nflverse/OTC feed until the table is complete and the owner has seen a before-and-after list of every DELTA Score it would move. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran (new deal), extension (years added to a running deal; new years start after the old ones), franchise_tag, practice_squad, free_agent (no current contract: `end` null, which the Score treats as neutral), retired (end null), left_team (end null; owner exception). `option` (first-rounders only): `exercised` = the team picked up the fifth-year option and that year is counted in `end`; `available` = not decided yet, so `end` stops after year four and the page shows \"Fifth-Year Option Available\" with no date (owner, 25 Oct 2026: teams can decide any time in `window`, which is kept only so we know when to re-check); `declined` = no fifth year. A row with `pending` waits on the owner because it disagrees with the feed. Rows that agree with the feed went in without owner review (owner's rule, 25 Oct 2026).",
  "season": 2026,
  "updated": "2026-10-25",
  "rookie_rule": "Drafted players: four-year deal, draft year to draft year + 3. First-rounders add draft year + 4 only once the team picks up the fifth-year option (decided each May of year + 3). Players from the last three classes cannot sign extensions until after their third season.",
@@ -162,6 +162,17 @@
     "year": 2029,
     "window": "end of the 2027 regular season to early May 2028"
    }
+  },
+  "Audric Estime": {
+   "team": null,
+   "end": null,
+   "kind": "free_agent",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 5 by Denver; waived 2025; on the Saints roster from November 2025; waived with an injury settlement 22 Sep 2026. No 2026 contract found as of 25 Oct 2026: counted as no contract (Score treats it as neutral).",
+   "source": "https://en.wikipedia.org/wiki/Audric_Estim%C3%A9",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site uses 2026 from a feed row (Score unchanged at 41)."
   },
   "Austin Ekeler": {
    "team": "WAS",
@@ -584,6 +595,17 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Chris Brooks": {
+   "team": "GB",
+   "end": 2027,
+   "kind": "veteran",
+   "aav": 2.43,
+   "total": 4.85,
+   "basis": "Two-year, $4.85M deal to return to Green Bay (March 2026): 2026-2027.",
+   "source": "https://www.acmepackingcompany.com/green-bay-packers-free-agency/79999/packers-re-sign-rb-chris-brooks-to-2-year-4-85-million-contract",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site has no contract for him (Score 27 to 28)."
+  },
   "Chris Godwin": {
    "team": "TB",
    "end": 2027,
@@ -804,6 +826,16 @@
    "source": "https://abc13.com/post/sources-texans-dalton-schultz-reach-1-year-126m-extension/18686394/",
    "checked": "2026-10-25"
   },
+  "Damien Martinez": {
+   "team": null,
+   "end": null,
+   "kind": "free_agent",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 by Seattle; on a Green Bay reserve/future deal (January 2026), released 30 Aug 2026. No 2026 contract found as of 25 Oct 2026: counted as no contract (Score treats it as neutral).",
+   "source": "https://en.wikipedia.org/wiki/Damien_Martinez",
+   "checked": "2026-10-25"
+  },
   "Daniel Jones": {
    "team": "IND",
    "end": 2027,
@@ -863,6 +895,17 @@
    "basis": "One-year deal with the Chargers (May 2026).",
    "source": "https://www.espn.com/nfl/story/_/id/48739754/sources-chargers-te-david-njoku-agree-one-year-deal",
    "checked": "2026-10-25"
+  },
+  "Davis Mills": {
+   "team": "HOU",
+   "end": 2026,
+   "kind": "extension",
+   "aav": 7.0,
+   "total": 7.0,
+   "basis": "One-year, $7M extension (2025) through the 2026 season; restructured in 2026.",
+   "source": "https://www.cbssports.com/nfl/news/davis-mills-contract-texans-agree-to-one-year-7-million-extension-with-backup-qb-per-report",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site uses 2025, a contract that already ended (Score unchanged at 38)."
   },
   "Dawson Knox": {
    "team": "BUF",
@@ -962,6 +1005,16 @@
    "total": null,
    "basis": "Drafted 2024, round 7 (pick 235): four-year rookie deal, 2024-2027.",
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Devin Neal": {
+   "team": "WAS",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 by New Orleans; waived with an injury settlement 3 Sep 2026; signed to the Washington practice squad 13 Oct 2026 (season-only deal).",
+   "source": "https://www.commanders.com/news/commanders-sign-devin-neal-practice-squad",
    "checked": "2026-10-25"
   },
   "Devin Singletary": {
@@ -1414,6 +1467,16 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Ja'Lynn Polk": {
+   "team": null,
+   "end": null,
+   "kind": "retired",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 by New England; traded to New Orleans (2025); retired from the NFL in summer 2026.",
+   "source": "https://sportsnaut.com/nfl/new-orleans-saints-jalynn-polk-retires",
+   "checked": "2026-10-25"
+  },
   "JaTavion Sanders": {
    "team": "CAR",
    "end": 2027,
@@ -1489,6 +1552,26 @@
     "window": "end of the 2028 regular season to early May 2029"
    }
   },
+  "Jahdae Walker": {
+   "team": "CHI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Undrafted in 2025, signed by Chicago (undrafted free-agent deals run three years: 2025-2027); on the initial 2026 53-man roster.",
+   "source": "https://chicagobears.com/news/chicago-bears-announce-roster-moves-initial-53-man-2026",
+   "checked": "2026-10-25"
+  },
+  "Jake Tonges": {
+   "team": "SF",
+   "end": 2027,
+   "kind": "extension",
+   "aav": 4.0,
+   "total": 8.0,
+   "basis": "Two-year, $8M deal with San Francisco (2026): 2026-2027.",
+   "source": "https://www.smdailyjournal.com/sports/49ers-agree-to-a-2-year-8m-contract-with-tight-end-jake-tonges/article_576db392-a972-5777-98c3-08336b9f5827.html",
+   "checked": "2026-10-25"
+  },
   "Jakobi Meyers": {
    "team": "JAX",
    "end": 2028,
@@ -1547,6 +1630,16 @@
    "total": null,
    "basis": "Drafted 2025, round 4 (pick 133): four-year rookie deal, 2025-2028.",
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jalen Tolbert": {
+   "team": "MIA",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "One-year deal with Miami (March 2026).",
+   "source": "https://digital-release.ketk.com/sports/sports-illustrated/arena-nfl/si-dallas-cowboys-nfl/c788aa2b/cowboys-lose-former-receiving-tds-leader-to-dolphins-in-free-agency",
    "checked": "2026-10-25"
   },
   "Jam Miller": {
@@ -1669,6 +1762,17 @@
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Jaydon Blue": {
+   "team": "PHI",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 by Dallas; released 30 Aug 2026; signed to the Philadelphia practice squad 31 Aug 2026 (season-only deal).",
+   "source": "https://larrybrownsports.com/football/former-cowboys-jaydon-blue-signing-eagles/768218",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site has no contract for him (Score unchanged at 36)."
+  },
   "Jaylen Wright": {
    "team": "MIA",
    "end": 2027,
@@ -1724,6 +1828,16 @@
     "window": "end of the 2028 regular season to early May 2029"
    }
   },
+  "Jerome Ford": {
+   "team": "WAS",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "One-year deal with Washington (2026).",
+   "source": "https://www.aol.com/articles/jerome-ford-signs-one-contract-150019856.html",
+   "checked": "2026-10-25"
+  },
   "Jerry Jeudy": {
    "team": "CLE",
    "end": 2027,
@@ -1732,6 +1846,16 @@
    "total": 58.0,
    "basis": "Three-year extension (March 2024) after his option year (2024): new years 2025-2027; reported as up to $58M.",
    "source": "https://www.cbssports.com/nfl/news/browns-lock-up-jerry-jeudy-new-cleveland-wr-gets-three-year-extension-reportedly-worth-up-to-58-million",
+   "checked": "2026-10-25"
+  },
+  "Jimmy Horn": {
+   "team": "CLE",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 by Carolina; released; signed to the Cleveland practice squad (September 2026) (season-only deal).",
+   "source": "https://www.clevelandbrowns.com/news/browns-sign-wr-jimmy-horn-jr-to-the-practice-squad",
    "checked": "2026-10-25"
   },
   "Joe Flacco": {
@@ -1772,6 +1896,16 @@
    "total": null,
    "basis": "Drafted 2026, round 5 (pick 170): four-year rookie deal, 2026-2029.",
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "John Metchie": {
+   "team": "CAR",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "Signed by Carolina (March 2026); length not reported, so counted as at least the 2026 season.",
+   "source": "https://wtop.com/nfl/2026/03/panthers-agree-to-terms-with-john-metchie-giving-them-more-speed-at-wide-receiver/",
    "checked": "2026-10-25"
   },
   "John Michael Gyllenborg": {
@@ -1914,6 +2048,17 @@
    "source": "https://www.cbssports.com/nfl/news/nfl-free-agency-2024-packers-signing-pro-bowl-rb-josh-jacobs-to-four-year-48-million-deal-per-report",
    "checked": "2026-10-25"
   },
+  "Joshua Palmer": {
+   "team": "BUF",
+   "end": 2027,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "Three-year deal with Buffalo (March 2025): 2025-2027; on injured reserve.",
+   "source": "https://www.buffalorumblings.com/2025/3/17/24387859/full-contract-breakdown-of-buffalo-bills-wr-joshua-palmers-3-year-deal",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site has no contract for him (Score 43 to 44)."
+  },
   "Justice Hill": {
    "team": "BAL",
    "end": 2026,
@@ -1989,6 +2134,16 @@
     "window": "end of the 2028 regular season to early May 2029"
    }
   },
+  "KaVontae Turpin": {
+   "team": "DAL",
+   "end": 2027,
+   "kind": "veteran",
+   "aav": 6.0,
+   "total": 18.0,
+   "basis": "Three-year, $18M deal to stay in Dallas (March 2025): 2025-2027.",
+   "source": "https://www.dallascowboys.com/news/kavontae-turpin-agrees-to-terms-with-cowboys-on-3-year-deal",
+   "checked": "2026-10-25"
+  },
   "Kaden Wetjen": {
    "team": "PIT",
    "end": 2029,
@@ -2017,6 +2172,16 @@
    "total": null,
    "basis": "Drafted 2025, round 3 (pick 83): four-year rookie deal, 2025-2028.",
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kameron Johnson": {
+   "team": "TB",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Undrafted in 2024, signed by Tampa Bay; undrafted free-agent deals run three years: 2024-2026; on the 2026 roster.",
+   "source": "https://www.espn.com/nfl/player/news/_/id/5097554",
    "checked": "2026-10-25"
   },
   "Kareem Hunt": {
@@ -2127,6 +2292,16 @@
    "total": 43.05,
    "basis": "Three-year, $43.05M free-agent deal with the Chiefs (March 2026): 2026-2028.",
    "source": "https://espn.com.au/nfl/story/_/id/48153654/source-super-bowl-mvp-kenneth-walker-agrees-sign-chiefs",
+   "checked": "2026-10-25"
+  },
+  "Kenny McIntosh": {
+   "team": null,
+   "end": null,
+   "kind": "free_agent",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 7 by Seattle; waived 27 Jul 2026. No 2026 contract found as of 25 Oct 2026: counted as no contract (Score treats it as neutral).",
+   "source": "https://www.yakimaherald.com/sports/professional_sports/seahawks/seahawks-waive-oft-injured-rb-kenny-mcintosh/article_ddb376a4-6134-5d29-8aed-71289d93c60e.html",
    "checked": "2026-10-25"
   },
   "Kenny Pickett": {
@@ -2445,6 +2620,16 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Marquise Brown": {
+   "team": "PHI",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "One-year deal with Philadelphia (March 2026).",
+   "source": "https://www.fox29.com/sports/eagles-sign-wide-receiver-hollywood-brown-1-year-deal",
+   "checked": "2026-10-25"
+  },
   "Marvin Harrison Jr.": {
    "team": "ARI",
    "end": 2027,
@@ -2535,6 +2720,16 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Michael Carter": {
+   "team": "TEN",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "On the Tennessee roster in 2026; length not reported, so counted as at least the 2026 season.",
+   "source": "https://www.tennesseetitans.com/team/players-roster/michael-carter/",
+   "checked": "2026-10-25"
+  },
   "Michael Penix Jr.": {
    "team": "ATL",
    "end": 2027,
@@ -2558,6 +2753,16 @@
    "total": 59.0,
    "basis": "Traded to Pittsburgh (March 2026): two years added after 2026 with his 2026 pay restructured; $59M through 2028 (Steelers Depot).",
    "source": "https://steelersdepot.com/2026/03/new-contract-details-for-steelers-wr-michael-pittman-jr-revealed/",
+   "checked": "2026-10-25"
+  },
+  "Michael Trigg": {
+   "team": "DAL",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Undrafted in 2026; waived by Dallas 30 Aug 2026 and re-signed to its practice squad the next day (season-only deal).",
+   "source": "https://en.wikipedia.org/wiki/Michael_Trigg_(tight_end)",
    "checked": "2026-10-25"
   },
   "Mike Evans": {
@@ -2620,6 +2825,16 @@
    "source": "https://www.tennesseetitans.com/news/titans-sign-five-of-the-team-s-eight-draft-picks",
    "checked": "2026-10-25"
   },
+  "Nick Chubb": {
+   "team": null,
+   "end": null,
+   "kind": "retired",
+   "aav": null,
+   "total": null,
+   "basis": "Retired from the NFL (August 2026); signed a one-day contract to retire as a Brown.",
+   "source": "https://www.cleveland19.com/2026/09/24/nick-chubb-retiring-brown/",
+   "checked": "2026-10-25"
+  },
   "Nico Collins": {
    "team": "HOU",
    "end": 2027,
@@ -2640,6 +2855,16 @@
    "source": "https://www.thefantasyfootballers.com/news/629576/noah-fant-heading-to-new-orleans/",
    "checked": "2026-10-25"
   },
+  "Noah Gray": {
+   "team": "KC",
+   "end": 2027,
+   "kind": "extension",
+   "aav": 6.5,
+   "total": 19.5,
+   "basis": "Three-year, $19.5M extension (September 2024) after a rookie deal through 2024: new years 2025-2027.",
+   "source": "https://www.ky3.com/2024/09/05/chiefs-agree-with-te-noah-gray-3-year-contract-extension-ap-source-says/",
+   "checked": "2026-10-25"
+  },
   "Noah Thomas": {
    "team": "CIN",
    "end": 2026,
@@ -2649,6 +2874,27 @@
    "basis": "Undrafted in 2026; on the Bengals initial practice squad (31 Aug 2026; season-only deal).",
    "source": "https://atozsports.com/nfl/cincinnati-bengals-news/initial-2026-practice-squad-11-players-garmon-randolph-tanner-hudson/",
    "checked": "2026-10-25"
+  },
+  "Odell Beckham": {
+   "team": "MIN",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Signed to the Minnesota practice squad 7 Oct 2026 (season-only deal).",
+   "source": "https://www.vikings.com/news/odell-beckham-jr-practice-squad-roster-moves",
+   "checked": "2026-10-25"
+  },
+  "Olamide Zaccheaus": {
+   "team": "ATL",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "Signed by Atlanta (March 2026); length not reported, so counted as at least the 2026 season.",
+   "source": "https://www.atlantafalcons.com/news/atlanta-falcons-sign-wr-olamide-zaccheaus",
+   "checked": "2026-10-25",
+   "pending": "Owner review: site uses 2027 from the feed, which lists a two-year deal no report confirms (Score 43 to 42)."
   },
   "Ollie Gordon": {
    "team": "MIA",
@@ -2748,6 +2994,16 @@
    "total": 504.75,
    "basis": "Reworked deal (June 2026); AP: through 2033, $504.75M.",
    "source": "https://wtop.com/nfl/2026/06/chiefs-lock-in-patrick-mahomes-through-2033-with-a-504-75m-reworked-deal-ap-source-says/",
+   "checked": "2026-10-25"
+  },
+  "Phil Mafah": {
+   "team": "NYG",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 by Dallas; waived 30 Aug 2026; signed to the Giants practice squad 14 Sep 2026 (season-only deal).",
+   "source": "https://en.wikipedia.org/wiki/Phil_Mafah",
    "checked": "2026-10-25"
   },
   "Puka Nacua": {
@@ -3355,6 +3611,16 @@
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Trey Lance": {
+   "team": "LAC",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": 6.75,
+   "total": 6.75,
+   "basis": "One-year deal to return to the Chargers (March 2026), up to $6.75M.",
+   "source": "https://profootballrumors.com/2026/03/chargers-to-re-sign-qb-trey-lance",
+   "checked": "2026-10-25"
+  },
   "Treylon Burks": {
    "team": "WAS",
    "end": 2026,
@@ -3383,6 +3649,26 @@
    "total": null,
    "basis": "One-year deal with Atlanta (March 2026).",
    "source": "https://www.hawaiinewsnow.com/2026/03/10/tua-tagovailoa-sign-one-year-contract-with-atlanta-falcons/",
+   "checked": "2026-10-25"
+  },
+  "Tutu Atwell": {
+   "team": "LAR",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "One-year deal with Miami (2026); traded back to the Rams 27 Aug 2026 with the contract.",
+   "source": "https://www.local10.com/sports/local/2026/08/27/dolphins-trade-tutu-atwell-back-to-rams-for-rb-jarquez-hunter/",
+   "checked": "2026-10-25"
+  },
+  "Ty Johnson": {
+   "team": "BUF",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "Two-year deal to return to Buffalo (March 2025): 2025-2026.",
+   "source": "https://www.buffalorumblings.com/2025/3/11/24383623/buffalo-bills-re-sign-ufa-running-back-ty-johnson-2025-nfl-free-agency-news",
    "checked": "2026-10-25"
   },
   "Ty Simpson": {
@@ -3485,6 +3771,16 @@
    "source": "https://www.newsweek.com/sports/nfl/tyreek-hill-to-sign-with-nfl-team-in-the-next-few-days-says-agent-12525630",
    "checked": "2026-10-25"
   },
+  "Tyrod Taylor": {
+   "team": "GB",
+   "end": 2026,
+   "kind": "veteran",
+   "aav": null,
+   "total": null,
+   "basis": "Signed by Green Bay as a backup (May 2026); length not reported, so counted as at least the 2026 season.",
+   "source": "https://www.packers.com/news/packers-thrilled-to-add-great-leader-of-men-in-tyrod-taylor-may-13-2026",
+   "checked": "2026-10-25"
+  },
   "Tyrone Tracy": {
    "team": "NYG",
    "end": 2027,
@@ -3535,6 +3831,16 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   },
+  "Will Levis": {
+   "team": "NYJ",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2; released by Tennessee; signed to the Jets practice squad 22 Sep 2026 (season-only deal).",
+   "source": "https://www.yardbarker.com/nfl/articles/jets_qb_will_levis_agree_to_deal/s1_14819_44335589",
+   "checked": "2026-10-25"
+  },
   "Will Shipley": {
    "team": "PHI",
    "end": 2027,
@@ -3580,6 +3886,16 @@
     "window": "end of the 2026 regular season to early May 2027"
    }
   },
+  "Xavier Restrepo": {
+   "team": "TEN",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Undrafted in 2025; waived by Tennessee 31 Aug 2026 and signed to its practice squad (season-only deal).",
+   "source": "https://www.yardbarker.com/nfl/articles/titans_sign_wr_xavier_restrepo_to_practice_squad/s1_17039_44248208",
+   "checked": "2026-10-25"
+  },
   "Xavier Worthy": {
    "team": "KC",
    "end": 2027,
@@ -3603,6 +3919,16 @@
    "total": null,
    "basis": "Drafted 2023, round 2 (pick 52): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
    "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Zach Ertz": {
+   "team": "PHI",
+   "end": 2026,
+   "kind": "practice_squad",
+   "aav": null,
+   "total": null,
+   "basis": "Signed to the Philadelphia practice squad (September 2026) after Dallas Goedert's injury (season-only deal).",
+   "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/zach-ertz-returning-to-philadelphia-will-sign-with-eagles-practice-squad",
    "checked": "2026-10-25"
   },
   "Zachariah Branch": {
