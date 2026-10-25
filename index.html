@@ -199,7 +199,7 @@ tr:hover td{background:var(--panel)}
 .dl-tc-act:hover{background:var(--teal-soft)}
 .dl-tc-act:disabled{opacity:.6;cursor:default}
 /* Mock Draft (24 Oct 2026). Chips and buttons are page chrome (accent); the board is .dl-board. */
-.dl-md-wrap{max-width:760px}
+.dl-md-wrap{max-width:760px;margin:0 auto}   /* centred on desktop (owner, 25 Oct 2026) */
 .dl-md-head h2{font-size:20px;font-weight:800;color:var(--paper);margin:0 0 4px;letter-spacing:-.3px}
 .dl-md-head p{font-size:12px;color:var(--fog);margin:0 0 14px}
 .dl-md-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-bottom:12px}
@@ -4546,6 +4546,14 @@ function openMockDraft(){
   if(!MD.pool){ root.innerHTML='<div class="dl-md-note">Loading the big board…</div>';
     mdLoad().then(p=>{ if(!p){ root.innerHTML='<div class="dl-md-note">The big board didn’t load.</div>'
       +'<button type="button" class="dl-md-go" onclick="openMockDraft()">Try Again</button>'; return; } openMockDraft(); }); return; }
+  /* Opened straight from the menu (owner, 25 Oct 2026): the saved league used to load only when
+     Roster opened, so the Mock Draft started in Custom until you visited Roster and came back.
+     Start the same restore Roster runs (it marks the league busy at once), then the wait below
+     picks it up. Tried once per visit; with no saved league this does nothing. */
+  if(typeof SLP!=='undefined'&&SLP&&!SLP.conn&&!SLP.loaded&&!SLP.busy&&!MD._restoreTried&&typeof openMyTeamTab==='function'){
+    let saved=null; try{ saved=slpStoreActive(slpStoreRead()); }catch(e){}
+    if(saved&&saved.leagueId){ MD._restoreTried=true; try{ openMyTeamTab(); }catch(e){ console.warn('mock: league restore',e); } }
+  }
   // A saved league still loading: wait for it (up to ~20 s) rather than open in Custom.
   const pnl=document.getElementById('panel-mock');
   if(typeof SLP!=='undefined'&&SLP&&SLP.conn&&!SLP.loaded&&SLP.busy&&MD._waitN<50&&!MD.running){
@@ -4626,7 +4634,7 @@ function mdRenderSetup(){
     if(block==='loading') note='Your league is still loading. Pick My League again in a moment.';
     else if(block==='mfl') note='My League works with Sleeper leagues for now. MFL standings aren’t read yet.';
     else if(block==='season') note='Your league’s next draft isn’t the '+MD.pool['class']+' class, so it runs as Custom.';
-    else if(block==='none') note='Connect your Sleeper league on My Team to mock your real draft, with every traded pick.';
+    else if(block==='none') note='Connect your Sleeper league to mock your real draft, with every traded pick. <button type="button" class="dl-md-link" style="color:var(--teal-br);padding:0" onclick="showTab(\'myteam\',document.querySelector(\'.tab[data-tab=myteam]\'))">Choose League</button>';
   }
   const need=MD.cfg.teams*MD.cfg.rounds, have=MD.pool.players.length;
   const short=need>have?'<p class="dl-md-warn">The board has '+have+' fantasy players and this draft has '+need+' picks, so it ends early. A deeper board paste fixes it.</p>'
@@ -7745,7 +7753,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-25a</span>
+  <span class="foot-build">2026-10-25b</span>
 </footer>
 
 
