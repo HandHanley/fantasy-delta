@@ -32,7 +32,9 @@ data regardless of anything in LICENSE.md:
   Commercial use permitted at every tier; attribution strongly encouraged.
 - **FantasyCalc** — dynasty market values. No published terms; used as an
   undocumented public endpoint.
-- **OverTheCap** — contract data.
+- **Contracts** — DELTA's own table (`data/delta-contracts.json`), compiled by hand from
+  public reports of each signing (team announcements, news outlets), each row linked to its
+  report. Not taken from OverTheCap or Spotrac (the OverTheCap feed was retired 25 Oct 2026).
 - **Sleeper** — league and roster data, read-only, fetched in the user's browser
   at their request. Nothing is stored beyond league and roster identifiers.
 - **MyFantasyLeague (MFL)** — league and roster data for public leagues,

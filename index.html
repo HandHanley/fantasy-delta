@@ -1110,7 +1110,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
 /* ── Contracts board ─────────────────────────────────────────────────── */
 .dtable td.dl-ct-name{font-weight:600;white-space:nowrap}
 .dtable td.dl-ct-dim{color:var(--fog)}
-.dtable td.dl-ct-aav{font-weight:600}
+.dtable td.dl-ct-aav{font-weight:600;white-space:nowrap}
 .dtable td.dl-ct-yrs{font-weight:600}
 /* The signal cell holds a full sentence plus the market value. Left to wrap it squeezed
    into ~109px on a phone and pushed every row to 75px — five lines of text in a column
@@ -2414,7 +2414,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     <tbody id="contracts-body"></tbody>
   </table></div>
   <div style="margin-top:12px;font-size:10px;color:var(--fog-2)">
-    All 32 NFL teams loaded — full contract coverage complete.
+    Contracts from DELTA's own table, built from the original reports of each signing.
     ■ Locked Up = 4+ years remaining · ✓ Stable = 3 years · ◷ Expiring = 1-2 years · ⚠ Walk Year = contract ends this season
   </div>
 </div>
@@ -3916,7 +3916,7 @@ function cpResultsHtml(){
         if(!c||!c.end) return null;
         const opt=(typeof fifthYearNote==='function')&&fifthYearNote(ps[i],c);
         return '<b>'+c.end+(opt?'<sup title="'+cpEsc(opt)+'">+opt</sup>':'')+'</b>'
-          +(c.aav>0?'<small>$'+(c.aav/1e6).toFixed(1)+'M / yr</small>':'');
+          +(/^rookie/.test(c.kind||'')?'<small>Rookie Deal</small>':c.aav>0?'<small>$'+(c.aav/1e6).toFixed(1)+'M / yr</small>':'');
       }),ct.map(c=>c&&c.end?c.end:null),1,g);
 
   // What makes up the DELTA Score
@@ -5251,8 +5251,7 @@ function renderRipple(){
 
 // ============================================================
 // CONTRACT DATA
-// Source: Spotrac screenshots, batches by team
-// Status: 6 teams loaded (NO, NYG, NYJ, PHI, PIT, SF)
+// Source: DELTA's own table, data/delta-contracts.json (see CONTRACTS in delta-engine.js)
 // AAV = average annual value, end = contract end year
 // ============================================================
 function renderContracts(){
@@ -5284,6 +5283,10 @@ function renderContracts(){
   else data.sort((a,b)=>d*(b.aav-a.aav)); // default: aav descending
 
   const fmt=n=>n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+n.toLocaleString();
+  /* Money cells (25 Oct 2026, owner): rookie deals read "Rookie Deal", no dollars; a practice-squad
+     deal says so; a deal whose value was never reported shows a dash, never "$0". */
+  const money=(c,n,first)=>/^rookie/.test(c.kind||'')?(first?'Rookie Deal':'\u2014')
+    :c.kind==='practice_squad'?(first?'Practice Squad':'\u2014'):n>0?fmt(n):'\u2014';
   const yrsColor=yrs=>yrs<=2?'var(--coral)':yrs<=3?'var(--topaz)':yrs>=5?'var(--emerald)':'var(--sky)';
 
   document.getElementById('contracts-body').innerHTML=data.map(c=>{
@@ -5294,11 +5297,11 @@ function renderContracts(){
     return`<tr class="dl-rk-row" data-name="${c.n}" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">
       <td class="pname dl-ct-name"><span class="dl-b-pn">${c.n}</span><span class="dl-b-tp">${c.pos} ${c.team}</span></td>
       <td class="dl-b-r">${pl&&pl.a<90?pl.a.toFixed(1):'-'}</td>
-      <td class="dl-b-r dl-ct-aav">${fmt(c.aav)}</td>
-      <td class="dl-b-r dl-ct-dim">${fmt(c.total)}</td>
+      <td class="dl-b-r dl-ct-aav">${money(c,c.aav,true)}</td>
+      <td class="dl-b-r dl-ct-dim">${money(c,c.total,false)}</td>
       <td class="dl-b-r">${c.end}</td>
       <td class="dl-b-c dl-ct-yrs" style="color:${yrsColor(yrsLeft)}">${yrsLeft}yr</td>
-      <td class="dl-ct-status"><span class="badge ${st.cls}">${st.icon} ${st.label}</span></td>
+      <td class="dl-ct-status"><span class="badge ${st.cls}">${st.icon} ${st.label}</span>${fifthYearNote(pl||{},c)?'<div style="font-size:10px;color:var(--sky);margin-top:3px">Fifth-Year Option Available</div>':''}</td>
       <td class="dl-ct-sig">${dynastySignal(c)} ${ktcStr}</td>
     </tr>`;
   }).join('');
@@ -7440,7 +7443,7 @@ document.addEventListener('click', function(e) {
         <ul class="about-list">
           <li><b style="color:var(--emerald)">NFL production, snaps, EPA, game logs</b> — <a href="https://github.com/nflverse" target="_blank" rel="noopener">nflverse</a> via nflreadpy: the open play-by-play project. Also the source for rosters, draft picks, combine testing and depth charts.</li>
           <li><b style="color:var(--sky)">Market value</b> — <a href="https://fantasycalc.com" target="_blank" rel="noopener">FantasyCalc</a> dynasty consensus, refreshed daily. The yardstick DELTA is measured against, never an input to the score or projection.</li>
-          <li><b>Contracts</b> — <a href="https://overthecap.com" target="_blank" rel="noopener">OverTheCap</a>, plus a small hand-maintained override file for deals signed since the last refresh.</li>
+          <li><b>Contracts</b> — <b>DELTA's own table, built by hand</b> from the original reports of each signing (team announcements, AP, NFL.com and other outlets), one row per player with a link to its report. Rookie deals show as "Rookie Deal".</li>
           <li><b>Injury designations</b> — <a href="https://docs.sleeper.com" target="_blank" rel="noopener">Sleeper</a> roster tags (IR / PUP / NFI / SUS). Only a separate hand-maintained list of confirmed season-ending injuries ever zeroes a projection: an IR flag means "unavailable now", not "done for the year".</li>
           <li><b>College production, recruiting, PPA</b> — <a href="https://collegefootballdata.com" target="_blank" rel="noopener">College Football Data</a> (CFBD). Regular season only; bowl and playoff games sit in their own section and are excluded from every rating, because participation is not uniform.</li>
           <li><b style="color:var(--topaz)">Play-callers and coaching tendencies</b> — <b>built and verified by hand at DELTA</b>, 2017–2026 at week level, because no public dataset tracks in-season play-calling changes reliably. Of 354 team-seasons: 307 confirmed against contemporaneous reporting, 32 projected for the coming season, 8 likely, 7 unverified. Building it removed 11 coaches other sources list who never actually called plays.</li>
@@ -7742,7 +7745,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-24h</span>
+  <span class="foot-build">2026-10-25a</span>
 </footer>
 
 
@@ -7791,8 +7794,7 @@ function dlFreshHtml(){
 // Will be updated once fetch completes
 
 // ── CONTRACT LOADER ───────────────────────────────────────────────────────
-// Reads data/player-contracts.json (from nflverse/OTC via GitHub Action)
-// Updates DELTA contract data automatically
+// loadPlayerContracts() in delta-engine.js reads data/delta-contracts.json, DELTA's own table.
 
 // ── College tracking tab (?college=1) ───────────────────────────────────────
 // Gated, lazy-loaded and fully isolated: the data file is fetched only when the tab
@@ -8920,29 +8922,46 @@ function initEngineAudit(){
   renderContractCheck();
   loadUntrackedMarket();
 }
-/* Contract end years to check by hand (DL_CONTRACT_CHECK, built by loadPlayerContracts in
-   the engine). An extension signed while the rookie deal still runs is counted short by the
-   feed; "Likely" assumes the new years start after the rookie deal and any option year,
-   which a declined option or an undrafted deal breaks — so it is a prompt, never applied.
-   Confirmed years go into CONTRACT_OVERRIDES and the player drops off this list. */
-function renderContractCheck(){
+/* Contracts To Check (25 Oct 2026). Contracts now come from DELTA's own table
+   (data/delta-contracts.json), so nothing updates them by itself. Prompts only, never applied:
+   - the table did not load, so the page is on its built-in copy;
+   - the built-in copy differs from the table (run scripts/build-contracts-backup.js; the nightly
+     also fails on this);
+   - a player's team on the nightly nflverse depth chart differs from the table's, or a player the
+     table has unsigned is on one: usually a trade, a release or a new deal. Players on no depth
+     chart (practice squad, injured reserve, unsigned) are not checked here, and the owner's
+     left-team exception (kind left_team, Aiyuk) is skipped. */
+async function renderContractCheck(){
   const host=document.getElementById('audit-contracts'); if(!host) return;
-  const L=(typeof DL_CONTRACT_CHECK!=='undefined'&&Array.isArray(DL_CONTRACT_CHECK))?DL_CONTRACT_CHECK:[];
-  const ST=(typeof DL_CONTRACT_STALE!=='undefined'&&Array.isArray(DL_CONTRACT_STALE))?DL_CONTRACT_STALE:[];
-  const head='<div class="section-label" style="margin-top:22px">Contract End Years To Check</div>';
-  /* Hand entries the feed has overtaken (a new deal since the entry was confirmed). */
-  const stale=!ST.length?'':'<div style="font-size:11px;color:var(--topaz);margin:0 0 8px">'+ST.length+' hand-entered end year'+(ST.length===1?' is':'s are')+' now earlier than the feed'+"\u2019"+'s, which usually means a new deal. Check, then update CONTRACT_OVERRIDES.</div>'
-    +'<div class="dl-b-scroll" style="margin-bottom:12px"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Hand Entry</th><th class="dl-b-r">Feed Now</th><th class="dl-b-r">Signed</th></tr></thead><tbody>'
-    +ST.slice().sort((a,b)=>a.n<b.n?-1:1).map(function(x){
-      return '<tr><td class="pname"><span class="dl-b-pn">'+x.n+'</span></td><td class="dl-b-r">'+x.uses+'</td><td class="dl-b-r">'+x.feedEnd+'</td><td class="dl-b-r">'+(x.signed||'-')+'</td></tr>'; }).join('')
-    +'</tbody></table></div>';
-  if(!L.length){ host.innerHTML=head+stale+'<div style="font-size:11px;color:var(--fog-2)">None'+(ST.length?' otherwise':'')+'. Every extension signed during a rookie deal has a confirmed end year'+(ST.length?'.':', and no hand entry is behind the feed.')+'</div>'; return; }
-  host.innerHTML=head+stale
-    +'<div style="font-size:11px;color:var(--fog-2);margin:-4px 0 8px">'+L.length+' extension'+(L.length===1?'':'s')+' signed while a rookie deal was still running. The feed counts the new years from the signing year; Likely counts them after the rookie deal and option year. Confirm each, then add it to CONTRACT_OVERRIDES in delta-engine.js.</div>'
-    +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Signed</th><th class="dl-b-r">New Years</th><th class="dl-b-r">DELTA Uses</th><th class="dl-b-r">Likely</th></tr></thead><tbody>'
-    +L.slice().sort((a,b)=>a.n<b.n?-1:1).map(function(x){
-      return '<tr><td class="pname"><span class="dl-b-pn">'+x.n+'</span><span class="dl-b-tp">Rd '+x.round+'</span></td>'
-        +'<td class="dl-b-r">'+x.signed+'</td><td class="dl-b-r">'+x.years+'</td><td class="dl-b-r">'+x.uses+'</td><td class="dl-b-r">'+x.likely+'</td></tr>'; }).join('')
+  const note=function(t){ return '<div style="font-size:11px;color:var(--fog-2);margin:-4px 0 8px">'+t+'</div>'; };
+  const warn=function(t){ return '<div style="font-size:11px;color:var(--topaz);margin:0 0 8px">'+t+'</div>'; };
+  const src=(typeof DL_CONTRACTS_SOURCE==='string')?DL_CONTRACTS_SOURCE:'unknown';
+  const diff=(typeof DL_CONTRACT_BACKUP_DIFF!=='undefined'&&Array.isArray(DL_CONTRACT_BACKUP_DIFF))?DL_CONTRACT_BACKUP_DIFF:[];
+  const rows=(typeof DL_CONTRACT_ROWS!=='undefined'&&DL_CONTRACT_ROWS)?DL_CONTRACT_ROWS:{};
+  let top='<div class="section-label" style="margin-top:22px">Contracts To Check</div>';
+  if(src!=='table') top+=warn('The contracts table did not load, so the site is using its built-in copy'
+    +(typeof DL_CONTRACTS_BACKUP_ASOF==='string'?' (table as of '+DL_CONTRACTS_BACKUP_ASOF+')':'')+'.');
+  if(diff.length) top+=warn('The built-in copy is out of date for '+diff.length+' player'+(diff.length===1?'':'s')+' ('
+    +diff.slice(0,8).join(', ')+(diff.length>8?' …':'')+'). Run scripts/build-contracts-backup.js and commit both files.');
+  host.innerHTML=top+note('Checking teams against the nightly depth charts…');
+  let dc=null;
+  try{ const r=await fetch('./data/depth-charts.json',{cache:'no-cache'}); if(r.ok) dc=await r.json(); }catch(e){}
+  if(!dc||!dc.players){ host.innerHTML=top+note('The depth charts did not load, so teams were not checked.'); return; }
+  const asof=String(dc.snapshot||dc.generated||'').slice(0,10);
+  const norm=function(t){ return t?((typeof AL!=='undefined'&&AL[t])||t):''; };
+  const L=[];
+  Object.keys(rows).forEach(function(n){
+    const d=dc.players[n], row=rows[n];
+    if(!d||!d.team||!row||row.kind==='left_team') return;
+    if(row.end==null) L.push({n:n,tbl:'No Contract',now:norm(d.team)});
+    else if(norm(row.team)!==norm(d.team)) L.push({n:n,tbl:norm(row.team),now:norm(d.team)});
+  });
+  if(!L.length){ host.innerHTML=top+note('None. Everyone on a depth chart ('+asof+') is on the team DELTA’s contracts table has.'); return; }
+  host.innerHTML=top
+    +note(L.length+' player'+(L.length===1?' is':'s are')+' on a different team in the nightly depth charts ('+asof+') than in DELTA’s contracts table: usually a trade, a release or a new deal. Check the reports, then update data/delta-contracts.json.')
+    +'<div class="dl-b-scroll"><table class="dtable dl-board"><thead><tr><th>Player</th><th class="dl-b-r">Table</th><th class="dl-b-r">Depth Chart</th></tr></thead><tbody>'
+    +L.sort(function(a,b){ return a.n<b.n?-1:1; }).map(function(x){
+      return '<tr><td class="pname"><span class="dl-b-pn">'+x.n+'</span></td><td class="dl-b-r">'+x.tbl+'</td><td class="dl-b-r">'+x.now+'</td></tr>'; }).join('')
     +'</tbody></table></div>';
 }
 /* Market players DELTA does not track (scripts/untracked-market.js, nightly). A list

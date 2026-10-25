@@ -113,7 +113,8 @@ that should not move the model and does is a bug.
 
 Player stats and play-by-play from **nflverse**, college data from
 **CollegeFootballData**, dynasty market values from **FantasyCalc**, contracts
-from **OverTheCap**, and league data from **Sleeper** at the user's request.
+from DELTA's own table compiled from public signing reports, and league data from
+**Sleeper** at the user's request.
 
 Each source has its own terms, and those terms apply to the files in `data/`
 regardless of this repository's licence. **See [NOTICE.md](NOTICE.md) before

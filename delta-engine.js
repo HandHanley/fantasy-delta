@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-24b';
+const DL_BUILD='2026-10-25a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -183,7 +183,7 @@ const DL_PREFETCH = {};
 const DL_BOOT_FILES = [
   ['./data/market-values.json', {cache:'no-cache'}],
   ['./data/player-stats.json', {cache:'no-cache'}],
-  ['./data/player-contracts.json', {cache:'no-cache'}],
+  ['./data/delta-contracts.json', {cache:'no-cache'}],
   ['./data/ripple.json', {cache:'no-cache'}],
   ['./data/injury-overrides.json', undefined],
   ['./data/qb-starters.json', undefined],
@@ -3827,274 +3827,450 @@ function mvAssetRaw(pl){
   return Math.min(19999,Math.round(e.ktc*agM*(1+mvDelta)*e.injP));
 }
 
-const CONTRACTS=[
-  // NEW ORLEANS SAINTS
-  {n:'Travis Etienne',pos:'RB',team:'NO',aav:12000000,total:48000000,end:2029,note:'Signed as RB1 through 2029'},
-  {n:'Alvin Kamara',pos:'RB',team:'NO',aav:12250000,total:24500000,end:2026,note:'Final contract — walk year 2026'},
-  {n:'Chris Olave',pos:'WR',team:'NO',aav:4817969,total:19271874,end:2026,note:'Cheap deal expiring — extension or FA looms'},
-  {n:'Juwan Johnson',pos:'TE',team:'NO',aav:10250000,total:30750000,end:2027,note:'Locked in as TE1 through 2027'},
-
-  // NEW YORK GIANTS
-  {n:'Malik Nabers',pos:'WR',team:'NYG',aav:7301938,total:29207750,end:2028,note:'Locked in as WR1 through 2028'},
-  {n:'Jaxson Dart',pos:'QB',team:'NYG',aav:4244482,total:16977927,end:2029,note:'Franchise QB of the future'},
-  {n:'Isaiah Likely',pos:'TE',team:'NYG',aav:13333333,total:40000000,end:2028,note:'Major investment — clear TE1 role'},
-  {n:'Cam Skattebo',pos:'RB',team:'NYG',aav:1318260,total:5273040,end:2028,note:'Cheap rookie deal, developing RB1'},
-  {n:'Theo Johnson',pos:'TE',team:'NYG',aav:1212859,total:4851436,end:2027,note:'Backup TE on affordable deal'},
-  // NEW YORK JETS
-  {n:'Garrett Wilson',pos:'WR',team:'NYJ',aav:32500000,total:130000000,end:2030,note:'Elite WR1 locked up long term'},
-  {n:'Breece Hall',pos:'RB',team:'NYJ',aav:15250000,total:45750000,end:2028,note:'3yr/$45.75M signed May 2026 — $29M guaranteed'},
-  {n:'Mason Taylor',pos:'TE',team:'NYJ',aav:2616547,total:10466187,end:2028,note:'Young TE1 locked in through 2028'},
-  {n:'Braelon Allen',pos:'RB',team:'NYJ',aav:1137177,total:4548708,end:2027,note:'Cheap ascending RB on rookie deal'},
-  {n:'Geno Smith',pos:'QB',team:'NYJ',aav:3300000,total:3300000,end:2026,note:'1yr stop-gap — NYJ will move on'},
-  // PHILADELPHIA EAGLES
-  {n:'Jalen Hurts',pos:'QB',team:'PHI',aav:51000000,total:255000000,end:2028,note:'Franchise locked through 2028'},
-  {n:'A.J. Brown',pos:'WR',team:'PHI',aav:32000000,total:96000000,end:2029,note:'Elite WR1 locked up long term'},
-  {n:'DeVonta Smith',pos:'WR',team:'PHI',aav:25000000,total:75000000,end:2028,note:'Locked in as WR2 through 2028'},
-  {n:'Saquon Barkley',pos:'RB',team:'PHI',aav:20600000,total:41200000,end:2028,note:'2 years left — sell window opening'},
-  {n:'Dallas Goedert',pos:'TE',team:'PHI',aav:7000000,total:7000000,end:2026,note:'Walk year — PHI may extend or move on'},
-  {n:'Will Shipley',pos:'RB',team:'PHI',aav:1184241,total:4736964,end:2027,note:'Cheap handcuff/developing back'},
-  {n:'Ricky Pearsall',pos:'WR',team:'SF',aav:3134600,total:12538398,end:2028,note:'SF committed through 2028 — ascending'},
-  // PITTSBURGH STEELERS
-  {n:'DK Metcalf',pos:'WR',team:'PIT',aav:33000000,total:132000000,end:2029,note:'Elite WR1 locked through 2029'},
-  {n:'Michael Pittman Jr.',pos:'WR',team:'PIT',aav:17500000,total:35000000,end:2029,note:'2yr deal but through 2029'},
-  {n:'Pat Freiermuth',pos:'TE',team:'PIT',aav:12100000,total:48400000,end:2028,note:'Locked in as TE1 through 2028'},
-  {n:'Rico Dowdle',pos:'RB',team:'PIT',aav:6125000,total:12250000,end:2027,note:'2yr deal — RB1 committed short term'},
-  {n:'Jaylen Warren',pos:'RB',team:'PIT',aav:5952000,total:11904000,end:2027,note:'2yr deal alongside Dowdle'},
-  {n:'Mason Rudolph',pos:'QB',team:'PIT',aav:3750000,total:7500000,end:2026,note:'Ends 2026 — PIT will upgrade at QB'},
-  // HOUSTON TEXANS
-  {n:'Nico Collins',pos:'WR',team:'HOU',aav:24250000,total:72750000,end:2027,note:'HOU WR1 locked through 2027'},
-  {n:'C.J. Stroud',pos:'QB',team:'HOU',aav:9069811,total:36279243,end:2027,note:'Franchise QB through 2027 — extension likely'},
-    {n:'Jayden Higgins',pos:'WR',team:'HOU',aav:2925206,total:11700824,end:2028,note:'Locked rookie deal through 2028'},
-  {n:'Dalton Schultz',pos:'TE',team:'HOU',aav:12600000,total:12600000,end:2027,note:'Expiring 2027 — walk year coming'},
-  {n:'Tank Dell',pos:'WR',team:'HOU',aav:1422276,total:5689104,end:2026,note:'Walk year — extension or FA looms'},
-  {n:'Woody Marks',pos:'RB',team:'HOU',aav:1300942,total:5203768,end:2028,note:'Cheap RB on 4yr rookie deal'},
-  // ARIZONA CARDINALS
-  {n:'Trey McBride',pos:'TE',team:'ARI',aav:19000000,total:76000000,end:2029,note:'Elite TE1 locked through 2029 — long-term buy'},
-  {n:'Marvin Harrison Jr.',pos:'WR',team:'ARI',aav:8843686,total:35374742,end:2027,note:'Rookie deal through 2027'},
-  {n:'Trey Benson',pos:'RB',team:'ARI',aav:1514902,total:6059606,end:2027,note:'Cheap rookie deal through 2027'},
-  {n:'James Conner',pos:'RB',team:'ARI',aav:3000000,total:3000000,end:2026,note:'Walk year — final contract at ARI'},
-  // CAROLINA PANTHERS
-  {n:'Bryce Young',pos:'QB',team:'CAR',aav:9488768,total:37955071,end:2027,note:'CAR franchise QB locked through 2027'},
-  {n:'Chuba Hubbard',pos:'RB',team:'CAR',aav:8300000,total:33200000,end:2028,note:'Locked through 2028 — role declining per target data'},
-  {n:'Tetairoa McMillan',pos:'WR',team:'CAR',aav:6982598,total:27930390,end:2028,note:'Locked WR1 through 2028 — ascending rookie'},
-  {n:'Jonathon Brooks',pos:'RB',team:'CAR',aav:2104271,total:8417082,end:2027,note:'Cheap rookie deal — monitor health'},
-  {n:'Xavier Legette',pos:'WR',team:'CAR',aav:3089294,total:12357176,end:2028,note:'Locked WR2 through 2028'},
-  {n:'Jalen Coker',pos:'WR',team:'CAR',aav:1075000,total:1075000,end:2028,note:'Walk year — cheap rookie deal expiring 2026'},
-  // WASHINGTON COMMANDERS
-  {n:'Terry McLaurin',pos:'WR',team:'WAS',aav:32333333,total:97000000,end:2028,note:'Elite WR1 locked through 2028'},
-  {n:'Jayden Daniels',pos:'QB',team:'WAS',aav:9436663,total:37746650,end:2028,note:'Franchise QB locked — ascending'},
-  {n:'Chigoziem Okonkwo',pos:'TE',team:'WAS',aav:9000000,total:27000000,end:2028,note:'WAS TE1 locked through 2028'},
-  {n:'Jacory Croskey-Merritt',pos:'RB',team:'WAS',aav:1076357,total:4305428,end:2028,note:'Cheap ascending RB on rookie deal'},
-  // TENNESSEE TITANS
-  {n:'Calvin Ridley',pos:'WR',team:'TEN',aav:23000000,total:92000000,end:2027,note:'WR1 locked through 2027'},
-  {n:"Wan'Dale Robinson",pos:'WR',team:'TEN',aav:17500000,total:70000000,end:2029,note:'Locked WR2 through 2029 — great value'},
-  {n:'Cam Ward',pos:'QB',team:'TEN',aav:12209905,total:48839618,end:2029,note:'Franchise rookie QB locked through 2029'},
-  {n:'Tony Pollard',pos:'RB',team:'TEN',aav:7250000,total:21750000,end:2026,note:'Walk year — confirmed final season in TEN'},
-  {n:'Tyjae Spears',pos:'RB',team:'TEN',aav:1372654,total:5490616,end:2026,note:'Expiring 2026 — cheap handcuff'},
-  {n:'Gunnar Helm',pos:'TE',team:'TEN',aav:1293227,total:5172908,end:2028,note:'Locked TE1 through 2028 on rookie deal'},
-  {n:'Elic Ayomanor',pos:'WR',team:'TEN',aav:1216454,total:4865816,end:2028,note:'Cheap ascending WR on rookie deal'},
-  // BUFFALO BILLS
-  {n:'Josh Allen',pos:'QB',team:'BUF',aav:55000000,total:330000000,end:2030,note:'Generational deal — locked through 2030'},
-  {n:'D.J. Moore',pos:'WR',team:'BUF',aav:27500000,total:110000000,end:2029,note:'Elite WR1 locked through 2029'},
-  {n:'Khalil Shakir',pos:'WR',team:'BUF',aav:13264500,total:53058000,end:2029,note:'Locked WR2 through 2029 — ascending'},
-  {n:'James Cook',pos:'RB',team:'BUF',aav:11500000,total:46000000,end:2029,note:'4yr/$46M locked through 2029 — role secure'},
-  {n:'Keon Coleman',pos:'WR',team:'BUF',aav:2518565,total:10074258,end:2027,note:'Cheap rookie deal through 2027'},
-  {n:'Dalton Kincaid',pos:'TE',team:'BUF',aav:3356756,total:13427023,end:2027,note:'Through 2027 — competing for role'},
-  // BALTIMORE RAVENS
-  {n:'Lamar Jackson',pos:'QB',team:'BAL',aav:52000000,total:260000000,end:2027,note:'Generational deal locked through 2027'},
-  {n:'Mark Andrews',pos:'TE',team:'BAL',aav:13089000,total:39267000,end:2028,note:'Locked through 2028 — 3yr deal'},
-  {n:'Zay Flowers',pos:'WR',team:'BAL',aav:3509109,total:14036434,end:2027,note:'Cheap deal through 2027 — extension coming given ascending role'},
-  {n:'Derrick Henry',pos:'RB',team:'BAL',aav:15000000,total:30000000,end:2027,note:'2yr deal — sell window opening'},
-  {n:'Rashod Bateman',pos:'WR',team:'BAL',aav:12250000,total:36750000,end:2029,note:'Locked BAL WR2 through 2029'},
-  // ATLANTA FALCONS
-  {n:'Tua Tagovailoa',pos:'QB',team:'ATL',aav:53100000,total:212400000,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Bijan Robinson',pos:'RB',team:'ATL',aav:5489634,total:21958535,end:2027,note:'Locked through 2027 — cheap deal, RB1 secure'},
-  {n:'Drake London',pos:'WR',team:'ATL',aav:35260000,total:141040000,end:2030,note:'Locked through 2030 — $35M/yr elite WR commitment'},
-  {n:'Kyle Pitts',pos:'TE',team:'ATL',aav:15045000,total:15045000,end:2026,note:'WALK YEAR 2026 — extension or departure imminent'},
-  // TAMPA BAY BUCCANEERS
-  {n:'Baker Mayfield',pos:'QB',team:'TB',aav:33333333,total:100000000,end:2026,note:'WALK YEAR 2026 — TB must extend or move on'},
-  {n:'Kenneth Gainwell',pos:'RB',team:'TB',aav:7000000,total:14000000,end:2027,note:'2yr/$14M — committed RB role confirmed'},
-  {n:'Emeka Egbuka',pos:'WR',team:'TB',aav:4543183,total:18172730,end:2028,note:'Year 2 of 4yr rookie deal · 5th-yr option (2029) at Tampa\'s discretion before \'28 season'},
-  {n:'Bucky Irving',pos:'RB',team:'TB',aav:1187888,total:4751552,end:2027,note:'Cheap ascending RB through 2027'},
-  {n:'Cade Otton',pos:'TE',team:'TB',aav:10000000,total:30000000,end:2028,note:'Locked TE1 through 2028'},
-  // SEATTLE SEAHAWKS
-  {n:'Cooper Kupp',pos:'WR',team:'SEA',aav:15000000,total:45000000,end:2027,note:'3yr/$45M — SEA WR2 behind JSN, uncertain beyond 2026'},
-  {n:'Jaxon Smith-Njigba',pos:'WR',team:'SEA',aav:42150000,total:168600000,end:2031,note:'Franchise deal — locked through 2031, buy at any cost'},
-  {n:'Sam Darnold',pos:'QB',team:'SEA',aav:33500000,total:100500000,end:2027,note:'3yr committed starter through 2027'},
-  {n:'Rashid Shaheed',pos:'WR',team:'SEA',aav:17000000,total:51000000,end:2028,note:'Locked WR2 through 2028'},
-  {n:'Zach Charbonnet',pos:'RB',team:'SEA',aav:1719020,total:6876079,end:2026,note:'Expiring 2026 — SEA RB situation murky'},
-  {n:'George Kittle',pos:'TE',team:'SF',aav:19100000,total:76400000,end:2029,note:'Elite TE1 locked up through 2029'},
-  {n:'Christian McCaffrey',pos:'RB',team:'SF',aav:19000000,total:38000000,end:2027,note:'Only 2 years left — sell window opening'},
-  {n:'Mike Evans',pos:'WR',team:'SF',aav:14133333,total:42400000,end:2028,note:'3yr deal — committed as SF WR2'},
-  // DALLAS COWBOYS
-  {n:'Dak Prescott',pos:'QB',team:'DAL',aav:60000000,total:240000000,end:2028,note:'Locked through 2028'},
-  {n:'CeeDee Lamb',pos:'WR',team:'DAL',aav:34000000,total:136000000,end:2029,note:'Elite WR1 locked through 2029'},
-  {n:'Jake Ferguson',pos:'TE',team:'DAL',aav:12500000,total:50000000,end:2029,note:'DAL TE1 locked through 2029'},
-  {n:'George Pickens',pos:'WR',team:'DAL',aav:27298000,total:27298000,end:2026,note:'WALK YEAR 2026 — DAL must extend WR2'},
-  {n:'Javonte Williams',pos:'RB',team:'DAL',aav:8000000,total:24000000,end:2028,note:'3yr/$24M locked — role security confirmed'},
-  // DENVER BRONCOS
-    {n:'Jaylen Waddle',pos:'WR',team:'DEN',aav:28250000,total:84750000,end:2027,note:'Committed through 2027 — Broncos hold 2028 option'},
-  {n:'Bo Nix',pos:'QB',team:'DEN',aav:4653292,total:18613166,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'RJ Harvey',pos:'RB',team:'DEN',aav:1839920,total:7359680,end:2028,note:'Cheap ascending RB locked through 2028'},
-  {n:'Troy Franklin',pos:'WR',team:'DEN',aav:1218709,total:4874836,end:2027,note:'Cheap WR on rookie deal through 2027'},
-  {n:'Evan Engram',pos:'TE',team:'DEN',aav:11500000,total:23000000,end:2026,note:'Walk year — expiring 2026'},
-  {n:'J.K. Dobbins',pos:'RB',team:'DEN',aav:8000000,total:16000000,end:2027,note:'2yr deal — RB1 committed short term'},
-  // GREEN BAY PACKERS
-  {n:'Jordan Love',pos:'QB',team:'GB',aav:55000000,total:220000000,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Josh Jacobs',pos:'RB',team:'GB',aav:12000000,total:48000000,end:2027,note:'Locked RB1 through 2027'},
-      {n:'Tucker Kraft',pos:'TE',team:'GB',aav:1384484,total:5537934,end:2026,note:'Expiring 2026 — extension expected'},
-  {n:'Jayden Reed',pos:'WR',team:'GB',aav:1795195,total:7180778,end:2028,note:'Expiring 2026 — extension coming'},
-  // LOS ANGELES CHARGERS
-  {n:'Justin Herbert',pos:'QB',team:'LAC',aav:52500000,total:262500000,end:2029,note:'Franchise locked through 2029'},
-  {n:'Omarion Hampton',pos:'RB',team:'LAC',aav:4443616,total:17774464,end:2029,note:'Cheap ascending RB locked through 2029'},
-  {n:'Quentin Johnston',pos:'WR',team:'LAC',aav:3547195,total:14188778,end:2027,note:'Locked WR through 2027'},
-  {n:'Ladd McConkey',pos:'WR',team:'LAC',aav:2498797,total:9995186,end:2027,note:'Cheap ascending WR through 2027'},
-    // LOS ANGELES RAMS
-  {n:'Matthew Stafford',pos:'QB',team:'LAR',aav:42000000,total:84000000,end:2026,note:'Walk year — LAR QB murky after 2026'},
-  {n:'Davante Adams',pos:'WR',team:'LAR',aav:22000000,total:44000000,end:2026,note:'WALK YEAR 2026 — final deal'},
-  {n:'Kyren Williams',pos:'RB',team:'LAR',aav:11000000,total:33000000,end:2028,note:'3yr/$33M locked through 2028'},
-  {n:'Puka Nacua',pos:'WR',team:'LAR',aav:1021244,total:4084977,end:2026,note:'Expiring 2026 — extension critical'},
-  {n:'Blake Corum',pos:'RB',team:'LAR',aav:1440941,total:5763762,end:2027,note:'Cheap RB on rookie deal'},
-  // MIAMI DOLPHINS
-  {n:'Malik Willis',pos:'QB',team:'MIA',aav:22500000,total:67500000,end:2028,note:'3yr committed starter through 2028'},
-  {n:'Jaylen Wright',pos:'RB',team:'MIA',aav:1195005,total:4780020,end:2027,note:'Cheap ascending RB through 2027'},
-  {n:'Ollie Gordon',pos:'RB',team:'MIA',aav:1118166,total:4472664,end:2028,note:'Cheap RB on rookie deal'},
-  // DETROIT LIONS
-  {n:'Jared Goff',pos:'QB',team:'DET',aav:53000000,total:212000000,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Amon-Ra St. Brown',pos:'WR',team:'DET',aav:30002500,total:120010000,end:2028,note:'Elite WR1 locked through 2028'},
-    {n:'Jahmyr Gibbs',pos:'RB',team:'DET',aav:4461283,total:17845130,end:2027,note:'Cheap RB1 on rookie deal — buy before extension'},
-    {n:'Isaac TeSlaa',pos:'WR',team:'DET',aav:1666113,total:6664452,end:2028,note:'Cheap ascending WR locked through 2028'},
-  // LAS VEGAS RAIDERS
-  {n:'Ashton Jeanty',pos:'RB',team:'LV',aav:8973953,total:35895812,end:2029,note:'Locked RB1 through 2029 — franchise piece'},
-  {n:'Brock Bowers',pos:'TE',team:'LV',aav:4534696,total:18138784,end:2028,note:'Cheap TE1 on rookie deal — extension imminent'},
-  {n:'Jalen Nailor',pos:'WR',team:'LV',aav:11676667,total:35030000,end:2028,note:'LV WR1 locked through 2028'},
-  // CLEVELAND BROWNS
-  {n:'Quinshon Judkins',pos:'RB',team:'CLE',aav:2850534,total:11402136,end:2028,note:'Cheap ascending RB locked through 2028'},
-  {n:'Harold Fannin Jr.',pos:'TE',team:'CLE',aav:1685722,total:6742886,end:2028,note:'Cheap TE1 on rookie deal through 2028'},
-  {n:'Shedeur Sanders',pos:'QB',team:'CLE',aav:1161845,total:4647380,end:2028,note:'Cheap franchise QB on rookie deal'},
-  {n:'Dylan Sampson',pos:'RB',team:'CLE',aav:1282641,total:5130564,end:2028,note:'Cheap ascending RB through 2028'},
-  // KANSAS CITY CHIEFS
-  {n:'Patrick Mahomes',pos:'QB',team:'KC',aav:45000000,total:450000000,end:2031,note:'Generational deal — locked through 2031'},
-  {n:'Kenneth Walker III',pos:'RB',team:'KC',aav:14350000,total:43050000,end:2028,note:'3yr/$43M — major RB1 investment'},
-  {n:"De'Von Achane",pos:'RB',team:'MIA',aav:16000000,total:64000000,end:2029,note:'4yr/$64M signed May 2026'},
-  {n:'Aaron Rodgers',pos:'QB',team:'PIT',aav:4000000,total:4000000,end:2026,note:'1yr bridge deal at 42'},
-  {n:'Travis Kelce',pos:'TE',team:'KC',aav:12000000,total:12000000,end:2028,note:'Walk year but likely extends — monitor'},
-  {n:'Xavier Worthy',pos:'WR',team:'KC',aav:3447566,total:13790264,end:2028,note:'Cheap ascending WR through 2028'},
-  {n:'Rashee Rice',pos:'WR',team:'KC',aav:1623802,total:6495208,end:2029,note:'Expiring 2026 — extension coming given ascending role'},
-  // MINNESOTA VIKINGS
-  {n:'Justin Jefferson',pos:'WR',team:'MIN',aav:35000000,total:140000000,end:2028,note:'Elite WR1 locked through 2028'},
-  {n:'Kyler Murray',pos:'QB',team:'MIN',aav:1300000,total:1300000,end:2028,note:'1yr bridge deal — expected QB1 starter in 2026'},
-  {n:'T.J. Hockenson',pos:'TE',team:'MIN',aav:16500000,total:66000000,end:2026,note:'WALK YEAR 2026 — confirms Fading signal'},
-  {n:'J.J. McCarthy',pos:'QB',team:'MIN',aav:5463699,total:21854796,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Jordan Addison',pos:'WR',team:'MIN',aav:3432935,total:13731739,end:2027,note:'Cheap WR locked through 2027'},
-  {n:'Aaron Jones',pos:'RB',team:'MIN',aav:5560000,total:5560000,end:2026,note:'WALK YEAR 2026 — final contract at MIN'},
-  {n:'Jordan Mason',pos:'RB',team:'MIN',aav:5250000,total:10500000,end:2026,note:'Expiring 2026 — short runway'},
-  // CINCINNATI BENGALS
-  {n:'Joe Burrow',pos:'QB',team:'CIN',aav:55000000,total:275000000,end:2029,note:'Franchise locked through 2029'},
-  {n:"Ja'Marr Chase",pos:'WR',team:'CIN',aav:40250000,total:161000000,end:2029,note:'Elite WR1 locked through 2029'},
-  {n:'Tee Higgins',pos:'WR',team:'CIN',aav:28750000,total:115000000,end:2028,note:'Locked WR2 through 2028'},
-  {n:'Chase Brown',pos:'RB',team:'CIN',aav:1031539,total:4126156,end:2026,note:'Expiring 2026 — CIN RB1 extension needed'},
-  // JACKSONVILLE JAGUARS
-  {n:'Trevor Lawrence',pos:'QB',team:'JAC',aav:55000000,total:275000000,end:2030,note:'Franchise locked through 2030'},
-  {n:'Jakobi Meyers',pos:'WR',team:'JAC',aav:20000000,total:60000000,end:2028,note:'Locked WR1 through 2028'},
-  {n:'Travis Hunter',pos:'WR',team:'JAC',aav:11662282,total:46649126,end:2028,note:'Locked WR2 through 2028 — ascending rookie'},
-  {n:'Brian Thomas Jr.',pos:'WR',team:'JAC',aav:3664995,total:14659978,end:2028,note:'Cheap WR locked through 2028'},
-  {n:'Bhayshul Tuten',pos:'RB',team:'JAC',aav:1319132,total:5276528,end:2028,note:'Cheap ascending RB through 2028'},
-  {n:'Parker Washington',pos:'WR',team:'JAC',aav:1008066,total:4032264,end:2026,note:'Expiring 2026 — extension needed'},
-  {n:'Brenton Strange',pos:'TE',team:'JAC',aav:1528583,total:6114333,end:2026,note:'Expiring 2026'},
-  // CHICAGO BEARS
-  {n:'Caleb Williams',pos:'QB',team:'CHI',aav:9871515,total:39486058,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Colston Loveland',pos:'TE',team:'CHI',aav:6659002,total:26636008,end:2029,note:'Locked TE1 through 2029 — ascending'},
-  {n:"D'Andre Swift",pos:'RB',team:'CHI',aav:8000000,total:24000000,end:2026,note:'WALK YEAR 2026 — CHI RB1 expiring'},
-  {n:'Rome Odunze',pos:'WR',team:'CHI',aav:5681125,total:22724500,end:2028,note:'Locked WR through 2028 — ascending'},
-  {n:'Luther Burden',pos:'WR',team:'CHI',aav:2741008,total:10964030,end:2028,note:'Cheap ascending WR locked through 2028'},
-  {n:'Cole Kmet',pos:'TE',team:'CHI',aav:12500000,total:50000000,end:2027,note:'Locked TE through 2027'},
-  // NEW ENGLAND PATRIOTS
-  {n:'Romeo Doubs',pos:'WR',team:'NE',aav:17000000,total:68000000,end:2029,note:'Locked NE WR1 through 2029 — major investment'},
-  {n:'Drake Maye',pos:'QB',team:'NE',aav:9159941,total:36639764,end:2028,note:'Franchise QB locked through 2028'},
-  {n:'Rhamondre Stevenson',pos:'RB',team:'NE',aav:9000000,total:36000000,end:2028,note:'Locked RB1 through 2028'},
-  {n:'Hunter Henry',pos:'TE',team:'NE',aav:9000000,total:27000000,end:2026,note:'Walk year — NE TE1 expiring 2026'},
-  {n:'TreVeyon Henderson',pos:'RB',team:'NE',aav:2785809,total:11143234,end:2028,note:'Cheap ascending RB locked through 2028'},
-  {n:'Jonathan Taylor',pos:'RB',team:'IND',aav:14000000,total:42000000,end:2027,note:'WALK YEAR 2026 — IND must extend or sell'},
-  {n:'Tyler Warren',pos:'TE',team:'IND',aav:5240163,total:20960650,end:2029,note:'Locked TE1 through 2029 — IND committed'},
-  {n:'Josh Downs',pos:'WR',team:'IND',aav:1380115,total:5520459,end:2026,note:'Expiring 2026 — extension likely'},
-  // Batch — contracts from screenshots
-  {n:'AJ Barner',pos:'TE',team:'SEA',aav:1193777,total:4775108,end:2027,note:'Cheap rookie deal through 2027 — ascending SEA TE1'},
-  {n:'Kyle Monangai',pos:'RB',team:'CHI',aav:1082035,total:4328140,end:2028,note:'Cheap rookie deal through 2028 — CHI ascending RB'},
-  {n:'Matthew Golden',pos:'WR',team:'GB',aav:4393835,total:17575338,end:2029,note:'Fully guaranteed rookie deal through 2029 — locked up'},
-  {n:'David Montgomery',pos:'RB',team:'HOU',aav:8250000,total:16500000,end:2027,note:'2yr/$16.5M — HOU RB1 committed through 2027'},
-  {n:'Tyrone Tracy',pos:'RB',team:'NYG',aav:1076588,total:4306352,end:2027,note:'Cheap rookie deal through 2027 — NYG committee back'},
-  {n:'Jameson Williams',pos:'WR',team:'DET',aav:26666667,total:80000000,end:2029,note:'Major extension — locked through 2029 as DET WR2'},
-  {n:'Oronde Gadsden',pos:'TE',team:'LAC',aav:1143509,total:4574036,end:2028,note:'Cheap rookie deal through 2028 — ascending LAC TE1'},
-  {n:'Brock Purdy',pos:'QB',team:'SF',aav:53000000,total:265000000,end:2030,note:'Franchise QB locked through 2030'},
-  {n:'Tyler Shough',pos:'QB',team:'NO',aav:2701180,total:10804721,end:2028,note:'Cheap rookie QB deal through 2028 — fully guaranteed'},
-  {n:'Courtland Sutton',pos:'WR',team:'DEN',aav:23000000,total:92000000,end:2029,note:'Locked through 2029 — potential out after 2026 worth monitoring'},
-  {n:'Daniel Jones',pos:'QB',team:'IND',aav:44000000,total:88000000,end:2027,note:'2yr/$88M transition tag extension — IND QB1'},
-  {n:'Alec Pierce',pos:'WR',team:'IND',aav:28500000,total:114000000,end:2029,note:'Major extension — IND WR1 locked through 2029'},
-  {n:'Christian Watson',pos:'WR',team:'GB',aav:11000000,total:11000000,end:2029,note:'WALK YEAR 2026 — 1yr incentive-laden deal, GB must re-sign'},
-  // 2026 Draft Rounds 4-7
-  {n:'Brenen Thompson',pos:'WR',team:'LAC',aav:980000,total:3920000,end:2029,note:'Rd4 #105 — LAC speed WR, 4.26 40'},
-  {n:'Jonah Coleman',pos:'RB',team:'DEN',aav:960000,total:3840000,end:2029,note:'Rd4 #109 — DEN RB, Payton system'},
-  {n:'Cade Klubnik',pos:'QB',team:'NYJ',aav:955000,total:3820000,end:2029,note:'Rd4 #110 — NYJ backup QB, developmental'},
-  {n:'Elijah Sarratt',pos:'WR',team:'BAL',aav:935000,total:3740000,end:2029,note:'Rd4 #115 — BAL depth WR'},
-  {n:'Kaden Wetjen',pos:'WR',team:'PIT',aav:920000,total:3680000,end:2029,note:'Rd4 #121 — PIT kick returner/depth WR'},
-  {n:'Mike Washington Jr.',pos:'RB',team:'LV',aav:915000,total:3660000,end:2029,note:'Rd4 #122 — LV RB, Mendoza era backup'},
-  {n:'Skyler Bell',pos:'WR',team:'BUF',aav:910000,total:3640000,end:2029,note:'Rd4 #125 — BUF depth WR, Bills offense'},
-  {n:'Matthew Hibner',pos:'TE',team:'BAL',aav:900000,total:3600000,end:2029,note:'Rd4 #133 — BAL blocking TE'},
-  {n:'Bryce Lance',pos:'WR',team:'NO',aav:890000,total:3560000,end:2029,note:'Rd4 #136 — NO depth WR, FCS background'},
-  {n:'Colbie Young',pos:'WR',team:'CIN',aav:880000,total:3520000,end:2029,note:'Rd4 #140 — CIN depth WR'},
-  {n:'Reggie Virgil',pos:'WR',team:'ARI',aav:870000,total:3480000,end:2029,note:'Rd5 #143 — ARI depth WR, one-year wonder concern'},
-  {n:'Justin Joly',pos:'TE',team:'DEN',aav:855000,total:3420000,end:2029,note:'Rd5 #152 — DEN most proven TE producer in class'},
-  {n:'Emmett Johnson',pos:'RB',team:'KC',aav:840000,total:3360000,end:2029,note:'Rd5 #161 — KC RB, Mahomes system'},
-  {n:'Nicholas Singleton',pos:'RB',team:'TEN',aav:835000,total:3340000,end:2029,note:'Rd5 #165 — TEN RB behind Ward/Tate offense'},
-  {n:'Kendrick Law',pos:'WR',team:'DET',aav:825000,total:3300000,end:2029,note:'Rd5 #168 — DET offense elite but thin production profile'},
-  {n:'Adam Randall',pos:'RB',team:'BAL',aav:820000,total:3280000,end:2029,note:'Rd5 #174 — BAL RB, converted WR athlete'},
-  {n:'Kevin Coleman Jr.',pos:'WR',team:'MIA',aav:815000,total:3260000,end:2029,note:'Rd5 #177 — MIA WR, Willis at QB limits ceiling'},
-  {n:'Cole Payton',pos:'QB',team:'PHI',aav:810000,total:3240000,end:2029,note:'Rd5 #178 — PHI backup QB, FCS background'},
-  {n:'Cyrus Allen',pos:'WR',team:'KC',aav:805000,total:3220000,end:2029,note:'Rd5 #176 — KC WR, Mahomes creates opportunity'},
-  {n:'Taylen Green',pos:'QB',team:'CLE',aav:795000,total:3180000,end:2029,note:'Rd6 #182 — CLE backup QB'},
-  {n:'Kaytron Allen',pos:'RB',team:'WAS',aav:785000,total:3140000,end:2029,note:'Rd6 #187 — WAS depth RB'},
-  {n:'Barion Brown',pos:'WR',team:'NO',aav:780000,total:3120000,end:2029,note:'Rd6 #190 — NO depth WR, Olave+Tyson limit ceiling'},
-  {n:'Demond Claiborne',pos:'RB',team:'MIN',aav:775000,total:3100000,end:2029,note:'Rd6 #198 — MIN depth RB'},
-  {n:'Deion Burks',pos:'WR',team:'IND',aav:760000,total:3040000,end:2029,note:'Rd7 #254 — IND WR, slid from projected Rd3'},
-  {n:'Garrett Nussmeier',pos:'QB',team:'KC',aav:755000,total:3020000,end:2029,note:'Rd7 #249 — KC backup QB behind Mahomes'},
-  {n:'Seth McGowan',pos:'RB',team:'IND',aav:750000,total:3000000,end:2029,note:'Rd7 #237 — IND depth RB'},
-  {n:'Caleb Douglas',pos:'WR',team:'MIA',aav:1390000,total:5560000,end:2029,note:'Rd3 #75 — 4yr rookie deal. MIA WR — Malik Willis at QB (Tua moved to ATL). Low-volume situation hurts dynasty ceiling significantly'},
-  {n:'Zavion Thomas',pos:'WR',team:'CHI',aav:1310000,total:5240000,end:2029,note:'Rd3 #89 — 4yr rookie deal. CHI WR depth — Moore departed to BUF, upside as WR3+'},
-  {n:'Kaelon Black',pos:'RB',team:'SF',aav:1305000,total:5220000,end:2029,note:'Rd3 #90 — 4yr rookie deal. SF RB — strong OL system but crowded room'},
-  // 2026 Day 2 Rookies
-  {n:"De'Zhaun Stribling",pos:'WR',team:'SF',aav:1800000,total:7200000,end:2029,note:'Rd2 #33 — 4yr rookie deal. SF WR — Deebo/Aiyuk departed, real target share available'},
-  {n:'Denzel Boston',pos:'WR',team:'CLE',aav:2200000,total:8800000,end:2029,note:'Rd2 #39 — 4yr rookie deal. CLE WR2 behind Concepcion. QB situation (Sanders) limits ceiling'},
-  {n:'Germie Bernard',pos:'WR',team:'PIT',aav:1900000,total:7600000,end:2029,note:'Rd2 #47 — 4yr rookie deal. PIT WR3 behind DK Metcalf + Pittman. QB unresolved (Howard/Allar/Rodgers). Ceiling compressed vs expected'},
-  {n:'Eli Stowers',pos:'TE',team:'PHI',aav:1700000,total:6800000,end:2029,note:'Rd2 #54 — 4yr rookie deal. PHI TE2 behind Goedert (31, injury history). Heir apparent — Hurts is elite QB. Best long-term TE dynasty situation in class'},
-  {n:'Marlin Klein',pos:'TE',team:'HOU',aav:1600000,total:6400000,end:2029,note:'Rd2 #59 — 4yr rookie deal. Blocking TE — Stroud is elite QB but limited dynasty upside'},
-  {n:'Max Klare',pos:'TE',team:'LAR',aav:1550000,total:6200000,end:2029,note:'Rd2 #61 — 4yr rookie deal. LAR TE behind Stafford short-term, Simpson era eventually'},
-  {n:'Carson Beck',pos:'QB',team:'ARI',aav:1500000,total:6000000,end:2029,note:'Rd3 #65 — 4yr rookie deal. ARI backup behind Love. Long-term Brady/Love pairing'},
-  {n:'Sam Roush',pos:'TE',team:'CHI',aav:1450000,total:5800000,end:2029,note:'Rd3 #69 — 4yr rookie deal. CHI blocking TE — limited dynasty receiving upside'},
-  {n:'Antonio Williams',pos:'WR',team:'WAS',aav:1420000,total:5680000,end:2029,note:'Rd3 #71 — 4yr rookie deal. WAS WR2 behind McLaurin with Jayden Daniels throwing'},
-  {n:'Oscar Delp',pos:'TE',team:'NO',aav:1400000,total:5600000,end:2029,note:'Rd3 #73 — 4yr rookie deal. Blocking-first TE in NO. Shough/Moore system'},
-  {n:'Malachi Fields',pos:'WR',team:'NYG',aav:1390000,total:5560000,end:2029,note:'Rd3 #74 — 4yr rookie deal. NYG WR room thin but QB situation uncertain'},
-  {n:'Zachariah Branch',pos:'WR',team:'ATL',aav:1380000,total:5520000,end:2029,note:'Rd3 #79 — 4yr rookie deal. ATL WR behind Drake London — Kirk/Pitts offense'},
-  {n:"Ja'Kobi Lane",pos:'WR',team:'BAL',aav:1370000,total:5480000,end:2029,note:'Rd3 #80 — 4yr rookie deal. BAL WR — Lamar Jackson is elite, crowded WR room'},
-  {n:'Chris Brazzell II',pos:'WR',team:'CAR',aav:1360000,total:5440000,end:2029,note:'Rd3 #83 — 4yr rookie deal. CAR WR — thin room but weak offense overall'},
-  {n:'Ted Hurst',pos:'WR',team:'TB',aav:1355000,total:5420000,end:2029,note:'Rd3 #84 — 4yr rookie deal. TB WR — Baker Mayfield gives solid QB situation'},
-  {n:'Drew Allar',pos:'QB',team:'PIT',aav:1350000,total:5400000,end:2029,note:'Rd3 #76 — 4yr rookie deal. PIT QB competition with Howard and possible Rodgers. Long-term franchise QB'},
-  {n:'Will Kacmarek',pos:'TE',team:'MIA',aav:1320000,total:5280000,end:2029,note:'Rd3 #87 — 4yr rookie deal. Blocking TE in MIA — minimal dynasty receiving upside'},
-  {n:'Chris Bell',pos:'WR',team:'MIA',aav:1300000,total:5200000,end:2029,note:'Rd3 #94 — 4yr rookie deal. MIA WR3 — Tua + Douglas competing for targets'},
-  {n:'Eli Raridon',pos:'TE',team:'NE',aav:1290000,total:5160000,end:2029,note:'Rd3 #95 — 4yr rookie deal. NE TE — thin NE roster but unclear QB situation'},
-  // 2026 Rookies — standard 4yr rookie deals
-  {n:'Fernando Mendoza',pos:'QB',team:'LV',aav:9500000,total:38000000,end:2029,note:'#1 overall — 4yr through 2029. Cousins bridge 2026, Mendoza starter 2027+'},
-  {n:'Jeremiyah Love',pos:'RB',team:'ARI',aav:8200000,total:32800000,end:2029,note:'#3 overall — 4yr through 2029. Cardinals RB1 immediately. Conner in committee'},
-  {n:'Carnell Tate',pos:'WR',team:'TEN',aav:7900000,total:31600000,end:2029,note:'#4 overall — 4yr through 2029. Titans WR1 with Cam Ward at QB'},
-  {n:'Jordyn Tyson',pos:'WR',team:'NO',aav:6800000,total:27200000,end:2029,note:'#8 overall — 4yr through 2029. Saints WR with Shough/Moore HC'},
-  {n:'Ty Simpson',pos:'QB',team:'LAR',aav:5400000,total:21600000,end:2029,note:'#13 overall — 4yr through 2029. Buried behind Stafford until 2027+'},
-  {n:'Kenyon Sadiq',pos:'TE',team:'NYJ',aav:4800000,total:19200000,end:2029,note:'#16 overall — 4yr through 2029. Jets TE1 immediately with Geno Smith'},
-  {n:'Makai Lemon',pos:'WR',team:'PHI',aav:4200000,total:16800000,end:2029,note:'#20 overall — 4yr through 2029. Eagles WR3 until AJ Brown trade clears'},
-  {n:'KC Concepcion',pos:'WR',team:'CLE',aav:3800000,total:15200000,end:2029,note:'#24 overall — 4yr through 2029. Browns WR1 path, QB situation concern'},
-  {n:'Omar Cooper',pos:'WR',team:'NYJ',aav:3200000,total:12800000,end:2029,note:'#30 overall — 4yr through 2029. Jets WR2 behind Garrett Wilson'},
-  {n:'Jadarian Price',pos:'RB',team:'SEA',aav:3100000,total:12400000,end:2029,note:'#32 overall — 4yr through 2029. Seahawks RB, strong OL, Walker competition'},
-
-];
+/* CONTRACTS — DELTA's own contracts table (25 Oct 2026, legal compliance plan step 8).
+   The source of truth is data/delta-contracts.json: one row per player, each built from the original
+   news report of the signing, with its link (never OverTheCap or Spotrac). The owner's rules for end
+   years (contract_rule, rookie_rule) are written in that file. The Score reads only `end`; the pages
+   also show aav/total, `kind` (rookie deals show "Rookie Deal", no dollars) and the option status.
+   This replaced the OverTheCap feed (data/player-contracts.json) and the hand list that used to sit
+   here (its source line said "Spotrac screenshots").
+   Filled as this file loads from the built-in copy below, so the first draw already matches the
+   table; loadPlayerContracts() then refreshes it from the file. If the file fails to load, the
+   copy stays in use (owner, 25 Oct 2026). A player whose row has no end year (free agent, retired,
+   left his team) gets no entry here, which dsCont() scores as a neutral 5. */
+// <contracts-backup>
+/* Built-in copy of data/delta-contracts.json, written by scripts/build-contracts-backup.js.
+   Do not edit by hand: change the table, then run the script. The nightly fails if they differ. */
+const DL_CONTRACTS_BACKUP_ASOF="2026-10-25";
+const DL_CONTRACTS_BACKUP={
+  "A.J. Brown":{team:"NE",end:2029,kind:"extension",aav:32,total:96},
+  "AJ Barner":{team:"SEA",end:2027,kind:"rookie",aav:null,total:null},
+  "Aaron Jones":{team:"MIN",end:2026,kind:"veteran",aav:null,total:null},
+  "Aaron Rodgers":{team:"PIT",end:2026,kind:"veteran",aav:22,total:22},
+  "Adam Randall":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
+  "Adonai Mitchell":{team:"NYJ",end:2027,kind:"rookie",aav:null,total:null},
+  "Alec Pierce":{team:"IND",end:2029,kind:"veteran",aav:28.5,total:114},
+  "Alexander Mattison":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Alvin Kamara":{team:"NO",end:2026,kind:"veteran",aav:null,total:null},
+  "Amon-Ra St. Brown":{team:"DET",end:2028,kind:"extension",aav:30,total:120},
+  "Andrei Iosivas":{team:"CIN",end:2026,kind:"rookie",aav:null,total:null},
+  "Anthony Richardson":{team:"IND",end:2026,kind:"rookie",aav:null,total:null,option:"declined"},
+  "Antonio Williams":{team:"WAS",end:2029,kind:"rookie",aav:null,total:null},
+  "Arian Smith":{team:"NYJ",end:2028,kind:"rookie",aav:null,total:null},
+  "Ashton Jeanty":{team:"LV",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Audric Estime":{team:"CLE",end:2026,kind:"veteran",aav:null,total:null},
+  "Austin Ekeler":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Baker Mayfield":{team:"TB",end:2029,kind:"extension",aav:55,total:165},
+  "Barion Brown":{team:"NO",end:2029,kind:"rookie",aav:null,total:null},
+  "Ben Sinnott":{team:"WAS",end:2027,kind:"rookie",aav:null,total:null},
+  "Bhayshul Tuten":{team:"JAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Bijan Robinson":{team:"ATL",end:2030,kind:"extension",aav:22.25,total:66.75},
+  "Blake Corum":{team:"LAR",end:2027,kind:"rookie",aav:null,total:null},
+  "Bo Nix":{team:"DEN",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Braelon Allen":{team:"NYJ",end:2027,kind:"rookie",aav:null,total:null},
+  "Brandon Aiyuk":{team:"SF",end:null,kind:"left_team",aav:null,total:null},
+  "Brashard Smith":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
+  "Breece Hall":{team:"NYJ",end:2028,kind:"extension",aav:15.25,total:45.75},
+  "Brenen Thompson":{team:"LAC",end:2029,kind:"rookie",aav:null,total:null},
+  "Brenton Strange":{team:"JAC",end:2029,kind:"extension",aav:16,total:48},
+  "Brian Robinson":{team:"ATL",end:2026,kind:"veteran",aav:null,total:null},
+  "Brian Thomas Jr.":{team:"JAC",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Brock Bowers":{team:"LV",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Brock Purdy":{team:"SF",end:2030,kind:"extension",aav:53,total:265},
+  "Bryce Lance":{team:"NO",end:2029,kind:"rookie",aav:null,total:null},
+  "Bryce Young":{team:"CAR",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
+  "Bucky Irving":{team:"TB",end:2027,kind:"rookie",aav:null,total:null},
+  "C.J. Stroud":{team:"HOU",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
+  "CJ Daniels":{team:"LAR",end:2029,kind:"rookie",aav:null,total:null},
+  "Cade Klubnik":{team:"NYJ",end:2029,kind:"rookie",aav:null,total:null},
+  "Cade Otton":{team:"TB",end:2028,kind:"veteran",aav:null,total:null},
+  "Caleb Douglas":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "Caleb Williams":{team:"CHI",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Calvin Austin":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
+  "Calvin Ridley":{team:"TEN",end:2027,kind:"veteran",aav:23,total:92},
+  "Cam Skattebo":{team:"NYG",end:2028,kind:"rookie",aav:null,total:null},
+  "Cam Ward":{team:"TEN",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Carnell Tate":{team:"TEN",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Carson Beck":{team:"ARI",end:2029,kind:"rookie",aav:null,total:null},
+  "Cedric Tillman":{team:"NO",end:2026,kind:"practice_squad",aav:null,total:null},
+  "CeeDee Lamb":{team:"DAL",end:2028,kind:"extension",aav:34,total:136},
+  "Charlie Kolar":{team:"LAC",end:2028,kind:"veteran",aav:null,total:null},
+  "Chase Brown":{team:"CIN",end:2026,kind:"rookie",aav:null,total:null},
+  "Chigoziem Okonkwo":{team:"WAS",end:2028,kind:"veteran",aav:9,total:27},
+  "Chimere Dike":{team:"TEN",end:2028,kind:"rookie",aav:null,total:null},
+  "Chris Bell":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "Chris Brazzell II":{team:"CAR",end:2029,kind:"rookie",aav:null,total:null},
+  "Chris Brooks":{team:"GB",end:2027,kind:"veteran",aav:2.43,total:4.85},
+  "Chris Godwin":{team:"TB",end:2027,kind:"veteran",aav:22,total:66},
+  "Chris Olave":{team:"NO",end:2030,kind:"extension",aav:33,total:132,option:"exercised"},
+  "Chris Rodriguez":{team:"JAC",end:2027,kind:"veteran",aav:5,total:10},
+  "Christian Kirk":{team:"SF",end:2026,kind:"veteran",aav:6,total:6},
+  "Christian McCaffrey":{team:"SF",end:2027,kind:"extension",aav:19,total:38},
+  "Christian Watson":{team:"GB",end:2030,kind:"extension",aav:27.63,total:110.5},
+  "Chuba Hubbard":{team:"CAR",end:2028,kind:"extension",aav:null,total:null},
+  "Colbie Young":{team:"CIN",end:2029,kind:"rookie",aav:null,total:null},
+  "Colby Parkinson":{team:"LAR",end:2026,kind:"veteran",aav:7.5,total:22.5},
+  "Cole Kmet":{team:"CHI",end:2027,kind:"extension",aav:12.5,total:50},
+  "Cole Payton":{team:"PHI",end:2029,kind:"rookie",aav:null,total:null},
+  "Colston Loveland":{team:"CHI",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Cooper Kupp":{team:"SEA",end:2027,kind:"veteran",aav:15,total:45},
+  "Courtland Sutton":{team:"DEN",end:2029,kind:"extension",aav:23,total:92},
+  "Cyrus Allen":{team:"KC",end:2029,kind:"rookie",aav:null,total:null},
+  "D'Andre Swift":{team:"CHI",end:2029,kind:"extension",aav:11.25,total:33.75},
+  "D.J. Moore":{team:"BUF",end:2028,kind:"extension",aav:27.5,total:110},
+  "DJ Giddens":{team:"IND",end:2028,kind:"rookie",aav:null,total:null},
+  "DK Metcalf":{team:"PIT",end:2029,kind:"extension",aav:30,total:150},
+  "Dak Prescott":{team:"DAL",end:2028,kind:"extension",aav:60,total:240},
+  "Dallas Goedert":{team:"PHI",end:2026,kind:"veteran",aav:7,total:7},
+  "Dalton Kincaid":{team:"BUF",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
+  "Dalton Schultz":{team:"HOU",end:2027,kind:"extension",aav:12.6,total:12.6},
+  "Damien Martinez":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Daniel Jones":{team:"IND",end:2027,kind:"veteran",aav:44,total:88},
+  "Darius Slayton":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Darnell Mooney":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
+  "Darnell Washington":{team:"PIT",end:2030,kind:"extension",aav:10.5,total:42},
+  "Davante Adams":{team:"LAR",end:2026,kind:"veteran",aav:null,total:null},
+  "David Montgomery":{team:"HOU",end:2027,kind:"veteran",aav:8.25,total:16.5},
+  "David Njoku":{team:"LAC",end:2026,kind:"veteran",aav:null,total:null},
+  "Davis Mills":{team:"HOU",end:2026,kind:"extension",aav:7,total:7},
+  "Dawson Knox":{team:"BUF",end:2028,kind:"veteran",aav:null,total:null},
+  "De'Von Achane":{team:"MIA",end:2030,kind:"extension",aav:16,total:64},
+  "De'Zhaun Stribling":{team:"SF",end:2029,kind:"rookie",aav:null,total:null},
+  "DeMario Douglas":{team:"NE",end:2026,kind:"rookie",aav:null,total:null},
+  "DeVonta Smith":{team:"PHI",end:2028,kind:"extension",aav:25,total:75},
+  "Deebo Samuel":{team:"SF",end:2026,kind:"veteran",aav:7,total:7},
+  "Deion Burks":{team:"IND",end:2029,kind:"rookie",aav:null,total:null},
+  "Demond Claiborne":{team:"MIN",end:2029,kind:"rookie",aav:null,total:null},
+  "Denzel Boston":{team:"CLE",end:2029,kind:"rookie",aav:null,total:null},
+  "Derrick Henry":{team:"BAL",end:2026,kind:"extension",aav:15,total:30},
+  "Deshaun Watson":{team:"CLE",end:2029,kind:"veteran",aav:46,total:230},
+  "Devaughn Vele":{team:"NO",end:2027,kind:"rookie",aav:null,total:null},
+  "Devin Neal":{team:"WAS",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Devin Singletary":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
+  "Dillon Gabriel":{team:"CLE",end:2028,kind:"rookie",aav:null,total:null},
+  "Dont'e Thornton":{team:"LV",end:2028,kind:"rookie",aav:null,total:null},
+  "Dontayvion Wicks":{team:"PHI",end:2027,kind:"extension",aav:12.5,total:12.5},
+  "Drake London":{team:"ATL",end:2030,kind:"extension",aav:35.25,total:141,option:"exercised"},
+  "Drake Maye":{team:"NE",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Drew Allar":{team:"PIT",end:2029,kind:"rookie",aav:null,total:null},
+  "Dylan Sampson":{team:"CLE",end:2028,kind:"rookie",aav:null,total:null},
+  "Efton Chism":{team:"NE",end:2027,kind:"rookie",aav:null,total:null},
+  "Eli Heidenreich":{team:"PIT",end:2029,kind:"rookie",aav:null,total:null},
+  "Eli Raridon":{team:"NE",end:2029,kind:"rookie",aav:null,total:null},
+  "Eli Stowers":{team:"PHI",end:2029,kind:"rookie",aav:null,total:null},
+  "Elic Ayomanor":{team:"TEN",end:2028,kind:"rookie",aav:null,total:null},
+  "Elijah Arroyo":{team:"SEA",end:2028,kind:"rookie",aav:null,total:null},
+  "Elijah Higgins":{team:"ARI",end:2026,kind:"rookie",aav:null,total:null},
+  "Elijah Sarratt":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
+  "Emanuel Wilson":{team:"SEA",end:2026,kind:"veteran",aav:2.1,total:2.1},
+  "Emari Demercado":{team:"DAL",end:2026,kind:"veteran",aav:null,total:null},
+  "Emeka Egbuka":{team:"TB",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Emmett Johnson":{team:"KC",end:2029,kind:"rookie",aav:null,total:null},
+  "Erick All":{team:"CIN",end:2027,kind:"rookie",aav:null,total:null},
+  "Evan Engram":{team:"DEN",end:2026,kind:"veteran",aav:null,total:null},
+  "Fernando Mendoza":{team:"LV",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Gardner Minshew":{team:"ARI",end:2026,kind:"veteran",aav:8,total:8},
+  "Garrett Nussmeier":{team:"KC",end:2029,kind:"rookie",aav:null,total:null},
+  "Garrett Wilson":{team:"NYJ",end:2030,kind:"extension",aav:32.5,total:130,option:"exercised"},
+  "Geno Smith":{team:"NYJ",end:2027,kind:"extension",aav:null,total:null},
+  "George Holani":{team:"SEA",end:2026,kind:"veteran",aav:null,total:null},
+  "George Kittle":{team:"SF",end:2029,kind:"extension",aav:19.1,total:76.4},
+  "George Pickens":{team:"DAL",end:2026,kind:"franchise_tag",aav:null,total:null},
+  "Germie Bernard":{team:"PIT",end:2029,kind:"rookie",aav:null,total:null},
+  "Greg Dulcich":{team:"MIA",end:2026,kind:"veteran",aav:3.25,total:3.25},
+  "Gunnar Helm":{team:"TEN",end:2028,kind:"rookie",aav:null,total:null},
+  "Harold Fannin Jr.":{team:"CLE",end:2028,kind:"rookie",aav:null,total:null},
+  "Hunter Henry":{team:"NE",end:2027,kind:"extension",aav:8,total:16},
+  "Isaac Guerendo":{team:"SF",end:2027,kind:"rookie",aav:null,total:null},
+  "Isaac TeSlaa":{team:"DET",end:2028,kind:"rookie",aav:null,total:null},
+  "Isaiah Bond":{team:"CLE",end:2027,kind:"rookie",aav:null,total:null},
+  "Isaiah Davis":{team:"NYJ",end:2027,kind:"rookie",aav:null,total:null},
+  "Isaiah Likely":{team:"NYG",end:2028,kind:"veteran",aav:13.33,total:40},
+  "Isiah Pacheco":{team:"DET",end:2026,kind:"veteran",aav:null,total:null},
+  "J'Mari Taylor":{team:"JAC",end:2026,kind:"practice_squad",aav:null,total:null},
+  "J.J. McCarthy":{team:"NYG",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "J.K. Dobbins":{team:"DEN",end:2027,kind:"veteran",aav:null,total:null},
+  "Ja'Kobi Lane":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
+  "Ja'Lynn Polk":{team:null,end:null,kind:"retired",aav:null,total:null},
+  "Ja'Marr Chase":{team:"CIN",end:2029,kind:"extension",aav:40.25,total:161},
+  "JaTavion Sanders":{team:"CAR",end:2027,kind:"rookie",aav:null,total:null},
+  "Jack Bech":{team:"LV",end:2028,kind:"rookie",aav:null,total:null},
+  "Jack Endries":{team:"CIN",end:2029,kind:"rookie",aav:null,total:null},
+  "Jacob Cowing":{team:"SF",end:2027,kind:"rookie",aav:null,total:null},
+  "Jacoby Brissett":{team:"ARI",end:2026,kind:"veteran",aav:21,total:21},
+  "Jacory Croskey-Merritt":{team:"WAS",end:2028,kind:"rookie",aav:null,total:null},
+  "Jadarian Price":{team:"SEA",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Jahan Dotson":{team:"ATL",end:2027,kind:"veteran",aav:7.5,total:15},
+  "Jahdae Walker":{team:"CHI",end:2027,kind:"rookie",aav:null,total:null},
+  "Jahmyr Gibbs":{team:"DET",end:2030,kind:"extension",aav:25.23,total:75.7},
+  "Jake Ferguson":{team:"DAL",end:2029,kind:"extension",aav:13,total:52},
+  "Jake Tonges":{team:"SF",end:2027,kind:"extension",aav:4,total:8},
+  "Jakobi Meyers":{team:"JAC",end:2028,kind:"extension",aav:20,total:60},
+  "Jalen Coker":{team:"CAR",end:2029,kind:"extension",aav:11.67,total:35},
+  "Jalen Hurts":{team:"PHI",end:2028,kind:"extension",aav:51,total:255},
+  "Jalen McMillan":{team:"TB",end:2027,kind:"rookie",aav:null,total:null},
+  "Jalen Milroe":{team:"SEA",end:2028,kind:"rookie",aav:null,total:null},
+  "Jalen Nailor":{team:"LV",end:2028,kind:"veteran",aav:null,total:null},
+  "Jalen Royals":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
+  "Jalen Tolbert":{team:"MIA",end:2026,kind:"veteran",aav:null,total:null},
+  "Jam Miller":{team:"ATL",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Jameis Winston":{team:"NYG",end:2028,kind:"extension",aav:6.5,total:13},
+  "James Conner":{team:"ARI",end:2026,kind:"veteran",aav:null,total:null},
+  "James Cook":{team:"BUF",end:2029,kind:"extension",aav:12,total:48},
+  "Jameson Williams":{team:"DET",end:2029,kind:"extension",aav:27.67,total:83,option:"exercised"},
+  "Jared Goff":{team:"DET",end:2028,kind:"extension",aav:53,total:212},
+  "Jaren Kanak":{team:"TEN",end:2029,kind:"rookie",aav:null,total:null},
+  "Jarquez Hunter":{team:"NO",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Jauan Jennings":{team:"MIN",end:2026,kind:"veteran",aav:null,total:null},
+  "Javonte Williams":{team:"DAL",end:2028,kind:"veteran",aav:8,total:24},
+  "Jaxon Smith-Njigba":{team:"SEA",end:2031,kind:"extension",aav:42.2,total:168.8},
+  "Jaxson Dart":{team:"NYG",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Jayden Daniels":{team:"WAS",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Jayden Higgins":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
+  "Jayden Reed":{team:"GB",end:2029,kind:"extension",aav:16.75,total:50.25},
+  "Jaydon Blue":{team:"PHI",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Jaylen Waddle":{team:"DEN",end:2028,kind:"extension",aav:28.25,total:84.75},
+  "Jaylen Warren":{team:"PIT",end:2027,kind:"extension",aav:5.83,total:17.5},
+  "Jaylen Wright":{team:"MIA",end:2027,kind:"rookie",aav:null,total:null},
+  "Jaylin Lane":{team:"WAS",end:2028,kind:"rookie",aav:null,total:null},
+  "Jaylin Noel":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
+  "Jeff Caldwell":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
+  "Jeremiyah Love":{team:"ARI",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Jerome Ford":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Jerry Jeudy":{team:"CLE",end:2027,kind:"extension",aav:19.33,total:58},
+  "Jimmy Horn":{team:"CLE",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Joe Burrow":{team:"CIN",end:2029,kind:"extension",aav:55,total:275},
+  "Joe Flacco":{team:"CIN",end:2026,kind:"veteran",aav:null,total:null},
+  "Joe Milton":{team:"PHI",end:2026,kind:"veteran",aav:null,total:null},
+  "Joe Mixon":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Joe Royer":{team:"CLE",end:2029,kind:"rookie",aav:null,total:null},
+  "John Metchie":{team:"CAR",end:2026,kind:"veteran",aav:null,total:null},
+  "John Michael Gyllenborg":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
+  "Jonah Coleman":{team:"DEN",end:2029,kind:"rookie",aav:null,total:null},
+  "Jonathan Taylor":{team:"IND",end:2028,kind:"extension",aav:22,total:44},
+  "Jonathon Brooks":{team:"CAR",end:2027,kind:"rookie",aav:null,total:null},
+  "Jonnu Smith":{team:"GB",end:2026,kind:"veteran",aav:null,total:null},
+  "Jordan Addison":{team:"MIN",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
+  "Jordan James":{team:"SF",end:2028,kind:"rookie",aav:null,total:null},
+  "Jordan Love":{team:"GB",end:2028,kind:"extension",aav:55,total:220},
+  "Jordan Mason":{team:"MIN",end:2026,kind:"veteran",aav:6,total:12},
+  "Jordan Whittington":{team:"LAR",end:2027,kind:"rookie",aav:null,total:null},
+  "Jordyn Tyson":{team:"NO",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Josh Allen":{team:"BUF",end:2030,kind:"extension",aav:55,total:330},
+  "Josh Cameron":{team:"JAC",end:2029,kind:"rookie",aav:null,total:null},
+  "Josh Downs":{team:"IND",end:2026,kind:"rookie",aav:null,total:null},
+  "Josh Jacobs":{team:"GB",end:2027,kind:"veteran",aav:12,total:48},
+  "Joshua Palmer":{team:"BUF",end:2027,kind:"veteran",aav:null,total:null},
+  "Justice Hill":{team:"BAL",end:2026,kind:"extension",aav:3,total:6},
+  "Justin Fields":{team:"KC",end:2026,kind:"veteran",aav:20,total:40},
+  "Justin Herbert":{team:"LAC",end:2029,kind:"extension",aav:52.5,total:262.5},
+  "Justin Jefferson":{team:"MIN",end:2028,kind:"extension",aav:35,total:140},
+  "Justin Joly":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "Juwan Johnson":{team:"NO",end:2027,kind:"veteran",aav:10,total:30},
+  "K.J. Osborn":{team:"TEN",end:2026,kind:"veteran",aav:null,total:null},
+  "KC Concepcion":{team:"CLE",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "KaVontae Turpin":{team:"DAL",end:2027,kind:"veteran",aav:6,total:18},
+  "Kaden Wetjen":{team:"PIT",end:2029,kind:"rookie",aav:null,total:null},
+  "Kaelon Black":{team:"SF",end:2029,kind:"rookie",aav:null,total:null},
+  "Kaleb Johnson":{team:"GB",end:2028,kind:"rookie",aav:null,total:null},
+  "Kameron Johnson":{team:"TB",end:2026,kind:"rookie",aav:null,total:null},
+  "Kareem Hunt":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Kayshon Boutte":{team:"HOU",end:2026,kind:"rookie",aav:null,total:null},
+  "Kaytron Allen":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "KeAndre Lambert-Smith":{team:"LAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Keaton Mitchell":{team:"LAC",end:2027,kind:"veteran",aav:null,total:null},
+  "Keenan Allen":{team:"IND",end:2026,kind:"veteran",aav:null,total:null},
+  "Kendre Miller":{team:"NO",end:2026,kind:"rookie",aav:null,total:null},
+  "Kendrick Bourne":{team:"ARI",end:2027,kind:"veteran",aav:5,total:10},
+  "Kendrick Law":{team:"DET",end:2029,kind:"rookie",aav:null,total:null},
+  "Kenneth Gainwell":{team:"TB",end:2027,kind:"veteran",aav:null,total:null},
+  "Kenneth Walker III":{team:"KC",end:2028,kind:"veteran",aav:14.35,total:43.05},
+  "Kenny McIntosh":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Kenny Pickett":{team:"CAR",end:2026,kind:"veteran",aav:7.5,total:7.5},
+  "Kenyon Sadiq":{team:"NYJ",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Keon Coleman":{team:"BUF",end:2027,kind:"rookie",aav:null,total:null},
+  "Kevin Coleman":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "Khalil Shakir":{team:"BUF",end:2029,kind:"extension",aav:13.25,total:53},
+  "Kimani Vidal":{team:"LAC",end:2026,kind:"veteran",aav:null,total:null},
+  "Kirk Cousins":{team:"LV",end:2028,kind:"veteran",aav:null,total:null},
+  "Konata Mumpfield":{team:"LAR",end:2028,kind:"rookie",aav:null,total:null},
+  "Kyle Monangai":{team:"CHI",end:2028,kind:"rookie",aav:null,total:null},
+  "Kyle Pitts":{team:"ATL",end:2028,kind:"veteran",aav:18,total:54},
+  "Kyle Williams":{team:"NE",end:2028,kind:"rookie",aav:null,total:null},
+  "Kyler Murray":{team:"MIN",end:2026,kind:"veteran",aav:null,total:null},
+  "Kyren Williams":{team:"LAR",end:2028,kind:"extension",aav:11,total:33},
+  "Ladd McConkey":{team:"LAC",end:2027,kind:"rookie",aav:null,total:null},
+  "Lamar Jackson":{team:"BAL",end:2027,kind:"veteran",aav:52,total:260},
+  "LeQuint Allen":{team:"JAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Luke McCaffrey":{team:"WAS",end:2027,kind:"rookie",aav:null,total:null},
+  "Luke Musgrave":{team:"GB",end:2026,kind:"rookie",aav:null,total:null},
+  "Luther Burden":{team:"CHI",end:2028,kind:"rookie",aav:null,total:null},
+  "Mac Jones":{team:"SF",end:2026,kind:"veteran",aav:4.2,total:8.4},
+  "Mack Hollins":{team:"NE",end:2026,kind:"veteran",aav:4.2,total:8.4},
+  "Makai Lemon":{team:"PHI",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Malachi Fields":{team:"NYG",end:2029,kind:"rookie",aav:null,total:null},
+  "Malik Benson":{team:"LV",end:2029,kind:"rookie",aav:null,total:null},
+  "Malik Davis":{team:"DAL",end:2026,kind:"veteran",aav:null,total:null},
+  "Malik Nabers":{team:"NYG",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Malik Washington":{team:"MIA",end:2027,kind:"rookie",aav:null,total:null},
+  "Malik Willis":{team:"MIA",end:2028,kind:"veteran",aav:22.5,total:67.5},
+  "MarShawn Lloyd":{team:"GB",end:2027,kind:"rookie",aav:null,total:null},
+  "Marcus Mariota":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Mark Andrews":{team:"BAL",end:2028,kind:"extension",aav:13.1,total:39.3},
+  "Marlin Klein":{team:"HOU",end:2029,kind:"rookie",aav:null,total:null},
+  "Marquise Brown":{team:"PHI",end:2026,kind:"veteran",aav:null,total:null},
+  "Marvin Harrison Jr.":{team:"HOU",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Marvin Mims":{team:"DEN",end:2026,kind:"rookie",aav:null,total:null},
+  "Mason Rudolph":{team:"PIT",end:2026,kind:"veteran",aav:null,total:null},
+  "Mason Taylor":{team:"NYJ",end:2028,kind:"rookie",aav:null,total:null},
+  "Matt Hibner":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
+  "Matthew Golden":{team:"GB",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Matthew Stafford":{team:"LAR",end:2027,kind:"extension",aav:55,total:55},
+  "Max Klare":{team:"LAR",end:2029,kind:"rookie",aav:null,total:null},
+  "Michael Carter":{team:"TEN",end:2026,kind:"veteran",aav:null,total:null},
+  "Michael Mayer":{team:"LV",end:2029,kind:"extension",aav:15,total:45},
+  "Michael Penix Jr.":{team:"ATL",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Michael Pittman Jr.":{team:"PIT",end:2028,kind:"extension",aav:19.67,total:59},
+  "Michael Trigg":{team:"DAL",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Michael Wilson":{team:"ARI",end:2029,kind:"extension",aav:25,total:75},
+  "Mike Evans":{team:"SF",end:2028,kind:"veteran",aav:14.17,total:42.5},
+  "Mike Gesicki":{team:"CIN",end:2027,kind:"veteran",aav:8.5,total:25.5},
+  "Mike Washington Jr.":{team:"LV",end:2029,kind:"rookie",aav:null,total:null},
+  "Najee Harris":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
+  "Nate Boerkircher":{team:"JAC",end:2029,kind:"rookie",aav:null,total:null},
+  "Nicholas Singleton":{team:"TEN",end:2029,kind:"rookie",aav:null,total:null},
+  "Nick Chubb":{team:null,end:null,kind:"retired",aav:null,total:null},
+  "Nico Collins":{team:"HOU",end:2027,kind:"extension",aav:24,total:72},
+  "Noah Fant":{team:"NO",end:2027,kind:"veteran",aav:null,total:null},
+  "Noah Gray":{team:"KC",end:2027,kind:"extension",aav:6.5,total:19.5},
+  "Noah Thomas":{team:"CIN",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Odell Beckham":{team:"MIN",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Olamide Zaccheaus":{team:"ATL",end:2026,kind:"veteran",aav:null,total:null},
+  "Ollie Gordon":{team:"MIA",end:2028,kind:"rookie",aav:null,total:null},
+  "Omar Cooper":{team:"NYJ",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Omarion Hampton":{team:"LAC",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Oronde Gadsden":{team:"LAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Oscar Delp":{team:"NO",end:2029,kind:"rookie",aav:null,total:null},
+  "Parker Washington":{team:"JAC",end:2026,kind:"rookie",aav:null,total:null},
+  "Pat Bryant":{team:"DEN",end:2028,kind:"rookie",aav:null,total:null},
+  "Pat Freiermuth":{team:"PIT",end:2028,kind:"extension",aav:12.1,total:48.4},
+  "Patrick Mahomes":{team:"KC",end:2033,kind:"extension",aav:null,total:504.75},
+  "Phil Mafah":{team:"NYG",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Puka Nacua":{team:"LAR",end:2026,kind:"rookie",aav:null,total:null},
+  "Quentin Johnston":{team:"LAC",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
+  "Quinn Ewers":{team:"JAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Quinshon Judkins":{team:"CLE",end:2028,kind:"rookie",aav:null,total:null},
+  "RJ Harvey":{team:"DEN",end:2028,kind:"rookie",aav:null,total:null},
+  "Rachaad White":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Raheim Sanders":{team:"CLE",end:2027,kind:"rookie",aav:null,total:null},
+  "Rashee Rice":{team:"KC",end:2026,kind:"rookie",aav:null,total:null},
+  "Rashid Shaheed":{team:"SEA",end:2028,kind:"veteran",aav:17,total:51},
+  "Rashod Bateman":{team:"BAL",end:2029,kind:"extension",aav:12.25,total:36.75},
+  "Ray Davis":{team:"BUF",end:2027,kind:"rookie",aav:null,total:null},
+  "Reggie Virgil":{team:"ARI",end:2029,kind:"rookie",aav:null,total:null},
+  "Rhamondre Stevenson":{team:"NE",end:2028,kind:"extension",aav:9,total:36},
+  "Ricky Pearsall":{team:"SF",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Rico Dowdle":{team:"PIT",end:2027,kind:"veteran",aav:6.13,total:12.25},
+  "Riley Leonard":{team:"IND",end:2028,kind:"rookie",aav:null,total:null},
+  "Robert Henry":{team:"SEA",end:2026,kind:"veteran",aav:null,total:null},
+  "Roman Hemby":{team:"LV",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Roman Wilson":{team:"PIT",end:2027,kind:"rookie",aav:null,total:null},
+  "Rome Odunze":{team:"CHI",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Romeo Doubs":{team:"NE",end:2029,kind:"veteran",aav:17.5,total:70},
+  "Roschon Johnson":{team:"CHI",end:2026,kind:"rookie",aav:null,total:null},
+  "Ryan Flournoy":{team:"DAL",end:2027,kind:"extension",aav:6,total:6},
+  "Sam Darnold":{team:"SEA",end:2027,kind:"veteran",aav:33.5,total:100.5},
+  "Sam LaPorta":{team:"DET",end:2026,kind:"rookie",aav:null,total:null},
+  "Sam Roush":{team:"CHI",end:2029,kind:"rookie",aav:null,total:null},
+  "Samaje Perine":{team:"CIN",end:2026,kind:"veteran",aav:null,total:null},
+  "Saquon Barkley":{team:"PHI",end:2028,kind:"extension",aav:20.6,total:41.2},
+  "Savion Williams":{team:"GB",end:2028,kind:"rookie",aav:null,total:null},
+  "Sean Tucker":{team:"TB",end:2026,kind:"veteran",aav:null,total:null},
+  "Seth McGowan":{team:"IND",end:2029,kind:"rookie",aav:null,total:null},
+  "Shedeur Sanders":{team:"CLE",end:2028,kind:"rookie",aav:null,total:null},
+  "Skyler Bell":{team:"BUF",end:2029,kind:"rookie",aav:null,total:null},
+  "Stefon Diggs":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "T.J. Hockenson":{team:"MIN",end:2027,kind:"extension",aav:16.5,total:66},
+  "Tahj Brooks":{team:"CIN",end:2028,kind:"rookie",aav:null,total:null},
+  "Tai Felton":{team:"MIN",end:2028,kind:"rookie",aav:null,total:null},
+  "Tank Bigsby":{team:"PHI",end:2026,kind:"rookie",aav:null,total:null},
+  "Tank Dell":{team:"HOU",end:2026,kind:"rookie",aav:null,total:null},
+  "Tanner Koziol":{team:"JAC",end:2029,kind:"rookie",aav:null,total:null},
+  "Tanner McKee":{team:"PHI",end:2026,kind:"rookie",aav:null,total:null},
+  "Taylen Green":{team:"CLE",end:2029,kind:"rookie",aav:null,total:null},
+  "Ted Hurst":{team:"TB",end:2029,kind:"rookie",aav:null,total:null},
+  "Tee Higgins":{team:"CIN",end:2028,kind:"veteran",aav:28.75,total:115},
+  "Terrance Ferguson":{team:"LAR",end:2028,kind:"rookie",aav:null,total:null},
+  "Terry McLaurin":{team:"WAS",end:2028,kind:"extension",aav:32,total:96},
+  "Tetairoa McMillan":{team:"CAR",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Tez Johnson":{team:"TB",end:2028,kind:"rookie",aav:null,total:null},
+  "Theo Johnson":{team:"NYG",end:2027,kind:"rookie",aav:null,total:null},
+  "Tony Pollard":{team:"TEN",end:2026,kind:"veteran",aav:8,total:24},
+  "Tory Horton":{team:"SEA",end:2028,kind:"rookie",aav:null,total:null},
+  "Travis Etienne":{team:"NO",end:2029,kind:"veteran",aav:12,total:48},
+  "Travis Hunter":{team:"JAC",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Travis Kelce":{team:"KC",end:2026,kind:"veteran",aav:null,total:null},
+  "Tre Harris":{team:"LAC",end:2028,kind:"rookie",aav:null,total:null},
+  "Tre Tucker":{team:"LV",end:2026,kind:"rookie",aav:null,total:null},
+  "TreVeyon Henderson":{team:"NE",end:2028,kind:"rookie",aav:null,total:null},
+  "Trevor Etienne":{team:"CAR",end:2028,kind:"rookie",aav:null,total:null},
+  "Trevor Lawrence":{team:"JAC",end:2030,kind:"extension",aav:55,total:275},
+  "Trey Benson":{team:"ARI",end:2027,kind:"rookie",aav:null,total:null},
+  "Trey Lance":{team:"LAC",end:2026,kind:"veteran",aav:6.75,total:6.75},
+  "Trey McBride":{team:"ARI",end:2029,kind:"extension",aav:19,total:76},
+  "Treylon Burks":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Troy Franklin":{team:"DEN",end:2027,kind:"rookie",aav:null,total:null},
+  "Tua Tagovailoa":{team:"ATL",end:2026,kind:"veteran",aav:null,total:null},
+  "Tucker Kraft":{team:"GB",end:2030,kind:"extension",aav:18.75,total:75},
+  "Tutu Atwell":{team:"LAR",end:2026,kind:"veteran",aav:null,total:null},
+  "Ty Johnson":{team:"BUF",end:2026,kind:"veteran",aav:null,total:null},
+  "Ty Simpson":{team:"LAR",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
+  "Tyjae Spears":{team:"TEN",end:2026,kind:"rookie",aav:null,total:null},
+  "Tyler Allgeier":{team:"ARI",end:2027,kind:"veteran",aav:6.13,total:12.25},
+  "Tyler Higbee":{team:"LAR",end:2027,kind:"veteran",aav:null,total:null},
+  "Tyler Huntley":{team:"BAL",end:2027,kind:"veteran",aav:null,total:null},
+  "Tyler Shough":{team:"NO",end:2028,kind:"rookie",aav:null,total:null},
+  "Tyler Warren":{team:"IND",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
+  "Tyquan Thornton":{team:"KC",end:2027,kind:"veteran",aav:null,total:null},
+  "Tyreek Hill":{team:null,end:null,kind:"free_agent",aav:null,total:null},
+  "Tyrod Taylor":{team:"GB",end:2026,kind:"veteran",aav:null,total:null},
+  "Tyrone Tracy":{team:"NYG",end:2027,kind:"rookie",aav:null,total:null},
+  "Tyson Bagent":{team:"CHI",end:2027,kind:"extension",aav:null,total:null},
+  "Wan'Dale Robinson":{team:"TEN",end:2029,kind:"veteran",aav:19.5,total:78},
+  "Will Howard":{team:"PIT",end:2028,kind:"rookie",aav:null,total:null},
+  "Will Kacmarek":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
+  "Will Levis":{team:"NYJ",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Will Shipley":{team:"PHI",end:2027,kind:"rookie",aav:null,total:null},
+  "Woody Marks":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
+  "Xavier Hutchinson":{team:"HOU",end:2026,kind:"rookie",aav:null,total:null},
+  "Xavier Legette":{team:"CAR",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Xavier Restrepo":{team:"TEN",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Xavier Worthy":{team:"KC",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
+  "Zach Charbonnet":{team:"SEA",end:2026,kind:"rookie",aav:null,total:null},
+  "Zach Ertz":{team:"PHI",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Zachariah Branch":{team:"ATL",end:2029,kind:"rookie",aav:null,total:null},
+  "Zavion Thomas":{team:"CHI",end:2029,kind:"rookie",aav:null,total:null},
+  "Zay Flowers":{team:"BAL",end:2031,kind:"extension",aav:35,total:140,option:"exercised"},
+  "Zonovan Knight":{team:"ARI",end:2026,kind:"veteran",aav:null,total:null},
+};
+// </contracts-backup>
+const CONTRACTS=[];
+const DL_CONTRACT_ROWS={};        // every player's row, contract or not (team, kind, option): pages and ?dev=1
+let DL_CONTRACTS_SOURCE='built-in copy';   // 'table' once data/delta-contracts.json has loaded
+function dlContractsApply(rows){
+  CONTRACTS.length=0;
+  for(const k of Object.keys(DL_CONTRACT_ROWS)) delete DL_CONTRACT_ROWS[k];
+  for(const r of RAW){
+    const row=rows[r.n]; if(!row) continue;
+    DL_CONTRACT_ROWS[r.n]=row;
+    if(row.end==null) continue;
+    const opt=row.option==null?null:(typeof row.option==='string'?row.option:row.option.status||null);
+    CONTRACTS.push({ n:r.n, pos:r.p||r.pos||'', team:row.team||r.t||'',
+      aav:Math.round((+row.aav||0)*1e6), total:Math.round((+row.total||0)*1e6),
+      end:row.end, kind:row.kind||'', opt });
+  }
+}
+dlContractsApply(DL_CONTRACTS_BACKUP);
 
 const COLLEGES={
   'Jaxson Dart':'Ole Miss',
@@ -5885,178 +6061,41 @@ async function loadLiveMarketValues() {
 }
 
 // ── FRESHNESS INDICATOR ───────────────────────────────────────────────────
-/* Contracts whose end year needs a hand check (see CONTRACT_OVERRIDES). Shown on the
-   ?dev=1 Engine Audit panel; feeds no number. */
-let DL_CONTRACT_CHECK = [];
-let DL_CONTRACT_STALE = [];   // hand entries the feed has overtaken (see loadPlayerContracts)
+/* Players whose built-in copy (DL_CONTRACTS_BACKUP) differs from the table: the copy is out of
+   date. Shown on the ?dev=1 Engine Audit panel; the nightly fails on it too
+   (scripts/build-contracts-backup.js --check). Feeds no number. */
+let DL_CONTRACT_BACKUP_DIFF = [];
+function dlContractsDiff(a, b){
+  const key = (r) => r ? [r.team, r.end, r.kind, r.aav, r.total,
+    r.option == null ? null : (typeof r.option === 'string' ? r.option : r.option.status)].join('|') : '';
+  return [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])]
+    .filter((n) => key(a[n]) !== key(b[n])).sort();
+}
+/* Contracts: DELTA's own table, data/delta-contracts.json (25 Oct 2026; see CONTRACTS). Replaces
+   the OverTheCap feed and its hand corrections (the +1 rule, CONTRACT_OVERRIDES, CONTRACT_VOID):
+   the table is built from the signing reports, so every end year in it is already the owner's.
+   On any failure the built-in copy filled at load stays in use, and the load notice says so. */
 async function loadPlayerContracts() {
   try {
-    const res = await dlFetch('./data/player-contracts.json',{cache:'no-cache'});
-    if (!res.ok) { dlNoteFail('contracts'); return; } // non-fatal
+    const res = await dlFetch('./data/delta-contracts.json',{cache:'no-cache'});
+    if (!res.ok) { dlNoteFail('contracts'); return; }        // built-in copy stays
     const data = await res.json();
-    if (!data?.contracts) return;
-
-    // Explicit overrides for cases where the pipeline formula still gives the wrong year.
-    // Add entries here ONLY when Steve has personally confirmed the correct end year.
-    // Everything else comes from the pipeline automatically.
-    // AN EXTENSION SIGNED WHILE THE ROOKIE DEAL STILL RUNS: OTC counts its years from the
-    // signing year, but they start AFTER the current deal (and the 5th-year option, if
-    // picked up). The feed is short by 1-2 years, and nothing in it says whether the
-    // option was exercised, so these are confirmed by hand. DL_CONTRACT_CHECK (below)
-    // lists any new one on the ?dev=1 Engine Audit panel until it is added here.
-    // A stale entry here BEATS the feed: Gibbs sat at 2027 for 11 weeks after his
-    // extension (Contract 6/10 instead of 10/10). Revisit entries when a player re-signs.
-    const CONTRACT_OVERRIDES = {
-      'Jahmyr Gibbs': 2030,          // 3 yrs after the 2027 option (Aug 2026) — Lions: "through the 2030 season"
-      'Jameson Williams': 2029,      // extension signed — locked through 2029 (pipeline stale)
-      'Josh Allen':    2030,  // year_signed=2025 new deal — OTC correct, no +1 needed (handled by rule below too)
-      'Drake London':  2030,  // year_signed=2026 but extension starts 2027 — needs +1 that rule suppresses
-      // 2026 extensions on running rookie deals, confirmed by Steve 23 Oct 2026 (reported end
-      // year where one was found; otherwise rookie deal / option year + new years):
-      'Bijan Robinson':     2030,  // 3 yrs after the 2027 option — AP: "locked up through 2030"
-      'Jaxon Smith-Njigba': 2031,  // 4 yrs — Fox 13: "through the 2031 season"
-      'Zay Flowers':        2031,  // 4 yrs after the 2027 option (Ravens: option already picked up)
-      'Chris Olave':        2030,  // 4 yrs from 2027 — CBS: "through the 2030 season"
-      'Tucker Kraft':       2030,  // 4 yrs — NFL.com: "extension through 2030"
-      'Jayden Reed':        2029,  // 3 yrs — NFP: "signed through 2029"
-      'Brenton Strange':    2029,  // 3 yrs after the rookie deal (2026)
-      'Michael Mayer':      2029,  // 3 yrs after the rookie deal (2026)
-      'Michael Wilson':     2029,  // 3 yrs after the rookie deal (2026)
-      'Chris Rodriguez':    2028,  // 2 yrs after the rookie deal (2026)
-      // Earlier extensions on running rookie deals / RFA tenders, from the Engine Audit list;
-      // each checked against a report and confirmed by Steve 23 Oct 2026. Most were a year short
-      // (the +1 rule only covers deals signed before 2025, and not first-rounders' option years).
-      'Justin Herbert':     2029,  // CBS: "through the 2029 season"
-      'Joe Burrow':         2029,  // Bengals.com: "through 2029"
-      'Trevor Lawrence':    2030,  // "signed with Jaguars through 2030"
-      'Brock Purdy':        2030,  // five-year extension, "contract until 2030"
-      "Ja'Marr Chase":      2029,  // Bengals.com: "four-year contract extension through the 2029 season"
-      'Garrett Wilson':     2030,  // AP: through 2030 (5th-year option picked up first)
-      'Trey McBride':       2029,  // AP: "keeping him with team through 2029"
-      'Jake Ferguson':      2029,  // CBS: "through the 2029 season"
-      'Khalil Shakir':      2029,  // Bills.com: "extension through 2029"
-      'James Cook':         2029,  // Bills.com: "through the 2029 season"
-      'Kyren Williams':     2028,  // Rams.com: "through 2028"
-      "De'Von Achane":      2030,  // PFT: new-money years 2027-2030
-      'DeVonta Smith':      2028,  // "Eagles extend WR DeVonta Smith through 2028 season"
-      'Jaylen Waddle':      2028,  // "signed with Miami through the 2028 season"
-      'Rashod Bateman':     2029,  // "tacks onto his current deal ... through the 2029 season"
-      'Darnell Washington': 2030,  // 4 yrs, cap schedule runs to 2030
-      'Jalen Coker':        2029,  // NFL Network: "in Charlotte through 2029" (undrafted: rule guessed 2030)
-      'Jaylen Warren':      2027,  // NFL.com: "under contract through 2027" (on top of his 2025 tender)
-      'Jordan Mason':       2026,  // new 2-yr deal in 2025 replaced his tender; free agent next March (feed right)
-      'Jahan Dotson':       2027,  // 2-yr free-agent deal with ATL in 2026 (feed right; option was declined)
-    };
-
-    /* VOIDED CONTRACTS — the feed is stale in a way no formula can detect.
-       OTC keeps listing a deal that no longer legally exists (voided, released,
-       left squad). Applying it would hand the player a security bonus for a
-       contract he does not have — the opposite of the truth.
-       A name here is treated as HAVING NO CONTRACT, which dsCont() scores as 5
-       (neutral), not as a penalty: absence of security is not a red flag.
-       Hand-maintained. Add a name ONLY when the void is confirmed. */
-    const CONTRACT_VOID = {
-      'Brandon Aiyuk': 'Voided his SF deal; on the reserve/left-squad list. OTC still lists 2027.',
-    };
-
-    let updated = 0, added = 0, voided = 0;
-    DL_CONTRACT_CHECK = []; DL_CONTRACT_STALE = [];
-    for (const player of RAW) {
-      if (!player || !player.n) continue;
-
-      // Void first — and drop any baked entry too, so the void holds regardless
-      // of whether the player also sits in the hand table.
-      if (CONTRACT_VOID[player.n]) {
-        const i = CONTRACTS.findIndex(x => x.n === player.n);
-        if (i >= 0) CONTRACTS.splice(i, 1);
-        voided++;
-        continue;
-      }
-
-      const c = data.contracts[player.n];
-      if (!c) continue;
-
-      // vet+1 correction: OTC undercounts extensions signed before the current year
-      // because it counts year_signed as year 1, but for old extensions year 1 is
-      // actually year_signed + 1. Only apply when:
-      //   - established player (aav ≥ $5M)
-      //   - multi-year deal (years > 1 — franchise tags and 1yr deals always start year_signed)
-      //   - signed before 2025 (year_signed < 2025 — recent new deals have OTC computing correctly)
-      // Franchise tags (years=1) like Pickens 2026 → no +1
-      // New 2025-2026 deals (Walker, Hall year_signed=2026) → no +1
-      // Old extensions (Waddle year_signed=2024) → +1 applied
-      const isVet = (c.aav || 0) >= 5;
-      // Rookie-deal exclusion: a contract signed in the player's own draft year
-      // is the rookie contract — OTC computes those correctly, and first-round
-      // rookie AAVs clear the $5M vet bar (MHJ 8.84), so without this check the
-      // vet+1 correction wrongly extends top rookie deals by a year.
-      const dpk = (typeof DRAFT_PICKS !== 'undefined') && DRAFT_PICKS[player.n];
-      const isRookieDeal = dpk && c.year_signed === dpk.y;
-      const isOldExtension = isVet && !isRookieDeal && (c.years || 0) > 1 && (c.year_signed || 0) < 2025;
-      // Extension signed while the rookie deal was still running (last rookie season is
-      // draft year + 3; a first-rounder's option year is + 4). The feed's end year is then
-      // too early. Flag it for a hand check unless it is already confirmed above.
-      const pipeEnd = CONTRACT_OVERRIDES[player.n] ?? (isOldExtension ? c.end_year + 1 : c.end_year);
-      // Listed only when the likely year differs from the one DELTA will use (the +1 rule
-      // above already corrects many older extensions).
-      if (dpk && !isRookieDeal && isVet && (c.years || 0) > 1 && !(player.n in CONTRACT_OVERRIDES)
-          && (c.year_signed || 0) <= dpk.y + (dpk.r === 1 ? 4 : 3)) {
-        const runsTo = Math.max(c.year_signed - 1, dpk.y + 3), opt = dpk.y + 4;
-        const likely = (dpk.r === 1 && c.year_signed <= opt ? opt : runsTo) + c.years;
-        if (likely !== pipeEnd) DL_CONTRACT_CHECK.push({ n: player.n, signed: c.year_signed, years: c.years,
-          uses: pipeEnd, likely, round: dpk.r });
-      }
-      // A hand entry the feed has overtaken: the feed now runs LATER than the confirmed year,
-      // which is what a new deal looks like (Gibbs: entry 2027, feed 2028 after his August
-      // extension — the entry won for 11 weeks). The feed undercounts, never overcounts, so a
-      // later feed year means the entry is stale. Listed until the entry is updated.
-      if ((player.n in CONTRACT_OVERRIDES) && (c.end_year || 0) > CONTRACT_OVERRIDES[player.n])
-        DL_CONTRACT_STALE.push({ n: player.n, uses: CONTRACT_OVERRIDES[player.n], feedEnd: c.end_year,
-          signed: c.year_signed, years: c.years });
-
-      const existing = CONTRACTS.find(x => x.n === player.n);
-      if (existing) {
-        if (c.aav   > 0) existing.aav   = Math.round(c.aav   * 1000000);
-        if (c.total > 0) existing.total = Math.round(c.total * 1000000);
-        existing.end = pipeEnd; // pipeline is the source of truth; overwrites baked
-        updated++;
-      } else {
-        /* CREATE, don't skip. This branch used to not exist: a player absent from
-           the baked CONTRACTS hand table had his pipeline contract silently
-           discarded. Measured on live data, that was 167 of 409 players — 99 of
-           whom scored a neutral 5 on dsCont() while holding a real multi-year
-           deal worth 6, 7 or 9. The gap fell almost entirely on young players on
-           rookie contracts, the exact group the axis is meant to reward, and it
-           also cost every one of them the -0.02 "no contract = uncertainty"
-           model-value nudge they should never have taken.
-           The hand table remains the override layer for names the feed gets
-           wrong; it is no longer the gate deciding who is allowed a contract. */
-        CONTRACTS.push({
-          n:     player.n,
-          pos:   player.p || player.pos || '',
-          team:  player.t || c.team || '',
-          aav:   Math.round((c.aav   || 0) * 1000000),
-          total: Math.round((c.total || 0) * 1000000),
-          end:   pipeEnd,
-          note:  'From nflverse/OTC feed',
-        });
-        added++;
-      }
-    }
-
-    if (updated > 0 || added > 0 || voided > 0) {
-      console.log(`[DELTA] Contracts updated: ${updated} players` +
-                  (added  ? `, ${added} added from feed` : '') +
-                  (voided ? `, ${voided} voided` : ''));
-      COMP.length = 0;
-      RAW.forEach(r => COMP.push(calcProj(r)));
-      ASSETS.length = 0;
-      ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
-      if (typeof renderRankings === 'function') renderRankings();
-    }
+    const rows = data && data.players;
+    // A short or empty table is a broken file, not a league with no contracts.
+    if (!rows || Object.keys(rows).length < 350) { dlNoteFail('contracts'); return; }
+    DL_CONTRACT_BACKUP_DIFF = dlContractsDiff(DL_CONTRACTS_BACKUP, rows);
+    dlContractsApply(rows);
+    DL_CONTRACTS_SOURCE = 'table';
+    console.log(`[DELTA] Contracts: ${CONTRACTS.length} from DELTA's table` +
+                (DL_CONTRACT_BACKUP_DIFF.length ? ` (built-in copy differs for ${DL_CONTRACT_BACKUP_DIFF.length})` : ''));
+    COMP.length = 0;
+    RAW.forEach(r => COMP.push(calcProj(r)));
+    ASSETS.length = 0;
+    ASSETS.push(...COMP, ...PICKS.filter(p => !p.hidden));
+    if (typeof renderRankings === 'function') renderRankings();
   } catch(e) {
     dlNoteFail('contracts');
-    console.warn('[DELTA] Could not load contracts:', e.message);
+    console.warn('[DELTA] Could not load contracts; using the built-in copy:', e.message);
   }
 }
 
@@ -6198,7 +6237,7 @@ function dynastySignal(c){
   if(yrsLeft>=5&&c.aav>=20000000)return'<span style="color:var(--emerald);font-size:10px">Elite commitment — long-term hold</span>';
   if(yrsLeft>=3)return'<span style="color:var(--sky);font-size:10px">Stable — '+yrsLeft+' years of role security</span>';
   if(yrsLeft<=2)return'<span style="color:var(--topaz);font-size:10px">Contract leverage ends · '+yrsLeft+' yrs left</span>';
-  return'<span style="color:var(--fog);font-size:10px">'+c.note+'</span>';
+  return'<span style="color:var(--fog);font-size:10px">'+(c.note||'')+'</span>';
 }
 
 function buildDSBreakdownHTML(p){
@@ -6272,11 +6311,11 @@ function isNFLRookie(p){
 // First-round rookie deals carry a team-option 5th year. We display guaranteed
 // years as-is (the option isn't exercised until it is), but surface that it
 // exists so a Bowers doesn't read as "2 years and done".
+/* Fifth-year option still to be decided (owner, 25 Oct 2026): read from the contracts table, not
+   guessed from the draft round, so an option already declined or picked up never shows. No date:
+   teams can decide any time in the window. A picked-up option is already in the end year. */
 function fifthYearNote(p,ct){
-  const d=(typeof DRAFT_PICKS!=='undefined')&&DRAFT_PICKS[p.n];
-  if(!d||d.r!==1||!ct||!ct.end) return '';
-  if(ct.end===d.y+3) return `5th-year option (${d.y+4}) available — team decision`;
-  return '';
+  return ct&&ct.opt==='available'?'Fifth-Year Option Available':'';
 }
 function explainSystem(p){
   if(p.sys==null) return null;

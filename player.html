@@ -346,7 +346,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-23a</span>
+    <span class="foot-build">2026-10-25a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -989,11 +989,17 @@ function buildContractHTML(p) {
   const st = contractStatus(ct);
   const yrsLeft = ct.end - (SEASON_YEAR - 1); // inclusive of the current season
   const yrsClr = yrsLeft<=2?'var(--coral-bri)':yrsLeft<=3?'var(--topaz)':yrsLeft>=5?'var(--emerald)':'var(--sky)';
+  /* Money boxes (25 Oct 2026, owner): a rookie deal reads "Rookie Deal" with no dollars, a
+     practice-squad deal says so, and a value that was never reported shows a dash, never "$0". */
+  const kindLbl = /^rookie/.test(ct.kind || '') ? 'Rookie Deal' : ct.kind === 'practice_squad' ? 'Practice Squad' : '';
+  const money = kindLbl
+    ? `<div class="stat-box" style="grid-column:span 2"><div class="stat-val">${kindLbl}</div><div class="stat-lbl">Contract</div></div>`
+    : `<div class="stat-box"><div class="stat-val">${ct.aav > 0 ? fmt(ct.aav) : '\u2014'}</div><div class="stat-lbl">Per Year</div></div>
+      <div class="stat-box"><div class="stat-val">${ct.total > 0 ? fmt(ct.total) : '\u2014'}</div><div class="stat-lbl">Total</div></div>`;
   return `<div class="card">
     <div class="card-label">Contract</div>
     <div class="stat-grid" style="margin-bottom:12px">
-      <div class="stat-box"><div class="stat-val">${fmt(ct.aav)}</div><div class="stat-lbl">Per Year</div></div>
-      <div class="stat-box"><div class="stat-val">${fmt(ct.total)}</div><div class="stat-lbl">Total</div></div>
+      ${money}
       <div class="stat-box"><div class="stat-val" style="color:${yrsClr}">${yrsLeft}</div><div class="stat-lbl">Yrs Left</div></div>
     </div>
     <div class="bdr-row"><span style="color:var(--fog)">Status</span><span class="badge ${st.cls}">${st.label}</span></div>

@@ -29,10 +29,9 @@ except ImportError:
 #
 # Floors sit at roughly 75% of observed live counts (11 Aug 2026), so ordinary
 # week-to-week drift can never trip them and only real degradation can:
-#     players 327 · contracts 394 · draft 372 · universe 409
+#     players 327 · draft 372 · universe 409 (contracts: no longer fetched, 25 Oct 2026)
 # Raise these when the universe grows; never lower them to make a red run pass.
 MIN_PLAYERS   = 250   # live 327 — matches the freeze pre-flight's own floor
-MIN_CONTRACTS = 300   # live 394
 MIN_DRAFT     = 250   # live 372 — feeds the rookie draft-capital baseline
 MIN_UNIVERSE  = 350   # live 409 — RAW parsed out of delta-engine.js
 
@@ -1287,65 +1286,6 @@ def fetch_draft_and_college(delta_names, meta):
     return draft_map, college_map, age_map
 
 
-CONTRACT_OVERRIDES_FILE = Path(__file__).resolve().parent.parent / 'data' / 'contract-overrides.json'
-
-def load_contract_overrides():
-    """Read data/contract-overrides.json, a hand-maintained stopgap.
-
-    Shape — a flat map of DELTA player name -> contract fields, plus a free-text
-    note recording WHY the entry exists and where the figures came from:
-
-        {
-          "Stefon Diggs": {
-            "team": "Commanders", "year_signed": 2026, "years": 1,
-            "end_year": 2026, "aav": 12.0, "total": 12.0, "guaranteed": 6.0,
-            "note": "Signed 5 Aug 2026, per OTC website; absent from the OTC
-                     data release as of 8 Aug. Delete once upstream has it."
-          }
-        }
-
-    Missing file is normal and silent — most of the time there is nothing to
-    override. A malformed file is NOT silent: it warns and returns empty, so a
-    typo degrades to plain OTC behaviour instead of failing the run.
-    """
-    if not CONTRACT_OVERRIDES_FILE.exists():
-        return {}
-    try:
-        raw = json.loads(CONTRACT_OVERRIDES_FILE.read_text())
-    except Exception as e:
-        print(f'[DELTA] contract-overrides.json unreadable ({e}) — ignoring, using OTC only')
-        return {}
-    if not isinstance(raw, dict):
-        print('[DELTA] contract-overrides.json is not an object — ignoring')
-        return {}
-
-    REQUIRED = ('team', 'year_signed', 'years', 'aav')
-    out = {}
-    for name, entry in raw.items():
-        if name.startswith('_'):
-            continue                                    # allow "_comment" keys
-        if not isinstance(entry, dict):
-            print(f'[DELTA] contract override for {name!r} is not an object — skipped')
-            continue
-        missing = [k for k in REQUIRED if entry.get(k) in (None, '')]
-        if missing:
-            print(f'[DELTA] contract override for {name!r} missing {missing} — skipped')
-            continue
-        e = {k: v for k, v in entry.items() if k != 'note'}
-        if 'end_year' not in e:
-            try:
-                e['end_year'] = int(e['year_signed']) + int(e['years']) - 1
-            except Exception:
-                print(f'[DELTA] contract override for {name!r} has bad year fields — skipped')
-                continue
-        e.setdefault('total', e.get('aav'))
-        e.setdefault('guaranteed', 0)
-        out[name] = e
-    if out:
-        print(f'[DELTA] contract-overrides.json: {len(out)} entr(ies) loaded')
-    return out
-
-
 INJURY_LOG_FILE = Path(__file__).resolve().parent.parent / 'data' / 'injury-log.jsonl'
 
 def append_injury_log(injury_status):
@@ -1375,158 +1315,6 @@ def append_injury_log(injury_status):
         # Never fail the run over the observability log.
         print(f'[DELTA] injury log append failed ({e}) — continuing')
 
-
-def fetch_contracts(delta_names):
-    """Fetch active NFL contracts from nflverse (sourced from OTC)"""
-    print("\n[DELTA] Fetching contracts from nflverse/OTC...")
-    
-    try:
-        contracts_df = nfl.load_contracts()
-        pdf = contracts_df.to_pandas() if hasattr(contracts_df, 'to_pandas') else contracts_df
-        
-        # Active contracts only
-        if 'is_active' in pdf.columns:
-            pdf = pdf[pdf['is_active'] == True].copy()
-        
-        print(f"[DELTA] Active contracts: {len(pdf)}")
-        print(f"[DELTA] Contract columns: {list(pdf.columns)[:15]}")
-        
-        # Build name lookup
-        name_col = next((c for c in ['player','player_name','name'] if c in pdf.columns), None)
-        if not name_col:
-            print("[DELTA] Could not find player name column in contracts")
-            return {}
-        
-        # Normalize names for matching
-        pdf['norm_name'] = pdf[name_col].apply(norm)
-        # Also create a no-apostrophe version for fuzzy matching
-        pdf['norm_name_clean'] = pdf[name_col].apply(
-            lambda x: norm(str(x).replace("'","").replace("’",""))
-        )
-        
-        contracts = {}
-        not_found = []
-        
-        # Contract-specific aliases: DELTA's spelling -> OTC's spelling.
-        # A miss here is expensive and invisible — the player silently falls
-        # back to their baked CONTRACTS entry while a perfectly good active
-        # contract sits in the feed under a different name. Stafford is the
-        # worked example: OTC has "Matt Stafford" with an active 2026 Rams deal
-        # (1yr, $55M); DELTA calls him "Matthew Stafford" and matched nothing.
-        CONTRACT_ALIASES = {
-            "Ja'Marr Chase": "Ja'Marr Chase",
-            'Chigoziem Okonkwo': 'Chig Okonkwo',
-            'Matthew Stafford': 'Matt Stafford',
-        }
-        
-        for delta_name in delta_names:
-            # Try alias first
-            lookup = CONTRACT_ALIASES.get(delta_name, delta_name)
-            key = norm(lookup)
-            match = pdf[pdf['norm_name'] == key]
-            
-            # If no match, try the original name too
-            if match.empty and lookup != delta_name:
-                key = norm(delta_name)
-                match = pdf[pdf['norm_name'] == key]
-            
-            # If still no match, try stripping all apostrophes
-            if match.empty:
-                key_clean = key.replace("'","")
-                match = pdf[pdf['norm_name_clean'] == key_clean]
-            
-            if match.empty:
-                # Try partial match
-                words = key.split()
-                found = None
-                for length in range(len(words), 1, -1):
-                    partial = ' '.join(words[:length])
-                    cands = pdf[pdf['norm_name'].str.startswith(partial)]
-                    if len(cands) == 1:
-                        found = cands.iloc[0]
-                        break
-                if found is not None:
-                    match = pd.DataFrame([found])
-            
-            if not match.empty:
-                # Take the contract with latest end year (most recent extension)
-                match = match.copy()
-                match['_end'] = match.apply(
-                    lambda r: int(r.get('year_signed', 2024) or 2024) + int(r.get('years', 1) or 1) - 1,
-                    axis=1
-                )
-                row = match.sort_values('_end', ascending=False).iloc[0]
-                # Calculate contract end year
-                year_signed = int(row.get('year_signed', 2024) or 2024)
-                years = int(row.get('years', 1) or 1)
-                end_year = year_signed + years - 1
-                
-                # APY/value are in dollars not millions in nflverse
-                # Divide by 1M for display
-                apy_raw   = float(row.get('apy',   0) or 0)
-                value_raw = float(row.get('value', 0) or 0)
-                guar_raw  = float(row.get('guaranteed', 0) or 0)
-                # nflverse stores in thousands or full dollars — detect scale
-                aav_m = apy_raw / 1e6 if apy_raw > 1000 else apy_raw
-                tot_m = value_raw / 1e6 if value_raw > 1000 else value_raw
-                gua_m = guar_raw / 1e6 if guar_raw > 1000 else guar_raw
-
-                contracts[delta_name] = {
-                    'team':        str(row.get('team', '')),
-                    'year_signed': year_signed,
-                    'years':       years,
-                    'end_year':    end_year,
-                    'aav':         round(aav_m, 2),
-                    'total':       round(tot_m, 2),
-                    'guaranteed':  round(gua_m, 2),
-                    'is_active':   True,
-                }
-            else:
-                not_found.append(delta_name)
-        
-        # ── Hand-maintained overrides ───────────────────────────────────────
-        # For the narrow case where a player has demonstrably signed but OTC's
-        # dataset has not caught up (Diggs -> WAS, Aug 2026: signing is on OTC's
-        # website, absent from their data release).
-        #
-        # PRECEDENCE: OTC WINS. An override applies only to a player with no
-        # active upstream contract, so each entry expires ITSELF the moment the
-        # real one lands. That direction matters — the opposite would let a
-        # hand-typed figure quietly outlive the truth.
-        overrides = load_contract_overrides()
-        applied, expired = [], []
-        for name, entry in overrides.items():
-            if name in contracts:
-                expired.append(name)          # OTC has it now; override is dead weight
-            elif name in delta_names:
-                e = dict(entry)
-                e['is_active'] = True
-                e['source'] = 'override'
-                contracts[name] = e
-                applied.append(name)
-        if applied:
-            print(f'[DELTA] contract overrides applied ({len(applied)}): {sorted(applied)}')
-        if expired:
-            print(f'[DELTA] contract overrides now redundant — OTC has these, '
-                  f'safe to DELETE from data/contract-overrides.json ({len(expired)}): {sorted(expired)}')
-
-        print(f"[DELTA] Contracts matched: {len(contracts)}/{len(delta_names)}")
-        vet_not_found = [n for n in not_found if n not in [
-            'Jeremiyah Love','Carnell Tate','Fernando Mendoza','Jordyn Tyson',
-            'Kenyon Sadiq','Makai Lemon','Omar Cooper','Jadarian Price',
-            'Denzel Boston','Germie Bernard','Eli Stowers','Marlin Klein',
-            'Max Klare','Carson Beck','Sam Roush','Antonio Williams',
-            'Oscar Delp','Malachi Fields','Zachariah Branch','Chris Brazzell II',
-            'Ted Hurst','Drew Allar','Will Kacmarek'
-        ]]
-        if vet_not_found:
-            print(f"[DELTA] Unmatched veterans: {vet_not_found[:10]}")
-        
-        return contracts
-        
-    except Exception as e:
-        print(f"[DELTA] Contract fetch failed: {e}")
-        return {}
 
 def main():
     print(f"[DELTA] Starting at {datetime.now(timezone.utc).isoformat()}")
@@ -1764,57 +1552,9 @@ def main():
     print(f"[DELTA] player-stats.json written ({kb}KB, {len(players)} players)")
     spot_check(players)
     
-    # 2. Fetch contracts
-    contracts = fetch_contracts(delta_names)
-    # Visibility: DELTA players with no active contract upstream (e.g. Stafford
-    # June 2026 — extension signed but absent from the nflverse/OTC release).
-    # The runtime falls back to the baked CONTRACTS entry for these, silently;
-    # this log makes the gap auditable in the Actions output.
-    missing_contracts = [n for n in delta_names if n not in contracts]
-    # Split the list by whether the player is actually ON a roster. Without this
-    # the log mixes two unrelated things: a genuinely unsigned free agent (OTC
-    # is CORRECT, nothing to do) and a player who has signed but whose contract
-    # has not reached the feed (actionable). Sleeper answers which is which.
-    if sleeper_teams:
-        rostered, unsigned = [], []
-        for n in missing_contracts:
-            pos = meta.get(n, (None, None))[1]
-            on_roster = bool(pos and sleeper_teams.get((norm(matched.get(n, n)), pos)))
-            (rostered if on_roster else unsigned).append(n)
-        print(f'[DELTA] players with NO active upstream contract ({len(missing_contracts)}):')
-        print(f'[DELTA]   ON a roster per Sleeper — contract genuinely missing, '
-              f'consider data/contract-overrides.json ({len(rostered)}): {sorted(rostered)}')
-        print(f'[DELTA]   NOT on a roster — unsigned free agents, OTC is correct '
-              f'({len(unsigned)}): {sorted(unsigned)[:20]}')
-    else:
-        print(f'[DELTA] players with NO active upstream contract ({len(missing_contracts)}): {missing_contracts[:15]}')
-    
-    # Write contracts to separate file
-    contracts_output = {
-        'fetched': datetime.now(timezone.utc).isoformat(),
-        'note': 'Active NFL contracts from nflverse/OTC. end_year = year_signed + years - 1.',
-        'contracts': contracts,
-    }
-    contracts_file = OUT_DIR / "player-contracts.json"
-    # Same rule as the stats file. Note this one now matters MORE than it used to:
-    # the engine no longer gates contracts behind its baked hand table, so a short
-    # contracts file propagates straight to the contract axis for every player in it.
-    if len(contracts) < MIN_CONTRACTS:
-        die(f"only {len(contracts)} contracts resolved (expected ~394) — the nflverse/OTC "
-            "contract feed returned a partial or empty result. player-stats.json was "
-            "written; data/ is otherwise unchanged and the previous contracts file stands.")
-    contracts_file.write_text(json.dumps(contracts_output, indent=2))
-    kb = len(json.dumps(contracts_output)) // 1024
-    print(f"[DELTA] player-contracts.json written ({kb}KB, {len(contracts)} contracts)")
-    
-    # Spot check key contracts
-    print("\n[DELTA] Contract spot check:")
-    for name in ['Josh Allen','Breece Hall',"Ja'Marr Chase",'Bijan Robinson','Trey McBride']:
-        c = contracts.get(name)
-        if c:
-            print(f"  {name}: {c['years']}yr signed {c['year_signed']} → expires {c['end_year']}, AAV ${c['aav']:.1f}M, total ${c['total']:.1f}M")
-        else:
-            print(f"  {name}: NOT FOUND")
+    # Contracts are no longer fetched here (25 Oct 2026, legal compliance plan step 8). The site reads
+    # DELTA's own table, data/delta-contracts.json, built by hand from the signing reports; the
+    # OverTheCap feed (nflverse load_contracts) and data/contract-overrides.json were retired.
 
 if __name__ == '__main__':
     main()

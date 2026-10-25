@@ -165,6 +165,14 @@ jobs:
       # 2025 silently after nflverse renamed its columns. Runs AFTER commit and whatever the
       # gate above did: fresh data always publishes; an in-season fallback turns the run red
       # (-> email) instead of hiding in the log.
+      # Contracts backup alarm (25 Oct 2026). delta-engine.js carries a built-in copy of DELTA's own
+      # contracts table (data/delta-contracts.json), used when that file fails to load. A table
+      # change without rebuilding the copy turns the run red (-> email). Fix:
+      # node scripts/build-contracts-backup.js, then commit both files.
+      - name: Contracts backup check
+        if: always()
+        run: node scripts/build-contracts-backup.js --check
+
       - name: QB depth-chart check
         if: always()
         run: |
