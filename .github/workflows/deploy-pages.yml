@@ -121,6 +121,16 @@ jobs:
           "$PW_DIR/node_modules/.bin/playwright" install --with-deps chromium
           node scripts/build-share-images.js .
 
+      # Test files stay off the site (25 Oct 2026, legal compliance plan step 4). data/fixtures
+      # holds the owner's league history (league-mates' Sleeper names and avatars) and Fantasy
+      # Football Calculator files for studies. Nothing on the site reads them; the research
+      # scripts read the repo copy, which is untouched. This deletes them from the PUBLISHED copy
+      # only. If a page ever needs a file from that folder, move the file out of it instead.
+      - name: Leave test files out of the site
+        run: |
+          rm -rf data/fixtures
+          test ! -e data/fixtures && echo "data/fixtures left out of the published site"
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:
