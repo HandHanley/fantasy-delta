@@ -250,14 +250,14 @@
   },
   "Brandon Aiyuk": {
    "team": "SF",
-   "end": 2028,
-   "kind": "extension",
-   "aav": 30.0,
-   "total": 120.0,
-   "basis": "Four-year, $120M extension (August 2024) keeping him through the 2028 season. The 49ers voided his 2026 guaranteed money but have not released him (June 2026: team not budging on his release request).",
-   "source": "https://abc7news.com/15244848",
+   "end": null,
+   "kind": "left_team",
+   "aav": null,
+   "total": null,
+   "basis": "Signed a four-year, $120M extension through 2028 (August 2024), then stopped reporting and is no longer with the team; the 49ers voided his 2026 guarantees and hold his rights. Owner (25 Oct 2026): counted as no contract; he is not expected to play again.",
+   "source": "https://www.cbssports.com/nfl/news/san-fransisco-49ers-brandon-aiyuk-contract",
    "checked": "2026-10-25",
-   "pending": "Owner review: site treats him as having no contract (an engine entry confirmed by the owner earlier). Under the 25 Oct contract-years rule the deal still runs through 2028 (Score 41 to 43)."
+   "source2": "https://abc7news.com/15244848"
   },
   "Brashard Smith": {
    "team": "KC",
@@ -652,8 +652,7 @@
    "total": 22.5,
    "basis": "Three-year free-agent deal with the Rams (March 2024): 2024-2026.",
    "source": "https://www.therams.com/news/rams-sign-tight-end-colby-parkinson-to-3-year-deal",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site uses 2027 (the engine adds a year meant for extensions; Score 57 to 56)."
+   "checked": "2026-10-25"
   },
   "Cole Kmet": {
    "team": "CHI",
@@ -1923,8 +1922,7 @@
    "total": 6.0,
    "basis": "Two-year, $6M extension (September 2024); AP: under contract through the 2026 season.",
    "source": "https://www.weaa.org/news/2024-09-20/ravens-sign-running-back-justice-hill-to-a-2-year-6-million-extension",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site uses 2025, a contract that already ended (Score unchanged at 35)."
+   "checked": "2026-10-25"
   },
   "Justin Fields": {
    "team": "KC",
@@ -1934,8 +1932,7 @@
    "total": 40.0,
    "basis": "Two-year, $40M deal with the Jets (March 2025): 2025-2026; traded to Kansas City March 2026 with the deal.",
    "source": "https://wtop.com/nfl/2026/03/jets-agree-to-trade-quarterback-justin-fields-to-chiefs-to-serve-as-mahomes-backup-ap-source-says/",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site uses 2025, a contract that already ended (Score unchanged at 68)."
+   "checked": "2026-10-25"
   },
   "Justin Jefferson": {
    "team": "MIN",
@@ -2501,8 +2498,7 @@
    "total": null,
    "basis": "Drafted 2026, round 5 (pick 133); signed his four-year rookie deal 30 April 2026: 2026-2029. Missed in batch 1 because the draft file spells him \"Matthew\".",
    "source": "https://www.profootballrumors.com/players/matt-hibner",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site has no contract for him (Score 47 to 51)."
+   "checked": "2026-10-25"
   },
   "Matthew Golden": {
    "team": "GB",
@@ -2602,8 +2598,7 @@
    "total": null,
    "basis": "Signed by the Giants (August 2026); length not reported, so counted as at least the 2026 season.",
    "source": "https://www.local10.com/sports/2026/08/18/new-york-giants-are-signing-running-back-najee-harris-ap-source-says/",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site has no contract for him (Score unchanged at 44)."
+   "checked": "2026-10-25"
   },
   "Nate Boerkircher": {
    "team": "JAC",
@@ -2923,8 +2918,7 @@
    "total": null,
    "basis": "Waived by Washington (August 2026), then signed by Seattle off the Washington practice squad 6 Oct 2026; length not reported, so counted as at least the 2026 season.",
    "source": "https://www.seahawks.com/news/seahawks-sign-rb-robert-henry-jr",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site uses 2027 from the feed, which lists a two-year deal no report confirms (Score 45 to 44)."
+   "checked": "2026-10-25"
   },
   "Roman Hemby": {
    "team": "LV",
@@ -3509,8 +3503,7 @@
    "total": null,
    "basis": "Two-year extension (August 2025); ABC7: through 2027.",
    "source": "https://abc7chicago.com/amp/post/nfl-news-chicago-bears-sign-backup-qb-tyson-bagent-2-year-contract-extension-2027/17599710/",
-   "checked": "2026-10-25",
-   "pending": "Owner review: site uses 2026 (Score 34 to 35)."
+   "checked": "2026-10-25"
   },
   "Wan'Dale Robinson": {
    "team": "TEN",
@@ -3643,5 +3636,5 @@
    "checked": "2026-10-25"
   }
  },
- "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then)."
+ "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then). Owner exception: a player who has left his team and stopped reporting (no longer with the team, though it holds his rights) counts as no contract, kind `left_team` (Brandon Aiyuk)."
 }
