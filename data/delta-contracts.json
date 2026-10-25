@@ -725,10 +725,9 @@
    "kind": "veteran",
    "aav": 46.0,
    "total": 230.0,
-   "basis": "Five-year, $230M deal (2022); a December 2024 restructure turned the 2027-2028 void years into real years and added a non-guaranteed 2029 salary, so the deal formally runs through 2029. CBS expects a release before March 2027.",
+   "basis": "Five-year, $230M deal (2022); a December 2024 restructure turned the 2027-2028 void years into real years and added a non-guaranteed 2029 salary, so the deal formally runs through 2029. CBS expects a release before March 2027. Owner rule (25 Oct 2026): count what is in the contract.",
    "source": "https://cbssports.com/nfl/news/browns-deshaun-watson-contract-release-2027",
-   "checked": "2026-10-25",
-   "pending": "Owner review: rule question: formal end 2029 vs expected release; site uses 2027."
+   "checked": "2026-10-25"
   },
   "Devaughn Vele": {
    "team": "DEN",
@@ -1577,14 +1576,15 @@
   },
   "Kirk Cousins": {
    "team": "LV",
-   "end": 2026,
+   "end": 2028,
    "kind": "veteran",
    "aav": null,
    "total": null,
-   "basis": "Up to five years and $172M with Las Vegas (April 2026), but only 2026 ($20M) is guaranteed and later years are club options.",
-   "source": "https://abc7news.com/post/kirk-cousins-agrees-sign-contract-raiders-agent-says/18828077/",
+   "basis": "Signed April 2026: 2026 ($20M guaranteed) plus a two-year club option for 2027-2028 written into the deal; two void years (2029-2030) are salary-cap placeholders only. Headline \"up to five years, $172M\". Owner rule (25 Oct 2026): playable years on the deal count; void years never do.",
+   "source": "https://www.yardbarker.com/nfl/articles/details_emerge_on_qb_kirk_cousins_raiders_contract/s1_14819_43680265",
    "checked": "2026-10-25",
-   "pending": "Owner review: rule question: if team options counted, end would be 2030 (site uses 2026)."
+   "pending": "Owner review: site uses 2026; owner to confirm that void years do not count (Score 54 to 56 at 2028).",
+   "source2": "https://abc7news.com/post/kirk-cousins-agrees-sign-contract-raiders-agent-says/18828077/"
   },
   "Konata Mumpfield": {
    "team": "LAR",
@@ -1879,10 +1879,9 @@
    "kind": "veteran",
    "aav": 14.17,
    "total": 42.5,
-   "basis": "Three-year, $42.5M deal (March 2026) through the 2028 season; ESPN: works like a one-year deal with team options for 2027 and 2028.",
+   "basis": "Three-year, $42.5M deal (March 2026) through the 2028 season; ESPN: works like a one-year deal with team options for 2027 and 2028. Owner rule (25 Oct 2026): every playable year written into the deal counts, even if the team can get out of it.",
    "source": "https://abc7news.com/post/breaking-down-mike-evans-contract-49ers/18728661/",
-   "checked": "2026-10-25",
-   "pending": "Owner review: rule question: do unexercised team options count? If not, end is 2026 (site uses 2028)."
+   "checked": "2026-10-25"
   },
   "Mike Washington Jr.": {
    "team": "LV",
@@ -2390,9 +2389,9 @@
    "team": "NO",
    "end": 2029,
    "kind": "veteran",
-   "aav": null,
-   "total": null,
-   "basis": "Four-year free-agent deal with the Saints (March 2026): 2026-2029. Reports differ on the value ($52M Crescent City Sports, $48M Pro Football Network), so no figure is shown.",
+   "aav": 12.0,
+   "total": 48.0,
+   "basis": "Four-year free-agent deal with the Saints (March 2026): 2026-2029. Reports differ on value ($48M Pro Football Network, $52M Crescent City Sports); the lower figure is shown (owner, 25 Oct 2026: the higher is likely the incentive maximum).",
    "source": "https://crescentcitysports.com/saints-agree-to-deal-with-ex-jaguars-rb-travis-etienne/",
    "checked": "2026-10-25"
   },
@@ -2651,5 +2650,6 @@
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
    "checked": "2026-10-25"
   }
- }
+ },
+ "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then)."
 }
