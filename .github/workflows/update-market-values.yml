@@ -57,6 +57,9 @@ jobs:
           # fallback came from an upstream column rename landing unannounced. Bump on purpose.
           pip install 'nflreadpy@git+https://github.com/nflverse/nflreadpy@e7e87b2ef626b8672279db25432b1554ee13348a' --quiet
 
+      # Both FantasyCalc steps skip themselves within three hours of their last full pull
+      # (scripts/fc-refresh-guard.js, 25 Oct 2026), so a hand re-run soon after a run keeps
+      # the saved files and asks FantasyCalc for nothing.
       - name: Fetch FantasyCalc market values
         run: node scripts/fetch-market-values.js
 

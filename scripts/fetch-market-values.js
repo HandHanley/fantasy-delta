@@ -23,8 +23,10 @@
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+// One pull per setting every three hours at most (25 Oct 2026): see fc-refresh-guard.js.
+const { MIN_HOURS, recentPull } = require('./fc-refresh-guard');
 
-const PPR     = 1;                       // hold scoring axis fixed (matches prior anchor)
+const PPR     = 1;                      // hold scoring axis fixed (matches prior anchor)
 const TEAMS   = [8, 10, 12, 14];
 const QBS     = ['1qb', 'sf'];           // 1qb -> numQbs=1, sf -> numQbs=2
 const DEFAULT = '12|sf';                 // model anchor + pick-scaling basis
@@ -136,6 +138,16 @@ function appendPriceLog(settings, defaultKey) {
 }
 
 async function main() {
+  // Inside three hours of the last full pull: keep the saved file, ask FantasyCalc for nothing,
+  // and skip the price log too (today's line, if any, already holds this same pull).
+  const last = recentPull(path.join(process.cwd(), 'data', 'market-values.json'), 'fetched');
+  if (last.recent) {
+    console.log(`[DELTA] FantasyCalc was pulled ${Math.round(last.hours * 60)} min ago (${last.at}). ` +
+                `Under ${MIN_HOURS} h, so keeping data/market-values.json and asking FantasyCalc for nothing.`);
+    return;
+  }
+  if (last.why) console.log(`[DELTA] Pulling FantasyCalc: ${last.why}.`);
+
   console.log(`[DELTA] Fetching FantasyCalc grid at ${new Date().toISOString()} (ppr=${PPR})`);
 
   const outDir = path.join(process.cwd(), 'data');

@@ -34,6 +34,10 @@
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+// One pull per setting every three hours at most (25 Oct 2026): see fc-refresh-guard.js.
+// This script's settings are their own set of FantasyCalc queries (no picks), so it keeps its
+// own clock: the `generated` time in data/scarcity-validation.json.
+const { MIN_HOURS, recentPull } = require('./fc-refresh-guard');
 
 // MUST MATCH SCAR_STARTERS in index.html. If you change one, change both.
 // (Different files, so unavoidable duplication — flagged on purpose.)
@@ -113,6 +117,14 @@ async function gapsForSetting(teams, qb) {
 }
 
 async function main() {
+  const last = recentPull(path.join(process.cwd(), 'data', 'scarcity-validation.json'), 'generated');
+  if (last.recent) {
+    console.log(`[DELTA] Scarcity validation: FantasyCalc was pulled ${Math.round(last.hours * 60)} min ago ` +
+                `(${last.at}). Under ${MIN_HOURS} h, so keeping data/scarcity-validation.json and asking for nothing.`);
+    return;
+  }
+  if (last.why) console.log(`[DELTA] Scarcity validation, pulling FantasyCalc: ${last.why}.`);
+
   console.log(`[DELTA] Scarcity validation — fetching FC grid at ${new Date().toISOString()}`);
 
   // 1) raw gaps for every setting
