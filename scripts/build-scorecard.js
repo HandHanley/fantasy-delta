@@ -45,7 +45,8 @@
  *        with 4+ games (the ledger's own computation is not in the repo).
  *  - StatHead is deliberately NOT shown (owner, 26 Sep 2026): a single developer's
  *    model with no track record, and comparing against it invites the charge of
- *    picking weak opponents. It stays in data/freeze-2026-comparators.json, untouched.
+ *    picking weak opponents. It stays in the comparators file, untouched (full copy in the
+ *    owner's private Claude Project since 25 Oct 2026; see ACCURACY-LEDGER §8).
  */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');

@@ -588,6 +588,32 @@ same terms as the snapshot itself. Every source is named and linked in the file'
 attribution for accuracy-ledger use; they are that publisher's product, not
 DELTA's.
 
+### Moved off the public site — 25 October 2026
+
+Dated entry, added under section 5 rule 3. **Where the file lives changed. What it
+holds did not.**
+
+The four data lists in `data/freeze-2026-comparators.json` (1,036 FantasyPros
+rankings, 640 DynastyProcess values, 500 KeepTradeCut values, 448 StatHead
+projections) were taken out of the public repo and site. KeepTradeCut's terms bar
+using its data on another website, and FantasyPros requires a deal to
+redistribute its rankings.
+
+- **Nothing was changed, dropped or added.** The comparator list above stays
+  closed exactly as written, and every source is still graded at season's end.
+- **The full file, byte for byte,** is kept in the owner's private Claude Project
+  as `claude/freeze-2026-comparators.json.gz.b64.txt`. Its SHA-256 is
+  `93b534954f2ce5359969ef42c6d41106bbb7645d380b476e5237ff691ea10672`
+  (471,967 bytes), checked on the way in.
+- **The public file keeps that fingerprint,** plus every source's upstream repo,
+  commit, path and own fingerprint, so anyone can re-fetch the originals and check
+  them without trusting DELTA's copy.
+- **`data/freeze-2026.json` was not opened.** DELTA's own frozen numbers are
+  untouched.
+- **Grading:** restore the full file first (`base64 -d < that file | gunzip`),
+  confirm the SHA-256 matches, then grade. The same bytes also sit in this repo's
+  git history until the repo goes private.
+
 ### What was searched for and could not be recovered
 
 Recorded because a year from now the difference between "nobody thought of it"
