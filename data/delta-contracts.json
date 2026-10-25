@@ -1,0 +1,1948 @@
+{
+ "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. NOTHING ON THE SITE READS THIS FILE YET: the site keeps using the nflverse/OTC feed until the table is complete and the owner has seen a before-and-after list of every DELTA Score it would move. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran, extension. A row with `pending` waits on the owner because it disagrees with the feed. Rows that agree with the feed went in without owner review (owner's rule, 25 Oct 2026).",
+ "season": 2026,
+ "updated": "2026-10-25",
+ "rookie_rule": "Drafted players: four-year deal, draft year to draft year + 3. First-rounders add draft year + 4 only once the team picks up the fifth-year option (decided each May of year + 3). Players from the last three classes cannot sign extensions until after their third season.",
+ "players": {
+  "AJ Barner": {
+   "team": "SEA",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 121): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Adam Randall": {
+   "team": "BAL",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 174): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Adonai Mitchell": {
+   "team": "IND",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 (pick 52): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Andrei Iosivas": {
+   "team": "CIN",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 206): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Anthony Richardson": {
+   "team": "IND",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 4): rookie deal 2023-2026; Colts declined the fifth-year option, so he is a free agent after 2026.",
+   "source": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25"
+  },
+  "Antonio Williams": {
+   "team": "WAS",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 71): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Arian Smith": {
+   "team": "NYJ",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 110): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ashton Jeanty": {
+   "team": "LV",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 6): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Barion Brown": {
+   "team": "NO",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 190): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ben Sinnott": {
+   "team": "WAS",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 (pick 53): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Bhayshul Tuten": {
+   "team": "JAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 104): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Blake Corum": {
+   "team": "LAR",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 83): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Bo Nix": {
+   "team": "DEN",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 12): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Braelon Allen": {
+   "team": "NYJ",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 134): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Brashard Smith": {
+   "team": "KC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 228): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Brenen Thompson": {
+   "team": "LAC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 105): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Brian Thomas Jr.": {
+   "team": "JAC",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 23): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Brock Bowers": {
+   "team": "LV",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 13): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Bryce Lance": {
+   "team": "NO",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 136): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Bryce Young": {
+   "team": "CAR",
+   "end": 2027,
+   "kind": "rookie_option",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 1): rookie deal 2023-2026; team picked up the fifth-year option for 2027 (spring 2026). No extension reported as of 2026-10-25.",
+   "source": "https://www.panthers.com/news/panthers-pick-up-the-fifth-year-option-on-quarterback-bryce-young-s-contract",
+   "source2": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25",
+   "pending": "Owner review: feed and site use 2026 (they leave out the option year)."
+  },
+  "Bucky Irving": {
+   "team": "TB",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 125): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "C.J. Stroud": {
+   "team": "HOU",
+   "end": 2027,
+   "kind": "rookie_option",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 2): rookie deal 2023-2026; team picked up the fifth-year option for 2027 (spring 2026). No extension reported as of 2026-10-25.",
+   "source": "https://www.thefantasyfootballers.com/news/630139/cj-stroud-fifth-year-option-picked-up/",
+   "source2": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25",
+   "pending": "Owner review: feed and site use 2026 (they leave out the option year)."
+  },
+  "CJ Daniels": {
+   "team": "LAR",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 197): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Cade Klubnik": {
+   "team": "NYJ",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 110): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Caleb Douglas": {
+   "team": "MIA",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 75): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Caleb Williams": {
+   "team": "CHI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 1): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Cam Skattebo": {
+   "team": "NYG",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 105): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Cam Ward": {
+   "team": "TEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 1): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Carnell Tate": {
+   "team": "TEN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 4): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Carson Beck": {
+   "team": "ARI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 65): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Chase Brown": {
+   "team": "CIN",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 5 (pick 163): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Chimere Dike": {
+   "team": "TEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 103): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Chris Bell": {
+   "team": "MIA",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 94): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Chris Brazzell II": {
+   "team": "CAR",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 83): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Colbie Young": {
+   "team": "CIN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 140): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Cole Payton": {
+   "team": "PHI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 178): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Colston Loveland": {
+   "team": "CHI",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 10): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Cyrus Allen": {
+   "team": "KC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 176): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "DJ Giddens": {
+   "team": "IND",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 151): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Dalton Kincaid": {
+   "team": "BUF",
+   "end": 2027,
+   "kind": "rookie_option",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 25): rookie deal 2023-2026; team picked up the fifth-year option for 2027 (spring 2026). No extension reported as of 2026-10-25.",
+   "source": "https://www.buffalorumblings.com/buffalo-bills-links-news-rumors/131793/bills-news-buffalo-picks-up-fifth-year-option-on-dalton-kincaid",
+   "source2": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25",
+   "pending": "Owner review: feed and site use 2026 (they leave out the option year)."
+  },
+  "De'Zhaun Stribling": {
+   "team": "SF",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 33): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "DeMario Douglas": {
+   "team": "NE",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 210): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Deion Burks": {
+   "team": "IND",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 254): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Demond Claiborne": {
+   "team": "MIN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 198): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Denzel Boston": {
+   "team": "CLE",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 39): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Devaughn Vele": {
+   "team": "DEN",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 7 (pick 235): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Dillon Gabriel": {
+   "team": "CLE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 94): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Dont'e Thornton": {
+   "team": "LV",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 108): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Drake Maye": {
+   "team": "NE",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 3): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Drew Allar": {
+   "team": "PIT",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 76): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Dylan Sampson": {
+   "team": "CLE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 126): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Eli Heidenreich": {
+   "team": "PIT",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 230): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Eli Raridon": {
+   "team": "NE",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 95): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Eli Stowers": {
+   "team": "PHI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 54): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Elic Ayomanor": {
+   "team": "TEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 136): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Elijah Arroyo": {
+   "team": "SEA",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 50): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Elijah Higgins": {
+   "team": "ARI",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 197): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Elijah Sarratt": {
+   "team": "BAL",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 115): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Emeka Egbuka": {
+   "team": "TB",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 19): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Emmett Johnson": {
+   "team": "KC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 161): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Erick All": {
+   "team": "CIN",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 115): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Fernando Mendoza": {
+   "team": "LV",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 1): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Garrett Nussmeier": {
+   "team": "KC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 249): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Germie Bernard": {
+   "team": "PIT",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 47): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Gunnar Helm": {
+   "team": "TEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 120): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Harold Fannin Jr.": {
+   "team": "CLE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 67): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Isaac Guerendo": {
+   "team": "SF",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 129): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Isaac TeSlaa": {
+   "team": "DET",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 70): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Isaiah Davis": {
+   "team": "NYJ",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 5 (pick 173): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "J.J. McCarthy": {
+   "team": "MIN",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 10): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ja'Kobi Lane": {
+   "team": "BAL",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 80): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "JaTavion Sanders": {
+   "team": "CAR",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 101): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jack Bech": {
+   "team": "LV",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 58): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jack Endries": {
+   "team": "CIN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 221): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jacob Cowing": {
+   "team": "SF",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 135): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jacory Croskey-Merritt": {
+   "team": "WAS",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 245): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jadarian Price": {
+   "team": "SEA",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 32): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jalen McMillan": {
+   "team": "TB",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 92): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jalen Milroe": {
+   "team": "SEA",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 92): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jalen Royals": {
+   "team": "KC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 133): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jaren Kanak": {
+   "team": "TEN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 225): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jaxson Dart": {
+   "team": "NYG",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 25): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jayden Daniels": {
+   "team": "WAS",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 2): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jayden Higgins": {
+   "team": "HOU",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 34): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jaylen Wright": {
+   "team": "MIA",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 120): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jaylin Lane": {
+   "team": "WAS",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 128): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jaylin Noel": {
+   "team": "IND",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 79): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jeremiyah Love": {
+   "team": "ARI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 3): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Joe Royer": {
+   "team": "CLE",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 170): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jonah Coleman": {
+   "team": "DEN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 108): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jonathon Brooks": {
+   "team": "CAR",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 (pick 46): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jordan Addison": {
+   "team": "MIN",
+   "end": 2027,
+   "kind": "rookie_option",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 23): rookie deal 2023-2026; team picked up the fifth-year option for 2027 (spring 2026). No extension reported as of 2026-10-25.",
+   "source": "https://www.vikings.com/news/jordan-addison-contract-fifth-year-option-2026",
+   "source2": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25",
+   "pending": "Owner review: feed and site use 2026 (they leave out the option year)."
+  },
+  "Jordan James": {
+   "team": "SF",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 147): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jordan Whittington": {
+   "team": "LAR",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 6 (pick 213): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Jordyn Tyson": {
+   "team": "NO",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 8): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Josh Cameron": {
+   "team": "JAC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 191): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Josh Downs": {
+   "team": "IND",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 3 (pick 79): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Justin Joly": {
+   "team": "DEN",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 152): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "KC Concepcion": {
+   "team": "CLE",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 24): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kaden Wetjen": {
+   "team": "PIT",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 121): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kaelon Black": {
+   "team": "SF",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 90): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kaleb Johnson": {
+   "team": "PIT",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 83): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kayshon Boutte": {
+   "team": "NE",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 187): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kaytron Allen": {
+   "team": "WAS",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 187): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "KeAndre Lambert-Smith": {
+   "team": "LAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 158): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kendre Miller": {
+   "team": "NO",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 3 (pick 71): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kendrick Law": {
+   "team": "DET",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 168): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kenyon Sadiq": {
+   "team": "NYJ",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 16): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Keon Coleman": {
+   "team": "BUF",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 (pick 33): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kevin Coleman": {
+   "team": "MIA",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 177): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Konata Mumpfield": {
+   "team": "LAR",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 242): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kyle Monangai": {
+   "team": "CHI",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 233): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Kyle Williams": {
+   "team": "NE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 69): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ladd McConkey": {
+   "team": "LAC",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 2 (pick 34): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "LeQuint Allen": {
+   "team": "JAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 236): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Luke McCaffrey": {
+   "team": "WAS",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 100): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Luke Musgrave": {
+   "team": "GB",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2 (pick 42): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Luther Burden": {
+   "team": "CHI",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 39): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Makai Lemon": {
+   "team": "PHI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 20): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Malachi Fields": {
+   "team": "NYG",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 74): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Malik Benson": {
+   "team": "LV",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 195): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Malik Nabers": {
+   "team": "NYG",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 6): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Malik Washington": {
+   "team": "MIA",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 6 (pick 184): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "MarShawn Lloyd": {
+   "team": "GB",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 88): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Marlin Klein": {
+   "team": "HOU",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 59): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Marvin Harrison Jr.": {
+   "team": "ARI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 4): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Marvin Mims": {
+   "team": "DEN",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2 (pick 63): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Mason Taylor": {
+   "team": "NYJ",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 42): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Matthew Golden": {
+   "team": "GB",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 23): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Max Klare": {
+   "team": "LAR",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 61): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Michael Penix Jr.": {
+   "team": "ATL",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 8): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Mike Washington Jr.": {
+   "team": "LV",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 122): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Nate Boerkircher": {
+   "team": "JAC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 2 (pick 56): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ollie Gordon": {
+   "team": "MIA",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 (pick 179): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Omar Cooper": {
+   "team": "NYJ",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 30): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Omarion Hampton": {
+   "team": "LAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 22): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Oronde Gadsden": {
+   "team": "LAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 165): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Oscar Delp": {
+   "team": "NO",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 73): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Parker Washington": {
+   "team": "JAC",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 185): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Pat Bryant": {
+   "team": "DEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 74): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Puka Nacua": {
+   "team": "LAR",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 5 (pick 177): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Quentin Johnston": {
+   "team": "LAC",
+   "end": 2027,
+   "kind": "rookie_option",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 1 (pick 21): rookie deal 2023-2026; team picked up the fifth-year option for 2027 (spring 2026). No extension reported as of 2026-10-25.",
+   "source": "https://chargers.com/news/quentin-johnston-5th-year-option",
+   "source2": "https://abc7news.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/",
+   "checked": "2026-10-25",
+   "pending": "Owner review: feed and site use 2026 (they leave out the option year)."
+  },
+  "Quinn Ewers": {
+   "team": "MIA",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 231): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Quinshon Judkins": {
+   "team": "CLE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 36): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "RJ Harvey": {
+   "team": "DEN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 60): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Rashee Rice": {
+   "team": "KC",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2 (pick 55): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ray Davis": {
+   "team": "BUF",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 128): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Reggie Virgil": {
+   "team": "ARI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 143): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ricky Pearsall": {
+   "team": "SF",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 31): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Riley Leonard": {
+   "team": "IND",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 (pick 189): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Roman Wilson": {
+   "team": "PIT",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 84): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Rome Odunze": {
+   "team": "CHI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 9): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Roschon Johnson": {
+   "team": "CHI",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 4 (pick 115): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Sam LaPorta": {
+   "team": "DET",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2 (pick 34): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Sam Roush": {
+   "team": "CHI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 69): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Savion Williams": {
+   "team": "GB",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 87): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Seth McGowan": {
+   "team": "IND",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 7 (pick 237): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Shedeur Sanders": {
+   "team": "CLE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 144): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Skyler Bell": {
+   "team": "BUF",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 4 (pick 125): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tahj Brooks": {
+   "team": "CIN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 (pick 193): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tai Felton": {
+   "team": "MIN",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 3 (pick 102): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tank Bigsby": {
+   "team": "JAC",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 3 (pick 88): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tanner Koziol": {
+   "team": "JAC",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 5 (pick 164): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tanner McKee": {
+   "team": "PHI",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 188): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Taylen Green": {
+   "team": "CLE",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 6 (pick 182): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ted Hurst": {
+   "team": "TB",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 84): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Terrance Ferguson": {
+   "team": "LAR",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 46): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tetairoa McMillan": {
+   "team": "CAR",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 8): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tez Johnson": {
+   "team": "TB",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 7 (pick 235): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Theo Johnson": {
+   "team": "NYG",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 107): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tory Horton": {
+   "team": "SEA",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 5 (pick 166): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Travis Hunter": {
+   "team": "JAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 2): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tre Harris": {
+   "team": "LAC",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 55): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tre Tucker": {
+   "team": "LV",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 3 (pick 100): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "TreVeyon Henderson": {
+   "team": "NE",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 38): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Trevor Etienne": {
+   "team": "CAR",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 114): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Trey Benson": {
+   "team": "ARI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 3 (pick 66): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Troy Franklin": {
+   "team": "DEN",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 102): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Ty Simpson": {
+   "team": "LAR",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 1 (pick 13): four-year rookie deal, 2026-2029. Fifth-year option (2030) not yet decided; teams decide in May 2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tyjae Spears": {
+   "team": "TEN",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 3 (pick 81): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tyler Shough": {
+   "team": "NO",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 2 (pick 40): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tyler Warren": {
+   "team": "IND",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 1 (pick 14): four-year rookie deal, 2025-2028. Fifth-year option (2029) not yet decided; teams decide in May 2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Tyrone Tracy": {
+   "team": "NYG",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 5 (pick 166): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Will Howard": {
+   "team": "PIT",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 6 (pick 185): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Will Kacmarek": {
+   "team": "MIA",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 87): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Will Shipley": {
+   "team": "PHI",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 4 (pick 127): four-year rookie deal, 2024-2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Woody Marks": {
+   "team": "HOU",
+   "end": 2028,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2025, round 4 (pick 116): four-year rookie deal, 2025-2028.",
+   "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Xavier Hutchinson": {
+   "team": "HOU",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 6 (pick 205): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Xavier Legette": {
+   "team": "CAR",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 32): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Xavier Worthy": {
+   "team": "KC",
+   "end": 2027,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2024, round 1 (pick 28): four-year rookie deal, 2024-2027. Fifth-year option (2028) not yet decided; teams decide in May 2027.",
+   "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Zach Charbonnet": {
+   "team": "SEA",
+   "end": 2026,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2023, round 2 (pick 52): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Zachariah Branch": {
+   "team": "ATL",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 79): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  },
+  "Zavion Thomas": {
+   "team": "CHI",
+   "end": 2029,
+   "kind": "rookie",
+   "aav": null,
+   "total": null,
+   "basis": "Drafted 2026, round 3 (pick 89): four-year rookie deal, 2026-2029.",
+   "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
+   "checked": "2026-10-25"
+  }
+ }
+}
