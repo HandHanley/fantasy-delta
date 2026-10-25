@@ -528,6 +528,33 @@ with cfbd.ApiClient(cfg) as api:
         # Game rows exist but none joined to the roster index -> a genuine join bug. Alert.
         print("    !! JOIN FAILED COMPLETELY — production door would be empty. Not writing.")
         sys.exit(1)
+    # PARTIAL-PULL GUARD (25 Oct 2026). A run at 08:23 UTC got box scores back for weeks 1 and 2
+    # only: CFBD's calls for every other week failed or came back empty, minutes after a run that
+    # got none at all. The check above stops only a run with NO games, so that file was written,
+    # committed and deployed, cutting every player to two games (no board player qualified for
+    # dDOM or PPA) until it was reverted. So this pull is compared with the file already saved
+    # for the season: every week that has game rows there must still have at least half as many
+    # here (CFBD corrections move a row or two, never half a week; this pull also covers more
+    # players than the saved file keeps). Short means incomplete: nothing is written and the
+    # saved files stay. A week the saved file never had (this week's new games, or week 0 when
+    # CFBD rejects it) is not judged, and with no saved file for the season there is no check.
+    # Asking for fewer weeks than the saved file holds also stops here, which is the point: that
+    # file would lose them.
+    try:
+        with open(OUT) as fh:
+            saved = json.load(fh)
+    except Exception:
+        saved = None
+    if saved and saved.get("season") == YEAR:
+        was = collections.Counter(r.get("w") for sp in saved.get("players", []) for r in sp.get("g", []))
+        now = collections.Counter(wk for v in ply.values() for wk in v["g"])
+        short = [f"wk{w} {now.get(w, 0)} of {n}" for w, n in sorted((w, n) for w, n in was.items() if w is not None)
+                 if now.get(w, 0) < 0.5 * n]
+        if short:
+            print(f"::error title=College fetch incomplete::Box scores came back short against the saved "
+                  f"{OUT} ({', '.join(short)} rows). Nothing written; existing files left untouched.")
+            sys.exit(1)
+        print(f"\n  partial-pull guard: all {len(was)} saved weeks came back at least half as full")
     print(f"\n  stat keys discovered: {len(STAT_KEYS)}")
     for kk, n in STAT_KEYS.most_common(18):
         print(f"    {kk:<26} {n:>6,}")
