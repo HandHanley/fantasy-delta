@@ -1,18 +1,19 @@
 {
- "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. NOTHING ON THE SITE READS THIS FILE YET: the site keeps using the nflverse/OTC feed until the table is complete and the owner has seen a before-and-after list of every DELTA Score it would move. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran (new deal), extension (years added to a running deal; new years start after the old ones), franchise_tag, practice_squad, free_agent (no current contract: `end` null, which the Score treats as neutral), retired (end null), left_team (end null; owner exception). `option` (first-rounders only): `exercised` = the team picked up the fifth-year option and that year is counted in `end`; `available` = not decided yet, so `end` stops after year four and the page shows \"Fifth-Year Option Available\" with no date (owner, 25 Oct 2026: teams can decide any time in `window`, which is kept only so we know when to re-check); `declined` = no fifth year. A row with `pending` waits on the owner because it disagrees with the feed. Rows that agree with the feed went in without owner review (owner's rule, 25 Oct 2026).",
+ "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. NOTHING ON THE SITE READS THIS FILE YET: the site keeps using the nflverse/OTC feed until the table is complete and the owner has seen a before-and-after list of every DELTA Score it would move. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran (new deal), extension (years added to a running deal; new years start after the old ones), franchise_tag, practice_squad, free_agent (no current contract: `end` null, which the Score treats as neutral), retired (end null), left_team (end null; owner exception). `option` (first-rounders only): `exercised` = the team picked up the fifth-year option and that year is counted in `end`; `available` = not decided yet, so `end` stops after year four and the page shows \"Fifth-Year Option Available\" with no date (owner, 25 Oct 2026: teams can decide any time in `window`, which is kept only so we know when to re-check); `declined` = no fifth year. A row with `pending` waits on the owner because it disagrees with the feed. Rows that agree with the feed went in without owner review (owner's rule, 25 Oct 2026). `team_source`: a link for a move (trade, waiver claim) after the deal was signed; the contract travels with the player.",
  "season": 2026,
  "updated": "2026-10-25",
  "rookie_rule": "Drafted players: four-year deal, draft year to draft year + 3. First-rounders add draft year + 4 only once the team picks up the fifth-year option (decided each May of year + 3). Players from the last three classes cannot sign extensions until after their third season.",
  "players": {
   "A.J. Brown": {
-   "team": "PHI",
+   "team": "NE",
    "end": 2029,
    "kind": "extension",
    "aav": 32.0,
    "total": 96.0,
-   "basis": "Three-year, $96M extension (April 2024); 6abc: runs through 2029.",
+   "basis": "Three-year, $96M extension (April 2024); 6abc: runs through 2029. Traded to New England (1 Jun 2026) with the contract.",
    "source": "https://6abc.com/post/eagles-aj-brown-agrees-to-3-year-$96-million-extension/14735994/",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.ksl.com/article/51505405/eagles-trade-receiver-aj-brown-to-the-patriots-setting-up-reunion-with-mike-vrabel"
   },
   "AJ Barner": {
    "team": "SEA",
@@ -55,14 +56,15 @@
    "checked": "2026-10-25"
   },
   "Adonai Mitchell": {
-   "team": "IND",
+   "team": "NYJ",
    "end": 2027,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2024, round 2 (pick 52): four-year rookie deal, 2024-2027.",
+   "basis": "Drafted 2024, round 2 (pick 52): four-year rookie deal, 2024-2027. Traded to the Jets (November 2025) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.newyorkjets.com/news/jets-colts-trade-two-first-round-picks-sauce-gardner-ad-mitchell-11-04-2025"
   },
   "Alec Pierce": {
    "team": "IND",
@@ -310,7 +312,7 @@
    "checked": "2026-10-25"
   },
   "Brenton Strange": {
-   "team": "JAX",
+   "team": "JAC",
    "end": 2029,
    "kind": "extension",
    "aav": 16.0,
@@ -659,15 +661,14 @@
    }
   },
   "Chris Rodriguez": {
-   "team": "JAX",
+   "team": "JAC",
    "end": 2027,
    "kind": "veteran",
    "aav": 5.0,
    "total": 10.0,
    "basis": "Left Washington; two-year deal with Jacksonville (March 2026), $10M base (up to $12M): 2026-2027.",
    "source": "https://profootballrumors.com/2026/03/jaguars-to-sign-rb-chris-rodriguez",
-   "checked": "2026-10-25",
-   "pending": "Owner review: confirmed 23 Oct as 2028 (read as a two-year extension after a rookie deal ending 2026); the report is a new two-year deal from 2026, so 2027."
+   "checked": "2026-10-25"
   },
   "Christian Kirk": {
    "team": "SF",
@@ -1080,14 +1081,15 @@
    "checked": "2026-10-25"
   },
   "Devaughn Vele": {
-   "team": "DEN",
+   "team": "NO",
    "end": 2027,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2024, round 7 (pick 235): four-year rookie deal, 2024-2027.",
+   "basis": "Drafted 2024, round 7 (pick 235): four-year rookie deal, 2024-2027. Traded to New Orleans (2025) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.denverbroncos.com/news/broncos-agree-to-terms-on-trade-with-saints-to-acquire-fourth-seventh-round-picks-in-exchange-for-wr-devaughn-vele"
   },
   "Devin Neal": {
    "team": "WAS",
@@ -1533,7 +1535,7 @@
    "checked": "2026-10-25"
   },
   "J'Mari Taylor": {
-   "team": "JAX",
+   "team": "JAC",
    "end": 2026,
    "kind": "practice_squad",
    "aav": null,
@@ -1543,19 +1545,20 @@
    "checked": "2026-10-25"
   },
   "J.J. McCarthy": {
-   "team": "MIN",
+   "team": "NYG",
    "end": 2027,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2024, round 1 (pick 10): four-year rookie deal, 2024-2027.",
+   "basis": "Drafted 2024, round 1 (pick 10): four-year rookie deal, 2024-2027. Traded to the Giants (28 Sep 2026) with the rookie deal; the option decision is now the Giants'.",
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
    "checked": "2026-10-25",
    "option": {
     "status": "available",
     "year": 2028,
     "window": "end of the 2026 regular season to early May 2027"
-   }
+   },
+   "team_source": "https://www.vikings.com/news/jj-mccarthy-quarterback-trade-new-york-giants-2026-nfl-season"
   },
   "J.K. Dobbins": {
    "team": "DEN",
@@ -1725,7 +1728,7 @@
    "checked": "2026-10-25"
   },
   "Jakobi Meyers": {
-   "team": "JAX",
+   "team": "JAC",
    "end": 2028,
    "kind": "extension",
    "aav": 20.0,
@@ -2022,14 +2025,15 @@
    "checked": "2026-10-25"
   },
   "Jaylin Noel": {
-   "team": "IND",
+   "team": "HOU",
    "end": 2028,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2025, round 3 (pick 79): four-year rookie deal, 2025-2028.",
+   "basis": "Drafted 2025, round 3 (pick 79): four-year rookie deal, 2025-2028. Drafted and signed by Houston (the team was wrong in batch 1).",
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://gmg-kprc-prod.cdn.arcpublishing.com/sports/2025/05/09/texans-sign-third-round-wide-receiver-jaylin-noel-to-four-year-6466-million-deal"
   },
   "Jeff Caldwell": {
    "team": "KC",
@@ -2357,14 +2361,15 @@
    "checked": "2026-10-25"
   },
   "Justin Joly": {
-   "team": "DEN",
+   "team": "MIA",
    "end": 2029,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2026, round 5 (pick 152): four-year rookie deal, 2026-2029.",
+   "basis": "Drafted 2026, round 5 (pick 152): four-year rookie deal, 2026-2029. Waived by Denver and claimed by Miami (31 Aug 2026), who took over the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.denvergazette.com/dolphins-poach-joly-taylor-as-broncos-assemble-17-man-practice-squad/"
   },
   "Juwan Johnson": {
    "team": "NO",
@@ -2432,14 +2437,15 @@
    "checked": "2026-10-25"
   },
   "Kaleb Johnson": {
-   "team": "PIT",
+   "team": "GB",
    "end": 2028,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2025, round 3 (pick 83): four-year rookie deal, 2025-2028.",
+   "basis": "Drafted 2025, round 3 (pick 83): four-year rookie deal, 2025-2028. Traded to Green Bay (30 Aug 2026) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.packers.com/news/packers-announce-roster-moves-aug-30-2026"
   },
   "Kameron Johnson": {
    "team": "TB",
@@ -2462,24 +2468,26 @@
    "checked": "2026-10-25"
   },
   "Kayshon Boutte": {
-   "team": "NE",
+   "team": "HOU",
    "end": 2026,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2023, round 6 (pick 187): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "basis": "Drafted 2023, round 6 (pick 187): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25. Traded to Houston (August 2026) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.nbcsportsboston.com/nfl/new-england-patriots/trade-kayshon-boutte-houston-texans-jaylen-reed-draft-pick-report/800524/"
   },
   "Kaytron Allen": {
-   "team": "WAS",
+   "team": "MIA",
    "end": 2029,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2026, round 6 (pick 187): four-year rookie deal, 2026-2029.",
+   "basis": "Drafted 2026, round 6 (pick 187): four-year rookie deal, 2026-2029. Released by Washington and claimed by Miami (October 2026), who took over the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2026_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.wtkr.com/sports/dolphins-claim-kaytron-allen-off-waivers-giving-norfolk-native-new-nfl-home"
   },
   "KeAndre Lambert-Smith": {
    "team": "LAC",
@@ -2920,19 +2928,20 @@
    "checked": "2026-10-25"
   },
   "Marvin Harrison Jr.": {
-   "team": "ARI",
+   "team": "HOU",
    "end": 2027,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2024, round 1 (pick 4): four-year rookie deal, 2024-2027.",
+   "basis": "Drafted 2024, round 1 (pick 4): four-year rookie deal, 2024-2027. Traded to Houston (October 2026) with the rookie deal; the option decision is now the Texans'.",
    "source": "https://en.wikipedia.org/wiki/2024_NFL_draft",
    "checked": "2026-10-25",
    "option": {
     "status": "available",
     "year": 2028,
     "window": "end of the 2026 regular season to early May 2027"
-   }
+   },
+   "team_source": "https://www.azfamily.com/2026/10/12/arizona-cardinals-agree-terms-trade-sending-marvin-harrison-jr-texans/"
   },
   "Marvin Mims": {
    "team": "DEN",
@@ -3340,14 +3349,15 @@
    }
   },
   "Quinn Ewers": {
-   "team": "MIA",
+   "team": "JAC",
    "end": 2028,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2025, round 7 (pick 231): four-year rookie deal, 2025-2028.",
+   "basis": "Drafted 2025, round 7 (pick 231): four-year rookie deal, 2025-2028. Traded to Jacksonville (29 Aug 2026) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2025_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.nbcsports.com/fantasy/football/player-news/2026-08-29/jaguars-acquire-quinn-ewers-from-dolphins"
   },
   "Quinshon Judkins": {
    "team": "CLE",
@@ -3700,14 +3710,15 @@
    "checked": "2026-10-25"
   },
   "Tank Bigsby": {
-   "team": "JAC",
+   "team": "PHI",
    "end": 2026,
    "kind": "rookie",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2023, round 3 (pick 88): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25.",
+   "basis": "Drafted 2023, round 3 (pick 88): four-year rookie deal, 2023-2026. No extension reported as of 2026-10-25. Traded to Philadelphia (September 2025) with the rookie deal.",
    "source": "https://en.wikipedia.org/wiki/2023_NFL_draft",
-   "checked": "2026-10-25"
+   "checked": "2026-10-25",
+   "team_source": "https://www.philadelphiaeagles.com/news/eagles-agree-to-acquire-tank-bigsby-from-the-jaguars"
   },
   "Tank Dell": {
    "team": "HOU",
@@ -3920,7 +3931,7 @@
    "checked": "2026-10-25"
   },
   "Trevor Lawrence": {
-   "team": "JAX",
+   "team": "JAC",
    "end": 2030,
    "kind": "extension",
    "aav": 55.0,
@@ -4324,5 +4335,6 @@
    "checked": "2026-10-25"
   }
  },
- "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then). Owner exception: a player who has left his team and stopped reporting (no longer with the team, though it holds his rights) counts as no contract, kind `left_team` (Brandon Aiyuk)."
+ "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then). Owner exception: a player who has left his team and stopped reporting (no longer with the team, though it holds his rights) counts as no contract, kind `left_team` (Brandon Aiyuk).",
+ "team_codes": "Team codes follow the site (JAC, LAR, WAS, LV), not nflverse (JAX, LA)."
 }
