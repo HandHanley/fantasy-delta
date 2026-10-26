@@ -145,7 +145,7 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     """weekly_pdf/snaps_pdf/sched_pdf: pandas DataFrames. matched: {delta_name: nfl_display_name}.
     Played games come from weekly stats; upcoming CURRENT-season weeks come from the schedule."""
     smap = build_schedule_map(sched_pdf)
-    w = weekly_pdf
+    w = weekly_pdf.reset_index(drop=True)   # unique row labels for the namesake check below
     nc   = pick(w, 'player_display_name')
     sc   = pick(w, 'season', 'year')
     wk   = pick(w, 'week', 'game_week')
@@ -180,15 +180,34 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     # A QB start = his team's most pass attempts that game, 10+ (docs/PREREG-qb-perstart.md) — the
     # in-season blend counts only these games for a QB once the points-per-start build ships.
     team_lead = {}
-    for _, r in w.iterrows():
+    # NAMESAKES (25 Oct 2026). Rows are keyed by name, so two players with one name in the same
+    # week collided and the later row won: Week 5 2026 gave WR Justin Jefferson (MIN, 6 catches)
+    # the Cleveland linebacker's empty line. The position can't simply be filtered (Travis Hunter
+    # is listed CB with real targets), so on a collision the row that looks more like an offensive
+    # player wins: an offensive position first, then more offensive volume.
+    OFF_POS = {'QB', 'RB', 'WR', 'TE', 'FB', 'HB'}
+    posc = pick(w, 'position')
+    def _wrank(r):
+        vol = sum(_num(r, c) for c in (pa, car, tgt, rec) if c)
+        return ((r.get(posc) in OFF_POS) if posc else False, vol)
+    best_idx, best_rank = {}, {}
+    for i, r in w.iterrows():
+        key = (norm(r.get(nc)), int(_num(r, sc)), int(_num(r, wk)))
+        rk = _wrank(r)
+        if key not in best_rank or rk > best_rank[key]: best_idx[key], best_rank[key] = i, rk
+    n_collide = len(w) - len(best_idx)
+    if n_collide: print(f'[DELTA] same-name rows in one week: {n_collide} (kept the offensive player\'s row)')
+    for i, r in w.iterrows():
         key = (norm(r.get(nc)), int(_num(r, sc)), int(_num(r, wk)))
         tm_r = r.get(tmc)
-        wk_team[key] = tm_r
+        # team totals count EVERY row (a namesake still took his team's targets)
         if tm_r is not None and not isinstance(tm_r, float):   # NaN-safe (mirrors team guards below)
             team_tgt[(key[1], key[2], tm_r)] += _num(r, tgt)
             lk = (key[1], key[2], tm_r); a_r = _num(r, pa)
             if lk not in team_lead or a_r > team_lead[lk][0]:
                 team_lead[lk] = (a_r, key[0])
+        if best_idx[key] != i: continue   # the losing namesake gets no player line
+        wk_team[key] = tm_r
         wk_lookup[key] = {
             'py': _num(r, py), 'pt': _num(r, pt), 'pi': _num(r, pin),
             'ry': _num(r, ry), 'rt': _num(r, rt),
@@ -213,6 +232,8 @@ def build_game_logs(weekly_pdf, snaps_pdf, matched, sched_pdf=None, current_seas
     if s is not None and snc:
         for _, r in s.iterrows():
             key = (norm(r.get(snc)), int(_num(r, ssc)), int(_num(r, swk)))
+            # Namesakes (see above): keep the row with more offensive snaps.
+            if key in snap_lookup and _num(r, osn) <= snap_lookup[key]['snaps']: continue
             t_s = r.get(stm) if stm else None
             t_s = t_s if isinstance(t_s, str) and t_s else None
             snap_lookup[key] = {'snaps': _num(r, osn), 'pct': _num(r, opc), 'team': t_s}
