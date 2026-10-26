@@ -3886,10 +3886,10 @@ function cpResultsHtml(){
   const posSet=new Set(ps.map(cpPos)), onePos=posSet.size===1?ps.map(cpPos)[0]:null;
 
   const cards='<div class="dl-cp-cards '+g+'">'+ps.map((p,i)=>{
-    const hs=(typeof HEADSHOTS!=='undefined'&&HEADSHOTS[p.n])||'';
+    // Initials only (25 Oct 2026): the NFL.com photo is gone; the Score is already big on this card.
     const ini=String(p.n).split(/\s+/).map(w=>w.charAt(0)).join('').slice(0,2).toUpperCase();
     return '<div class="dl-cp-card" style="--cp-c:'+CP_COL[i]+';--cp-t:'+CP_TINT[i]+'">'
-      +'<span class="dl-cp-av"><i>'+cpEsc(ini)+'</i>'+(hs?'<img src="'+cpEsc(hs)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</span>'
+      +'<span class="dl-cp-av"><i>'+cpEsc(ini)+'</i></span>'
       +'<button type="button" class="dl-cp-nm" data-n="'+cpEsc(p.n)+'" onclick="openDeck(this.dataset.n)">'
         +(cpFirst(p.n)?cpEsc(cpFirst(p.n))+'<br>':'')+cpEsc(cpLast(p.n))+'</button>'
       +'<span class="dl-cp-sm">'+cpEsc(cpPos(p))+' · '+cpEsc(p.t)+' · '+Math.floor(p.a||0)+'</span>'
@@ -6412,16 +6412,8 @@ function projChipColor(v,pos){
 function renderDeck(p){
   // ── Header ──
   document.getElementById('dd-name').textContent=p.n;
-  const hsEl = document.getElementById('dd-headshot');
-  const hsUrl = HEADSHOTS[p.n];
-  if (hsUrl) {
-    // clear the previous player's photo immediately — the browser otherwise
-    // keeps painting the old bitmap until the new src finishes loading
-    hsEl.src=''; hsEl.style.opacity='0'; hsEl.style.display='block';
-    hsEl.onload=()=>{ hsEl.style.opacity='1'; };
-    hsEl.src=hsUrl;
-  }
-  else { hsEl.style.display='none'; hsEl.src=''; hsEl.onload=null; }
+  // DELTA Score ring in place of the NFL.com headshot (owner, 25 Oct 2026). Tap opens the player page.
+  { const r=document.getElementById('dd-ring'); if(r) r.innerHTML=dlScoreRing(p,52); }
   document.getElementById('dd-card').dataset.player=p.n;
   { const h=document.getElementById('dd-college'); if(h) h.innerHTML=''; }
   if((p.g25||0)===0 && (p.ppg24||0)===0 && (p.ppg23||0)===0){
@@ -6436,8 +6428,8 @@ function renderDeck(p){
     const scoreEl = document.getElementById('opp-score-val');
     const score = getOppScore(p.n, p.pos);
     if (scoreEl && score != null) countUp(scoreEl, score);
-    const dsEl = document.getElementById('ds-score-val');
-    if (dsEl && p.dsScore != null) countUp(dsEl, p.dsScore);
+    const dsEl = document.querySelector('#dd-ring .dl-ring-n');
+    if (dsEl && p.dsScore != null) countUp(dsEl, Math.round(p.dsScore));
   });
   const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
   const ct=CONTRACTS.find(c=>c.n===p.n);
@@ -7504,12 +7496,8 @@ document.addEventListener('click', function(e) {
     <div class="dd-header" style="display:block">
       <div style="display:flex;align-items:center;gap:12px">
       <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-        <img id="dd-headshot" src="" alt="" width="52" height="52"
-          style="border-radius:50%;object-fit:cover;border:2px solid var(--line);
-                 background:var(--panel);flex-shrink:0;display:none;cursor:pointer;
-                 box-shadow:0 2px 10px rgba(0,0,0,.5)"
-          onerror="this.style.display='none'"
-          onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)">
+        <span id="dd-ring" title="Open full player page" style="display:flex;flex-shrink:0;cursor:pointer"
+          onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)"></span>
         <div style="min-width:0">
           <div style="display:flex;align-items:baseline;gap:7px;min-width:0">
             <div class="dd-name" id="dd-name" style="cursor:pointer;min-width:0" title="Open full player page"
@@ -7753,7 +7741,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-25b</span>
+  <span class="foot-build">2026-10-25c</span>
 </footer>
 
 

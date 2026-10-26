@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-25a';
+const DL_BUILD='2026-10-25b';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5235,6 +5235,26 @@ function dsEndOfSeason(p){
            oppFrom: (opp26 != null || rushPG != null) ? SEASON_YEAR : SEASON_YEAR - 1 };
 }
 
+/* DELTA Score ring (25 Oct 2026, owner; legal compliance plan step 6). Stands where the NFL.com
+   headshot used to be: those photos are NFL.com's, licensed for personal, non-commercial use only,
+   so DELTA no longer shows them. The ring fills to the Score and takes its colour from dsColor()
+   (the owner chose the Score colours over plain teal). It is sized by font-size: `size` px, or let
+   the page's CSS set font-size on .dl-ring. The number carries class dl-ring-n for count-ups. */
+function dlScoreRing(p, size){
+  const s = (p && p.dsScore != null) ? Math.round(p.dsScore) : null;
+  const f = s == null ? 0 : Math.max(0, Math.min(100, s)) / 100, C = 2 * Math.PI * 30;
+  return '<span class="dl-ring" role="img" aria-label="DELTA Score '+(s == null ? 'not available' : s)+'"'
+    + ' style="position:relative;display:inline-block;flex-shrink:0;width:1em;height:1em;line-height:1'+(size ? ';font-size:'+size+'px' : '')+'">'
+    + '<svg viewBox="0 0 68 68" width="100%" height="100%" aria-hidden="true" style="position:absolute;inset:0;display:block">'
+    + '<circle cx="34" cy="34" r="30" fill="var(--ink-2)" stroke="var(--line)" stroke-width="4"/>'
+    + (f ? '<circle cx="34" cy="34" r="30" fill="none" stroke="'+dsColor(s)+'" stroke-width="4" stroke-linecap="round"'
+         + ' stroke-dasharray="'+(C*f).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 34 34)"/>' : '')
+    + '</svg><span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">'
+    + '<b class="dl-ring-n" style="font-family:var(--mono);font-size:.32em;font-weight:700;color:var(--paper)">'+(s == null ? '\u2014' : s)+'</b>'
+    + '<small style="font-family:var(--sans,system-ui);font-size:.11em;font-weight:800;letter-spacing:.14em;color:var(--fog);margin-top:.05em">DELTA</small>'
+    + '</span></span>';
+}
+
 function dsColor(score) {
   // Matches platform color language (oppScoreColor thresholds)
   // Tokens, not hex: every value below is the exact same colour it was, but
@@ -5659,7 +5679,7 @@ async function loadPlayerStats() {
     if (!data?.players) return;
 
     PLAYER_STATS = data.players;
-    if (data.headshots) HEADSHOTS = data.headshots;
+    // data.headshots (NFL.com photo addresses) is no longer read or written (25 Oct 2026, step 6).
     QB_ROLES = data.qb_roles || {};
     // Model value follows the live depth chart; the DELTA Score holds in-season (owner, 2 Oct 2026).
     // Older data files without the field fall back to qb_roles, which was the same set until then.
@@ -6291,7 +6311,7 @@ function buildDSBreakdownHTML(p){
     +'<span style="font-size:13px;font-weight:600;color:var(--paper);letter-spacing:.02em">DELTA Score</span>'
     +(noNFL?'<span style="font-size:9px;color:var(--fog);margin-left:2px">rookie · capped</span>':'')
     +'</div>'
-    +'<div id="ds-score-val" style="font-size:30px;font-weight:800;line-height:1;color:'+col+'">'+ds+'</div>'
+    /* The big number moved to the Score ring at the top of the card (owner, 25 Oct 2026). */
     +'</div>'
     +'<div style="font-size:9px;color:var(--fog-2);margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
     +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)

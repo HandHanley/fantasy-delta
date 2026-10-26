@@ -210,7 +210,8 @@ a:hover{text-decoration:underline}
 .scout-text{font-size:12px;color:var(--fog);line-height:1.65}
 .state-msg{text-align:center;padding:60px 20px;color:var(--fog-2);font-size:13px}
 .freshness{font-size:10px;color:var(--fog-2);margin-top:6px;text-align:right}
-@media(max-width:480px){.hero-name{font-size:20px}.hero-hs,.hero-ph{width:58px;height:58px}}
+.hero .dl-ring{font-size:72px}
+@media(max-width:480px){.hero-name{font-size:20px}.hero-hs,.hero-ph{width:58px;height:58px}.hero .dl-ring{font-size:62px}}
 /* ===================== DELTA BRAND LAYER ===================== */
 :root{
   --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
@@ -346,7 +347,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-25a</span>
+    <span class="foot-build">2026-10-25b</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -415,10 +416,8 @@ function buildHeroHTML(p) {
     : vt === 'hold' ? 'var(--paper)' : vt.includes('strong sell') ? 'var(--coral-bri)' : 'var(--coral)';
   const mv = mvAsset(p);
   const adjP = getAdjProj(p);
-  const hs = (typeof HEADSHOTS !== 'undefined') && HEADSHOTS[p.n];
-  const hsHtml = hs
-    ? `<img class="hero-hs" src="${hs}" alt="${p.n}" onerror="heroPhFallback(this)">`
-    : `<div class="hero-ph">${HERO_PH_SVG}</div>`;
+  // DELTA Score ring in place of the NFL.com headshot (owner, 25 Oct 2026; sized by .hero .dl-ring).
+  const hsHtml = dlScoreRing(p);
 
   // College + draft on same muted line, no accent color for draft pick
   const bgParts = [];

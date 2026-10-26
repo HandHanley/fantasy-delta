@@ -1515,7 +1515,8 @@ def main():
         'seasons': SEASONS,
         'note':    'Raw stats — PPG calculated client-side per scoring format dropdown',
         'players': players,
-        'headshots': headshot_out,
+        # 'headshots' (NFL.com photo addresses) no longer written (25 Oct 2026, legal plan step 6):
+        # the site shows a DELTA Score ring instead; NFL.com's photos are personal, non-commercial use only.
         'qb_roles': qb_roles,
         'qb_roles_score': qb_roles_score,
         'qb_roles_status': DEPTH_STATUS,
