@@ -101,6 +101,28 @@ function main() {
     }
     buckets[bucketOf(p.n)].push(card);
   }
+  /* Players the College tab can still browse in an earlier season but who are not in the current
+     pool (25 Oct 2026). The site no longer publishes the full season files (legal compliance plan
+     step 9), so these cards are now the only place their game rows live. Each takes his newest
+     browse season as his own; cards for the current pool come first in every bucket. */
+  const carded = new Set(data.players.map((p) => p.id));
+  let extra = 0;
+  for (const yr of seasons.slice().sort((a, b) => b - a)) {
+    if (yr === season) continue;
+    for (const p of pools[yr] || []) {
+      if (carded.has(p.id)) continue;
+      carded.add(p.id);
+      const card = { n: p.n, pos: p.pos, id: p.id, season: yr, seasons, hist, p, dd: M.cfbDDOM(p, pools[yr]), s: {} };
+      for (const y of hist) {
+        const players = pools[y];
+        const rec = players.find((x) => x.id === p.id) || players.find((x) => x.n === p.n && x.pos === p.pos);
+        if (!rec) continue;
+        card.s[y] = { rec: rec === p ? 'p' : rec, dd: M.cfbDDOM(rec, players), mates: matesFor(rec, players) };
+      }
+      buckets[bucketOf(p.n)].push(card);
+      extra++;
+    }
+  }
 
   if (data.players.length < 200) { console.error('REFUSED: implausibly small current pool'); process.exit(1); }
   // Stamped with the SOURCE file's time, not now, so a nightly rebuild of unchanged
@@ -118,7 +140,7 @@ function main() {
   });
   fs.rmSync(OUT_DIR, { recursive: true, force: true });
   fs.renameSync(TMP, OUT_DIR);
-  console.log(`[DELTA] cfb cards: ${data.players.length} players, season ${season}, history ${hist.join(',')}, ` +
+  console.log(`[DELTA] cfb cards: ${data.players.length} players + ${extra} from earlier browse seasons, season ${season}, history ${hist.join(',')}, ` +
               `${BUCKETS} files, ${Math.round(total / 1024)} KB total, largest ${Math.round(biggest / 1024)} KB`);
 }
 

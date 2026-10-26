@@ -2217,7 +2217,7 @@ async function loadSchools(){
   S.schoolState = 'loading';
   try{
     // DELTA's own file: revalidate rather than re-download, like the app does.
-    const d = await getJSON('data/college-players.json', 'no-cache');
+    const d = await getJSON('data/college-board.json', 'no-cache');   // season lines only (25 Oct 2026)
     const m = {}, rows = {};
     for(const p of ((d && d.players) || [])){
       if(!p || !p.n || !p.tm) continue;

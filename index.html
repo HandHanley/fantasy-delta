@@ -7739,7 +7739,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-25d</span>
+  <span class="foot-build">2026-10-25e</span>
 </footer>
 
 
@@ -7802,7 +7802,8 @@ async function ensureCollege(){
   if(CFB_STATE==='loaded'||CFB_STATE==='loading') return CFB_STATE;
   CFB_STATE='loading';
   try{
-    const r=await fetch('./data/college-players.json',{cache:'no-cache'});
+    // College board files (25 Oct 2026, legal plan step 9): season lines + DELTA's measures, no game rows.
+    const r=await fetch('./data/college-board.json',{cache:'no-cache'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     let j=await r.json();
     if(!j || !Array.isArray(j.players)) throw new Error('unexpected shape');
@@ -7812,7 +7813,7 @@ async function ensureCollege(){
     const newest=vis[0];
     if(newest && j.season!==newest){
       try{
-        const r2=await fetch('./data/college-players-'+newest+'.json',{cache:'no-cache'});
+        const r2=await fetch('./data/college-board-'+newest+'.json',{cache:'no-cache'});
         if(r2.ok){ const j2=await r2.json(); if(j2 && Array.isArray(j2.players)){ if(!j2.seasons) j2.seasons=j.seasons; j=j2; } }
       }catch(_){}
     }
@@ -7841,6 +7842,9 @@ function cfbProd(p){ return p.pos==='QB' ? (p.py||0) : (p.rey||0)+(p.ry||0); }
 function cfbRecentSplit(p, k){
   // Last k games vs the k before, on scrimmage yards (passing for QBs). Returns null
   // when there is not enough of a season to compare — better a blank than a fake trend.
+  // The board files carry this already worked out for k=3 (rs3, scripts/build-college-board.js),
+  // since they no longer hold game rows. Same sums; game rows are used when present.
+  if(!p.g && k===3) return p.rs3 ? {recent:p.rs3[0], prior:p.rs3[1], diff:p.rs3[0]-p.rs3[1]} : null;
   const g=(p.g||[]).slice().sort((a,b)=>(a.w||0)-(b.w||0));
   if(g.length < k*2) return null;
   const val=r=> p.pos==='QB' ? (+r.py||0) : (+r.rey||0)+(+r.ry||0);
@@ -8094,7 +8098,7 @@ async function cfbSetSeason(yr){
   const host=document.getElementById('cfb-body');
   if(host) host.innerHTML='<div style="font-size:12px;color:var(--fog-2);padding:14px">Loading '+yr+'\u2026</div>';
   try{
-    const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'});
+    const r=await fetch('./data/college-board-'+yr+'.json',{cache:'no-cache'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j=await r.json();
     if(!j||!Array.isArray(j.players)) throw new Error('unexpected shape');
@@ -8222,7 +8226,7 @@ function renderCollege(){
   if(!host) return;
   if(CFB_STATE==='error' || !CFB){
     host.innerHTML='<div style="font-size:12px;color:var(--topaz);border:1px solid var(--line);border-radius:8px;padding:14px">'
-      +'College data isn\u2019t available yet. The weekly pipeline writes <code>data/college-players.json</code>; '
+      +'College data isn\u2019t available yet. The deploy builds <code>data/college-board.json</code> from the weekly pipeline\u2019s files; '
       +'once it has run, this tab fills in.</div>';
     if(foot) foot.textContent=''; return;
   }
@@ -8619,7 +8623,7 @@ const CFB_SEASON_CACHE={};
 async function cfbLoadSeason(yr){
   if(CFB_SEASON_CACHE[yr]!==undefined) return CFB_SEASON_CACHE[yr];
   try{
-    const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'});
+    const r=await fetch('./data/college-board-'+yr+'.json',{cache:'no-cache'});
     if(!r.ok) throw 0;
     const j=await r.json(); CFB_SEASON_CACHE[yr]=(j&&j.players)||[];
   }catch(e){ CFB_SEASON_CACHE[yr]=[]; }
@@ -8757,14 +8761,36 @@ function cfbRenderGameLog(){
   const tm=document.getElementById('cfb-teammates');
   if(tm) tm.innerHTML=cfbTeammates(cur.rec, cur.players);
 }
+/* Same bucket hash and file layout as cfb-player.html / scripts/build-cfb-cards.js (FNV-1a of the
+   lower-cased name, 64 files). Prefers the card with his id, then exact name, then any case. */
+function cfbCardBucket(name, n){
+  const s=String(name).toLowerCase(); let h=0x811c9dc5;
+  for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); }
+  return (h>>>0)%n;
+}
+async function cfbLoadCardFor(p){
+  try{
+    const r=await fetch('./data/cfb-cards/'+cfbCardBucket(p.n,64)+'.json',{cache:'no-cache'});
+    if(!r.ok) return null;
+    const j=await r.json(); if(!j||!Array.isArray(j.players)||j.buckets!==64) return null;
+    const lc=String(p.n).toLowerCase();
+    return j.players.find(c=>c.id===p.id) || j.players.find(c=>c.n===p.n) || j.players.find(c=>c.n.toLowerCase()===lc) || null;
+  }catch(e){ return null; }
+}
 async function cfbFillGameLog(p){
   const host=document.getElementById('cfb-gamelog'); if(!host||!CFB) return;
   const seasons=await cfbHistorySeasons(CFB.seasons);
+  /* Game rows come from the player's own card (25 Oct 2026, legal plan step 9): the site no longer
+     publishes the full season files. One small download instead of up to seven season files.
+     players = his Team Construction mates for that season (all cfbTeammates reads). */
   const data={};
-  for(const yr of seasons){
-    const players=await cfbLoadSeason(yr);
-    const rec=players.find(x=>x.id===p.id) || players.find(x=>x.n===p.n && x.pos===p.pos);
-    if(rec && rec.g && rec.g.length) data[yr]={games:rec.g, pos:rec.pos, rec:rec, players:players};
+  const card=await cfbLoadCardFor(p);
+  if(card&&card.s){
+    for(const yr of seasons){
+      const c=card.s[yr]; if(!c) continue;
+      const rec=c.rec==='p'?card.p:c.rec;
+      if(rec && rec.g && rec.g.length) data[yr]={games:rec.g, pos:rec.pos, rec:rec, players:c.mates||[]};
+    }
   }
   if(document.getElementById('cfb-gamelog')!==host) return;
   const yrsWith=Object.keys(data).map(Number).sort((a,b)=>a-b);

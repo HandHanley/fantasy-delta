@@ -121,6 +121,20 @@ jobs:
           "$PW_DIR/node_modules/.bin/playwright" install --with-deps chromium
           node scripts/build-share-images.js .
 
+      # College files (25 Oct 2026, legal compliance plan step 9). CFBD's terms bar publishing its
+      # data as a bulk download or public mirror, so the raw season files (every game for ~1,000
+      # players a season) stay in the repo for the scripts and studies but leave the PUBLISHED copy.
+      # The pages read DELTA's college board instead (season lines + DELTA's measures, no game rows),
+      # built here from those same files. If the build fails, the deploy stops and the site keeps its
+      # previous version, so the College tab is never left without a file.
+      - name: College board files, and no raw season files on the site
+        run: |
+          node scripts/build-college-board.js
+          rm -f data/college-players.json data/college-players-*.json
+          test -s data/college-board.json
+          if ls data/college-players*.json >/dev/null 2>&1; then echo "raw college files still present"; exit 1; fi
+          echo "college board built; raw season files left out of the published site"
+
       # Test files stay off the site (25 Oct 2026, legal compliance plan step 4). data/fixtures
       # holds the owner's league history (league-mates' Sleeper names and avatars) and Fantasy
       # Football Calculator files for studies. Nothing on the site reads them; the research

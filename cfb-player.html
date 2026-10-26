@@ -274,7 +274,7 @@ async function cfbHistorySeasons(fallback){
 }
 const SEASON_CACHE={};
 async function loadSeason(yr){ if(SEASON_CACHE[yr]!==undefined) return SEASON_CACHE[yr];
-  try{ const r=await fetch('./data/college-players-'+yr+'.json',{cache:'no-cache'}); if(!r.ok) throw 0;
+  try{ const r=await fetch('./data/college-board-'+yr+'.json',{cache:'no-cache'}); if(!r.ok) throw 0;
     const j=await r.json(); SEASON_CACHE[yr]=(j&&j.players)||[]; }catch(e){ SEASON_CACHE[yr]=[]; }
   return SEASON_CACHE[yr]; }
 
@@ -308,7 +308,8 @@ async function boot(){
   if(card){ CFB_CARD=card; CFB_HIST=card.hist.slice(); render(card.p, null, card.seasons, card.season); return; }
   // resolve newest visible season (same logic as the app)
   let data;
-  try{ const r=await fetch('./data/college-players.json',{cache:'no-cache'}); data=await r.json(); }
+  // Fallback when a card is missing: the college board (season lines only, no game rows; 25 Oct 2026).
+  try{ const r=await fetch('./data/college-board.json',{cache:'no-cache'}); data=await r.json(); }
   catch(e){ app.innerHTML='<div id="err">College data unavailable.</div>'; return; }
   const vis=(data.seasons||[]).slice().sort((a,b)=>b-a); const newest=vis[0];
   if(newest && data.season!==newest){ const s=await loadSeason(newest); if(s.length) data={players:s,seasons:data.seasons,season:newest}; }
