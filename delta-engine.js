@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-25b';
+const DL_BUILD='2026-10-26a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5565,6 +5565,8 @@ function projContext(p){
   const showFull = perStart && fg!==g;
   return {pre,now,act:g?pts/g:null,g,perStart,showFull,full:fg?fpts/fg:null,fg};
 }
+/* projContextHTML: the old one-line version. No page draws it since 26 Oct 2026 — both pages show
+   dlProjChartHTML() (design A1, below). Kept for now so a roll-back is a one-line change. */
 function projContextHTML(p,linkHtml){
   const c=projContext(p); if(!c) return '';
   const m='font-family:var(--mono)';
@@ -5590,6 +5592,132 @@ function projContextHTML(p,linkHtml){
     +'<circle cx="'+X(c.pre)+'" cy="7" r="3.6" fill="none" stroke="var(--fog)" stroke-width="1.5"></circle></svg>';
   return '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px">'
     +txt+scale+(linkHtml||'')+'</span>';
+}
+/* ── PLAYER HEADER, DESIGN A1 (26 Oct 2026, owner) ─────────────────────────────────────────────
+   Shared by the player page (player.html buildHeroHTML) and the rankings pop-up card (index.html
+   renderDeck), so the two cannot drift. Display only: every number here is one the site already
+   showed in the old header. The layout, chosen by the owner from mockups:
+     the Score ring, big, with the position rank under it; beside it the name (always one line),
+     position / team / age / contract, college / draft, the call with its gap to market, and the
+     Owned In line. Below: three tiles (Market, Model, Proj PPG) and the season chart.
+   The styles (.dlh-*) live in each page's own <style>; keep player.html and index.html in step.
+   The chart needs the frozen preseason file, so pages draw it after loadFreezeProj(). */
+/* Projection colour, scaled by position so 12 PPG reads good for a TE and middling for a WR.
+   Moved here from index.html (26 Oct 2026) so the player page's tile uses the same bands. */
+function projChipColor(v,pos){
+  const hi=pos==='QB'?21:pos==='RB'?16:pos==='TE'?11:15;
+  const mid=pos==='QB'?17:pos==='RB'?12:pos==='TE'?8:11;
+  return v>=hi?'var(--emerald)':v>=mid?'var(--sky)':v>=mid*0.7?'var(--topaz)':'var(--coral)';
+}
+function dlHdrMetaHTML(p){
+  const ct=CONTRACTS.find(c=>c.n===p.n), pos=p.pos||p.p;
+  const team=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
+  const opt=ct?fifthYearNote(p,ct):'';
+  // "+opt" sits on the contract's own line at the same size (owner: it read like a superscript).
+  return '<span class="dlh-pos">'+pos+'</span><span>'+(team||'FA')+'</span><span>Age '+(p.a!=null?p.a.toFixed(1):'—')+'</span>'
+    +(ct?'<span>Thru '+ct.end
+      +(ct.end<=SEASON_YEAR?' <span style="color:var(--topaz)" title="Walk year: the contract ends after this season">⚠</span>':'')
+      +(opt?' <span class="dlh-opt" title="'+opt+'">+opt</span>':'')+'</span>':'');
+}
+/* One school: the one he came to the NFL from. A transfer's list comes in two shapes:
+   - the nightly feed (nflverse player bios), newest first: "Indiana; James Madison; St. Francis PA".
+     Checked 26 Oct 2026 against the draft records: the first school was the draft-day school for
+     every one of the 117 transfers that could be matched;
+   - this file's own COLLEGES table, oldest first: "Alabama/Oklahoma".
+   So the first of a ";" list, the last of a "/" list. */
+function dlHdrSchool(p){
+  const raw=(typeof COLLEGES!=='undefined'&&COLLEGES[p.n])?String(COLLEGES[p.n]).trim():'';
+  if(raw.indexOf(';')>=0) return raw.split(';')[0].trim();
+  return raw.split('/').pop().trim();
+}
+function dlHdrBgText(p){
+  const dp=DRAFT_PICKS[p.n];
+  return [dlHdrSchool(p), dp?dp.y+' Rd'+dp.r+' Pick '+dp.p:''].filter(Boolean).join(' · ');
+}
+function dlHdrCallHTML(p){
+  const vt=(vTag(p).match(/>([a-z ]+)</)||[,''])[1], rookie=dlRookieHold(p);
+  const buy=/buy/.test(vt), sell=/sell/.test(vt);
+  const clr=buy?'var(--emerald)':/strong sell/.test(vt)?'var(--coral-bri)':sell?'var(--coral)':'var(--paper)';
+  const bg=buy?'var(--emerald-tint)':sell?'var(--coral-tint)':'var(--line)';
+  // The gap is the call's own ratio (verdictRatio). None under the price floor: there the call is
+  // a plain Hold with no copy (owner, 22 Oct).
+  let gap='';
+  if(rookie) gap='No season on record yet';
+  else if(!dlBelowCallFloor(p)){ const pct=Math.round((verdictRatio(p)-1)*100);
+    gap=pct===0?'Model level with market':Math.abs(pct)+'% '+(pct>0?'above':'below')+' market'; }
+  return '<span class="dlh-call" style="color:'+clr+';background:'+bg+'"'+(rookie?' title="'+DL_ROOKIE_HOLD_TIP+'"':'')+'>'
+    +vt+(rookie?' · rookie':'')+'</span>'+(gap?'<span class="dlh-gap">'+gap+'</span>':'');
+}
+function dlHdrReachHTML(p){
+  if(typeof dlLeagueReach!=='function') return '';
+  const r=dlLeagueReach(p.n,p.pos||p.p), t=dlLeagueReachText(r);
+  return t?'<div class="dlh-reach" title="'+dlLeagueReachTitle(r).replace(/"/g,'&quot;')+'">'+t+'</div>':'';
+}
+function dlPerStartQB(p){
+  return (p.pos||p.p)==='QB' && QB_PS && QB_PS_LEVEL>0 && GL_HAS_QS;   // same test as projContext()
+}
+function dlHdrTilesHTML(p){
+  const mk=p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0), mv=mvAsset(p), adj=getAdjProj(p);
+  // Proj PPG repeats the chart's Rest Of Season on purpose (owner): the big number for a quick look.
+  return '<div class="dlh-tiles">'
+    +'<div><small>Market</small><b>'+Math.round(mk).toLocaleString()+'</b></div>'
+    +'<div><small>Model</small><b>'+(mv>=19999?'19,999+':Math.round(mv||0).toLocaleString())+'</b></div>'
+    +'<div><small>'+(dlPerStartQB(p)?'Proj / Start':'Proj PPG')+'</small><b style="color:'+projChipColor(adj||0,p.pos||p.p)+'">'
+    +(adj!=null?adj.toFixed(1):'—')+'</b></div></div>';
+}
+/* The season chart (owner, 25-26 Oct 2026): one number line, Preseason / So Far / Rest Of Season.
+   - Labels sit in one evenly spaced row above the line, in the dots' left-to-right order, with no
+     connecting lines. Each number is its dot's colour. Always three numbers, three labels.
+   - So Far is sky at or above Preseason, violet below, judged on the numbers shown.
+   - Two numbers that match share one dot carrying both looks: So Far's fill inside Rest Of
+     Season's teal ring (the common case), or a grey ring when Preseason is one of the pair. */
+function dlProjChartHTML(p){
+  const c=projContext(p); if(!c) return '';
+  const pts=[{v:c.pre,lab:'Preseason',cls:'o'}];
+  if(c.act!=null) pts.push({v:c.act,lab:'So Far',cls:'w',clr:+c.act.toFixed(1)>=+c.pre.toFixed(1)?'var(--sky)':'var(--violet)'});
+  pts.push({v:c.now,lab:c.perStart?'Rest / Start':'Rest Of Season',cls:'t',clr:'var(--teal-br)'});
+  pts.forEach((x,i)=>{ x.i=i; x.r=x.v.toFixed(1); });
+  const vals=pts.map(x=>x.v), lo=Math.floor(Math.min(...vals)-1), hi=Math.ceil(Math.max(...vals)+1);
+  pts.forEach(x=>{ x.x=100*(x.v-lo)/(hi-lo); });
+  const groups={}; pts.forEach(x=>{ (groups[x.r]=groups[x.r]||[]).push(x); });
+  const dots=Object.values(groups).map(g=>{
+    const at='left:'+g[0].x.toFixed(1)+'%';
+    if(g.length===1){ const x=g[0]; return '<span class="dlh-pt dlh-pt-'+x.cls+'" style="'+at+(x.cls==='w'?';background:'+x.clr:'')+'"></span>'; }
+    const o=g.find(x=>x.cls==='o'), w=g.find(x=>x.cls==='w'), t=g.find(x=>x.cls==='t');
+    const fill=w?w.clr:'var(--teal-br)', edge=(w&&t)?'var(--teal-br)':'var(--fog)';
+    const ring=(o&&w&&t)?'0 0 0 2px var(--fog)':t?'0 0 0 3px var(--teal-tint)':'none';
+    return '<span class="dlh-pt dlh-pt-mix" style="'+at+';background:'+fill+';border-color:'+edge+';box-shadow:'+ring+'"></span>';
+  }).join('');
+  const lbl=x=>'<div class="dlh-lbl"><b'+(x.clr?' style="color:'+x.clr+'"':'')+'>'+x.r+'</b><small>'+x.lab+'</small></div>';
+  const order=pts.slice().sort((a,b)=>(+a.r-+b.r)||(a.i-b.i));
+  return '<div class="dlh-chart"><div class="dlh-chart-h">'+SEASON_YEAR+' Points Per Game'+(c.perStart?' · Per Full Start From Here':'')+'</div>'
+    +'<div class="dlh-lbls" style="grid-template-columns:repeat('+pts.length+',minmax(0,1fr))">'+order.map(lbl).join('')+'</div>'
+    +'<div class="dlh-plot"><span class="dlh-axis"></span>'+dots+'</div>'
+    +'<div class="dlh-scale"><span>'+lo+'</span><span>'+hi+'</span></div>'
+    +(c.g!=null?'<div class="dlh-chart-f">So far: '+c.g+' game'+(c.g===1?'':'s')
+      +(c.showFull?' · '+c.fg+' full start'+(c.fg===1?'':'s')+', '+(c.full!=null?c.full.toFixed(1):'—')+' per start':'')+'</div>':'')
+    +'</div>';
+}
+/* One line, largest size that fits (owner: "I hate the look of names broken into two lines").
+   Steps down from `max` px until the text fits its box, never below `min`. */
+function dlFitOneLine(el,max,min){
+  if(!el) return;
+  let fs=max; el.style.fontSize=fs+'px';
+  while(el.scrollWidth>el.clientWidth+0.5 && fs>min){ fs-=0.5; el.style.fontSize=fs+'px'; }
+}
+/* Fit everything in a header that must stay on one line: the name, the meta line, the college line,
+   and the chart labels (which shrink as a set, to 85% at most, if one outgrows its share of the row).
+   Pages call this after drawing, when fonts finish loading, and on resize. */
+function dlHdrFit(root,nameMax){
+  if(!root) return;
+  dlFitOneLine(root.querySelector('.dlh-name'),nameMax||24,14);
+  dlFitOneLine(root.querySelector('.dlh-meta'),12.5,10);
+  dlFitOneLine(root.querySelector('.dlh-bg'),12,10);
+  const row=root.querySelector('.dlh-lbls');
+  if(row) for(const sc of [1,0.95,0.9,0.85]){
+    row.style.setProperty('--ls',sc);
+    if([...row.children].every(el=>el.scrollWidth<=el.clientWidth+0.5)) break;
+  }
 }
 function rescalePickTier(year, rnd, tierName, newTierVal) {
   const tierSlots = {Early:[1,2,3,4], Mid:[5,6,7,8], Late:[9,10,11,12]};

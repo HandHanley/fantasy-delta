@@ -99,16 +99,8 @@ a:hover{text-decoration:underline}
   .gl-tab::after{content:'';position:absolute;inset:-8px -1px}
 }
 .nav-brand{font-size:11px;font-weight:700;color:var(--emerald);letter-spacing:.05em}
-.hero{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
 .hero-hs{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--line);background:var(--panel);flex-shrink:0}
 .hero-ph{width:72px;height:72px;border-radius:50%;background:var(--panel);border:1px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--fog-2)}
-.hero-info{flex:1;min-width:0}
-.hero-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--paper);line-height:1.1;margin-bottom:5px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px;color:var(--fog);margin-bottom:3px}
-.hero-bg{font-size:11px;color:var(--fog);margin-bottom:7px}
-.hero-verdict{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.verdict-badge{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.hero-vals{font-size:11px;color:var(--fog)}
 .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em}
 .bs{background:var(--ink-2);color:var(--emerald)}
 .bi{background:var(--ink-2);color:var(--sky)}
@@ -210,8 +202,47 @@ a:hover{text-decoration:underline}
 .scout-text{font-size:12px;color:var(--fog);line-height:1.65}
 .state-msg{text-align:center;padding:60px 20px;color:var(--fog-2);font-size:13px}
 .freshness{font-size:10px;color:var(--fog-2);margin-top:6px;text-align:right}
-.hero .dl-ring{font-size:72px;align-self:center}   /* centred beside the text block (owner) */
-@media(max-width:480px){.hero-name{font-size:20px}.hero-hs,.hero-ph{width:58px;height:58px}.hero .dl-ring{font-size:62px}}
+/* ── Player header, design A1 (26 Oct 2026, owner). Built by dlHdr*() in delta-engine.js. The same
+   rules live in index.html for the pop-up card: keep the two in step. ── */
+.dlh{margin-bottom:18px}
+.dlh-top{display:flex;gap:16px;align-items:center}
+.dlh-ringcol{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.dlh-rk{font-family:var(--sans);font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--fog)}
+.dlh-id{flex:1;min-width:0}
+.dlh-name{font-family:var(--sans);font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--paper);line-height:1.15;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-star{cursor:pointer;font-size:.72em;vertical-align:.12em;margin-left:7px}
+.dlh-meta{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;font-family:var(--sans);font-size:12.5px;color:var(--fog);margin-bottom:9px;white-space:nowrap;overflow:hidden}
+.dlh-pos{background:var(--line);color:var(--paper);font-weight:800;font-size:.88em;padding:2px 7px;border-radius:5px;letter-spacing:.04em}
+.dlh-opt{color:var(--sky)}
+.dlh-bg{font-family:var(--sans);font-size:12px;color:var(--fog-2);margin:-3px 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-callrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.dlh-call{font-family:var(--sans);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.dlh-gap{font-family:var(--sans);font-size:12px;color:var(--fog)}
+.dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
+.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.dlh-tiles>div{background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
+.dlh-tiles small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog-2)}
+.dlh-tiles b{display:block;font-family:var(--mono);font-size:17px;color:var(--paper);margin-top:3px}
+.dlh-chart{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:11px 14px 10px;background:var(--ink-2)}
+.dlh-chart-h{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog);margin-bottom:4px}
+.dlh-lbls{display:grid;margin:6px 0 2px}
+.dlh-lbl{text-align:center;min-width:0;overflow:hidden;white-space:nowrap}
+.dlh-lbl b{display:block;font-family:var(--mono);font-size:calc(17px * var(--ls,1));font-weight:700;color:var(--paper);line-height:1.1}
+.dlh-lbl small{display:block;font-family:var(--sans);font-size:calc(10.5px * var(--ls,1));color:var(--fog-2);margin-top:1px}
+.dlh-plot{position:relative;height:22px;margin:0 6px}
+.dlh-axis{position:absolute;left:0;right:0;top:9px;height:3px;border-radius:3px;background:var(--line)}
+.dlh-pt{position:absolute;top:10.5px;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);box-sizing:border-box}
+.dlh-pt-o{border:2px solid var(--fog);background:var(--ink-2)}
+.dlh-pt-w{background:var(--paper)}
+.dlh-pt-t{background:var(--teal-br);width:15px;height:15px;box-shadow:0 0 0 4px var(--teal-tint)}
+.dlh-pt-mix{width:16px;height:16px;border:3px solid}
+.dlh-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--fog-2);margin-top:2px}
+.dlh-chart-f{font-family:var(--sans);font-size:11px;color:var(--fog-2);margin-top:4px}
+/* Desktop: identity on the left, tiles and chart on the right, matching the two-column cards below. */
+@media(min-width:1000px){
+  .dlh{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+  .dlh-tiles{margin-top:0}
+}
 /* ===================== DELTA BRAND LAYER ===================== */
 :root{
   --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
@@ -240,9 +271,6 @@ a{color:var(--teal-br)}
 .nav{border-bottom:1px solid var(--line)}
 .nav-back{color:var(--fog)}
 .nav-back:hover{color:var(--paper)}
-.hero-name{font-family:var(--sans)}
-.hero-meta,.hero-bg,.hero-vals{font-family:var(--sans)}
-.verdict-badge{font-family:var(--sans)}
 /* badges → brand semantics: buy=emerald, hold=slate, sell=coral */
 .badge{font-family:var(--sans)}
 .bs{background:var(--emerald-tint);color:var(--emerald-bri)}
@@ -347,7 +375,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-25b</span>
+    <span class="foot-build">2026-10-26a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -408,46 +436,31 @@ function ppgClr(v) {
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
 function buildHeroHTML(p) {
-  const ct = CONTRACTS.find(c => c.n === p.n);
-  const dp = DRAFT_PICKS[p.n];
-  const team = (typeof AL !== 'undefined' && AL[p.t]) ? AL[p.t] : p.t;
-  const vt = (vTag(p).match(/>([a-z ]+)</) || [,''])[1];
-  const vc = vt.includes('strong buy') ? 'var(--emerald)' : vt === 'buy' ? 'var(--emerald)'
-    : vt === 'hold' ? 'var(--paper)' : vt.includes('strong sell') ? 'var(--coral-bri)' : 'var(--coral)';
-  const mv = mvAsset(p);
-  const adjP = getAdjProj(p);
-  // DELTA Score ring in place of the NFL.com headshot (owner, 25 Oct 2026; sized by .hero .dl-ring).
-  const hsHtml = dlScoreRing(p);
-
-  // College + draft on same muted line, no accent color for draft pick
-  const bgParts = [];
-  if (COLLEGES && COLLEGES[p.n]) bgParts.push(COLLEGES[p.n]);
-  if (dp) bgParts.push(`${dp.y} Rd${dp.r} Pick ${dp.p}`);
-  const bgLine = bgParts.length ? `<div class="hero-bg">${bgParts.join(' · ')}</div>` : '';
-
-  // Season stat line is rendered separately (after the DELTA Score) — see buildStatLineHTML.
-
-  return `<div class="hero">
-    ${hsHtml}
-    <div class="hero-info">
-      <div class="hero-name">${typeof injBadge==='function'?injBadge(p.n):''}${p.n} <span data-name="${p.n}" onclick="heroStar(this)" style="cursor:pointer;font-size:17px;vertical-align:2px;color:${dwHas(p.n)?'var(--topaz)':'var(--fog-2)'}">${dwHas(p.n)?'\u2605':'\u2606'}</span></div>
-      <div class="hero-meta">
-        <span class="badge bn">${p.pos}</span>
-        <span>${team}</span>
-        <span>Age ${p.a.toFixed(1)}</span>
-        ${ct ? `<span style="color:var(--fog)">Thru ${ct.end}${ct.end<=SEASON_YEAR?' ⚠':''}${fifthYearNote(p,ct)?' +opt':''}</span>` : ''}
+  // Design A1 (owner, 26 Oct 2026). The pieces are shared with the rankings pop-up card: see
+  // dlHdr*() in delta-engine.js. The season chart fills #hero-pctx once the preseason file loads.
+  const pos = p.pos || p.p, rk = dlPosRank(p), bg = dlHdrBgText(p), on = dwHas(p.n);
+  return `<div class="hero dlh">
+    <div class="dlh-top">
+      <div class="dlh-ringcol">${dlScoreRing(p, 112)}${rk ? `<div class="dlh-rk">${pos}${rk}</div>` : ''}</div>
+      <div class="dlh-id">
+        <div class="dlh-name">${typeof injBadge==='function'?injBadge(p.n):''}${p.n}<span class="dlh-star" data-name="${p.n}" onclick="heroStar(this)" title="Watchlist" style="color:${on?'var(--topaz)':'var(--fog-2)'}">${on?'★':'☆'}</span></div>
+        <div class="dlh-meta">${dlHdrMetaHTML(p)}</div>
+        ${bg ? `<div class="dlh-bg">${bg}</div>` : ''}
+        <div class="dlh-callrow">${dlHdrCallHTML(p)}</div>
+        ${dlHdrReachHTML(p)}
       </div>
-      ${bgLine}
-      ${(function(){ const r=(typeof dlLeagueReach==='function')?dlLeagueReach(p.n,p.pos||p.p):null, t=dlLeagueReachText(r);
-         return t?'<div class="hero-bg" title="'+dlLeagueReachTitle(r).replace(/"/g,'&quot;')+'">'+t+'</div>':''; })()}
-      <div class="hero-verdict">
-        <span class="verdict-badge" style="color:${vc}"${dlRookieHold(p)?` title="${DL_ROOKIE_HOLD_TIP}"`:''}>${vt}${dlRookieHold(p)?' \u00b7 rookie':''}</span>
-        <span class="hero-vals">Mkt ${(p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0)).toLocaleString()} · Model ${mv>=19999?'19,999+':(mv!=null?mv:0).toLocaleString()} · Proj ${(adjP!=null?adjP:0).toFixed(1)} PPG</span>
-      </div>
-      <div id="hero-pctx" style="margin-top:6px"></div>
+    </div>
+    <div class="dlh-side">
+      ${dlHdrTilesHTML(p)}
+      <div id="hero-pctx"></div>
     </div>
   </div>`;
 }
+/* Keep the header's one-line rules true: after drawing, when the fonts arrive (a fallback font
+   measures differently), and when the screen turns or the window resizes. */
+function heroFit(){ dlHdrFit(document.querySelector('.dlh'), 24); }
+let _heroFitT = null;
+window.addEventListener('resize', () => { clearTimeout(_heroFitT); _heroFitT = setTimeout(heroFit, 120); });
 
 // Season stat line — raw counting stats. DELTA is rate-driven, so these were never shown;
 // they ground every derived metric. Rendered AFTER the DELTA Score so the signature metric
@@ -1772,8 +1785,10 @@ function _renderPlayerPage(p) {
   // Preseason · Now · Actual (shared engine helper). Needs the frozen file, fetched once.
   if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
     const el=document.getElementById('hero-pctx');
-    if(el) el.innerHTML=projContextHTML(p);   // no link (owner, 26 Sep: too much on the card)
+    if(el){ el.innerHTML=dlProjChartHTML(p); heroFit(); }   // the season chart (design A1, 26 Oct 2026)
   }).catch(()=>{});
+  heroFit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(heroFit).catch(()=>{});
   document.title = p.n + ' — DELTA';
   dlShareReady(p);
   dlCompareReady(p);
