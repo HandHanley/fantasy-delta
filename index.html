@@ -3886,15 +3886,13 @@ function cpResultsHtml(){
   const posSet=new Set(ps.map(cpPos)), onePos=posSet.size===1?ps.map(cpPos)[0]:null;
 
   const cards='<div class="dl-cp-cards '+g+'">'+ps.map((p,i)=>{
-    // Initials only (25 Oct 2026): the NFL.com photo is gone; the Score is already big on this card.
-    const ini=String(p.n).split(/\s+/).map(w=>w.charAt(0)).join('').slice(0,2).toUpperCase();
+    // DELTA Score ring in place of the photo and the big number (owner, 25 Oct 2026).
     return '<div class="dl-cp-card" style="--cp-c:'+CP_COL[i]+';--cp-t:'+CP_TINT[i]+'">'
-      +'<span class="dl-cp-av"><i>'+cpEsc(ini)+'</i></span>'
+      +dlScoreRing(p,64)
       +'<button type="button" class="dl-cp-nm" data-n="'+cpEsc(p.n)+'" onclick="openDeck(this.dataset.n)">'
         +(cpFirst(p.n)?cpEsc(cpFirst(p.n))+'<br>':'')+cpEsc(cpLast(p.n))+'</button>'
       +'<span class="dl-cp-sm">'+cpEsc(cpPos(p))+' · '+cpEsc(p.t)+' · '+Math.floor(p.a||0)+'</span>'
-      +'<span class="dl-cp-ds" style="color:'+dsColor(p.dsScore)+'">'+(p.dsScore!=null?p.dsScore:'—')+'</span>'
-      +'<span class="dl-cp-dsl">DELTA SCORE</span>'+vTag(p)+'</div>';
+      +vTag(p)+'</div>';
   }).join('')+'</div>';
 
   // The Basics
