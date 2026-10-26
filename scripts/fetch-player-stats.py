@@ -495,6 +495,53 @@ def fetch_current_teams():
         return None
 
 SLEEPER_PLAYERS_URL = 'https://api.sleeper.app/v1/players/nfl'
+SLEEPER_PLAYERS_OUT = Path(__file__).resolve().parent.parent / 'data' / 'sleeper-players.json'
+MIN_SLEEPER_PLAYERS = 1500   # a short file is a broken pull; the old file stands
+
+def trim_sleeper_players(raw):
+    """Sleeper's player list cut to what DELTA's pages use (legal compliance plan step 7, 25 Oct 2026).
+
+    Sleeper's docs ask apps to call /players/nfl sparingly (about once a day) and keep a copy on
+    their own servers. Every visitor's browser used to download the whole ~5 MB list itself; now
+    this nightly pull (already made for teams and injuries) saves the trimmed map and the pages
+    read data/sleeper-players.json. MUST MIRROR slpEnsurePlayers() in index.html exactly: main
+    position QB/RB/WR/TE, else the first of those in fantasy_positions (two-way players such as
+    Travis Hunter); name = full_name, else first + last; fields n, p, t, a. `mp` (main position)
+    is added only when it differs from p, for scripts/detect-ripples.js."""
+    keep = {'QB', 'RB', 'WR', 'TE'}
+    out = {}
+    for pid, pl in raw.items():
+        if not pl or not isinstance(pl, dict):
+            continue
+        mainp = pl.get('position')
+        pos = mainp if mainp in keep else next((x for x in (pl.get('fantasy_positions') or []) if x in keep), None)
+        if not pos:
+            continue
+        nm = pl.get('full_name') or ((pl.get('first_name') or '') + ' ' + (pl.get('last_name') or '')).strip()
+        if not nm:
+            continue
+        age = pl.get('age')
+        rec = {'n': nm, 'p': pos, 't': pl.get('team') or None,
+               'a': age if isinstance(age, (int, float)) and not isinstance(age, bool) else None}
+        if mainp != pos:
+            rec['mp'] = mainp
+        out[str(pid)] = rec
+    return out
+
+def write_sleeper_players(raw):
+    try:
+        players = trim_sleeper_players(raw)
+        if len(players) < MIN_SLEEPER_PLAYERS:
+            print(f'[DELTA] sleeper-players.json NOT written: only {len(players)} players (floor {MIN_SLEEPER_PLAYERS})')
+            return
+        out = {'fetched': datetime.now(timezone.utc).isoformat(),
+               'source': 'Sleeper /players/nfl, pulled once a day by the nightly and trimmed to QB/RB/WR/TE',
+               'count': len(players), 'players': players}
+        SLEEPER_PLAYERS_OUT.write_text(json.dumps(out, separators=(',', ':')))
+        print(f'[DELTA] sleeper-players.json written: {len(players)} players '
+              f'({SLEEPER_PLAYERS_OUT.stat().st_size // 1024} KB)')
+    except Exception as e:   # never fail the nightly over this file; the pages fall back to Sleeper
+        print(f'[DELTA] sleeper-players.json write failed ({e}) — pages keep their fallback')
 
 def fetch_sleeper_teams():
     """Current team per skill player from Sleeper's live roster feed.
@@ -537,6 +584,8 @@ def fetch_sleeper_teams():
     if not isinstance(raw, dict) or not raw:
         print('[DELTA] Sleeper feed: empty or unexpected shape — falling back to nflverse')
         return None, {}, {}
+
+    write_sleeper_players(raw)
 
     SKILL_POS = {'QB', 'RB', 'WR', 'TE'}
     seen = defaultdict(set)

@@ -7739,7 +7739,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-25c</span>
+  <span class="foot-build">2026-10-25d</span>
 </footer>
 
 
@@ -9718,6 +9718,25 @@ function slpBuildDeltaIndex(){
 // ── Player database (~5MB raw, fetched once, trimmed before caching) ──
 async function slpEnsurePlayers(force){
   if(SLP.players&&SLP_SLEEPER_DB&&!force) return SLP.players;
+  /* DELTA's own copy first (25 Oct 2026, legal compliance plan step 7). Sleeper's docs ask apps to
+     call /players/nfl about once a day and keep it on their own servers; the nightly now saves the
+     same trimmed map this function builds (scripts/fetch-player-stats.py, trim_sleeper_players) as
+     data/sleeper-players.json. A few hundred KB instead of ~5 MB, and a day fresh at most. If the
+     file is missing or short, the old path below (7-day cache, then Sleeper itself) still runs. */
+  if(!force){
+    try{
+      const r=await fetch('./data/sleeper-players.json',{cache:'no-cache'});
+      if(r.ok){
+        const j=await r.json(), m=j&&j.players;
+        if(m&&Object.keys(m).length>=1500){
+          SLP.players=m; SLP_SLEEPER_DB=true;
+          slpLog('player DB from DELTA copy:',Object.keys(m).length,'players, pulled',String(j.fetched||'').slice(0,16));
+          return m;
+        }
+        slpLog('DELTA player copy too short \u2014 falling back');
+      }
+    }catch(e){ slpLog('DELTA player copy unavailable \u2014 falling back:',e); }
+  }
   if(!force){
     try{
       const c=JSON.parse(localStorage.getItem(SLP_LS_PLAYERS)||'null');

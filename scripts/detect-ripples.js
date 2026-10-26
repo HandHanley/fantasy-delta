@@ -47,6 +47,30 @@ function trimSleeper(raw) {
   return out;
 }
 
+// One Sleeper pull a day (25 Oct 2026, legal compliance plan step 7): the main nightly saves a
+// trimmed copy as data/sleeper-players.json. Use it when it is under 36 hours old, rebuilt to the
+// exact shape trimSleeper() makes (main position RB/WR/TE; `mp` holds the main position when it
+// differs from the fantasy one). Otherwise pull Sleeper as before.
+async function sleeperSnapshot() {
+  try {
+    const f = path.join(DATA, 'sleeper-players.json');
+    const j = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const age = Date.now() - Date.parse(j.fetched);
+    if (j.players && Object.keys(j.players).length >= 1500 && age >= 0 && age < 36 * 3600 * 1000) {
+      const out = {};
+      for (const [id, p] of Object.entries(j.players)) {
+        const main = ('mp' in p) ? p.mp : p.p;   // mp may be null or '' (no main position)
+        if (!SKILL.has(main)) continue;
+        out[id] = { full_name: p.n, position: main, team: p.t || null };
+      }
+      console.log(`[ripple] Sleeper players from data/sleeper-players.json (${Object.keys(out).length} RB/WR/TE)`);
+      return out;
+    }
+    console.log('[ripple] data/sleeper-players.json too old or short; pulling Sleeper');
+  } catch (e) { console.log(`[ripple] no saved Sleeper copy (${e.message}); pulling Sleeper`); }
+  return trimSleeper(await fetchJSON(SLEEPER_URL));
+}
+
 // Minimal quote-aware CSV row splitter (player names have no internal commas, but be safe).
 function csvRow(line) {
   const out = []; let cur = '', q = false;
@@ -217,7 +241,7 @@ async function main() {
     cross = fs.existsSync(process.argv[5] || '') ? parseCrosswalk(fs.readFileSync(process.argv[5], 'utf8')) : {};
   } else {
     console.log('[ripple] fetching Sleeper players + crosswalk ...');
-    currSnap = trimSleeper(await fetchJSON(SLEEPER_URL));
+    currSnap = await sleeperSnapshot();
     cross = parseCrosswalk(await fetchText(CROSSWALK_URL));
     const snapPath = path.join(DATA, 'roster-snapshot.json');
     if (!fs.existsSync(snapPath)) {
