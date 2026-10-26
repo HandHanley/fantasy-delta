@@ -415,6 +415,53 @@ tr:hover td{background:var(--panel)}
 .dd-close{background:none;border:none;color:var(--fog);font-size:20px;cursor:pointer;
   padding:0 4px;line-height:1;flex-shrink:0}
 .dd-close:hover{color:var(--paper)}
+/* ── Player header, design A1 (26 Oct 2026, owner). Built by dlHdr*() in delta-engine.js. The same
+   rules live in player.html for the player page: keep the two in step. ── */
+.dlh-top{display:flex;gap:16px;align-items:center}
+.dlh-ringcol{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.dlh-rk{font-family:var(--sans);font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--fog)}
+.dlh-id{flex:1;min-width:0}
+.dlh-name{font-family:var(--sans);font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--paper);line-height:1.15;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-star{cursor:pointer;font-size:.72em;vertical-align:.12em;margin-left:7px}
+.dlh-meta{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;font-family:var(--sans);font-size:12.5px;color:var(--fog);margin-bottom:9px;white-space:nowrap;overflow:hidden}
+.dlh-pos{background:var(--line);color:var(--paper);font-weight:800;font-size:.88em;padding:2px 7px;border-radius:5px;letter-spacing:.04em}
+.dlh-opt{color:var(--sky)}
+.dlh-bg{font-family:var(--sans);font-size:12px;color:var(--fog-2);margin:-3px 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-callrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.dlh-call{font-family:var(--sans);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.dlh-gap{font-family:var(--sans);font-size:12px;color:var(--fog)}
+.dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
+.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.dlh-tiles>div{background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
+.dlh-tiles small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog-2)}
+.dlh-tiles b{display:block;font-family:var(--mono);font-size:17px;color:var(--paper);margin-top:3px}
+.dlh-chart{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:11px 14px 10px;background:var(--ink-2)}
+.dlh-chart-h{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog);margin-bottom:4px}
+.dlh-lbls{display:grid;margin:6px 0 2px}
+.dlh-lbl{text-align:center;min-width:0;overflow:hidden;white-space:nowrap}
+.dlh-lbl b{display:block;font-family:var(--mono);font-size:calc(17px * var(--ls,1));font-weight:700;color:var(--paper);line-height:1.1}
+.dlh-lbl small{display:block;font-family:var(--sans);font-size:calc(10.5px * var(--ls,1));color:var(--fog-2);margin-top:1px}
+.dlh-plot{position:relative;height:22px;margin:0 6px}
+.dlh-axis{position:absolute;left:0;right:0;top:9px;height:3px;border-radius:3px;background:var(--line)}
+.dlh-pt{position:absolute;top:10.5px;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);box-sizing:border-box}
+.dlh-pt-o{border:2px solid var(--fog);background:var(--ink-2)}
+.dlh-pt-w{background:var(--paper)}
+.dlh-pt-t{background:var(--teal-br);width:15px;height:15px;box-shadow:0 0 0 4px var(--teal-tint)}
+.dlh-pt-mix{width:16px;height:16px;border:3px solid}
+.dlh-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--fog-2);margin-top:2px}
+.dlh-chart-f{font-family:var(--sans);font-size:11px;color:var(--fog-2);margin-top:4px}
+/* The pop-up card itself is --panel, so its tiles step down to --ink-2. It is narrower than the
+   player page and shares its top row with the close button, so the ring and gaps are smaller. */
+.dd-dlh{--dlh-tile:var(--ink-2)}
+.dd-dlh .dlh-top{gap:12px}
+#dd-ring .dl-ring{font-size:88px}
+@media(max-width:600px){
+  .dd-header{padding:1rem 1rem .75rem}
+  #dd-ring .dl-ring{font-size:72px}
+}
+.dd-dlh .dlh-bg:empty{display:none}
+.dlh-nm{cursor:pointer}
+.dlh-nm:hover{color:var(--teal-br)}
 .dd-body{padding:1rem 1.25rem}
 .dd-section{margin-bottom:1.1rem}
 .dd-section-label{font-size:9px;font-weight:700;letter-spacing:.08em;
@@ -6390,6 +6437,12 @@ function openDeck(name){  const p=COMP.find(x=>x.n===name);
   renderDeck(p);
 }
 
+/* The card header's one-line rules (name, meta line, chart labels): after drawing, when the fonts
+   arrive, and when the screen turns or the window resizes. */
+function deckFit(){ dlHdrFit(document.querySelector('#dd-card .dlh'), 22); }
+{ let t=null; window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(deckFit,120); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(deckFit).catch(()=>{}); }
+
 function closeDeckNow(){
   document.getElementById('dd-overlay').classList.remove('open');
   document.body.style.overflow='';
@@ -6401,24 +6454,24 @@ function closeDeck(e){
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();closeNews();closeAppCard();} });
 
-function projChipColor(v,pos){
-  // position-scaled bands so a 12-PPG projection reads 'good' for a TE, 'meh' for a WR
-  const hi=pos==='QB'?21:pos==='RB'?16:pos==='TE'?11:15;
-  const mid=pos==='QB'?17:pos==='RB'?12:pos==='TE'?8:11;
-  return v>=hi?'var(--emerald)':v>=mid?'var(--sky)':v>=mid*0.7?'var(--topaz)':'var(--coral)';
-}
+// projChipColor() moved to delta-engine.js (26 Oct 2026) so the player page's Proj PPG tile shares its bands.
 function renderDeck(p){
-  // ── Header ──
+  // ── Header: design A1 (owner, 26 Oct 2026) ──
+  // The same pieces as the player page's header (dlHdr*() in delta-engine.js): ring with the
+  // position rank, name on one line, position / team / age / contract, college / draft, the call
+  // with its gap to market, Owned In; then the three tiles and the season chart; then Compare and
+  // Open Full Profile.
   document.getElementById('dd-name').textContent=p.n;
   // DELTA Score ring in place of the NFL.com headshot (owner, 25 Oct 2026). Tap opens the player page.
-  { const r=document.getElementById('dd-ring'); if(r) r.innerHTML=dlScoreRing(p,52); }
+  { const r=document.getElementById('dd-ring'); if(r) r.innerHTML=dlScoreRing(p); }   // sized by #dd-ring .dl-ring
+  { const k=document.getElementById('dd-rk'), rk=dlPosRank(p); if(k) k.textContent=rk?(p.pos||p.p)+rk:''; }
   document.getElementById('dd-card').dataset.player=p.n;
   { const h=document.getElementById('dd-college'); if(h) h.innerHTML=''; }
   if((p.g25||0)===0 && (p.ppg24||0)===0 && (p.ppg23||0)===0){
     ensureCollegeQuiet().then(()=>renderDeckCollege(p.n)).catch(()=>{});
   }
   { const s=document.getElementById('dd-star'), on=dwHas(p.n);
-    if(s){ s.textContent=on?'\u2605':'\u2606'; s.style.color=on?'var(--topaz)':'var(--fog-2)'; } }
+    if(s){ s.textContent=on?'★':'☆'; s.style.color=on?'var(--topaz)':'var(--fog-2)'; } }
   // Score animations fire after innerHTML renders
   requestAnimationFrame(() => {
     renderStartProfile(p);
@@ -6429,54 +6482,31 @@ function renderDeck(p){
     const dsEl = document.querySelector('#dd-ring .dl-ring-n');
     if (dsEl && p.dsScore != null) countUp(dsEl, Math.round(p.dsScore));
   });
-  const trendHtml='';  // Rising/Fading badge removed (see trendTag); table still feeds value engine
-  const ct=CONTRACTS.find(c=>c.n===p.n);
-  const fy=ct?fifthYearNote(p,ct):'';
-  const ctHtml=ct?`<span>Exp ${ct.end}${ct.end<=SEASON_YEAR?' <span style="color:var(--topaz)">⚠ walk year</span>':''}${fy?` <span style="color:var(--sky)" title="${fy}">· 5th-yr opt</span>`:''}</span>`:'<span style="color:var(--fog-2)">No contract data</span>';
-  const dp=DRAFT_PICKS[p.n];
-  const dpClr=dp?(dp.r===1?'var(--emerald)':dp.r===2?'var(--sky)':dp.r===3?'var(--topaz)':'var(--fog)'):'var(--fog)';
-  // Row 1: position · team · age · contract.  Row 2: college · draft capital.
-  const dispTeam=(typeof AL!=='undefined'&&AL[p.t])?AL[p.t]:p.t;
+  const ct=CONTRACTS.find(c=>c.n===p.n);        // the body's contract note reads it
   const adjProj=getAdjProj(p);
-  const projClr=projChipColor(adjProj,p.pos);
-  // Top row stays short so it fits beside the photo; the contract moved to the full-width line below.
-  const row1=`<span>${p.pos} · ${dispTeam}</span><span>Age ${p.a.toFixed(1)}</span>`;
-  // Plain text, no box. The old chip built its fill and border as "var(--emerald)22" — not
-  // valid CSS, so the browser dropped both and left only the padding, which read as a stray
-  // indent under the photo (4 Oct 2026).
-  const projChip=`<span style="display:inline-flex;align-items:baseline;gap:5px"><b style="color:${projClr};font-size:14px">${adjProj.toFixed(1)}</b><span style="font-size:10px;color:var(--fog)">proj PPG</span></span>`;
-  const bgParts=[];
-  if(COLLEGES[p.n]) bgParts.push(`<span>${COLLEGES[p.n]}</span>`);
-  if(dp) bgParts.push(`<span>${dp.y} Rd${dp.r} Pick ${dp.p}</span>`);
-  document.getElementById('dd-meta').innerHTML=row1;
-  // extra meta rows after the header line: college/draft, then Projected PPG on its own line beneath it
-  const metaEl=document.getElementById('dd-meta');
-  if(metaEl){
-    // Remove EVERY extra row from the previous card (dd-meta-2, -3, -4 …). The old list named only
-    // 2 and 3; a third extra row (the Preseason · Now · Actual line) was left behind on every redraw.
-    // The extra rows live in their own full-width box under the top row; emptying the box
-    // clears the previous player's rows in one step.
-    const more=document.getElementById('dd-meta-more'); more.innerHTML='';
-    const rows=[];
-    rows.push([ctHtml].concat(bgParts).join('<span style="color:var(--fog-2)">\u00b7</span>'));
-    // No separate "proj PPG" line (owner, 4 Oct: "floating by itself"). It repeated the Rest Of
-    // Season figure in the line below, so that line now carries the projection. The plain chip
-    // shows only until that line loads, or instead of it when there is no preseason record.
-    rows.push('<span id="dd-pctx" data-name="'+scEsc(p.n)+'">'+projChip+'</span>');   // Preseason · Now · Actual — filled below
-    rows.forEach((html,idx)=>{ const d=document.createElement('div'); d.id='dd-meta-'+(idx+2); d.className='dd-meta'; d.style.marginTop=idx?'8px':'0'; d.innerHTML=html; more.appendChild(d); });
+  const projClr=projChipColor(adjProj,p.pos);   // the body's "2026 proj" line reads it
+  document.getElementById('dd-meta').innerHTML=dlHdrMetaHTML(p);
+  document.getElementById('dd-bg').textContent=dlHdrBgText(p);
+  document.getElementById('dd-call').innerHTML=dlHdrCallHTML(p);
+  document.getElementById('dd-reach').innerHTML=dlHdrReachHTML(p);
+  {
+    // Everything under the top row lives in one box; emptying it clears the previous player's in one step.
+    const more=document.getElementById('dd-meta-more');
+    more.innerHTML=dlHdrTilesHTML(p)+'<div id="dd-pctx" data-name="'+scEsc(p.n)+'"></div>';
     // Full Profile: a full-width button closing the header, instead of a pill floating mid-card.
     const fpb=document.createElement('a'); fpb.id='dd-fullpage';
-    fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.title='Open full page'; fpb.textContent='Open Full Profile \u2192';
+    fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.title='Open full page'; fpb.textContent='Open Full Profile →';
     fpb.style.cssText='flex:1;display:block;text-align:center;padding:8px 0;font-size:11px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:8px';
     // Compare (22 Oct 2026): a new comparison with this player in the first slot.
     const cmpb=document.createElement('button'); cmpb.type='button'; cmpb.className='dl-cp-deck';
     cmpb.textContent='Compare'; cmpb.onclick=function(){ cpStartWith(p.n); };
     const actRow=document.createElement('div'); actRow.style.cssText='display:flex;gap:8px;margin-top:12px';
     actRow.appendChild(cmpb); actRow.appendChild(fpb); more.appendChild(actRow);
-    // Preseason · Now · Actual: needs the frozen file (fetched once). Fill only if this player's card is still open.
+    deckFit();
+    // The season chart needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
       const el=document.getElementById('dd-pctx'); if(!el||el.dataset.name!==p.n) return;
-      const h=projContextHTML(p); if(h) el.innerHTML=h;   // no link (owner, 26 Sep); keeps the plain chip if there is no context
+      el.innerHTML=dlProjChartHTML(p); deckFit();
     }).catch(()=>{});
   }
 
@@ -7492,23 +7522,26 @@ document.addEventListener('click', function(e) {
          column beside the photo, wrapping word by word on a phone with the photo
          floating in the middle of it (owner: "looks weird"). -->
     <div class="dd-header" style="display:block">
-      <div style="display:flex;align-items:center;gap:12px">
-      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-        <span id="dd-ring" title="Open full player page" style="display:flex;flex-shrink:0;cursor:pointer"
-          onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)"></span>
-        <div style="min-width:0">
-          <div style="display:flex;align-items:baseline;gap:7px;min-width:0">
-            <div class="dd-name" id="dd-name" style="cursor:pointer;min-width:0" title="Open full player page"
-              onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</div>
-            <span id="dd-star" onclick="deckStar(this)" title="Watchlist"
-              style="cursor:pointer;font-size:15px;line-height:1;color:var(--fog-2);flex-shrink:0;align-self:baseline">&#9734;</span>
+      <div class="dlh dd-dlh">
+        <div class="dlh-top">
+          <div class="dlh-ringcol">
+            <span id="dd-ring" title="Open full player page" style="display:flex;flex-shrink:0;cursor:pointer"
+              onclick="window.location.href='player.html?name='+encodeURIComponent(this.closest('[data-player]').dataset.player)"></span>
+            <div class="dlh-rk" id="dd-rk"></div>
           </div>
-          <div class="dd-meta" id="dd-meta"></div>
+          <div class="dlh-id">
+            <div class="dlh-name"><span class="dlh-nm" id="dd-name" title="Open full player page"
+              onclick="window.location.href='player.html?name='+encodeURIComponent(document.getElementById('dd-card').dataset.player)">—</span><span
+              id="dd-star" class="dlh-star" onclick="deckStar(this)" title="Watchlist">&#9734;</span></div>
+            <div class="dlh-meta" id="dd-meta"></div>
+            <div class="dlh-bg" id="dd-bg"></div>
+            <div class="dlh-callrow" id="dd-call"></div>
+            <div id="dd-reach"></div>
+          </div>
+          <button class="dd-close" onclick="closeDeckNow()" style="align-self:flex-start">✕</button>
         </div>
+        <div id="dd-meta-more"></div>
       </div>
-      <button class="dd-close" onclick="closeDeckNow()" style="align-self:flex-start">✕</button>
-      </div>
-      <div id="dd-meta-more" style="margin-top:10px"></div>
       <div id="dd-college"></div>
     </div>
     <div class="dd-body" id="dd-body"></div>
@@ -7739,7 +7772,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-25e</span>
+  <span class="foot-build">2026-10-26a</span>
 </footer>
 
 
