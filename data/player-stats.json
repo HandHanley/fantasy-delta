@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-10-26T14:24:44.986859+00:00",
+  "fetched": "2026-10-27T13:23:37.687571+00:00",
   "seasons": [
     2022,
     2023,
@@ -25570,6 +25570,11 @@
       "behind": "Michael Penix Jr.",
       "source": "depth-chart"
     },
+    "J.J. McCarthy": {
+      "role": "backup",
+      "behind": "Kyler Murray",
+      "source": "depth-chart-absent"
+    },
     "Shedeur Sanders": {
       "role": "backup",
       "behind": "Deshaun Watson",
@@ -25582,8 +25587,8 @@
     },
     "Mac Jones": {
       "role": "backup",
-      "behind": "Brock Purdy",
-      "source": "depth-chart"
+      "behind": "Drake Maye",
+      "source": "depth-chart-absent"
     },
     "Joe Flacco": {
       "role": "backup",
@@ -25642,8 +25647,8 @@
     },
     "Cole Payton": {
       "role": "backup",
-      "behind": "Tanner McKee",
-      "source": "depth-chart"
+      "behind": "Jalen Hurts",
+      "source": "incumbency-2025"
     },
     "Riley Leonard": {
       "role": "backup",
@@ -25652,8 +25657,8 @@
     },
     "Quinn Ewers": {
       "role": "backup",
-      "behind": "Malik Willis",
-      "source": "depth-chart-absent"
+      "behind": "Trevor Lawrence",
+      "source": "depth-chart"
     },
     "Jameis Winston": {
       "role": "backup",
@@ -25827,7 +25832,7 @@
     "source": "depth-chart",
     "reason": "ok",
     "teams": 32,
-    "snapshot": "2026-10-26T14:07:44Z",
+    "snapshot": "2026-10-27T13:08:56Z",
     "in_season": true
   },
   "qb_start_splits": {
@@ -26730,6 +26735,7 @@
     "Xavier Worthy": "KC",
     "Keon Coleman": "BUF",
     "Josh Downs": "IND",
+    "Travis Hunter": "JAC",
     "Brandon Aiyuk": "SF",
     "Jalen Coker": "CAR",
     "Malik Nabers": "NYG",
@@ -26914,7 +26920,6 @@
     "Isaiah Davis": "NYJ",
     "Roman Hemby": "LV",
     "Brashard Smith": "KC",
-    "Najee Harris": "NYG",
     "Malik Davis": "DAL",
     "Kendre Miller": "NO",
     "Jarquez Hunter": "NO",
@@ -26980,6 +26985,7 @@
     "Arian Smith": "NYJ",
     "Jordan Whittington": "LAR",
     "Xavier Restrepo": "TEN",
+    "Joshua Palmer": "BUF",
     "Kameron Johnson": "TB",
     "Tutu Atwell": "LAR",
     "Olamide Zaccheaus": "ATL",
@@ -26993,8 +26999,7 @@
     "De'Zhaun Stribling": "SF",
     "Ja'Kobi Lane": "BAL",
     "J'Mari Taylor": "JAC",
-    "Dont'e Thornton": "LV",
-    "Ja'Lynn Polk": "NO"
+    "Dont'e Thornton": "LV"
   },
   "injury": {
     "Lamar Jackson": {
@@ -27011,7 +27016,7 @@
     },
     "Saquon Barkley": {
       "status": "Questionable",
-      "body_part": "Hamstring"
+      "body_part": "Back"
     },
     "Christian McCaffrey": {
       "status": "Questionable",
@@ -27093,6 +27098,10 @@
       "status": "Out",
       "body_part": "Coach's Decision"
     },
+    "Amon-Ra St. Brown": {
+      "status": "Questionable",
+      "body_part": "Ankle"
+    },
     "Davante Adams": {
       "status": "IR",
       "body_part": "Hamstring"
@@ -27145,6 +27154,10 @@
       "status": "IR",
       "body_part": "Knee - ACL"
     },
+    "Matthew Golden": {
+      "status": "Questionable",
+      "body_part": "Shoulder"
+    },
     "Ricky Pearsall": {
       "status": "IR",
       "body_part": "Knee - PCL"
@@ -27156,6 +27169,10 @@
     "Brandon Aiyuk": {
       "status": "DNR",
       "body_part": "Knee - ACL + MCL"
+    },
+    "Jalen Coker": {
+      "status": "Questionable",
+      "body_part": "Shoulder"
     },
     "Deebo Samuel": {
       "status": "Out",
@@ -27257,10 +27274,6 @@
       "status": "IR",
       "body_part": "Chest"
     },
-    "Eli Stowers": {
-      "status": "IR",
-      "body_part": "Hamstring"
-    },
     "Marlin Klein": {
       "status": "Out",
       "body_part": "Coach's Decision"
@@ -27317,6 +27330,10 @@
       "status": "Out",
       "body_part": "Coach's Decision"
     },
+    "Cole Payton": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
     "Marcus Mariota": {
       "status": "Out",
       "body_part": "Knee - MCL"
@@ -27360,6 +27377,10 @@
     "Malik Davis": {
       "status": "IR",
       "body_part": "Hip"
+    },
+    "Emari Demercado": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
     },
     "Will Shipley": {
       "status": "IR",
@@ -27533,9 +27554,6 @@
     "Jadarian Price": {
       "status": "Inactive"
     },
-    "Eli Stowers": {
-      "status": "Inactive"
-    },
     "Chris Brazzell II": {
       "status": "Inactive"
     },
@@ -27543,9 +27561,6 @@
       "status": "Inactive"
     },
     "Adam Randall": {
-      "status": "Inactive"
-    },
-    "Dillon Gabriel": {
       "status": "Inactive"
     },
     "Trey Lance": {
