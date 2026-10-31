@@ -57,18 +57,12 @@ a:hover{text-decoration:underline}
      aren't aligned"). Paired in rows — Score beside The Read, stats beside Start
      Profile — each pair now shares a top and a bottom. Markup order is unchanged,
      so phones (one column, below 1000px) see exactly what they did. */
+  /* Since 31 Oct 2026 (redesign step 3): DELTA Score beside Start Profile, one row. */
   #tab-nfl > .pp-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"ds read" "stat start";gap:16px;align-items:stretch}
-  .pp-top > .pt-ds{grid-area:ds} .pp-top > .pt-read{grid-area:read}
-  .pp-top > .pt-stat{grid-area:stat} .pp-top > .pt-start{grid-area:start}
+    grid-template-areas:"ds start";gap:16px;align-items:stretch}
+  .pp-top > .pt-ds{grid-area:ds} .pp-top > .pt-start{grid-area:start}
   .pp-top > div{display:flex;flex-direction:column;min-width:0}
   .pp-top > div > *:last-child{flex:1;margin-bottom:0 !important}
-  /* The season stats had a loose label above a bare box, so the box started lower
-     than Start Profile beside it. On desktop the whole block sits in a card, so
-     both cards share a top as well as a bottom. */
-  .pp-top #statline-host{display:flex;flex-direction:column;background:var(--panel);
-    border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-  .pp-top #statline-host > *:last-child{flex:1}
 }
 .foot-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
 .foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
@@ -128,12 +122,22 @@ a:hover{text-decoration:underline}
 .mk-plot{position:relative;touch-action:pan-y;cursor:crosshair}
 .mk-foot{font-size:9.5px;color:var(--fog-2);margin-top:6px}
 .mk-wait{font-size:11px;color:var(--fog-2);padding:18px 0}
-@media(max-width:600px){.gl-tbl{font-size:9px!important}.gl-tbl th,.gl-tbl td{padding:2px 3px!important}
+@media(max-width:600px){
+/* Game log table on phones (31 Oct 2026): 12px like the rest of the page instead of 9px. A running
+   back's twelve columns no longer fit, so the table slides sideways inside its card with the week
+   and opponent pinned on the left and the fantasy points pinned on the right: the two things you
+   read a row by stay in view while the middle scrolls. */
+.gl-tbl,.gl-tbl th,.gl-tbl td{font-size:12px!important}.gl-tbl th,.gl-tbl td{padding:3px 5px!important;white-space:nowrap}
+.gl-tbl th:first-child,.gl-tbl td:first-child{position:sticky;left:0;z-index:1;background:var(--panel);min-width:24px;width:24px;box-sizing:border-box}
+.gl-tbl th:nth-child(2),.gl-tbl td:nth-child(2){position:sticky;left:24px;z-index:1;background:var(--panel);box-shadow:6px 0 6px -6px var(--ink)}
+.gl-tbl th:last-child,.gl-tbl td:last-child:not([colspan]){position:sticky;right:0;z-index:1;background:var(--panel);box-shadow:-6px 0 6px -6px var(--ink)}
 /* game-log view tabs: 6 pills must hold ONE line. At default sizing the strip needs
    ~346px but a 402pt phone only gives 340px of card content, so "Trend" wrapped.
    Tightening type + padding + gap frees ~70px, which keeps all six inline down to
    ~350pt. Container keeps flex-wrap as a safety net below that. */
-.gl-tab{font-size:9.5px!important;padding:3px 5px!important;margin-right:3px!important}}
+/* Since 31 Oct 2026 the views sit in a wrapping grid (delta-engine.js), and the page's five text
+   sizes put them at 12px like every other small label. */
+.gl-tab{font-size:12px!important;padding:4px 10px!important;margin-right:0!important;flex:1 1 22%!important}}   /* four to a row, then three */
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:var(--fog);width:36px;flex-shrink:0}
 .dd-prog-bar{flex:1;height:5px;background:var(--panel);border-radius:3px;overflow:hidden}
@@ -223,7 +227,7 @@ a:hover{text-decoration:underline}
 .dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
 /* The value strip (redesign step 3, 31 Oct 2026): one joined card, three cells, Title Case labels. */
 .dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.dlh-tiles>div{padding:11px 12px;min-width:0}
+.dlh-tiles>div{padding:11px 8px;min-width:0;text-align:center}
 .dlh-tiles>div+div{border-left:1px solid var(--line)}
 .dlh-tiles small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlh-tiles b{display:block;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--paper);margin-top:2px;white-space:nowrap}
@@ -329,6 +333,24 @@ a{color:var(--teal-br)}
 
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <script src="delta-nav.js" defer></script>
+<style id="dl-type">
+/* ── PLAYER PAGE CARDS AND TYPE SCALE (redesign step 3, piece 2, 31 Oct 2026, owner-approved plan) ──
+   Five text sizes instead of eighteen: 12 (notes, small labels), 13 (rows, body), 16 (card titles),
+   20 (key numbers), 28 (the biggest numbers). Card titles in Title Case rather than small capitals.
+   The cards are drawn by many builders, some shared with the pop-up in delta-engine.js and most with
+   sizes written inline, so dlTypeScale() below snaps every size inside the NFL and College tabs to
+   the nearest step after each draw. Charts (SVG) keep their own sizes: they are drawings. */
+.card{border-radius:14px;padding:16px;margin-bottom:12px}
+.card-label,.dd-section-label{font-size:16px;font-weight:800;letter-spacing:0;text-transform:capitalize;color:var(--paper)}
+.card-sub{font-size:12px;color:var(--fog-2)}
+.dlh-chart-h{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#player-content .dd-title{font-size:16px !important;font-weight:800 !important;letter-spacing:0 !important}
+/* The DELTA Score block is built for the pop-up (a section inside a card); here it is a card. */
+/* Season stats sit first, right under the points-per-game chart (owner, 31 Oct); on a wide screen
+   the cells run six to a row. */
+@media(min-width:1000px){#statline-host .sl-grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important}}
+.pt-ds .dd-section,#tab-nfl > .dd-section{background:var(--panel) !important;border-radius:14px !important;padding:16px !important;margin-bottom:12px !important}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -400,7 +422,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31f</span>
+    <span class="foot-build">2026-10-31h</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -455,6 +477,38 @@ function showContent(html) {
   el.innerHTML = html;
 }
 
+/* Five text sizes (redesign step 3, piece 2, 31 Oct 2026). Snaps every text size inside the NFL and
+   College tabs to 12 / 13 / 16 / 20 / 28px, and turns small-capital labels into Title Case. Reads
+   all sizes first, then writes, so an em-sized child is measured before its parent changes.
+   Each element is snapped once (remembered in a WeakSet), so running it again changes nothing. Runs
+   after each draw, and again whenever a card fills in later (game log views, season pills, the
+   market chart, the College tab), via the observer below. SVG text is left alone. */
+// 10px and under (small labels, notes) -> 12; 10.5-14 (rows, body) -> 13; then titles, numbers.
+function dlTypeStep(f){ return f<=10.25?12 : f<=14.5?13 : f<=18.5?16 : f<=23.5?20 : 28; }
+const _dlTyped=new WeakSet();
+function dlTypeScale(){
+  const roots=['tab-nfl','tab-cfb'].map(id=>document.getElementById(id)).filter(Boolean);
+  const plan=[];
+  roots.forEach(r=>r.querySelectorAll('*').forEach(e=>{
+    if(_dlTyped.has(e)||e.closest('svg')||e.tagName==='SCRIPT'||e.tagName==='STYLE') return;
+    if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())) return;
+    const cs=getComputedStyle(e), f=parseFloat(cs.fontSize);
+    if(!f) return;
+    plan.push([e, dlTypeStep(f), cs.textTransform==='uppercase', f]);
+  }));
+  plan.forEach(([e,f,up,was])=>{
+    _dlTyped.add(e);
+    if(Math.abs(f-was)>0.01) e.style.fontSize=f+'px';
+    if(up){ e.style.textTransform='capitalize'; e.style.letterSpacing='normal'; }
+  });
+}
+let _dlTypeQ=false;
+function dlTypeSoon(){ if(_dlTypeQ) return; _dlTypeQ=true; requestAnimationFrame(()=>{ _dlTypeQ=false; dlTypeScale(); }); }
+(function(){
+  const host=document.getElementById('player-content');
+  if(host && window.MutationObserver) new MutationObserver(dlTypeSoon).observe(host,{childList:true,subtree:true});
+})();
+
 function ppgClr(v) {
   return v >= 18 ? 'var(--emerald)' : v >= 14 ? 'var(--sky)' : v >= 10 ? 'var(--topaz)' : v > 0 ? 'var(--coral)' : 'var(--line)';
 }
@@ -483,7 +537,12 @@ function buildHeroHTML(p) {
 }
 /* Keep the header's one-line rules true: after drawing, when the fonts arrive (a fallback font
    measures differently), and when the screen turns or the window resizes. */
-function heroFit(){ dlHdrFit(document.querySelector('.dlh'), 24); }
+function heroFit(){
+  dlHdrFit(document.querySelector('.dlh'), 24);
+  // The season chart's heading stays on one line (owner, 31 Oct): a quarterback's
+  // '2026 Points Per Game · Per Full Start From Here' steps down from 16px until it fits.
+  dlFitOneLine(document.querySelector('.dlh .dlh-chart-h'), 16, 11);
+}
 let _heroFitT = null;
 window.addEventListener('resize', () => { clearTimeout(_heroFitT); _heroFitT = setTimeout(heroFit, 120); });
 
@@ -549,7 +608,7 @@ function buildStatLineHTML(p) {
   const yrs = slYears(p.n);
   if (!yrs.length) return '';
   _slPlayer = p; _slSeason = yrs[yrs.length - 1];
-  return `<div id="statline-host" style="margin-bottom:12px">${statLineInner(p, _slSeason, yrs)}</div>`;
+  return `<div class="card" id="statline-host">${statLineInner(p, _slSeason, yrs)}</div>`;
 }
 let _slPlayer = null, _slSeason = null;
 function statLineSeason(y) {
@@ -570,10 +629,10 @@ function statLineInner(p, season, yrs) {
         + `color:${y === season ? 'var(--teal-br)' : 'var(--fog)'}">${y}</button>`).join('') + `</div>`
     : '';
   // Same label for every year, the season in progress included (owner, 7 Oct).
-  const label = `${season} SEASON`;
+  const label = `${season} Season`;
   // Wraps on a phone: five season pills do not fit beside the title at 390px.
   const head = `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;margin:0 0 8px">`
-    + `<div style="font-size:10px;font-weight:700;letter-spacing:.07em;color:var(--fog-2)">${label}</div>${pills}</div>`;
+    + `<div class="card-label" style="margin-bottom:0">${label}</div>${pills}</div>`;
   if (!s) return head + `<div style="font-size:11.5px;color:var(--fog-2);padding:10px 0">No stats on record for ${season}.</div>`;
   // Position-appropriate stat rows. Rows of three; a rushing row appears for a
   // receiver only when he actually has carries, so the grid never shows dead cells.
@@ -593,7 +652,7 @@ function statLineInner(p, season, yrs) {
     }
   }
   return head
-    + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden">`
+    + `<div class="sl-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden">`
     + cells.map(c => `<div style="background:var(--panel);padding:10px 11px"><div style="font-size:9.5px;color:var(--fog-2);text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
         + `<div style="font-size:16px;font-weight:700;font-family:var(--mono,monospace);margin-top:2px">${c[1]}</div></div>`).join('')
     + `</div>`;
@@ -968,15 +1027,9 @@ function usageRowsHTML(st, isWR, teamGames) {
 // ── Opportunity ───────────────────────────────────────────────────────────────
 function buildOpportunityHTML(p) {
   const oppSc = getOppScore(p.n, p.pos);
-  if (!oppSc) {
-    // QBs (and anyone ungraded for opportunity) still get the scheme context —
-    // popup ⊆ full card: nothing shown in the popup may be missing here.
-    if (p.sys == null) return '';
-    return `<div class="card">
-      <div class="card-label" style="margin-bottom:8px">Offense / Scheme</div>
-      ${buildSchemeHTML(p)}
-    </div>`;
-  }
+  // Playcaller Tendencies is its own card since 31 Oct 2026 (buildPlaycallerCard), so a player
+  // with no opportunity grade (QBs) simply has no Opportunity card.
+  if (!oppSc) return '';
   const st25 = (typeof PLAYER_STATS !== 'undefined') && PLAYER_STATS[p.n] && PLAYER_STATS[p.n]['2025'];
   const isWR = p.pos === 'WR' || p.pos === 'TE';
   // No fallback. oppScoreColor always exists — delta-engine.js loads before this runs —
@@ -1012,9 +1065,20 @@ function buildOpportunityHTML(p) {
     ${usageRows ? '<div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fog);margin:4px 0 2px">2025 Usage</div>' : ''}
     ${usageRows}
     ${usage26}
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--panel)">
-      ${buildSchemeHTML(p)}
-    </div>
+  </div>`;
+}
+
+// ── Playcaller Tendencies (own card, redesign step 3, 31 Oct 2026) ─────────────────
+// Was the bottom of the Opportunity card. Shown for anyone who had it there (every player with
+// an opportunity grade) plus anyone who had the separate Offense / Scheme card (p.sys known), so
+// nothing the pop-up shows goes missing here (popup ⊆ full card).
+function buildPlaycallerCard(p) {
+  if (!getOppScore(p.n, p.pos) && p.sys == null) return '';
+  const fp = (typeof PC_FINGERPRINT !== 'undefined') ? PC_FINGERPRINT[p.t || p.team] : null;
+  return `<div class="card">
+    <div class="card-label" style="margin-bottom:2px">Playcaller Tendencies</div>
+    ${fp && fp.pc ? `<div class="card-sub" style="color:var(--teal-br)">${fp.pc}</div>` : ''}
+    ${buildSchemeHTML(p, {bare: true})}
   </div>`;
 }
 
@@ -1709,7 +1773,7 @@ function buildMarketCardInner(){
     +'<div><div class="card-label" style="margin-bottom:2px">Market Value</div>'
     +'<div class="card-sub">'+(typeof leagueTeams!=='undefined'?leagueTeams:12)+'-team '+(typeof qbFmt!=='undefined'&&qbFmt==='1qb'?'1QB':'superflex')
     +' \u00B7 context only, never part of the DELTA Score</div></div>'
-    +'<div class="mk-pills">'+pill('30','30 Days')+pill('all','Since '+mkMon(all[0].d))+'</div></div>'
+    +'<div class="mk-pills">'+pill('30','30 Days')+pill('all','All')+'</div></div>'
     +'<div class="mk-head"><span class="mk-now">'+mkFmt(at.v)+'</span>'
     +'<span class="mk-chg">'+ar+' '+mkFmt(Math.abs(d2))+' ('+(d2>=0?'+':'\u2212')+Math.abs(p2).toFixed(0)+'%) since '+mkMon(first.d)+'</span>'
     +'<span class="mk-rank">'+(hi_!=null?'<b style="color:var(--paper)">'+mkMon(at.d)+'</b> \u00B7 ':'')+'#'+at.r+' overall</span></div>'
@@ -1782,21 +1846,27 @@ function _renderPlayerPage(p) {
     ${buildHeroHTML(p)}
     <div id="tabstrip">${buildTabsHTML()}</div>
     <div id="tab-nfl"${_TAB==='nfl'?'':' style="display:none"'}>
+    <!-- Card order (redesign step 3, piece 2, 31 Oct 2026): the owner-approved mock's order —
+         DELTA Score, Start Profile, Game Log, Season, Opportunity, Playcaller Tendencies, PPG Trend,
+         Age Curve, Contract, Comparable Players. Cards the mock did not draw keep a place beside
+         their nearest kin: Score Arc and the efficiency/TD cards with the trends, Market Value and
+         The Read with Contract (all three are about price). -->
+    <div class="pp-span">${buildStatLineHTML(p)}</div>
     <div class="pp-span pp-top">
       <div class="pt-ds">${buildDSBreakdownHTML(p)}</div>
-      <div class="pt-stat">${buildStatLineHTML(p)}</div>
-      <div class="pt-read">${buildReadHTML(p)}</div>
       <div class="pt-start">${buildStartProfileCard(p)}</div>
     </div>
     <div class="pp-span">${buildGameLogCard(p)}</div>
     ${buildOpportunityHTML(p)}
+    ${buildPlaycallerCard(p)}
+    ${buildProductionHTML(p)}
     ${buildDSTrajectoryHTML(p)}
     ${buildAgeCurveHTML(p)}
-    ${buildProductionHTML(p)}
-    ${buildTDPctHTML(p)}
     ${buildEPAHTML(p)}
+    ${buildTDPctHTML(p)}
     ${buildContractHTML(p)}
     ${buildMarketShellHTML(p)}
+    ${buildReadHTML(p)}
     ${buildRippleHTML(p)}
     ${buildComparableHTML(p)}
     ${(!hasCollege(p) && isRookie(p)) ? '<div id="combine-slot"></div>' : ''}

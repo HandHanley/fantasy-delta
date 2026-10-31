@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31a';
+const DL_BUILD='2026-10-31c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -389,7 +389,7 @@ function gameLogInner(p){
   const seasons=glSeasons(p);
   const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend'],['eff','Efficiency']];
   const vsw=views.map(v=>
-    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:4px 6px;border-radius:10px;white-space:nowrap;text-align:center;'
+    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;flex:1 1 auto;font-size:10px;font-weight:700;padding:4px 6px;border-radius:10px;white-space:nowrap;text-align:center;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
   ).join('');
   const chips=seasons.map(s=>
@@ -422,7 +422,9 @@ function gameLogInner(p){
   /* Even rows (4 Oct 2026): seven chips wrapped as six plus one alone on a phone. A grid of
      equal cells, at least 64px each, gives four and three on a phone and a single row where
      there is room for all seven. */
-  return '<div class="gl-tabs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:5px;margin:.35rem 0 .3rem">'+vsw+'</div>'
+  // Each pill as wide as its word, rows filled edge to edge (owner, 31 Oct 2026: equal columns let
+  // 'Startability' run past its pill once the player page's text went to 12px).
+  return '<div class="gl-tabs" style="display:flex;flex-wrap:wrap;gap:5px;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +sub
     +((_glView==='trend'||_glView==='eff')?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
     +content;
@@ -6441,12 +6443,12 @@ function buildDSBreakdownHTML(p){
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
     +'<div style="display:flex;align-items:baseline;gap:7px">'
     +'<span style="font-family:Georgia,serif;font-size:20px;color:'+col+'">Δ</span>'
-    +'<span style="font-size:13px;font-weight:600;color:var(--paper);letter-spacing:.02em">DELTA Score</span>'
+    +'<span class="dd-title" style="font-size:13px;font-weight:600;color:var(--paper);letter-spacing:.02em">DELTA Score</span>'
     +(noNFL?'<span style="font-size:9px;color:var(--fog);margin-left:2px">rookie · capped</span>':'')
     +'</div>'
     /* The big number moved to the Score ring at the top of the card (owner, 25 Oct 2026). */
     +'</div>'
-    +'<div style="font-size:9px;color:var(--fog-2);margin-bottom:8px;letter-spacing:.04em">PROVEN VALUE · demonstrated production, age &amp; draft capital — no speculation</div>'
+    +'<div style="font-size:9px;color:var(--fog-2);margin-bottom:8px;letter-spacing:.04em">Proven value · demonstrated production, age &amp; draft capital — no speculation</div>'
     +bar('Age',aW,15)+bar('Production'+multLbl,prodW,45,multTipContent)+bar('Opportunity',oppW,30)+bar('Contract',conPts,10)
     +'</div>';
 }
@@ -6501,7 +6503,10 @@ function explainSystem(p){
   const sty=styleFactors(p.n,pos,p.t);
   return {sys:p.sys,tier,proven,softened:proven&&(e.s<55||e.c<0.70),dSys,dOc,net:dSys+dOc+sty.total,och:!!p.och,oc:p.oc||'',style:sty};
 }
-function buildSchemeHTML(p){
+function buildSchemeHTML(p, opts){
+  // opts.bare (player page, 31 Oct 2026): the card around it carries the title, so the radar and
+  // the no-history note leave out their own "Playcaller Tendencies" heading.
+  var bare = !!(opts && opts.bare);
   // PLAYCALLER TENDENCIES — descriptive only, NO projection values.
   // Reads the CURRENT (2026) playcaller's own 4-year charted fingerprint, following him
   // across teams. First-time playcallers have no charted history -> honest blank, because
@@ -6521,7 +6526,7 @@ function buildSchemeHTML(p){
           + 'Tendencies will populate once the offense has games on tape.';
     }
     return '<div>'
-      +'<div style="font-size:11px;color:var(--paper);font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>'
+      +(bare?'':'<div style="font-size:11px;color:var(--paper);font-weight:700;margin-bottom:4px">Playcaller Tendencies</div>')
       +'<div style="font-size:10px;color:var(--fog);line-height:1.5">'+msg+'</div></div>';
   }
   var d = fp.d, coach = fp.pc, color = 'var(--teal-br)';
@@ -6544,9 +6549,9 @@ function buildSchemeHTML(p){
     labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" font-size="9" text-anchor="'+anc+'" style="fill:var(--fog);font-family:var(--sans,sans-serif)">'+lab+'</text>';
   }
   poly = '<polygon points="'+pts.join(' ')+'" fill-opacity="0.18" stroke-width="2" style="fill:'+color+';stroke:'+color+'"/>';
-  var radar = '<svg viewBox="0 0 300 300" style="width:100%;max-width:300px;display:block;margin:0 auto">'
-    +'<text x="150" y="18" font-size="12.5" font-weight="700" text-anchor="middle" style="fill:var(--paper);font-family:var(--sans,sans-serif)">Playcaller Tendencies</text>'
-    +'<text x="150" y="33" font-size="10.5" font-weight="600" text-anchor="middle" style="fill:'+color+';font-family:var(--sans,sans-serif)">'+coach+'</text>'
+  var radar = '<svg viewBox="'+(bare?'0 28 300 272':'0 0 300 300')+'" style="width:100%;max-width:300px;display:block;margin:0 auto">'
+    +(bare?'':'<text x="150" y="18" font-size="12.5" font-weight="700" text-anchor="middle" style="fill:var(--paper);font-family:var(--sans,sans-serif)">Playcaller Tendencies</text>'
+    +'<text x="150" y="33" font-size="10.5" font-weight="600" text-anchor="middle" style="fill:'+color+';font-family:var(--sans,sans-serif)">'+coach+'</text>')
     +rings+spokes+poly+dots+labels+'</svg>';
 
   // ---- bars: all 8 ----
@@ -6632,9 +6637,9 @@ function buildReadHTML(p){
     +'<span class="dd-section-label" style="margin-bottom:0">The Read</span>'
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
     +'<div style="font-size:12px;color:var(--paper);line-height:1.55;margin-bottom:11px">'+read+'</div>'
-    +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
-    +barFor(rankMv,'var(--violet)','DELTA VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
-    +barFor(rankMk,'var(--sky)','MARKET PRICE',mk.toLocaleString())
+    +barFor(rankDs,proofClr,'DELTA Score (Δ'+ds+')',proof)
+    +barFor(rankMv,'var(--violet)','DELTA Value',(mvv>=19999?'19,999+':mvv.toLocaleString()))
+    +barFor(rankMk,'var(--sky)','Market Price',mk.toLocaleString())
     +'</div>';
 }
 
