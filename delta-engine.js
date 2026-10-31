@@ -5643,7 +5643,7 @@ function dlHdrCallHTML(p){
   // a plain Hold with no copy (owner, 22 Oct).
   // Redesign step 3 (owner, 31 Oct 2026): one pill holding the call and its gap, in Title Case.
   let gap='';
-  if(rookie) gap='No Season On Record Yet';
+  if(rookie) gap='No NFL Season Yet';
   else if(!dlBelowCallFloor(p)){ const pct=Math.round((verdictRatio(p)-1)*100);
     gap=pct===0?'Level With Market':Math.abs(pct)+'% '+(pct>0?'Above':'Below')+' Market'; }
   const title=s=>s.replace(/\b[a-z]/g,c=>c.toUpperCase());
@@ -5662,7 +5662,8 @@ function dlHdrTilesHTML(p){
   const mk=p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0), mv=mvAsset(p), adj=getAdjProj(p);
   // Proj PPG repeats the chart's Rest Of Season on purpose (owner): the big number for a quick look.
   return '<div class="dlh-tiles">'
-    +'<div><small>Market</small><b>'+Math.round(mk).toLocaleString()+'</b></div>'
+    // Market Value beside DELTA Value (owner, 31 Oct): the matching names say compare these two.
+    +'<div><small>Market Value</small><b>'+Math.round(mk).toLocaleString()+'</b></div>'
     +'<div><small>DELTA Value</small><b>'+(mv>=19999?'19,999+':Math.round(mv||0).toLocaleString())+'</b></div>'
     // Plain text since 31 Oct 2026: green next to a Buy pill read as part of the call.
     +'<div><small>'+(dlPerStartQB(p)?'Proj / Start':'Proj PPG')+'</small><b>'
@@ -5716,6 +5717,7 @@ function dlHdrFit(root,nameMax){
   dlFitOneLine(root.querySelector('.dlh-name'),nameMax||24,14);
   dlFitOneLine(root.querySelector('.dlh-meta'),12.5,10);
   dlFitOneLine(root.querySelector('.dlh-bg'),12,10);
+  dlFitOneLine(root.querySelector('.dlh-call'),13,9.5);   // call and gap stay on one line
   const row=root.querySelector('.dlh-lbls');
   if(row) for(const sc of [1,0.95,0.9,0.85]){
     row.style.setProperty('--ls',sc);

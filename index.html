@@ -431,9 +431,10 @@ tr:hover td{background:var(--panel)}
 .dlh-opt{color:var(--sky)}
 .dlh-bg{font-family:var(--sans);font-size:12px;color:var(--fog-2);margin:-3px 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlh-callrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.dlh-call{display:inline-flex;flex-wrap:wrap;align-items:center;column-gap:8px;font-family:var(--sans);font-size:13px;line-height:18px;padding:6px 12px;border-radius:15px;max-width:100%;box-sizing:border-box}
+/* One line always (owner, 31 Oct): dlHdrFit() steps the pill's text down until it fits. */
+.dlh-call{display:inline-flex;flex-wrap:nowrap;align-items:center;column-gap:.6em;font-family:var(--sans);font-size:13px;line-height:18px;padding:6px 12px;border-radius:15px;max-width:100%;min-width:0;overflow:hidden;box-sizing:border-box}
 .dlh-call b{font-weight:800;white-space:nowrap}
-.dlh-gap{font-family:var(--sans);font-size:13px;color:var(--fog);white-space:nowrap}
+.dlh-gap{font-family:var(--sans);font-size:1em;color:var(--fog);white-space:nowrap}
 .dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
 /* The value strip (redesign step 3, 31 Oct 2026): one joined card, three cells, Title Case labels. */
 .dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -1990,6 +1991,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
    This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
    view, on desktop and on phones without a see-through bar, so nothing moves there. */
 html{padding-top:env(safe-area-inset-top,0px)}
+/* Text sizes as written (31 Oct 2026). Without this, iPhone browsers enlarge some small text on
+   their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 </head>
 <body>
@@ -6885,8 +6889,8 @@ function renderDeck(p){
       // Workhorse grade, but scheme context still matters — render a compact
       // Offense / scheme block so System Score etc. aren't lost.
       if (!oppSc || !st25) {
-        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:12px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:12px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
         const qbOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">· ⚠ new OC</span>' : '';
         return '<div class="dd-section">'
@@ -6930,13 +6934,13 @@ function renderDeck(p){
         ? 'font-size:26px;font-weight:700;font-family:var(--geo);color:'+scC+';line-height:1;margin-right:8px'
         : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
       const gms = st25.games;
-      const sampleNote = gms ? '<div style="font-size:9px;color:var(--fog-2);margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
+      const sampleNote = gms ? '<div style="font-size:11px;color:var(--fog-2);margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
       // Folded-in scheme/context (the non-redundant survivors of System & Role):
       // system score, OC-change risk, target-share TREND (direction, not the
       // static share shown above), and format sensitivity.
       const ocLine = p.och ? '<span style="color:var(--topaz)">\u26a0 OC change</span> '+(p.oc||'') : (p.oc||'');
-      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:12px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:12px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
       const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">⚠ new OC</span>' : '';
       const schemeBlock =
         '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid var(--line)">'
@@ -7954,7 +7958,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31g</span>
+  <span class="foot-build">2026-10-31h</span>
 </footer>
 
 
