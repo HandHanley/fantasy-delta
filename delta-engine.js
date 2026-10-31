@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-26a';
+const DL_BUILD='2026-10-31a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5599,7 +5599,7 @@ function projContextHTML(p,linkHtml){
    showed in the old header. The layout, chosen by the owner from mockups:
      the Score ring, big, with the position rank under it; beside it the name (always one line),
      position / team / age / contract, college / draft, the call with its gap to market, and the
-     Owned In line. Below: three tiles (Market, Model, Proj PPG) and the season chart.
+     Owned In line. Below: the value strip (Market, DELTA Value, Proj PPG) and the season chart.
    The styles (.dlh-*) live in each page's own <style>; keep player.html and index.html in step.
    The chart needs the frozen preseason file, so pages draw it after loadFreezeProj(). */
 /* Projection colour, scaled by position so 12 PPG reads good for a TE and middling for a WR.
@@ -5641,12 +5641,14 @@ function dlHdrCallHTML(p){
   const bg=buy?'var(--emerald-tint)':sell?'var(--coral-tint)':'var(--line)';
   // The gap is the call's own ratio (verdictRatio). None under the price floor: there the call is
   // a plain Hold with no copy (owner, 22 Oct).
+  // Redesign step 3 (owner, 31 Oct 2026): one pill holding the call and its gap, in Title Case.
   let gap='';
-  if(rookie) gap='No season on record yet';
+  if(rookie) gap='No NFL Season Yet';
   else if(!dlBelowCallFloor(p)){ const pct=Math.round((verdictRatio(p)-1)*100);
-    gap=pct===0?'Model level with market':Math.abs(pct)+'% '+(pct>0?'above':'below')+' market'; }
-  return '<span class="dlh-call" style="color:'+clr+';background:'+bg+'"'+(rookie?' title="'+DL_ROOKIE_HOLD_TIP+'"':'')+'>'
-    +vt+(rookie?' · rookie':'')+'</span>'+(gap?'<span class="dlh-gap">'+gap+'</span>':'');
+    gap=pct===0?'Level With Market':Math.abs(pct)+'% '+(pct>0?'Above':'Below')+' Market'; }
+  const title=s=>s.replace(/\b[a-z]/g,c=>c.toUpperCase());
+  return '<span class="dlh-call" style="background:'+bg+'"'+(rookie?' title="'+DL_ROOKIE_HOLD_TIP+'"':'')+'>'
+    +'<b style="color:'+clr+'">'+title(vt)+(rookie?' · Rookie':'')+'</b>'+(gap?'<span class="dlh-gap">'+gap+'</span>':'')+'</span>';
 }
 function dlHdrReachHTML(p){
   if(typeof dlLeagueReach!=='function') return '';
@@ -5660,9 +5662,11 @@ function dlHdrTilesHTML(p){
   const mk=p.ktcEff!=null?p.ktcEff:(p.ktc!=null?p.ktc:0), mv=mvAsset(p), adj=getAdjProj(p);
   // Proj PPG repeats the chart's Rest Of Season on purpose (owner): the big number for a quick look.
   return '<div class="dlh-tiles">'
-    +'<div><small>Market</small><b>'+Math.round(mk).toLocaleString()+'</b></div>'
-    +'<div><small>Model</small><b>'+(mv>=19999?'19,999+':Math.round(mv||0).toLocaleString())+'</b></div>'
-    +'<div><small>'+(dlPerStartQB(p)?'Proj / Start':'Proj PPG')+'</small><b style="color:'+projChipColor(adj||0,p.pos||p.p)+'">'
+    // Market Value beside DELTA Value (owner, 31 Oct): the matching names say compare these two.
+    +'<div><small>Market Value</small><b>'+Math.round(mk).toLocaleString()+'</b></div>'
+    +'<div><small>DELTA Value</small><b>'+(mv>=19999?'19,999+':Math.round(mv||0).toLocaleString())+'</b></div>'
+    // Plain text since 31 Oct 2026: green next to a Buy pill read as part of the call.
+    +'<div><small>'+(dlPerStartQB(p)?'Proj / Start':'Proj PPG')+'</small><b>'
     +(adj!=null?adj.toFixed(1):'—')+'</b></div></div>';
 }
 /* The season chart (owner, 25-26 Oct 2026): one number line, Preseason / So Far / Rest Of Season.
@@ -5713,6 +5717,7 @@ function dlHdrFit(root,nameMax){
   dlFitOneLine(root.querySelector('.dlh-name'),nameMax||24,14);
   dlFitOneLine(root.querySelector('.dlh-meta'),12.5,10);
   dlFitOneLine(root.querySelector('.dlh-bg'),12,10);
+  dlFitOneLine(root.querySelector('.dlh-call'),13,9.5);   // call and gap stay on one line
   const row=root.querySelector('.dlh-lbls');
   if(row) for(const sc of [1,0.95,0.9,0.85]){
     row.style.setProperty('--ls',sc);
@@ -6608,8 +6613,8 @@ function buildReadHTML(p){
     clr='var(--fog)';
   } else {
     const pct=Math.round((verdictRatio(p)-1)*100);
-    read=pct===0?'Model Value Level With Market Price'
-      :'Model Value '+Math.abs(pct)+'% '+(pct>0?'Above':'Below')+' Market Price';
+    read=pct===0?'DELTA Value Level With Market Price'
+      :'DELTA Value '+Math.abs(pct)+'% '+(pct>0?'Above':'Below')+' Market Price';
     clr=/buy/.test(verdict)?'var(--emerald)':/sell/.test(verdict)?'var(--coral)':'var(--paper)';
   }
   const N=peers.length||1;
@@ -6628,7 +6633,7 @@ function buildReadHTML(p){
     +'<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:'+clr+'">'+verdict+'</span></div>'
     +'<div style="font-size:12px;color:var(--paper);line-height:1.55;margin-bottom:11px">'+read+'</div>'
     +barFor(rankDs,proofClr,'DELTA SCORE (Δ'+ds+')',proof)
-    +barFor(rankMv,'var(--violet)','MODEL VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
+    +barFor(rankMv,'var(--violet)','DELTA VALUE',(mvv>=19999?'19,999+':mvv.toLocaleString()))
     +barFor(rankMk,'var(--sky)','MARKET PRICE',mk.toLocaleString())
     +'</div>';
 }

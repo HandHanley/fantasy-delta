@@ -6,18 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DELTA — Dynasty Efficiency + Long-Term Analysis</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
-<meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DELTA">
 <meta property="og:title" content="DELTA - Dynasty Fantasy Football Analytics">
-<meta property="og:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta property="og:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta property="og:url" content="https://fantasydelta.com/">
 <meta property="og:image" content="https://fantasydelta.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DELTA - Dynasty Fantasy Football Analytics">
-<meta name="twitter:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta name="twitter:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta name="twitter:image" content="https://fantasydelta.com/og-image.png">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0A0F1A">
@@ -431,13 +431,17 @@ tr:hover td{background:var(--panel)}
 .dlh-opt{color:var(--sky)}
 .dlh-bg{font-family:var(--sans);font-size:12px;color:var(--fog-2);margin:-3px 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlh-callrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.dlh-call{font-family:var(--sans);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.dlh-gap{font-family:var(--sans);font-size:12px;color:var(--fog)}
+/* One line always (owner, 31 Oct): dlHdrFit() steps the pill's text down until it fits. */
+.dlh-call{display:inline-flex;flex-wrap:nowrap;align-items:center;column-gap:.6em;font-family:var(--sans);font-size:13px;line-height:18px;padding:6px 12px;border-radius:15px;max-width:100%;min-width:0;overflow:hidden;box-sizing:border-box}
+.dlh-call b{font-weight:800;white-space:nowrap}
+.dlh-gap{font-family:var(--sans);font-size:1em;color:var(--fog);white-space:nowrap}
 .dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
-.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
-.dlh-tiles>div{background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
-.dlh-tiles small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog-2)}
-.dlh-tiles b{display:block;font-family:var(--mono);font-size:17px;color:var(--paper);margin-top:3px}
+/* The value strip (redesign step 3, 31 Oct 2026): one joined card, three cells, Title Case labels. */
+.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dlh-tiles>div{padding:11px 12px;min-width:0}
+.dlh-tiles>div+div{border-left:1px solid var(--line)}
+.dlh-tiles small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-tiles b{display:block;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--paper);margin-top:2px;white-space:nowrap}
 .dlh-chart{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:11px 14px 10px;background:var(--ink-2)}
 .dlh-chart-h{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog);margin-bottom:4px}
 .dlh-lbls{display:grid;margin:6px 0 2px}
@@ -1987,6 +1991,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
    This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
    view, on desktop and on phones without a see-through bar, so nothing moves there. */
 html{padding-top:env(safe-area-inset-top,0px)}
+/* Text sizes as written (31 Oct 2026). Without this, iPhone browsers enlarge some small text on
+   their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 </head>
 <body>
@@ -2362,7 +2369,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
     age, opportunity and contract.</p>
     <p style="margin-top:9px">There are three numbers and they answer different
     questions. <b>Δ</b> is the player, 0 to 99, ignoring price entirely.
-    <b>Mkt Val</b> is what he currently costs in trades. <b>Mod val</b> is what
+    <b>Mkt Val</b> is what he currently costs in trades. <b>DELTA Val</b> is what
     DELTA thinks he is worth. The gap between the last two is the verdict.</p>
     <p style="margin-top:9px"><b>Buy</b> and <b>sell</b> mean DELTA and the
     market disagree. <b>Strong</b> is reserved for a gap of 25% or more, and is
@@ -2390,7 +2397,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
     </select>
     <select id="sort-proj" aria-label="Sort Projections" onchange="projSort=this.value;projSortDir=1;renderProj()">
       <option value="proj">Proj PPG</option><option value="ceil">Ceiling</option>
-      <option value="floor">Floor</option><option value="gap">Model gap</option>
+      <option value="floor">Floor</option><option value="gap">DELTA Value Gap</option>
     </select>
   </div>
   <div class="dl-b-scroll"><table class="dtable dl-board">
@@ -2438,7 +2445,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
       onclick="var h=document.getElementById('tc-how'),o=h.hasAttribute('hidden');o?h.removeAttribute('hidden'):h.setAttribute('hidden','');this.setAttribute('aria-expanded',o?'true':'false');return false;">How This Is Valued</button>
   </div>
   <div class="how" id="tc-how" hidden>
-    <p>Model value is market price adjusted for age, opportunity, efficiency, quarterback quality and
+    <p>DELTA Value is market price adjusted for age, opportunity, efficiency, quarterback quality and
     offence, then corrected for the model&rsquo;s known pessimism &mdash; a correction that shrinks as
     a player gets more expensive. Picks use raw market value.</p>
     <ul class="how-list">
@@ -2467,7 +2474,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
       <div class="search-wrap"><input id="srch-a" aria-label="Team A: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-a">—</span></div>
-      <div class="total-row model"><span>Model value</span><span id="mod-a">—</span></div>
+      <div class="total-row model"><span>DELTA Value</span><span id="mod-a">—</span></div>
     </div>
     <!-- Side B -->
     <div class="trade-side" id="trade-col-b">
@@ -2475,7 +2482,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
       <div class="search-wrap"><input id="srch-b" aria-label="Team B: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-b">—</span></div>
-      <div class="total-row model"><span>Model value</span><span id="mod-b">—</span></div>
+      <div class="total-row model"><span>DELTA Value</span><span id="mod-b">—</span></div>
     </div>
     <!-- Side C (3-way) -->
     <div class="trade-side" id="trade-col-c" style="display:none">
@@ -2483,7 +2490,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
       <div class="search-wrap"><input id="srch-c" aria-label="Team C: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-c">—</span></div>
-      <div class="total-row model"><span>Model value</span><span id="mod-c">—</span></div>
+      <div class="total-row model"><span>DELTA Value</span><span id="mod-c">—</span></div>
     </div>
     <!-- Side D (4-way) -->
     <div class="trade-side" id="trade-col-d" style="display:none">
@@ -2491,7 +2498,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
       <div class="search-wrap"><input id="srch-d" aria-label="Team D: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
       <div class="total-row"><span>Mkt Val</span><span id="ktc-d">—</span></div>
-      <div class="total-row model"><span>Model value</span><span id="mod-d">—</span></div>
+      <div class="total-row model"><span>DELTA Value</span><span id="mod-d">—</span></div>
     </div>
   </div>
   <div id="verdict-area"></div>
@@ -3034,7 +3041,7 @@ const RK_COLS=[
   tip:"DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
 
- {k:'mv', al:'r', lbl:'Mod val', full:'Model Value', sort:'mv', mob:true,
+ {k:'mv', al:'r', lbl:'DELTA Val', full:'DELTA Value', sort:'mv', mob:true,
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
@@ -3682,7 +3689,7 @@ function recalcTrade(){
       const mvCol=mv>p.k?'var(--emerald)':mv<p.k*0.95?'var(--coral)':'var(--paper)';
       const nameHtml=p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`;
       const valsHtml=`<span style="color:var(--fog)">Mkt ${p.k.toLocaleString()}</span>`
-        +(p.ip?'':`<span title="DELTA model value \u2014 market value adjusted by age, opportunity, EPA, scarcity and format. Green = model sees him above market, coral = below."><span style="color:var(--fog);font-weight:400">Mdl</span> <b style="color:${mvCol}">${mv.toLocaleString()}</b></span>`)
+        +(p.ip?'':`<span title="DELTA Value \u2014 market value adjusted by age, opportunity, EPA, scarcity and format. Green = DELTA Value above market, coral = below."><span style="color:var(--fog);font-weight:400">DELTA</span> <b style="color:${mvCol}">${mv.toLocaleString()}</b></span>`)
         +(p.ip?'':`<span title="DELTA Score — demonstrated dynasty value (0–100)"><span style="color:var(--fog);font-weight:400">DS</span> <span style="font-weight:600;color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></span>`);
       const metaHtml=p.ip?'Pick':`${p.p||p.pos} · ${e?e.team:p.t}${e&&e.ch?' · <span style="color:var(--topaz)">⚠ OC</span>':''} · ${getAdjProj(p).toFixed(1)} PPG`;
       const destSel=tradeTeams>2?`<select onchange="setDest('${s.id}','${p.n.replace(/'/g,"\\'")}',this.value)" title="Which team receives this asset" class="dest-sel" style="font-size:9px;background:var(--ink-2);border:1px solid var(--line);border-radius:4px;color:var(--fog);padding:2px 5px">${SIDES.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}" ${(p.to||defaultDest(s.id))===x.id?'selected':''}>→ ${x.label.replace('Team ','')}</option>`).join('')}</select>`:'';
@@ -4069,7 +4076,7 @@ function cpResultsHtml(){
   const fmtN=v=>v==null?null:Math.round(v).toLocaleString();
   const basics=
      cpRow('Market Value',mkt.map(fmtN),mkt,1,g)
-    +cpRow('Model Value',mv.map(fmtN),mv,1,g)
+    +cpRow('DELTA Value',mv.map(fmtN),mv,1,g)
     +cpRow(onePos?'Rank Among '+onePos+'s · By DELTA Score':'Rank At Position · By DELTA Score',
        rk.map((r,i)=>r?cpEsc(cpPos(ps[i]))+r:null),rk,-1,g)
     +cpRow('Projected PPG · Rest Of Season',pj.map(v=>v==null?null:v.toFixed(1)),pj,1,g)
@@ -4265,7 +4272,7 @@ async function drawCompareImage(){
   const pj=ps.map(p=>{const v=getAdjProj(p);return v>0?v:null;}), age=ps.map(p=>p.a||null), rk=ps.map(dlPosRank);
   const tl=ps.map(seasonTally), so=tl.map(t=>t.g?t.pts/t.g:null);
   rows.push({l:'Market Value',d:mkt.map(fmtN),v:mkt,dir:1});
-  rows.push({l:'Model Value',d:mv.map(fmtN),v:mv,dir:1});
+  rows.push({l:'DELTA Value',d:mv.map(fmtN),v:mv,dir:1});
   rows.push({l:'Rank At Position · By DELTA Score',d:rk.map((r,i)=>r?(ps[i].pos||ps[i].p)+r:'—'),v:rk,dir:-1});
   rows.push({l:'Projected PPG · Rest Of Season',d:pj.map(v=>v==null?'—':v.toFixed(1)),v:pj,dir:1});
   rows.push({l:'Points Per Game · '+SEASON_YEAR+' So Far',d:so.map((v,i)=>v==null?'—':v.toFixed(1)),s:tl.map(t=>t.g?t.g+' game'+(t.g===1?'':'s'):''),v:so,dir:1});
@@ -6395,6 +6402,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-31-look', d:'31 Oct 2026', t:'A New Look On Phones',
+   b:"Phones get a bar along the bottom for NFL, College, My Team and Live, with each section's pages in one row of buttons across the top. Player cards open with a cleaner header, and the number DELTA puts on a player is now called DELTA Value (it was Model), so it sits plainly beside Market Value."},
   {id:'2026-10-31-market', d:'31 Oct 2026', t:'Market', tab:'market',
    b:"NFL has a new first page. Market holds the week's biggest price risers and fallers, plus the players DELTA thinks the market has priced too high or too low, now on phones too. Rankings starts right at the top of the board. Risers show in blue and fallers in purple: a price moving is not a buy or sell call."},
   {id:'2026-10-24-mock', d:'24 Oct 2026', t:'Mock Draft', tab:'mock',
@@ -6882,8 +6891,8 @@ function renderDeck(p){
       // Workhorse grade, but scheme context still matters — render a compact
       // Offense / scheme block so System Score etc. aren't lost.
       if (!oppSc || !st25) {
-        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+        const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:12px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+        const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:12px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
         if (p.sys==null) return '';
         const qbOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">· ⚠ new OC</span>' : '';
         return '<div class="dd-section">'
@@ -6927,13 +6936,13 @@ function renderDeck(p){
         ? 'font-size:26px;font-weight:700;font-family:var(--geo);color:'+scC+';line-height:1;margin-right:8px'
         : 'font-size:24px;color:'+scC+';line-height:1;margin-right:8px';
       const gms = st25.games;
-      const sampleNote = gms ? '<div style="font-size:9px;color:var(--fog-2);margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
+      const sampleNote = gms ? '<div style="font-size:11px;color:var(--fog-2);margin-top:7px">Usage from '+gms+' games · 2025 season</div>' : '';
       // Folded-in scheme/context (the non-redundant survivors of System & Role):
       // system score, OC-change risk, target-share TREND (direction, not the
       // static share shown above), and format sensitivity.
       const ocLine = p.och ? '<span style="color:var(--topaz)">\u26a0 OC change</span> '+(p.oc||'') : (p.oc||'');
-      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:10px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
-      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:10px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
+      const tsLine = (tsDelta!==0 && !isRookieSeason) ? '<div style="margin-top:4px;font-size:12px;color:'+(tsDelta>0?'var(--emerald)':tsDelta<0?'var(--coral)':'var(--fog)')+'">Target share trend: '+(tsDelta>0?'+':'')+(tsDelta*100).toFixed(1)+'% YoY</div>' : '';
+      const fmtLine = fmtSensitivity ? '<div style="margin-top:4px;font-size:12px;color:var(--fog)">Format sensitivity: '+fmtSensitivity+'</div>' : '';
       const skOc = (p.och && !isNFLRookie(p)) ? ' <span style="color:var(--topaz)">⚠ new OC</span>' : '';
       const schemeBlock =
         '<div style="margin-top:9px;padding-top:9px;border-top:0.5px solid var(--line)">'
@@ -7606,7 +7615,7 @@ document.addEventListener('click', function(e) {
         <ul class="about-list">
           <li><b style="color:var(--emerald)">DELTA Score (0–100)</b> — the proprietary grade of <i>demonstrated</i> dynasty value: production history, age vs. positional prime, opportunity, contract. League median ≈ 60.</li>
           <li><b style="color:var(--sky)">Market Value</b> — consensus trade value (FantasyCalc): what the market pays. Used as a yardstick only, never a model input.</li>
-          <li><b style="color:var(--sky)">Model Value</b> — DELTA's own asset price, built from projected production. The gap between Model and Market is the whole product.</li>
+          <li><b style="color:var(--sky)">DELTA Value</b> — DELTA's own asset price, built from projected production. The gap between DELTA Value and Market is the whole product.</li>
           <li><b>Verdict (Buy / Sell / Hold)</b> — how a player's model-vs-market gap compares to other players at a similar price. So "buy" means <i>cheaper than comparable assets cost</i>, not simply cheaper than the league average. A <b>Strong</b> verdict needs a 25% gap in either direction, and is withheld from players who have not yet had 20 games' worth of chances (seasons in the league &times; 17) — a first-year player cannot reach that in a 17-game season.</li>
           <li><b>Proj PPG</b> — DELTA's projected points per game for the upcoming season, at your league's scoring.</li>
           <li><b>Start Profile</b> — per-start outcomes across recent seasons: <b>hit</b> (startable week), <b>elite</b> (slate-breaking week), <b>miss</b> (hurt your lineup). Weekly dependability, not season totals.</li>
@@ -7737,7 +7746,7 @@ document.addEventListener('click', function(e) {
         <button id="slp-pf-mfl" onclick="slpSetConnectPlatform('mfl')" aria-pressed="false" style="font-size:11.5px;font-weight:600;padding:5px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">MFL</button>
       </div>
       <div id="slp-title" style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
-      <div id="slp-intro" style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
+      <div id="slp-intro" style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, DELTA Value vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input type="text" id="slp-input" aria-label="Sleeper Username Or League ID" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')slpConnectClick()">
         <button onclick="slpConnectClick()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
@@ -7825,14 +7834,6 @@ document.addEventListener('click', function(e) {
       </div>
     </div>
   </div>
-  <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Production facts for draft-eligible FBS skill players. <b style="color:var(--paper)">No DELTA Score and no projections</b> —
-    college production is not the same quantity as demonstrated NFL value, and a comparable-looking number would imply a parity
-    that does not exist. Use this to get familiar with players early; draft capital still decides dynasty value.
-      <p style="margin-top:9px">The universe is players clearing a production quota, plus four- and
-      five-star underclassmen. Age is estimated from recruiting class and is absent for players who
-      were not recruited. RecSh is receptions divided by team receptions, standing in for target
-      share because CFBD publishes no target counts. QB rushing is net of sacks, per college
-      convention.</p></div></details>
   <div class="set-row" style="margin-bottom:.5rem" id="cfb-pos-row">
     <button class="set-pill on" data-cpos="ALL" onclick="cfbSetPos('ALL')">All</button>
     <button class="set-pill" data-cpos="QB" onclick="cfbSetPos('QB')">QB</button>
@@ -7951,7 +7952,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31f</span>
+  <span class="foot-build">2026-10-31i</span>
 </footer>
 
 
@@ -9870,7 +9871,7 @@ function slpSetConnectPlatform(pf){
   set('slp-title', mfl?'Connect your MFL league':'Connect your Sleeper league');
   set('slp-intro', mfl
     ?'Paste your MyFantasyLeague league ID (the number after L= in your league\u2019s web address), or the whole address. Public leagues only \u2014 DELTA cannot read a league that needs an MFL login. Read-only.'
-    :'Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, model vs market, and buy/sell tags. Read-only \u2014 DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.');
+    :'Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, DELTA Value vs market, and buy/sell tags. Read-only \u2014 DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.');
   const inp=document.getElementById('slp-input');
   if(inp){ inp.placeholder=mfl?'MFL league ID or address':'Sleeper username or league ID'; inp.value=''; }
   ['sleeper','mfl'].forEach(function(k){
@@ -10731,9 +10732,9 @@ function renderSlpPower(){
 
   const head='<tr>'
     +'<th>Team</th>'
-    +'<th data-tip="Rank by DELTA model value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
-    +'<th class="dl-b-c" data-tip="Rank by DELTA model value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
-    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA\u2019s model. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 green means DELTA ranks them higher than the market does, red means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
+    +'<th data-tip="Rank by DELTA Value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
+    +'<th class="dl-b-c" data-tip="Rank by DELTA Value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
+    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA Value. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 green means DELTA ranks them higher than the market does, red means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
     +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted. Picks from next season are priced Early, Mid or Late by their original owner\u2019s standing in Proj PPG, cut into thirds \u2014 an estimate from today\u2019s rosters, which moves as rosters do. Seasons after that are priced Mid.">Picks</th>'
     +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'
@@ -11642,7 +11643,7 @@ const MT_COLS=[
  {k:'ktc', full:'Market Value', mob:true, th:'<th class="dl-b-r">Mkt Val</th>',
   m:x=>'<td class="dl-b-r dl-mt-num">'+(x.p.ktcEff>0?x.p.ktcEff.toLocaleString():'-')+'</td>',
   u:x=>'<td class="dl-b-r dl-mt-num">'+(x.mkt>0?x.mkt.toLocaleString():'-')+'</td>'},
- {k:'mv', full:'Model Value', th:'<th class="dl-b-r">Mod val</th>',
+ {k:'mv', full:'DELTA Value', th:'<th class="dl-b-r">DELTA Val</th>',
   m:x=>{ const p=x.p, mv=(typeof mvAsset==='function')?mvAsset(p):0;
     const c=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
     return '<td class="dl-b-r dl-mt-num" style="color:'+c+'">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'; },
@@ -12147,7 +12148,7 @@ function renderSlpLists(){
   const thead=function(showOwner){
     return '<thead><tr><th class="dl-lb-ds">\u0394</th><th>Player</th>'
       +(showOwner?'<th>Owned by</th>':'')
-      +'<th class="dl-b-r">Mkt Val</th><th class="col-hide-mobile dl-b-r">Mod val</th>'
+      +'<th class="dl-b-r">Mkt Val</th><th class="col-hide-mobile dl-b-r">DELTA Val</th>'
       +'<th>Tag</th></tr></thead>';
   };
 

@@ -23,7 +23,27 @@
     me:   'M5 20 c0-3.6 3.1-5.6 7-5.6 s7 2 7 5.6 M12 11.6 a3.9 3.9 0 1 0 0-7.8 a3.9 3.9 0 1 0 0 7.8',
     live: 'M3 12.5 h3.6 l2.6 -6.5 l4.4 13 l2.6 -6.5 h4.8'
   };
+  /* NFL and College use the real DELTA marks (owner, 31 Oct 2026): the solid mark for NFL, the
+     outline mark for College, as on the NFL and College pages. Geometry and colours are verbatim
+     from the brand guide and are never recoloured (BRAND.md), which is why they are hex here
+     rather than tokens. Own gradient ids (dlbn-*) so they never clash with a page's copies.
+     The section you are in shows the mark in full colour; the others are dimmed, like the
+     grey line icons for My Team and Live. */
+  var RUNGS = '<g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="3" stroke-linecap="round">'
+    + '<line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g>';
+  var MARK = {
+    nfl: '<defs><linearGradient id="dlbn-l" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>'
+      + '<linearGradient id="dlbn-r" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient></defs>'
+      + '<path d="M64 22 L24 106 L64 106 Z" fill="url(#dlbn-l)"/><path d="M64 22 L64 106 L104 106 Z" fill="url(#dlbn-r)"/>'
+      + '<line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>' + RUNGS,
+    cfb: '<defs><linearGradient id="dlbn-s" x1="0.05" y1="0.25" x2="0.95" y2="0.75"><stop offset="0" stop-color="#2DD4BF"/><stop offset="0.5" stop-color="#14B8A6"/><stop offset="1" stop-color="#047857"/></linearGradient>'
+      + '<linearGradient id="dlbn-c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CCFBF1"/><stop offset="1" stop-color="#2DD4BF"/></linearGradient></defs>'
+      + '<g fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#dlbn-s)" stroke-width="9"/>'
+      + '<path d="M64 22 L24 106 L104 106 Z" stroke="url(#dlbn-c)" stroke-width="2.8" stroke-opacity="0.5"/></g>'
+      + '<line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/>' + RUNGS
+  };
   function svg(k) {
+    if (MARK[k]) return '<svg class="dl-bn-mark" width="28" height="28" viewBox="0 0 128 128" aria-hidden="true">' + MARK[k] + '</svg>';
     return '<svg class="dl-bn-ic" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">'
       + '<path d="' + ICON[k] + '"/></svg>';
   }
@@ -46,6 +66,8 @@
     + '.seg.dl-bnav .seg-btn.on{color:var(--teal-br)}'
     + '.seg.dl-bnav .seg-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:-2px}'
     + '.dl-bn-ic{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}'
+    + '.dl-bn-mark{display:block;margin:-2px 0;transition:opacity .15s,filter .15s}'
+    + '.seg.dl-bnav .seg-btn:not(.on) .dl-bn-mark{opacity:.7;filter:grayscale(1) brightness(1.3)}'
     + '.seg.dl-bnav .seg-btn .dl-nw-dot{top:5px;right:calc(50% - 19px);width:7px;height:7px}'
     /* room for it at the end of every page */
     + '.dl-bn-space{display:block;height:calc(72px + max(0px,calc(env(safe-area-inset-bottom) - 12px)))}'
@@ -67,7 +89,7 @@
   function dressIndex(seg) {
     seg.classList.add('dl-bnav');
     seg.querySelectorAll('.seg-btn').forEach(function (b) {
-      if (b.querySelector('.dl-bn-ic')) return;
+      if (b.querySelector('.dl-bn-ic,.dl-bn-mark')) return;
       var k = b.getAttribute('data-sec') || b.getAttribute('data-arm');
       if (!ICON[k]) return;
       var label = document.createElement('span'); label.className = 'dl-bn-l';

@@ -9,18 +9,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DELTA · Player Profile</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
-<meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DELTA">
 <meta property="og:title" content="DELTA - Player Card">
-<meta property="og:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta property="og:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta property="og:url" content="https://fantasydelta.com/player.html">
 <meta property="og:image" content="https://fantasydelta.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DELTA - Player Card">
-<meta name="twitter:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
+<meta name="twitter:description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between DELTA Value and market price.">
 <meta name="twitter:image" content="https://fantasydelta.com/og-image.png">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0A0F1A">
@@ -216,13 +216,17 @@ a:hover{text-decoration:underline}
 .dlh-opt{color:var(--sky)}
 .dlh-bg{font-family:var(--sans);font-size:12px;color:var(--fog-2);margin:-3px 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlh-callrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.dlh-call{font-family:var(--sans);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.dlh-gap{font-family:var(--sans);font-size:12px;color:var(--fog)}
+/* One line always (owner, 31 Oct): dlHdrFit() steps the pill's text down until it fits. */
+.dlh-call{display:inline-flex;flex-wrap:nowrap;align-items:center;column-gap:.6em;font-family:var(--sans);font-size:13px;line-height:18px;padding:6px 12px;border-radius:15px;max-width:100%;min-width:0;overflow:hidden;box-sizing:border-box}
+.dlh-call b{font-weight:800;white-space:nowrap}
+.dlh-gap{font-family:var(--sans);font-size:1em;color:var(--fog);white-space:nowrap}
 .dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
-.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
-.dlh-tiles>div{background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
-.dlh-tiles small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog-2)}
-.dlh-tiles b{display:block;font-family:var(--mono);font-size:17px;color:var(--paper);margin-top:3px}
+/* The value strip (redesign step 3, 31 Oct 2026): one joined card, three cells, Title Case labels. */
+.dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dlh-tiles>div{padding:11px 12px;min-width:0}
+.dlh-tiles>div+div{border-left:1px solid var(--line)}
+.dlh-tiles small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlh-tiles b{display:block;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--paper);margin-top:2px;white-space:nowrap}
 .dlh-chart{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:11px 14px 10px;background:var(--ink-2)}
 .dlh-chart-h{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--fog);margin-bottom:4px}
 .dlh-lbls{display:grid;margin:6px 0 2px}
@@ -239,8 +243,18 @@ a:hover{text-decoration:underline}
 .dlh-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--fog-2);margin-top:2px}
 .dlh-chart-f{font-family:var(--sans);font-size:11px;color:var(--fog-2);margin-top:4px}
 /* Desktop: identity on the left, tiles and chart on the right, matching the two-column cards below. */
+/* Player page only (redesign step 3, 31 Oct 2026): the identity sits in its own card, and the
+   season chart is a card like the rest of the page, with a Title Case heading. */
+.dlh-top{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px;box-sizing:border-box}
+.dlh-chart{background:var(--panel);border-radius:14px;padding:14px 16px 12px}
+.dlh-chart-h{font-size:15px;letter-spacing:0;text-transform:none;color:var(--paper)}
+.dlh-tiles{border-radius:14px}
+@media(max-width:600px){
+  .dlh-top{gap:14px;padding:16px 14px}
+  .dlh-ringcol .dl-ring{font-size:96px !important}   /* beats dlScoreRing's inline size */
+}
 @media(min-width:1000px){
-  .dlh{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+  .dlh{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}
   .dlh-tiles{margin-top:0}
 }
 /* ===================== DELTA BRAND LAYER ===================== */
@@ -321,6 +335,9 @@ a{color:var(--teal-br)}
    This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
    view, on desktop and on phones without a see-through bar, so nothing moves there. */
 html{padding-top:env(safe-area-inset-top,0px)}
+/* Text sizes as written (31 Oct 2026). Without this, iPhone browsers enlarge some small text on
+   their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 </head>
 <body>
@@ -383,7 +400,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31d</span>
+    <span class="foot-build">2026-10-31f</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1894,7 +1911,7 @@ async function drawPlayerImage(p){
   });
   y+=40;
   // numbers row
-  const cells=[['Market Value',p.ktcEff>0?Math.round(p.ktcEff).toLocaleString():'—',''],['Model Value',mv>0?Math.round(mv).toLocaleString():'—',''],
+  const cells=[['Market Value',p.ktcEff>0?Math.round(p.ktcEff).toLocaleString():'—',''],['DELTA Value',mv>0?Math.round(mv).toLocaleString():'—',''],
     [SEASON_YEAR+' PPG',so!=null?so.toFixed(1):'—',tl.g?tl.g+' game'+(tl.g===1?'':'s'):'']];
   const cw=(W-2*P)/3;
   g.textAlign='left'; g.fillStyle=C.paper; g.font='800 32px '+F.sans; g.fillText('The Numbers',P,y+30); g.fillStyle=C.line; g.fillRect(P,y+60,W-2*P,2); y+=70;

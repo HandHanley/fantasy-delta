@@ -131,6 +131,9 @@ table.dl-board.gl{font-size:11.5px}
    This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
    view, on desktop and on phones without a see-through bar, so nothing moves there. */
 html{padding-top:env(safe-area-inset-top,0px)}
+/* Text sizes as written (31 Oct 2026). Without this, iPhone browsers enlarge some small text on
+   their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 </head>
 <body><div class="wrap">
@@ -183,7 +186,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
          it deliberately did not; that is no longer true. It is paired with the engine
          marker the same way player.html and index.html are, and the two differing is a
          normal state, never coloured as a fault. -->
-    <span class="foot-build">2026-10-31d</span>
+    <span class="foot-build">2026-10-31e</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
