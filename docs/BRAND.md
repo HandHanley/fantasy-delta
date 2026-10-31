@@ -114,7 +114,7 @@ to deep (shadow facet).
 | `--line` | `#1E2A3A` |
 | `--paper` | `#EAF0F4` |
 | `--fog` | `#8CA0B3` |
-| `--fog-2` | `#5C7080` |
+| `--fog-2` | `#748A9C` (was #5C7080 until 31 Oct 2026: it failed the 4.5 to 1 readability bar for small text on cards, 3.4 to 1; #748A9C reads 4.9 on `--panel`, 5.3 on `--ink`) |
 
 ### Signal colors — reserved, never decorative
 These carry meaning everywhere in the product. **Do not reuse them for chrome,
