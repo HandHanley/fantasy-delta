@@ -96,7 +96,10 @@ tr:hover td{background:var(--panel)}
   .dd-name{font-size:15px}
 }
 @media(max-width:400px){
-  .tab{padding:4px 8px;font-size:10px}
+  /* 5px sides and a 2px gap (31 Oct 2026): Market made five NFL tabs, and with Sign in and
+     the gear the strip needed 410px of a 390 phone's 374, so Sign in dropped to a second
+     row. Interim: Step 2 of the redesign replaces this strip on phones with pills. */
+  .tab{padding:4px 5px;font-size:10px}   /* gap: see the rule after .tabs{…gap:4px} below */
   .dd-grid{grid-template-columns:1fr 1fr}
   .dd-stat-val{font-size:14px}
 }
@@ -567,7 +570,7 @@ tr:hover td{background:var(--panel)}
 :root{
   --ink:#0A0F1A; --ink-2:#0D1420; --panel:#111A28; --line:#1E2A3A;
   --teal-br:#2DD4BF; --teal:#14B8A6; --emerald:#10B981; --emerald-dp:#047857;
-  --mint:#CCFBF1; --fog:#8CA0B3; --fog-2:#5C7080; --paper:#EAF0F4;
+  --mint:#CCFBF1; --fog:#8CA0B3; --fog-2:#748A9C; --paper:#EAF0F4;
   --coral:#E05745; --topaz:#E0B34D;
   /* low-alpha signal tints so chips sit correctly on --ink */
   --emerald-tint:rgba(16,185,129,.14); --emerald-bri:#34D399;
@@ -617,6 +620,8 @@ body{font-family:var(--sans);background:var(--ink);color:var(--paper)}
 
 /* ── Tabs → teal pills ─────────────────────────────────────────────────── */
 .tabs{border-bottom:none;gap:4px}
+/* Kept right after its base rule (trap 7): an earlier media query cannot beat it. */
+@media(max-width:400px){.tabs{gap:0}}
 .tab{border:none;border-bottom:none;border-radius:8px;background:transparent;color:var(--fog);
   margin-bottom:0;font-weight:600;transition:background .15s,color .15s}
 .tab:hover{color:var(--paper);background:var(--teal-soft)}
@@ -1110,24 +1115,27 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
    stray line and the uneven gap beside that column. A prefix is not a
    namespace. */
 .dl-rk-move{border-left:2px solid var(--line);padding-left:10px;cursor:pointer}
-.dl-rk-move.up{border-left-color:var(--emerald)}
-.dl-rk-move.dn{border-left-color:var(--coral)}
+/* Sky up, violet down (31 Oct 2026): a price moving is not a buy or sell call, so it never takes
+   emerald or coral (BRAND.md, direction without a call). */
+.dl-rk-move.up{border-left-color:var(--sky)}
+.dl-rk-move.dn{border-left-color:var(--violet)}
 .dl-rk-move:hover .dl-rk-mvp{color:var(--teal-br)}
 .dl-rk-mvp{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dl-rk-mvd{font-family:var(--mono);font-size:13.5px;font-weight:700;margin-top:3px}
-.dl-rk-move.up .dl-rk-mvd{color:var(--emerald)}
-.dl-rk-move.dn .dl-rk-mvd{color:var(--coral)}
+.dl-rk-move.up .dl-rk-mvd{color:var(--sky)}
+.dl-rk-move.dn .dl-rk-mvd{color:var(--violet)}
 .dl-rk-mvm{font-size:10.5px;color:var(--fog-2);margin-top:3px}
 .dl-rk-mvnone{font-size:11.5px;color:var(--fog-2);grid-column:1/-1}
 
 
 @media(max-width:600px){
-  /* The decision on record: a repeat visitor wants what changed since
-     yesterday, not the buy and sell lists they have already read. So the
-     lists go and Market Moves is what stays. The scatter moves behind its
-     own button — 409 points is unreadable at 360px. */
+  /* Until 31 Oct 2026 the lists were hidden on phones, because they sat above the
+     Rankings board and pushed it below the fold. They have their own page (Market)
+     now, so phones show them under Market Moves (owner, 31 Oct). The scatter stays
+     desktop-only — 409 points is unreadable at 360px. */
   .dl-rk-block{display:block}
-  .dl-rk-lists{display:none}
+  .dl-rk-lists{margin-top:1.6rem}
+  .dl-rk-lst+.dl-rk-lst{margin-top:1.6rem}
   .dl-rk-mapcol{display:block}
   .dl-rk-surface{border:0;background:none;flex:none;display:block;border-radius:0}
   .dl-rk-maphd,.dl-rk-mapbody,.dl-rk-readout{display:none}
@@ -1974,6 +1982,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button type="button" class="seg-btn" data-arm="live" onclick="dlNewsSeenArm('live');location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
 <div class="tabs" style="position:relative">
+  <button data-tab="market" data-sec="nfl" class="tab" onclick="showTab('market',this)">Market</button>
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
   <button data-tab="compare" data-sec="nfl" class="tab" onclick="showTab('compare',this)">Compare</button>
   <button data-tab="roles" data-sec="nfl" class="tab" onclick="showTab('roles',this)">Role Changes</button>
@@ -2036,7 +2045,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     <select id="landing-pref" aria-label="Landing Page" class="set-sel" onchange="setLandingPref(this.value)">
       <option value="last">Where I left off</option>
       <optgroup label="NFL">
-        <option value="rankings">Rankings (default)</option>
+        <option value="">NFL, where I left off (default)</option>
+        <option value="market">Market</option>
+        <option value="rankings">Rankings</option>
         <option value="projections">Rankings · Projections</option>
         <option value="epa">Rankings · Efficiency</option>
         <option value="contracts">Rankings · Contracts</option>
@@ -2098,40 +2109,34 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <span class="dl-nw-go">See What Changed &rsaquo;</span>
 </div>
 
-<div id="panel-rankings" class="panel active">
-  <!-- Hidden state stores. pos-rank lives here rather than being replaced outright: the
-       position pills below write to it, and renderRankings() + deckStar() keep reading it
-       exactly as before, so the filter swap is presentation-only. Same pattern the scoring
-       and league selects already use. -->
-  <div style="display:none"><select id="scoring-fmt" aria-label="Scoring Format" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" aria-label="League Size" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" aria-label="QB Format" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select><select id="pos-rank" aria-label="Position" onchange="renderRankings()">
-      <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
-      <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
-    </select></div>
-
+<!-- MARKET (31 Oct 2026, owner): what the market did this week and where DELTA disagrees with it.
+     Moved here, ids unchanged, from the top of #panel-rankings so the board starts at the top of a
+     phone screen. renderRankings() still draws all three (rkBoardData() reads every player, not the
+     filtered board, so the Rankings search and position pills never reach this page). -->
+<div id="panel-market" class="panel">
   <!-- Panel lockup, matching #panel-college. Solid mark here, outline there — that pairing
        already carries the NFL/college distinction, so nothing else has to. -->
   <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:.25rem">
     <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block;margin-top:2px">
       <defs>
-        <linearGradient id="rkL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
-        <linearGradient id="rkR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+        <linearGradient id="mkL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+        <linearGradient id="mkR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
       </defs>
-      <path d="M64 22 L24 106 L64 106 Z" fill="url(#rkL)"/>
-      <path d="M64 22 L64 106 L104 106 Z" fill="url(#rkR)"/>
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#mkL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#mkR)"/>
       <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
       <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
         <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
       </g>
     </svg>
     <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Rankings</div>
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Market</div>
       <!-- Filled by dlLeagueBadge(). The subtitle IS the live league state: these three
            settings rescore all 409 players, so they belong on screen rather than behind
            the gear. College has no equivalent state and keeps a plain subtitle. -->
-      <div id="rk-state" class="rk-state"></div>
+      <div id="mk-state" class="rk-state"></div>
     </div>
   </div>
-
 
   <div class="dl-rk-block">
     <div class="dl-rk-mapcol">
@@ -2178,6 +2183,42 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       </div>
     </div>
   </div>
+</div>
+
+<div id="panel-rankings" class="panel active">
+  <!-- Hidden state stores. pos-rank lives here rather than being replaced outright: the
+       position pills below write to it, and renderRankings() + deckStar() keep reading it
+       exactly as before, so the filter swap is presentation-only. Same pattern the scoring
+       and league selects already use. -->
+  <div style="display:none"><select id="scoring-fmt" aria-label="Scoring Format" onchange="applyScoring()"><option value="half_tep">0.5PPR + TE Prem</option><option value="half">0.5 PPR</option><option value="full_tep">Full PPR + TE Prem</option><option value="full">Full PPR</option><option value="std">Standard</option></select><select id="lg-teams" aria-label="League Size" onchange="applyLeagueSettings('main')"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select><select id="lg-qb" aria-label="QB Format" onchange="applyLeagueSettings('main')"><option value="sf">sf</option><option value="1qb">1qb</option></select><select id="pos-rank" aria-label="Position" onchange="renderRankings()">
+      <option value="ALL">All</option><option value="WL">★ Watchlist</option><option value="QB">QB</option>
+      <option value="WR">WR</option><option value="RB">RB</option><option value="TE">TE</option>
+    </select></div>
+
+  <!-- Panel lockup, matching #panel-college. Solid mark here, outline there — that pairing
+       already carries the NFL/college distinction, so nothing else has to. -->
+  <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:.25rem">
+    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block;margin-top:2px">
+      <defs>
+        <linearGradient id="rkL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+        <linearGradient id="rkR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
+      </defs>
+      <path d="M64 22 L24 106 L64 106 Z" fill="url(#rkL)"/>
+      <path d="M64 22 L64 106 L104 106 Z" fill="url(#rkR)"/>
+      <line x1="64" y1="25" x2="64" y2="106" stroke="#CCFBF1" stroke-width="1.4" stroke-opacity=".42"/>
+      <g stroke="#CCFBF1" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round">
+        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+      </g>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Rankings</div>
+      <!-- Filled by dlLeagueBadge(). The subtitle IS the live league state: these three
+           settings rescore all 409 players, so they belong on screen rather than behind
+           the gear. College has no equivalent state and keeps a plain subtitle. -->
+      <div id="rk-state" class="rk-state"></div>
+    </div>
+  </div>
+
 
   <!-- RANKINGS VIEWS (14 Oct 2026, owner): Projections, EPA Insights and Contracts were separate
        NFL tabs showing this same board with other columns. They are views of it now. A view
@@ -3042,8 +3083,7 @@ function rkPaintView(render){
   const sub=$('rk-vsub'); if(sub){ sub.textContent=V.sub; sub.hidden=!V.sub; }
   const show=(el,on)=>{ if(el) el.style.display=on?'':'none'; };
   const panel=$('panel-rankings'); if(!panel) return;
-  show(panel.querySelector('.dl-rk-block'), dyn);          // price map, lists and Market Moves: the Dynasty board only
-  show($('rk-lists'), dyn);
+  // The price map, lists and Market Moves moved to #panel-market (31 Oct 2026); no view hides them now.
   show(panel.querySelector('.dl-rk-colwrap'), dyn);        // the reader's own columns belong to Dynasty
   show($('rk-ctl'), !ct); show($('rk-pos-row'), !ct);
   const tbl=$('rank-body'); show(tbl&&tbl.closest('.dl-b-scroll'), !ct);
@@ -5626,17 +5666,18 @@ function setTheme(name){
    opens the settings sheet, so nothing that used to be reachable stopped being reachable. */
 const RK_ANCHOR={teams:12,qb:'sf',fmt:'half_tep'};
 function dlLeagueBadge(){
-  const host=document.getElementById('rk-state'); if(!host) return;
+  const hosts=['rk-state','mk-state'].map(id=>document.getElementById(id)).filter(Boolean); if(!hosts.length) return;
   const fmtLbl={half_tep:'0.5 PPR + TE',half:'0.5 PPR',full_tep:'Full PPR + TE',full:'Full PPR',std:'Standard'};
   const chip=(label,key,atAnchor)=>
     '<button class="rk-chip" onclick="rkChipClick(event,\''+key+'\')" title="'+
       (atAnchor?'League setting — tap to open settings':'Tap ✕ to reset to the '+
         (key==='teams'?'12-team':key==='qb'?'superflex':'0.5 PPR + TE')+' anchor')+'">'+
     label+(atAnchor?'':'<span class="x" data-reset="'+key+'">\u2715</span>')+'</button>';
-  host.innerHTML =
+  const html =
       chip(leagueTeams+'-team','teams',leagueTeams===RK_ANCHOR.teams)
     + chip(qbFmt==='sf'?'Superflex':'1-QB','qb',qbFmt===RK_ANCHOR.qb)
     + chip(fmtLbl[scoringFmt]||scoringFmt,'fmt',scoringFmt===RK_ANCHOR.fmt);
+  hosts.forEach(h=>{ h.innerHTML=html; });
 }
 /* One handler for the whole chip: the ✕ resets, anywhere else opens settings. Reading the
    click target rather than nesting a button inside a button, which is invalid HTML. */
@@ -5666,7 +5707,7 @@ function settingsInit(){
   // Ripple Effects left the nav on 10 Oct 2026; a device that chose it as its landing page
   // is moved to Rankings so the setting never shows blank.
   if(dlPref('delta_landing')==='ripple') dlPref('delta_landing','rankings');
-  if(sel) sel.value=dlPref('delta_landing')||'rankings';
+  if(sel) sel.value=dlPref('delta_landing')||'';
   dlThemeApply(dlPref('delta_theme')||'teal');
   const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
   const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
@@ -5710,7 +5751,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // to three rows on a phone and buried College, the one thing no competitor has.
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
-const SEC_TABS={ nfl:['rankings','compare','roles','scorecard','audit'],
+const SEC_TABS={ nfl:['market','rankings','compare','roles','scorecard','audit'],
                  cfb:['college','cfbroles','portal','bigboard'],
                  me: ['myteam','trade','mock','watchlist'] };
 const SEC_OF={};
@@ -5765,7 +5806,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
+const DL_TABS=['market','rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -6152,6 +6193,7 @@ function showTab(id,el,skipSection){
   // below. Without this, arriving on the tab from a deep link or the back
   // button shows whatever happened to be rendered last — which is nothing,
   // if the tab was never opened in this page's lifetime.
+  if(id==='market' && typeof COMP!=='undefined' && COMP.length){ try{ renderRkLists(); rkDrawMap(); rkLoadMoves(); renderRkMovers(); }catch(e){ console.warn('market',e); } }
   if(id==='rankings'){ try{ rkPaintView(false); }catch(e){} }
   if(id==='rankings' && RK_VIEW==='ct'){ try{ renderContracts(); }catch(e){ console.warn('contracts',e); } }
   else if(id==='rankings' && typeof renderRankings==='function'
@@ -6218,6 +6260,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-10-31-market', d:'31 Oct 2026', t:'Market', tab:'market',
+   b:"NFL has a new first page. Market holds the week's biggest price risers and fallers, plus the players DELTA thinks the market has priced too high or too low, now on phones too. Rankings starts right at the top of the board. Risers show in blue and fallers in purple: a price moving is not a buy or sell call."},
   {id:'2026-10-24-mock', d:'24 Oct 2026', t:'Mock Draft', tab:'mock',
    b:"Mock your league's real rookie draft. The order comes from your standings, every traded pick sits with its owner, and the bots pick live, one at a time, leaning toward what each team needs. Tap Draft beside a name when you're on the clock, then share the finished draft as a picture. No league connected? Set it up yourself. My Team &rsaquo; Mock Draft."},
   {id:'2026-10-23-pics', d:'23 Oct 2026', t:'Comparisons And Players As Pictures', tab:'compare',
@@ -7772,7 +7816,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-26a</span>
+  <span class="foot-build">2026-10-31a</span>
 </footer>
 
 
