@@ -1575,7 +1575,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
    Who is on the field more, and less, than early in the season. Facts, never a call:
    the market already prices playing time (backlog 5.3), so no emerald or coral here.
    Direction uses the Scorecard's pair: sky = more, violet = less. Prefixed dl-rc-. */
-.dl-rc-title{font-size:15px;font-weight:800;color:var(--paper)}
+.dl-rc-title{font-size:15px;font-weight:800;color:var(--paper);margin-bottom:10px}
 .dl-rc-intro{font-size:12.5px;color:var(--fog);margin:3px 0 12px;line-height:1.45}
 .dl-rc-chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .dl-rc-chip{font-size:11px;font-weight:700;color:var(--fog);border:1px solid var(--line);border-radius:14px;padding:6px 12px;
@@ -3122,11 +3122,11 @@ function rkEffLoad(){ if(_rkEffAsked) return; _rkEffAsked=true; ensureEfficiency
    ?tab= links, the landing setting, "where I left off", and the back button. */
 const RK_VIEWS={
   dyn: {alias:'rankings',    sub:''},
-  proj:{alias:'projections', sub:'Projected points per game, the range around it, and how often he hits.',
+  proj:{alias:'projections', sub:'',
         d:['ds','n','a','proj','floor','ceil','ci','miss','hit','elite','ktc','mv','pct','tag'], m:['n','proj','floor','ceil','hit','tag'], sort:'proj'},
-  eff: {alias:'epa',         sub:'How much each play is worth, not just the totals.',
+  eff: {alias:'epa',         sub:'',
         d:['ds','ktc','n','a','e25','e24','e23','e22','epaSc','eff','effd','tag'], m:['n','e25','e24','epaSc','tag'], sort:'epaSc'},
-  ct:  {alias:'contracts',   sub:'Salary, years left and walk years, with DELTA\u2019s contract read beside each.'}
+  ct:  {alias:'contracts',   sub:''}
 };
 const RK_VIEW_OF={projections:'proj', epa:'eff', contracts:'ct'};
 let RK_VIEW='dyn', RK_DYN_SORT=null;
@@ -6130,7 +6130,6 @@ function renderRoles(){
       +(L.length>lim?'<button type="button" class="dl-rc-more" onclick="rcShowAll(\''+dir+'\')">Show all '+L.length+'</button>':'')+'</div>';
   };
   root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
-    +'<div class="dl-rc-intro">Who is on the field more, and less, than early in the season.</div>'
     +'<div class="dl-rc-chips" role="group" aria-label="Position">'+['ALL','RB','WR','TE'].map(v=>'<button type="button" class="dl-rc-chip'+(RC_POS===v?' on':'')+'" aria-pressed="'+(RC_POS===v)+'" onclick="rcSetPos(\''+v+'\')">'+(v==='ALL'?'All':v)+'</button>').join('')+'</div>'
     +'<div class="dl-rc-seg" role="tablist" aria-label="Direction">'
       +'<button type="button" role="tab" class="up'+(RC_SIDE==='up'?' on':'')+'" aria-selected="'+(RC_SIDE==='up')+'" onclick="rcSetSide(\'up\')">Playing More \u00b7 '+up.length+'</button>'
@@ -6189,7 +6188,6 @@ function renderCfbRoles(){
     :CRC_POS==='WR'?'For a receiver it is his share of the team\u2019s catches and of its receiving yards; 100 is about a third of the catches and 40% of the yards.'
     :'For a tight end it is his share of the team\u2019s catches and of its receiving yards; 100 is about a quarter of each.';
   root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
-    +'<div class="dl-rc-intro">Who is getting more, and less, of his team\u2019s offense than early in the season.</div>'
     +'<div class="dl-crc-ctl"><div class="dl-crc-pos" role="tablist" aria-label="Position">'+['RB','WR','TE'].map(v=>'<button type="button" role="tab" class="'+(CRC_POS===v?'on':'')+'" aria-selected="'+(CRC_POS===v)+'" onclick="crcSet(\'pos\',\''+v+'\')">'+v+'</button>').join('')+'</div>'
     +'<div class="dl-rc-chips" role="group" aria-label="Schools">'
       +'<button type="button" class="dl-rc-chip'+(CRC_P4?' on':'')+'" aria-pressed="'+CRC_P4+'" onclick="crcSet(\'p4\',true)">Power 4</button>'
@@ -6272,8 +6270,7 @@ function renderScorecard(){
   }).join('');
   const sel=(v,cur,l)=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>';
   root.innerHTML='<div class="dl-sc-head"><div><div class="dl-sc-eyebrow">SCORECARD \u00b7 '+d.season+'</div>'
-    +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'
-    +'<p class="dl-sc-sub">Each projection is graded only on games played after it was made.</p></div>'
+    +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'+'</div>'
     +'<span class="dl-sc-pill">Through Week '+d.through_week+'</span></div>'
     +'<details class="cfb-about"><summary>How It\u2019s Graded</summary><div class="cfb-about-body">'
     +'<b>Average miss</b> is how far each projection was from what the player actually averaged, in points per game; lower is better. '
@@ -7573,7 +7570,7 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div id="panel-rookies" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div></div></div>
 </div>
 
 <!-- About DELTA modal -->
@@ -7768,7 +7765,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-cfbroles" class="panel"><div id="crc-root"></div></div>
 
 <div id="panel-portal" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Who moved, and what changed</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div></div></div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
     <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
@@ -7946,7 +7943,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31c</span>
+  <span class="foot-build">2026-10-31d</span>
 </footer>
 
 
