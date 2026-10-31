@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31d';
+const DL_BUILD='2026-10-31e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6606,13 +6606,14 @@ function buildSchemeHTML(p, opts){
   var span = fp.yrs>0 ? fp.yrs+'-Year Fingerprint' : 'This Season So Far';
 
   return '<div>'
-    +(bare?'<div class="card-sub" style="margin:0 0 10px">'+coach+' · '+span+' · Ranked Against The League</div>':'')
+    // The play-caller's name alone, in the accent, under the card title (owner, 31 Oct 2026).
+    +(bare?'<div class="card-sub" style="margin:0 0 10px;color:var(--teal-br)">'+coach+'</div>':'')
     +(tags?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px">'+tags+'</div>':'')
     +radar
     +'<div style="margin-top:6px">'+rows+'</div>'
     +'<div style="font-size:12px;color:var(--fog-2);padding-top:8px;border-top:1px solid var(--line);line-height:1.5">'
     +'Bar = rank against all 32 play-callers · tick = league middle'
-    +(bare?'':' · '+span+' · '+coach)+' · description only, never part of the DELTA Score</div>'
+    +' · '+span+(bare?'':' · '+coach)+' · description only, never part of the DELTA Score</div>'
     +'</div>';
 }
 // receptions/game with a game-log fallback so RBs outside the pipeline's
