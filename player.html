@@ -422,7 +422,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31h</span>
+    <span class="foot-build">2026-10-31i</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1074,10 +1074,9 @@ function buildOpportunityHTML(p) {
 // nothing the pop-up shows goes missing here (popup ⊆ full card).
 function buildPlaycallerCard(p) {
   if (!getOppScore(p.n, p.pos) && p.sys == null) return '';
-  const fp = (typeof PC_FINGERPRINT !== 'undefined') ? PC_FINGERPRINT[p.t || p.team] : null;
+  // The coach, seasons and 'ranked against the league' line comes from buildSchemeHTML (bare mode).
   return `<div class="card">
     <div class="card-label" style="margin-bottom:2px">Playcaller Tendencies</div>
-    ${fp && fp.pc ? `<div class="card-sub" style="color:var(--teal-br)">${fp.pc}</div>` : ''}
     ${buildSchemeHTML(p, {bare: true})}
   </div>`;
 }
@@ -1167,11 +1166,11 @@ function buildAgeCurveHTML(p) {
 
   return '<div class="card">'
     + '<div class="card-label" style="margin-bottom:2px">Age Curve · ' + pos + '</div>'
-    + '<div class="card-sub" style="margin-bottom:8px">Dynasty value score vs age — green shading marks the prime window</div>'
+    + '<div class="card-sub" style="margin-bottom:8px">Dynasty value score vs age — shading marks the prime window</div>'
     + '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block;overflow:visible">'
 
     // Peak zone shading
-    + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="var(--emerald)" opacity="0.07" rx="2"/>'
+    + '<rect x="' + pkX1.toFixed(1) + '" y="' + padT + '" width="' + (pkX2-pkX1).toFixed(1) + '" height="' + plotH + '" fill="var(--teal-br)" opacity="0.12" rx="2"/>'   // accent, not emerald: emerald means buy (31 Oct 2026)
 
     // Fill under curve
     + '<path d="' + fillPath + '" fill="var(--fog-2)" opacity="0.2"/>'
@@ -1189,7 +1188,7 @@ function buildAgeCurveHTML(p) {
     // Age labels
     + ageLabels
 
-    // No floating "prime" label in SVG — the green shading shows the window; footer note carries the text
+    // No floating "prime" label in SVG — the shading shows the window; footer note carries the text
 
     // Player dot + vertical guide
     + '<line x1="' + mx.toFixed(1) + '" y1="' + (padT+plotH) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>'
