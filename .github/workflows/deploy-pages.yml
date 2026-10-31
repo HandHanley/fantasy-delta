@@ -79,10 +79,11 @@ jobs:
       - name: Stamp script versions
         run: |
           v="$(git rev-parse --short HEAD)"
-          for f in index.html player.html cfb-player.html; do
-            sed -i -E "s#src=\"(delta-engine|delta-sync)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
+          # delta-nav.js (31 Oct 2026, redesign step 2) is the phone bottom bar, loaded by live.html too.
+          for f in index.html player.html cfb-player.html live.html; do
+            sed -i -E "s#src=\"(delta-engine|delta-sync|delta-nav)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
           done
-          grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html
+          grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html live.html || true
 
       # Player link-preview pictures (23 Oct 2026). Draws p/<slug>/card.png for every NFL player
       # with the engine's own drawing code in a real browser, and points each /p/<slug>/ page at
@@ -174,7 +175,7 @@ jobs:
           git diff --name-only -z --no-renames --diff-filter=D "$base" "$br" "${keep[@]}" |
             while IFS= read -r -d '' f; do rm -f "$T/$f"; echo "  removed on the branch: $f"; done
           for f in "$T"/*.html; do
-            sed -i -E "s#src=\"(delta-engine|delta-sync)\.js(\?v=[0-9a-f]+)?\"#src=\"\1.js?v=${v}\"#g" "$f"
+            sed -i -E "s#src=\"(delta-engine|delta-sync|delta-nav)\.js(\?v=[0-9a-f]+)?\"#src=\"\1.js?v=${v}\"#g" "$f"
             sed -i 's#<head>#<head><meta name="robots" content="noindex,nofollow">#' "$f"
           done
           test -s "$T/data/college-board.json"
