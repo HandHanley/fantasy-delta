@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31b';
+const DL_BUILD='2026-10-31c';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -389,7 +389,7 @@ function gameLogInner(p){
   const seasons=glSeasons(p);
   const views=[['table','Schedule'],['start','Startability'],['avg','vs Avg'],['usage','Usage'],['mix','Mix'],['trend','Trend'],['eff','Efficiency']];
   const vsw=views.map(v=>
-    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;font-size:10px;font-weight:700;padding:4px 6px;border-radius:10px;white-space:nowrap;text-align:center;'
+    '<span class="gl-tab" onclick="glSetView(\''+v[0]+'\')" style="cursor:pointer;flex:1 1 auto;font-size:10px;font-weight:700;padding:4px 6px;border-radius:10px;white-space:nowrap;text-align:center;'
     +(v[0]===_glView?'background:var(--teal-br,#2DD4BF);color:var(--ink)':'background:var(--line);color:var(--fog)')+'">'+v[1]+'</span>'
   ).join('');
   const chips=seasons.map(s=>
@@ -422,7 +422,9 @@ function gameLogInner(p){
   /* Even rows (4 Oct 2026): seven chips wrapped as six plus one alone on a phone. A grid of
      equal cells, at least 64px each, gives four and three on a phone and a single row where
      there is room for all seven. */
-  return '<div class="gl-tabs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:5px;margin:.35rem 0 .3rem">'+vsw+'</div>'
+  // Each pill as wide as its word, rows filled edge to edge (owner, 31 Oct 2026: equal columns let
+  // 'Startability' run past its pill once the player page's text went to 12px).
+  return '<div class="gl-tabs" style="display:flex;flex-wrap:wrap;gap:5px;margin:.35rem 0 .3rem">'+vsw+'</div>'
     +sub
     +((_glView==='trend'||_glView==='eff')?'':'<div style="display:flex;flex-wrap:wrap;align-items:center;margin:0 0 .55rem">'+chips+'</div>')
     +content;

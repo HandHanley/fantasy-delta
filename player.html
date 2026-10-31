@@ -137,7 +137,7 @@ a:hover{text-decoration:underline}
    ~350pt. Container keeps flex-wrap as a safety net below that. */
 /* Since 31 Oct 2026 the views sit in a wrapping grid (delta-engine.js), and the page's five text
    sizes put them at 12px like every other small label. */
-.gl-tab{font-size:12px!important;padding:4px 5px!important;margin-right:0!important}}
+.gl-tab{font-size:12px!important;padding:4px 10px!important;margin-right:0!important;flex:1 1 22%!important}}   /* four to a row, then three */
 .dd-prog-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .dd-prog-label{font-size:10px;color:var(--fog);width:36px;flex-shrink:0}
 .dd-prog-bar{flex:1;height:5px;background:var(--panel);border-radius:3px;overflow:hidden}
@@ -227,7 +227,7 @@ a:hover{text-decoration:underline}
 .dlh-reach{font-family:var(--sans);font-size:11.5px;color:var(--fog-2);margin-top:8px}
 /* The value strip (redesign step 3, 31 Oct 2026): one joined card, three cells, Title Case labels. */
 .dlh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--dlh-tile,var(--panel));border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.dlh-tiles>div{padding:11px 12px;min-width:0}
+.dlh-tiles>div{padding:11px 8px;min-width:0;text-align:center}
 .dlh-tiles>div+div{border-left:1px solid var(--line)}
 .dlh-tiles small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dlh-tiles b{display:block;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--paper);margin-top:2px;white-space:nowrap}
@@ -343,9 +343,12 @@ a{color:var(--teal-br)}
 .card{border-radius:14px;padding:16px;margin-bottom:12px}
 .card-label,.dd-section-label{font-size:16px;font-weight:800;letter-spacing:0;text-transform:capitalize;color:var(--paper)}
 .card-sub{font-size:12px;color:var(--fog-2)}
-.dlh-chart-h{font-size:16px}
+.dlh-chart-h{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #player-content .dd-title{font-size:16px !important;font-weight:800 !important;letter-spacing:0 !important}
 /* The DELTA Score block is built for the pop-up (a section inside a card); here it is a card. */
+/* Season stats sit first, right under the points-per-game chart (owner, 31 Oct); on a wide screen
+   the cells run six to a row. */
+@media(min-width:1000px){#statline-host .sl-grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important}}
 .pt-ds .dd-section,#tab-nfl > .dd-section{background:var(--panel) !important;border-radius:14px !important;padding:16px !important;margin-bottom:12px !important}
 </style>
 <style id="dl-safe-top">
@@ -419,7 +422,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31g</span>
+    <span class="foot-build">2026-10-31h</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -534,7 +537,12 @@ function buildHeroHTML(p) {
 }
 /* Keep the header's one-line rules true: after drawing, when the fonts arrive (a fallback font
    measures differently), and when the screen turns or the window resizes. */
-function heroFit(){ dlHdrFit(document.querySelector('.dlh'), 24); }
+function heroFit(){
+  dlHdrFit(document.querySelector('.dlh'), 24);
+  // The season chart's heading stays on one line (owner, 31 Oct): a quarterback's
+  // '2026 Points Per Game · Per Full Start From Here' steps down from 16px until it fits.
+  dlFitOneLine(document.querySelector('.dlh .dlh-chart-h'), 16, 11);
+}
 let _heroFitT = null;
 window.addEventListener('resize', () => { clearTimeout(_heroFitT); _heroFitT = setTimeout(heroFit, 120); });
 
@@ -644,7 +652,7 @@ function statLineInner(p, season, yrs) {
     }
   }
   return head
-    + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden">`
+    + `<div class="sl-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden">`
     + cells.map(c => `<div style="background:var(--panel);padding:10px 11px"><div style="font-size:9.5px;color:var(--fog-2);text-transform:uppercase;letter-spacing:.04em">${c[0]}</div>`
         + `<div style="font-size:16px;font-weight:700;font-family:var(--mono,monospace);margin-top:2px">${c[1]}</div></div>`).join('')
     + `</div>`;
@@ -1765,7 +1773,7 @@ function buildMarketCardInner(){
     +'<div><div class="card-label" style="margin-bottom:2px">Market Value</div>'
     +'<div class="card-sub">'+(typeof leagueTeams!=='undefined'?leagueTeams:12)+'-team '+(typeof qbFmt!=='undefined'&&qbFmt==='1qb'?'1QB':'superflex')
     +' \u00B7 context only, never part of the DELTA Score</div></div>'
-    +'<div class="mk-pills">'+pill('30','30 Days')+pill('all','Since '+mkMon(all[0].d))+'</div></div>'
+    +'<div class="mk-pills">'+pill('30','30 Days')+pill('all','All')+'</div></div>'
     +'<div class="mk-head"><span class="mk-now">'+mkFmt(at.v)+'</span>'
     +'<span class="mk-chg">'+ar+' '+mkFmt(Math.abs(d2))+' ('+(d2>=0?'+':'\u2212')+Math.abs(p2).toFixed(0)+'%) since '+mkMon(first.d)+'</span>'
     +'<span class="mk-rank">'+(hi_!=null?'<b style="color:var(--paper)">'+mkMon(at.d)+'</b> \u00B7 ':'')+'#'+at.r+' overall</span></div>'
@@ -1843,12 +1851,12 @@ function _renderPlayerPage(p) {
          Age Curve, Contract, Comparable Players. Cards the mock did not draw keep a place beside
          their nearest kin: Score Arc and the efficiency/TD cards with the trends, Market Value and
          The Read with Contract (all three are about price). -->
+    <div class="pp-span">${buildStatLineHTML(p)}</div>
     <div class="pp-span pp-top">
       <div class="pt-ds">${buildDSBreakdownHTML(p)}</div>
       <div class="pt-start">${buildStartProfileCard(p)}</div>
     </div>
     <div class="pp-span">${buildGameLogCard(p)}</div>
-    ${buildStatLineHTML(p)}
     ${buildOpportunityHTML(p)}
     ${buildPlaycallerCard(p)}
     ${buildProductionHTML(p)}
