@@ -5890,8 +5890,18 @@ function dlPlaceTopRight(){
   const tr=document.querySelector('.tab-right'), h=document.querySelector('.dl-hdr'), t=document.querySelector('.tabs');
   if(!tr||!h||!t) return;
   const phone=window.matchMedia&&matchMedia('(max-width:759px)').matches;
-  if(phone && tr.parentElement!==h) h.appendChild(tr);
-  else if(!phone && tr.parentElement!==t) t.insertBefore(tr, document.getElementById('settings-pop'));
+  /* The settings panel leaves the strip on phones too (31 Oct 2026). Left inside the sideways-
+     scrolling strip, iPhone Safari clipped it to the strip's height and drew the page over the
+     rest, though it is position:fixed there. On wider screens it goes back to the end of the
+     strip, where it hangs under the gear (position:absolute). */
+  const pop=document.getElementById('settings-pop');
+  if(phone){
+    if(tr.parentElement!==h) h.appendChild(tr);
+    if(pop && pop.parentElement!==document.body) document.body.appendChild(pop);
+  } else {
+    if(pop && pop.parentElement!==t) t.appendChild(pop);
+    if(tr.parentElement!==t) t.insertBefore(tr, pop);
+  }
 }
 function dlTabIntoView(el){
   try{
@@ -7952,7 +7962,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31i</span>
+  <span class="foot-build">2026-10-31j</span>
 </footer>
 
 
