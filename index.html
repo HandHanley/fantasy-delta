@@ -548,6 +548,7 @@ tr:hover td{background:var(--panel)}
 .about-tab:hover{color:var(--fog)}
 .about-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1001;
   display:flex;align-items:center;justify-content:center;padding:1.25rem;
+  padding-top:max(1.25rem,env(safe-area-inset-top,0px));
   opacity:0;transition:opacity .2s;pointer-events:none;overflow-y:auto}
 .about-overlay.open{opacity:1;pointer-events:auto}
 .about-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
@@ -1133,7 +1134,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
      Rankings board and pushed it below the fold. They have their own page (Market)
      now, so phones show them under Market Moves (owner, 31 Oct). The scatter stays
      desktop-only — 409 points is unreadable at 360px. */
-  .dl-rk-block{display:block}
+  .dl-rk-block{display:block;margin-top:1.1rem}   /* breathing room under the league chips (owner, 31 Oct) */
   .dl-rk-lists{margin-top:1.6rem}
   .dl-rk-lst+.dl-rk-lst{margin-top:1.6rem}
   .dl-rk-mapcol{display:block}
@@ -1341,7 +1342,7 @@ svg.dl-rk-map{display:block;width:100%;height:auto}
    desktop screen it sat on the bottom edge. Centred here, and a bottom sheet
    only where that makes sense — the same shape .dd-overlay already uses. */
 .dl-pr-modal{position:fixed;inset:0;background:rgba(0,0,0,.67);z-index:9999;
-  display:flex;align-items:center;justify-content:center;padding:1rem}
+  display:flex;align-items:center;justify-content:center;padding:1rem;padding-top:max(1rem,env(safe-area-inset-top,0px))}
 .dl-pr-sheet{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;
   padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
 @media(max-width:600px){
@@ -1969,8 +1970,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   .tab-right .signin-tab{height:44px;padding:0 10px !important;font-family:var(--sans);font-size:14px;font-weight:700;
     background:none;color:var(--teal-br)}
   body.dl-search-open .dl-srch-btn{color:var(--teal-br)}
-  #settings-pop{position:fixed !important;top:calc(.5rem + 50px) !important;left:max(.5rem,env(safe-area-inset-left)) !important;
-    right:max(.5rem,env(safe-area-inset-right)) !important;min-width:0 !important;max-height:calc(100vh - 150px);overflow-y:auto}
+  #settings-pop{position:fixed !important;top:calc(.5rem + 50px + env(safe-area-inset-top,0px)) !important;left:max(.5rem,env(safe-area-inset-left)) !important;
+    right:max(.5rem,env(safe-area-inset-right)) !important;min-width:0 !important;max-height:calc(100vh - 150px - env(safe-area-inset-top,0px));overflow-y:auto}
   /* Panel headings drop the 46px logo: the logo now sits once, top left. Titles stay. */
   .panel svg[width="46"][viewBox="0 0 128 128"]{display:none !important}   /* beats their inline display:block */
   /* Things pinned to the bottom of the screen sit above the bar. */
@@ -1980,6 +1981,13 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 }
 </style>
 <script src="delta-nav.js" defer></script>
+<style id="dl-safe-top">
+/* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
+   app's see-through status bar (black-translucent) let the page run up under the clock and battery.
+   This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
+   view, on desktop and on phones without a see-through bar, so nothing moves there. */
+html{padding-top:env(safe-area-inset-top,0px)}
+</style>
 </head>
 <body>
 <div class="dl-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
@@ -7943,7 +7951,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31d</span>
+  <span class="foot-build">2026-10-31e</span>
 </footer>
 
 

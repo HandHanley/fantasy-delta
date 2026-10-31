@@ -125,6 +125,13 @@ table.dl-board.gl{font-size:11.5px}
 .foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
 #err{color:var(--fog);font-size:14px;padding:40px 0;text-align:center}
 </style><script src="delta-nav.js" defer></script>
+<style id="dl-safe-top">
+/* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
+   app's see-through status bar (black-translucent) let the page run up under the clock and battery.
+   This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
+   view, on desktop and on phones without a see-through bar, so nothing moves there. */
+html{padding-top:env(safe-area-inset-top,0px)}
+</style>
 </head>
 <body><div class="wrap">
 <nav class="nav">
@@ -176,7 +183,7 @@ table.dl-board.gl{font-size:11.5px}
          it deliberately did not; that is no longer true. It is paired with the engine
          marker the same way player.html and index.html are, and the two differing is a
          normal state, never coloured as a fault. -->
-    <span class="foot-build">2026-10-31b</span>
+    <span class="foot-build">2026-10-31c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>

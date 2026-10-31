@@ -315,6 +315,13 @@ a{color:var(--teal-br)}
 
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <script src="delta-nav.js" defer></script>
+<style id="dl-safe-top">
+/* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
+   app's see-through status bar (black-translucent) let the page run up under the clock and battery.
+   This pushes the page down by exactly the status bar's height. It is zero in Safari's normal
+   view, on desktop and on phones without a see-through bar, so nothing moves there. */
+html{padding-top:env(safe-area-inset-top,0px)}
+</style>
 </head>
 <body>
 <div class="page">
@@ -376,7 +383,7 @@ a{color:var(--teal-br)}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31b</span>
+    <span class="foot-build">2026-10-31c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
