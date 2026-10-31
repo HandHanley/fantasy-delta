@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31c';
+const DL_BUILD='2026-10-31e';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6532,9 +6532,9 @@ function buildSchemeHTML(p, opts){
   var d = fp.d, coach = fp.pc, color = 'var(--teal-br)';
 
   // ---- radar: 6 axes ----
-  var AX = [['Motion','moti'],['Play-action','pa_p'],['PROE','proe'],
-            ['12-pers','te2'],['Two-back','two_'],['Pace','play']];
-  var n = AX.length, cx = 150, cy = 158, R = 92;
+  var AX = [['Motion','moti'],['Play-Action','pa_p'],['PROE','proe'],
+            ['2-TE Sets','te2'],['Two-Back','two_'],['Pace','play']];
+  var n = AX.length, cx = 150, cy = 158, R = 84;
   function xy(i, r){ var a = -Math.PI/2 + 2*Math.PI*i/n; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
   var rings = '', spokes = '', poly = '', dots = '', labels = '';
   [33,66,100].forEach(function(g){ rings += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R*g/100)+'" fill="none" style="stroke:var(--line)"/>'; });
@@ -6546,7 +6546,7 @@ function buildSchemeHTML(p, opts){
     dots += '<circle cx="'+v[0].toFixed(1)+'" cy="'+v[1].toFixed(1)+'" r="2.5" style="fill:'+color+'"/>';
     var gap = (i===0)?24:15, lp = xy(i, R+gap);
     var anc = Math.abs(lp[0]-cx)<15?'middle':(lp[0]>cx?'start':'end');
-    labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" font-size="9" text-anchor="'+anc+'" style="fill:var(--fog);font-family:var(--sans,sans-serif)">'+lab+'</text>';
+    labels += '<text x="'+lp[0].toFixed(0)+'" y="'+lp[1].toFixed(0)+'" font-size="11" font-weight="600" text-anchor="'+anc+'" style="fill:var(--fog);font-family:var(--sans,sans-serif)">'+lab+'</text>';
   }
   poly = '<polygon points="'+pts.join(' ')+'" fill-opacity="0.18" stroke-width="2" style="fill:'+color+';stroke:'+color+'"/>';
   var radar = '<svg viewBox="'+(bare?'0 28 300 272':'0 0 300 300')+'" style="width:100%;max-width:300px;display:block;margin:0 auto">'
@@ -6554,34 +6554,66 @@ function buildSchemeHTML(p, opts){
     +'<text x="150" y="33" font-size="10.5" font-weight="600" text-anchor="middle" style="fill:'+color+';font-family:var(--sans,sans-serif)">'+coach+'</text>')
     +rings+spokes+poly+dots+labels+'</svg>';
 
-  // ---- bars: all 8 ----
-  var BARS = [
-    ['Pre-snap motion','moti','How often a man is moving at the snap — used to read coverage and create leverage'],
-    ['Play-action','pa_p','Share of dropbacks with a fake handoff to freeze the defense'],
-    ['Pass rate over expected (PROE)','proe','Positive = passes more than a typical team would in the same spots'],
-    ['12-personnel (2-TE)','te2','How often two tight ends are on the field — heavier looks that squeeze the WR3'],
-    ['Two-back sets','two_','How often two running backs share the field — a run-game / play-action tell'],
-    ['Pace (plays/game)','play','Total offensive snaps per game — higher = faster, more volume for everyone'],
-    ['11-personnel pass lean','pass','Overall pass rate — how pass-heavy the offense is'],
-    ['Air yards (aDOT)','adot','Average depth of target — how far downfield the ball travels on throws']
+  // ---- rows: all 8, most unusual first (redesign step 3, piece 3, 31 Oct 2026; owner-approved mock) ----
+  // Each row: the measure, a tier word, the value, and a bar for his rank against all 32 play-callers,
+  // with a tick at the league middle. The one-line explanations moved into the label's hover text.
+  // Up to two "stands out" tags for anything in the league's top or bottom three (Decision 6).
+  // Tier words in sky (high) / violet (low): direction without a call, per BRAND.md.
+  var ROWS = [
+    ['moti','Pre-Snap Motion','How often a man is moving at the snap, used to read coverage and create leverage',
+      ['Most Pre-Snap Motion In The NFL','Among The Most Pre-Snap Motion','Least Pre-Snap Motion In The NFL','Among The Least Pre-Snap Motion']],
+    ['pa_p','Play-Action','Share of dropbacks with a fake handoff to freeze the defense',
+      ['Most Play-Action In The NFL','Among The Most Play-Action','Least Play-Action In The NFL','Among The Least Play-Action']],
+    ['proe','Pass Rate Over Expected','Positive means he passes more than a typical team would in the same spots',
+      ['Most Pass-Happy In The NFL','Among The Most Pass-Happy','Most Run-Leaning In The NFL','Among The Most Run-Leaning']],
+    ['te2','Two-Tight-End Sets','How often two tight ends are on the field: heavier looks that squeeze the WR3',
+      ['Most Two-Tight-End Sets In The NFL','Among The Most Two-Tight-End Sets','Fewest Two-Tight-End Sets In The NFL','Among The Fewest Two-Tight-End Sets']],
+    ['two_','Two-Back Sets','How often two running backs share the field: a run-game and play-action tell',
+      ['Most Two-Back Sets In The NFL','Among The Most Two-Back Sets','Fewest Two-Back Sets In The NFL','Among The Fewest Two-Back Sets']],
+    ['play','Pace','Offensive snaps per game: higher is faster, with more volume for everyone',
+      ['Fastest Pace In The NFL','Among The Fastest Paces','Slowest Pace In The NFL','Among The Slowest Paces']],
+    ['pass','Pass Rate','Overall pass rate: how pass-heavy the offense is',
+      ['Highest Pass Rate In The NFL','Among The Highest Pass Rates','Lowest Pass Rate In The NFL','Among The Lowest Pass Rates']],
+    ['adot','Throw Depth (aDOT)','Average depth of target: how far downfield the ball travels',
+      ['Deepest Throws In The NFL','Among The Deepest Throws','Shortest Throws In The NFL','Among The Shortest Throws']]
   ];
-  function bar(label, cell, hint){
-    if(!cell) return '';
-    var pc = cell.p, v = cell.v, clr = pc>=67?'var(--teal-br)':pc>=34?'var(--sky)':'var(--fog-2)';
-    var tier = pc>=80?'elite':pc>=60?'high':pc>=40?'average':pc>=20?'low':'rare';
-    return '<div style="margin:8px 0">'
-      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">'
-      +'<span style="font-size:10px;color:var(--fog)">'+label+'</span>'
-      +'<span style="font-size:10px;color:'+clr+';font-family:var(--mono,monospace);font-weight:600">'+v+'<span style="color:var(--fog-2);font-weight:400"> · '+tier+'</span></span></div>'
-      +'<div style="height:4px;border-radius:3px;background:var(--line)"><div style="height:100%;width:'+pc+'%;background:'+clr+';border-radius:3px"></div></div>'
-      +(hint?'<div style="font-size:8.5px;color:var(--fog-2);margin-top:2px">'+hint+'</div>':'')+'</div>';
-  }
-  var bars = BARS.map(function(b){ return bar(b[0], d[b[1]], b[2]); }).join('');
+  var esc = function(t){ return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
+  var tierOf = function(pc){
+    return pc>=80?['Very High','var(--sky)']:pc>=60?['High','var(--sky)']:pc>=40?['Average','var(--fog)']
+      :pc>=20?['Low','var(--violet)']:['Very Low','var(--violet)'];
+  };
+  var have = ROWS.filter(function(r){ return d[r[0]]; });
+  // Percentiles are rank / 31 across the 32 play-callers (scripts/generate-style-fingerprint.py), so
+  // the top three are 94 and up and the bottom three 6 and below.
+  var tags = have.filter(function(r){ var pc=d[r[0]].p; return pc>=94 || pc<=6; })
+    .sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).slice(0,2)
+    .map(function(r){ var pc=d[r[0]].p, t=r[3];
+      var txt = pc===100?t[0]:pc>=94?t[1]:pc===0?t[2]:t[3];
+      return '<span class="pc-tag" style="display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:14px;'
+        +'font-size:12px;font-weight:700;white-space:nowrap;background:var(--teal-tint);color:var(--teal-br)">'+txt+'</span>'; }).join('');
+  var rows = have.slice().sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).map(function(r){
+    var cell = d[r[0]], pc = cell.p, tr = tierOf(pc);
+    return '<div style="padding:10px 0;border-top:1px solid var(--line)">'
+      +'<div style="display:flex;align-items:baseline;gap:8px">'
+      +'<span title="'+esc(r[2])+'" style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--paper)">'+r[1]+'</span>'
+      +'<span style="font-size:12px;font-weight:700;color:'+tr[1]+';white-space:nowrap">'+tr[0]+'</span>'
+      +'<span style="min-width:44px;text-align:right;font-family:var(--mono,monospace);font-size:13px;color:var(--paper)">'+cell.v+'</span></div>'
+      +'<div style="position:relative;margin-top:7px;height:6px;border-radius:3px;background:var(--line)">'
+      +'<div style="height:100%;width:'+Math.max(3,pc)+'%;border-radius:3px;background:var(--teal-br)"></div>'
+      +'<div style="position:absolute;left:50%;top:-3px;width:2px;height:12px;margin-left:-1px;border-radius:1px;background:var(--fog);opacity:.55"></div>'
+      +'</div></div>';
+  }).join('');
+  var span = fp.yrs>0 ? fp.yrs+'-Year Fingerprint' : 'This Season So Far';
 
-  return '<div>'+radar
-    +'<div style="margin-top:6px">'+bars+'</div>'
-    +'<div style="font-size:8.5px;color:var(--fog-2);text-align:center;margin-top:8px">'
-    + fp.yrs + '-year fingerprint · ' + coach + ' · ranked vs league · descriptive, not a projection input</div>'
+  return '<div>'
+    // The play-caller's name alone, in the accent, under the card title (owner, 31 Oct 2026).
+    +(bare?'<div class="card-sub" style="margin:0 0 10px;color:var(--teal-br)">'+coach+'</div>':'')
+    +(tags?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px">'+tags+'</div>':'')
+    +radar
+    +'<div style="margin-top:6px">'+rows+'</div>'
+    +'<div style="font-size:12px;color:var(--fog-2);padding-top:8px;border-top:1px solid var(--line);line-height:1.5">'
+    +'Bar = rank against all 32 play-callers · tick = league middle'
+    +' · '+span+(bare?'':' · '+coach)+' · description only, never part of the DELTA Score</div>'
     +'</div>';
 }
 // receptions/game with a game-log fallback so RBs outside the pipeline's
