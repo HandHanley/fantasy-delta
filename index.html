@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DELTA — Dynasty Efficiency + Long-Term Analysis</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZkwiIHgxPSIwIiB5MT0iMCIgeDI9Ii4zNSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJERDRCRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0QjhBNiIvPjwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZSIiB4MT0iLjU1IiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMEI5ODEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNDc4NTciLz48L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNjQgMjAgTDIyIDEwOCBMNjQgMTA4IFoiIGZpbGw9InVybCgjZkwpIi8+CiAgPHBhdGggZD0iTTY0IDIwIEw2NCAxMDggTDEwNiAxMDggWiIgZmlsbD0idXJsKCNmUikiLz4KICA8bGluZSB4MT0iNjQiIHkxPSIyMyIgeDI9IjY0IiB5Mj0iMTA4IiBzdHJva2U9IiNDQ0ZCRjEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLW9wYWNpdHk9Ii41Ii8+Cjwvc3ZnPgo=">
 <meta name="description" content="Market-blind dynasty fantasy football analytics. DELTA scores what players have demonstrated - production, age, opportunity, contract - and finds the gaps between model value and market price.">
@@ -1575,7 +1575,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
    Who is on the field more, and less, than early in the season. Facts, never a call:
    the market already prices playing time (backlog 5.3), so no emerald or coral here.
    Direction uses the Scorecard's pair: sky = more, violet = less. Prefixed dl-rc-. */
-.dl-rc-title{font-size:15px;font-weight:800;color:var(--paper)}
+.dl-rc-title{font-size:15px;font-weight:800;color:var(--paper);margin-bottom:10px}
 .dl-rc-intro{font-size:12.5px;color:var(--fog);margin:3px 0 12px;line-height:1.45}
 .dl-rc-chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .dl-rc-chip{font-size:11px;font-weight:700;color:var(--fog);border:1px solid var(--line);border-radius:14px;padding:6px 12px;
@@ -1916,9 +1916,73 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 </script>
 
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style id="dl-phone-nav">
+/* ── REDESIGN STEP 2: PHONE NAVIGATION (31 Oct 2026, owner-approved plan) ────────────────
+   Below 760px, the width the .seg / .eyebrow switch already uses. Desktop is untouched.
+   - NFL / College / My Team / Live: the .seg switcher, pinned to the bottom by delta-nav.js
+     (one file styles it here and adds the same bar to player, college card and Live pages).
+   - A section's pages: the .tabs strip as one row of pills that scrolls sideways, under the
+     section's name (#dl-sec-h, set by setSection()).
+   - Search, Sign in and the gear: top right beside a small logo. Search opens the field.
+   This block sits after every other stylesheet on purpose (trap 7: an earlier rule loses). */
+.dl-sec-h{display:none}
+.dl-srch-btn{display:none}
+@media (max-width:759px){
+  body{padding-left:max(.5rem,env(safe-area-inset-left));padding-right:max(.5rem,env(safe-area-inset-right))}
+  .dl-hdr{min-height:44px;align-items:center !important;flex-wrap:nowrap !important;margin-bottom:.5rem !important}
+  .dl-hdr .dl-head{gap:9px}
+  .dl-hdr .dl-mark{width:28px;height:28px}
+  .dl-hdr .dl-word{font-size:18px;letter-spacing:4px}
+  .dl-hdr .dl-sub{display:none}
+  .dl-search-row{display:none !important}
+  body.dl-search-open .dl-search-row{display:flex !important;margin:.3rem 0 .6rem !important}
+  body.dl-search-open .dl-search-row>div{max-width:none !important}
+  .tabs{position:static !important;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:8px !important;
+    margin:0 calc(-1 * max(.5rem,env(safe-area-inset-right))) 1rem calc(-1 * max(.5rem,env(safe-area-inset-left)));
+    padding:2px max(.5rem,env(safe-area-inset-right)) 2px max(.5rem,env(safe-area-inset-left));
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs .tab[data-tab]{flex-shrink:0;height:36px;padding:0 15px !important;border-radius:18px;font-family:var(--sans);
+    font-size:14px;font-weight:700;background:var(--panel);color:var(--fog);white-space:nowrap}
+  .tabs .tab[data-tab].active{background:var(--paper);color:var(--ink)}
+  .tabs .tab[data-tab]:hover:not(.active){color:var(--paper);background:var(--panel)}
+  /* More pages off screen: a fade plus a round arrow you can tap, at whichever edge has more
+     (owner, 31 Oct: the fade alone did not say "scroll"). They live in a wrapper around the strip
+     (dlTabsWrap), not inside the scroller. */
+  .dl-tabs-wrap{position:relative}
+  .dl-tabs-more{position:absolute;top:2px;height:36px;width:58px;display:none;align-items:center;border:0;padding:0;
+    cursor:pointer;z-index:2;color:var(--paper)}
+  .dl-tabs-more.r{right:calc(-1 * max(.5rem,env(safe-area-inset-right)));justify-content:flex-end;
+    padding-right:max(.5rem,env(safe-area-inset-right));background:linear-gradient(90deg,transparent,var(--ink) 55%)}
+  .dl-tabs-more.l{left:calc(-1 * max(.5rem,env(safe-area-inset-left)));justify-content:flex-start;
+    padding-left:max(.5rem,env(safe-area-inset-left));background:linear-gradient(270deg,transparent,var(--ink) 55%)}
+  .dl-tabs-more span{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;
+    background:var(--panel);border:1px solid var(--line)}
+  .dl-tabs-wrap.more-r .dl-tabs-more.r,.dl-tabs-wrap.more-l .dl-tabs-more.l{display:flex}
+  /* Search, Sign in and the gear: on phones dlPlaceTopRight() moves the group INTO the header,
+     beside the logo. (The first version left it inside the scrolling strip and positioned it out
+     to the corner; it showed in Chrome and not on the owner's iPhone, 31 Oct. A real move needs
+     no escaping a scroller in any browser.) */
+  .dl-hdr .tab-right{position:static;margin:0 0 0 auto;gap:0;height:44px;display:flex;align-items:center;flex-shrink:0}
+  .tab-right .dl-srch-btn,.tab-right #gear-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+    padding:0 !important;border:0;border-radius:12px;background:none;color:var(--fog);cursor:pointer}
+  .tab-right .signin-tab{height:44px;padding:0 10px !important;font-family:var(--sans);font-size:14px;font-weight:700;
+    background:none;color:var(--teal-br)}
+  body.dl-search-open .dl-srch-btn{color:var(--teal-br)}
+  #settings-pop{position:fixed !important;top:calc(.5rem + 50px) !important;left:max(.5rem,env(safe-area-inset-left)) !important;
+    right:max(.5rem,env(safe-area-inset-right)) !important;min-width:0 !important;max-height:calc(100vh - 150px);overflow-y:auto}
+  /* Panel headings drop the 46px logo: the logo now sits once, top left. Titles stay. */
+  .panel svg[width="46"][viewBox="0 0 128 128"]{display:none !important}   /* beats their inline display:block */
+  /* Things pinned to the bottom of the screen sit above the bar. */
+  .dl-md-act{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  #delta-toast{bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important}
+  .dl-rk-colmenu{z-index:950}
+}
+</style>
+<script src="delta-nav.js" defer></script>
 </head>
 <body>
-<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
+<div class="dl-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
   <a class="dl-head dl-home" href="?tab=rankings" onclick="return dlHome(event)"
      aria-label="DELTA home — NFL Rankings">
     <svg class="dl-mark" viewBox="0 0 128 128" aria-hidden="true">
@@ -1941,7 +2005,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     </div>
   </a>
 </div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
+<div class="dl-search-row" style="display:flex;align-items:center;gap:10px;margin-bottom:.85rem;position:relative;flex-wrap:wrap">
   <div style="position:relative;flex:1;max-width:280px">
     <input id="deck-search" aria-label="Find Any Player" type="text" placeholder="Find any player, NFL or college"
       oninput="deckSearchInput()"
@@ -1981,6 +2045,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <!-- Live: see the note on the desktop switcher above. -->
   <button type="button" class="seg-btn" data-arm="live" onclick="dlNewsSeenArm('live');location.href='live.html'" role="tab" aria-selected="false">Live</button>
 </div>
+<!-- Phones only (redesign step 2): the section's name, big, above its pills. setSection() sets it. -->
+<div class="dl-sec-h" id="dl-sec-h" aria-hidden="true">NFL</div>
 <div class="tabs" style="position:relative">
   <button data-tab="market" data-sec="nfl" class="tab" onclick="showTab('market',this)">Market</button>
   <button data-tab="rankings" data-sec="nfl" class="tab active" onclick="showTab('rankings',this)">Rankings</button>
@@ -1989,14 +2055,15 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="cfbroles" data-sec="cfb" class="tab" onclick="showTab('cfbroles',this)">Role Changes</button>
-  <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
+  <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="mock" data-sec="me" class="tab" onclick="showTab('mock',this)">Mock Draft</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <span class="tab-right">
+  <button type="button" class="dl-srch-btn" id="dl-srch-btn" aria-label="Search players" aria-expanded="false" onclick="dlSearchToggle()"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
   <button class="tab signin-tab" id="signin-btn" title="Sign in to sync across your devices"
     onclick="openSettingsAtAccount(event)" style="display:none">Sign in</button>
   <script>
@@ -2023,6 +2090,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   </script>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </span>
+  <script>/* Phones: the group above belongs in the header, beside the logo (dlPlaceTopRight keeps it there on rotate). */
+  (function(){try{if(window.matchMedia&&matchMedia('(max-width:759px)').matches){var h=document.querySelector('.dl-hdr'),t=document.querySelector('.tab-right');if(h&&t)h.appendChild(t);}}catch(e){}})();</script>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
     <div class="set-sec">LEAGUE</div>
     <select id="set-scoring" class="set-sel" onchange="applySetScoring(this.value)" title="Scoring format">
@@ -2057,8 +2126,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <optgroup label="College">
         <option value="college">College Rankings</option>
         <option value="cfbroles">College Role Changes</option>
-        <option value="portal">Transfer Portal</option>
         <option value="bigboard">Big Board</option>
+        <option value="portal">Transfer Portal</option>
         <option value="rookies">Big Board · 2026 Drafted</option>
       </optgroup>
       <optgroup label="My Team">
@@ -3053,11 +3122,11 @@ function rkEffLoad(){ if(_rkEffAsked) return; _rkEffAsked=true; ensureEfficiency
    ?tab= links, the landing setting, "where I left off", and the back button. */
 const RK_VIEWS={
   dyn: {alias:'rankings',    sub:''},
-  proj:{alias:'projections', sub:'Projected points per game, the range around it, and how often he hits.',
+  proj:{alias:'projections', sub:'',
         d:['ds','n','a','proj','floor','ceil','ci','miss','hit','elite','ktc','mv','pct','tag'], m:['n','proj','floor','ceil','hit','tag'], sort:'proj'},
-  eff: {alias:'epa',         sub:'How much each play is worth, not just the totals.',
+  eff: {alias:'epa',         sub:'',
         d:['ds','ktc','n','a','e25','e24','e23','e22','epaSc','eff','effd','tag'], m:['n','e25','e24','epaSc','tag'], sort:'epaSc'},
-  ct:  {alias:'contracts',   sub:'Salary, years left and walk years, with DELTA\u2019s contract read beside each.'}
+  ct:  {alias:'contracts',   sub:''}
 };
 const RK_VIEW_OF={projections:'proj', epa:'eff', contracts:'ct'};
 let RK_VIEW='dyn', RK_DYN_SORT=null;
@@ -5752,7 +5821,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['market','rankings','compare','roles','scorecard','audit'],
-                 cfb:['college','cfbroles','portal','bigboard'],
+                 cfb:['college','cfbroles','bigboard','portal'],
                  me: ['myteam','trade','mock','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
@@ -5774,9 +5843,65 @@ function dlHome(e){
   try{ window.scrollTo(0,0); }catch(err){}
   return false;
 }
+/* Phone navigation helpers (redesign step 2, 31 Oct 2026). Harmless on desktop: the title and
+   the search button are display:none there and the strip never overflows. */
+const DL_SEC_NAME={nfl:'NFL',cfb:'College',me:'My Team'};
+function dlTabsFade(){
+  const t=document.querySelector('.tabs'); if(!t) return;
+  const w=t.parentElement&&t.parentElement.classList.contains('dl-tabs-wrap')?t.parentElement:null;
+  const over=t.scrollWidth>t.clientWidth+2;
+  const r=over && t.scrollLeft+t.clientWidth<t.scrollWidth-2, l=over && t.scrollLeft>2;
+  if(w){ w.classList.toggle('more-r',r); w.classList.toggle('more-l',l); }
+}
+function dlTabsMore(dir){
+  const t=document.querySelector('.tabs'); if(!t) return;
+  const by=Math.round(t.clientWidth*0.7)*(dir<0?-1:1);
+  try{ t.scrollBy({left:by,behavior:'smooth'}); }catch(e){ t.scrollLeft+=by; }
+}
+/* Wrap the strip once so the arrows sit over its edges without being inside the scroller. */
+function dlTabsWrap(){
+  const t=document.querySelector('.tabs'); if(!t||t.parentElement.classList.contains('dl-tabs-wrap')) return;
+  const w=document.createElement('div'); w.className='dl-tabs-wrap';
+  t.parentNode.insertBefore(w,t); w.appendChild(t);
+  const btn=(cls,dir,label,path)=>{ const b=document.createElement('button'); b.type='button'; b.className='dl-tabs-more '+cls;
+    b.setAttribute('aria-label',label); b.onclick=()=>dlTabsMore(dir);
+    b.innerHTML='<span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg></span>';
+    return b; };
+  w.appendChild(btn('l',-1,'Earlier pages','M15 6l-6 6 6 6'));
+  w.appendChild(btn('r',1,'More pages','M9 6l6 6-6 6'));
+}
+/* Search, Sign in and the gear: in the header on phones, back in the strip on wider screens. */
+function dlPlaceTopRight(){
+  const tr=document.querySelector('.tab-right'), h=document.querySelector('.dl-hdr'), t=document.querySelector('.tabs');
+  if(!tr||!h||!t) return;
+  const phone=window.matchMedia&&matchMedia('(max-width:759px)').matches;
+  if(phone && tr.parentElement!==h) h.appendChild(tr);
+  else if(!phone && tr.parentElement!==t) t.insertBefore(tr, document.getElementById('settings-pop'));
+}
+function dlTabIntoView(el){
+  try{
+    const t=el&&el.parentElement; if(!t||!t.classList.contains('tabs')||t.scrollWidth<=t.clientWidth) return;
+    const pr=t.getBoundingClientRect(), r=el.getBoundingClientRect();
+    if(r.left<pr.left+8||r.right>pr.right-8) t.scrollLeft+=r.left-pr.left-16;
+  }catch(e){}
+  dlTabsFade();
+}
+function dlSearchToggle(force){
+  const open=typeof force==='boolean'?force:!document.body.classList.contains('dl-search-open');
+  document.body.classList.toggle('dl-search-open',open);
+  const b=document.getElementById('dl-srch-btn'); if(b) b.setAttribute('aria-expanded',open?'true':'false');
+  if(open){ const i=document.getElementById('deck-search'); if(i){ try{ i.focus(); }catch(e){} } }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  dlPlaceTopRight(); dlTabsWrap();
+  const t=document.querySelector('.tabs'); if(t) t.addEventListener('scroll',dlTabsFade,{passive:true});
+  window.addEventListener('resize',()=>{ dlPlaceTopRight(); dlTabsFade(); });
+  dlTabsFade();
+});
 function setSection(s, wantTab){
   if(!SEC_TABS[s]) s='nfl';
   DL_SECTION=s;
+  const sh=document.getElementById('dl-sec-h'); if(sh) sh.textContent=DL_SEC_NAME[s]||'';
   dlPref('delta_section',s);
   document.querySelectorAll('.seg-btn, .eb-btn').forEach(b=>{
     const on=b.dataset.sec===s;
@@ -5814,6 +5939,10 @@ function applyLanding(){
   if(params.get('trade')) return;
   let target=params.get('tab');                       // manifest shortcuts / deep links
   if(!target && params.get('cmp')) target='compare';  // a shared comparison
+  // ?sec= comes from the bottom bar on the player, college card and Live pages (redesign step 2):
+  // open that section on its remembered page, the same as tapping it here.
+  const wantSec=params.get('sec');
+  if(!target && wantSec && SEC_TABS[wantSec]){ setSection(wantSec); return; }
   if(!target){
     const pref=dlPref('delta_landing');
     target = pref==='last' ? dlPref('delta_lasttab') : pref;
@@ -6001,7 +6130,6 @@ function renderRoles(){
       +(L.length>lim?'<button type="button" class="dl-rc-more" onclick="rcShowAll(\''+dir+'\')">Show all '+L.length+'</button>':'')+'</div>';
   };
   root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
-    +'<div class="dl-rc-intro">Who is on the field more, and less, than early in the season.</div>'
     +'<div class="dl-rc-chips" role="group" aria-label="Position">'+['ALL','RB','WR','TE'].map(v=>'<button type="button" class="dl-rc-chip'+(RC_POS===v?' on':'')+'" aria-pressed="'+(RC_POS===v)+'" onclick="rcSetPos(\''+v+'\')">'+(v==='ALL'?'All':v)+'</button>').join('')+'</div>'
     +'<div class="dl-rc-seg" role="tablist" aria-label="Direction">'
       +'<button type="button" role="tab" class="up'+(RC_SIDE==='up'?' on':'')+'" aria-selected="'+(RC_SIDE==='up')+'" onclick="rcSetSide(\'up\')">Playing More \u00b7 '+up.length+'</button>'
@@ -6060,7 +6188,6 @@ function renderCfbRoles(){
     :CRC_POS==='WR'?'For a receiver it is his share of the team\u2019s catches and of its receiving yards; 100 is about a third of the catches and 40% of the yards.'
     :'For a tight end it is his share of the team\u2019s catches and of its receiving yards; 100 is about a quarter of each.';
   root.innerHTML='<div class="dl-rc-title">Role Changes</div>'
-    +'<div class="dl-rc-intro">Who is getting more, and less, of his team\u2019s offense than early in the season.</div>'
     +'<div class="dl-crc-ctl"><div class="dl-crc-pos" role="tablist" aria-label="Position">'+['RB','WR','TE'].map(v=>'<button type="button" role="tab" class="'+(CRC_POS===v?'on':'')+'" aria-selected="'+(CRC_POS===v)+'" onclick="crcSet(\'pos\',\''+v+'\')">'+v+'</button>').join('')+'</div>'
     +'<div class="dl-rc-chips" role="group" aria-label="Schools">'
       +'<button type="button" class="dl-rc-chip'+(CRC_P4?' on':'')+'" aria-pressed="'+CRC_P4+'" onclick="crcSet(\'p4\',true)">Power 4</button>'
@@ -6143,8 +6270,7 @@ function renderScorecard(){
   }).join('');
   const sel=(v,cur,l)=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>';
   root.innerHTML='<div class="dl-sc-head"><div><div class="dl-sc-eyebrow">SCORECARD \u00b7 '+d.season+'</div>'
-    +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'
-    +'<p class="dl-sc-sub">Each projection is graded only on games played after it was made.</p></div>'
+    +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'+'</div>'
     +'<span class="dl-sc-pill">Through Week '+d.through_week+'</span></div>'
     +'<details class="cfb-about"><summary>How It\u2019s Graded</summary><div class="cfb-about-body">'
     +'<b>Average miss</b> is how far each projection was from what the player actually averaged, in points per game; lower is better. '
@@ -6189,6 +6315,7 @@ function showTab(id,el,skipSection){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const pnl=document.getElementById('panel-'+id); if(pnl) pnl.classList.add('active');
   if(el) el.classList.add('active');
+  dlTabIntoView(el);
   // Landing on the board has to draw it, the same as contracts and rookies
   // below. Without this, arriving on the tab from a deep link or the back
   // button shows whatever happened to be rendered last — which is nothing,
@@ -7443,7 +7570,7 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div id="panel-rookies" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Draft capital does the heavy lifting</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Rookie Prospect Board</div></div></div>
 </div>
 
 <!-- About DELTA modal -->
@@ -7638,7 +7765,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-cfbroles" class="panel"><div id="crc-root"></div></div>
 
 <div id="panel-portal" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div><div style="font-size:11px;color:var(--fog-2);margin-top:2px">Who moved, and what changed</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div></div></div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
     <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
@@ -7816,7 +7943,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31a</span>
+  <span class="foot-build">2026-10-31d</span>
 </footer>
 
 
