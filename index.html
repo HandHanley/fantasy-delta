@@ -1929,7 +1929,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-srch-btn{display:none}
 @media (max-width:759px){
   body{padding-left:max(.5rem,env(safe-area-inset-left));padding-right:max(.5rem,env(safe-area-inset-right))}
-  .dl-hdr{min-height:44px;align-items:center !important;margin-bottom:.2rem !important;padding-right:150px}
+  .dl-hdr{min-height:44px;align-items:center !important;flex-wrap:nowrap !important;margin-bottom:.5rem !important}
   .dl-hdr .dl-head{gap:9px}
   .dl-hdr .dl-mark{width:28px;height:28px}
   .dl-hdr .dl-word{font-size:18px;letter-spacing:4px}
@@ -1937,8 +1937,6 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   .dl-search-row{display:none !important}
   body.dl-search-open .dl-search-row{display:flex !important;margin:.3rem 0 .6rem !important}
   body.dl-search-open .dl-search-row>div{max-width:none !important}
-  .dl-sec-h{display:block;font-size:32px;line-height:38px;font-weight:800;letter-spacing:-.02em;
-    color:var(--paper);margin:.35rem 0 .7rem}
   .tabs{position:static !important;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:8px !important;
     margin:0 calc(-1 * max(.5rem,env(safe-area-inset-right))) 1rem calc(-1 * max(.5rem,env(safe-area-inset-left)));
     padding:2px max(.5rem,env(safe-area-inset-right)) 2px max(.5rem,env(safe-area-inset-left));
@@ -1948,12 +1946,24 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     font-size:14px;font-weight:700;background:var(--panel);color:var(--fog);white-space:nowrap}
   .tabs .tab[data-tab].active{background:var(--paper);color:var(--ink)}
   .tabs .tab[data-tab]:hover:not(.active){color:var(--paper);background:var(--panel)}
-  /* Edge fade on the strip while more pills sit off to the right (cleared at the end). */
-  .tabs::after{content:'';position:sticky;right:calc(-1 * max(.5rem,env(safe-area-inset-right)));flex:0 0 32px;
-    margin-left:-32px;background:linear-gradient(90deg,transparent,var(--ink));pointer-events:none;opacity:0;transition:opacity .15s}
-  .tabs.dl-fade::after{opacity:1}
-  /* Search, Sign in and the gear move to the top right, out of the scrolling strip. */
-  .tab-right{position:absolute;top:.5rem;right:max(.5rem,env(safe-area-inset-right));margin:0;gap:0;z-index:20;height:44px}
+  /* More pages off screen: a fade plus a round arrow you can tap, at whichever edge has more
+     (owner, 31 Oct: the fade alone did not say "scroll"). They live in a wrapper around the strip
+     (dlTabsWrap), not inside the scroller. */
+  .dl-tabs-wrap{position:relative}
+  .dl-tabs-more{position:absolute;top:2px;height:36px;width:58px;display:none;align-items:center;border:0;padding:0;
+    cursor:pointer;z-index:2;color:var(--paper)}
+  .dl-tabs-more.r{right:calc(-1 * max(.5rem,env(safe-area-inset-right)));justify-content:flex-end;
+    padding-right:max(.5rem,env(safe-area-inset-right));background:linear-gradient(90deg,transparent,var(--ink) 55%)}
+  .dl-tabs-more.l{left:calc(-1 * max(.5rem,env(safe-area-inset-left)));justify-content:flex-start;
+    padding-left:max(.5rem,env(safe-area-inset-left));background:linear-gradient(270deg,transparent,var(--ink) 55%)}
+  .dl-tabs-more span{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;
+    background:var(--panel);border:1px solid var(--line)}
+  .dl-tabs-wrap.more-r .dl-tabs-more.r,.dl-tabs-wrap.more-l .dl-tabs-more.l{display:flex}
+  /* Search, Sign in and the gear: on phones dlPlaceTopRight() moves the group INTO the header,
+     beside the logo. (The first version left it inside the scrolling strip and positioned it out
+     to the corner; it showed in Chrome and not on the owner's iPhone, 31 Oct. A real move needs
+     no escaping a scroller in any browser.) */
+  .dl-hdr .tab-right{position:static;margin:0 0 0 auto;gap:0;height:44px;display:flex;align-items:center;flex-shrink:0}
   .tab-right .dl-srch-btn,.tab-right #gear-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
     padding:0 !important;border:0;border-radius:12px;background:none;color:var(--fog);cursor:pointer}
   .tab-right .signin-tab{height:44px;padding:0 10px !important;font-family:var(--sans);font-size:14px;font-weight:700;
@@ -2045,8 +2055,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   <button data-tab="scorecard" data-sec="nfl" class="tab" onclick="showTab('scorecard',this)">Scorecard</button>
   <button data-tab="college" data-sec="cfb" class="tab" id="tab-college-btn" onclick="showTab('college',this)" style="display:none">Rankings</button>
   <button data-tab="cfbroles" data-sec="cfb" class="tab" onclick="showTab('cfbroles',this)">Role Changes</button>
-  <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="bigboard" data-sec="cfb" class="tab" onclick="showTab('bigboard',this)">Big Board</button>
+  <button data-tab="portal" data-sec="cfb" class="tab" onclick="showTab('portal',this)">Transfer Portal</button>
   <button data-tab="myteam" data-sec="me" class="tab" onclick="showTab('myteam',this)">Roster</button>
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="mock" data-sec="me" class="tab" onclick="showTab('mock',this)">Mock Draft</button>
@@ -2080,6 +2090,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   </script>
   <button class="about-tab" id="gear-btn" aria-label="Settings" title="Settings" onclick="toggleSettings(event)" style="padding:6px 9px;line-height:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </span>
+  <script>/* Phones: the group above belongs in the header, beside the logo (dlPlaceTopRight keeps it there on rotate). */
+  (function(){try{if(window.matchMedia&&matchMedia('(max-width:759px)').matches){var h=document.querySelector('.dl-hdr'),t=document.querySelector('.tab-right');if(h&&t)h.appendChild(t);}}catch(e){}})();</script>
 <div id="settings-pop" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;min-width:250px;box-shadow:0 14px 36px rgba(0,0,0,.55)">
     <div class="set-sec">LEAGUE</div>
     <select id="set-scoring" class="set-sel" onchange="applySetScoring(this.value)" title="Scoring format">
@@ -2114,8 +2126,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
       <optgroup label="College">
         <option value="college">College Rankings</option>
         <option value="cfbroles">College Role Changes</option>
-        <option value="portal">Transfer Portal</option>
         <option value="bigboard">Big Board</option>
+        <option value="portal">Transfer Portal</option>
         <option value="rookies">Big Board · 2026 Drafted</option>
       </optgroup>
       <optgroup label="My Team">
@@ -5809,7 +5821,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // Gated tabs (College, Engine Audit) stay locked until their flag unlocks them, so
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['market','rankings','compare','roles','scorecard','audit'],
-                 cfb:['college','cfbroles','portal','bigboard'],
+                 cfb:['college','cfbroles','bigboard','portal'],
                  me: ['myteam','trade','mock','watchlist'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
@@ -5836,8 +5848,35 @@ function dlHome(e){
 const DL_SEC_NAME={nfl:'NFL',cfb:'College',me:'My Team'};
 function dlTabsFade(){
   const t=document.querySelector('.tabs'); if(!t) return;
-  const more=t.scrollWidth>t.clientWidth+2 && t.scrollLeft+t.clientWidth<t.scrollWidth-2;
-  t.classList.toggle('dl-fade',more);
+  const w=t.parentElement&&t.parentElement.classList.contains('dl-tabs-wrap')?t.parentElement:null;
+  const over=t.scrollWidth>t.clientWidth+2;
+  const r=over && t.scrollLeft+t.clientWidth<t.scrollWidth-2, l=over && t.scrollLeft>2;
+  if(w){ w.classList.toggle('more-r',r); w.classList.toggle('more-l',l); }
+}
+function dlTabsMore(dir){
+  const t=document.querySelector('.tabs'); if(!t) return;
+  const by=Math.round(t.clientWidth*0.7)*(dir<0?-1:1);
+  try{ t.scrollBy({left:by,behavior:'smooth'}); }catch(e){ t.scrollLeft+=by; }
+}
+/* Wrap the strip once so the arrows sit over its edges without being inside the scroller. */
+function dlTabsWrap(){
+  const t=document.querySelector('.tabs'); if(!t||t.parentElement.classList.contains('dl-tabs-wrap')) return;
+  const w=document.createElement('div'); w.className='dl-tabs-wrap';
+  t.parentNode.insertBefore(w,t); w.appendChild(t);
+  const btn=(cls,dir,label,path)=>{ const b=document.createElement('button'); b.type='button'; b.className='dl-tabs-more '+cls;
+    b.setAttribute('aria-label',label); b.onclick=()=>dlTabsMore(dir);
+    b.innerHTML='<span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg></span>';
+    return b; };
+  w.appendChild(btn('l',-1,'Earlier pages','M15 6l-6 6 6 6'));
+  w.appendChild(btn('r',1,'More pages','M9 6l6 6-6 6'));
+}
+/* Search, Sign in and the gear: in the header on phones, back in the strip on wider screens. */
+function dlPlaceTopRight(){
+  const tr=document.querySelector('.tab-right'), h=document.querySelector('.dl-hdr'), t=document.querySelector('.tabs');
+  if(!tr||!h||!t) return;
+  const phone=window.matchMedia&&matchMedia('(max-width:759px)').matches;
+  if(phone && tr.parentElement!==h) h.appendChild(tr);
+  else if(!phone && tr.parentElement!==t) t.insertBefore(tr, document.getElementById('settings-pop'));
 }
 function dlTabIntoView(el){
   try{
@@ -5854,8 +5893,10 @@ function dlSearchToggle(force){
   if(open){ const i=document.getElementById('deck-search'); if(i){ try{ i.focus(); }catch(e){} } }
 }
 document.addEventListener('DOMContentLoaded',()=>{
+  dlPlaceTopRight(); dlTabsWrap();
   const t=document.querySelector('.tabs'); if(t) t.addEventListener('scroll',dlTabsFade,{passive:true});
-  window.addEventListener('resize',dlTabsFade);
+  window.addEventListener('resize',()=>{ dlPlaceTopRight(); dlTabsFade(); });
+  dlTabsFade();
 });
 function setSection(s, wantTab){
   if(!SEC_TABS[s]) s='nfl';
@@ -7905,7 +7946,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31b</span>
+  <span class="foot-build">2026-10-31c</span>
 </footer>
 
 
