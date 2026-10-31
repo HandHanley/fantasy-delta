@@ -1975,8 +1975,8 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   /* Panel headings drop the 46px logo: the logo now sits once, top left. Titles stay. */
   .panel svg[width="46"][viewBox="0 0 128 128"]{display:none !important}   /* beats their inline display:block */
   /* Things pinned to the bottom of the screen sit above the bar. */
-  .dl-md-act{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-  #delta-toast{bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important}
+  .dl-md-act{bottom:calc(74px + max(0px,calc(env(safe-area-inset-bottom,0px) - 12px)))}
+  #delta-toast{bottom:calc(78px + max(0px,calc(env(safe-area-inset-bottom,0px) - 12px))) !important}
   .dl-rk-colmenu{z-index:950}
 }
 </style>
@@ -7951,7 +7951,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31e</span>
+  <span class="foot-build">2026-10-31f</span>
 </footer>
 
 

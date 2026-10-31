@@ -33,9 +33,11 @@
        page; this keeps content clear of it. Zero on phones without a notch and on desktop. */
     + 'html{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}'
     + '@media (max-width:759px){'
-    /* the bar */
+    /* the bar. Bottom padding is the home-line area less 12px (owner, 31 Oct: the full 34px left
+       too much empty space under the labels on an iPhone). Apple's own tab bars overlap that area
+       the same way; the labels still end well above the home line. */
     + '.seg.dl-bnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;margin:0;gap:0;'
-    +   'padding:4px max(6px,env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));'
+    +   'padding:4px max(6px,env(safe-area-inset-right)) max(4px,calc(env(safe-area-inset-bottom) - 12px)) max(6px,env(safe-area-inset-left));'
     +   'background:var(--ink-2);border:0;border-top:1px solid var(--line);border-radius:0;'
     +   'box-shadow:0 -10px 24px var(--ink)}'
     + '.seg.dl-bnav .seg-btn{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;'
@@ -46,7 +48,7 @@
     + '.dl-bn-ic{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}'
     + '.seg.dl-bnav .seg-btn .dl-nw-dot{top:5px;right:calc(50% - 19px);width:7px;height:7px}'
     /* room for it at the end of every page */
-    + '.dl-bn-space{display:block;height:calc(70px + env(safe-area-inset-bottom))}'
+    + '.dl-bn-space{display:block;height:calc(72px + max(0px,calc(env(safe-area-inset-bottom) - 12px)))}'
     + '}'
     + '@media (min-width:760px){.dl-bn-space,.dl-bnav-added{display:none !important}}';
 
