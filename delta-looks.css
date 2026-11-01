@@ -89,6 +89,7 @@ html[data-look="glass"] .gl-tbl :is(th:first-child,td:first-child,th:nth-child(2
 /* Buttons: tinted glass rather than solid fills. */
 html[data-look="glass"] :is(#dd-actbar,.dd-actbar) .dd-act-main{background:var(--teal-tint);color:var(--teal-br);border:1px solid var(--teal-br)}
 html[data-look="glass"] :is(#dd-actbar,.dd-actbar) .dd-act-cmp{background:rgba(255,255,255,.07);border-color:var(--g-edge)}
+html[data-look="glass"] #panel-trade .dl-tc-act.dl-tc-main{background:var(--teal-tint);color:var(--teal-br);border:1px solid var(--teal-br)}
 
 /* The DELTA Score ring glows softly. */
 html[data-look="glass"] .dl-ring svg{filter:drop-shadow(0 0 10px var(--teal-tint))}

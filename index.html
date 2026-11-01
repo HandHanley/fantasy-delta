@@ -173,7 +173,7 @@ tr:hover td{background:var(--panel)}
 .total-row.model span:first-child{font-weight:700}
 .total-row.model span:last-child{font-size:17px}
 .vbar-outer{height:12px;background:var(--line);border-radius:6px;overflow:hidden;position:relative;margin:8px 0}
-.vbar-a{position:absolute;left:0;top:0;height:100%;background:var(--emerald);border-radius:6px 0 0 6px;transition:width .3s}
+.vbar-a{position:absolute;left:0;top:0;height:100%;background:var(--cp-1);border-radius:6px 0 0 6px;transition:width .3s}
 .vbar-b{position:absolute;right:0;top:0;height:100%;background:var(--sky);border-radius:0 6px 6px 0;transition:width .3s}
 .vmid{position:absolute;left:50%;top:0;width:2px;height:100%;background:var(--ink);transform:translateX(-50%)}
 .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
@@ -190,7 +190,7 @@ tr:hover td{background:var(--panel)}
 .vbadge{font-size:12px;padding:4px 14px}
 .vgap{font-family:var(--mono);font-size:11px;color:var(--fog);margin-top:5px}
 .adjline{font-size:10px;margin-bottom:6px;line-height:1.7}
-.adj-up{color:var(--emerald)}.adj-warn{color:var(--topaz)}.adj-none{color:var(--fog-2)}
+.adj-up{color:var(--teal-br)}   /* a value adjustment, not a Buy: accent, not emerald (1 Nov 2026) */.adj-warn{color:var(--topaz)}.adj-none{color:var(--fog-2)}
 .mods{font-family:var(--mono);font-size:9px;color:var(--fog-2);margin-left:4px}
 .vbadge{white-space:normal}
 .vsub{font-size:12px;color:var(--fog);margin-top:6px}
@@ -342,10 +342,10 @@ tr:hover td{background:var(--panel)}
 #trade-col-b .ts-hd{color:var(--sky)}
 #trade-col-c .ts-hd{color:var(--violet)}
 #trade-col-d .ts-hd{color:var(--topaz)}
-#trade-col-a .total-row.model span{color:var(--teal-br)}
+#trade-col-a .total-row.model span{color:var(--cp-1)}
 #trade-col-b .total-row.model span{color:var(--sky)}
 #trade-col-c .total-row.model span{color:var(--violet)}
-#trade-col-d .total-row.model span{color:var(--topaz)}
+#trade-col-d .total-row.model span{color:var(--fog)}
 .howbtn{font-family:inherit;font-size:11px;font-weight:600;color:var(--fog);background:none;
   border:none;border-radius:4px;padding:5px 10px;
   cursor:pointer;white-space:nowrap}
@@ -2056,6 +2056,51 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   #panel-rankings td.dl-rk-name .dl-b-tp{display:block;margin-left:0;margin-top:1px;line-height:1.2}
 }
 </style>
+<style id="dl-trade">
+/* ── TRADE CALC, REDESIGNED (1 Nov 2026, owner: match the new design) ─────────────────────────
+   The same rules as the rest of the redesign: 14px cards, 16px Title Case titles, pills for
+   choices, 48px buttons, inputs at 16px on phones (smaller makes iPhones zoom the page on focus),
+   and the five text sizes (dlPanelTypeWatch). Each team has its own colour, as a dot by its name:
+   A Compare's teal, B sky, C violet, D grey (never buy green or watch gold). */
+#trade-col-a{--tc:var(--cp-1)} #trade-col-b{--tc:var(--sky)} #trade-col-c{--tc:var(--violet)} #trade-col-d{--tc:var(--fog)}
+#panel-trade .tc-lbl{font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog)}
+#panel-trade .tc-btn,#panel-trade .tc-clear{height:36px;padding:0 16px;border-radius:18px;font-size:13px;font-weight:700}
+#panel-trade .trade-side,#panel-trade #verdict-area{border-radius:14px}
+#panel-trade #verdict-area{padding:16px}
+#panel-trade .ts-hd{justify-content:flex-start;padding:14px 16px 8px;font-size:16px;font-weight:800;letter-spacing:0;
+  text-transform:none;color:var(--paper);border-bottom:0}
+#panel-trade .ts-hd::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--tc);margin-right:8px;flex-shrink:0}
+#panel-trade .ts-hd .win-sel{margin-left:auto;font-size:12px;height:30px;border-radius:15px;padding:0 8px}
+#panel-trade .search-wrap{padding:6px 16px 8px}
+#panel-trade .search-wrap input{height:44px;font-size:13px;padding:0 14px;border-radius:12px}
+#panel-trade .added{padding:10px 16px}
+#panel-trade .added-name{font-size:13px}
+#panel-trade .added-vals{font-size:12px;gap:10px}
+#panel-trade .added-meta{font-size:12px}
+#panel-trade .rm{width:32px;height:32px;margin:-6px -8px 0 0;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:16px}
+#panel-trade .rm:hover{background:var(--ink-2);color:var(--paper)}
+#panel-trade .total-row{padding:8px 16px;font-size:13px}
+#panel-trade .total-row.model{padding-bottom:14px}
+#panel-trade .total-row.model span:last-child{font-size:20px}
+#panel-trade .dl-tc-acts{flex-wrap:wrap;gap:10px;margin-top:16px}
+#panel-trade .dl-tc-act{flex:1 1 0;min-width:0;height:48px;padding:0 10px;border-radius:14px;font-size:15px;font-weight:700}
+#panel-trade .dl-tc-act.dl-tc-main{flex-basis:100%;background:var(--teal-br);color:var(--ink);border-color:transparent}
+/* The About panel's source links had no colour of their own, so they showed the browser's default
+   blue: 1.9 to 1 on the dark card (found by the contrast scan, 1 Nov 2026). */
+.about-card a:not([class]){color:var(--teal-br);text-decoration:underline;text-underline-offset:2px}
+/* Three or four columns are narrow even on a desktop: numbers under the name there too. */
+#panel-trade :is(.three-col,.four-col) .added-top{flex-wrap:wrap;row-gap:3px}
+#panel-trade :is(.three-col,.four-col) .added-vals{flex-basis:100%}
+@media(max-width:600px){
+  #panel-trade .search-wrap input{font-size:16px}
+  #panel-trade .tc-row{row-gap:8px}
+  #panel-trade .tc-btn{flex:1;padding:0 6px;min-width:0}
+  #panel-trade .tc-clear{margin-left:0;padding:0 14px;flex-shrink:0}
+  /* The name gets the whole first line; the three numbers drop to their own line under it. */
+  #panel-trade .added-top{flex-wrap:wrap;row-gap:3px}
+  #panel-trade .added-vals{flex-basis:100%}
+}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -2537,13 +2582,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
   <!-- Team count toggle -->
   <div class="tc-row">
-    <span class="tc-lbl">Teams In Trade:</span>
+    <span class="tc-lbl">Teams In Trade</span>
     <div class="tc-wrap">
       <button id="tc-2" class="tc-btn tc-active" onclick="setTradeTeams(2)">2 Teams</button>
       <button id="tc-3" class="tc-btn" onclick="setTradeTeams(3)">3 Teams</button>
       <button id="tc-4" class="tc-btn" onclick="setTradeTeams(4)">4 Teams</button>
     </div>
-    <button class="tc-clear" onclick="clearAllTrade()">Clear all</button>
+    <button class="tc-clear" onclick="clearAllTrade()">Clear All</button>
   </div>
 
   <div id="trade-mode-note" style="display:none">Each column = one team's incoming assets. The verdict ranks who gets the most value overall.</div>
@@ -2553,7 +2598,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div class="ts-hd">Team A<select class="win-sel" aria-label="Team A Window" onchange="setWindow('a',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-a" aria-label="Team A: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('a')"><div id="drop-a" class="dropdown" style="display:none"></div></div>
       <div id="side-a"></div>
-      <div class="total-row"><span>Mkt Val</span><span id="ktc-a">—</span></div>
+      <div class="total-row"><span>Market Value</span><span id="ktc-a">—</span></div>
       <div class="total-row model"><span>DELTA Value</span><span id="mod-a">—</span></div>
     </div>
     <!-- Side B -->
@@ -2561,7 +2606,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div class="ts-hd">Team B<select class="win-sel" aria-label="Team B Window" onchange="setWindow('b',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-b" aria-label="Team B: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('b')"><div id="drop-b" class="dropdown" style="display:none"></div></div>
       <div id="side-b"></div>
-      <div class="total-row"><span>Mkt Val</span><span id="ktc-b">—</span></div>
+      <div class="total-row"><span>Market Value</span><span id="ktc-b">—</span></div>
       <div class="total-row model"><span>DELTA Value</span><span id="mod-b">—</span></div>
     </div>
     <!-- Side C (3-way) -->
@@ -2569,7 +2614,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div class="ts-hd">Team C<select class="win-sel" aria-label="Team C Window" onchange="setWindow('c',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-c" aria-label="Team C: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('c')"><div id="drop-c" class="dropdown" style="display:none"></div></div>
       <div id="side-c"></div>
-      <div class="total-row"><span>Mkt Val</span><span id="ktc-c">—</span></div>
+      <div class="total-row"><span>Market Value</span><span id="ktc-c">—</span></div>
       <div class="total-row model"><span>DELTA Value</span><span id="mod-c">—</span></div>
     </div>
     <!-- Side D (4-way) -->
@@ -2577,7 +2622,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div class="ts-hd">Team D<select class="win-sel" aria-label="Team D Window" onchange="setWindow('d',this.value)" data-tip="Competitive window — context only, does not change values"><option value="neutral">Neutral</option><option value="contender">Contender</option><option value="rebuilder">Rebuilder</option></select></div>
       <div class="search-wrap"><input id="srch-d" aria-label="Team D: Add Player Or Pick" placeholder="Search player or pick..." oninput="doSearch('d')"><div id="drop-d" class="dropdown" style="display:none"></div></div>
       <div id="side-d"></div>
-      <div class="total-row"><span>Mkt Val</span><span id="ktc-d">—</span></div>
+      <div class="total-row"><span>Market Value</span><span id="ktc-d">—</span></div>
       <div class="total-row model"><span>DELTA Value</span><span id="mod-d">—</span></div>
     </div>
   </div>
@@ -3758,10 +3803,12 @@ function applyTradeScoring(){
 function recalcTrade(){
   TC_CTX=null;   // a redraw is an edit: the ledger note (and its names) goes with it
   const SIDES=[
-    {id:'a',arr:sA,color:'var(--emerald)',label:'Team A'},
+    // Team colours (1 Nov 2026): A takes Compare's fixed teal (--cp-1) and D grey. Emerald means
+    // Buy and topaz means Watch everywhere else, so neither can stand for a team.
+    {id:'a',arr:sA,color:'var(--cp-1)',label:'Team A'},
     {id:'b',arr:sB,color:'var(--sky)',label:'Team B'},
     {id:'c',arr:sC,color:'var(--violet)',label:'Team C'},
-    {id:'d',arr:sD,color:'var(--topaz)',label:'Team D'},
+    {id:'d',arr:sD,color:'var(--fog)',label:'Team D'},
   ].slice(0,tradeTeams);
 
   const totals=SIDES.map(s=>{
@@ -3769,10 +3816,10 @@ function recalcTrade(){
       const e=p.ip?null:getEff(p);
       const mv=p.ip?p.k:mvAsset(p);
       const mvCol=mv>p.k?'var(--emerald)':mv<p.k*0.95?'var(--coral)':'var(--paper)';
-      const nameHtml=p.ip?p.n:`<span style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`;
-      const valsHtml=`<span style="color:var(--fog)">Mkt ${p.k.toLocaleString()}</span>`
+      const nameHtml=p.ip?p.n:`<span style="cursor:pointer" onclick="openDeck('${p.n.replace(/'/g,"\\'")}')">${p.n}</span>`;
+      const valsHtml=`<span style="color:var(--fog)">Market ${p.k.toLocaleString()}</span>`
         +(p.ip?'':`<span title="DELTA Value \u2014 market value adjusted by age, opportunity, EPA, scarcity and format. Green = DELTA Value above market, coral = below."><span style="color:var(--fog);font-weight:400">DELTA</span> <b style="color:${mvCol}">${mv.toLocaleString()}</b></span>`)
-        +(p.ip?'':`<span title="DELTA Score — demonstrated dynasty value (0–100)"><span style="color:var(--fog);font-weight:400">DS</span> <span style="font-weight:600;color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></span>`);
+        +(p.ip?'':`<span title="DELTA Score — demonstrated dynasty value (0–100)"><span style="color:var(--fog);font-weight:400">Δ</span> <span style="font-weight:600;color:${p.dsScore>=85?'var(--emerald)':p.dsScore>=70?'var(--sky)':p.dsScore>=55?'var(--topaz)':'var(--coral)'}">${p.dsScore??'—'}</span></span>`);
       const metaHtml=p.ip?'Pick':`${p.p||p.pos} · ${e?e.team:p.t}${e&&e.ch?' · <span style="color:var(--topaz)">⚠ OC</span>':''} · ${getAdjProj(p).toFixed(1)} PPG`;
       const destSel=tradeTeams>2?`<select onchange="setDest('${s.id}','${p.n.replace(/'/g,"\\'")}',this.value)" title="Which team receives this asset" class="dest-sel" style="font-size:9px;background:var(--ink-2);border:1px solid var(--line);border-radius:4px;color:var(--fog);padding:2px 5px">${SIDES.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}" ${(p.to||defaultDest(s.id))===x.id?'selected':''}>→ ${x.label.replace('Team ','')}</option>`).join('')}</select>`:'';
       return`<div class="added">
@@ -3864,7 +3911,7 @@ function recalcTrade(){
             <span>${v4.sideA.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
           </div>`:''}
           <div class="breakdown-row" style="font-weight:600">
-            <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>Adjusted Total${v4.sideA.concM>1.001?` <span style="font-size:9px;color:var(--teal-br)">(×${v4.sideA.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mA.toLocaleString()}</span>
           </div>
         </div>
@@ -3877,13 +3924,13 @@ function recalcTrade(){
             <span>${v4.sideB.detail.reduce((s,d)=>s+d.adj,0).toLocaleString()}</span>
           </div>`:''}
           <div class="breakdown-row" style="font-weight:600">
-            <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:var(--emerald)">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
+            <span>Adjusted Total${v4.sideB.concM>1.001?` <span style="font-size:9px;color:var(--teal-br)">(×${v4.sideB.concM.toFixed(2)} conc)</span>`:''}</span>
             <span>${mB.toLocaleString()}</span>
           </div>
         </div>
       </div>
 
-      <div class="dl-tc-acts" id="dl-tc-acts">${pct>3?`<button class="dl-tc-act" onclick="toggleGapFiller()">⇄ ${gapFillerOpen?'Hide Gap Filler':'Bridge The Gap'}</button>`:''}</div>`;
+      <div class="dl-tc-acts" id="dl-tc-acts">${pct>3?`<button class="dl-tc-act dl-tc-main" onclick="toggleGapFiller()">⇄ ${gapFillerOpen?'Hide Gap Filler':'Bridge The Gap'}</button>`:''}</div>`;
   } else {
     // Multi-team verdict — per-asset routing makes RECEIVES computable:
     // each team's net = value routed TO them − value they give away.
@@ -3932,7 +3979,7 @@ function recalcTrade(){
       <div class="dl-tc-mgrid" style="--n:${tradeTeams}">
         ${adjResults.map(t=>`
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem">${t.label} GIVES UP</div>
+            <div style="font-size:10px;font-weight:700;color:${t.color};margin-bottom:.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem">${t.label} Gives Up</div>
             ${t.adjResult.detail.map(d=>{
               const mods=[];
               if(d.eliteM>1.0)mods.push('elite \xd7'+d.eliteM.toFixed(2));
@@ -5232,8 +5279,9 @@ function tcVerdict2(mA,mB,la,lb){
 function tcMulti(st){
   st=st||tcLive();
   const S=st.s, ids=['a','b','c','d'].slice(0,st.n);
-  const SIDES=[{id:'a',arr:S.a,color:'var(--emerald)',label:'Team A'},{id:'b',arr:S.b,color:'var(--sky)',label:'Team B'},
-    {id:'c',arr:S.c,color:'var(--violet)',label:'Team C'},{id:'d',arr:S.d,color:'var(--topaz)',label:'Team D'}].slice(0,st.n);
+  // Team colours match recalcTrade (1 Nov 2026): Compare teal, sky, violet, grey; never buy green or watch gold.
+  const SIDES=[{id:'a',arr:S.a,color:'var(--cp-1)',label:'Team A'},{id:'b',arr:S.b,color:'var(--sky)',label:'Team B'},
+    {id:'c',arr:S.c,color:'var(--violet)',label:'Team C'},{id:'d',arr:S.d,color:'var(--fog)',label:'Team D'}].slice(0,st.n);
   const dest=id=>ids[(ids.indexOf(id)+1)%ids.length];   // same rule as defaultDest(), on this trade's teams
   const rows=SIDES.map((t,idx)=>({...t, idx, adjResult:calcSingleSideAdjusted(t.arr)}));
   const allAssets=SIDES.flatMap(t=>t.arr.map(a=>({...a, from:t.id, to:a.to||dest(t.id)})));
@@ -5283,7 +5331,7 @@ function tiMeta(p){
 async function drawTradeImage(st){
   st=st||tcLive();
   const C={ink:dlImgTok('ink'),panel:dlImgTok('panel'),line:dlImgTok('line'),paper:dlImgTok('paper'),fog:dlImgTok('fog'),fog2:dlImgTok('fog-2'),
-    url:dlImgTok('cp-1'),team:[dlImgTok('emerald'),dlImgTok('sky'),dlImgTok('violet'),dlImgTok('topaz')]};
+    url:dlImgTok('cp-1'),team:[dlImgTok('cp-1'),dlImgTok('sky'),dlImgTok('violet'),dlImgTok('fog')]};   // as on the page (1 Nov 2026)
   const F={sans:dlImgTok('sans'),mono:dlImgTok('mono'),geo:dlImgTok('geo')};
   try{ await document.fonts.ready; }catch(e){}
   const L=tiLabels(st.ctx), act=['a','b','c','d'].slice(0,st.n), sides=st.s, CTX=st.ctx;
@@ -6473,6 +6521,7 @@ function showTab(id,el,skipSection){
   if(id==='watchlist' && typeof openWatchlistTab==='function'){ try{ openWatchlistTab(); }catch(e){ console.warn('watchlist',e); } }
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
+  if(id==='trade') dlPanelTypeWatch('panel-trade');
 }
 
 // Depth Charts tab removed — replaced by Contracts tab
@@ -8123,7 +8172,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31r</span>
+  <span class="foot-build">2026-11-01a</span>
 </footer>
 
 
@@ -8752,6 +8801,15 @@ function closeCfbCard(){
   // unlock would release the NFL pop-up's lock underneath it.
   if(o&&o.classList.contains('open')){ o.classList.remove('open'); document.body.style.overflow=''; }
   const c=document.getElementById('cfb-card'); if(c){ c.classList.remove('dd-dragging'); c.style.transform=''; }
+}
+/* Five text sizes for a whole panel (1 Nov 2026, the section redesigns): first open applies the
+   scale and watches the panel for anything drawn later. Used by Trade Calc. */
+const _dlPanelTW={};
+function dlPanelTypeWatch(id){
+  const host=document.getElementById(id); if(!host||typeof dlTypeScaleIn!=='function') return;
+  let q=false; const run=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false; dlTypeScaleIn([host]); }); };
+  run();
+  if(!_dlPanelTW[id] && window.MutationObserver){ _dlPanelTW[id]=1; new MutationObserver(run).observe(host,{childList:true,subtree:true}); }
 }
 /* Five text sizes inside the college pop-up's sections, as on the college page (31 Oct 2026). */
 let _cfbCardTypeWatch=false;
