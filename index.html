@@ -8455,7 +8455,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01h</span>
+  <span class="foot-build">2026-11-01i</span>
 </footer>
 
 
@@ -11249,7 +11249,7 @@ function renderSlpPower(){
     +'<th>Team</th>'
     +'<th data-tip="Rank by DELTA Value across the roster and future picks, weighted so quality outranks quantity: each asset counts for value \u00d7 (value \u00f7 reference)^0.25." class="dl-b-c">Total</th>'
     +'<th class="dl-b-c" data-tip="Rank by DELTA Value across the ROSTER only, picks excluded. Read it against Total: a team ahead here and behind there is strong on the field and short of future capital \u2014 win-now. The reverse is a team banking assets it cannot start.">Roster</th>'
-    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA Value. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 green means DELTA ranks them higher than the market does, red means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
+    +'<th data-tip="Rank by dynasty market value \u2014 same rosters, same weighting, scored on what the market would pay instead of on DELTA Value. Where the ranks disagree, DELTA and the market disagree about that roster \u2014 sky means DELTA ranks them higher than the market does, violet means lower. This is a disagreement, not a change over time." class="dl-b-c">MKT</th>'
     +POS.map(p=>'<th class="col-hide-mobile dl-b-c" data-tip="Rank in the league by DELTA value at '+p+'.">'+p+'</th>').join('')
     +'<th class="dl-b-r" data-tip="Future draft capital: the market value of this team\u2019s picks from next season on, with the pick count beside it. Picks are valued identically on both sides of the ranking \u2014 DELTA scores demonstrated production and a pick has none \u2014 so they move a team\u2019s position without moving its Edge. A season past the end of the market file is valued from the last priced season, discounted by the rate the file itself shows between its two furthest years \u2014 those show as \u201cest\u201d. Rounds beyond the third have no published tier at all and are still not counted. Picks from next season are priced Early, Mid or Late by their original owner\u2019s standing in Proj PPG, cut into thirds \u2014 an estimate from today\u2019s rosters, which moves as rosters do. Seasons after that are priced Mid.">Picks</th>'
     +'<th class="dl-b-r" data-tip="Projected points from the best legal starting lineup this roster can field, using this league\u2019s own slots. Bench, taxi and IR score nothing, so depth does not count here \u2014 unlike the asset columns, where a surplus starter is tradeable leverage. This is where an aging producer looks better than his dynasty value: worth less, still useful.">Proj PPG</th>'

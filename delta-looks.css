@@ -49,7 +49,7 @@ html[data-look="glass"] body::before{
 /* Class selectors only inside :is(): an id in the list would raise the whole rule's weight
    (:is takes its heaviest argument) and the phone exception below could not undo it. */
 html[data-look="glass"] :is(.card,.cc-sec,.dlh-tiles,.dlh-chart,.dl-rk-surface,
-  .dl-rc-card,.dl-cp-card,.dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list,.dl-lg-tc,.dl-cp-sec,.dl-cp-pair,.dl-pr-card){
+  .dl-rc-card,.dl-cp-card,.dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list,.dl-lg-tc,.dl-cp-sec,.dl-cp-pair,.dl-pr-card,.g,.hero){
   border-radius:20px;border-color:var(--g-edge);
   background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
   box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
@@ -142,7 +142,7 @@ html[data-look="daylight"]{
 html[data-look="daylight"] body{background:var(--ink)}
 /* White cards lift off the grey page with a soft shadow instead of a dark edge. */
 html[data-look="daylight"] :is(.card,.cc-sec,.dlh-tiles,.dlh-chart,.dl-rk-surface,.dl-rc-card,.dl-cp-card,
-  .dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list,.dl-lg-tc,.dl-cp-sec,.dl-cp-pair,.dl-pr-card){
+  .dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list,.dl-lg-tc,.dl-cp-sec,.dl-cp-pair,.dl-pr-card,.g,.hero){
   border-radius:16px;border-color:var(--line);box-shadow:var(--d-shadow)}
 html[data-look="daylight"] .dlh:not(.dd-dlh) > .dlh-top{border-radius:16px;box-shadow:var(--d-shadow)}
 html[data-look="daylight"] :is(.pt-ds > .dd-section,#tab-nfl > .dd-section){background:var(--panel) !important;border-radius:16px !important;box-shadow:var(--d-shadow)}

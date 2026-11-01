@@ -112,7 +112,7 @@ h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em;
 .tab[aria-selected="true"]{color:var(--teal-br);border-color:var(--teal-br);background:var(--teal-tint)}
 
 .hd{display:flex;align-items:center;gap:9px;margin:16px 0 9px}
-.hd span:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--fog);
+.hd > span:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--fog);
                      text-transform:uppercase;white-space:nowrap}
 .rule{flex:1;height:1px;background:var(--line)}
 
@@ -310,10 +310,72 @@ summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
 .srch:focus{outline:none;border-color:var(--teal-br)}
 .fc{font-family:var(--mono);font-size:10.5px;color:var(--fog);margin-top:8px;white-space:pre-wrap;
     word-break:break-word}
+
+/* ── Redesign rules (1 Nov 2026) ─────────────────────────────────────────────────────────
+   Same rules as the rest of the site: the five text sizes (12 / 13 / 16 / 20 / 28), Title Case
+   labels written in the text (no small capitals), 14px cards, 36px pills, 44px tabs and back.
+   Numbers stay in the mono face; labels move to the body face. */
+h1{font-size:20px}
+.back{font-size:20px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;padding:0;margin:-10px 0}
+.stamp{font-size:12px}
+.tab{min-height:44px;padding:0 6px;border-radius:14px}
+.hd > span:not(.rule):not(.swatch){font-family:var(--sans);font-size:13px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--paper)}
+.notice{font-size:13px;border-radius:14px}
+.g,.card,.hero{border-radius:14px}
+.chip{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0;border-radius:8px;padding:1px 8px}
+.chip.rz{padding:0 7px}
+.when{font-size:12px}
+.abbr{font-size:16px}
+.rk{font-size:12px}
+.nick,.rec,.dot{font-size:12px}
+.sc{font-size:20px}
+.gfoot{font-size:12px}
+.pre-t{font-size:16px}
+.nm{font-size:13px}
+.nm .pos,.sub{font-size:12px}
+.bx th{font-family:var(--sans);font-size:12px;letter-spacing:0}
+.rdcmp,.rdtier,.rdmeas,.rddesc,.rdsub{font-size:12px}
+.rdgrp{font-size:13px}
+.rdbig{font-size:16px}
+.statline{font-size:12px}
+.kvk{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+.trk{font-size:12px}
+.qp{min-height:36px;padding:0 8px;font-size:13px}
+.fp{font-size:16px}
+.fp .fpu,.fine,.tt,.tt .u{font-size:12px}
+.hero .abbr{font-size:20px}
+.hero .sc{font-size:28px}
+.fyd,.fkey{font-size:12px}
+.drv{font-size:13px}
+.drvk{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+.ptag{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;border-radius:8px;padding:0 7px}
+.sheet-nm{font-size:16px}
+.sheet-x{min-height:36px;border-radius:18px}
+.prevb{font-size:12px;min-height:36px}
+.empty{font-size:13px}
+summary{font-size:12px}
+.wk{min-height:36px;padding:0 14px;font-size:13px}
+.srch{min-height:44px;border-radius:14px}
+.fc{font-size:12px}
+.ahead{font-size:inherit}
 </style>
 <script src="delta-nav.js" defer></script>
-<script>/* The Look (redesign step 4): before first paint, as on the other pages. */
-(function(){try{var L=localStorage.getItem('delta_look'); if(L==='glass'||L==='daylight') document.documentElement.setAttribute('data-look',L);}catch(e){}})();</script>
+<script>/* Accent theme and Look before first paint (1 Nov 2026: Live was the one page that ignored the
+   reader's accent). A COPY of the block in index, player, cfb-player, privacy and terms: T must match
+   DL_THEMES and DAY must match DL_THEMES_DAY in index.html. Change one, change all seven. */
+(function(){try{
+  var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
+         cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
+  var DAY={teal:['#0A6660','#0F766E'],violet:['#5B48C2','#6650D0'],sky:['#1A6496','#1E6FA8'],
+           cobalt:['#2F5FC4','#3A62C8'],orchid:['#A8358F','#B03C98'],slate:['#475569','#5B6676']};
+  var L=localStorage.getItem('delta_look'); if(L==='daylight') T=DAY;
+  var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
+  function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
+  s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
+  s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
+  s.setProperty('--row-hi',rgba(t[0],.055));
+  if(L==='glass'||L==='daylight') document.documentElement.setAttribute('data-look',L);
+}catch(e){}})();</script>
 <link rel="stylesheet" href="delta-looks.css">
 </head>
 <body>
@@ -1269,8 +1331,8 @@ function whenText(g){
   return KICK_DAY.format(d) + ' - ' + KICK_TIME.format(d);
 }
 function chip(live, g){
-  const base = live ? '<span class="chip">LIVE</span>' : '<span class="chip done">FINAL</span>';
-  return live && inRedZone(g) ? '<span class="chips">' + base + '<span class="chip rz">RED ZONE</span></span>' : base;
+  const base = live ? '<span class="chip">Live</span>' : '<span class="chip done">Final</span>';
+  return live && inRedZone(g) ? '<span class="chips">' + base + '<span class="chip rz">Red Zone</span></span>' : base;
 }
 
 /* RED ZONE: the team with the ball is at or inside the opponent's 20. Read from
@@ -1484,7 +1546,7 @@ function fieldBar(g, sum){
   return '<div class="hd"><span>Where The Ball Is</span><span class="rule"></span></div>'
     + '<div class="card" style="padding:12px 12px 10px">'
     + '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px">'
-    + '<span style="font-weight:700;font-size:14px">' + esc(g.detail || '') + '</span>'
+    + '<span style="font-weight:800;font-size:16px">' + esc(g.detail || '') + '</span>'
     + '<span class="rec">' + (f.dir === 1 ? esc((f.poss || {}).abbr || '') + ' ball &#8594;'
                                       : '&#8592; ' + esc((f.poss || {}).abbr || '') + ' ball') + '</span></div>'
     + '<div class="field">'
@@ -1774,7 +1836,7 @@ function scoringBlock(g, sum){
         const q = r.period ? 'Q' + r.period : '';
         return '<div class="rowb"><div style="display:flex;align-items:baseline;gap:8px">'
           + (t ? '<span class="spine" style="height:14px;background:' + teamColor(t) + '"></span>' : '')
-          + '<span class="nm" style="font-size:12.5px">' + esc(r.team) + '</span>'
+          + '<span class="nm">' + esc(r.team) + '</span>'
           + (r.kind ? '<span class="rec">' + esc(r.kind) + '</span>' : '')
           + '<span class="rec" style="margin-left:auto;white-space:nowrap">'
           + '<span class="' + (lead(r) === 'a' ? 'ahead' : '') + '">'
@@ -2050,9 +2112,11 @@ function renderBox(){
     html += '<div class="tabs" style="margin-top:12px">' + abbrs.map(function(a){
       const on = a === S.boxTeam, c = teamColor(teamByAbbr(g, a) || {});
       // Selected tab wears that team's own colour rather than the brand teal,
-      // which is what stops the page reading as one grey block.
+      // which is what stops the page reading as one grey block. The colour is on the
+      // border and a bar along the bottom, not the text: a dark team colour (Bills blue)
+      // was 2.5 to 1 as text on the dark page (1 Nov 2026).
       return '<button class="tab" type="button" data-team="' + esc(a) + '" aria-selected="'
-        + on + '"' + (on ? ' style="color:' + c + ';border-color:' + c + ';background:transparent"' : '')
+        + on + '"' + (on ? ' style="color:var(--paper);border-color:' + c + ';box-shadow:inset 0 -3px 0 ' + c + ';background:transparent"' : '')
         + '>' + esc(a) + '</button>';
     }).join('') + '</div>';
   }
