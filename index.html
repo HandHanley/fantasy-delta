@@ -2369,6 +2369,71 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-mt-team{display:block;width:100%;text-align:left;margin-bottom:8px;min-height:44px;font-family:var(--sans);font-size:13px;font-weight:700;
   padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);cursor:pointer}
 .dl-mt-team:hover{border-color:var(--teal-br)}
+/* Roster part two (1 Nov 2026): Trade Partners, All Buys & Sells, Free Agents, Power Rankings.
+   Power Rankings: a market rank moving is sky up / violet down, not a call; open lineup slots are a
+   caution (topaz); "none" for picks is plain grey. Section labels on Buys & Sells keep their signal
+   colour (the list IS the buy or sell list). */
+#panel-myteam .set-pill{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;font-weight:700}
+#panel-myteam .set-sel{min-height:36px;font-size:16px;border-radius:14px;padding:0 10px}
+#panel-myteam .howbtn{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:18px;font-size:13px}
+#panel-myteam .how{font-size:13px}
+/* Trade Partners */
+#panel-myteam .dl-tp-seg{border-radius:14px;padding:4px}
+#panel-myteam .dl-tp-seg button{min-height:36px;border-radius:10px;font-size:13px}
+#panel-myteam .dl-tp-title{font-size:16px}
+#panel-myteam .dl-tp-sub{font-size:13px}
+#panel-myteam .dl-tp-card{border-radius:14px;padding:14px}
+#panel-myteam .dl-tp-tm{font-size:16px}
+#panel-myteam .dl-tp-win{font-size:12px}
+#panel-myteam .dl-tp-sw{font-size:13px}
+#panel-myteam .dl-tp-rs{font-size:12px;border-radius:10px}
+#panel-myteam .dl-tp-rs b{font-size:12px}
+#panel-myteam .dl-tp-strip{grid-template-columns:auto repeat(5,minmax(0,1fr))}
+#panel-myteam .dl-tp-rs.dl-tp-rl{background:none;border-color:transparent;padding-left:0;padding-right:2px;color:var(--fog)}
+#panel-myteam .dl-tp-lab{font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog);margin:12px 0 4px}
+#panel-myteam .dl-tp-pl{font-size:13px;min-height:36px}
+#panel-myteam .dl-tp-pm{font-size:12px}
+#panel-myteam .dl-tp-tg{font-size:12px;border-radius:8px}
+#panel-myteam .dl-tp-cta{min-height:48px;border-radius:14px;background:var(--teal-tint);font-size:16px}
+#panel-myteam .dl-tp-more{display:inline-flex;align-items:center;min-height:36px;font-size:13px}
+/* All Buys & Sells */
+#panel-myteam .dl-lb-title{font-size:16px}
+#panel-myteam .dl-lb-sec{font-size:13px;font-weight:800;letter-spacing:0;text-transform:none;margin:14px 0 6px}
+#panel-myteam .dl-lb-none{font-size:13px}
+#panel-myteam .dl-lb-tbl td.dl-lb-name{font-family:var(--sans);font-weight:600}
+#panel-myteam .dl-lb-tbl th.dl-lb-ds{font-size:16px}
+#panel-myteam .dl-lb-tbl td.dl-lb-own{font-size:12px}
+/* Free Agents */
+#panel-myteam .dl-fa-bar{gap:8px}
+.dl-fa-title{font-size:16px;font-weight:800;color:var(--paper)}
+.dl-fa-n{font-size:12px;color:var(--fog)}
+#panel-myteam .dl-fa-k{font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--paper);margin-bottom:6px}
+#panel-myteam .dl-fa-d{font-size:12px}
+#panel-myteam .dl-fa-li{font-size:13px}
+#panel-myteam .dl-fa-box{font-size:13px}
+#panel-myteam td.dl-mt-name .badge{font-size:12px;padding:0 6px;border-radius:8px}
+#panel-myteam .dl-b-tp{font-size:12px}
+/* Power Rankings */
+#panel-myteam .dl-pw-tbl td.dl-pw-team{font-family:var(--sans);font-weight:600}
+#panel-myteam .dl-pw-up{color:var(--sky)}
+#panel-myteam .dl-pw-dn{color:var(--violet)}
+#panel-myteam .dl-pw-sub{font-size:12px}
+#panel-myteam .dl-pw-open{font-size:12px;color:var(--topaz)}
+#panel-myteam .dl-pw-none{color:var(--fog)}
+#panel-myteam .dl-pw-caveat{font-size:12px}
+@media(max-width:600px){
+  #panel-myteam td.dl-mt-name .dl-b-tp{display:block;margin:2px 0 0}
+  #panel-myteam .dl-mt-tbl td.dl-mt-name{white-space:normal;min-width:104px}
+  #panel-myteam td.dl-lb-name .dl-b-tp{display:block;margin:2px 0 0}
+  #panel-myteam .dl-pw-team{max-width:92px}
+  #panel-myteam :is(.dl-lb-tbl,.dl-pw-tbl) tbody td{font-size:12px;padding:9px 6px}
+  #panel-myteam :is(.dl-lb-tbl,.dl-pw-tbl) thead th{font-size:9.5px;padding:0 6px 7px}
+  #panel-myteam .dl-lb-tbl td.dl-lb-ds{font-size:14px}
+  #panel-myteam .dl-lb-tbl td.dl-lb-own{font-size:12px}
+  #panel-myteam :is(.dl-lb-tbl,.dl-mt-tbl) .badge{padding:2px 6px}
+}
+@media(max-width:370px){#panel-myteam :is(.dl-mt-tbl,.dl-lb-tbl,.dl-pw-tbl) :is(tbody td,thead th){padding-left:4px;padding-right:4px}
+  #panel-myteam .dl-lb-tbl td.dl-lb-own{max-width:46px}#panel-myteam .dl-pw-team{max-width:80px}}
 </style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
@@ -8390,7 +8455,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01g</span>
+  <span class="foot-build">2026-11-01h</span>
 </footer>
 
 
@@ -11175,7 +11240,7 @@ function slpViewPower(){ SLP.view='power'; renderMyTeam(); }
 
 function renderSlpPower(){
   const rows=slpTeamValues();
-  if(!rows) return '<div style="color:var(--fog);font-size:12px;padding:1rem">Roster data not loaded.</div>';
+  if(!rows) return '<div class="dl-mt-load">Roster data not loaded.</div>';
   const mine=SLP.conn?SLP.conn.rosterId:null;
   const fmtK=v=>v>=1000?(v/1000).toFixed(1)+'k':Math.round(v);
   const POS=['QB','RB','WR','TE'];
@@ -11195,7 +11260,7 @@ function renderSlpPower(){
     const me=String(r.rosterId)===String(mine);
     const move=r.rankMarket-r.rankModel;   // positive: DELTA ranks them higher
     return '<tr'+(me?' class="dl-pw-me"':'')+'>'
-      +'<td class="dl-pw-team">'+slpEsc(r.team)+(me?' \u2605':'')+'</td>'
+      +'<td class="dl-pw-team">'+slpEsc(r.team)+'</td>'
       +'<td class="dl-b-c dl-pw-model">'+r.rankModel+'</td>'
       +'<td class="dl-b-c dl-pw-dim">'+r.rankRoster+'</td>'
       +'<td class="dl-b-c '+(move?(move>0?'dl-pw-up':'dl-pw-dn'):'dl-pw-flat')+'">'+r.rankMarket+'</td>'
@@ -12299,8 +12364,8 @@ function renderSlpFA(){
   const pill=function(v,lbl){ return '<button type="button" class="set-pill'+(FA_POS===v?' on':'')+'" onclick="faSetPos(\''+v+'\')">'+lbl+'</button>'; };
   const opt=function(v,lbl){ return '<option value="'+v+'"'+(FA_SORT===v?' selected':'')+'>'+lbl+'</option>'; };
   const bar='<div class="dl-fa-bar">'
-    +'<span style="font-size:13px;font-weight:800;color:var(--paper)">Free Agents</span>'
-    +'<span style="font-size:11px;color:var(--fog)">'+list.length+' available</span>'
+    +'<span class="dl-fa-title">Free Agents</span>'
+    +'<span class="dl-fa-n">'+list.length+' available</span>'
     +'<span style="flex:1"></span>'
     +'<select class="set-sel" style="width:auto;margin:0" aria-label="Sort free agents" onchange="faSetSort(this.value)">'
       +opt('ds','DELTA Score')+opt('mkt','Market Value')+opt('ppg26','PPG \u201926')+'</select>'
@@ -12316,7 +12381,7 @@ function renderSlpFA(){
   const nameCell=function(p){
     const bk=(p.pos==='QB'&&typeof QB_ROLES!=='undefined'&&QB_ROLES[p.n]&&QB_ROLES[p.n].role==='backup')
       ? ' <span class="badge bn" title="Backup on today\u2019s depth chart'+(QB_ROLES[p.n].behind?' \u2014 behind '+QB_ROLES[p.n].behind:'')+'">Backup</span>' : '';
-    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+'</span>'+bk+'</td>';
+    return '<td class="dl-mt-name">'+p.n+' <span class="dl-b-tp">'+p.pos+(teamShown?'':' '+p.t)+bk+'</span></td>';
   };
   /* Tapping a row opens this under it: who on your roster he could replace, then the
      way through to his card (which used to be the whole tap). */
@@ -12522,9 +12587,12 @@ function renderSlpPartners(){
     const r=f.r;
     const strip=POS.map(function(p){
       const on=f.give.indexOf(p)>=0||f.get.indexOf(p)>=0;
-      return '<div class="dl-tp-rs'+(on?' on':'')+'"><b>'+p+'</b><span>You '+slpTpOrd(me.pos[p].rank)+'</span><span>Them '+slpTpOrd(r.pos[p].rank)+'</span></div>';
+      return '<div class="dl-tp-rs'+(on?' on':'')+'"><b>'+p+'</b><span>'+slpTpOrd(me.pos[p].rank)+'</span><span>'+slpTpOrd(r.pos[p].rank)+'</span></div>';
     }).join('')
-      +'<div class="dl-tp-rs'+(f.giveP||f.getP?' on':'')+'"><b>Picks</b><span>You '+slpTpOrd(d.myPR)+'</span><span>Them '+slpTpOrd(f.pr)+'</span></div>';
+      +'<div class="dl-tp-rs'+(f.giveP||f.getP?' on':'')+'"><b>Picks</b><span>'+slpTpOrd(d.myPR)+'</span><span>'+slpTpOrd(f.pr)+'</span></div>';
+    /* Row labels once, on the left, instead of "You" / "Them" in every box: at 12px the
+       words wrapped inside five boxes on a phone (1 Nov 2026). */
+    const strip0='<div class="dl-tp-rs dl-tp-rl" aria-hidden="true"><b>&nbsp;</b><span>You</span><span>Them</span></div>';
     const mine=f.myPicks.map(function(x){ return pk(Object.assign({own:me.rosterId},x)); }).join('');
     const theirs=f.theirPicks.map(function(x){ return pk(Object.assign({own:r.rosterId},x)); }).join('');
     return '<div class="dl-tp-card">'
@@ -12532,7 +12600,7 @@ function renderSlpPartners(){
       +'<div class="dl-tp-sw">'+(f.fit===false
         ? (f.angle ? 'A fit, but only their stars or players too small to move would fill it' : 'No clear fit right now')
         : swap(f))+'</div>'
-      +'<div class="dl-tp-strip">'+strip+'</div>'
+      +'<div class="dl-tp-strip">'+strip0+strip+'</div>'
       +(f.ask.length||theirs?'<div class="dl-tp-lab">Ask About</div>'+f.ask.map(pl).join('')+theirs:'')
       +(f.offer.length||mine?'<div class="dl-tp-lab">Could Offer</div>'+f.offer.map(pl).join('')+mine:'')
       +'<button class="dl-tp-cta" onclick="slpTradeWith('+slpEsc(JSON.stringify(r.rosterId))+')">Open In Trade Calc</button>'
@@ -12592,14 +12660,14 @@ function renderSlpLists(){
         +(showOwner?'<td class="dl-lb-own">'+(labelByRid[x.rid]||'?')+'</td>':'')
         +'<td class="dl-b-r dl-lb-num">'+(p.ktcEff>0?p.ktcEff.toLocaleString():'-')+'</td>'
         +'<td class="col-hide-mobile dl-b-r dl-lb-num" style="color:'+mvCol+'">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'
-        +'<td>'+vTag(p)+'</td></tr>';
+        +'<td class="dl-rk-verdict">'+vTag(p)+'</td></tr>';
     }).join('');
   };
   const thead=function(showOwner){
     return '<thead><tr><th class="dl-lb-ds">\u0394</th><th>Player</th>'
-      +(showOwner?'<th>Owned by</th>':'')
+      +(showOwner?'<th>Owned By</th>':'')
       +'<th class="dl-b-r">Mkt Val</th><th class="col-hide-mobile dl-b-r">DELTA Val</th>'
-      +'<th>Tag</th></tr></thead>';
+      +'<th>Call</th></tr></thead>';
   };
 
   const targetsTbl=targets.length
@@ -12610,9 +12678,9 @@ function renderSlpLists(){
     :'<div class="dl-lb-none">Nothing on your roster is sell-tagged. Clean sheet.</div>';
 
   return '<div class="dl-lb-hd"><span class="dl-lb-title">League Board</span>'
-    +'<div class="dl-lb-sec dl-lb-buy">Trade targets \u2014 buy-tagged on other rosters \u00b7 '+targets.length+'</div>'
+    +'<div class="dl-lb-sec dl-lb-buy">Trade Targets \u2014 Buy-Tagged On Other Rosters \u00b7 '+targets.length+'</div>'
     +targetsTbl
-    +'<div class="dl-lb-sec dl-lb-sell dl-lb-ship">Your ship list \u2014 sell-tagged on your roster \u00b7 '+ship.length+'</div>'
+    +'<div class="dl-lb-sec dl-lb-sell dl-lb-ship">Your Ship List \u2014 Sell-Tagged On Your Roster \u00b7 '+ship.length+'</div>'
     +shipTbl
     +'<div class="dl-lb-howrow"><button class="howbtn" aria-expanded="false"'
     +' onclick="var h=this.parentNode.nextElementSibling,o=h.hasAttribute(\'hidden\');'
