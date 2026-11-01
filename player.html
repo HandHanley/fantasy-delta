@@ -342,6 +342,8 @@ a{color:var(--teal-br)}
    the nearest step after each draw. Charts (SVG) keep their own sizes: they are drawings. */
 .card{border-radius:14px;padding:16px;margin-bottom:12px}
 .card-label,.dd-section-label{font-size:16px;font-weight:800;letter-spacing:0;text-transform:capitalize;color:var(--paper)}
+.card-label > div,.card-label .card-sub{text-transform:none}   /* a sentence under a title stays a sentence */
+.card-label > div::first-letter{text-transform:uppercase}
 .card-sub{font-size:12px;color:var(--fog-2)}
 .dlh-chart-h{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #player-content .dd-title{font-size:16px !important;font-weight:800 !important;letter-spacing:0 !important}
@@ -422,7 +424,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31k</span>
+    <span class="foot-build">2026-10-31l</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1525,7 +1527,7 @@ function buildCollegeHTML(p) {
     : '';
 
   const ddCard = r._ddomPct != null
-    ? '<div class="card"><div class="card-label">dDOM \u00b7 ' + yr + ' \u00b7 ' + dLabel
+    ? '<div class="card"><div class="card-label"><span style="text-transform:none">dDOM</span> \u00b7 ' + yr + ' \u00b7 ' + dLabel
       + '<div class="card-sub">where he ranked among qualifying ' + pos + 's that season, adjusted for who he played</div></div>'
       + '<div style="display:flex;align-items:baseline;gap:10px">'
       + '<span style="font-size:30px;font-weight:800;font-family:var(--mono);line-height:1;color:' + _cfbColor(r._ddomPct) + '">' + r._ddomPct + '</span>'
@@ -1535,7 +1537,7 @@ function buildCollegeHTML(p) {
       + '<div style="font-size:10px;color:var(--fog-2);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">Opponent quality ' + _cpc(r.tpct) + '. '
       + (r.p4 ? 'Power 4 conference.' : 'Non-Power-4 conference \u2014 the schedule adjustment pulls this number down, not up.') + '</div>'
       + arc + '</div>'
-    : '<div class="card"><div class="card-label">dDOM \u00b7 ' + yr + '</div>'
+    : '<div class="card"><div class="card-label"><span style="text-transform:none">dDOM</span> \u00b7 ' + yr + '</div>'
       + '<div style="font-size:11.5px;color:var(--fog-2);padding:6px 0;line-height:1.6">Below the qualifying volume floor that season, so no competition-adjusted percentile is computed.</div>' + arc + '</div>';
 
   // Third box is the one number that describes his ROLE that season. It is NOT CFBD's

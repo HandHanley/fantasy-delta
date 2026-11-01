@@ -3047,7 +3047,7 @@ const RK_COLS=[
   tip:"Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.",
   fn:(p,R)=>`<td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
 
- {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
+ {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:false,
   tip:"Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.",
   fn:(p,R)=>`<td class="dl-b-r">${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
 
@@ -3077,11 +3077,11 @@ const RK_COLS=[
  /* Sorts on the same number it prints. It used to sort raw p.proj while
     displaying getAdjProj(p) — identical at the default scoring format and
     quietly wrong at every other one. */
- {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:true,
+ {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:false,
   tip:"DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
 
- {k:'mv', al:'r', lbl:'DELTA Val', full:'DELTA Value', sort:'mv', mob:true,
+ {k:'mv', al:'r', lbl:'DELTA Val', full:'DELTA Value', sort:'mv', mob:false,
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
@@ -3159,13 +3159,13 @@ const RK_COLS=[
     const r=effRec(p.n); if(!r||!effTier(r.pos,r.sofar,r.n,'season_min')||r.base==null) return rkNum(null,'');
     const v=effPct(r.pos,r.sofar)-effPct(r.pos,r.base); return rkNum(v,(v>0?'+':v<0?'\u2212':'')+Math.abs(v),null); }},
 
- {k:'tag', lbl:'Tag', full:'Verdict', mob:true,
+ {k:'tag', lbl:'Call', full:'Call (Buy / Sell / Hold)', mob:true,
   fn:(p,R)=>`<td class="dl-rk-verdict">${vTag(p)}</td>`}
 ];
 
 
 /* 600px is the live breakpoint — the same one col-hide-mobile fires at, so a
-   phone sees exactly the seven columns it saw before this change. */
+   phone and the Columns menu agree on what a phone is. */
 const RK_MQ = window.matchMedia('(max-width:600px)');
 /* The Efficiency columns read data/efficiency.json, fetched only when one of them is on. */
 let _rkEffAsked=false;
@@ -3261,8 +3261,10 @@ function rkCols(){
    Per BRAND section 7 these are per-device and do NOT sync, so there is no
    DSYNC hook here on purpose, and the menu says so on its face.
 
-   Defaults reproduce today's behaviour exactly: everything on desktop, and on
-   a phone the same eight columns col-hide-mobile used to leave visible. */
+   Desktop default: everything not marked off. Phone default (redesign step 3, piece 5, 31 Oct
+   2026, owner-approved plan): four columns, Score, Market, Player and Call (mob:true), so a row
+   reads at a glance on a phone. Anyone who has already picked phone columns keeps them: only a
+   phone with nothing saved, or one that taps Reset in Columns, sees the new default. */
 const RK_LS  = { d:'delta_cols_desktop', m:'delta_cols_mobile' };
 /* Desktop default is every column NOT marked off:true — which is exactly the
    thirteen that shipped before the extra ten were added, so nobody's board
@@ -8047,7 +8049,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31l</span>
+  <span class="foot-build">2026-10-31m</span>
 </footer>
 
 

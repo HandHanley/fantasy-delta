@@ -125,6 +125,16 @@ table.dl-board.gl{font-size:11.5px}
 .foot-build{font-family:var(--mono);font-size:9.5px;color:var(--fog-2);letter-spacing:.02em}
 #err{color:var(--fog);font-size:14px;padding:40px 0;text-align:center}
 </style><script src="delta-nav.js" defer></script>
+<style id="dl-type">
+/* ── COLLEGE CARD IN THE PLAYER PAGE'S STYLE (redesign step 3, piece 5, 31 Oct 2026, owner-approved plan) ──
+   Same cards (14px corners, 16px padding), section headings as 16px Title Case card titles inside their
+   cards, and the five text sizes (12 / 13 / 16 / 20 / 28px) via dlTypeScaleIn() in delta-engine.js. */
+.card{border-radius:14px;padding:16px}
+.card.sec{margin-top:14px}
+.hlab,.sec-h{font-size:16px;font-weight:800;letter-spacing:0;color:var(--paper)}
+.sec-h{margin:0 0 12px}
+.card .dl-board.gl tbody tr:last-child td{border-bottom:0}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -186,7 +196,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
          it deliberately did not; that is no longer true. It is paired with the engine
          marker the same way player.html and index.html are, and the two differing is a
          normal state, never coloured as a fault. -->
-    <span class="foot-build">2026-10-31e</span>
+    <span class="foot-build">2026-10-31f</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -260,7 +270,7 @@ function cfbDDOM(p,pool){ if(!cfbQualifies(p)) return null;
   if(raw==null) return null; const pct=cfbPct(p,pool); if(pct==null) return null;
   return { pct, raw:p.pos==='QB'?Math.round(raw*10)/10:Math.round(raw*1000)/10, rawUnit:p.pos==='QB'?'':'%',
     rawLabel:p.pos==='QB'?'ANY/A':p.pos==='RB'?'all-purpose dom':'dominator',
-    label:p.pos==='QB'?'competition-adjusted efficiency':p.pos==='RB'?'competition-adjusted all-purpose production':'competition-adjusted dominance' }; }
+    label:p.pos==='QB'?'Competition-Adjusted Efficiency':p.pos==='RB'?'Competition-Adjusted All-Purpose Production':'Competition-Adjusted Dominance' }; }
 function cfbClassName(c){ return {1:'Freshman',2:'Sophomore',3:'Junior',4:'Senior',5:'Senior (5th)'}[c]||'class n/a'; }
 const N=v=>(v==null||v===''||v===0)?'-':(''+v);
 
@@ -343,7 +353,7 @@ function render(p, pool, seasons, season){
   const posPlural={QB:'QBs',RB:'RBs',WR:'WRs',TE:'TEs'}[p.pos]||'players';
   const tp=p.tpct==null?50:Math.round(p.tpct*100);
   const heroCard = dd
-    ? '<div class="card"><div class="hlab">dDOM \u00b7 '+dd.label+'</div>'
+    ? '<div class="card"><div class="hlab">dDOM \u00b7 '+String(dd.label).replace(/\b[a-z]/g,c=>c.toUpperCase())+'</div>'
       +'<div class="big" style="color:var(--teal-br)">'+dd.pct+'</div>'
       +'<div class="muted" style="margin-top:3px">'+(dd.pct>=50?'top '+(100-dd.pct)+'% of '+posPlural:'below median of '+posPlural)+' \u00b7 percentile at position \u00b7 raw '+dd.rawLabel+' '+dd.raw+dd.rawUnit+'</div>'
       +'<div style="margin-top:11px;font-size:10.5px;color:var(--fog);display:flex;align-items:center;gap:7px"><span>competition</span>'
@@ -366,7 +376,7 @@ function render(p, pool, seasons, season){
     +'<span style="font-size:10.5px;color:var(--fog)"'+(tip?' title="'+tip+'"':'')+'>'+lab+'</span>'
     +'<b style="font-size:13px;font-family:var(--mono);color:'+(val>=0?'var(--paper)':'var(--coral)')+'">'+val.toFixed(2)+'</b></div>';
   const ppaCard = (p.ppa!=null||ppaHead!=null)
-    ? '<div class="card"><div class="hlab">PPA \u00b7 predicted points added (college EPA)</div>'
+    ? '<div class="card"><div class="hlab">PPA \u00b7 College EPA</div>'
       +'<div class="big" style="color:var(--sky)">'+(ppaHead!=null?ppaHead.toFixed(2):(p.ppa!=null?p.ppa.toFixed(2):'-'))+'</div>'
       +'<div class="muted" style="margin-top:3px">'+ppaLbl+ppaBench+' \u2014 per-play efficiency, garbage time excluded. ~0 is average.</div>'
       +'<div style="margin-top:10px">'
@@ -377,7 +387,7 @@ function render(p, pool, seasons, season){
           +'<span style="font-size:10.5px;color:var(--fog)" title="Cumulative points added over the season \u2014 a volume measure, unlike the per-play averages above.">Season total</span>'
           +'<b style="font-size:13px;font-family:var(--mono);color:var(--sky)">'+p.ppaTot.toFixed(1)+'</b></div>':'')
       +'</div><div id="ppa-hist"></div></div>'
-    : '<div class="card"><div class="hlab">PPA (college EPA)</div><div class="muted" style="margin-top:6px">No PPA on record for this season.</div></div>';
+    : '<div class="card"><div class="hlab">PPA (College EPA)</div><div class="muted" style="margin-top:6px">No PPA on record for this season.</div></div>';
 
   // production / efficiency grid
   const pc = p.pos==='QB'
@@ -399,14 +409,27 @@ function render(p, pool, seasons, season){
     +'<div class="sub"><span class="posdot" style="background:'+posCol+'">'+p.pos+'</span>'+(p.tm||'-')+(p.conf?' \u00b7 '+p.conf:'')
       +compHtml+starsHtml+'<span>'+cfbClassName(clsNum)+(p.ageEst?' \u00b7 age ~'+p.ageEst:'')+'</span></div>'
     +'<div class="cols">'+heroCard+ppaCard+'</div>'
-    +'<div class="sec-h">PRODUCTION &amp; EFFICIENCY \u00b7 '+season+'</div>'+gridHtml
-    +'<div class="sec-h">TRAJECTORY \u00b7 dDOM BY SEASON</div><div id="traj" class="muted">loading…</div>'
-    +'<div class="sec-h">GAME LOG</div><div id="gamelog" class="muted">loading…</div>'
+    // Each section is a card with a Title Case heading, like the NFL player page (redesign step 3, piece 5).
+    +'<div class="card sec"><div class="sec-h">Production &amp; Efficiency \u00b7 '+season+'</div>'+gridHtml+'</div>'
+    +'<div class="card sec"><div class="sec-h">Trajectory \u00b7 dDOM By Season</div><div id="traj" class="muted">loading…</div></div>'
+    +'<div class="card sec"><div class="sec-h">Game Log</div><div id="gamelog" class="muted">loading…</div></div>'
     +'<div id="teammates"></div>'
     +'<div class="muted" style="margin-top:22px;border-top:1px solid var(--line);padding-top:12px">'
     +'dDOM is a DELTA analytical metric (competition-adjusted production percentile among qualified players). PPA is CFBD\u2019s predicted-points-added, the college EPA. Age is an estimate from recruiting class. Regular season only.</div>';
 
   fillCrossSeason(p, seasons);
+  dlCfbTypeWatch();
+}
+/* Five text sizes (redesign step 3, piece 5): after the first draw and whenever a section fills in
+   later (trajectory, game log, team construction, season pills). */
+let _cfbTypeWatch=false;
+function dlCfbTypeWatch(){
+  const host=document.getElementById('app'); if(!host||typeof dlTypeScaleIn!=='function') return;
+  // The cards and the closing note only: the name, badges and school line above them keep their own sizes.
+  let q=false; const run=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false;
+    dlTypeScaleIn([...host.querySelectorAll(':scope .card, :scope > .muted')]); }); };
+  run();
+  if(!_cfbTypeWatch && window.MutationObserver){ _cfbTypeWatch=true; new MutationObserver(run).observe(host,{childList:true,subtree:true}); }
 }
 
 // ── cross-season: trajectory, breakout badge, season-switchable game log + team construction ──
@@ -463,9 +486,9 @@ function postseasonTable(pos, games, yr){
 function teammatesTable(p, pool){
   const mates=pool.filter(x=>x.tm===p.tm&&x.pos!=='QB'&&(x.rec||0)>0).sort((a,b)=>(b.rsh||0)-(a.rsh||0)).slice(0,6);
   if(mates.length<2) return '';
-  return '<div class="sec-h">TEAM CONSTRUCTION</div><table class="dl-board gl"><thead><tr><th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead><tbody>'
+  return '<div class="card sec"><div class="sec-h">Team Construction</div><div class="dl-b-scroll"><table class="dl-board gl"><thead><tr><th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead><tbody>'
     +mates.map(m=>'<tr'+(m.n===p.n?' class="dl-cp-me"':'')+'><td'+(m.n===p.n?' style="font-weight:800"':'')+'>'+m.n+(m.n===p.n?' \u2190':'')+'</td><td>'+m.pos+'</td><td>'+(m.cls?'Y'+m.cls:'-')+'</td><td>'+(m.rec||0)+'</td><td>'+(m.rey||0)+'</td><td>'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>').join('')
-    +'</tbody></table><div class="muted">Only tracked players appear \u2014 shares will not sum to 100%.</div>';
+    +'</tbody></table></div><div class="muted">Only tracked players appear \u2014 shares will not sum to 100%.</div></div>';
 }
 function glSeason(y){ if(y==='all'){ GL.sel='all'; renderGL(); return; } if(GL.data&&GL.data[y]){ GL.sel=y; renderGL(); } }
 // Season totals for the game-log caption. Lifted out of the all-seasons branch below
@@ -529,7 +552,7 @@ async function fillCrossSeason(p, seasons){
     const vals=pYrs.map(y=>ppaBySeason[y].head).filter(v=>v!=null);
     const mx=Math.max(0.6, ...vals.map(Math.abs));
     phEl.innerHTML='<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">'
-      +'<div class="hlab" style="margin-bottom:7px">PPA by season</div>'
+      +'<div class="hlab" style="margin-bottom:7px">PPA By Season</div>'
       +pYrs.map(y=>{ const v=ppaBySeason[y].head; if(v==null) return '';
         const w=Math.max(4,Math.round(Math.abs(v)/mx*100));
         return '<div style="display:grid;grid-template-columns:42px 1fr 46px;gap:8px;align-items:center;margin-bottom:5px;font-size:11px">'
