@@ -2101,6 +2101,37 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   #panel-trade .added-vals{flex-basis:100%}
 }
 </style>
+<style id="dl-mock">
+/* ── MOCK DRAFT, REDESIGNED (1 Nov 2026) ─────────────────────────────────────────────────────
+   The redesign's rules on the Mock Draft: 14px cards, Title Case labels and 16px section titles
+   instead of small capitals, 36px pill choices, a 48px Start button, 44px tap rows for the
+   Settings / Restart links, and the five text sizes (dlPanelTypeWatch). The Latest Picks box
+   keeps its fixed height on purpose (the board below never jumps as picks arrive). */
+#panel-mock .dl-md-card{border-radius:14px;padding:8px 16px}
+#panel-mock :is(.dl-md-status,.dl-md-clock,.dl-md-pill,.dl-md-log,.dl-md-feed,.dl-md-warn){border-radius:14px}
+#panel-mock .dl-md-rl{flex-basis:80px;font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog);padding-top:9px}
+#panel-mock .dl-md-chip{min-width:44px;min-height:36px;padding:0 12px;border-radius:18px;font-size:13px}
+#panel-mock .dl-md-chip.sm{min-height:32px;border-radius:16px;font-size:12px}
+#panel-mock .dl-md-go{min-height:48px;border-radius:14px;font-size:16px}
+#panel-mock .dl-md-sec h3{font-size:16px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--paper);margin:0 0 8px}
+#panel-mock .dl-md-ck-lbl{font-size:12px;letter-spacing:0;text-transform:none}
+#panel-mock .dl-md-link{font-size:13px}
+#panel-mock .dl-md-top .dl-md-link{min-height:44px}
+#panel-mock .dl-md-status span{font-family:var(--sans);font-size:13px}
+#panel-mock .dl-md-feed i{flex:0 1 auto;max-width:30%;min-width:0}
+/* Phones: the board keeps its last column (the pass odds) on screen. Headings may wrap; the pick goes under If You Pass. */
+@media(max-width:600px){
+  #panel-mock .dl-md-tbl th{white-space:normal;line-height:1.25;vertical-align:bottom}
+  #panel-mock .dl-md-tbl :is(th,td){padding-left:5px;padding-right:5px}
+  #panel-mock .dl-md-tbl :is(th,td):first-child{padding-left:0}
+  #panel-mock .dl-md-thp{display:block}
+  #panel-mock .dl-md-tbl th:has(.dl-md-thp){white-space:nowrap}
+  #panel-mock .dl-md-dbtn{padding:0 10px}
+}
+@media(max-width:370px){#panel-mock .dl-md-tbl td.pname{min-width:110px}}
+#panel-mock .dl-md-dbtn{min-height:32px;padding:0 12px;border-radius:16px;font-size:12px}
+#panel-mock .dl-md-head h2{font-size:20px}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -4988,7 +5019,7 @@ function mdRender(){
   const rank=new Map(av.map((i,j)=>[i,j+1]));
   const list=av.filter(i=>MD.pos==='All'||P[i].pos===MD.pos);
   const od=MD.odds, adp=MD.adp;
-  const oddsHead=od?(od.pass?'If You Pass · '+od.label:'At '+od.label):'';
+  const oddsHead=od?(od.pass?'If You Pass<span class="dl-md-thp"> · '+od.label+'</span>':'At '+od.label):'';
   // under the name: school, then the NFL team holding the pick that matches his board rank
   const nameCell=p=>'<td class="pname"><span class="dl-b-pn">'+mdEsc(p.n)+'</span><span class="dl-b-tp">'+p.pos+'</span>'
     +'<span class="dl-md-sub">'+mdEsc(p.school)+(p.nt?' · '+mdEsc(p.nt)+' #'+p.np:'')+'</span></td>';
@@ -6522,6 +6553,7 @@ function showTab(id,el,skipSection){
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
   if(id==='trade') dlPanelTypeWatch('panel-trade');
+  if(id==='mock') dlPanelTypeWatch('panel-mock');
 }
 
 // Depth Charts tab removed — replaced by Contracts tab
@@ -8172,7 +8204,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01a</span>
+  <span class="foot-build">2026-11-01b</span>
 </footer>
 
 
