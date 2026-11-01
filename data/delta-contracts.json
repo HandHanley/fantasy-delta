@@ -1,7 +1,7 @@
 {
  "_about": "DELTA's own contracts table (legal compliance plan, step 8). Built from public news reports and the draft, never copied from OverTheCap or Spotrac pages; every row names its source. THE SITE READS THIS FILE (since 25 Oct 2026; it replaced the OverTheCap feed). delta-engine.js carries a built-in copy for when it fails to load: after ANY change here, run node scripts/build-contracts-backup.js and commit both files (the nightly fails if they differ). Keeping it current: ?dev=1 lists players whose team on the nightly depth charts differs from this table. The Score reads only `end` (last season under contract). `aav` and `total` are in millions and display-only; null means none shown (rookie deals show 'Rookie Deal'). `kind`: rookie, rookie_option (fifth-year option picked up), veteran (new deal), extension (years added to a running deal; new years start after the old ones), franchise_tag, practice_squad, free_agent (no current contract: `end` null, which the Score treats as neutral), retired (end null), left_team (end null; owner exception). `option` (first-rounders only): `exercised` = the team picked up the fifth-year option and that year is counted in `end`; `available` = not decided yet, so `end` stops after year four and the page shows \"Fifth-Year Option Available\" with no date (owner, 25 Oct 2026: teams can decide any time in `window`, which is kept only so we know when to re-check); `declined` = no fifth year. A row with `pending` waits on the owner. During the first build, rows that agreed with the old feed went in without owner review and every disagreement was approved by the owner (25 Oct 2026); from now on, any change to an end year is the owner's call. `team_source`: a link for a move (trade, waiver claim) after the deal was signed; the contract travels with the player.",
  "season": 2026,
- "updated": "2026-10-25",
+ "updated": "2026-11-01",
  "rookie_rule": "Drafted players: four-year deal, draft year to draft year + 3. First-rounders add draft year + 4 only once the team picks up the fifth-year option (decided each May of year + 3). Players from the last three classes cannot sign extensions until after their third season.",
  "players": {
   "A.J. Brown": {
@@ -1282,14 +1282,15 @@
    "checked": "2026-10-25"
   },
   "Emari Demercado": {
-   "team": "DAL",
+   "team": "HOU",
    "end": 2026,
    "kind": "veteran",
    "aav": null,
    "total": null,
-   "basis": "Signed by Kansas City (March 2026); claimed off waivers by Dallas 31 Aug 2026, contract carried over; length not reported, so counted as at least the 2026 season.",
+   "basis": "Signed by Kansas City (March 2026); claimed off waivers by Dallas 31 Aug 2026, contract carried over; length not reported, so counted as at least the 2026 season. Waived by Dallas 27 Oct 2026 and claimed by Houston 28 Oct 2026, contract carried over.",
    "source": "https://www.nbcsports.com/fantasy/football/player-news/2026-08-31/cowboys-claim-emari-demercado-from-chiefs",
-   "checked": "2026-10-25"
+   "checked": "2026-11-01",
+   "team_source": "https://www.nbcsports.com/fantasy/football/player-news/2026-10-28/texans-claim-emari-demercado-off-waivers"
   },
   "Emeka Egbuka": {
    "team": "TB",
@@ -1977,12 +1978,12 @@
   "Jaydon Blue": {
    "team": "PHI",
    "end": 2026,
-   "kind": "practice_squad",
+   "kind": "veteran",
    "aav": null,
    "total": null,
-   "basis": "Drafted 2025, round 5 by Dallas; released 30 Aug 2026; signed to the Philadelphia practice squad 31 Aug 2026 (season-only deal).",
-   "source": "https://larrybrownsports.com/football/former-cowboys-jaydon-blue-signing-eagles/768218",
-   "checked": "2026-10-25"
+   "basis": "Drafted 2025, round 5 by Dallas; released 30 Aug 2026; on the Philadelphia practice squad from 31 Aug 2026; signed to the Eagles active roster 28 Oct 2026; length not reported, so counted as at least the 2026 season.",
+   "source": "https://www.philadelphiaeagles.com/news/eagles-sign-rb-jaydon-blue-to-the-active-roster-add-three-to-the-practice-squad-dameon-pierce",
+   "checked": "2026-11-01"
   },
   "Jaylen Waddle": {
    "team": "DEN",
@@ -2062,14 +2063,14 @@
    }
   },
   "Jerome Ford": {
-   "team": "WAS",
+   "team": "ARI",
    "end": 2026,
-   "kind": "veteran",
+   "kind": "practice_squad",
    "aav": null,
    "total": null,
-   "basis": "One-year deal with Washington (2026).",
-   "source": "https://www.aol.com/articles/jerome-ford-signs-one-contract-150019856.html",
-   "checked": "2026-10-25"
+   "basis": "One-year deal with Washington (2026); placed on injured reserve August 2026 and no longer with Washington; signed to the Arizona practice squad 14 Oct 2026 (season-only deal).",
+   "source": "https://www.rotoballer.com/?p=1966319",
+   "checked": "2026-11-01"
   },
   "Jerry Jeudy": {
    "team": "CLE",
@@ -2385,12 +2386,12 @@
   "K.J. Osborn": {
    "team": "TEN",
    "end": 2026,
-   "kind": "veteran",
+   "kind": "practice_squad",
    "aav": null,
    "total": null,
-   "basis": "One-year deal with Tennessee (April 2026).",
-   "source": "https://prd.tsn.ca/nfl/article/report-titans-add-wr-osborn-on-one-year-deal",
-   "checked": "2026-10-25"
+   "basis": "One-year deal with Tennessee (April 2026); now on the Titans practice squad (elevated for the 25 Oct 2026 game, returned 26 Oct) (season-only deal).",
+   "source": "https://www.rotowire.com/football/headlines/kj-osborn-news-returns-to-practice-squad-644558",
+   "checked": "2026-11-01"
   },
   "KC Concepcion": {
    "team": "CLE",
@@ -3115,14 +3116,14 @@
    "checked": "2026-10-25"
   },
   "Najee Harris": {
-   "team": "NYG",
-   "end": 2026,
-   "kind": "veteran",
+   "team": null,
+   "end": null,
+   "kind": "free_agent",
    "aav": null,
    "total": null,
-   "basis": "Signed by the Giants (August 2026); length not reported, so counted as at least the 2026 season.",
-   "source": "https://www.local10.com/sports/2026/08/18/new-york-giants-are-signing-running-back-najee-harris-ap-source-says/",
-   "checked": "2026-10-25"
+   "basis": "Signed by the Giants (August 2026); released 20 Oct 2026 and unsigned since. No contract as of 1 Nov 2026: counted as no contract (Score treats it as neutral).",
+   "source": "https://www.giants.com/news/rb-najee-harris-olb-jihad-ward-released-among-series-of-roster-moves-trace-ford-active-roster-moves-week-7",
+   "checked": "2026-11-01"
   },
   "Nate Boerkircher": {
    "team": "JAC",
