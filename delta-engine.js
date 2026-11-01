@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31f';
+const DL_BUILD='2026-10-31g';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5716,7 +5716,8 @@ function dlTypeStep(f){ return f<=10.25?12 : f<=14.5?13 : f<=18.5?16 : f<=23.5?2
 const _dlTyped=new WeakSet();
 function dlTypeScaleIn(roots){
   const plan=[];
-  (roots||[]).filter(Boolean).forEach(r=>r.querySelectorAll('*').forEach(e=>{
+  // The root itself counts too: a note passed in as a root carries its own text.
+  (roots||[]).filter(Boolean).forEach(r=>[r,...r.querySelectorAll('*')].forEach(e=>{
     if(_dlTyped.has(e)||e.closest('svg')||e.tagName==='SCRIPT'||e.tagName==='STYLE') return;
     if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())) return;
     const cs=getComputedStyle(e), f=parseFloat(cs.fontSize);

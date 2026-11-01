@@ -1993,13 +1993,19 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
    This block is last in <head> on purpose: an earlier phone rule for .dd-overlay lost to the base rule
    written after it (see the step 2 notes), which is why the card never became a sheet before. */
 .dd-grab{display:none}
-#dd-actbar{position:sticky;bottom:0;z-index:2;display:flex;gap:10px;padding:12px 1.25rem;
+#dd-actbar,.dd-actbar{position:sticky;bottom:0;z-index:2;display:flex;gap:10px;padding:12px 1.25rem;
   background:var(--panel);border-top:1px solid var(--line)}
-#dd-actbar .dd-act-main{flex:1;display:flex;align-items:center;justify-content:center;height:48px;border-radius:14px;
+#dd-actbar .dd-act-main,.dd-actbar .dd-act-main{flex:1;display:flex;align-items:center;justify-content:center;height:48px;border-radius:14px;
   background:var(--teal-br);color:var(--ink);font-size:15px;font-weight:800;text-decoration:none;box-sizing:border-box}
 #dd-actbar .dd-act-cmp{width:116px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);
   color:var(--paper);font:inherit;font-size:15px;font-weight:700;cursor:pointer;box-sizing:border-box}
 #dd-actbar .dd-act-main:focus-visible,#dd-actbar .dd-act-cmp:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+/* The college pop-up (#cfb-card): each section in its own box with a Title Case heading, like the
+   college page's cards; Open Full Profile pinned at the bottom (31 Oct 2026). */
+.cc-body{padding:18px 20px 16px}
+.cc-sec{margin-top:12px;background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.cc-h{font-size:16px;font-weight:800;letter-spacing:0;color:var(--paper);margin-bottom:10px}
+#cfb-card .dl-board tbody tr:last-child td{border-bottom:0}
 /* Section titles in Title Case, like the player page's cards. */
 #dd-card .dd-section-label{font-size:16px;font-weight:800;letter-spacing:0;text-transform:capitalize;color:var(--paper)}
 #dd-card .dd-title{font-size:16px !important;font-weight:800 !important;letter-spacing:0 !important}
@@ -2011,6 +2017,14 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
   .dd-overlay.open .dd-card{transform:translateY(0)}
   .dd-card.dd-dragging{transition:none}
+  #cfb-overlay{align-items:flex-end;justify-content:stretch;padding:0;overflow:hidden}
+  #cfb-card{max-width:none !important;width:100%;border-radius:18px 18px 0 0;border-bottom:0;
+    max-height:calc(100% - 44px - env(safe-area-inset-top,0px));
+    transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+  #cfb-overlay.open #cfb-card{transform:translateY(0)}
+  #cfb-card.dd-dragging{transition:none}
+  .cc-body{padding:1.5rem 16px 16px}
+  .dd-actbar{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
   .dd-grab{display:block;position:relative;z-index:3;height:22px;margin-bottom:-22px;cursor:grab;touch-action:none}
   .dd-grab::before{content:'';position:absolute;left:50%;top:8px;width:36px;height:5px;margin-left:-18px;border-radius:3px;background:var(--fog-2)}
   .dd-header{padding-top:1.5rem !important}
@@ -3047,7 +3061,7 @@ const RK_COLS=[
   tip:"Current age. Dynasty curves differ by position: RBs peak 24-26, WRs/TEs 25-28, QBs 27-32.",
   fn:(p,R)=>`<td class="dl-b-r">${p.a<90?p.a.toFixed(1):'-'}</td>`},
 
- {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:true,
+ {k:'ppg25', al:'r', lbl:"PPG'25", full:"PPG '25", sort:'ppg25', mob:false,
   tip:"Points per game in the 2025 season, adjusted for your current scoring format. True DNPs (0 offensive snaps) are excluded.",
   fn:(p,R)=>`<td class="dl-b-r">${(p.g25===0&&p.ppg25>0)?'\u2014':p.ppg25>0?p.ppg25.toFixed(1):'-'}</td>`},
 
@@ -3077,11 +3091,11 @@ const RK_COLS=[
  /* Sorts on the same number it prints. It used to sort raw p.proj while
     displaying getAdjProj(p) — identical at the default scoring format and
     quietly wrong at every other one. */
- {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:true,
+ {k:'proj', al:'r', lbl:'Proj PPG', full:'Projected PPG', sort:p=>getAdjProj(p), mob:false,
   tip:"DELTA's estimated PPG for the upcoming season, built from recent production, age trajectory, and projecting forward from opportunity score.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-proj">${getAdjProj(p).toFixed(1)}</td>`},
 
- {k:'mv', al:'r', lbl:'DELTA Val', full:'DELTA Value', sort:'mv', mob:true,
+ {k:'mv', al:'r', lbl:'DELTA Val', full:'DELTA Value', sort:'mv', mob:false,
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
@@ -3159,13 +3173,13 @@ const RK_COLS=[
     const r=effRec(p.n); if(!r||!effTier(r.pos,r.sofar,r.n,'season_min')||r.base==null) return rkNum(null,'');
     const v=effPct(r.pos,r.sofar)-effPct(r.pos,r.base); return rkNum(v,(v>0?'+':v<0?'\u2212':'')+Math.abs(v),null); }},
 
- {k:'tag', lbl:'Tag', full:'Verdict', mob:true,
+ {k:'tag', lbl:'Call', full:'Call (Buy / Sell / Hold)', mob:true,
   fn:(p,R)=>`<td class="dl-rk-verdict">${vTag(p)}</td>`}
 ];
 
 
 /* 600px is the live breakpoint — the same one col-hide-mobile fires at, so a
-   phone sees exactly the seven columns it saw before this change. */
+   phone and the Columns menu agree on what a phone is. */
 const RK_MQ = window.matchMedia('(max-width:600px)');
 /* The Efficiency columns read data/efficiency.json, fetched only when one of them is on. */
 let _rkEffAsked=false;
@@ -3261,8 +3275,10 @@ function rkCols(){
    Per BRAND section 7 these are per-device and do NOT sync, so there is no
    DSYNC hook here on purpose, and the menu says so on its face.
 
-   Defaults reproduce today's behaviour exactly: everything on desktop, and on
-   a phone the same eight columns col-hide-mobile used to leave visible. */
+   Desktop default: everything not marked off. Phone default (redesign step 3, piece 5, 31 Oct
+   2026, owner-approved plan): four columns, Score, Market, Player and Call (mob:true), so a row
+   reads at a glance on a phone. Anyone who has already picked phone columns keeps them: only a
+   phone with nothing saved, or one that taps Reset in Columns, sees the new default. */
 const RK_LS  = { d:'delta_cols_desktop', m:'delta_cols_mobile' };
 /* Desktop default is every column NOT marked off:true — which is exactly the
    thirteen that shipped before the extra ten were added, so nobody's board
@@ -6691,14 +6707,19 @@ function closeDeckNow(){
 }
 
 /* Drag the sheet down by its grab bar, or by its top while it is scrolled to the top, to close it
-   (phones, 31 Oct 2026). Past 90px, or a quick flick, it closes; otherwise it springs back. */
+   (phones, 31 Oct 2026). Past 90px, or a quick flick, it closes; otherwise it springs back.
+   Works for both sheets: the NFL player pop-up and the college one. */
 (function(){
-  let y0=null, dy=0, t0=0, card=null;
+  let y0=null, dy=0, t0=0, card=null, close=null;
   const phone=()=>window.matchMedia&&matchMedia('(max-width:759px)').matches;
+  const SHEETS=[['dd-overlay','dd-card','#dd-grab','.dd-header',()=>closeDeckNow()],
+                ['cfb-overlay','cfb-card','#cfb-grab','.cc-top',()=>closeCfbCard()]];
   document.addEventListener('touchstart',e=>{
-    card=document.getElementById('dd-card');
-    if(!phone()||!card||!document.getElementById('dd-overlay').classList.contains('open')) return;
-    const onGrab=e.target.closest('#dd-grab'), onTop=e.target.closest('.dd-header')&&card.scrollTop<=0;
+    if(!phone()) return;
+    const sh=SHEETS.find(x=>{ const o=document.getElementById(x[0]); return o&&o.classList.contains('open')&&e.target.closest('#'+x[1]); });
+    if(!sh) return;
+    card=document.getElementById(sh[1]); close=sh[4];
+    const onGrab=e.target.closest(sh[2]), onTop=e.target.closest(sh[3])&&card.scrollTop<=0;
     if(!onGrab&&!onTop) return;
     y0=e.touches[0].clientY; dy=0; t0=Date.now(); card.classList.add('dd-dragging');
   },{passive:true});
@@ -6711,7 +6732,7 @@ function closeDeckNow(){
     if(y0==null||!card) return;
     card.classList.remove('dd-dragging');
     const quick=dy>40&&(Date.now()-t0)<250;
-    if(dy>90||quick) closeDeckNow(); else card.style.transform='';
+    if(dy>90||quick) close(); else card.style.transform='';
     y0=null; dy=0;
   };
   document.addEventListener('touchend',end); document.addEventListener('touchcancel',end);
@@ -8047,7 +8068,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31l</span>
+  <span class="foot-build">2026-10-31n</span>
 </footer>
 
 
@@ -8675,6 +8696,16 @@ function closeCfbCard(){
   // Unlock only if it was open: Escape calls this on every page, and an unconditional
   // unlock would release the NFL pop-up's lock underneath it.
   if(o&&o.classList.contains('open')){ o.classList.remove('open'); document.body.style.overflow=''; }
+  const c=document.getElementById('cfb-card'); if(c){ c.classList.remove('dd-dragging'); c.style.transform=''; }
+}
+/* Five text sizes inside the college pop-up's sections, as on the college page (31 Oct 2026). */
+let _cfbCardTypeWatch=false;
+function dlCfbCardTypeWatch(){
+  const host=document.getElementById('cfb-card'); if(!host||typeof dlTypeScaleIn!=='function') return;
+  let q=false; const run=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false;
+    dlTypeScaleIn([...host.querySelectorAll('.cc-sec, .cc-note')]); }); };
+  run();
+  if(!_cfbCardTypeWatch && window.MutationObserver){ _cfbCardTypeWatch=true; new MutationObserver(run).observe(host,{childList:true,subtree:true}); }
 }
 // ── dDOM: DELTA's competition-adjusted production, as a 0-100 WITHIN-POSITION percentile ──
 // The raw base differs by position (WR/TE dominator, RB rush dominator, QB ANY/A) and lives
@@ -8800,9 +8831,9 @@ function openCfbCard(name){
     +'<span style="font-size:10.5px;color:var(--fog)" title="Predicted points added per play \u2014 the college equivalent of EPA. Garbage time excluded. ~0 is average.">PPA \u00b7 '+ppaLbl+'</span>'
     +'<span><b style="font-size:15px;font-family:var(--mono);color:var(--sky)">'+ppaHead.toFixed(2)+'</b>'
     +'<span style="font-size:10px;color:var(--fog-2);margin-left:6px">'+ppaBench+'</span></span></div>';
-  const hero = dd ? '<div style="margin-top:13px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px 14px">'
+  const hero = dd ? '<div class="cc-sec">'
     +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">'
-      +'<div style="min-width:0"><div style="font-size:10.5px;color:var(--fog);font-weight:600;letter-spacing:.02em">dDOM \u00b7 '+dd.label+'</div>'
+      +'<div style="min-width:0"><div class="cc-h" style="margin-bottom:4px">dDOM \u00b7 '+String(dd.label).replace(/\b[a-z]/g,c=>c.toUpperCase())+'</div>'
         +'<div style="font-size:30px;font-weight:800;color:var(--teal-br);font-family:var(--mono);line-height:1">'+dd.pct+'</div>'
         +'<div style="font-size:10px;color:var(--fog-2);margin-top:2px">'+(dd.pct>=50?'top '+(100-dd.pct)+'% of '+posPlural:'below median of '+posPlural)+' \u00b7 percentile at position</div></div>'
       +'<div style="text-align:right;flex-shrink:0"><div style="font-size:10.5px;color:var(--fog)">'+dd.rawLabel+'</div>'
@@ -8827,11 +8858,14 @@ function openCfbCard(name){
        ['Yds/car',p.car?(p.ry/p.car).toFixed(1):'-'],['Rec',n(p.rec)],['Rec yds',n(p.rey)]]
     : [['Rec yds',n(p.rey)],['Rec TD',n(p.ret)],['Catches',n(p.rec)],
        ['Tgt share',p.rsh!=null?Math.round(p.rsh*100)+'%':'-'],['Yds/catch',p.rec?(p.rey/p.rec).toFixed(1):'-'],['Yds/game',p.gms?(p.rey/p.gms).toFixed(1):'-']];
-  const grid='<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden">'
-    +pc.map(c=>gp(c[0],c[1])).join('')+'</div>';
+  const grid='<div class="cc-sec"><div class="cc-h">Production &amp; Efficiency</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden">'
+    +pc.map(c=>gp(c[0],c[1])).join('')+'</div></div>';
 
-  host.innerHTML='<div style="padding:18px 20px 20px">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
+  // Sheet on phones, sections in boxes, Open Full Profile pinned at the bottom (31 Oct 2026, owner:
+  // "the pop ups need to match NFL's ... and the sections should be visible there too").
+  host.innerHTML='<div class="dd-grab" id="cfb-grab" aria-hidden="true"></div><div class="cc-body">'
+    +'<div class="cc-top" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:2px">'
       +'<div style="min-width:0">'
         +'<div style="font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.35">'
           +'<a href="'+cfbNflHref(p.n)+'" '
@@ -8850,24 +8884,23 @@ function openCfbCard(name){
         +'</div>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-      +'<a href="'+cfbNflHref(p.n)+'" '
-        +'title="Open full page" style="font-size:10.5px;font-weight:700;color:var(--fog);text-decoration:none;'
-        +'border:1px solid var(--line);border-radius:14px;padding:4px 11px;white-space:nowrap">Full profile</a>'
       +'<button onclick="closeCfbCard()" aria-label="Close" style="background:none;border:none;color:var(--fog-2);'
         +'font-size:17px;cursor:pointer;line-height:1;padding:2px 4px">\u2715</button>'
       +'</div>'
     +'</div>'
     +hero
     +grid
-    +'<div id="cfb-traj" style="margin-top:14px"></div>'
-    +'<div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--fog-2);margin:16px 0 7px">GAME LOG</div>'
-    +'<div id="cfb-gamelog"></div>'
+    +'<div id="cfb-traj"></div>'
+    +'<div class="cc-sec"><div class="cc-h">Game Log</div><div id="cfb-gamelog"></div></div>'
     +'<div id="cfb-teammates"></div>'
-    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:11px;line-height:1.55">'
+    +'<div class="cc-note" style="font-size:9.5px;color:var(--fog-2);margin-top:12px;line-height:1.55">'
       +'dDOM is a DELTA analytical metric \u2014 a 0-100 percentile of competition-adjusted production WITHIN his position, ranked among QUALIFIED players (6+ games and a volume floor), so 90 = top 10% at his position. Low-volume players show no dDOM. A signal to read, not a ranking input. '
       +'Regular season only. QB rushing is net of sacks, per college convention. Age is an estimate from recruiting class, never a birth date.</div>'
-    +'</div>';
+    +'</div>'
+    +'<div class="dd-actbar" id="cfb-actbar"><a class="dd-act-main" href="'+cfbNflHref(p.n)+'">Open Full Profile</a></div>';
+  { const c=document.getElementById('cfb-card'); if(c){ c.scrollTop=0; c.style.transform=''; } }
   document.getElementById('cfb-overlay').classList.add('open');
+  dlCfbCardTypeWatch();
   // Lock the page behind, as openDeck() does for the NFL card. Without it a swipe on the
   // card scrolled the board underneath (owner, 21 Oct 2026, from the Big Board).
   document.body.style.overflow='hidden';
@@ -8889,8 +8922,8 @@ function cfbTeammates(p, pool){
       +'<td>'+(m.rec||0)+'</td><td>'+(m.rey||0)+'</td>'
       +'<td style="font-weight:600">'+(m.rsh!=null?Math.round(m.rsh*100)+'%':'-')+'</td></tr>';
   }).join('');
-  return '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:12px">'
-    +'<div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--fog-2);margin-bottom:7px">TEAM CONSTRUCTION</div>'
+  return '<div class="cc-sec">'
+    +'<div class="cc-h">Team Construction</div>'
     +'<div class="dl-b-scroll"><table class="dtable dl-board dl-cc-tbl"><thead><tr>'
     +'<th>Player</th><th>Pos</th><th>Cls</th><th>Rec</th><th>Yds</th><th>RecSh</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>'
@@ -8991,9 +9024,9 @@ async function cfbFillTrajectory(p){
     return '<div style="display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:11px">'
       +'<span style="color:var(--fog-2);font-family:var(--mono);font-weight:600">'+yr+'</span>'+bar+'</div>';
   }).join('');
-  host.innerHTML='<div style="font-size:11px;color:var(--fog);font-weight:700;letter-spacing:.03em;margin-bottom:8px;display:flex;justify-content:space-between">'
-    +'<span>Trajectory \u00b7 dDOM by season</span>'+trend+'</div>'+rowsHtml
-    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:2px">dDOM = percentile among his position that season \u00b7 bar end = 100. The greyed year fills in as it plays.</div>';
+  host.innerHTML='<div class="cc-sec"><div class="cc-h" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">'
+    +'<span>Trajectory \u00b7 dDOM By Season</span><span style="font-size:12px;font-weight:700">'+trend+'</span></div>'+rowsHtml
+    +'<div style="font-size:9.5px;color:var(--fog-2);margin-top:2px">dDOM = percentile among his position that season \u00b7 bar end = 100. The greyed year fills in as it plays.</div></div>';
 }
 
 // ── Season-aware game log: defaults to the player's most recent season with games,
