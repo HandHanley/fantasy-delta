@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31h';
+const DL_BUILD='2026-10-31j';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6615,7 +6615,7 @@ function buildSchemeHTML(p, opts){
     .sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).slice(0,2)
     .map(function(r){ var pc=d[r[0]].p, t=r[3];
       var txt = pc===100?t[0]:pc>=94?t[1]:pc===0?t[2]:t[3];
-      return '<div class="pc-tag" style="font-size:16px;font-weight:800;line-height:1.3;color:var(--paper);margin-top:4px">'+txt+'</div>'; }).join('');
+      return '<div class="pc-tag" style="font-size:13px;font-weight:700;line-height:1.35;color:var(--paper);margin-top:3px">'+txt+'</div>'; }).join('');   // 13px: row size (owner, 31 Oct: 16 was too large)
   var rows = have.slice().sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).map(function(r){
     var cell = d[r[0]], pc = cell.p, tr = tierOf(pc);
     return '<div style="padding:10px 0;border-top:1px solid var(--line)">'
@@ -6710,7 +6710,15 @@ function buildReadHTML(p){
    brand mark is the page's own SVG, drawn as an image. Photos are deliberately left out:
    headshots come from other sites, and drawing one would block the picture from saving. */
 function dlImgTok(n){ return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim(); }
+/* Share images keep one look for everyone (redesign plan, step 4): the colours are read with the
+   page's Look switched off for that instant, so a Glass or Daylight reader shares the same picture
+   as everyone else. Nothing repaints in between: the attribute is restored in the same task. */
 function dlImgColors(){
+  const h=document.documentElement, look=h.getAttribute('data-look');
+  if(look) h.removeAttribute('data-look');
+  try{ return dlImgColorsNow(); } finally { if(look) h.setAttribute('data-look',look); }
+}
+function dlImgColorsNow(){
   const t=dlImgTok;
   return {ink:t('ink'),panel:t('panel'),line:t('line'),paper:t('paper'),fog:t('fog'),fog2:t('fog-2'),url:t('cp-1'),
     emerald:t('emerald'),coral:t('coral'),sky:t('sky'),violet:t('violet'),topaz:t('topaz'),lead:t('cp-lead'),leadBd:t('cp-lead-bd')};

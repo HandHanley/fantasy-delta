@@ -410,7 +410,7 @@ var DSYNC = (function () {
   /* The Look rides inside settings (31 Oct 2026, Decision 9): the account row has no column for
      it, and settings already sync newest-wins. The page keeps its own key, 'delta_look', because
      the pre-paint script must read it before anything else runs. setLook() calls noteSettings(). */
-  var LOOKS = { classic: 1, glass: 1 };
+  var LOOKS = { classic: 1, glass: 1, daylight: 1 };
   function applyLook(look) {
     if (!look || !LOOKS[look]) return;
     lsSet(LS_LOOK, look);
