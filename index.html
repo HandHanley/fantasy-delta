@@ -2435,6 +2435,54 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 @media(max-width:370px){#panel-myteam :is(.dl-mt-tbl,.dl-lb-tbl,.dl-pw-tbl) :is(tbody td,thead th){padding-left:4px;padding-right:4px}
   #panel-myteam .dl-lb-tbl td.dl-lb-own{max-width:46px}#panel-myteam .dl-pw-team{max-width:80px}}
 </style>
+<style id="dl-watchlist">
+/* Watchlist, redesign rules (1 Nov 2026). Section headings 16px with the count beside; names in the
+   body font with position and team under them (the Pos and Team columns folded in, as on Rankings);
+   the Call column's pills; a 36px remove target. The college competition discount is violet ("less"),
+   recruit stars brighter for 5 rather than coloured. */
+#panel-watchlist > .section-label{display:none}
+.dl-wl-h{display:flex;align-items:baseline;gap:8px;font-size:16px;font-weight:800;color:var(--paper);margin:4px 0 8px}
+.dl-wl-h span{font-size:13px;font-weight:600;color:var(--fog)}
+.dl-wl-empty{max-width:560px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--fog);line-height:1.55}
+#panel-watchlist .dtable td.dl-wl-name{white-space:normal}
+#panel-watchlist .dl-b-pn{display:block}
+#panel-watchlist .dl-b-tp{display:block;font-size:12px;font-weight:500;color:var(--fog);margin:2px 0 0}
+#panel-watchlist .dl-wl-st{color:var(--fog);font-size:13px}
+#panel-watchlist .dl-wl-st.s5{color:var(--paper)}
+#panel-watchlist .dl-wl-g5{font-size:12px;border-radius:8px;padding:0 6px;background:var(--violet-tint);color:var(--violet)}
+#panel-watchlist .dl-wl-x{min-width:36px;min-height:36px;font-size:13px;border-radius:18px}
+#panel-watchlist .dl-wl-miss{font-size:12px}
+@media(max-width:600px){
+  #panel-watchlist .dl-board tbody td{font-size:12px;padding:9px 6px}
+  #panel-watchlist .dl-board td.dl-wl-ds{font-size:14px}
+}
+</style>
+<style id="dl-market">
+/* Market, redesign rules (1 Nov 2026). Page title 20px; the panel's logo lockup goes (the other
+   panels lost theirs in step 2; the mark lives in the header). 16px section titles in the body face,
+   36px pills, the five sizes. Move colours stay sky / violet; the list gaps stay emerald / coral (they
+   are DELTA's buy and sell reading). The chart's own SVG labels are exempt. */
+#panel-market .dl-mk-head{display:block;margin-bottom:12px}
+#panel-market .dl-mk-mark{display:none !important}
+#panel-market .dl-mk-title{font-size:20px;font-weight:800;color:var(--paper);margin-bottom:6px}
+#panel-market .rk-chip{font-size:12px}
+#panel-market .dl-rk-maphd h2,#panel-market .dl-rk-movers h3,#panel-market .dl-rk-lst h3{font-family:var(--sans);font-size:16px;font-weight:800;color:var(--paper)}
+#panel-market .dl-rk-cap,#panel-market .dl-rk-hint,#panel-market .dl-rk-readout{font-size:12px}
+#panel-market .dl-rk-skiplbl{font-size:inherit}
+#panel-market .set-pill{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;font-weight:700}
+#panel-market .dl-rk-bound-l{font-size:13px;font-weight:700;color:var(--fog);letter-spacing:0}
+#panel-market .dl-rk-mvp{font-size:13px}
+#panel-market .dl-rk-mvd{font-size:16px}
+#panel-market .dl-rk-mvm,#panel-market .dl-rk-mvnone{font-size:12px}
+#panel-market .dl-rk-lname{font-size:13px}
+#panel-market .dl-rk-lname s{font-size:12px}
+#panel-market .dl-rk-lval b{font-size:16px}
+#panel-market .dl-rk-lval s{font-size:12px}
+#panel-market .dl-rk-lrow.dl-rk-lnone{font-size:13px}
+#panel-market .dl-rk-surface{border-radius:14px}
+#panel-market .dl-rk-movers .dl-rk-cap{margin-bottom:10px}
+#panel-market .dl-rk-lst + .dl-rk-lst{margin-top:18px}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -2659,8 +2707,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div id="panel-market" class="panel">
   <!-- Panel lockup, matching #panel-college. Solid mark here, outline there — that pairing
        already carries the NFL/college distinction, so nothing else has to. -->
-  <div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:.25rem">
-    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block;margin-top:2px">
+  <div class="dl-mk-head">
+    <svg class="dl-mk-mark" width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block;margin-top:2px">
       <defs>
         <linearGradient id="mkL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
         <linearGradient id="mkR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#047857"/></linearGradient>
@@ -2673,7 +2721,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       </g>
     </svg>
     <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Market</div>
+      <div class="dl-mk-title">NFL Market</div>
       <!-- Filled by dlLeagueBadge(). The subtitle IS the live league state: these three
            settings rescore all 409 players, so they belong on screen rather than behind
            the gear. College has no equivalent state and keeps a plain subtitle. -->
@@ -6115,8 +6163,7 @@ async function openWatchlistTab(){
   renderWatchlist();
 }
 function wlEmpty(msg){
-  return '<div style="max-width:560px;background:var(--ink-2);border:1px solid var(--line);'
-    +'border-radius:8px;padding:14px 18px;font-size:11.5px;color:var(--fog);line-height:1.55">'+msg+'</div>';
+  return '<div class="dl-wl-empty">'+msg+'</div>';
 }
 function renderWatchlist(){
   const nflHost=document.getElementById('wl-nfl'), cfbHost=document.getElementById('wl-cfb');
@@ -6125,33 +6172,31 @@ function renderWatchlist(){
   // ---- NFL ----
   const names=dwList('nfl'), found=[], missing=[];
   names.forEach(n=>{ const pl=(typeof COMP!=='undefined')&&COMP.find(x=>x.n===n); pl?found.push(pl):missing.push(n); });
-  let html='<div class="set-sec" style="margin-bottom:8px">NFL \u2014 '+found.length+'</div>';
+  let html='<div class="dl-wl-h">NFL<span>'+found.length+'</span></div>';
   if(!found.length && !missing.length){
     html+=wlEmpty('No NFL players yet \u2014 open any player card and tap the <span style="color:var(--topaz)">\u2606</span> beside their name.');
   } else {
     found.sort((a,b)=>(b.dsScore??0)-(a.dsScore??0));
     html+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
-      +'<th>\u0394</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
-      +'<th class="dl-b-r">Proj PPG</th><th class="dl-b-r">Mkt Val</th><th>Tag</th><th></th></tr></thead><tbody>'
+      +'<th>\u0394</th><th>Player</th>'
+      +'<th class="dl-b-r">Proj PPG</th><th class="dl-b-r">Mkt Val</th><th>Call</th><th></th></tr></thead><tbody>'
       +found.map(pl=>'<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openDeck(this.dataset.name)">'
         +'<td class="dl-wl-ds" style="color:'+dsColor(pl.dsScore)+'">'+(pl.dsScore!=null?pl.dsScore:'\u2014')+'</td>'
-        +'<td class="pname dl-wl-name">'+pl.n+'</td>'
-        +'<td class="txt dl-b-c">'+pl.pos+'</td>'
-        +'<td class="txt dl-wl-nowrap">'+pl.t+'</td>'
+        +'<td class="pname dl-wl-name"><span class="dl-b-pn">'+pl.n+'</span><span class="dl-b-tp">'+pl.pos+' '+pl.t+'</span></td>'
         +'<td class="dl-b-r dl-wl-num">'+getAdjProj(pl).toFixed(1)+'</td>'
         +'<td class="dl-b-r">'+(pl.ktcEff>0?pl.ktcEff.toLocaleString():'-')+'</td>'
-        +'<td>'+vTag(pl)+'</td>'
-        +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();"'
+        +'<td class="dl-rk-verdict">'+vTag(pl)+'</td>'
+        +'<td><button title="Remove" aria-label="Remove '+pl.n.replace(/"/g,'&quot;')+'" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'nfl\');renderWatchlist();"'
         +'>\u2715</button></td></tr>').join('')
       +'</tbody></table></div>';
-    if(missing.length) html+='<div style="font-size:10.5px;color:var(--topaz);margin-top:9px">\u26a0 '+missing.length
+    if(missing.length) html+='<div class="dl-wl-miss">\u26a0 '+missing.length
       +' saved name'+(missing.length>1?'s':'')+' no longer in the player universe: '+missing.map(m=>m.replace(/</g,'&lt;')).join(', ')+'</div>';
   }
   nflHost.innerHTML=html;
 
   // ---- College ----
   const cn=dwList('cfb');
-  let ch='<div class="set-sec" style="margin-bottom:8px">COLLEGE \u2014 '+cn.length+'</div>';
+  let ch='<div class="dl-wl-h">College<span>'+cn.length+'</span></div>';
   if(!cn.length){
     ch+=wlEmpty('No college players yet \u2014 open the College section and tap the <span style="color:var(--topaz)">\u2606</span> on any row.');
   } else if(!CFB || !CFB.players){
@@ -6161,7 +6206,7 @@ function renderWatchlist(){
     cn.forEach(n=>{ const pl=CFB.players.find(x=>x.n===n); pl?cf.push(pl):cmiss.push(n); });
     cf.sort((a,b)=>cfbScout(b)-cfbScout(a));
     ch+='<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
-      +'<th>\u2605</th><th>Player</th><th class="dl-b-c">Pos</th><th>Team</th>'
+      +'<th>\u2605</th><th>Player</th>'
       +'<th class="dl-b-r">Yds</th><th class="dl-b-r">RecSh</th><th class="dl-b-c">Cls</th><th></th></tr></thead><tbody>'
       +cf.map(pl=>{
         // All-purpose, including passing. A quarterback used to show passing only,
@@ -6171,16 +6216,15 @@ function renderWatchlist(){
         const yds=(pl.py||0)+(pl.rey||0)+(pl.ry||0);
         const comp=cfbComp(pl);
         return '<tr class="dl-rk-row" data-name="'+pl.n.replace(/"/g,'&quot;')+'" onclick="openCfbCard(this.dataset.name)">'
-        +'<td class="dl-wl-ds" style="color:'+(pl.stars>=5?'var(--topaz)':pl.stars>=4?'var(--sky)':'var(--fog-2)')+'">'
+        // Recruit stars: brighter for more, no colour. Topaz means watch and sky was a category (1 Nov 2026).
+        +'<td class="dl-wl-ds dl-wl-st'+(pl.stars>=5?' s5':'')+'">'
           +(pl.stars?pl.stars+'\u2605':'\u2014')+'</td>'
-        +'<td class="pname dl-wl-name">'+pl.n+'</td>'
-        +'<td class="txt dl-b-c dl-wl-name">'+pl.pos+'</td>'
-        +'<td class="txt dl-wl-nowrap">'+cfbShortTeam(pl.tm)
-          +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</td>'
+        +'<td class="pname dl-wl-name"><span class="dl-b-pn">'+pl.n+'</span><span class="dl-b-tp">'+pl.pos+' '+cfbShortTeam(pl.tm)
+          +(comp<1?' <span class="dl-wl-g5">\u00d7'+comp.toFixed(2)+'</span>':'')+'</span></td>'
         +'<td class="dl-b-r dl-wl-num">'+(yds?yds.toLocaleString():'-')+'</td>'
         +'<td class="dl-b-r">'+(pl.rsh!=null&&pl.pos!=='QB'?Math.round(pl.rsh*100)+'%':'-')+'</td>'
         +'<td class="txt dl-b-c"><span class="dl-wl-cls'+((pl.cls>=3)?' el':'')+'">'+(pl.cls?'Y'+pl.cls:'-')+'</span></td>'
-        +'<td><button title="Remove" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
+        +'<td><button title="Remove" aria-label="Remove '+pl.n.replace(/"/g,'&quot;')+'" class="dl-wl-x" onclick="event.stopPropagation();dwToggle(this.closest(\'tr\').dataset.name,\'cfb\');renderWatchlist();"'
         +'>\u2715</button></td></tr>';
       }).join('')+'</tbody></table></div>';
     if(cmiss.length) ch+='<div class="dl-wl-miss">\u26a0 '+cmiss.length
@@ -8455,7 +8499,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01l</span>
+  <span class="foot-build">2026-11-01m</span>
 </footer>
 
 
