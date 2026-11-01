@@ -1912,6 +1912,11 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
      the same values a seventh time. */
   var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
          cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
+  /* Daylight (31 Oct 2026) needs each accent's darker partner: the bright accents are 1.9 to 1 on
+     white. MUST match DL_THEMES_DAY in index.html; five copies, like the table above. */
+  var DAY={teal:['#0A6660','#0F766E'],violet:['#5B48C2','#6650D0'],sky:['#1A6496','#1E6FA8'],
+           cobalt:['#2F5FC4','#3A62C8'],orchid:['#A8358F','#B03C98'],slate:['#475569','#5B6676']};
+  var L=localStorage.getItem('delta_look'); if(L==='daylight') T=DAY;
   var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
   function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
@@ -1919,7 +1924,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   s.setProperty('--row-hi',rgba(t[0],.055));
   /* The Look (redesign step 4, 31 Oct 2026): set before first paint, like the accent. Read by
      delta-looks.css. The same line sits in index, player, cfb-player, privacy, terms and live. */
-  var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);
+  if(L==='glass'||L==='daylight') document.documentElement.setAttribute('data-look',L);
 }catch(e){}})();
 </script>
 
@@ -2225,6 +2230,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div class="set-row" id="look-row">
       <button class="set-pill" data-look="classic" onclick="setLook('classic')">Classic</button>
       <button class="set-pill" data-look="glass"   onclick="setLook('glass')">Glass</button>
+      <button class="set-pill" data-look="daylight" onclick="setLook('daylight')">Daylight</button>
     </div>
     <div class="set-sec">THEME</div>
     <div class="set-row" id="theme-row">
@@ -5684,8 +5690,16 @@ function renderAll(){
 const DL_THEMES={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],
                  sky:['#6BB6E0','#4E96BE'],cobalt:['#5B8DEF','#3F6FD1'],
                  orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
+/* Daylight's darker partner for each accent (31 Oct 2026): the bright ones are about 1.9 to 1 on
+   white. MUST match DAY in the five pre-paint scripts (index, player, cfb-player, privacy, terms). */
+/* Both shades are text somewhere (the second one too, e.g. Big Board headings), so both clear 4.5 to 1
+   on the page grey, and the first one clears it on its own tint (selected pills). */
+const DL_THEMES_DAY={teal:['#0A6660','#0F766E'],violet:['#5B48C2','#6650D0'],
+                     sky:['#1A6496','#1E6FA8'],cobalt:['#2F5FC4','#3A62C8'],
+                     orchid:['#A8358F','#B03C98'],slate:['#475569','#5B6676']};
 function dlThemeApply(name){
-  const th=DL_THEMES[name]||DL_THEMES.teal, s=document.documentElement.style;
+  const day=document.documentElement.getAttribute('data-look')==='daylight', TT=day?DL_THEMES_DAY:DL_THEMES;
+  const th=TT[name]||TT.teal, s=document.documentElement.style;
   const rgba=(h,a)=>{const b=parseInt(h.slice(1),16);return 'rgba('+(b>>16&255)+','+(b>>8&255)+','+(b&255)+','+a+')';};
   s.setProperty('--teal-br',th[0]); s.setProperty('--teal',th[1]);
   s.setProperty('--teal-tint',rgba(th[0],.12)); s.setProperty('--teal-soft',rgba(th[0],.07));
@@ -5695,7 +5709,7 @@ function dlThemeApply(name){
     /* Dots are painted from DL_THEMES rather than hardcoded in the markup, which is
        what made them a seventh copy of the theme table and the one guaranteed to go
        stale — nothing renders them, so a retuned hex would never show up as wrong. */
-    const dot=b.querySelector('.set-dot'), th=DL_THEMES[b.dataset.theme];
+    const dot=b.querySelector('.set-dot'), th=TT[b.dataset.theme];
     if(dot&&th) dot.style.background=th[0];
   });
 }
@@ -5819,11 +5833,14 @@ function setTheme(name){
    The pre-paint script in each page sets the attribute before first paint; this keeps the
    page and the Settings pills in step afterwards. Synced inside the account's settings
    (delta-sync.js carries it), so a change here is a settings change. */
-const DL_LOOKS=['classic','glass'];
+const DL_LOOKS=['classic','glass','daylight'];
 function dlLookApply(name){
   const n=DL_LOOKS.indexOf(name)>-1?name:'classic', h=document.documentElement;
+  const was=h.getAttribute('data-look');
   if(n==='classic') h.removeAttribute('data-look'); else h.setAttribute('data-look',n);
   document.querySelectorAll('#look-row .set-pill').forEach(b=>b.classList.toggle('on',b.dataset.look===n));
+  // Into or out of Daylight the accent swaps to its darker or brighter partner.
+  if((was==='daylight')!==(n==='daylight') && typeof dlThemeApply==='function') dlThemeApply(dlPref('delta_theme')||'teal');
 }
 window.dlLookApply=dlLookApply;
 function setLook(name){
@@ -8104,7 +8121,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31p</span>
+  <span class="foot-build">2026-10-31q</span>
 </footer>
 
 

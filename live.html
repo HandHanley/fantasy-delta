@@ -313,7 +313,7 @@ summary{font-family:var(--mono);font-size:11px;color:var(--fog)}
 </style>
 <script src="delta-nav.js" defer></script>
 <script>/* The Look (redesign step 4): before first paint, as on the other pages. */
-(function(){try{var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);}catch(e){}})();</script>
+(function(){try{var L=localStorage.getItem('delta_look'); if(L==='glass'||L==='daylight') document.documentElement.setAttribute('data-look',L);}catch(e){}})();</script>
 <link rel="stylesheet" href="delta-looks.css">
 </head>
 <body>

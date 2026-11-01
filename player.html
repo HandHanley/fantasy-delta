@@ -323,6 +323,11 @@ a{color:var(--teal-br)}
      the same values a seventh time. */
   var T={teal:['#2DD4BF','#14B8A6'],violet:['#9B8AF0','#7C6FD6'],sky:['#6BB6E0','#4E96BE'],
          cobalt:['#5B8DEF','#3F6FD1'],orchid:['#D96BC4','#BE55AA'],slate:['#94A3B8','#64748B']};
+  /* Daylight (31 Oct 2026) needs each accent's darker partner: the bright accents are 1.9 to 1 on
+     white. MUST match DL_THEMES_DAY in index.html; five copies, like the table above. */
+  var DAY={teal:['#0A6660','#0F766E'],violet:['#5B48C2','#6650D0'],sky:['#1A6496','#1E6FA8'],
+           cobalt:['#2F5FC4','#3A62C8'],orchid:['#A8358F','#B03C98'],slate:['#475569','#5B6676']};
+  var L=localStorage.getItem('delta_look'); if(L==='daylight') T=DAY;
   var t=T[localStorage.getItem('delta_theme')]||T.teal, s=document.documentElement.style;
   function rgba(h,a){var b=parseInt(h.slice(1),16);return 'rgba('+((b>>16)&255)+','+((b>>8)&255)+','+(b&255)+','+a+')';}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
@@ -330,7 +335,7 @@ a{color:var(--teal-br)}
   s.setProperty('--row-hi',rgba(t[0],.055));
   /* The Look (redesign step 4, 31 Oct 2026): set before first paint, like the accent. Read by
      delta-looks.css. The same line sits in index, player, cfb-player, privacy, terms and live. */
-  var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);
+  if(L==='glass'||L==='daylight') document.documentElement.setAttribute('data-look',L);
 }catch(e){}})();
 </script>
 
@@ -428,7 +433,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31o</span>
+    <span class="foot-build">2026-10-31p</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>

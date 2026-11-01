@@ -114,3 +114,50 @@ html[data-look="glass"] .dl-ring svg{filter:drop-shadow(0 0 10px var(--teal-tint
   html[data-look="glass"]{--panel:#141B28;--ink-2:#0F1520}
   html[data-look="glass"] .seg.dl-bnav{background:var(--g-solid)}
 }
+
+/* ════════════════════════════════════════════════════════════════════════════════════════
+   DAYLIGHT — light pages, white cards, dark text. Built from the owner-approved Daylight mock.
+   Every text colour below clears 4.5 to 1 on white and on the page grey (checked 31 Oct 2026):
+   paper 19.2, fog 6.7, fog-2 5.4, buy 5.5, sell 5.9, watch 5.2, sky 5.4, violet 5.8. The bright
+   signal colours of the dark looks cannot be text on white, so each has a darker partner here.
+   The accent's darker partner is set by the pre-paint script (it writes the accent inline).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html[data-look="daylight"]{
+  color-scheme:light;
+  --ink:#F2F4F7; --ink-2:#F5F7F9; --panel:#FFFFFF; --line:#E3E7EC;
+  --paper:#0A0F1A; --fog:#4F5E6C; --fog-2:#5F6C79; --mint:#0F766E;
+  --emerald:#047857; --emerald-dp:#065F46; --emerald-bri:#047857; --emerald-tint:#E3F5EE;
+  --coral:#B4382A; --coral-bri:#B4382A; --coral-tint:#FBE9E6;
+  --topaz:#946200; --topaz-tint:#FCF1D8;
+  --sky:#1E6FA8; --sky-tint:#E4F0F9; --sky-dp:#9CC6E6;
+  --violet:#6650D0; --violet-tint:#ECE9FB;
+  /* Live has no accent script of its own: these are its accent in Daylight. */
+  --teal-br:#0A6660; --teal:#0F766E; --teal-tint:rgba(10,102,96,.12); --teal-soft:rgba(10,102,96,.07);
+  --row-hi:rgba(10,102,96,.055);
+  --cp-1:#0F766E; --cp-1-tint:rgba(15,118,110,.12);
+  --cp-lead:rgba(10,15,26,.04); --cp-lead-bd:rgba(10,15,26,.14);
+  --d-shadow:0 1px 2px rgba(10,15,26,.06),0 4px 14px rgba(10,15,26,.05);
+}
+html[data-look="daylight"] body{background:var(--ink)}
+/* White cards lift off the grey page with a soft shadow instead of a dark edge. */
+html[data-look="daylight"] :is(.card,.cc-sec,.dlh-tiles,.dlh-chart,.dl-rk-surface,.dl-rc-card,.dl-cp-card,
+  .dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list){
+  border-radius:16px;border-color:var(--line);box-shadow:var(--d-shadow)}
+html[data-look="daylight"] .dlh:not(.dd-dlh) > .dlh-top{border-radius:16px;box-shadow:var(--d-shadow)}
+html[data-look="daylight"] :is(.pt-ds > .dd-section,#tab-nfl > .dd-section){background:var(--panel) !important;border-radius:16px !important;box-shadow:var(--d-shadow)}
+html[data-look="daylight"] #panel-scorecard :is(.dl-sc-card,.dl-sc-list){border-radius:16px}
+@media (max-width:759px){
+  html[data-look="daylight"] .dl-rk-surface{border-radius:0;border-color:transparent;box-shadow:none}
+}
+/* Pop-ups and sheets: a lighter dimming of the page, softer shadows. */
+html[data-look="daylight"] :is(.dd-overlay,.about-overlay,.dl-pr-modal){background:rgba(10,15,26,.38)}
+html[data-look="daylight"] :is(.dd-card,.about-card){box-shadow:0 20px 60px rgba(10,15,26,.18)}
+html[data-look="daylight"] .dd-card{background:var(--ink)}
+html[data-look="daylight"] #settings-pop{box-shadow:0 14px 36px rgba(10,15,26,.18) !important}
+html[data-look="daylight"] :is(.dropdown,.edit-results,.dl-rk-colmenu,.nav-sh-menu){box-shadow:0 10px 28px rgba(10,15,26,.14)}
+html[data-look="daylight"] [data-tip]::after{background:var(--paper);color:var(--ink);box-shadow:0 6px 22px rgba(10,15,26,.18)}
+/* Phones: a white bottom bar with a hairline, not a dark band. */
+@media (max-width:759px){
+  html[data-look="daylight"] .seg.dl-bnav{background:var(--panel);box-shadow:0 -1px 0 var(--line),0 -6px 18px rgba(10,15,26,.05);border-top-color:transparent}
+  html[data-look="daylight"] .tabs .tab[data-tab]:not(.active){background:var(--panel);box-shadow:0 1px 2px rgba(10,15,26,.06)}
+}
