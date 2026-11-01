@@ -48,13 +48,19 @@ html[data-look="glass"] body::before{
 /* Cards: rounder, a faint top-lit sheen, a light edge. */
 /* Class selectors only inside :is(): an id in the list would raise the whole rule's weight
    (:is takes its heaviest argument) and the phone exception below could not undo it. */
-html[data-look="glass"] :is(.card,.dd-section,.cc-sec,.dlh-top,.dlh-tiles,.dlh-chart,.dl-rk-surface,
+html[data-look="glass"] :is(.card,.cc-sec,.dlh-top,.dlh-tiles,.dlh-chart,.dl-rk-surface,
   .dl-rc-card,.dl-cp-card,.dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list){
   border-radius:20px;border-color:var(--g-edge);
   background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
   box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
 }
-html[data-look="glass"] .pt-ds .dd-section,html[data-look="glass"] #tab-nfl > .dd-section{border-radius:20px !important}
+/* .dd-section is a card only on the player page. In the pop-up most sections are open blocks with
+   no padding of their own, and a frame drawn round them sat right on the text (owner, 31 Oct). */
+html[data-look="glass"] :is(.pt-ds > .dd-section,#tab-nfl > .dd-section){
+  border-radius:20px !important;border-color:var(--g-edge);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
+  box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
+}
 /* The Scorecard's own rules are id-scoped, so its cards are named the same way here. */
 html[data-look="glass"] #panel-scorecard :is(.dl-sc-card,.dl-sc-list){border-radius:20px;border-color:var(--g-edge)}
 

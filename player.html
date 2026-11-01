@@ -428,7 +428,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31m</span>
+    <span class="foot-build">2026-10-31n</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1896,7 +1896,9 @@ function dlShareReady(p){
       const path = (j.base || '/p/') + slug + '/';
       SHARE_URL = location.origin + path;
       const extra = [...new URLSearchParams(location.search).keys()].filter(k => k !== 'name' && k !== 'player');
-      if (!extra.length && /\/player\.html$/.test(location.pathname)) {
+      // Not on the /preview/ copy: the short link leads to the live page, so a reload there would
+      // quietly leave the preview (31 Oct 2026).
+      if (!extra.length && /\/player\.html$/.test(location.pathname) && !/^\/preview\//.test(location.pathname)) {
         try { history.replaceState(history.state, '', path); } catch (e) {}
       }
     }).catch(() => {});
