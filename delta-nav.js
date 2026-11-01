@@ -71,6 +71,9 @@
     + '.seg.dl-bnav .seg-btn .dl-nw-dot{top:5px;right:calc(50% - 19px);width:7px;height:7px}'
     /* room for it at the end of every page */
     + '.dl-bn-space{display:block;height:calc(72px + max(0px,calc(env(safe-area-inset-bottom) - 12px)))}'
+    /* typing: the keyboard pushes the bar up over whatever is being typed into (owner, 1 Nov,
+       Compare search in Glass), so it steps aside until the keyboard closes */
+    + 'html.dl-kb .seg.dl-bnav{display:none}'
     + '}'
     + '@media (min-width:760px){.dl-bn-space,.dl-bnav-added{display:none !important}}';
 
@@ -112,9 +115,28 @@
     document.body.appendChild(nav);
   }
 
+  /* A text box has focus = the on-screen keyboard is up on a phone. Buttons, tick boxes and
+     selects don't raise one, so they don't hide the bar. */
+  var NOKB = /^(button|checkbox|radio|range|color|file|submit|reset|image|hidden)$/;
+  function typing(el) {
+    if (!el) return false;
+    if (el.isContentEditable || el.tagName === 'TEXTAREA') return true;
+    return el.tagName === 'INPUT' && !NOKB.test((el.getAttribute('type') || 'text').toLowerCase());
+  }
+  function watchKeyboard() {
+    var h = document.documentElement;
+    document.addEventListener('focusin', function (e) { if (typing(e.target)) h.classList.add('dl-kb'); });
+    /* focus moving from one box to the next fires focusout first; wait a tick so the bar
+       doesn't flash back between them */
+    document.addEventListener('focusout', function () {
+      setTimeout(function () { if (!typing(document.activeElement)) h.classList.remove('dl-kb'); }, 0);
+    });
+  }
+
   function init() {
     if (framed) return;
     addStyle();
+    watchKeyboard();
     var seg = document.querySelector('.seg');
     if (seg) dressIndex(seg);
     else addBar(document.documentElement.getAttribute('data-dl-sec') || 'nfl');
