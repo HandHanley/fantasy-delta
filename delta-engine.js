@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31j';
+const DL_BUILD='2026-11-01a';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6709,7 +6709,14 @@ function buildReadHTML(p){
    file never touch it. Colours are read from :root at draw time (zero hex here); the
    brand mark is the page's own SVG, drawn as an image. Photos are deliberately left out:
    headshots come from other sites, and drawing one would block the picture from saving. */
-function dlImgTok(n){ return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim(); }
+/* Read with the page's Look switched off for that instant, so a picture is the same whoever makes it
+   (Glass and Daylight change the page's colours, never a shared picture). Every drawing reads its
+   colours through here, including the Trade Calc's own (drawTradeImage). */
+function dlImgTok(n){
+  const h=document.documentElement, look=h.getAttribute('data-look');
+  if(look) h.removeAttribute('data-look');
+  try{ return getComputedStyle(h).getPropertyValue('--'+n).trim(); } finally { if(look) h.setAttribute('data-look',look); }
+}
 /* Share images keep one look for everyone (redesign plan, step 4): the colours are read with the
    page's Look switched off for that instant, so a Glass or Daylight reader shares the same picture
    as everyone else. Nothing repaints in between: the attribute is restored in the same task. */
