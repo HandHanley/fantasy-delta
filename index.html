@@ -1917,6 +1917,9 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
   s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
   s.setProperty('--row-hi',rgba(t[0],.055));
+  /* The Look (redesign step 4, 31 Oct 2026): set before first paint, like the accent. Read by
+     delta-looks.css. The same line sits in index, player, cfb-player, privacy, terms and live. */
+  var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);
 }catch(e){}})();
 </script>
 
@@ -2038,6 +2041,15 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   #dd-card .gl-tbl th:last-child,#dd-card .gl-tbl td:last-child:not([colspan]){position:sticky;right:0;z-index:1;background:var(--panel);box-shadow:-6px 0 6px -6px var(--ink)}
 }
 @media(prefers-reduced-motion:reduce){.dd-card{transition:none !important}}
+/* The tab strip's scroll arrows are phone-only (step 2). Nothing hid them on wider screens, so a
+   desktop showed two bare arrow buttons above the page title (found 31 Oct 2026). */
+@media(min-width:760px){.dl-tabs-more{display:none !important}}
+/* Phone Rankings, four columns (31 Oct 2026): position and team drop under the name so the Call
+   column fits on screen. On one line, a long name ("Jaxon Smith-Njigba WR SEA") pushed the board to
+   417px on a 390 phone and half the Call badge sat off the edge. */
+@media(max-width:600px){
+  #panel-rankings td.dl-rk-name .dl-b-tp{display:block;margin-left:0;margin-top:1px;line-height:1.2}
+}
 </style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
@@ -2049,6 +2061,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
    their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
+<link rel="stylesheet" href="delta-looks.css">
 </head>
 <body>
 <div class="dl-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem;flex-wrap:wrap;gap:12px">
@@ -2206,6 +2219,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <option value="watchlist">Watchlist</option>
       </optgroup>
     </select>
+    <!-- Look (redesign step 4, 31 Oct 2026, Decision 8): the whole style of the site. Synced with
+         the account like the accent; styles in delta-looks.css. -->
+    <div class="set-sec">LOOK</div>
+    <div class="set-row" id="look-row">
+      <button class="set-pill" data-look="classic" onclick="setLook('classic')">Classic</button>
+      <button class="set-pill" data-look="glass"   onclick="setLook('glass')">Glass</button>
+    </div>
     <div class="set-sec">THEME</div>
     <div class="set-row" id="theme-row">
       <button class="set-pill" data-theme="teal"   onclick="setTheme('teal')"><span class="set-dot"></span>Teal</button>
@@ -5795,6 +5815,21 @@ function setTheme(name){
   dlPref('delta_theme',name); dlThemeApply(name);
   try{ if(typeof DSYNC!=='undefined') DSYNC.noteTheme(); }catch(e){}
 }
+/* The Look (redesign step 4, 31 Oct 2026). 'classic' is the site as it was: no attribute at all.
+   The pre-paint script in each page sets the attribute before first paint; this keeps the
+   page and the Settings pills in step afterwards. Synced inside the account's settings
+   (delta-sync.js carries it), so a change here is a settings change. */
+const DL_LOOKS=['classic','glass'];
+function dlLookApply(name){
+  const n=DL_LOOKS.indexOf(name)>-1?name:'classic', h=document.documentElement;
+  if(n==='classic') h.removeAttribute('data-look'); else h.setAttribute('data-look',n);
+  document.querySelectorAll('#look-row .set-pill').forEach(b=>b.classList.toggle('on',b.dataset.look===n));
+}
+window.dlLookApply=dlLookApply;
+function setLook(name){
+  dlPref('delta_look',name); dlLookApply(name);
+  try{ if(typeof DSYNC!=='undefined') DSYNC.noteSettings(); }catch(e){}
+}
 /* The old #lg-badge was one mono chip that opened the settings sheet. It is now three
    chips, one per setting, because these are three independent things and collapsing them
    into a single string meant you could not see which one you had changed.
@@ -5849,6 +5884,7 @@ function settingsInit(){
   if(dlPref('delta_landing')==='ripple') dlPref('delta_landing','rankings');
   if(sel) sel.value=dlPref('delta_landing')||'';
   dlThemeApply(dlPref('delta_theme')||'teal');
+  dlLookApply(dlPref('delta_look')||'classic');
   const fr=document.getElementById('set-fresh'); if(fr) fr.innerHTML=dlFreshHtml();
   const sc=document.getElementById('set-scoring'); if(sc) sc.value=scoringFmt;
   const st=document.getElementById('lg-teams-set'); if(st) st.value=String(leagueTeams);
@@ -8068,7 +8104,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31n</span>
+  <span class="foot-build">2026-10-31o</span>
 </footer>
 
 

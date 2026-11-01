@@ -328,6 +328,9 @@ a{color:var(--teal-br)}
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
   s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
   s.setProperty('--row-hi',rgba(t[0],.055));
+  /* The Look (redesign step 4, 31 Oct 2026): set before first paint, like the accent. Read by
+     delta-looks.css. The same line sits in index, player, cfb-player, privacy, terms and live. */
+  var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);
 }catch(e){}})();
 </script>
 
@@ -363,6 +366,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
    their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
+<link rel="stylesheet" href="delta-looks.css">
 </head>
 <body>
 <div class="page">
@@ -424,7 +428,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31l</span>
+    <span class="foot-build">2026-10-31m</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
