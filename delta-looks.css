@@ -48,8 +48,15 @@ html[data-look="glass"] body::before{
 /* Cards: rounder, a faint top-lit sheen, a light edge. */
 /* Class selectors only inside :is(): an id in the list would raise the whole rule's weight
    (:is takes its heaviest argument) and the phone exception below could not undo it. */
-html[data-look="glass"] :is(.card,.cc-sec,.dlh-top,.dlh-tiles,.dlh-chart,.dl-rk-surface,
+html[data-look="glass"] :is(.card,.cc-sec,.dlh-tiles,.dlh-chart,.dl-rk-surface,
   .dl-rc-card,.dl-cp-card,.dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list){
+  border-radius:20px;border-color:var(--g-edge);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
+  box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
+}
+/* So is the header's identity block (.dlh-top): in the pop-up it is open, beside the close
+   button, and a frame round it cut across the name (owner, 31 Oct). */
+html[data-look="glass"] .dlh:not(.dd-dlh) > .dlh-top{
   border-radius:20px;border-color:var(--g-edge);
   background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
   box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);

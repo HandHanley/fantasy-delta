@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31g';
+const DL_BUILD='2026-10-31h';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -6615,8 +6615,7 @@ function buildSchemeHTML(p, opts){
     .sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).slice(0,2)
     .map(function(r){ var pc=d[r[0]].p, t=r[3];
       var txt = pc===100?t[0]:pc>=94?t[1]:pc===0?t[2]:t[3];
-      return '<span class="pc-tag" style="display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:14px;'
-        +'font-size:12px;font-weight:700;white-space:nowrap;background:var(--teal-tint);color:var(--teal-br)">'+txt+'</span>'; }).join('');
+      return '<div class="pc-tag" style="font-size:16px;font-weight:800;line-height:1.3;color:var(--paper);margin-top:4px">'+txt+'</div>'; }).join('');
   var rows = have.slice().sort(function(a,b){ return Math.abs(d[b[0]].p-50)-Math.abs(d[a[0]].p-50); }).map(function(r){
     var cell = d[r[0]], pc = cell.p, tr = tierOf(pc);
     return '<div style="padding:10px 0;border-top:1px solid var(--line)">'
@@ -6634,9 +6633,12 @@ function buildSchemeHTML(p, opts){
   return '<div>'
     // The play-caller's name alone, in the accent, under the card title (owner, 31 Oct 2026).
     +(bare?'<div class="card-sub" style="margin:0 0 10px;color:var(--teal-br)">'+coach+'</div>':'')
-    +(tags?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px">'+tags+'</div>':'')
     +radar
     +'<div style="margin-top:6px">'+rows+'</div>'
+    // Stands Out sits under the table as a callout of its own (owner, 31 Oct 2026): the finding
+    // reads better after the numbers that back it than as chips above the chart.
+    +(tags?'<div class="pc-out" style="margin:4px 0 12px;padding:12px 14px;border-radius:14px;background:var(--teal-tint);border-left:3px solid var(--teal-br)">'
+      +'<div style="font-size:12px;font-weight:800;color:var(--teal-br)">Stands Out</div>'+tags+'</div>':'')
     +'<div style="font-size:12px;color:var(--fog-2);padding-top:8px;border-top:1px solid var(--line);line-height:1.5">'
     +'Bar = rank against all 32 play-callers · tick = league middle'
     +' · '+span+(bare?'':' · '+coach)+' · description only, never part of the DELTA Score</div>'
