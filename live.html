@@ -1073,8 +1073,8 @@ function normName(s){
 }
 
 /* A team colour from the feed is often near-black and vanishes on this
-   background. Take the primary, fall back to the alternate, then lift it until
-   it is actually visible. */
+   background. Take the primary, fall back to the alternate (never a white or
+   silver one over a real colour), then lift it until it is actually visible. */
 function teamColor(t){
   function parse(h){
     if(!h) return null;
@@ -1086,7 +1086,13 @@ function teamColor(t){
   let c = parse(t && t.color);
   if(!c || c.lum < 0.18){
     const alt = parse(t && t.altColor);
-    if(alt && (!c || alt.lum > c.lum)) c = alt;
+    /* A dark primary that is a real colour (Cardinals red, Colts blue) is lifted below
+       rather than swapped for a white or silver alternate: white is not the team's
+       colour, it is the trim (owner, 1 Nov 2026: "the Cardinals should be red"). A
+       black or grey primary still takes its alternate. */
+    const chroma = function(x){ return Math.max(x.r, x.g, x.b) - Math.min(x.r, x.g, x.b); };
+    const neutralAlt = alt && chroma(alt) < 40, colourful = c && chroma(c) >= 40;
+    if(alt && (!c || alt.lum > c.lum) && !(neutralAlt && colourful)) c = alt;
   }
   if(!c) return 'var(--fog-2)';
   let r = c.r, g = c.g, b = c.b, lum = c.lum, guard = 0;
