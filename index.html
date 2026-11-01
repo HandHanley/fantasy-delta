@@ -2300,6 +2300,76 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .dl-ps-warn{font-size:12px;font-weight:600;color:var(--topaz);background:var(--topaz-tint);border-radius:14px;padding:10px 12px;margin-bottom:14px}
 .dl-ps-close{width:100%;min-height:48px;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;color:var(--paper);font-family:inherit;font-size:16px;font-weight:700;cursor:pointer}
 </style>
+<style id="dl-myteam">
+/* My Team / Roster, redesign rules (1 Nov 2026). Header, view pills, roster, picks, connect.
+   The roster table matches the Rankings board: names in the body font, the Call column's
+   pills, 12px cells on phones. Active pills use the accent, not emerald (emerald means buy). */
+#panel-myteam > .section-label{display:none}
+.dl-mt-pill{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--line);
+  background:var(--ink-2);color:var(--fog);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.dl-mt-pill:hover{color:var(--paper)}
+.dl-mt-pill.on{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
+.dl-mt-pill.dl-mt-add{background:transparent;border-style:dashed}
+.dl-mt-pill.dl-mt-trade{color:var(--teal-br);border-color:var(--teal-br);background:var(--teal-tint)}
+.dl-mt-sub{font-weight:500;opacity:.8}
+.dl-mt-row{gap:8px}
+.dl-mt-analysis{margin:12px 0 16px}
+.dl-mt-note{font-size:12px;color:var(--fog);line-height:1.5}
+.dl-mt-note b{color:var(--paper)}
+.dl-mt-auto{margin-left:6px}
+.dl-mt-chip{display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--fog);background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:1px 8px}
+.dl-mt-lbl{font-size:13px;font-weight:700;color:var(--fog);margin-bottom:8px}
+.dl-mt-load{color:var(--fog);font-size:13px;padding:1rem 0}
+#panel-myteam .dl-mt-disc>summary{min-height:44px;font-size:13px;border-radius:14px;padding:6px 14px}
+#panel-myteam .dl-mt-disc[open]>summary{border-radius:14px 14px 0 0}
+#panel-myteam .dl-mt-disc[open]>.dl-mt-row,#panel-myteam .dl-mt-disc[open]>div{border-radius:0 0 14px 14px}
+#panel-myteam .dl-mt-set>summary{font-size:16px;font-weight:800}
+#panel-myteam .dl-mt-fmt{font-size:12px}
+#panel-myteam .dl-mt-count{font-size:12px}
+/* roster */
+.dl-mt-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.dl-mt-tn{display:inline-flex;align-items:center;gap:8px;font-size:20px;font-weight:800;color:var(--paper)}
+.dl-mt-you{font-size:12px;font-weight:700;color:var(--teal-br);background:var(--teal-tint);border-radius:8px;padding:1px 8px}
+.dl-mt-stat{font-size:12px;color:var(--fog)}
+.dl-mt-stat b{color:var(--sky)}
+#panel-myteam .dl-mt-tbl td.dl-mt-name{font-family:var(--sans);font-weight:600}
+#panel-myteam .dl-mt-tbl th.dl-mt-ds{font-size:16px}
+#panel-myteam .dl-mt-tbl tbody td.dl-mt-ds{font-size:14px}
+#panel-myteam .dl-mt-tbl td.dl-mt-sp{font-size:12px}
+#panel-myteam .dl-board tbody tr.dl-mt-grp td{font-size:13px;font-weight:800;color:var(--paper);letter-spacing:0;text-transform:none;padding:18px 7px 6px}
+#panel-myteam .dl-board tbody tr.dl-mt-grp:first-child td{padding-top:6px}
+#panel-myteam .dl-mt-grp td span{margin-left:6px;font-weight:600;color:var(--fog)}
+@media(max-width:600px){
+  #panel-myteam .dl-mt-tbl tbody td{font-size:12px;padding:9px 6px}
+  #panel-myteam .dl-mt-tbl thead th{padding:0 6px 7px}
+  #panel-myteam .dl-mt-tbl td.dl-mt-sp{font-size:12px}
+  #panel-myteam .dl-mt-tbl .badge{padding:2px 6px}
+}
+.dl-mt-picks{margin-top:16px;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;line-height:1.8}
+.dl-mt-ph{font-size:16px;font-weight:800;color:var(--paper);margin-bottom:6px}
+.dl-mt-pl b{color:var(--paper);font-weight:700}
+.dl-mt-yr{color:var(--sky);font-weight:700;margin-right:8px}
+.dl-mt-via{color:var(--fog);font-size:12px}
+.dl-mt-dot{color:var(--fog-2)}
+/* connect */
+.dl-mt-connect{max-width:540px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.dl-mt-pf{margin-bottom:14px}
+.dl-mt-ctitle{font-size:16px;font-weight:800;color:var(--paper);margin-bottom:6px}
+.dl-mt-cintro{font-size:13px;color:var(--fog);line-height:1.55;margin-bottom:14px}
+.dl-mt-cform{display:flex;gap:8px;flex-wrap:wrap}
+.dl-mt-in{flex:1;min-width:200px;min-height:44px;box-sizing:border-box;font-family:var(--sans);font-size:16px;padding:0 14px;border-radius:14px;
+  border:1px solid var(--line);background:var(--ink-2);color:var(--paper);outline:none}
+.dl-mt-in:focus{border-color:var(--teal-br)}
+.dl-mt-in::placeholder{font-size:13px;color:var(--fog-2)}
+.dl-mt-go{min-height:44px;padding:0 20px;border-radius:14px;border:1px solid var(--teal-br);background:var(--teal-tint);color:var(--teal-br);
+  font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer}
+.dl-mt-status{font-size:12px;color:var(--fog);margin-top:10px;min-height:16px}
+.dl-mt-back{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.dl-mt-pick{margin-top:14px}
+.dl-mt-team{display:block;width:100%;text-align:left;margin-bottom:8px;min-height:44px;font-family:var(--sans);font-size:13px;font-weight:700;
+  padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);cursor:pointer}
+.dl-mt-team:hover{border-color:var(--teal-br)}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -8108,18 +8178,18 @@ document.addEventListener('click', function(e) {
   <div class="section-label">My Team</div>
   <div id="myteam-rosterview">
   <div id="myteam-connect">
-    <div style="max-width:540px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:18px 20px">
-      <div style="display:flex;gap:6px;margin-bottom:12px" role="group" aria-label="League platform">
-        <button id="slp-pf-sleeper" onclick="slpSetConnectPlatform('sleeper')" aria-pressed="true" style="font-size:11.5px;font-weight:800;padding:5px 14px;border-radius:14px;border:1px solid var(--teal);background:var(--panel);color:var(--teal);cursor:pointer">Sleeper</button>
-        <button id="slp-pf-mfl" onclick="slpSetConnectPlatform('mfl')" aria-pressed="false" style="font-size:11.5px;font-weight:600;padding:5px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">MFL</button>
+    <div class="dl-mt-connect">
+      <div class="dl-mt-row dl-mt-pf" role="group" aria-label="League platform">
+        <button id="slp-pf-sleeper" class="dl-mt-pill on" onclick="slpSetConnectPlatform('sleeper')" aria-pressed="true">Sleeper</button>
+        <button id="slp-pf-mfl" class="dl-mt-pill" onclick="slpSetConnectPlatform('mfl')" aria-pressed="false">MFL</button>
       </div>
-      <div id="slp-title" style="font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px">Connect your Sleeper league</div>
-      <div id="slp-intro" style="font-size:11.5px;color:var(--fog);line-height:1.55;margin-bottom:12px">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, DELTA Value vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="text" id="slp-input" aria-label="Sleeper Username Or League ID" placeholder="Sleeper username or league ID" style="flex:1;min-width:200px;font-size:12px;padding:7px 10px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper)" onkeydown="if(event.key==='Enter')slpConnectClick()">
-        <button onclick="slpConnectClick()" style="font-size:12px;font-weight:700;padding:7px 16px;border-radius:5px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">Connect</button>
+      <div id="slp-title" class="dl-mt-ctitle">Connect Your Sleeper League</div>
+      <div id="slp-intro" class="dl-mt-cintro">Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, DELTA Value vs market, and buy/sell tags. Read-only — DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.</div>
+      <div class="dl-mt-cform">
+        <input type="text" id="slp-input" class="dl-mt-in" aria-label="Sleeper Username Or League ID" placeholder="Sleeper username or league ID" onkeydown="if(event.key==='Enter')slpConnectClick()">
+        <button class="dl-mt-go" onclick="slpConnectClick()">Connect</button>
       </div>
-      <div id="slp-status" style="font-size:11px;color:var(--fog);margin-top:9px;min-height:14px"></div>
+      <div id="slp-status" class="dl-mt-status"></div>
       <div id="slp-pickers"></div>
       <div id="slp-switch-back"></div>
     </div>
@@ -8320,7 +8390,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01f</span>
+  <span class="foot-build">2026-11-01g</span>
 </footer>
 
 
@@ -10016,16 +10086,12 @@ function renderSlpLeagueSwitcher(){
     const on=SLP.conn&&String(l.leagueId)===String(SLP.conn.leagueId);
     const s=l.settings;
     const sub=(s&&s.teams)?(s.teams+'-team \u00b7 '+(s.qb==='sf'?'SF':'1QB')):'';
-    return '<button onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')"'
-      +' style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:14px;cursor:'+(on?'default':'pointer')+';'
-      +'border:1px solid '+(on?'var(--teal)':'var(--line)')+';background:'+(on?'var(--ink-2)':'var(--panel)')+';'
-      +'color:'+(on?'var(--teal)':'var(--fog)')+'">'+slpEsc(l.leagueName)
-      +(sub?'<span style="font-weight:500;opacity:.75"> \u00b7 '+sub+'</span>':'')+'</button>';
+    return '<button class="dl-mt-pill'+(on?' on':'')+'" onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')">'+slpEsc(l.leagueName)
+      +(sub?'<span class="dl-mt-sub"> \u00b7 '+sub+'</span>':'')+'</button>';
   }).join('');
-  const add='<button onclick="slpAddLeague()" style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:14px;'
-    +'border:1px dashed var(--line);background:transparent;color:var(--fog);cursor:pointer">+ Add league</button>';
+  const add='<button class="dl-mt-pill dl-mt-add" onclick="slpAddLeague()">+ Add League</button>';
   const cta=(!slpSignedIn()&&list.length>=2)
-    ? '<div style="font-size:10.5px;color:var(--fog);margin-top:6px">'
+    ? '<div class="dl-mt-note">'
       +list.length+' leagues connected on this device \u00b7 '
       +'<a href="#" onclick="if(typeof openSettingsAtAccount===\'function\'){openSettingsAtAccount(event);}return false;" style="color:var(--teal);font-weight:700;text-decoration:none">Sign in</a>'
       +' and they follow you to every device.</div>'
@@ -10044,12 +10110,10 @@ function renderSlpSwitchBack(){
   const st=slpStoreRead();
   const list=st.leagues||[];
   if(!list.length){ host.innerHTML=''; return; }
-  host.innerHTML='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'
-    +'<div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Already connected</div>'
+  host.innerHTML='<div class="dl-mt-back"><div class="dl-mt-lbl">Already Connected</div><div class="dl-mt-row">'
     +list.map(function(l){
-      return '<button onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')" style="display:inline-block;margin:0 6px 6px 0;font-size:11.5px;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
-        +slpEsc(l.leagueName)+'</button>';
-    }).join('')+'</div>';
+      return '<button class="dl-mt-pill" onclick="slpSwitchLeague(\''+slpEscJs(l.leagueId)+'\')">'+slpEsc(l.leagueName)+'</button>';
+    }).join('')+'</div></div>';
 }
 
 function slpLog(){ try{ console.log.apply(console,['[DELTA Sleeper]'].concat([].slice.call(arguments))); }catch(e){} }
@@ -10257,7 +10321,7 @@ function slpSetConnectPlatform(pf){
   SLP_CONNECT_PF=(pf==='mfl')?'mfl':'sleeper';
   const mfl=SLP_CONNECT_PF==='mfl';
   const set=function(id,txt){ const el=document.getElementById(id); if(el) el.textContent=txt; };
-  set('slp-title', mfl?'Connect your MFL league':'Connect your Sleeper league');
+  set('slp-title', mfl?'Connect Your MFL League':'Connect Your Sleeper League');
   set('slp-intro', mfl
     ?'Paste your MyFantasyLeague league ID (the number after L= in your league\u2019s web address), or the whole address. Public leagues only \u2014 DELTA cannot read a league that needs an MFL login. Read-only.'
     :'Enter your Sleeper username (or paste a league ID) to see your roster with DELTA Scores, Start Profiles, DELTA Value vs market, and buy/sell tags. Read-only \u2014 DELTA never changes anything in your league, and the rest of the app works exactly the same without a connection.');
@@ -10266,9 +10330,7 @@ function slpSetConnectPlatform(pf){
   ['sleeper','mfl'].forEach(function(k){
     const b=document.getElementById('slp-pf-'+k); if(!b) return;
     const on=k===SLP_CONNECT_PF;
-    b.style.borderColor=on?'var(--teal)':'var(--line)';
-    b.style.color=on?'var(--teal)':'var(--fog)';
-    b.style.fontWeight=on?'800':'600';
+    b.classList.toggle('on',on);
     b.setAttribute('aria-pressed',on?'true':'false');
   });
   const pk=document.getElementById('slp-pickers'); if(pk) pk.innerHTML='';
@@ -10724,18 +10786,17 @@ function renderSlpLeaguePicker(){
 
 function renderSlpTeamPicker(){
   const host=document.getElementById('slp-pickers'); if(!host) return;
-  host.innerHTML='<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Which team is yours? \u00b7 '+(SLP.league?SLP.league.name:'')+'</div>'
+  host.innerHTML='<div class="dl-mt-pick"><div class="dl-mt-lbl">Which Team Is Yours? \u00b7 '+(SLP.league?SLP.league.name:'')+'</div>'
     +(SLP.rosters||[]).map(function(r){
-      return '<button onclick="slpSelectTeam('+r.roster_id+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;font-size:12px;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">'
-        +slpTeamLabel(r)+'</button>';
-    }).join('');
+      return '<button class="dl-mt-team" onclick="slpSelectTeam('+r.roster_id+')">'+slpTeamLabel(r)+'</button>';
+    }).join('')+'</div>';
 }
 
 function slpFmtChips(){
   const labels={half_tep:'0.5PPR+TEP',half:'0.5PPR',full_tep:'FullPPR+TEP',full:'FullPPR',std:'Standard'};
-  const chip=function(t){ return '<span style="font-size:10px;font-weight:700;color:var(--sky);background:var(--ink-2);border:1px solid var(--line);border-radius:4px;padding:2px 7px">'+t+'</span>'; };
+  const chip=function(t){ return '<span class="dl-mt-chip">'+t+'</span>'; };
   return chip(leagueTeams+'-team')+' '+chip(qbFmt==='sf'?'Superflex':'1-QB')+' '+chip(labels[scoringFmt]||scoringFmt)
-    +(SLP.detected?'<span style="font-size:9.5px;color:var(--fog-2);margin-left:6px">'
+    +(SLP.detected?'<span class="dl-mt-note dl-mt-auto">'
       +((slpIsMfl(SLP.conn&&SLP.conn.leagueId)&&!(SLP.league&&SLP.league.scoringRead))?'teams and QB format read from MFL \u00b7 scoring could not be read, so set it in Settings if it differs':'auto-detected from league settings')
       +'</span>':'');
 }
@@ -11206,8 +11267,8 @@ function renderSlpSubNav(){
     return slpTeamLabel(a).localeCompare(slpTeamLabel(b));
   }).map(function(r){
     const active=SLP.view==='rosters'&&String(r.roster_id)===String(SLP.viewRosterId);
-    return '<button onclick="slpViewRoster('+r.roster_id+')" style="font-size:10.5px;font-weight:'+(active?'800':'600')+';padding:4px 10px;border-radius:12px;border:1px solid '+(active?'var(--line)':'var(--line)')+';background:'+(active?'var(--ink-2)':'var(--panel)')+';color:'+(active?'var(--emerald)':'var(--fog)')+';cursor:pointer;white-space:nowrap">'
-      +slpTeamLabel(r)+(r.roster_id===mine?' \u2605':'')+'</button>';
+    return '<button class="dl-mt-pill'+(active?' on':'')+'" onclick="slpViewRoster('+r.roster_id+')">'
+      +slpTeamLabel(r)+(r.roster_id===mine?' (You)':'')+'</button>';
   }).join('');
   // Twelve team pills is four rows on a phone, and you are looking at your own
   // roster nearly every time. Fold them; the analysis pills stay out.
@@ -11223,9 +11284,7 @@ function renderSlpSubNav(){
      thing: one shared style (sky, emerald when active, on the raised surface)
      marks them as a pair and separates them from the roster pills. */
   const analysisPill=function(on,fn,label,news){
-    return '<button'+(news?' data-news-pill="'+news+'"':'')+' onclick="'+fn+'" style="font-size:10.5px;font-weight:'+(on?'800':'700')
-      +';padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2)'
-      +';color:'+(on?'var(--emerald)':'var(--sky)')+';cursor:pointer;white-space:nowrap">'+label+'</button>';
+    return '<button class="dl-mt-pill'+(on?' on':'')+'"'+(news?' data-news-pill="'+news+'"':'')+' onclick="'+fn+'">'+label+'</button>';
   };
   /* My Roster is always in this row (8 Oct 2026, from an MFL user). Your own team
      used to be reachable only inside the folded "Compare another team" list, so
@@ -11962,7 +12021,7 @@ function renderMyTeam(){
   if(SLP.busy&&SLP.conn){
     connectDiv.style.display='none'; rosterDiv.style.display='block';
     rosterDiv.innerHTML=renderSlpLeagueSwitcher()
-      +'<div style="color:var(--fog);font-size:12px;padding:1rem">Loading '+slpEsc(SLP.conn.leagueName||'your league')+' from '+slpPlatformName(SLP.conn.leagueId)+'\u2026</div>';
+      +'<div class="dl-mt-load">Loading '+slpEsc(SLP.conn.leagueName||'your league')+' from '+slpPlatformName(SLP.conn.leagueId)+'\u2026</div>';
     return;
   }
   if(!SLP.conn||!SLP.loaded){
@@ -11983,12 +12042,12 @@ function renderMyTeam(){
     +(qbFmt==='sf'?'SF':'1QB')+' \u00b7 '+slpEsc(slpFmtLabel(scoringFmt))+'</span></summary>'
     +renderSlpLeagueSwitcher()
     +'<div class="dl-mt-row dl-mt-meta">'
-    +'<div style="font-size:11px;color:var(--fog)">'+slpPlatformName(SLP.conn.leagueId)+' \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <span style="color:var(--fog);font-weight:700">'+slpEsc(SLP.conn.teamName)+'</span></div>'
+    +'<div class="dl-mt-note">'+slpPlatformName(SLP.conn.leagueId)+' \u00b7 '+slpEsc(SLP.conn.season)+' season \u00b7 you are <b>'+slpEsc(SLP.conn.teamName)+'</b></div>'
     +'<div style="flex:1"></div>'
-    +'<button onclick="sleeperRefresh()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--paper);cursor:pointer">\u21bb Refresh</button>'
+    +'<button class="dl-mt-pill" onclick="sleeperRefresh()">\u21bb Refresh</button>'
     +(multi
-      ? '<button onclick="slpRemoveLeague(\''+slpEscJs(SLP.conn.leagueId)+'\')" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Remove</button>'
-      : '<button onclick="sleeperDisconnect()" style="font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fog);cursor:pointer">Disconnect</button>')
+      ? '<button class="dl-mt-pill" onclick="slpRemoveLeague(\''+slpEscJs(SLP.conn.leagueId)+'\')">Remove</button>'
+      : '<button class="dl-mt-pill" onclick="sleeperDisconnect()">Disconnect</button>')
     +'</div>'
     +'<div class="dl-mt-row">'+slpFmtChips()+'</div></details>'
     +renderSlpSubNav();
@@ -12039,9 +12098,9 @@ const MT_COLS=[
     const c=mv>p.ktcEff?'var(--emerald)':(mv<p.ktcEff*.9?'var(--coral)':'var(--paper)');
     return '<td class="dl-b-r dl-mt-num" style="color:'+c+'">'+(mv>=19999?'19,999+':mv.toLocaleString())+'</td>'; },
   u:x=>'<td class="dl-b-r dl-mt-dim">-</td>'},
- {k:'tag', full:'Verdict', mob:true, th:'<th>Tag</th>',
-  m:x=>'<td>'+vTag(x.p)+'</td>',
-  u:x=>'<td><span class="badge bn" title="Outside DELTA modeled universe \u2014 market value shown when FantasyCalc tracks the player">not modeled</span></td>'}
+ {k:'tag', full:'Verdict', mob:true, th:'<th>Call</th>',
+  m:x=>'<td class="dl-rk-verdict">'+vTag(x.p)+'</td>',
+  u:x=>'<td class="dl-rk-verdict"><span class="badge bn" title="Outside DELTA modeled universe \u2014 market value shown when FantasyCalc tracks the player">not modeled</span></td>'}
 ];
 const MT_LS={ d:'delta_mt_cols_desktop', m:'delta_mt_cols_mobile' };
 const MT_DEF={ d:MT_COLS.filter(c=>!c.off).map(c=>c.k), m:MT_COLS.filter(c=>c.mob).map(c=>c.k) };
@@ -12127,11 +12186,11 @@ function renderSlpRoster(rid){
                +unmodeled.reduce(function(s,x){ return s+(x.mkt||0); },0);
   const totalRostered=modeled.length+unmodeled.length;
 
-  const summary='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">'
-    +'<span style="font-size:13px;font-weight:800;color:var(--paper)">'+slpTeamLabel(roster)+(isMine?' <span style="color:var(--topaz);font-size:11px">(you)</span>':'')+'</span>'
-    +(isMine?'':'<button onclick="slpTradeWith('+roster.roster_id+')" style="font-size:10.5px;font-weight:700;padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--ink-2);color:var(--emerald);cursor:pointer">\u21c4 Trade with this team</button>')
+  const summary='<div class="dl-mt-sum">'
+    +'<span class="dl-mt-tn">'+slpTeamLabel(roster)+(isMine?'<span class="dl-mt-you">You</span>':'')+'</span>'
+    +(isMine?'':'<button class="dl-mt-pill dl-mt-trade" onclick="slpTradeWith('+roster.roster_id+')">\u21c4 Trade With This Team</button>')
     +'<span style="flex:1"></span>'
-    +'<span style="font-size:11px;color:var(--fog)">'+totalRostered+' rostered \u00b7 '+modeled.length+' modeled \u00b7 market value <span style="color:var(--sky);font-weight:700">'+totalMkt.toLocaleString()+'</span></span>'
+    +'<span class="dl-mt-stat">'+totalRostered+' rostered \u00b7 '+modeled.length+' modeled \u00b7 market value <b>'+totalMkt.toLocaleString()+'</b></span>'
     +mtMenuHTML()
     +'</div>';
 
@@ -12140,7 +12199,7 @@ function renderSlpRoster(rid){
     const g=groups[pos];
     if(!g.m.length&&!g.u.length) return '';
     // The group row spans however many columns are on \u2014 it used to say 9 regardless.
-    const head='<tr class="dl-mt-grp"><td colspan="'+cols.length+'">'+pos+' \u00b7 '+(g.m.length+g.u.length)+'</td></tr>';
+    const head='<tr class="dl-mt-grp"><td colspan="'+cols.length+'">'+pos+'<span>'+(g.m.length+g.u.length)+'</span></td></tr>';
     const mRows=g.m.map(function(x){
       return '<tr class="dl-rk-row" data-name="'+x.p.n+'" onclick="openDeck(this.dataset.name)" oncontextmenu="openDeckNewTab(event,this.dataset.name)">'
         +cols.map(function(c){ return c.m(x); }).join('')+'</tr>';
@@ -12163,20 +12222,20 @@ function renderSlpRoster(rid){
     const items=bySeason[s].sort(function(a,b){ return a.round-b.round; }).map(function(pk){
       const via=String(pk.from)!==String(roster.roster_id);
       const fr=via?slpRosterById(pk.from):null;
-      return '<span style="color:var(--paper);font-weight:600">'+slpOrd(pk.round)+'</span>'+(via?'<span style="color:var(--fog);font-size:10px"> (via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
-    }).join('<span style="color:var(--fog-2)"> \u00b7 </span>');
-    return '<div style="margin-bottom:3px"><span style="color:var(--sky);font-weight:700;margin-right:8px">'+s+'</span>'+items+'</div>';
+      return '<b>'+slpOrd(pk.round)+'</b>'+(via?'<span class="dl-mt-via"> (via '+(fr?slpTeamLabel(fr):'?')+')</span>':'');
+    }).join('<span class="dl-mt-dot"> \u00b7 </span>');
+    return '<div class="dl-mt-pl"><span class="dl-mt-yr">'+s+'</span>'+items+'</div>';
   }).join('');
-  const picksBox='<div style="margin-top:14px;font-size:11.5px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;line-height:1.7">'
-    +'<div style="font-size:10px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">Draft picks (next 3 seasons)</div>'
-    +(pickLines||'<span style="color:var(--fog-2)">none</span>')
+  const picksBox='<div class="dl-mt-picks">'
+    +'<div class="dl-mt-ph">Draft Picks (Next 3 Seasons)</div>'
+    +(pickLines||'<span class="dl-mt-via">None</span>')
     +'</div>';
 
   // MFL rosters often carry kickers, defence, IDP and league-made custom
   // players. Say how many sit outside DELTA rather than letting them vanish.
   const notCovered=(roster.players||[]).length-totalRostered;
   const coverNote=(slpIsMfl(SLP.conn&&SLP.conn.leagueId)&&notCovered>0)
-    ?'<div style="font-size:11px;color:var(--fog);margin-top:8px">+ '+notCovered+' more on this roster that DELTA does not cover \u2014 kickers, defence, IDP and custom players.</div>'
+    ?'<div class="dl-mt-note">+ '+notCovered+' more on this roster that DELTA does not cover \u2014 kickers, defence, IDP and custom players.</div>'
     :'';
   return summary+table+coverNote+picksBox;
 }
