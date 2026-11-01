@@ -2132,6 +2132,47 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 #panel-mock .dl-md-dbtn{min-height:32px;padding:0 12px;border-radius:16px;font-size:12px}
 #panel-mock .dl-md-head h2{font-size:20px}
 </style>
+<style id="dl-ledger">
+/* League Trade Ledger, redesign rules (1 Nov 2026): 14px cards, 36px pills, 44px search,
+   48px buttons, Title Case labels written in the text (not small capitals), the five sizes.
+   FAAB and the search highlight leave topaz: topaz means watch. */
+.dl-lg .dl-lg-lbl2{font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog);margin:12px 0 6px}
+.dl-lg .dl-lg-pill{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+.dl-lg .dl-lg-ct{font-size:12px}
+.dl-lg .dl-lg-srch input{min-height:44px;border-radius:14px}
+.dl-lg .dl-lg-count{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog)}
+.dl-lg .dl-lg-names{min-height:44px;margin:0 0 6px;font-size:13px}
+.dl-lg .dl-lg-tc{border-radius:14px;margin-bottom:12px}
+.dl-lg .dl-lg-mine{border-color:var(--teal-br);border-color:color-mix(in srgb,var(--teal-br) 40%,var(--line))}
+.dl-lg .dl-lg-dt{font-size:12px}
+.dl-lg .dl-lg-tag{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;border-radius:10px;padding:2px 8px}
+.dl-lg .dl-lg-nm{font-size:16px}
+.dl-lg .dl-lg-av{font-size:13px}
+.dl-lg .dl-lg-you{font-size:12px;letter-spacing:0;text-transform:none}
+.dl-lg .dl-lg-tot b{font-size:16px}
+.dl-lg .dl-lg-tot s{font-size:12px;letter-spacing:0;text-transform:none}
+.dl-lg .dl-lg-it{font-size:13px}
+.dl-lg :is(.dl-lg-pos,.dl-lg-pk,.dl-lg-own){font-size:12px}
+.dl-lg .dl-lg-val{font-size:13px}
+.dl-lg .dl-lg-na{font-size:12px;letter-spacing:0;text-transform:none}
+.dl-lg .dl-lg-fa{color:var(--fog)}
+.dl-lg .dl-lg-hit{background:var(--teal-tint)}
+.dl-lg .dl-lg-mg{font-size:13px}
+.dl-lg .dl-lg-lbl{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog)}
+.dl-lg .dl-lg-note{font-size:12px}
+.dl-lg .dl-lg-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dl-lg .dl-lg-act{min-height:48px;border-radius:14px;font-size:13px}
+/* Tinted, not filled: a list of 150 trades with a solid teal button on each reads as a wall of teal. */
+.dl-lg .dl-lg-act:first-child{grid-column:1/-1;background:var(--teal-tint);font-size:16px}
+.dl-lg .dl-lg-foot{font-size:12px}
+.dl-lg .dl-lg-rf{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+:is(.dl-lg-load,.dl-lg-err) .dl-lg-rf{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;margin:10px 0 0}
+.dl-lg-prog{font-size:12px}
+/* Wide screens: two trades a row, so a name and its value are not a screen apart. Newest
+   still reads first (left to right, then down). */
+@media(min-width:1000px){#slp-ledger-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+  #slp-ledger-list .dl-lg-tc{margin-bottom:0}#slp-ledger-list .dl-lg-empty{grid-column:1/-1}}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -8204,7 +8245,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01b</span>
+  <span class="foot-build">2026-11-01c</span>
 </footer>
 
 
@@ -11562,7 +11603,7 @@ function slpLedgerRows(){
 
 function slpLedgerCount(rows){
   const st=slpLedgerState();
-  return rows.length+' trade'+(rows.length===1?'':'s')+(st.f.q?' matching \u201c'+st.f.q+'\u201d':'');
+  return rows.length+' Trade'+(rows.length===1?'':'s')+(st.f.q?' Matching \u201c'+st.f.q+'\u201d':'');
 }
 
 function slpLedgerMgr(u){
@@ -11585,7 +11626,7 @@ function slpLedgerSide(r,side,users,lead,valuer,q,all){
     if(p.v==null) unpriced++; else sum+=p.v;
     rows.push('<div class="dl-lg-it"><span class="dl-lg-pl">'+slpLedgerMark(p.n,q)
       +(p.p?'<span class="dl-lg-pos">'+slpEsc(p.p)+'</span>':'')+'</span>'
-      +(p.v==null?'<span class="dl-lg-val dl-lg-na">no current value</span>'
+      +(p.v==null?'<span class="dl-lg-val dl-lg-na">No Current Value</span>'
                  :'<span class="dl-lg-val">'+p.v.toLocaleString()+'</span>')+'</div>');
   });
   side.picks.forEach(function(pk){
@@ -11598,14 +11639,14 @@ function slpLedgerSide(r,side,users,lead,valuer,q,all){
     rows.push('<div class="dl-lg-it"><span class="dl-lg-lft"><span class="dl-lg-pk">'+slpEsc(v.label)+'</span>'
       +own+(v.who?'<span class="dl-lg-bec">'+slpLedgerMark(v.who,q)
       +(v.pos?'<span class="dl-lg-pos">'+slpEsc(v.pos)+'</span>':'')+'</span>':'')+'</span>'
-      +(v.v==null?'<span class="dl-lg-val dl-lg-na">no current value</span>'
+      +(v.v==null?'<span class="dl-lg-val dl-lg-na">No Current Value</span>'
                  :'<span class="dl-lg-val">'+v.v.toLocaleString()+'</span>')+'</div>');
   });
   side.faab.forEach(function(f){
     rows.push('<div class="dl-lg-it"><span class="dl-lg-fa">'+f.amt+' FAAB</span>'
-      +'<span class="dl-lg-val dl-lg-na">from '+slpEsc(slpLedgerMgr(users[f.from]))+'</span></div>');
+      +'<span class="dl-lg-val dl-lg-na">From '+slpEsc(slpLedgerMgr(users[f.from]))+'</span></div>');
   });
-  if(!rows.length) rows.push('<div class="dl-lg-it"><span class="dl-lg-na">Nothing \u2014 this side only sent</span></div>');
+  if(!rows.length) rows.push('<div class="dl-lg-it"><span class="dl-lg-na">Nothing \u2014 This Side Only Sent</span></div>');
 
   const u=users[r];
   const me=SLP.conn&&u&&u===SLP.conn.userId;
@@ -11616,8 +11657,8 @@ function slpLedgerSide(r,side,users,lead,valuer,q,all){
     +'<div class="dl-lg-who"><span class="dl-lg-av">'
     +(img?'<img src="'+slpEsc(img)+'" alt="" loading="lazy">':slpEsc(initial))+'</span>'
     +'<span class="dl-lg-col"><span class="dl-lg-nm">'+slpEsc(label)
-    +(me?'<span class="dl-lg-you">you</span>':'')+'</span></span>'
-    +'<span class="dl-lg-tot"><b>'+(sum?sum.toLocaleString():'\u2014')+'</b><s>value today</s></span>'
+    +(me?'<span class="dl-lg-you">You</span>':'')+'</span></span>'
+    +'<span class="dl-lg-tot"><b>'+(sum?sum.toLocaleString():'\u2014')+'</b><s>Value Today</s></span>'
     +'</div>'+rows.join('')+'</div>';
 }
 
@@ -11715,7 +11756,9 @@ function slpLedgerImage(id,btn){
   });
   return dlImgShare(function(){ return drawTradeImage(st); },'delta-trade.png',btn);
 }
-function slpLedgerNames(on){ tiSetNames(on); }
+/* Was slpLedgerNames, which also names the search's player-name list above. The later
+   declaration won, so typing in the Player search threw and found nothing (fixed 1 Nov 2026). */
+function slpLedgerNamesOn(on){ tiSetNames(on); }
 function slpLedgerShare(id,btn){
   const o=slpLedgerPayload(slpLedgerTradeById(id));
   if(!o) return;
@@ -11749,13 +11792,13 @@ function slpLedgerCards(rows){
     const grand=tot.reduce(function(a,x){ return a+x.sum; },0);
 
     const tags=[];
-    if(teams.length>2) tags.push('<span class="dl-lg-tag">'+teams.length+' teams</span>');
-    tags.push(t.leg>1?'<span class="dl-lg-tag dl-lg-wk">week '+t.leg+'</span>'
-                     :'<span class="dl-lg-tag">offseason</span>');
-    if(t.counter) tags.push('<span class="dl-lg-tag">counter</span>');
+    if(teams.length>2) tags.push('<span class="dl-lg-tag">'+teams.length+' Teams</span>');
+    tags.push(t.leg>1?'<span class="dl-lg-tag dl-lg-wk">Week '+t.leg+'</span>'
+                     :'<span class="dl-lg-tag">Offseason</span>');
+    if(t.counter) tags.push('<span class="dl-lg-tag">Counter</span>');
     let mine=false;
     for(const r in t.users) if(SLP.conn&&t.users[r]===SLP.conn.userId) mine=true;
-    if(mine) tags.push('<span class="dl-lg-tag dl-lg-me">you</span>');
+    if(mine) tags.push('<span class="dl-lg-tag dl-lg-me">You</span>');
 
     const split=grand>0
       ? '<div class="dl-lg-split">'+tot.map(function(x){
@@ -11777,7 +11820,7 @@ function slpLedgerCards(rows){
       +'<span class="dl-lg-tags">'+tags.join('')+'</span></div>'
       +teams.map(function(r){ return slpLedgerSide(Number(r),t.teams[r],t.users,Number(r)===leadR,valuer,q,t.rosters); }).join('')
       +split
-      +'<div class="dl-lg-mg"><span class="dl-lg-lbl">Value today</span>'+margin+'</div>'
+      +'<div class="dl-lg-mg"><span class="dl-lg-lbl">Value Today</span>'+margin+'</div>'
       +(unpriced?'<div class="dl-lg-note">'+unpriced+' asset'+(unpriced===1?'':'s')+' no longer priced</div>':'')
       +slpLedgerActs(t)
       +'</div>';
@@ -11797,7 +11840,7 @@ function renderSlpLedger(){
     +'<div class="dl-lg-prog">First time takes a moment \u2014 every week of every season. '
     +'Finished seasons are then kept on this device.</div></div>';
   if(st.error) return '<div class="dl-lg-err">Could not build the ledger: '+slpEsc(st.error)
-    +'<div><button class="dl-lg-rf" onclick="slpLedgerRefresh()">Try again</button></div></div>';
+    +'<div><button class="dl-lg-rf" onclick="slpLedgerRefresh()">Try Again</button></div></div>';
   if(!st.data) return '<div class="dl-lg-load">Opening\u2026</div>';
 
   const f=st.f;
@@ -11828,11 +11871,11 @@ function renderSlpLedger(){
     +'value="'+slpEsc(f.q)+'" oninput="slpLedgerSearch(this)" '
     +'placeholder="Search a player \u2014 every trade he appears in"></div>'
     +'<div class="dl-lg-count" id="slp-ledger-count">'+slpLedgerCount(rows)+'</div>'
-    +'<label class="dl-lg-names"><input type="checkbox"'+(tiNamesOn()?' checked':'')+' onchange="slpLedgerNames(this.checked)">Manager Names On Share Images</label>'
+    +'<label class="dl-lg-names"><input type="checkbox"'+(tiNamesOn()?' checked':'')+' onchange="slpLedgerNamesOn(this.checked)">Manager Names On Share Images</label>'
     +'<div id="slp-ledger-list">'+slpLedgerCards(rows)+'</div>'
     +'<div class="dl-lg-foot">Every trade this league has made, priced on today\u2019s market at your '
     +'league settings. A pick from a draft that has happened is priced as the player it became. '
-    +'FAAB is shown but not counted. <button class="dl-lg-rf" onclick="slpLedgerRefresh()">Refresh history</button></div>'
+    +'FAAB is shown but not counted. <button class="dl-lg-rf" onclick="slpLedgerRefresh()">Refresh History</button></div>'
     +'</div>';
 }
 
