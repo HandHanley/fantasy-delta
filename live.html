@@ -334,6 +334,12 @@ h1{font-size:20px}
 .nm{font-size:13px}
 .nm .pos,.sub{font-size:12px}
 .bx th{font-family:var(--sans);font-size:12px;letter-spacing:0}
+/* Box score cards (owner, 1 Nov): the column headers sat jammed under the rounded top edge with a
+   wide gap below them, which on a one-row table (a quarterback, the kicker) was most of the card.
+   Headers come down off the edge; the first row comes up to meet them. */
+.card:has(> table.bx){padding-top:10px}
+.bx thead th{line-height:1.2;padding-bottom:4px}
+.bx tbody tr:first-child td{padding-top:6px}
 .rdcmp,.rdtier,.rdmeas,.rddesc,.rdsub{font-size:12px}
 .rdgrp{font-size:13px}
 .rdbig{font-size:16px}
