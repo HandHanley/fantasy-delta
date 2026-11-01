@@ -132,7 +132,8 @@ html[data-look="daylight"]{
   --topaz:#946200; --topaz-tint:#FCF1D8;
   --sky:#1E6FA8; --sky-tint:#E4F0F9; --sky-dp:#9CC6E6;
   --violet:#6650D0; --violet-tint:#ECE9FB;
-  /* Live has no accent script of its own: these are its accent in Daylight. */
+  /* Teal's Daylight partner, as a fallback. Every page's pre-paint script sets the reader's own accent
+     inline, which wins (Live included since 1 Nov 2026). */
   --teal-br:#0A6660; --teal:#0F766E; --teal-tint:rgba(10,102,96,.12); --teal-soft:rgba(10,102,96,.07);
   --row-hi:rgba(10,102,96,.055);
   --cp-1:#0F766E; --cp-1-tint:rgba(15,118,110,.12);
