@@ -1,0 +1,116 @@
+/* DELTA — LOOKS (redesign step 4, 31 Oct 2026, owner-approved plan, Decisions 8 and 9)
+ *
+ * Settings > Look: Classic (no attribute: the pages exactly as they are), Glass, Daylight.
+ * The choice is stored as localStorage 'delta_look', set on <html data-look="…"> by the
+ * pre-paint script in each page (so there is no flash), and synced inside the account's
+ * settings by delta-sync.js. Loaded by index, player, cfb-player, live, privacy and terms.
+ *
+ * Rules live under html[data-look="…"] so they outrank each page's own rules of the same
+ * shape without !important, and Classic is simply "no rules here". The accent theme still
+ * works in every look: these rules read --teal-br / --teal-tint, never a fixed accent.
+ * Colours are tokens or alpha tints of white/black; the brand mark keeps its fixed gradient.
+ */
+
+/* ════════════════════════════════════════════════════════════════════════════════════════
+   GLASS — dark, like Classic, with frosted see-through cards over a softly lit page.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html[data-look="glass"]{
+  --ink:#070B13;
+  /* Cards and inner boxes become see-through, so the page's glow shows through them. */
+  --panel:rgba(26,34,50,.58);
+  --ink-2:rgba(255,255,255,.035);
+  --line:rgba(255,255,255,.09);
+  /* For anything that must hide what scrolls beneath it (pinned table columns). */
+  --g-solid:#121927;
+  --g-edge:rgba(255,255,255,.10);
+  --g-hi:inset 0 1px 0 rgba(255,255,255,.08);
+  --g-blur:blur(18px) saturate(140%);
+}
+html[data-look="glass"] body{background:var(--ink)}
+/* The light behind the glass: soft pools of the accent, sky and violet, fixed to the screen. */
+html[data-look="glass"] body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(120% 60% at 10% -10%, var(--teal-tint), transparent 70%),
+    radial-gradient(90% 55% at 100% 45%, var(--sky-tint,rgba(107,182,224,.14)), transparent 70%),
+    radial-gradient(90% 55% at 0% 100%, var(--violet-tint,rgba(155,138,240,.14)), transparent 70%);
+  opacity:.9;
+}
+@supports (background:color-mix(in srgb, red 50%, transparent)){
+  html[data-look="glass"] body::before{
+    background:
+      radial-gradient(120% 60% at 10% -10%, color-mix(in srgb, var(--teal-br) 24%, transparent), transparent 70%),
+      radial-gradient(90% 55% at 100% 45%, color-mix(in srgb, var(--sky) 15%, transparent), transparent 70%),
+      radial-gradient(90% 55% at 0% 100%, color-mix(in srgb, var(--violet) 15%, transparent), transparent 70%);
+    opacity:1}
+}
+
+/* Cards: rounder, a faint top-lit sheen, a light edge. */
+/* Class selectors only inside :is(): an id in the list would raise the whole rule's weight
+   (:is takes its heaviest argument) and the phone exception below could not undo it. */
+html[data-look="glass"] :is(.card,.cc-sec,.dlh-tiles,.dlh-chart,.dl-rk-surface,
+  .dl-rc-card,.dl-cp-card,.dl-tp-card,.dl-md-card,.info-box,.trade-side,.dl-sc-card,.dl-sc-list){
+  border-radius:20px;border-color:var(--g-edge);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
+  box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
+}
+/* So is the header's identity block (.dlh-top): in the pop-up it is open, beside the close
+   button, and a frame round it cut across the name (owner, 31 Oct). */
+html[data-look="glass"] .dlh:not(.dd-dlh) > .dlh-top{
+  border-radius:20px;border-color:var(--g-edge);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
+  box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
+}
+/* .dd-section is a card only on the player page. In the pop-up most sections are open blocks with
+   no padding of their own, and a frame drawn round them sat right on the text (owner, 31 Oct). */
+html[data-look="glass"] :is(.pt-ds > .dd-section,#tab-nfl > .dd-section){
+  border-radius:20px !important;border-color:var(--g-edge);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%);
+  box-shadow:var(--g-hi),0 10px 30px rgba(0,0,0,.22);
+}
+/* The Scorecard's own rules are id-scoped, so its cards are named the same way here. */
+html[data-look="glass"] #panel-scorecard :is(.dl-sc-card,.dl-sc-list){border-radius:20px;border-color:var(--g-edge)}
+
+/* Frosted: things that float over the page. */
+html[data-look="glass"] :is(#settings-pop,.dd-card,.about-card,.dl-ap-sheet,.dl-pr-sheet,.dropdown,
+  .edit-results,.dl-rk-colmenu,.nav-sh-menu,#dd-actbar,.dd-actbar){
+  -webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);border-color:var(--g-edge);
+}
+html[data-look="glass"] :is(.dd-card,.about-card){background-color:rgba(20,27,40,.80);border-radius:24px}
+html[data-look="glass"] #settings-pop{background-color:rgba(20,27,40,.86) !important;border-radius:18px !important}
+html[data-look="glass"] :is(#dd-actbar,.dd-actbar){background-color:rgba(20,27,40,.72)}
+html[data-look="glass"] [data-tip]::after{background:rgba(20,27,40,.92);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
+
+/* Pinned table columns stay solid so the scrolling middle never shows through them. */
+html[data-look="glass"] .gl-tbl :is(th,td){background-color:transparent}
+html[data-look="glass"] .gl-tbl :is(th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),
+  th:last-child,td:last-child:not([colspan])){background-color:var(--g-solid)}
+
+/* Buttons: tinted glass rather than solid fills. */
+html[data-look="glass"] :is(#dd-actbar,.dd-actbar) .dd-act-main{background:var(--teal-tint);color:var(--teal-br);border:1px solid var(--teal-br)}
+html[data-look="glass"] :is(#dd-actbar,.dd-actbar) .dd-act-cmp{background:rgba(255,255,255,.07);border-color:var(--g-edge)}
+
+/* The DELTA Score ring glows softly. */
+html[data-look="glass"] .dl-ring svg{filter:drop-shadow(0 0 10px var(--teal-tint))}
+
+/* Phones: pills and the bottom bar. */
+@media (max-width:759px){
+  html[data-look="glass"] .tabs .tab[data-tab]{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+  html[data-look="glass"] .tabs .tab[data-tab].active{background:var(--teal-tint);color:var(--teal-br);border-color:var(--teal-br)}
+  /* The bar floats: a frosted capsule above the bottom edge instead of a strip along it. */
+  html[data-look="glass"] .seg.dl-bnav{
+    left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom,0px));
+    padding:3px 6px;border-radius:30px;border:1px solid rgba(255,255,255,.12);
+    background:rgba(20,28,40,.70);-webkit-backdrop-filter:blur(24px) saturate(150%);backdrop-filter:blur(24px) saturate(150%);
+    box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  html[data-look="glass"] .dl-bn-space{height:calc(84px + env(safe-area-inset-bottom,0px))}
+  html[data-look="glass"] .dd-card,html[data-look="glass"] #cfb-card{border-radius:24px 24px 0 0}
+  /* On a phone the Market blocks are not boxed (Classic draws them flush), so they stay unboxed here. */
+  html[data-look="glass"] .dl-rk-surface{border-radius:0;border-color:transparent;background-image:none;box-shadow:none}
+}
+
+/* A phone that cannot blur gets solid cards (the Classic look's panels), never unreadable glass. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html[data-look="glass"]{--panel:#141B28;--ink-2:#0F1520}
+  html[data-look="glass"] .seg.dl-bnav{background:var(--g-solid)}
+}

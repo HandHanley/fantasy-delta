@@ -39,6 +39,9 @@
   s.setProperty('--teal-br',t[0]); s.setProperty('--teal',t[1]);
   s.setProperty('--teal-tint',rgba(t[0],.12)); s.setProperty('--teal-soft',rgba(t[0],.07));
   s.setProperty('--row-hi',rgba(t[0],.055));
+  /* The Look (redesign step 4, 31 Oct 2026): set before first paint, like the accent. Read by
+     delta-looks.css. The same line sits in index, player, cfb-player, privacy, terms and live. */
+  var L=localStorage.getItem('delta_look'); if(L==='glass') document.documentElement.setAttribute('data-look',L);
 }catch(e){}})();
 </script>
 <style>
@@ -145,6 +148,7 @@ html{padding-top:env(safe-area-inset-top,0px)}
    their own: in the pop-up a 10px note came out bigger than the 11.5px rows around it. */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
+<link rel="stylesheet" href="delta-looks.css">
 </head>
 <body><div class="wrap">
 <nav class="nav">
@@ -196,7 +200,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
          it deliberately did not; that is no longer true. It is paired with the engine
          marker the same way player.html and index.html are, and the two differing is a
          normal state, never coloured as a fault. -->
-    <span class="foot-build">2026-10-31f</span>
+    <span class="foot-build">2026-10-31g</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>

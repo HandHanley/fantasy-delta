@@ -41,6 +41,7 @@ var DSYNC = (function () {
   // rename shows up here as one edit rather than five scattered string typos.
   var LS_SETTINGS = 'delta_settings';
   var LS_THEME    = 'delta_theme';
+  var LS_LOOK     = 'delta_look';     // the Look (31 Oct 2026); travels inside settings, below
   var LS_WATCH    = 'delta_watchlist';
   var LS_SLEEPER  = 'delta_sleeper';
   var LS_META     = 'delta_sync_meta';   // new; this file only
@@ -343,6 +344,7 @@ var DSYNC = (function () {
     if (s.source === 'cloud' && s.value) {
       lsSet(LS_SETTINGS, JSON.stringify(s.value));
       if (typeof window.dsyncApplySettings === 'function') window.dsyncApplySettings(s.value);
+      applyLook(s.value.look);
     }
 
     // ---- theme -------------------------------------------------------------
@@ -405,11 +407,28 @@ var DSYNC = (function () {
     timers[key] = setTimeout(function () { timers[key] = null; fn(); }, DEBOUNCE_MS);
   }
 
+  /* The Look rides inside settings (31 Oct 2026, Decision 9): the account row has no column for
+     it, and settings already sync newest-wins. The page keeps its own key, 'delta_look', because
+     the pre-paint script must read it before anything else runs. setLook() calls noteSettings(). */
+  var LOOKS = { classic: 1, glass: 1 };
+  function applyLook(look) {
+    if (!look || !LOOKS[look]) return;
+    lsSet(LS_LOOK, look);
+    if (typeof window.dlLookApply === 'function') { window.dlLookApply(look); return; }
+    try {
+      if (look === 'classic') document.documentElement.removeAttribute('data-look');
+      else document.documentElement.setAttribute('data-look', look);
+    } catch (e) {}
+  }
+
   async function pushState(immediate) {
     if (!sb || !user) return;                      // no-op when signed out
+    var settings = lsJSON(LS_SETTINGS, {}) || {};
+    var look = lsGet(LS_LOOK);
+    if (look && LOOKS[look]) settings = Object.assign({}, settings, { look: look });
     var body = {
       user_id: user.id,
-      settings: lsJSON(LS_SETTINGS, {}) || {},
+      settings: settings,
       theme: lsGet(LS_THEME) || 'teal'
     };
     var r = await sb.from('user_state').upsert([body], { onConflict: 'user_id' });
