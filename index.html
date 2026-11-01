@@ -2173,6 +2173,49 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 @media(min-width:1000px){#slp-ledger-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
   #slp-ledger-list .dl-lg-tc{margin-bottom:0}#slp-ledger-list .dl-lg-empty{grid-column:1/-1}}
 </style>
+<style id="dl-compare">
+/* Compare, redesign rules (1 Nov 2026): 14px cards, 16px titles, 44px search at 16px (no
+   iPhone zoom on focus), 48px buttons, the five sizes. The score ring keeps its own drawing. */
+#panel-compare :is(.dl-cp-slot,.dl-cp-card,.dl-cp-sec,.dl-cp-pair,.dl-cp-drop){border-radius:14px}
+#panel-compare .dl-cp-sn{font-size:16px}
+#panel-compare .dl-cp-sm{font-size:12px}
+#panel-compare .dl-cp-plus{font-size:20px}
+#panel-compare .dl-cp-empty{font-size:13px}
+#panel-compare .dl-cp-x{width:36px;height:36px;font-size:13px}
+#panel-compare .dl-cp-lbl{font-size:13px;font-weight:700}
+#panel-compare .dl-cp-in{min-height:44px;font-size:16px;border-radius:14px}
+#panel-compare .dl-cp-in::placeholder{font-size:13px}
+#panel-compare .dl-cp-opt{min-height:56px}
+#panel-compare .dl-cp-on b{font-size:16px}
+#panel-compare .dl-cp-on span{font-size:12px}
+#panel-compare .dl-cp-od{font-size:16px}
+#panel-compare .dl-cp-note{font-size:13px}
+#panel-compare .dl-cp-go{min-height:48px;border-radius:14px;font-size:16px}
+#panel-compare .dl-cp-edit{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+#panel-compare .dl-cp-nm{font-size:13px}
+#panel-compare .dl-cp-dsl{font-size:12px}
+#panel-compare .badge{font-size:12px}
+#panel-compare .dl-cp-sec h3{font-size:16px;margin-bottom:8px}
+#panel-compare .dl-cp-sub{font-size:12px;margin-top:-4px}
+#panel-compare .dl-cp-rl{font-size:12px}
+#panel-compare .dl-cp-v{font-size:16px;border-radius:10px}
+#panel-compare .dl-cp-v.word{font-size:13px}
+#panel-compare .dl-cp-nw{font-size:16px}
+#panel-compare .dl-cp-v small{font-size:12px}
+#panel-compare .dl-cp-v sup{font-size:12px}
+#panel-compare :is(.dl-cp-ph,.dl-cp-ph span){font-size:13px}
+#panel-compare .dl-cp-sph{font-size:12px}
+#panel-compare .dl-cp-key{font-size:12px}
+#panel-compare .dl-cp-col em{font-family:var(--sans);font-size:12px;letter-spacing:-.02em}
+#panel-compare .dl-cp-yg{font-size:12px}
+#panel-compare .dl-cp-leg{font-size:12px}
+#panel-compare .dl-cp-pair p{font-size:13px}
+#panel-compare .dl-cp-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#panel-compare .dl-cp-act{min-height:48px;border-radius:14px;font-size:13px}
+#panel-compare .dl-cp-acts > .dl-cp-act:first-child{grid-column:1/-1;background:var(--teal-tint);font-size:16px}
+/* Small phones: 12 bar labels at 12px need the room the gaps were taking. */
+@media(max-width:400px){#panel-compare .dl-cp-yrs{gap:4px}#panel-compare .dl-cp-cols{gap:1px}}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -8245,7 +8288,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01c</span>
+  <span class="foot-build">2026-11-01d</span>
 </footer>
 
 
