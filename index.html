@@ -1985,6 +1985,46 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 }
 </style>
 <script src="delta-nav.js" defer></script>
+<style id="dl-sheet">
+/* ── THE PLAYER POP-UP AS A SHEET (redesign step 3, piece 4, 31 Oct 2026, owner-approved plan) ──
+   Phones: the card rises from the bottom edge, full width, rounded top corners, a grab bar to drag it
+   down, and the page still showing above it. Its two buttons, Open Full Profile and Compare, sit in a
+   bar pinned to the bottom of the card (#dd-actbar) on every screen size, so they are always in reach.
+   This block is last in <head> on purpose: an earlier phone rule for .dd-overlay lost to the base rule
+   written after it (see the step 2 notes), which is why the card never became a sheet before. */
+.dd-grab{display:none}
+#dd-actbar{position:sticky;bottom:0;z-index:2;display:flex;gap:10px;padding:12px 1.25rem;
+  background:var(--panel);border-top:1px solid var(--line)}
+#dd-actbar .dd-act-main{flex:1;display:flex;align-items:center;justify-content:center;height:48px;border-radius:14px;
+  background:var(--teal-br);color:var(--ink);font-size:15px;font-weight:800;text-decoration:none;box-sizing:border-box}
+#dd-actbar .dd-act-cmp{width:116px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--ink-2);
+  color:var(--paper);font:inherit;font-size:15px;font-weight:700;cursor:pointer;box-sizing:border-box}
+#dd-actbar .dd-act-main:focus-visible,#dd-actbar .dd-act-cmp:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+/* Section titles in Title Case, like the player page's cards. */
+#dd-card .dd-section-label{font-size:16px;font-weight:800;letter-spacing:0;text-transform:capitalize;color:var(--paper)}
+#dd-card .dd-title{font-size:16px !important;font-weight:800 !important;letter-spacing:0 !important}
+#dd-card .dlh-chart-h{font-size:16px;letter-spacing:0;text-transform:none;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:759px){
+  .dd-overlay{align-items:flex-end;justify-content:stretch;padding:0}
+  .dd-card{max-width:none;width:100%;border-radius:18px 18px 0 0;border-bottom:0;
+    max-height:calc(100% - 44px - env(safe-area-inset-top,0px));
+    transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+  .dd-overlay.open .dd-card{transform:translateY(0)}
+  .dd-card.dd-dragging{transition:none}
+  .dd-grab{display:block;position:relative;z-index:3;height:22px;margin-bottom:-22px;cursor:grab;touch-action:none}
+  .dd-grab::before{content:'';position:absolute;left:50%;top:8px;width:36px;height:5px;margin-left:-18px;border-radius:3px;background:var(--fog-2)}
+  .dd-header{padding-top:1.5rem !important}
+  #dd-actbar{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+  /* Game log table: 12px like everything else, week and opponent pinned left, points pinned right. */
+  #dd-card .gl-tab{font-size:12px !important;padding:4px 10px !important;margin-right:0 !important;flex:1 1 22% !important}
+  #dd-card .gl-tbl,#dd-card .gl-tbl th,#dd-card .gl-tbl td{font-size:12px !important}
+  #dd-card .gl-tbl th,#dd-card .gl-tbl td{padding:3px 5px !important;white-space:nowrap}
+  #dd-card .gl-tbl th:first-child,#dd-card .gl-tbl td:first-child{position:sticky;left:0;z-index:1;background:var(--panel);min-width:24px;width:24px;box-sizing:border-box}
+  #dd-card .gl-tbl th:nth-child(2),#dd-card .gl-tbl td:nth-child(2){position:sticky;left:24px;z-index:1;background:var(--panel);box-shadow:6px 0 6px -6px var(--ink)}
+  #dd-card .gl-tbl th:last-child,#dd-card .gl-tbl td:last-child:not([colspan]){position:sticky;right:0;z-index:1;background:var(--panel);box-shadow:-6px 0 6px -6px var(--ink)}
+}
+@media(prefers-reduced-motion:reduce){.dd-card{transition:none !important}}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -6630,6 +6670,8 @@ function openDeck(name){  const p=COMP.find(x=>x.n===name);
   if(!p) return;
   document.getElementById('dd-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  { const c=document.getElementById('dd-card'); if(c){ c.scrollTop=0; c.style.transform=''; } }
+  dlDeckTypeWatch();
   const fp=document.getElementById('dd-fullpage');
   if(fp) fp.href='player.html?name='+encodeURIComponent(p.n);
   renderDeck(p);
@@ -6637,20 +6679,60 @@ function openDeck(name){  const p=COMP.find(x=>x.n===name);
 
 /* The card header's one-line rules (name, meta line, chart labels): after drawing, when the fonts
    arrive, and when the screen turns or the window resizes. */
-function deckFit(){ dlHdrFit(document.querySelector('#dd-card .dlh'), 22); }
+function deckFit(){ dlHdrFit(document.querySelector('#dd-card .dlh'), 22);
+  dlFitOneLine(document.querySelector('#dd-card .dlh-chart-h'), 16, 11); }   // one line, like the player page
 { let t=null; window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(deckFit,120); });
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(deckFit).catch(()=>{}); }
 
 function closeDeckNow(){
   document.getElementById('dd-overlay').classList.remove('open');
   document.body.style.overflow='';
+  { const c=document.getElementById('dd-card'); if(c){ c.classList.remove('dd-dragging'); c.style.transform=''; } }
 }
+
+/* Drag the sheet down by its grab bar, or by its top while it is scrolled to the top, to close it
+   (phones, 31 Oct 2026). Past 90px, or a quick flick, it closes; otherwise it springs back. */
+(function(){
+  let y0=null, dy=0, t0=0, card=null;
+  const phone=()=>window.matchMedia&&matchMedia('(max-width:759px)').matches;
+  document.addEventListener('touchstart',e=>{
+    card=document.getElementById('dd-card');
+    if(!phone()||!card||!document.getElementById('dd-overlay').classList.contains('open')) return;
+    const onGrab=e.target.closest('#dd-grab'), onTop=e.target.closest('.dd-header')&&card.scrollTop<=0;
+    if(!onGrab&&!onTop) return;
+    y0=e.touches[0].clientY; dy=0; t0=Date.now(); card.classList.add('dd-dragging');
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(y0==null||!card) return;
+    dy=Math.max(0,e.touches[0].clientY-y0);
+    card.style.transform='translateY('+dy+'px)';
+  },{passive:true});
+  const end=()=>{
+    if(y0==null||!card) return;
+    card.classList.remove('dd-dragging');
+    const quick=dy>40&&(Date.now()-t0)<250;
+    if(dy>90||quick) closeDeckNow(); else card.style.transform='';
+    y0=null; dy=0;
+  };
+  document.addEventListener('touchend',end); document.addEventListener('touchcancel',end);
+})();
 
 function closeDeck(e){
   if(e.target===document.getElementById('dd-overlay')) closeDeckNow();
 }
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeDeckNow();closeAbout();closeNews();closeAppCard();} });
+
+/* The pop-up's body gets the player page's five text sizes (redesign step 3, piece 4): applied after
+   each draw and whenever a section fills in later (game log views, the season chart).
+   Attached on the first open: this script runs before the pop-up's markup exists. */
+let _ddTypeWatch=false;
+function dlDeckTypeWatch(){
+  if(_ddTypeWatch) return; const host=document.getElementById('dd-body'); if(!host) return; _ddTypeWatch=true;
+  let q=false; const run=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false;
+    if(typeof dlTypeScaleIn==='function') dlTypeScaleIn([host]); }); };
+  if(window.MutationObserver) new MutationObserver(run).observe(host,{childList:true,subtree:true});
+}
 
 // projChipColor() moved to delta-engine.js (26 Oct 2026) so the player page's Proj PPG tile shares its bands.
 function renderDeck(p){
@@ -6691,15 +6773,17 @@ function renderDeck(p){
     // Everything under the top row lives in one box; emptying it clears the previous player's in one step.
     const more=document.getElementById('dd-meta-more');
     more.innerHTML=dlHdrTilesHTML(p)+'<div id="dd-pctx" data-name="'+scEsc(p.n)+'"></div>';
-    // Full Profile: a full-width button closing the header, instead of a pill floating mid-card.
-    const fpb=document.createElement('a'); fpb.id='dd-fullpage';
-    fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.title='Open full page'; fpb.textContent='Open Full Profile →';
-    fpb.style.cssText='flex:1;display:block;text-align:center;padding:8px 0;font-size:11px;font-weight:700;color:var(--fog);text-decoration:none;border:1px solid var(--line);border-radius:8px';
+    // Open Full Profile and Compare (redesign step 3, piece 4, 31 Oct 2026): two big buttons in a bar
+    // pinned to the bottom of the card (#dd-actbar, styled in <style id="dl-sheet">), always in reach.
+    // Rebuilt for each player, so the previous player's bar goes first.
+    { const old=document.getElementById('dd-actbar'); if(old) old.remove(); }
+    const fpb=document.createElement('a'); fpb.id='dd-fullpage'; fpb.className='dd-act-main';
+    fpb.href='player.html?name='+encodeURIComponent(p.n); fpb.textContent='Open Full Profile';
     // Compare (22 Oct 2026): a new comparison with this player in the first slot.
-    const cmpb=document.createElement('button'); cmpb.type='button'; cmpb.className='dl-cp-deck';
+    const cmpb=document.createElement('button'); cmpb.type='button'; cmpb.className='dd-act-cmp';
     cmpb.textContent='Compare'; cmpb.onclick=function(){ cpStartWith(p.n); };
-    const actRow=document.createElement('div'); actRow.style.cssText='display:flex;gap:8px;margin-top:12px';
-    actRow.appendChild(cmpb); actRow.appendChild(fpb); more.appendChild(actRow);
+    const actRow=document.createElement('div'); actRow.id='dd-actbar';
+    actRow.appendChild(fpb); actRow.appendChild(cmpb); document.getElementById('dd-card').appendChild(actRow);
     deckFit();
     // The season chart needs the frozen file (fetched once). Fill only if this player's card is still open.
     if(typeof loadFreezeProj==='function') loadFreezeProj().then(()=>{
@@ -7713,7 +7797,8 @@ document.addEventListener('click', function(e) {
 </div>
 
 <div class="dd-overlay" id="dd-overlay" onclick="closeDeck(event)">
-  <div class="dd-card" id="dd-card" data-player="">
+  <div class="dd-card" id="dd-card" data-player="" role="dialog" aria-modal="true" aria-labelledby="dd-name">
+    <div class="dd-grab" id="dd-grab" aria-hidden="true"></div>
     <!-- HEADER, TWO PARTS (4 Oct 2026). Top: photo, name, position / team / age, and
          the buttons — one tidy row. Below it, full width: contract, college, draft,
          projection and the Preseason line. Before, all of that sat in a narrow
@@ -7962,7 +8047,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-10-31k</span>
+  <span class="foot-build">2026-10-31l</span>
 </footer>
 
 

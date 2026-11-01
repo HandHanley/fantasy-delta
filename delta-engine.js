@@ -14,7 +14,7 @@
    in the footer when they differ. Bump this one whenever delta-engine.js is handed over,
    and leave index.html's alone unless index.html changed too — they move independently
    on purpose, so neither file has to be re-uploaded just to keep the other quiet. */
-const DL_BUILD='2026-10-31e';
+const DL_BUILD='2026-10-31f';
 
 let scoringFmt='half_tep'; // global scoring format
 // Position-average rec/game for format sensitivity
@@ -5703,6 +5703,31 @@ function dlProjChartHTML(p){
     +(c.g!=null?'<div class="dlh-chart-f">So far: '+c.g+' game'+(c.g===1?'':'s')
       +(c.showFull?' · '+c.fg+' full start'+(c.fg===1?'':'s')+', '+(c.full!=null?c.full.toFixed(1):'—')+' per start':'')+'</div>':'')
     +'</div>';
+}
+/* FIVE TEXT SIZES (redesign step 3, 31 Oct 2026, owner-approved plan). Snaps every text size inside the
+   given roots to 12 / 13 / 16 / 20 / 28px, and turns small-capital labels into Title Case. Used by the
+   player page's NFL and College tabs and by the pop-up's body on the main page. Most cards here are
+   built with sizes written inline, so the scale is applied after drawing rather than in a stylesheet.
+   Reads all sizes first, then writes, so an em-sized child is measured before its parent changes.
+   Each element is snapped once (a WeakSet remembers it), so running it again changes nothing.
+   SVG text is left alone: charts are drawings. */
+// 10px and under (small labels, notes) -> 12; 10.5-14 (rows, body) -> 13; then titles, numbers.
+function dlTypeStep(f){ return f<=10.25?12 : f<=14.5?13 : f<=18.5?16 : f<=23.5?20 : 28; }
+const _dlTyped=new WeakSet();
+function dlTypeScaleIn(roots){
+  const plan=[];
+  (roots||[]).filter(Boolean).forEach(r=>r.querySelectorAll('*').forEach(e=>{
+    if(_dlTyped.has(e)||e.closest('svg')||e.tagName==='SCRIPT'||e.tagName==='STYLE') return;
+    if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())) return;
+    const cs=getComputedStyle(e), f=parseFloat(cs.fontSize);
+    if(!f) return;
+    plan.push([e, dlTypeStep(f), cs.textTransform==='uppercase', f]);
+  }));
+  plan.forEach(([e,f,up,was])=>{
+    _dlTyped.add(e);
+    if(Math.abs(f-was)>0.01) e.style.fontSize=f+'px';
+    if(up){ e.style.textTransform='capitalize'; e.style.letterSpacing='normal'; }
+  });
 }
 /* One line, largest size that fits (owner: "I hate the look of names broken into two lines").
    Steps down from `max` px until the text fits its box, never below `min`. */

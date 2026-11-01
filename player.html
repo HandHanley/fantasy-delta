@@ -422,7 +422,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-10-31j</span>
+    <span class="foot-build">2026-10-31k</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -477,31 +477,11 @@ function showContent(html) {
   el.innerHTML = html;
 }
 
-/* Five text sizes (redesign step 3, piece 2, 31 Oct 2026). Snaps every text size inside the NFL and
-   College tabs to 12 / 13 / 16 / 20 / 28px, and turns small-capital labels into Title Case. Reads
-   all sizes first, then writes, so an em-sized child is measured before its parent changes.
-   Each element is snapped once (remembered in a WeakSet), so running it again changes nothing. Runs
-   after each draw, and again whenever a card fills in later (game log views, season pills, the
-   market chart, the College tab), via the observer below. SVG text is left alone. */
-// 10px and under (small labels, notes) -> 12; 10.5-14 (rows, body) -> 13; then titles, numbers.
-function dlTypeStep(f){ return f<=10.25?12 : f<=14.5?13 : f<=18.5?16 : f<=23.5?20 : 28; }
-const _dlTyped=new WeakSet();
-function dlTypeScale(){
-  const roots=['tab-nfl','tab-cfb'].map(id=>document.getElementById(id)).filter(Boolean);
-  const plan=[];
-  roots.forEach(r=>r.querySelectorAll('*').forEach(e=>{
-    if(_dlTyped.has(e)||e.closest('svg')||e.tagName==='SCRIPT'||e.tagName==='STYLE') return;
-    if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())) return;
-    const cs=getComputedStyle(e), f=parseFloat(cs.fontSize);
-    if(!f) return;
-    plan.push([e, dlTypeStep(f), cs.textTransform==='uppercase', f]);
-  }));
-  plan.forEach(([e,f,up,was])=>{
-    _dlTyped.add(e);
-    if(Math.abs(f-was)>0.01) e.style.fontSize=f+'px';
-    if(up){ e.style.textTransform='capitalize'; e.style.letterSpacing='normal'; }
-  });
-}
+/* Five text sizes (redesign step 3, piece 2, 31 Oct 2026): the NFL and College tabs. The rules live
+   in delta-engine.js (dlTypeScaleIn) since piece 4, so the pop-up on the main page uses the same ones.
+   Runs after each draw, and again whenever a card fills in later (game log views, season pills, the
+   market chart, the College tab), via the observer below. */
+function dlTypeScale(){ dlTypeScaleIn(['tab-nfl','tab-cfb'].map(id=>document.getElementById(id))); }
 let _dlTypeQ=false;
 function dlTypeSoon(){ if(_dlTypeQ) return; _dlTypeQ=true; requestAnimationFrame(()=>{ _dlTypeQ=false; dlTypeScale(); }); }
 (function(){
