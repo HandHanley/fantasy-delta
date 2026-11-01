@@ -3843,7 +3843,7 @@ function mvAssetRaw(pl){
 // <contracts-backup>
 /* Built-in copy of data/delta-contracts.json, written by scripts/build-contracts-backup.js.
    Do not edit by hand: change the table, then run the script. The nightly fails if they differ. */
-const DL_CONTRACTS_BACKUP_ASOF="2026-10-25";
+const DL_CONTRACTS_BACKUP_ASOF="2026-11-01";
 const DL_CONTRACTS_BACKUP={
   "A.J. Brown":{team:"NE",end:2029,kind:"extension",aav:32,total:96},
   "AJ Barner":{team:"SEA",end:2027,kind:"rookie",aav:null,total:null},
@@ -3965,7 +3965,7 @@ const DL_CONTRACTS_BACKUP={
   "Elijah Higgins":{team:"ARI",end:2026,kind:"rookie",aav:null,total:null},
   "Elijah Sarratt":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
   "Emanuel Wilson":{team:"SEA",end:2026,kind:"veteran",aav:2.1,total:2.1},
-  "Emari Demercado":{team:"DAL",end:2026,kind:"veteran",aav:null,total:null},
+  "Emari Demercado":{team:"HOU",end:2026,kind:"veteran",aav:null,total:null},
   "Emeka Egbuka":{team:"TB",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
   "Emmett Johnson":{team:"KC",end:2029,kind:"rookie",aav:null,total:null},
   "Erick All":{team:"CIN",end:2027,kind:"rookie",aav:null,total:null},
@@ -4030,7 +4030,7 @@ const DL_CONTRACTS_BACKUP={
   "Jayden Daniels":{team:"WAS",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
   "Jayden Higgins":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
   "Jayden Reed":{team:"GB",end:2029,kind:"extension",aav:16.75,total:50.25},
-  "Jaydon Blue":{team:"PHI",end:2026,kind:"practice_squad",aav:null,total:null},
+  "Jaydon Blue":{team:"PHI",end:2026,kind:"veteran",aav:null,total:null},
   "Jaylen Waddle":{team:"DEN",end:2028,kind:"extension",aav:28.25,total:84.75},
   "Jaylen Warren":{team:"PIT",end:2027,kind:"extension",aav:5.83,total:17.5},
   "Jaylen Wright":{team:"MIA",end:2027,kind:"rookie",aav:null,total:null},
@@ -4038,7 +4038,7 @@ const DL_CONTRACTS_BACKUP={
   "Jaylin Noel":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
   "Jeff Caldwell":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
   "Jeremiyah Love":{team:"ARI",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
-  "Jerome Ford":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
+  "Jerome Ford":{team:"ARI",end:2026,kind:"practice_squad",aav:null,total:null},
   "Jerry Jeudy":{team:"CLE",end:2027,kind:"extension",aav:19.33,total:58},
   "Jimmy Horn":{team:"CLE",end:2026,kind:"practice_squad",aav:null,total:null},
   "Joe Burrow":{team:"CIN",end:2029,kind:"extension",aav:55,total:275},
@@ -4069,7 +4069,7 @@ const DL_CONTRACTS_BACKUP={
   "Justin Jefferson":{team:"MIN",end:2028,kind:"extension",aav:35,total:140},
   "Justin Joly":{team:"MIA",end:2029,kind:"rookie",aav:null,total:null},
   "Juwan Johnson":{team:"NO",end:2027,kind:"veteran",aav:10,total:30},
-  "K.J. Osborn":{team:"TEN",end:2026,kind:"veteran",aav:null,total:null},
+  "K.J. Osborn":{team:"TEN",end:2026,kind:"practice_squad",aav:null,total:null},
   "KC Concepcion":{team:"CLE",end:2029,kind:"rookie",aav:null,total:null,option:"available"},
   "KaVontae Turpin":{team:"DAL",end:2027,kind:"veteran",aav:6,total:18},
   "Kaden Wetjen":{team:"PIT",end:2029,kind:"rookie",aav:null,total:null},
@@ -4138,7 +4138,7 @@ const DL_CONTRACTS_BACKUP={
   "Mike Evans":{team:"SF",end:2028,kind:"veteran",aav:14.17,total:42.5},
   "Mike Gesicki":{team:"CIN",end:2027,kind:"veteran",aav:8.5,total:25.5},
   "Mike Washington Jr.":{team:"LV",end:2029,kind:"rookie",aav:null,total:null},
-  "Najee Harris":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
+  "Najee Harris":{team:null,end:null,kind:"free_agent",aav:null,total:null},
   "Nate Boerkircher":{team:"JAC",end:2029,kind:"rookie",aav:null,total:null},
   "Nicholas Singleton":{team:"TEN",end:2029,kind:"rookie",aav:null,total:null},
   "Nick Chubb":{team:null,end:null,kind:"retired",aav:null,total:null},
