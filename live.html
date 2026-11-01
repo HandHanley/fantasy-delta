@@ -337,7 +337,18 @@ h1{font-size:20px}
 /* Box score cards (owner, 1 Nov): the column headers sat jammed under the rounded top edge with a
    wide gap below them, which on a one-row table (a quarterback, the kicker) was most of the card.
    Headers come down off the edge; the first row comes up to meet them. */
-.card:has(> table.bx){padding-top:10px}
+.card:has(> table.bx):not(.bxc){padding-top:10px}
+/* Box score unit cards (1 Nov 2026): a team-colour band behind the header row, unit name on the
+   left of it. The band runs edge to edge, so the card has no side padding; the cells carry it. */
+.card.bxc{padding:0 0 2px;overflow:hidden;border-top:3px solid var(--tc);margin-top:12px}
+:root .card.bxc{border-top-color:var(--tc)}   /* beats the Glass / Daylight card edge colour */
+.bxc .bx thead th{background:var(--ink-2);background:color-mix(in srgb,var(--tc) 24%,var(--panel));
+  color:var(--paper);padding:9px 0 8px;line-height:1.2;vertical-align:middle}
+.bxc .bx thead th.p{font-size:13px;font-weight:800;text-align:left}
+.bxc .bx :is(th,td):first-child{padding-left:13px}
+.bxc .bx :is(th,td):last-child{padding-right:13px}
+.bxc .bx col.n{width:42px}
+.bxc .bx tbody tr:first-child td{padding-top:9px}
 .bx thead th{line-height:1.2;padding-bottom:4px}
 .bx tbody tr:first-child td{padding-top:6px}
 .rdcmp,.rdtier,.rdmeas,.rddesc,.rdsub{font-size:12px}
@@ -1649,11 +1660,11 @@ function cell(v){
   return (t === '0' || t === '0.0' || t === '0/0')
     ? '<span class="z">' + esc(t) + '</span>' : esc(t);
 }
-function playerTable(sec){
+function playerTable(sec, title){
   const cols = sec.cols || [];
   return '<table class="bx"><colgroup><col>'
     + cols.map(function(){ return '<col class="n">'; }).join('') + '</colgroup>'
-    + '<thead><tr><th class="p"></th>'
+    + '<thead><tr><th class="p">' + (title ? esc(title) : '') + '</th>'
     + cols.map(function(c){ return '<th>' + esc(c) + '</th>'; }).join('')
     + '</tr></thead><tbody>'
     + sec.players.map(function(p){
@@ -2154,10 +2165,11 @@ function renderBox(){
   const col = teamColor(teamByAbbr(g, S.boxTeam) || {});
   html += mine.length
     ? mine.map(function(sec){
-        return '<div class="hd"><span class="swatch" style="background:' + col + '"></span>'
-          + '<span>' + esc(titleFor(sec.name)) + '</span><span class="rule"></span></div>'
-          + '<div class="card tinted" style="border-top-color:' + col + '">'
-          + playerTable(sec) + '</div>';
+        /* One block per unit (owner, 1 Nov 2026): the team colour comes down as a band behind
+           the column labels, and the unit's name sits in the band's empty left corner, so
+           the heading that used to float above the card is not needed. */
+        return '<div class="card bxc" style="--tc:' + col + '">'
+          + playerTable(sec, titleFor(sec.name)) + '</div>';
       }).join('')
     : '<div class="empty">No player stats for this team yet.</div>';
   html += '<div class="hd"><span><span class="trk">&#9733;</span> On Your Watchlist</span>'
