@@ -83,6 +83,10 @@ jobs:
           for f in index.html player.html cfb-player.html live.html; do
             sed -i -E "s#src=\"(delta-engine|delta-sync|delta-nav)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
           done
+          # delta-looks.css (31 Oct 2026, redesign step 4): the Look stylesheet, linked by six pages.
+          for f in index.html player.html cfb-player.html live.html privacy.html terms.html; do
+            sed -i -E "s#href=\"delta-looks\.css\"#href=\"delta-looks.css?v=${v}\"#g" "$f"
+          done
           grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html live.html || true
 
       # Player link-preview pictures (23 Oct 2026). Draws p/<slug>/card.png for every NFL player
@@ -176,6 +180,7 @@ jobs:
             while IFS= read -r -d '' f; do rm -f "$T/$f"; echo "  removed on the branch: $f"; done
           for f in "$T"/*.html; do
             sed -i -E "s#src=\"(delta-engine|delta-sync|delta-nav)\.js(\?v=[0-9a-f]+)?\"#src=\"\1.js?v=${v}\"#g" "$f"
+            sed -i -E "s#href=\"delta-looks\.css(\?v=[0-9a-f-]+)?\"#href=\"delta-looks.css?v=${v}\"#g" "$f"
             sed -i 's#<head>#<head><meta name="robots" content="noindex,nofollow">#' "$f"
           done
           test -s "$T/data/college-board.json"
