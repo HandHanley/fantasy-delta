@@ -2216,6 +2216,90 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 /* Small phones: 12 bar labels at 12px need the room the gaps were taking. */
 @media(max-width:400px){#panel-compare .dl-cp-yrs{gap:4px}#panel-compare .dl-cp-cols{gap:1px}}
 </style>
+<style id="dl-bigboard">
+/* Big Board, redesign rules (1 Nov 2026). Both classes: the 2027 board and the 2026 drafted
+   cards. 36px pills, 14px cards, 16px Title Case headings, the five text sizes.
+   Colour: board moves are sky up / violet down (a rank moving is not a buy or sell); position,
+   team and round chips are plain grey, and so are the four card numbers (emerald and topaz
+   there named categories, which BRAND.md reserves for buy and watch). The competition
+   discount is violet (less), not coral. Score and percentile tier colours are kept, like the
+   score ring (Decision 1). */
+#panel-bigboard .dl-bb-head{display:flex;align-items:center;margin-bottom:12px}
+#panel-bigboard #devy-title{font-size:20px !important;font-weight:800 !important}
+#panel-bigboard .pos-filter-btn{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+#panel-bigboard .dl-bb-tier{font-size:16px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--paper);padding:16px 0 6px}
+#panel-bigboard .dl-bb-mv{font-size:12px}
+#panel-bigboard .dl-bb-mv.up{color:var(--sky)}
+#panel-bigboard .dl-bb-mv.dn{color:var(--violet)}
+#panel-bigboard .dl-bb-new{font-size:12px}
+#panel-bigboard .dl-bb-name{font-size:13px}
+#panel-bigboard :is(.dl-bb-meta,.bb-stars,.dl-bb-note,.dl-bb-warn,.dl-bb-foot,.dl-bb-empty){font-size:12px}
+#panel-bigboard .dl-bb-col{width:64px}
+#panel-bigboard .dl-bb-col.nar{width:56px}
+#panel-bigboard .dl-bb-pct{min-width:56px;border-radius:10px;font-size:13px}
+#panel-bigboard .dl-bb-pctlbl{font-size:12px;letter-spacing:0}
+@media(min-width:900px){
+  #panel-bigboard .bb-mid > span{font-size:13px}
+  #panel-bigboard .bb-mid .lbl{font-size:12px;letter-spacing:0;text-transform:none;white-space:nowrap}
+  #panel-bigboard .bb-mid .dl-bb-col{width:auto;min-width:56px}
+  #panel-bigboard .bb-row [data-tip]:hover::after{font-size:12px}
+}
+/* 2026 drafted cards */
+#panel-bigboard .dl-pr-poshd{font-size:16px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--paper);padding-left:0}
+#panel-bigboard .dl-pr-card{background:var(--panel);border-radius:14px}
+#panel-bigboard .dl-pr-cap{display:none}
+#panel-bigboard .dl-pr-name{font-size:16px}
+#panel-bigboard :is(.dl-pr-pos,.dl-pr-team,.dl-pr-rd){font-size:12px;font-weight:700;padding:1px 7px;border-radius:8px;color:var(--fog);background:var(--ink-2);border:1px solid var(--line)}
+#panel-bigboard .dl-pr-sub{font-size:12px}
+#panel-bigboard .dl-pr-lbl{font-size:12px;letter-spacing:0}
+#panel-bigboard .dl-pr-stat{padding:4px 8px;border-radius:8px}
+#panel-bigboard .dl-pr-statv{font-size:13px;color:var(--paper)}
+#panel-bigboard .dl-pr-statl{font-size:12px}
+#panel-bigboard .dl-pr-note{font-size:12px}
+#panel-bigboard .dl-pr-comp{font-size:12px;border-radius:8px;background:var(--violet-tint);color:var(--violet)}
+/* Phones: the label and four numbers drop under the name instead of squeezing it. */
+@media(max-width:600px){
+  #panel-bigboard .dl-pr-top{flex-wrap:wrap}
+  #panel-bigboard .dl-pr-who{flex:1 1 0}
+  #panel-bigboard .dl-pr-right{flex:1 1 100%;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;
+    padding-top:8px;border-top:1px solid var(--line)}
+  #panel-bigboard .dl-pr-stats{margin-top:0}
+}
+
+/* Drafted prospect sheet (1 Nov 2026), opened from a 2026 card. Appended to <body>, so not
+   under #panel-bigboard. */
+.dl-pr-sheet{background:var(--panel)}
+.dl-ps-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.dl-ps-who{min-width:0}
+.dl-ps-nl{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.dl-ps-name{font-size:20px;font-weight:800;color:var(--paper)}
+.dl-ps-star{background:none;border:0;cursor:pointer;font-size:20px;line-height:1;padding:0 4px;min-width:36px;min-height:36px;color:var(--fog)}
+.dl-ps-star.on{color:var(--topaz)}
+.dl-ps-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fog)}
+.dl-ps-chip{font-size:12px;font-weight:700;padding:1px 7px;border-radius:8px;color:var(--fog);background:var(--ink-2);border:1px solid var(--line)}
+.dl-ps-score{min-width:76px;height:auto;padding:8px 10px;border-radius:14px;flex:0 0 auto}
+.dl-ps-score .dl-pr-ds{font-size:28px}
+.dl-ps-sl{font-size:12px;font-weight:700;color:var(--band);margin-top:4px;white-space:nowrap}
+.dl-ps-kv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--ink-2);border-radius:14px;padding:12px 8px;margin-bottom:16px;text-align:center}
+.dl-ps-kv span{display:block;font-size:12px;color:var(--fog);margin-bottom:2px}
+.dl-ps-kv b{font-size:16px;font-weight:800;color:var(--paper)}
+.dl-ps-bars{margin-bottom:16px}
+.dl-ps-bar{margin-bottom:10px}
+.dl-ps-bh{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px;font-size:12px;color:var(--fog)}
+.dl-ps-bh b{color:var(--paper)}
+.dl-ps-tr{background:var(--ink-2);border-radius:4px;height:6px;overflow:hidden}
+.dl-ps-tr i{display:block;height:100%;border-radius:4px;transition:width .4s}
+.dl-ps-note{background:var(--ink-2);border-radius:14px;padding:12px;margin-bottom:12px}
+.dl-ps-nh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.dl-ps-nh b{font-size:13px;color:var(--paper)}
+.dl-ps-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.dl-ps-tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:8px;color:var(--fog);background:var(--panel);border:1px solid var(--line)}
+.dl-ps-tag.more{color:var(--sky);background:var(--sky-tint);border-color:transparent}
+.dl-ps-tag.less{color:var(--violet);background:var(--violet-tint);border-color:transparent}
+.dl-ps-note p{margin:0;font-size:13px;color:var(--fog);line-height:1.5}
+.dl-ps-warn{font-size:12px;font-weight:600;color:var(--topaz);background:var(--topaz-tint);border-radius:14px;padding:10px 12px;margin-bottom:14px}
+.dl-ps-close{width:100%;min-height:48px;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;color:var(--paper);font-family:inherit;font-size:16px;font-weight:700;cursor:pointer}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -7594,18 +7678,18 @@ function renderRookieBoard(posFilter) {
           <div class="dl-pr-sub">${p.school} · Age ${p.age} · ${p.pos} #${p.por} in class</div>
         </div>
         <div class="dl-pr-right">
-          <div class="dl-pr-lbl ${band}">${sl}</div>
+          <div class="dl-pr-lbl ${band}">${sl.toLowerCase().replace(/(^|[\s/-])([a-z])/g,(m,a,b)=>a+b.toUpperCase())}</div>
           <div class="dl-pr-stats">
-            <div class="dl-pr-stat"><div class="dl-pr-statv cap">${p.cap}</div><div class="dl-pr-statl">CAP</div></div>
-            <div class="dl-pr-stat"><div class="dl-pr-statv bb">${p.bb}</div><div class="dl-pr-statl">BOARD</div></div>
-            <div class="dl-pr-stat"><div class="dl-pr-statv ag">${p.ag}</div><div class="dl-pr-statl">AGE</div></div>
-            <div class="dl-pr-stat"><div class="dl-pr-statv ath">${p.ath}</div><div class="dl-pr-statl">ATH</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv cap">${p.cap}</div><div class="dl-pr-statl">Cap</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv bb">${p.bb}</div><div class="dl-pr-statl">Board</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv ag">${p.ag}</div><div class="dl-pr-statl">Age</div></div>
+            <div class="dl-pr-stat"><div class="dl-pr-statv ath">${p.ath}</div><div class="dl-pr-statl">Ath</div></div>
           </div>
         </div>
       </div>
       <div class="dl-pr-note">
         <span>${p.note}</span>
-        ${p.comp<1.0?`<span class="dl-pr-comp">COMP \u00d7${p.comp.toFixed(2)}</span>`:''}
+        ${p.comp<1.0?`<span class="dl-pr-comp">Comp \u00d7${p.comp.toFixed(2)}</span>`:''}
       </div>
     </div>`;
   });
@@ -7623,87 +7707,48 @@ function showRookieCard(idx, posFilter) {
   const sorted = [...filtered].sort((a,b)=>b.ds-a.ds);
   const p = sorted[idx];
   if (!p) return;
-  const sc = getScoreColor(p.ds);
-  const pc = getPosColor(p.pos);
-  const rdColor = p.pr===1?'var(--emerald)':p.pr===2?'var(--sky)':p.pr===3?'var(--topaz)':'var(--fog)';
-  
+  const band = prBand(p.ds);
+  // Colours (1 Nov 2026): one per bar, none of them buy/sell/watch; key numbers in plain text;
+  // tags use sky for more and violet for less. The old version appended '22' to a var() for a
+  // tint, which is not valid CSS, so those backgrounds never drew.
   const bars = [
-    {label:'Draft Capital', val:p.cap, max:40, color:'var(--sky)'},
-    {label:'Big Board (comp-adj)', val:p.bb, max:30, color:'var(--violet)'},
-    {label:'Age/Runway', val:p.ag, max:20, color:'var(--teal)'},
-    {label:'Athleticism (composite)', val:p.ath, max:10, color:'var(--topaz)'},
+    {label:'Draft Capital', val:p.cap, max:40, color:'var(--cp-1)'},
+    {label:'Big Board (Comp-Adjusted)', val:p.bb, max:30, color:'var(--sky)'},
+    {label:'Age And Runway', val:p.ag, max:20, color:'var(--violet)'},
+    {label:'Athleticism (Composite)', val:p.ath, max:10, color:'var(--fog)'},
   ];
-  
   const barHTML = bars.map(b=>`
-    <div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-        <span style="font-size:11px;color:var(--fog)">${b.label}</span>
-        <span style="font-size:11px;font-weight:700;color:${b.color}">${b.val} / ${b.max}</span>
-      </div>
-      <div style="background:var(--ink-2);border-radius:4px;height:6px">
-        <div style="background:${b.color};height:6px;border-radius:4px;width:${(b.val/b.max*100)}%;transition:width 0.4s"></div>
-      </div>
-    </div>
-  `).join('');
-  
+    <div class="dl-ps-bar">
+      <div class="dl-ps-bh"><span>${b.label}</span><b>${b.val} / ${b.max}</b></div>
+      <div class="dl-ps-tr"><i style="background:${b.color};width:${(b.val/b.max*100)}%"></i></div>
+    </div>`).join('');
+  const tag=(cls,txt)=>'<span class="dl-ps-tag '+cls+'">'+txt+'</span>';
+  const tags=(p.comp<1.0?tag('less','Comp \xd7'+p.comp.toFixed(2)):tag('','P4'))
+    +(p.prod&&p.prod>1.02?tag('more','Prod+'):p.prod&&p.prod<0.95?tag('less','Prod−'):'')
+    +(p.scar&&p.scar>1.0?tag('more',p.pos==='QB'?'SF+':'TEP+'):p.scar&&p.scar<1.0?tag('less','RB−'):'');
+  const kv=(l,v)=>'<div><span>'+l+'</span><b>'+v+'</b></div>';
+
   const modal = document.createElement('div');
   modal.id='rookie-modal';
   modal.className='dl-pr-modal';
   modal.innerHTML=`
   <div class="dl-pr-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <div style="font-size:20px;font-weight:800;color:var(--paper)">${p.n}</div>
-          <button class="watch-star" data-name="${p.n}" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;color:${isWatched(p.n)?'var(--topaz)':'var(--fog)'}">${isWatched(p.n)?'★':'☆'}</button>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <span style="font-size:11px;font-weight:700;color:${pc};background:${pc}22;padding:2px 8px;border-radius:4px">${p.pos}</span>
-          <span style="font-size:11px;color:var(--fog)">${p.school}</span>
-          <span style="font-size:11px;color:var(--fog)">· Age ${p.age}</span>
-        </div>
+    <div class="dl-ps-head">
+      <div class="dl-ps-who">
+        <div class="dl-ps-nl"><span class="dl-ps-name">${p.n}</span>
+          <button class="watch-star dl-ps-star${isWatched(p.n)?' on':''}" data-name="${p.n}">${isWatched(p.n)?'★':'☆'}</button></div>
+        <div class="dl-ps-meta"><span class="dl-ps-chip">${p.pos}</span>${p.school} · Age ${p.age}</div>
       </div>
-      <div style="text-align:center;padding:8px 12px;background:${sc}22;border:1px solid ${sc}44;border-radius:10px">
-        <div style="font-size:28px;font-weight:900;color:${sc};line-height:1">${p.ds}</div>
-        <div style="font-size:8px;letter-spacing:1px;color:${sc}99;font-weight:700">DELTA SCORE</div>
-      </div>
+      <div class="dl-pr-score dl-ps-score ${band}"><div class="dl-pr-ds">${p.ds}</div><div class="dl-ps-sl">DELTA Score</div></div>
     </div>
-    <div style="background:var(--ink-2);border-radius:8px;padding:12px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">PROJ ROUND</div>
-          <div style="font-size:16px;font-weight:800;color:${rdColor}">Rd${p.pr}</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">PROJ PICK</div>
-          <div style="font-size:16px;font-weight:800;color:${rdColor}">#${p.pp}</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">POS RANK</div>
-          <div style="font-size:16px;font-weight:800;color:var(--fog)">${p.pos}#${p.por}</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--fog-2);letter-spacing:1px;margin-bottom:2px">OVERALL</div>
-          <div style="font-size:16px;font-weight:800;color:var(--fog)">#${p.ovr}</div>
-        </div>
-      </div>
+    <div class="dl-ps-kv">${kv('Proj Round','Rd'+p.pr)+kv('Proj Pick','#'+p.pp)+kv('Pos Rank',p.pos+' #'+p.por)+kv('Overall','#'+p.ovr)}</div>
+    <div class="dl-ps-bars">${barHTML}</div>
+    <div class="dl-ps-note">
+      <div class="dl-ps-nh"><b>Scout Note</b><span class="dl-ps-tags">${tags}</span></div>
+      <p>${p.note}</p>
     </div>
-    <div style="margin-bottom:14px">${barHTML}</div>
-    <div style="background:var(--ink-2);border-radius:8px;padding:12px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--sky)">SCOUT NOTE</div>
-        <div style="display:flex;gap:4px">
-        ${p.comp<1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--coral-tint);color:var(--coral)">COMP \xd7'+p.comp.toFixed(2)+'</div>'):'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--emerald-tint);color:var(--emerald)">P4</div>'}
-        ${p.prod&&p.prod>1.02?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--teal-tint);color:var(--teal)">PROD+</div>':p.prod&&p.prod<0.95?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--topaz-tint);color:var(--topaz)">PROD−</div>':''}
-          ${p.scar&&p.scar>1.0?('<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--violet-tint);color:var(--violet)">'+(p.pos==='QB'?'SF+':'TEP+')+'</div>'):p.scar&&p.scar<1.0?'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--teal-soft);color:var(--fog)">RB−</div>':''}
-        </div>
-      </div>
-      <div style="font-size:12px;color:var(--fog);line-height:1.5">${p.note}</div>
-    </div>
-    <div style="background:var(--ink-2);border:1px solid var(--topaz-tint);border-radius:8px;padding:10px;margin-bottom:14px">
-      <div style="font-size:10px;color:var(--topaz);font-weight:600">⚠ Pre-landing score — landing spot will significantly impact dynasty value</div>
-    </div>
-    <button onclick="closeRookieModal()" style="width:100%;padding:12px;background:var(--line);border:none;border-radius:8px;color:var(--paper);font-size:14px;font-weight:600;cursor:pointer">Close</button>
+    <div class="dl-ps-warn">⚠ Pre-landing score. Where he lands will change his dynasty value a lot.</div>
+    <button class="dl-ps-close" onclick="closeRookieModal()">Close</button>
   </div>`;
   modal.onclick = e => { if(e.target===modal) closeRookieModal(); };
   document.body.appendChild(modal);
@@ -7822,20 +7867,7 @@ document.addEventListener('click', function(e) {
 
 <!-- DELTA Deck — Player Card Modal -->
 <div id="panel-bigboard" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:1rem">
-    <svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block">
-      <g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round">
-        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/>
-        <path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/>
-      </g>
-      <line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/>
-      <g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round">
-        <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
-      </g>
-    </svg>
-    <div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)" id="devy-title">Consensus Big Board</div>
-    </div>
-  </div>
+  <div class="dl-bb-head"><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)" id="devy-title">Consensus Big Board</div></div>
 
   <!-- CLASS SWITCH (14 Oct 2026, owner): Prospects was its own tab for the class just drafted.
        It is the Big Board's previous class now. ?tab=rookies still lands here, on that class. -->
@@ -8288,7 +8320,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01e</span>
+  <span class="foot-build">2026-11-01f</span>
 </footer>
 
 
@@ -8445,7 +8477,7 @@ function cfbIndex(){
 //
 // Nothing here feeds a score. Same rule market value follows on the NFL side.
 let DEVY=null, DEVY_PROD=null, _devyTried=false, _devyPos='all';
-const DEVY_TIER={T1:'Top 10 overall',T2:'Round 1',T3:'Round 2',T4:'Round 3+'};
+const DEVY_TIER={T1:'Top 10 Overall',T2:'Round 1',T3:'Round 2',T4:'Round 3+'};
 
 async function openDevyTab(){
   if(_devyTried){ renderDevy(); return; }
@@ -8530,7 +8562,7 @@ function renderDevy(){
       mv='<span class="dl-bb-mv '+(up?'up':'dn')+'">'
         +(up?'▲':'▼')+Math.abs(r.move)+'</span>';
     }else if(r.prevRank==null && DEVY.coverage && DEVY.coverage.hasPrevious){
-      mv='<span class="dl-bb-new">NEW</span>';
+      mv='<span class="dl-bb-new">New</span>';
     }
     html+='<div class="bb-row">'
       +'<span data-tip="His position on the consensus big board, compiled by hand from publicly published boards. Where the draft community ranks him — not a DELTA rating." class="dl-bb-rank">'+r.rank+'</span>'
@@ -8548,10 +8580,10 @@ function renderDevy(){
       // Desktop-only columns. Each is real data already on the row's warning lines or in
       // the record, surfaced here so the space between name and percentiles carries weight.
       +'<span class="bb-mid">'
-        +'<span class="dl-bb-col">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl" data-tip="Games played in the season shown. Early in a year this is the number to watch — three or four games is almost no sample, and one big afternoon can move a percentile fifty places.">GAMES</span></span>'
+        +'<span class="dl-bb-col">'+((pr&&pr.gms!=null)?pr.gms+'g':'–')+'<span class="lbl" data-tip="Games played in the season shown. Early in a year this is the number to watch — three or four games is almost no sample, and one big afternoon can move a percentile fifty places.">Games</span></span>'
         +'<span class="dl-bb-col" style="color:'+((pr&&pr.tpct!=null&&pr.tpct<0.72)?'var(--topaz)':'var(--fog)')+'">'
-          +((pr&&pr.tpct!=null)?(pr.tpct*100).toFixed(0)+'%':'–')+'<span class="lbl" data-tip="Average quality of the opponents he faced. A big production share against a soft schedule is the most common false positive on this page.">OPP QUAL</span></span>'
-        +'<span class="dl-bb-col nar">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl" data-tip="His high-school recruiting star rating. Independent of production, and it still carries real signal about where a player gets drafted.">RECRUIT</span></span>'
+          +((pr&&pr.tpct!=null)?(pr.tpct*100).toFixed(0)+'%':'–')+'<span class="lbl" data-tip="Average quality of the opponents he faced. A big production share against a soft schedule is the most common false positive on this page.">Opp Quality</span></span>'
+        +'<span class="dl-bb-col nar">'+((pr&&pr.stars)?pr.stars+'★':'–')+'<span class="lbl" data-tip="His high-school recruiting star rating. Independent of production, and it still carries real signal about where a player gets drafted.">Recruit</span></span>'
       +'</span>'
       +'<span class="dl-bb-pcts">'
         +'<span class="dl-bb-pct" style="color:'+col(pr&&pr.dd)+'">'
