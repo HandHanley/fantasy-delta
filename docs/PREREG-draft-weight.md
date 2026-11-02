@@ -80,7 +80,7 @@ reported; no switch.
 | Rookies (632) | 87.3 | 87.3 | identical (unchanged by design) | — |
 
 95% ranges on the change are wide (all: 0.9% better to 1.3% worse; years 1–3: 0.8% better to 3.0% worse), so the two
-versions are close; the K = 24 version just never comes out ahead where it was meant to help. Rank agreement moved
+versions are close; the K = 24 version comes out behind exactly where it was meant to help. Rank agreement moved
 slightly up (0.567 → 0.570 overall).
 
 **Q2 (odds, fresh 2021–22): not honest** (overall P3 0.033 vs limit 0.028; WR P3 0.053 vs 0.049), though its Brier score
