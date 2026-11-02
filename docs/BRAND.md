@@ -260,8 +260,8 @@ Both are DELTA — same silhouette, so they register as one brand.
 The outline's lighter, instrument-like read is the visual note for college: the
 same system, not yet filled in. The size floor rules it out of tabs, rows, and small chrome.
 **Panel lockups are retired** (redesign step 2, 31 Oct 2026; Big Board 1 Nov): the section and
-page title does that job, and the mark lives in the header and the bottom bar. The Transfer
-Portal still carries one — a leftover until that page is rebuilt.
+page title does that job, and the mark lives in the header and the bottom bar. The last ones
+(Market, Rankings, College Rankings, Transfer Portal on desktop) went on 1 Nov 2026.
 
 ---
 
@@ -367,9 +367,10 @@ all of them in the same commit.** A theme missing from a copy renders that whole
 
 The Looks' token sheet (`delta-looks.css`) is the other place hex is allowed outside `:root`.
 
-### Still to come (1 Nov 2026)
+### Coverage (1 Nov 2026)
 
-Sections built before the redesign and not yet rebuilt to section 11: Market, Rankings (the table's
-own scale, above), Role Changes, Scorecard, College Rankings, College Role Changes, Transfer Portal
-and the Watchlist. They already have the navigation, the Looks and the accent; their insides do not
-yet follow the five sizes or Title Case.
+Every section follows section 11: Market, Rankings, Compare, Role Changes, Scorecard, College
+Rankings, College Role Changes, Big Board, Transfer Portal, Roster (My Team), Trade Calc, Mock Draft,
+Watchlist, Live, the player pages and both pop-ups. One deliberate exception remains: the board scale
+inside the Rankings-style tables (section 6). Lifting it is one change across Rankings, the roster,
+Free Agents, Buys & Sells, Power Rankings, the Watchlist and College Rankings together.
