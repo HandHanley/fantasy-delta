@@ -2483,6 +2483,32 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 #panel-market .dl-rk-movers .dl-rk-cap{margin-bottom:10px}
 #panel-market .dl-rk-lst + .dl-rk-lst{margin-top:18px}
 </style>
+<style id="dl-roles">
+/* Role Changes, NFL and college (1 Nov 2026). Shared classes, so both pages move together.
+   20px title, 36px pills and switches, 16px names and column heads in Title Case, 14px cards,
+   the five sizes (bar labels 12px). Up / down stay sky / violet. */
+:is(#panel-roles,#panel-cfbroles) .dl-rc-title{font-size:20px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-intro{font-size:13px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-chip{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-chip.on{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
+:is(#panel-roles,#panel-cfbroles) :is(.dl-rc-seg,.dl-crc-pos){border-radius:14px;padding:4px}
+:is(#panel-roles,#panel-cfbroles) :is(.dl-rc-seg,.dl-crc-pos) button{min-height:36px;border-radius:10px;font-size:13px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-colh{font-size:16px;font-weight:800;letter-spacing:0;text-transform:none}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-colh span{font-size:13px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-card{border-radius:14px;padding:12px 14px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-nm{font-size:16px}
+:is(#panel-roles,#panel-cfbroles) :is(.dl-rc-meta,.dl-rc-of,.dl-rc-sub,.dl-rc-sub b,.dl-rc-how,.dl-rc-none){font-size:12px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-big{font-size:20px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-bars{height:70px;padding-top:16px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-b span{top:-16px;font-size:12px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-bc i{font-size:12px}
+:is(#panel-roles,#panel-cfbroles) .dl-rc-more{display:inline-flex;align-items:center;min-height:36px;padding:0;font-size:13px}
+#panel-cfbroles .dl-crc-sec{font-size:16px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--paper)}
+#panel-cfbroles .dl-crc-sec span{font-size:13px}
+#panel-cfbroles .dl-crc-secsub{font-size:13px}
+#panel-cfbroles .dl-crc-bb{font-size:12px}
+@media(min-width:760px){:is(#panel-roles,#panel-cfbroles) .dl-rc-big{font-size:28px}}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -8499,7 +8525,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01m</span>
+  <span class="foot-build">2026-11-01n</span>
 </footer>
 
 
