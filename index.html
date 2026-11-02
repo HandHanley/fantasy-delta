@@ -2509,6 +2509,26 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 #panel-cfbroles .dl-crc-bb{font-size:12px}
 @media(min-width:760px){:is(#panel-roles,#panel-cfbroles) .dl-rc-big{font-size:28px}}
 </style>
+<style id="dl-scorecard">
+/* Scorecard, redesign rules (1 Nov 2026). It was already close: the eyebrow and tags lose their small
+   capitals, the title is 20px, the hero miss is the one 28px number, small print is 12px, menus 36px.
+   Over / under stays sky / violet. */
+#panel-scorecard .dl-sc-eyebrow{font-size:13px;letter-spacing:0}
+#panel-scorecard .dl-sc-title{font-size:20px}
+#panel-scorecard .dl-sc-tag{font-size:12px;letter-spacing:0;font-weight:700}
+#panel-scorecard .dl-sc-pill{font-size:12px;padding:3px 10px}   /* a status, not a button: stays small */
+#panel-scorecard .dl-sc-card,#panel-scorecard .dl-sc-list{border-radius:14px}
+#panel-scorecard .dl-sc-big b{font-size:28px}
+#panel-scorecard .dl-sc-verdict{font-size:16px}
+#panel-scorecard :is(.dl-sc-foot,.dl-sc-meta,.dl-sc-num small,.dl-sc-chip,.dl-sc-legend){font-size:12px}
+#panel-scorecard .dl-sc-dir{font-size:12px}
+#panel-scorecard select{min-height:36px;border-radius:14px}
+/* The About / How It's Graded disclosure, everywhere it is used (Scorecard, Big Board, College
+   Rankings, Portal, Watchlist): a 36px pill in Title Case, not 19px small capitals. */
+.cfb-about summary{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog)}
+.cfb-about summary::after{font-size:13px}
+.cfb-about .cfb-about-body{font-size:13px}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -6812,7 +6832,7 @@ function renderScorecard(){
   const early=!snap||!snap.ready;
   let liv='<div class="dl-sc-card'+(early?' early':'')+'"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><h3>Live Projections</h3><div class="dl-sc-when">'
     +(snap?'Snapshot after Week '+snap.week+' \u00b7 graded on games since':'Weekly snapshots, graded on games since')+'</div></div>'
-    +(early?'<span class="dl-sc-tag">TOO EARLY</span>':'')+'</div>';
+    +(early?'<span class="dl-sc-tag">Too Early</span>':'')+'</div>';
   if(snap){
     liv+=scBars([{label:'DELTA live',v:snap.live.mae,me:1},{label:'DELTA preseason',v:snap.frozen.mae},
       {label:'3-year average',v:snap.avg3.mae},{label:"Last season's PPG",v:snap.last.mae},{label:'Through Wk '+snap.week+' alone',v:snap.thru.mae}]);
@@ -6827,7 +6847,7 @@ function renderScorecard(){
     +'<div><div class="dl-sc-nm">'+scEsc(p.n)+'</div><div class="dl-sc-meta">'+scEsc(p.pos)+' \u00b7 '+scEsc(p.t)+(p.r?' \u00b7 #'+p.r:'')+'</div></div>'
     +'<div class="dl-sc-num"><span class="dl-sc-nowrap">'+scF(p.pre)+' \u2192 '+scF(p.sofar)+'</span><small>'+scDir(p.off,far?1:2)+'</small>'+scDb(p.pre,p.sofar,dbMax)
     +'</div></div>').join('')+'</div>';
-  const t100=d.rules.top_pool?' <span class="dl-sc-tag">TOP '+d.rules.top_pool+'</span>':'';
+  const t100=d.rules.top_pool?' <span class="dl-sc-tag">Top '+d.rules.top_pool+'</span>':'';
   const tops='<div class="dl-sc-grid"><div><h3 class="dl-sc-h">Closest Preseason Calls'+t100+'</h3>'+top(d.closest||[],0)+'</div>'
     +'<div><h3 class="dl-sc-h">Farthest Off'+t100+'</h3>'+top(d.farthest||[],1)+'</div></div>'
     +((d.left_out||[]).length?'<div class="dl-sc-legend">Left out: '+d.left_out.map(x=>scEsc(x.n)+' ('+scEsc(x.why)+')').join(', ')+'</div>':'')
@@ -6855,7 +6875,7 @@ function renderScorecard(){
       +'<td class="dl-b-r dl-sc-hide-m">'+snapCell+'</td></tr>';
   }).join('');
   const sel=(v,cur,l)=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>';
-  root.innerHTML='<div class="dl-sc-head"><div><div class="dl-sc-eyebrow">SCORECARD \u00b7 '+d.season+'</div>'
+  root.innerHTML='<div class="dl-sc-head"><div><div class="dl-sc-eyebrow">Scorecard \u00b7 '+d.season+'</div>'
     +'<h2 class="dl-sc-title">How Accurate Is DELTA?</h2>'+'</div>'
     +'<span class="dl-sc-pill">Through Week '+d.through_week+'</span></div>'
     +'<details class="cfb-about"><summary>How It\u2019s Graded</summary><div class="cfb-about-body">'
@@ -8525,7 +8545,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01n</span>
+  <span class="foot-build">2026-11-01o</span>
 </footer>
 
 
