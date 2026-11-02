@@ -1,0 +1,18 @@
+{
+ "rows": 2320,
+ "veterans": 2003,
+ "rookies": 317,
+ "players": 980,
+ "mean_P_vets": {
+  "Fix 2": 0.2372353698228383,
+  "Fix 3": 0.21865827939498123
+ },
+ "runs": 200,
+ "world1_switch_rate": 0.41,
+ "world2_false_switch_rate": 0.0,
+ "world2_fix2_judged_honest": 0.815,
+ "world3_lean_caught": 0.985,
+ "note": "size-check permutation tests use 2,000 shuffles for speed; the real run uses 10,000",
+ "QA_powered": false,
+ "QB_powered": true
+}
