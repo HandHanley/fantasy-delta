@@ -159,9 +159,10 @@ Stated plainly:
   The crash test says this check catches a lean of the 1 Nov size (veterans at 0.835×) 93.5% of the time; Fix 2's lean is
   smaller (about 0.86×), so "honest" here means "no problem detectable at this sample size", not "perfect".
 - **Fix 1 fixes veterans and breaks rookies.** Scaling for league size brings veterans to 17.3% vs 17.1%, but pushes rookies
-  further below what happened. That fits the two-suspect picture: league growth explains the veterans, era change the rookies.
-- **Seen data (2013–2020, three-year odds, designed-from, decides nothing):** As-is, Fix 1 and Fix 2 are all not honest
-  there; Both is honest there. Fix 2 still leans high on veterans (21.7% vs 18.9%).
-- **Not tested, found after the run:** league-size scaling for veterans only, plus recent-count-more for everyone, would
-  likely beat all four. That is a new idea from seen results and needs fresh players: the 2023 snapshot's three-year window
+  further below what happened. That is consistent with the two suspects (league growth for veterans, era change for
+  rookies) but doesn't prove either.
+- **Seen data (2013–2020, three-year odds, designed-from, decides nothing):** no version is honest there. Both comes
+  closest (fails one of ten checks, RB E3); Fix 2 still leans high on veterans (21.7% vs 18.9%).
+- **Not tested, found after the run:** league-size scaling for veterans only, plus recent-count-more for everyone, is
+  worth testing next. That is a new idea from seen results and needs fresh players: the 2023 snapshot's three-year window
   (2024–2026) closes after the 2026 season, in early 2027.
