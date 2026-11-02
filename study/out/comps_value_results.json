@@ -1,0 +1,1696 @@
+{
+ "prereg": "docs/PREREG-comparables-value.md",
+ "scoring_check": [
+  {
+   "player": "Patrick Mahomes",
+   "season": 2018,
+   "pos": "QB",
+   "standard": 417.08,
+   "ppr": 417.08,
+   "delta_points": 417.08
+  },
+  {
+   "player": "Cooper Kupp",
+   "season": 2021,
+   "pos": "WR",
+   "standard": 294.5,
+   "ppr": 439.5,
+   "delta_points": 367.0
+  },
+  {
+   "player": "Travis Kelce",
+   "season": 2020,
+   "pos": "TE",
+   "standard": 207.76,
+   "ppr": 312.76,
+   "delta_points": 312.76
+  }
+ ],
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1032,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1605,
+   "V": 10187
+  },
+  "test": {
+   "R0": 632,
+   "V": 4316
+  },
+  "test_players": 1582,
+  "cv_excluded_lt10": 0,
+  "test_scored": 4948
+ },
+ "Q1": {
+  "n": 4948,
+  "players": 1582,
+  "baseline": "B2",
+  "rmse_cv": 74.43430014304093,
+  "rmse_base": 78.9199953209212,
+  "lift": 0.05683851297303799,
+  "p": 9.999000099990002e-05,
+  "pass": true
+ },
+ "Q2": {
+  "n": 2090,
+  "players": 1160,
+  "baseline": "B2",
+  "rmse_cv": 79.56775958919572,
+  "rmse_B2": 85.70738478511879,
+  "rmse_B3": 85.81096051522846,
+  "lift": 0.07163472799124626,
+  "p": 9.999000099990002e-05,
+  "pass": true
+ },
+ "Q3": {
+  "overall": {
+   "any_start": {
+    "n": 4948,
+    "error": 0.037206952303961226,
+    "limit": 0.016337914308811635,
+    "pct": 95.0,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 1920,
+      "predicted": 0.02673611111111111,
+      "observed": 0.034375
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 983,
+      "predicted": 0.12817904374364192,
+      "observed": 0.07019328585961343
+     },
+     {
+      "bin": "0.20-0.30",
+      "n": 643,
+      "predicted": 0.2417833074131675,
+      "observed": 0.19284603421461896
+     },
+     {
+      "bin": "0.30-0.40",
+      "n": 248,
+      "predicted": 0.3491935483870967,
+      "observed": 0.27419354838709675
+     },
+     {
+      "bin": "0.40-0.50",
+      "n": 266,
+      "predicted": 0.4327067669172933,
+      "observed": 0.34210526315789475
+     },
+     {
+      "bin": "0.50-0.60",
+      "n": 241,
+      "predicted": 0.5464730290456431,
+      "observed": 0.4854771784232365
+     },
+     {
+      "bin": "0.60-0.70",
+      "n": 139,
+      "predicted": 0.6654676258992805,
+      "observed": 0.60431654676259
+     },
+     {
+      "bin": "0.70-0.80",
+      "n": 124,
+      "predicted": 0.750268817204301,
+      "observed": 0.7096774193548387
+     },
+     {
+      "bin": "0.80-0.90",
+      "n": 162,
+      "predicted": 0.8337448559670781,
+      "observed": 0.845679012345679
+     },
+     {
+      "bin": "0.90-1.00",
+      "n": 222,
+      "predicted": 0.9418918918918922,
+      "observed": 0.9054054054054054
+     }
+    ]
+   },
+   "n_start": {
+    "n": 4948,
+    "error": 0.09921180274858532,
+    "limit": 0.03961937483158177,
+    "pct": 95.0,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.03",
+      "n": 850,
+      "predicted": 0.0,
+      "observed": 0.03176470588235294
+     },
+     {
+      "bin": "0.03-0.07",
+      "n": 389,
+      "predicted": 0.033333333333333326,
+      "observed": 0.05398457583547558
+     },
+     {
+      "bin": "0.07-0.13",
+      "n": 585,
+      "predicted": 0.08074074074074074,
+      "observed": 0.08547008547008547
+     },
+     {
+      "bin": "0.13-0.23",
+      "n": 628,
+      "predicted": 0.16157112526539277,
+      "observed": 0.0875796178343949
+     },
+     {
+      "bin": "0.23-0.33",
+      "n": 426,
+      "predicted": 0.26205007824726134,
+      "observed": 0.215962441314554
+     },
+     {
+      "bin": "0.33-0.57",
+      "n": 582,
+      "predicted": 0.42101947308132875,
+      "observed": 0.27147766323024053
+     },
+     {
+      "bin": "0.57-0.93",
+      "n": 485,
+      "predicted": 0.707766323024055,
+      "observed": 0.5278350515463918
+     },
+     {
+      "bin": "0.93-1.87",
+      "n": 503,
+      "predicted": 1.3343273691186217,
+      "observed": 1.1371769383697814
+     },
+     {
+      "bin": "1.87-4.33",
+      "n": 500,
+      "predicted": 2.773066666666667,
+      "observed": 2.546
+     }
+    ]
+   }
+  },
+  "QB": {
+   "any_start": {
+    "n": 680,
+    "error": 0.06230392156862749,
+    "limit": 0.056670955882353054,
+    "pct": 99.375,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 124,
+      "predicted": 0.040322580645161275,
+      "observed": 0.04032258064516129
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 113,
+      "predicted": 0.12536873156342185,
+      "observed": 0.10619469026548672
+     },
+     {
+      "bin": "0.20-0.30",
+      "n": 97,
+      "predicted": 0.2436426116838488,
+      "observed": 0.17525773195876287
+     },
+     {
+      "bin": "0.30-0.40",
+      "n": 36,
+      "predicted": 0.3527777777777778,
+      "observed": 0.1111111111111111
+     },
+     {
+      "bin": "0.40-0.50",
+      "n": 33,
+      "predicted": 0.42929292929292934,
+      "observed": 0.24242424242424243
+     },
+     {
+      "bin": "0.50-0.60",
+      "n": 36,
+      "predicted": 0.550925925925926,
+      "observed": 0.4166666666666667
+     },
+     {
+      "bin": "0.60-0.70",
+      "n": 29,
+      "predicted": 0.6632183908045977,
+      "observed": 0.7241379310344828
+     },
+     {
+      "bin": "0.70-0.80",
+      "n": 35,
+      "predicted": 0.7514285714285713,
+      "observed": 0.6285714285714286
+     },
+     {
+      "bin": "0.80-0.90",
+      "n": 55,
+      "predicted": 0.8393939393939394,
+      "observed": 0.8363636363636363
+     },
+     {
+      "bin": "0.90-1.00",
+      "n": 122,
+      "predicted": 0.9478142076502734,
+      "observed": 0.8852459016393442
+     }
+    ]
+   },
+   "n_start": {
+    "n": 680,
+    "error": 0.2472549019607844,
+    "limit": 0.19353186274509812,
+    "pct": 99.375,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 61,
+      "predicted": 0.02568306010928962,
+      "observed": 0.13114754098360656
+     },
+     {
+      "bin": "0.10-0.13",
+      "n": 35,
+      "predicted": 0.10000000000000002,
+      "observed": 0.05714285714285714
+     },
+     {
+      "bin": "0.13-0.27",
+      "n": 104,
+      "predicted": 0.16955128205128206,
+      "observed": 0.125
+     },
+     {
+      "bin": "0.27-0.40",
+      "n": 70,
+      "predicted": 0.3109523809523809,
+      "observed": 0.2857142857142857
+     },
+     {
+      "bin": "0.40-0.67",
+      "n": 69,
+      "predicted": 0.5072463768115942,
+      "observed": 0.2753623188405797
+     },
+     {
+      "bin": "0.67-1.35",
+      "n": 69,
+      "predicted": 0.9280193236714978,
+      "observed": 0.5652173913043478
+     },
+     {
+      "bin": "1.35-2.17",
+      "n": 66,
+      "predicted": 1.7328282828282828,
+      "observed": 1.6666666666666667
+     },
+     {
+      "bin": "2.17-2.93",
+      "n": 69,
+      "predicted": 2.5043478260869567,
+      "observed": 2.1884057971014492
+     },
+     {
+      "bin": "2.93-3.60",
+      "n": 67,
+      "predicted": 3.2388059701492535,
+      "observed": 2.8208955223880596
+     },
+     {
+      "bin": "3.60-4.33",
+      "n": 70,
+      "predicted": 3.851428571428572,
+      "observed": 3.0142857142857142
+     }
+    ]
+   }
+  },
+  "RB": {
+   "any_start": {
+    "n": 1293,
+    "error": 0.03542150038669762,
+    "limit": 0.03895430523330756,
+    "pct": 99.375,
+    "honest": true,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 441,
+      "predicted": 0.027739984882842024,
+      "observed": 0.05895691609977324
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 260,
+      "predicted": 0.1317948717948718,
+      "observed": 0.10384615384615385
+     },
+     {
+      "bin": "0.20-0.30",
+      "n": 201,
+      "predicted": 0.24328358208955228,
+      "observed": 0.208955223880597
+     },
+     {
+      "bin": "0.30-0.40",
+      "n": 88,
+      "predicted": 0.3473484848484849,
+      "observed": 0.2727272727272727
+     },
+     {
+      "bin": "0.40-0.50",
+      "n": 93,
+      "predicted": 0.4322580645161291,
+      "observed": 0.41935483870967744
+     },
+     {
+      "bin": "0.50-0.60",
+      "n": 77,
+      "predicted": 0.5441558441558443,
+      "observed": 0.4805194805194805
+     },
+     {
+      "bin": "0.60-0.70",
+      "n": 44,
+      "predicted": 0.6659090909090909,
+      "observed": 0.6818181818181818
+     },
+     {
+      "bin": "0.70-0.80",
+      "n": 30,
+      "predicted": 0.7522222222222223,
+      "observed": 0.8333333333333334
+     },
+     {
+      "bin": "0.80-0.90",
+      "n": 24,
+      "predicted": 0.8319444444444445,
+      "observed": 0.875
+     },
+     {
+      "bin": "0.90-1.00",
+      "n": 35,
+      "predicted": 0.9419047619047619,
+      "observed": 0.9714285714285714
+     }
+    ]
+   },
+   "n_start": {
+    "n": 1293,
+    "error": 0.07703016241299306,
+    "limit": 0.09092710750193353,
+    "pct": 99.375,
+    "honest": true,
+    "table": [
+     {
+      "bin": "0.00-0.03",
+      "n": 192,
+      "predicted": 0.0,
+      "observed": 0.046875
+     },
+     {
+      "bin": "0.03-0.07",
+      "n": 109,
+      "predicted": 0.033333333333333326,
+      "observed": 0.10091743119266056
+     },
+     {
+      "bin": "0.07-0.17",
+      "n": 205,
+      "predicted": 0.09609756097560973,
+      "observed": 0.09268292682926829
+     },
+     {
+      "bin": "0.17-0.27",
+      "n": 132,
+      "predicted": 0.19848484848484846,
+      "observed": 0.19696969696969696
+     },
+     {
+      "bin": "0.27-0.40",
+      "n": 126,
+      "predicted": 0.3185185185185185,
+      "observed": 0.2222222222222222
+     },
+     {
+      "bin": "0.40-0.60",
+      "n": 135,
+      "predicted": 0.47975308641975306,
+      "observed": 0.35555555555555557
+     },
+     {
+      "bin": "0.60-0.87",
+      "n": 128,
+      "predicted": 0.7007812499999999,
+      "observed": 0.5390625
+     },
+     {
+      "bin": "0.87-1.53",
+      "n": 129,
+      "predicted": 1.1289405684754523,
+      "observed": 0.9612403100775194
+     },
+     {
+      "bin": "1.53-3.90",
+      "n": 137,
+      "predicted": 2.181751824817518,
+      "observed": 2.2627737226277373
+     }
+    ]
+   }
+  },
+  "WR": {
+   "any_start": {
+    "n": 1922,
+    "error": 0.04450225459590705,
+    "limit": 0.02899800554977455,
+    "pct": 99.375,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 860,
+      "predicted": 0.02562015503875969,
+      "observed": 0.015116279069767442
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 376,
+      "predicted": 0.12668439716312058,
+      "observed": 0.034574468085106384
+     },
+     {
+      "bin": "0.20-0.30",
+      "n": 231,
+      "predicted": 0.24458874458874458,
+      "observed": 0.18614718614718614
+     },
+     {
+      "bin": "0.30-0.40",
+      "n": 99,
+      "predicted": 0.3498316498316498,
+      "observed": 0.29292929292929293
+     },
+     {
+      "bin": "0.40-0.50",
+      "n": 94,
+      "predicted": 0.4329787234042554,
+      "observed": 0.3404255319148936
+     },
+     {
+      "bin": "0.50-0.60",
+      "n": 82,
+      "predicted": 0.5426829268292683,
+      "observed": 0.5
+     },
+     {
+      "bin": "0.60-0.70",
+      "n": 35,
+      "predicted": 0.6628571428571429,
+      "observed": 0.45714285714285713
+     },
+     {
+      "bin": "0.70-0.80",
+      "n": 34,
+      "predicted": 0.75,
+      "observed": 0.7352941176470589
+     },
+     {
+      "bin": "0.80-0.90",
+      "n": 55,
+      "predicted": 0.8266666666666667,
+      "observed": 0.8181818181818182
+     },
+     {
+      "bin": "0.90-1.00",
+      "n": 56,
+      "predicted": 0.9351190476190477,
+      "observed": 0.8928571428571429
+     }
+    ]
+   },
+   "n_start": {
+    "n": 1922,
+    "error": 0.08756503642039541,
+    "limit": 0.07142061220950403,
+    "pct": 99.375,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.07",
+      "n": 535,
+      "predicted": 0.009221183800623053,
+      "observed": 0.009345794392523364
+     },
+     {
+      "bin": "0.07-0.10",
+      "n": 148,
+      "predicted": 0.06666666666666665,
+      "observed": 0.0472972972972973
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 268,
+      "predicted": 0.13034825870646766,
+      "observed": 0.03731343283582089
+     },
+     {
+      "bin": "0.20-0.27",
+      "n": 146,
+      "predicted": 0.2168949771689498,
+      "observed": 0.07534246575342465
+     },
+     {
+      "bin": "0.27-0.43",
+      "n": 226,
+      "predicted": 0.32389380530973444,
+      "observed": 0.22123893805309736
+     },
+     {
+      "bin": "0.43-0.73",
+      "n": 201,
+      "predicted": 0.5555555555555555,
+      "observed": 0.4577114427860697
+     },
+     {
+      "bin": "0.73-1.40",
+      "n": 203,
+      "predicted": 0.9669950738916256,
+      "observed": 0.7733990147783252
+     },
+     {
+      "bin": "1.40-3.63",
+      "n": 195,
+      "predicted": 2.244102564102564,
+      "observed": 2.051282051282051
+     }
+    ]
+   }
+  },
+  "TE": {
+   "any_start": {
+    "n": 1053,
+    "error": 0.04552073440962332,
+    "limit": 0.03903173472617917,
+    "pct": 99.375,
+    "honest": false,
+    "table": [
+     {
+      "bin": "0.00-0.10",
+      "n": 495,
+      "predicted": 0.024377104377104376,
+      "observed": 0.044444444444444446
+     },
+     {
+      "bin": "0.10-0.20",
+      "n": 234,
+      "predicted": 0.12792022792022795,
+      "observed": 0.07264957264957266
+     },
+     {
+      "bin": "0.20-0.30",
+      "n": 114,
+      "predicted": 0.2318713450292398,
+      "observed": 0.19298245614035087
+     },
+     {
+      "bin": "0.30-0.40",
+      "n": 25,
+      "predicted": 0.348,
+      "observed": 0.44
+     },
+     {
+      "bin": "0.40-0.50",
+      "n": 46,
+      "predicted": 0.43550724637681154,
+      "observed": 0.2608695652173913
+     },
+     {
+      "bin": "0.50-0.60",
+      "n": 46,
+      "predicted": 0.5536231884057973,
+      "observed": 0.5217391304347826
+     },
+     {
+      "bin": "0.60-0.70",
+      "n": 31,
+      "predicted": 0.6698924731182795,
+      "observed": 0.5483870967741935
+     },
+     {
+      "bin": "0.70-0.80",
+      "n": 25,
+      "predicted": 0.7466666666666666,
+      "observed": 0.64
+     },
+     {
+      "bin": "0.80-0.90",
+      "n": 28,
+      "predicted": 0.838095238095238,
+      "observed": 0.8928571428571429
+     },
+     {
+      "bin": "0.90-1.00",
+      "n": 9,
+      "predicted": 0.9037037037037039,
+      "observed": 1.0
+     }
+    ]
+   },
+   "n_start": {
+    "n": 1053,
+    "error": 0.08445710667932893,
+    "limit": 0.08538026274137396,
+    "pct": 99.375,
+    "honest": true,
+    "table": [
+     {
+      "bin": "0.00-0.03",
+      "n": 242,
+      "predicted": 0.0,
+      "observed": 0.045454545454545456
+     },
+     {
+      "bin": "0.03-0.07",
+      "n": 115,
+      "predicted": 0.033333333333333326,
+      "observed": 0.05217391304347826
+     },
+     {
+      "bin": "0.07-0.13",
+      "n": 151,
+      "predicted": 0.08145695364238409,
+      "observed": 0.13245033112582782
+     },
+     {
+      "bin": "0.13-0.20",
+      "n": 102,
+      "predicted": 0.14477124183006534,
+      "observed": 0.10784313725490197
+     },
+     {
+      "bin": "0.20-0.33",
+      "n": 123,
+      "predicted": 0.24119241192411925,
+      "observed": 0.21138211382113822
+     },
+     {
+      "bin": "0.33-0.57",
+      "n": 108,
+      "predicted": 0.4182098765432099,
+      "observed": 0.24074074074074073
+     },
+     {
+      "bin": "0.57-1.29",
+      "n": 106,
+      "predicted": 0.8751572327044025,
+      "observed": 0.6886792452830188
+     },
+     {
+      "bin": "1.29-3.80",
+      "n": 106,
+      "predicted": 2.0254716981132077,
+      "observed": 1.820754716981132
+     }
+    ]
+   }
+  },
+  "pass": false
+ },
+ "breakdown": {
+  "all": {
+   "n": 4948,
+   "CV": {
+    "rmse": 74.43430014304093,
+    "mae": 36.937441573147396,
+    "spearman": 0.568071665719693
+   },
+   "CV_k15": {
+    "rmse": 76.3494550317929,
+    "mae": 37.618114765265425,
+    "spearman": 0.560723785705836
+   },
+   "CV_k50": {
+    "rmse": 73.87303502371022,
+    "mae": 36.814962129135004,
+    "spearman": 0.5733822674156565
+   },
+   "B1": {
+    "rmse": 80.15656737635732,
+    "mae": 42.949597977739195,
+    "spearman": 0.49831034498135485
+   },
+   "B2": {
+    "rmse": 78.9199953209212,
+    "mae": 42.253337617056204,
+    "spearman": 0.5183734840097474
+   },
+   "B3": {
+    "rmse": 86.88086479080178,
+    "mae": 46.30027342402562,
+    "spearman": 0.37125744214759165
+   }
+  },
+  "QB": {
+   "n": 680,
+   "CV": {
+    "rmse": 125.90381006265386,
+    "mae": 75.66604040333334,
+    "spearman": 0.6680079213055141
+   },
+   "CV_k15": {
+    "rmse": 128.84390883367578,
+    "mae": 76.78645861196078,
+    "spearman": 0.6685137102214184
+   },
+   "CV_k50": {
+    "rmse": 124.63803054008515,
+    "mae": 75.584045518,
+    "spearman": 0.6664018788049314
+   },
+   "B1": {
+    "rmse": 132.58418253163236,
+    "mae": 89.1055536455738,
+    "spearman": 0.5998519896381531
+   },
+   "B2": {
+    "rmse": 132.4711180574859,
+    "mae": 88.17333956624235,
+    "spearman": 0.6179402901147399
+   },
+   "B3": {
+    "rmse": 143.7518840410611,
+    "mae": 94.45107579238706,
+    "spearman": 0.34308437730413965
+   }
+  },
+  "RB": {
+   "n": 1293,
+   "CV": {
+    "rmse": 69.10701383352207,
+    "mae": 36.346271049651975,
+    "spearman": 0.5267444434199989
+   },
+   "CV_k15": {
+    "rmse": 70.92769945488796,
+    "mae": 37.09477742603764,
+    "spearman": 0.5204381998677842
+   },
+   "CV_k50": {
+    "rmse": 68.53825105857156,
+    "mae": 36.29644958815159,
+    "spearman": 0.5355973001604921
+   },
+   "B1": {
+    "rmse": 76.78016454331106,
+    "mae": 42.350726996563694,
+    "spearman": 0.4508650305376462
+   },
+   "B2": {
+    "rmse": 75.45400600024487,
+    "mae": 42.904351751889955,
+    "spearman": 0.47660234351648467
+   },
+   "B3": {
+    "rmse": 78.56653701866037,
+    "mae": 42.31698601522462,
+    "spearman": 0.35995884019490487
+   }
+  },
+  "WR": {
+   "n": 1922,
+   "CV": {
+    "rmse": 64.0794385427305,
+    "mae": 33.02582609441554,
+    "spearman": 0.5917667626434265
+   },
+   "CV_k15": {
+    "rmse": 65.08643292780522,
+    "mae": 33.178108022476586,
+    "spearman": 0.5764533681597629
+   },
+   "CV_k50": {
+    "rmse": 63.7722577775786,
+    "mae": 32.99485324253902,
+    "spearman": 0.5970591390982322
+   },
+   "B1": {
+    "rmse": 68.89940294677483,
+    "mae": 37.250197477560235,
+    "spearman": 0.5254890829615287
+   },
+   "B2": {
+    "rmse": 66.48858206725227,
+    "mae": 36.070627598751564,
+    "spearman": 0.5449186805302854
+   },
+   "B3": {
+    "rmse": 77.33913857365695,
+    "mae": 43.36803797993828,
+    "spearman": 0.3810024936607579
+   }
+  },
+  "TE": {
+   "n": 1053,
+   "CV": {
+    "rmse": 49.3823948302524,
+    "mae": 19.793150245963915,
+    "spearman": 0.4455565292990178
+   },
+   "CV_k15": {
+    "rmse": 52.549064549795304,
+    "mae": 21.071005860715417,
+    "spearman": 0.4442694916032696
+   },
+   "CV_k50": {
+    "rmse": 49.19442295494468,
+    "mae": 19.3882852925736,
+    "spearman": 0.45420356112537674
+   },
+   "B1": {
+    "rmse": 54.1828981981738,
+    "mae": 24.281542978571437,
+    "spearman": 0.3638436060738548
+   },
+   "B2": {
+    "rmse": 53.614069205049084,
+    "mae": 23.08506226415488,
+    "spearman": 0.3885237851534938
+   },
+   "B3": {
+    "rmse": 60.227013058050986,
+    "mae": 25.44899282823244,
+    "spearman": 0.20879246830964246
+   }
+  },
+  "cy0": {
+   "n": 632,
+   "CV": {
+    "rmse": 87.51036783313225,
+    "mae": 41.26964611023207,
+    "spearman": 0.5298013411496805
+   },
+   "CV_k15": {
+    "rmse": 87.88833920020959,
+    "mae": 42.17488512974683,
+    "spearman": 0.5042788207130985
+   },
+   "CV_k50": {
+    "rmse": 87.60595919832811,
+    "mae": 41.42857342917721,
+    "spearman": 0.5407049219147111
+   },
+   "B1": {
+    "rmse": 98.32367371647359,
+    "mae": 55.25637721627162,
+    "spearman": 0.1516402951813798
+   },
+   "B2": {
+    "rmse": 97.90236036456174,
+    "mae": 56.340714230010924,
+    "spearman": 0.1653064988457931
+   },
+   "B3": {
+    "rmse": 84.30204572630129,
+    "mae": 42.0234199920295,
+    "spearman": 0.5018850626300004
+   }
+  },
+  "cy1": {
+   "n": 729,
+   "CV": {
+    "rmse": 79.3514551206517,
+    "mae": 39.776094298216734,
+    "spearman": 0.5588521422671601
+   },
+   "CV_k15": {
+    "rmse": 82.25579947563233,
+    "mae": 41.01955375454962,
+    "spearman": 0.5522493218973784
+   },
+   "CV_k50": {
+    "rmse": 78.64388768359021,
+    "mae": 39.65437357805213,
+    "spearman": 0.5580596098837352
+   },
+   "B1": {
+    "rmse": 84.57953094026396,
+    "mae": 38.28170473180942,
+    "spearman": 0.46358548757220663
+   },
+   "B2": {
+    "rmse": 83.4742094576649,
+    "mae": 44.774994106901154,
+    "spearman": 0.48232098733666295
+   },
+   "B3": {
+    "rmse": 87.49062040600127,
+    "mae": 43.6314131650449,
+    "spearman": 0.4723541620399226
+   }
+  },
+  "cy2": {
+   "n": 729,
+   "CV": {
+    "rmse": 72.21455025209752,
+    "mae": 36.90654103996342,
+    "spearman": 0.5724859403306489
+   },
+   "CV_k15": {
+    "rmse": 73.50789522897207,
+    "mae": 37.63425646163695,
+    "spearman": 0.5571804947884214
+   },
+   "CV_k50": {
+    "rmse": 71.86721225321358,
+    "mae": 36.688448404005484,
+    "spearman": 0.5754398929406579
+   },
+   "B1": {
+    "rmse": 74.96944239237106,
+    "mae": 35.72023713807856,
+    "spearman": 0.5386282810057379
+   },
+   "B2": {
+    "rmse": 76.04200260582537,
+    "mae": 41.122961567371874,
+    "spearman": 0.5411834107895478
+   },
+   "B3": {
+    "rmse": 85.41056654921954,
+    "mae": 43.546661703737996,
+    "spearman": 0.42461763013449816
+   }
+  },
+  "cy3-5": {
+   "n": 1591,
+   "CV": {
+    "rmse": 72.14218067875548,
+    "mae": 35.12931770601299,
+    "spearman": 0.5692021272157528
+   },
+   "CV_k15": {
+    "rmse": 74.07412304355721,
+    "mae": 35.5085187398282,
+    "spearman": 0.5603001835227729
+   },
+   "CV_k50": {
+    "rmse": 71.61364459883167,
+    "mae": 35.025977788032684,
+    "spearman": 0.5787779201928219
+   },
+   "B1": {
+    "rmse": 71.76801792615778,
+    "mae": 37.25727147239064,
+    "spearman": 0.5538320043339622
+   },
+   "B2": {
+    "rmse": 73.08771519285652,
+    "mae": 37.66745516030442,
+    "spearman": 0.5411981730736275
+   },
+   "B3": {
+    "rmse": 90.12339801650475,
+    "mae": 45.34600218535243,
+    "spearman": 0.3171159531693282
+   }
+  },
+  "cy6+": {
+   "n": 1267,
+   "CV": {
+    "rmse": 68.2514814308781,
+    "mae": 35.431459297921606,
+    "spearman": 0.5977548941161919
+   },
+   "CV_k15": {
+    "rmse": 70.85000646783772,
+    "mae": 36.02780070549855,
+    "spearman": 0.6005878578945817
+   },
+   "CV_k50": {
+    "rmse": 67.18159519159798,
+    "mae": 35.19915258250987,
+    "spearman": 0.6031740572733305
+   },
+   "B1": {
+    "rmse": 80.32281589388903,
+    "mae": 50.80414037683349,
+    "spearman": 0.5882421973516294
+   },
+   "B2": {
+    "rmse": 74.15132783362198,
+    "mae": 40.184413803660476,
+    "spearman": 0.5893549575374009
+   },
+   "B3": {
+    "rmse": 84.4532571873223,
+    "mae": 52.75189061632019,
+    "spearman": 0.2652745723569131
+   }
+  }
+ },
+ "young_mean_vs_median": {
+  "FV_mean": 37.17415760095694,
+  "FV_median": 0.0
+ },
+ "current_players": [
+  {
+   "player": "Marvin Harrison Jr.",
+   "kind": "V",
+   "pos": "WR",
+   "age": 23.1,
+   "pick": 4,
+   "career_year": 2,
+   "recent_ppg": 9.3,
+   "cv_fv": 105.9,
+   "cv_chance_starter_season": 0.667,
+   "cv_expected_starter_seasons": 1.3,
+   "closest_10": [
+    {
+     "name": "Braylon Edwards",
+     "season": 2005,
+     "age": 22.5,
+     "pick": 3,
+     "recent_ppg": 8.5,
+     "FV": 197.4,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Tavon Austin",
+     "season": 2013,
+     "age": 23.5,
+     "pick": 8,
+     "recent_ppg": 8.5,
+     "FV": 40.2,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Andre Johnson",
+     "season": 2005,
+     "age": 24.2,
+     "pick": 3,
+     "recent_ppg": 10.2,
+     "FV": 392.8,
+     "starter_seasons": 4
+    },
+    {
+     "name": "Amari Cooper",
+     "season": 2017,
+     "age": 23.2,
+     "pick": 4,
+     "recent_ppg": 10.6,
+     "FV": 243.6,
+     "starter_seasons": 4
+    },
+    {
+     "name": "Braylon Edwards",
+     "season": 2006,
+     "age": 23.5,
+     "pick": 3,
+     "recent_ppg": 9.2,
+     "FV": 177.8,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Justin Blackmon",
+     "season": 2012,
+     "age": 22.7,
+     "pick": 5,
+     "recent_ppg": 9.6,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Michael Crabtree",
+     "season": 2009,
+     "age": 22.0,
+     "pick": 10,
+     "recent_ppg": 8.8,
+     "FV": 96.8,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Koren Robinson",
+     "season": 2003,
+     "age": 23.5,
+     "pick": 9,
+     "recent_ppg": 9.8,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Andre Johnson",
+     "season": 2003,
+     "age": 22.2,
+     "pick": 3,
+     "recent_ppg": 9.6,
+     "FV": 248.1,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Calvin Johnson",
+     "season": 2007,
+     "age": 21.9,
+     "pick": 2,
+     "recent_ppg": 9.0,
+     "FV": 482.4,
+     "starter_seasons": 5
+    }
+   ]
+  },
+  {
+   "player": "Makai Lemon",
+   "kind": "R0",
+   "pos": "WR",
+   "age": 22.3,
+   "pick": 20,
+   "career_year": 0,
+   "recent_ppg": null,
+   "cv_fv": 71.1,
+   "cv_chance_starter_season": 0.5,
+   "cv_expected_starter_seasons": 1.0,
+   "closest_10": [
+    {
+     "name": "Nelson Agholor",
+     "season": 2014,
+     "age": 22.3,
+     "pick": 20,
+     "recent_ppg": null,
+     "FV": 39.6,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Matt Jones",
+     "season": 2004,
+     "age": 22.4,
+     "pick": 21,
+     "recent_ppg": null,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Will Fuller",
+     "season": 2015,
+     "age": 22.4,
+     "pick": 21,
+     "recent_ppg": null,
+     "FV": 18.1,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Ashley Lelie",
+     "season": 2001,
+     "age": 22.6,
+     "pick": 19,
+     "recent_ppg": null,
+     "FV": 41.0,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Kadarius Toney",
+     "season": 2020,
+     "age": 22.6,
+     "pick": 20,
+     "recent_ppg": null,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Bryant Johnson",
+     "season": 2002,
+     "age": 22.5,
+     "pick": 17,
+     "recent_ppg": null,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Marquise Brown",
+     "season": 2018,
+     "age": 22.3,
+     "pick": 25,
+     "recent_ppg": null,
+     "FV": 59.4,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Brandon Aiyuk",
+     "season": 2019,
+     "age": 22.5,
+     "pick": 25,
+     "recent_ppg": null,
+     "FV": 134.9,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Santonio Holmes",
+     "season": 2005,
+     "age": 22.5,
+     "pick": 25,
+     "recent_ppg": null,
+     "FV": 126.2,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Demaryius Thomas",
+     "season": 2009,
+     "age": 22.7,
+     "pick": 22,
+     "recent_ppg": null,
+     "FV": 294.7,
+     "starter_seasons": 3
+    }
+   ]
+  },
+  {
+   "player": "CeeDee Lamb",
+   "kind": "V",
+   "pos": "WR",
+   "age": 26.4,
+   "pick": 17,
+   "career_year": 6,
+   "recent_ppg": 14.3,
+   "cv_fv": 209.1,
+   "cv_chance_starter_season": 0.833,
+   "cv_expected_starter_seasons": 2.6,
+   "closest_10": [
+    {
+     "name": "Mike Evans",
+     "season": 2019,
+     "age": 26.0,
+     "pick": 7,
+     "recent_ppg": 14.6,
+     "FV": 335.1,
+     "starter_seasons": 5
+    },
+    {
+     "name": "Jeremy Maclin",
+     "season": 2014,
+     "age": 26.3,
+     "pick": 19,
+     "recent_ppg": 13.7,
+     "FV": 69.7,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Jeremy Maclin",
+     "season": 2015,
+     "age": 27.3,
+     "pick": 19,
+     "recent_ppg": 13.8,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Anquan Boldin",
+     "season": 2007,
+     "age": 26.9,
+     "pick": 54,
+     "recent_ppg": 14.0,
+     "FV": 188.6,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Odell Beckham",
+     "season": 2019,
+     "age": 26.8,
+     "pick": 12,
+     "recent_ppg": 13.5,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Davante Adams",
+     "season": 2019,
+     "age": 26.7,
+     "pick": 53,
+     "recent_ppg": 15.4,
+     "FV": 529.6,
+     "starter_seasons": 5
+    },
+    {
+     "name": "DeAndre Hopkins",
+     "season": 2017,
+     "age": 25.3,
+     "pick": 27,
+     "recent_ppg": 14.9,
+     "FV": 303.3,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Odell Beckham",
+     "season": 2018,
+     "age": 25.8,
+     "pick": 12,
+     "recent_ppg": 15.8,
+     "FV": 45.4,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Mike Evans",
+     "season": 2020,
+     "age": 27.0,
+     "pick": 7,
+     "recent_ppg": 14.3,
+     "FV": 284.8,
+     "starter_seasons": 4
+    },
+    {
+     "name": "Randy Moss",
+     "season": 2002,
+     "age": 25.6,
+     "pick": 21,
+     "recent_ppg": 15.0,
+     "FV": 441.2,
+     "starter_seasons": 4
+    }
+   ]
+  },
+  {
+   "player": "Javonte Williams",
+   "kind": "V",
+   "pos": "RB",
+   "age": 25.4,
+   "pick": 35,
+   "career_year": 5,
+   "recent_ppg": 11.2,
+   "cv_fv": 64.2,
+   "cv_chance_starter_season": 0.4,
+   "cv_expected_starter_seasons": 0.83,
+   "closest_10": [
+    {
+     "name": "Tevin Coleman",
+     "season": 2018,
+     "age": 25.4,
+     "pick": 73,
+     "recent_ppg": 11.2,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "DeShaun Foster",
+     "season": 2005,
+     "age": 25.7,
+     "pick": 34,
+     "recent_ppg": 10.4,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Jamaal Charles",
+     "season": 2012,
+     "age": 25.7,
+     "pick": 73,
+     "recent_ppg": 12.3,
+     "FV": 304.1,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Marshawn Lynch",
+     "season": 2011,
+     "age": 25.4,
+     "pick": 12,
+     "recent_ppg": 11.4,
+     "FV": 383.0,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Willis McGahee",
+     "season": 2007,
+     "age": 25.9,
+     "pick": 23,
+     "recent_ppg": 12.5,
+     "FV": 34.5,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Shane Vereen",
+     "season": 2014,
+     "age": 25.5,
+     "pick": 56,
+     "recent_ppg": 10.0,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Willis McGahee",
+     "season": 2006,
+     "age": 24.9,
+     "pick": 23,
+     "recent_ppg": 11.8,
+     "FV": 98.7,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Kevan Barlow",
+     "season": 2004,
+     "age": 25.7,
+     "pick": 80,
+     "recent_ppg": 10.5,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Kenyan Drake",
+     "season": 2019,
+     "age": 25.6,
+     "pick": 73,
+     "recent_ppg": 12.1,
+     "FV": 43.9,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Doug Martin",
+     "season": 2015,
+     "age": 26.6,
+     "pick": 31,
+     "recent_ppg": 10.8,
+     "FV": 0.0,
+     "starter_seasons": 0
+    }
+   ]
+  },
+  {
+   "player": "Caleb Williams",
+   "kind": "V",
+   "pos": "QB",
+   "age": 23.8,
+   "pick": 1,
+   "career_year": 2,
+   "recent_ppg": 17.2,
+   "cv_fv": 237.9,
+   "cv_chance_starter_season": 0.833,
+   "cv_expected_starter_seasons": 3.0,
+   "closest_10": [
+    {
+     "name": "Andrew Luck",
+     "season": 2013,
+     "age": 24.0,
+     "pick": 1,
+     "recent_ppg": 17.9,
+     "FV": 359.6,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Matthew Stafford",
+     "season": 2011,
+     "age": 23.6,
+     "pick": 1,
+     "recent_ppg": 17.1,
+     "FV": 374.3,
+     "starter_seasons": 5
+    },
+    {
+     "name": "Jared Goff",
+     "season": 2018,
+     "age": 23.9,
+     "pick": 1,
+     "recent_ppg": 16.7,
+     "FV": 259.9,
+     "starter_seasons": 5
+    },
+    {
+     "name": "Andrew Luck",
+     "season": 2012,
+     "age": 23.0,
+     "pick": 1,
+     "recent_ppg": 17.3,
+     "FV": 359.3,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Jameis Winston",
+     "season": 2016,
+     "age": 22.7,
+     "pick": 1,
+     "recent_ppg": 16.5,
+     "FV": 106.5,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Baker Mayfield",
+     "season": 2019,
+     "age": 24.4,
+     "pick": 1,
+     "recent_ppg": 15.7,
+     "FV": 285.4,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Blake Bortles",
+     "season": 2015,
+     "age": 23.4,
+     "pick": 3,
+     "recent_ppg": 16.7,
+     "FV": 115.3,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Marcus Mariota",
+     "season": 2016,
+     "age": 22.9,
+     "pick": 2,
+     "recent_ppg": 17.4,
+     "FV": 25.4,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Blake Bortles",
+     "season": 2016,
+     "age": 24.4,
+     "pick": 3,
+     "recent_ppg": 17.0,
+     "FV": 64.6,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Matthew Stafford",
+     "season": 2012,
+     "age": 24.6,
+     "pick": 1,
+     "recent_ppg": 17.9,
+     "FV": 370.5,
+     "starter_seasons": 5
+    }
+   ]
+  },
+  {
+   "player": "Brock Bowers",
+   "kind": "V",
+   "pos": "TE",
+   "age": 22.7,
+   "pick": 13,
+   "career_year": 2,
+   "recent_ppg": 15.0,
+   "cv_fv": 136.9,
+   "cv_chance_starter_season": 0.8,
+   "cv_expected_starter_seasons": 2.2,
+   "closest_10": [
+    {
+     "name": "Tim Tebow",
+     "season": 2011,
+     "age": 24.1,
+     "pick": 25,
+     "recent_ppg": 14.8,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Tim Tebow",
+     "season": 2010,
+     "age": 23.1,
+     "pick": 25,
+     "recent_ppg": 14.1,
+     "FV": 44.6,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Jordan Matthews",
+     "season": 2015,
+     "age": 23.1,
+     "pick": 42,
+     "recent_ppg": 13.7,
+     "FV": 24.0,
+     "starter_seasons": 1
+    },
+    {
+     "name": "Rob Gronkowski",
+     "season": 2011,
+     "age": 22.3,
+     "pick": 42,
+     "recent_ppg": 16.3,
+     "FV": 250.3,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Jeremy Shockey",
+     "season": 2003,
+     "age": 23.1,
+     "pick": 14,
+     "recent_ppg": 12.3,
+     "FV": 206.6,
+     "starter_seasons": 4
+    },
+    {
+     "name": "Kellen Winslow",
+     "season": 2007,
+     "age": 24.1,
+     "pick": 6,
+     "recent_ppg": 13.2,
+     "FV": 72.8,
+     "starter_seasons": 2
+    },
+    {
+     "name": "Jordan Matthews",
+     "season": 2016,
+     "age": 24.1,
+     "pick": 42,
+     "recent_ppg": 13.0,
+     "FV": 0.0,
+     "starter_seasons": 0
+    },
+    {
+     "name": "Rob Gronkowski",
+     "season": 2012,
+     "age": 23.3,
+     "pick": 42,
+     "recent_ppg": 17.5,
+     "FV": 273.5,
+     "starter_seasons": 3
+    },
+    {
+     "name": "Tony Gonzalez",
+     "season": 2001,
+     "age": 25.5,
+     "pick": 13,
+     "recent_ppg": 14.7,
+     "FV": 444.6,
+     "starter_seasons": 5
+    },
+    {
+     "name": "Jordan Matthews",
+     "season": 2014,
+     "age": 22.1,
+     "pick": 42,
+     "recent_ppg": 12.6,
+     "FV": 121.6,
+     "starter_seasons": 2
+    }
+   ]
+  }
+ ]
+}

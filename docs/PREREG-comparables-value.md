@@ -311,4 +311,33 @@ comparables; nothing was excluded.
 
 ### Post-lock
 
-_None yet._
+- **A11 (post-lock, 1 Nov 2026, found after the confirmatory run). Positions.** The display list for Brock Bowers showed
+  Tim Tebow and Jordan Matthews as comparables. Cause: nflverse's season stats file puts a player's **latest** position on
+  every season (Tebow's 2010–11 QB seasons read TE; Matthews' WR seasons read TE), and leaves some seasons blank (Trent
+  Richardson 2012–13), so §4's "listed position in season `t`" was not what the locked run used. 597 player-seasons in
+  2001–2020 differ from that season's nflverse roster file. This hits every method identically, so the comparison stays
+  fair. **The locked run remains the verdict of record.** Rule set before re-running: re-run once with each season's
+  position from `roster_YYYY.csv` (falling back to the stats file); if any answer flips, that answer is reported as
+  unsettled. Code: `--rosters DIR`; the default path was checked to reproduce the locked output exactly.
+  **Result: no answer flips** (Q1 +5.2%, Q2 +6.7%, both p < 0.001; Q3 not honest). The current-player display uses the
+  roster-position run.
+
+### Results (1 Nov 2026) — `study/out/comps_value_results.json`, `study/out/report_comps_value.txt`
+
+| Question | CV | Baseline | Lift | p | Answer |
+|---|---|---|---|---|---|
+| Q1, all 4,948 test snapshots | 74.4 | B2 78.9 | +5.7% | < 0.001 | **Pass** |
+| Q2, career year 0–2 (2,090) | 79.6 | B2 85.7 (B3 85.8) | +7.2% | < 0.001 | **Pass** |
+| Q3, honest odds | — | — | — | — | **Not honest** |
+
+- **Q3:** odds run high in the middle (said 35%, happened 27%; said 43%, happened 34%). Honest only at RB. For veterans the
+  average chance runs about 4 points high in every test year; incoming rookies run slightly low.
+- **Incoming rookies alone (career year 0), stated plainly:** draft-slot bands beat CV (B3 84.3 vs CV 87.5). This is the
+  threshold-world flag showing up in real data. CV's young-player win comes from first- and second-year players.
+- **§10 did not anticipate this combination** (accuracy passes, odds do not). Reading it: the accuracy result is what a
+  Trade Calc value would rest on; the odds result bars showing a "chance of a starter season" on a card. Either use needs
+  Steve's approval.
+- **1 Nov illustration:** consistent for Harrison (illustration 70%, CV 67%), Lamb (81% vs 83%) and Javonte (42% vs 40%);
+  Lemon higher (38% vs 50%), but the two use different windows (years 3–7 vs the next five) and groups (picks 10–32 vs his
+  30 nearest rookies). Given Q3, the three veterans' odds likely run a few points high; incoming rookies' ran slightly low. Young players' FV mean
+  37.2 vs median 0, as seen.

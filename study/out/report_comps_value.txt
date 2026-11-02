@@ -1,0 +1,135 @@
+COMPARABLES VALUE ("PLAYERS LIKE HIM") — CONFIRMATORY RUN, 1 Nov 2026
+Pre-registration: docs/PREREG-comparables-value.md, locked at c3f2428. Data: nflverse (credit nflverse).
+Locked run = study/out/comps_value_results.json (verdict of record).
+Robustness run (post-lock A11, per-season roster positions) = study/out/comps_value_results_rosters.json.
+
+== LOCKED RUN: 4948 test snapshots, 1582 players ==
+Q1 overall   CV RMSE 74.4 vs B2 78.9  lift +5.7%  p 0.0001  -> PASS
+Q2 young     CV RMSE 79.6 vs B2 85.7 (B2 85.7, B3 85.8)  n 2090  lift +7.2%  p 0.0001  -> PASS
+Q3 honest odds -> NOT HONEST
+   overall any_start error 0.037  honest-forecaster limit (95.0th pct) 0.016  FAIL
+   overall n_start   error 0.099  honest-forecaster limit (95.0th pct) 0.040  FAIL
+   QB      any_start error 0.062  honest-forecaster limit (99.375th pct) 0.057  FAIL
+   QB      n_start   error 0.247  honest-forecaster limit (99.375th pct) 0.194  FAIL
+   RB      any_start error 0.035  honest-forecaster limit (99.375th pct) 0.039  ok
+   RB      n_start   error 0.077  honest-forecaster limit (99.375th pct) 0.091  ok
+   WR      any_start error 0.045  honest-forecaster limit (99.375th pct) 0.029  FAIL
+   WR      n_start   error 0.088  honest-forecaster limit (99.375th pct) 0.071  FAIL
+   TE      any_start error 0.046  honest-forecaster limit (99.375th pct) 0.039  FAIL
+   TE      n_start   error 0.084  honest-forecaster limit (99.375th pct) 0.085  ok
+
+== ROSTER-POSITION RUN: 5034 test snapshots, 1617 players ==
+Q1 overall   CV RMSE 73.9 vs B2 78.0  lift +5.2%  p 0.0001  -> PASS
+Q2 young     CV RMSE 79.4 vs B2 85.1 (B2 85.1, B3 85.2)  n 2114  lift +6.7%  p 0.0001  -> PASS
+Q3 honest odds -> NOT HONEST
+   overall any_start error 0.038  honest-forecaster limit (95.0th pct) 0.016  FAIL
+   overall n_start   error 0.096  honest-forecaster limit (95.0th pct) 0.040  FAIL
+   QB      any_start error 0.061  honest-forecaster limit (99.375th pct) 0.057  FAIL
+   QB      n_start   error 0.236  honest-forecaster limit (99.375th pct) 0.196  FAIL
+   RB      any_start error 0.026  honest-forecaster limit (99.375th pct) 0.037  ok
+   RB      n_start   error 0.064  honest-forecaster limit (99.375th pct) 0.087  ok
+   WR      any_start error 0.042  honest-forecaster limit (99.375th pct) 0.029  FAIL
+   WR      n_start   error 0.094  honest-forecaster limit (99.375th pct) 0.069  FAIL
+   TE      any_start error 0.041  honest-forecaster limit (99.375th pct) 0.038  FAIL
+   TE      n_start   error 0.080  honest-forecaster limit (99.375th pct) 0.087  ok
+
+== Calibration, chance of >=1 starter season in next five (locked run) ==
+   0.00-0.10  n  1920  said   2.7%  happened   3.4%
+   0.10-0.20  n   983  said  12.8%  happened   7.0%
+   0.20-0.30  n   643  said  24.2%  happened  19.3%
+   0.30-0.40  n   248  said  34.9%  happened  27.4%
+   0.40-0.50  n   266  said  43.3%  happened  34.2%
+   0.50-0.60  n   241  said  54.6%  happened  48.5%
+   0.60-0.70  n   139  said  66.5%  happened  60.4%
+   0.70-0.80  n   124  said  75.0%  happened  71.0%
+   0.80-0.90  n   162  said  83.4%  happened  84.6%
+   0.90-1.00  n   222  said  94.2%  happened  90.5%
+
+== RMSE / MAE / Spearman by group (locked run) ==
+   group      n                  CV             CV_k15             CV_k50                 B1                 B2                 B3
+   all      4948   74.4/36.9/0.57   76.3/37.6/0.56   73.9/36.8/0.57   80.2/42.9/0.50   78.9/42.3/0.52   86.9/46.3/0.37
+   QB        680  125.9/75.7/0.67  128.8/76.8/0.67  124.6/75.6/0.67  132.6/89.1/0.60  132.5/88.2/0.62  143.8/94.5/0.34
+   RB       1293   69.1/36.3/0.53   70.9/37.1/0.52   68.5/36.3/0.54   76.8/42.4/0.45   75.5/42.9/0.48   78.6/42.3/0.36
+   WR       1922   64.1/33.0/0.59   65.1/33.2/0.58   63.8/33.0/0.60   68.9/37.3/0.53   66.5/36.1/0.54   77.3/43.4/0.38
+   TE       1053   49.4/19.8/0.45   52.5/21.1/0.44   49.2/19.4/0.45   54.2/24.3/0.36   53.6/23.1/0.39   60.2/25.4/0.21
+   cy0       632   87.5/41.3/0.53   87.9/42.2/0.50   87.6/41.4/0.54   98.3/55.3/0.15   97.9/56.3/0.17   84.3/42.0/0.50
+   cy1       729   79.4/39.8/0.56   82.3/41.0/0.55   78.6/39.7/0.56   84.6/38.3/0.46   83.5/44.8/0.48   87.5/43.6/0.47
+   cy2       729   72.2/36.9/0.57   73.5/37.6/0.56   71.9/36.7/0.58   75.0/35.7/0.54   76.0/41.1/0.54   85.4/43.5/0.42
+   cy3-5    1591   72.1/35.1/0.57   74.1/35.5/0.56   71.6/35.0/0.58   71.8/37.3/0.55   73.1/37.7/0.54   90.1/45.3/0.32
+   cy6+     1267   68.3/35.4/0.60   70.9/36.0/0.60   67.2/35.2/0.60   80.3/50.8/0.59   74.2/40.2/0.59   84.5/52.8/0.27
+   (k=15 and k=50 are sensitivity only and decide nothing)
+
+== Descriptive, after the verdict (not tested) ==
+   Starter-season odds, average said vs happened: veterans 24.2% vs 20.2%, incoming rookies 21.2% vs 23.7%;
+   veterans run high in every test year 2013-2020. FV level: CV average 42.1 vs actual 34.2 (roster run).
+   Likely reason: more players per season (about 490 in 2001-10, 595 by 2020) chasing the same fixed starter slots,
+   so comparables from earlier, smaller leagues hit more often. Untested.
+   Young players (career year 0-2): FV mean 37.2, median 0.0 (1 Nov pattern confirmed).
+
+== Current players, end of 2025, pool <= 2020 (display only; roster-position run) ==
+Marvin Harrison Jr. (WR, career year 2, pick 4, age 23.1): chance of a starter season 67%, expected starter seasons 1.3, CV 105.6
+     Braylon Edwards 2005 (age 22.5, pick 3, PPG 8.5) -> FV 197.2, starter seasons 2
+     Tavon Austin 2013 (age 23.5, pick 8, PPG 8.5) -> FV 38.7, starter seasons 1
+     Andre Johnson 2005 (age 24.2, pick 3, PPG 10.2) -> FV 392.6, starter seasons 4
+     Amari Cooper 2017 (age 23.2, pick 4, PPG 10.6) -> FV 243.6, starter seasons 4
+     Braylon Edwards 2006 (age 23.5, pick 3, PPG 9.2) -> FV 177.5, starter seasons 2
+     Justin Blackmon 2012 (age 22.7, pick 5, PPG 9.6) -> FV 0.0, starter seasons 0
+     Michael Crabtree 2009 (age 22.0, pick 10, PPG 8.8) -> FV 96.4, starter seasons 1
+     Koren Robinson 2003 (age 23.5, pick 9, PPG 9.8) -> FV 0.0, starter seasons 0
+     Andre Johnson 2003 (age 22.2, pick 3, PPG 9.6) -> FV 248.1, starter seasons 3
+     Calvin Johnson 2007 (age 21.9, pick 2, PPG 9.0) -> FV 482.1, starter seasons 5
+Makai Lemon (WR, incoming rookie, pick 20, age 22.3): chance of a starter season 50%, expected starter seasons 1.0, CV 71.0
+     Nelson Agholor 2014 (age 22.3, pick 20, PPG None) -> FV 38.5, starter seasons 1
+     Matt Jones 2004 (age 22.4, pick 21, PPG None) -> FV 0.0, starter seasons 0
+     Will Fuller 2015 (age 22.4, pick 21, PPG None) -> FV 18.1, starter seasons 0
+     Ashley Lelie 2001 (age 22.6, pick 19, PPG None) -> FV 41.0, starter seasons 1
+     Kadarius Toney 2020 (age 22.6, pick 20, PPG None) -> FV 0.0, starter seasons 0
+     Bryant Johnson 2002 (age 22.5, pick 17, PPG None) -> FV 0.0, starter seasons 0
+     Marquise Brown 2018 (age 22.3, pick 25, PPG None) -> FV 59.4, starter seasons 1
+     Brandon Aiyuk 2019 (age 22.5, pick 25, PPG None) -> FV 134.9, starter seasons 2
+     Santonio Holmes 2005 (age 22.5, pick 25, PPG None) -> FV 125.9, starter seasons 2
+     Demaryius Thomas 2009 (age 22.7, pick 22, PPG None) -> FV 294.5, starter seasons 3
+CeeDee Lamb (WR, career year 6, pick 17, age 26.4): chance of a starter season 83%, expected starter seasons 2.6, CV 208.8
+     Mike Evans 2019 (age 26.0, pick 7, PPG 14.6) -> FV 335.1, starter seasons 5
+     Jeremy Maclin 2014 (age 26.3, pick 19, PPG 13.7) -> FV 68.0, starter seasons 1
+     Jeremy Maclin 2015 (age 27.3, pick 19, PPG 13.8) -> FV 0.0, starter seasons 0
+     Anquan Boldin 2007 (age 26.9, pick 54, PPG 14.0) -> FV 188.3, starter seasons 2
+     Odell Beckham 2019 (age 26.8, pick 12, PPG 13.5) -> FV 0.0, starter seasons 0
+     Davante Adams 2019 (age 26.7, pick 53, PPG 15.4) -> FV 529.6, starter seasons 5
+     DeAndre Hopkins 2017 (age 25.3, pick 27, PPG 14.9) -> FV 303.3, starter seasons 3
+     Odell Beckham 2018 (age 25.8, pick 12, PPG 15.8) -> FV 45.4, starter seasons 1
+     Mike Evans 2020 (age 27.0, pick 7, PPG 14.3) -> FV 284.8, starter seasons 4
+     Randy Moss 2002 (age 25.6, pick 21, PPG 15.0) -> FV 441.2, starter seasons 4
+Javonte Williams (RB, career year 5, pick 35, age 25.4): chance of a starter season 40%, expected starter seasons 0.73, CV 48.9
+     Tevin Coleman 2018 (age 25.4, pick 73, PPG 11.2) -> FV 0.0, starter seasons 0
+     DeShaun Foster 2005 (age 25.7, pick 34, PPG 10.4) -> FV 0.0, starter seasons 0
+     Jamaal Charles 2012 (age 25.7, pick 73, PPG 12.3) -> FV 307.3, starter seasons 2
+     Marshawn Lynch 2011 (age 25.4, pick 12, PPG 11.4) -> FV 383.4, starter seasons 3
+     Willis McGahee 2007 (age 25.9, pick 23, PPG 12.5) -> FV 29.6, starter seasons 1
+     Shane Vereen 2014 (age 25.5, pick 56, PPG 10.0) -> FV 0.0, starter seasons 0
+     Willis McGahee 2006 (age 24.9, pick 23, PPG 11.8) -> FV 95.7, starter seasons 2
+     Kevan Barlow 2004 (age 25.7, pick 80, PPG 10.5) -> FV 0.0, starter seasons 0
+     Kenyan Drake 2019 (age 25.6, pick 73, PPG 12.1) -> FV 43.9, starter seasons 1
+     Doug Martin 2015 (age 26.6, pick 31, PPG 10.8) -> FV 0.0, starter seasons 0
+Caleb Williams (QB, career year 2, pick 1, age 23.8): chance of a starter season 83%, expected starter seasons 3.0, CV 237.9
+     Andrew Luck 2013 (age 24.0, pick 1, PPG 17.9) -> FV 359.6, starter seasons 3
+     Matthew Stafford 2011 (age 23.6, pick 1, PPG 17.1) -> FV 374.3, starter seasons 5
+     Jared Goff 2018 (age 23.9, pick 1, PPG 16.7) -> FV 259.9, starter seasons 5
+     Andrew Luck 2012 (age 23.0, pick 1, PPG 17.3) -> FV 359.3, starter seasons 3
+     Jameis Winston 2016 (age 22.7, pick 1, PPG 16.5) -> FV 106.5, starter seasons 3
+     Baker Mayfield 2019 (age 24.4, pick 1, PPG 15.7) -> FV 285.4, starter seasons 3
+     Blake Bortles 2015 (age 23.4, pick 3, PPG 16.7) -> FV 115.3, starter seasons 2
+     Marcus Mariota 2016 (age 22.9, pick 2, PPG 17.4) -> FV 25.4, starter seasons 2
+     Blake Bortles 2016 (age 24.4, pick 3, PPG 17.0) -> FV 64.6, starter seasons 1
+     Matthew Stafford 2012 (age 24.6, pick 1, PPG 17.9) -> FV 370.5, starter seasons 5
+Brock Bowers (TE, career year 2, pick 13, age 22.7): chance of a starter season 80%, expected starter seasons 2.27, CV 143.0
+     Rob Gronkowski 2011 (age 22.3, pick 42, PPG 16.3) -> FV 255.4, starter seasons 3
+     Jeremy Shockey 2003 (age 23.1, pick 14, PPG 12.3) -> FV 216.0, starter seasons 4
+     Kellen Winslow 2007 (age 24.1, pick 6, PPG 13.2) -> FV 76.4, starter seasons 3
+     Rob Gronkowski 2012 (age 23.3, pick 42, PPG 17.5) -> FV 282.7, starter seasons 3
+     Tony Gonzalez 2001 (age 25.5, pick 13, PPG 14.7) -> FV 449.5, starter seasons 5
+     Evan Engram 2019 (age 25.0, pick 23, PPG 12.6) -> FV 102.6, starter seasons 2
+     Jeremy Shockey 2005 (age 25.1, pick 14, PPG 12.4) -> FV 90.3, starter seasons 2
+     Jeremy Shockey 2004 (age 24.1, pick 14, PPG 11.6) -> FV 164.8, starter seasons 3
+     Evan Engram 2017 (age 23.0, pick 23, PPG 11.6) -> FV 32.8, starter seasons 1
+     Evan Engram 2018 (age 24.0, pick 23, PPG 11.5) -> FV 92.3, starter seasons 2

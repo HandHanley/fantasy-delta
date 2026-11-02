@@ -51,7 +51,11 @@ AGE_DAY = (9, 7)                                         # ages pinned to 7 Sep
 # ═════════════════════════════════════════════════════════════════════════════
 # 1. DATA
 # ═════════════════════════════════════════════════════════════════════════════
-def load(data_dir):
+def load(data_dir, roster_dir=None):
+    """roster_dir: POST-LOCK amendment A11. If given, each player-season's position comes from
+    that season's nflverse roster file (roster_YYYY.csv), falling back to the stats file's
+    position. The stats files carry a player's LATEST position on every season (Tim Tebow's
+    2010-11 QB seasons read TE) and leave some seasons blank. Default (None) is the locked run."""
     s = pd.read_csv(os.path.join(data_dir, 'player_stats_season.csv'), low_memory=False)
     s = s[s.season_type == 'REG']
     s25 = pd.read_csv(os.path.join(data_dir, 'stats_player_reg_2025.csv'), low_memory=False)
@@ -62,6 +66,16 @@ def load(data_dir):
             'receptions', 'fantasy_points', 'fantasy_points_ppr']
     st = pd.concat([s[cols], s25[cols]], ignore_index=True)
     assert not st.duplicated(['player_id', 'season']).any(), 'duplicate player-season rows'
+    if roster_dir:
+        import glob
+        R = pd.concat([pd.read_csv(f, low_memory=False, usecols=['season', 'gsis_id', 'position'])
+                       for f in sorted(glob.glob(os.path.join(roster_dir, 'roster_*.csv')))])
+        R = R.dropna(subset=['gsis_id']).drop_duplicates(['gsis_id', 'season'], keep='last')
+        R = R.rename(columns={'gsis_id': 'player_id', 'position': 'rpos'})
+        st = st.merge(R, on=['player_id', 'season'], how='left')
+        st['stats_position'] = st.position
+        st['position'] = st.rpos.where(st.rpos.notna(), st.position)
+        st = st.drop(columns='rpos')
     st = st[st.position.isin(POS)].copy()
     st['games'] = st.games.fillna(0)
     st['receptions'] = st.receptions.fillna(0)
@@ -546,8 +560,9 @@ def main():
     ap.add_argument('--out', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out',
                                                  'comps_value_results.json'))
     ap.add_argument('--counts-only', action='store_true')
+    ap.add_argument('--rosters', default=None, help='POST-LOCK A11 robustness run: per-season roster positions')
     a = ap.parse_args()
-    st, dp, pl = load(a.data)
+    st, dp, pl = load(a.data, a.rosters)
     S_all, counts = build(st, dp, pl, extra_seasons=(2025,))
     S = S_all[S_all.t <= SNAP_LAST].reset_index(drop=True)
     pre = precompute(S)
