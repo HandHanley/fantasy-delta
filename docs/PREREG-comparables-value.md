@@ -332,8 +332,8 @@ comparables; nothing was excluded.
 
 - **Q3:** odds run high in the middle (said 35%, happened 27%; said 43%, happened 34%). Honest only at RB. For veterans the
   average chance runs about 4 points high in every test year; incoming rookies run slightly low.
-- **Incoming rookies alone (career year 0), stated plainly:** draft-slot bands beat CV (B3 84.3 vs CV 87.5). This is the
-  threshold-world flag showing up in real data. CV's young-player win comes from first- and second-year players.
+- **Incoming rookies alone (career year 0), stated plainly:** draft-slot bands beat CV (B3 84.3 vs CV 87.5). Consistent with
+  the threshold-world flag (untested as the cause). CV's young-player win comes from first- and second-year players.
 - **§10 did not anticipate this combination** (accuracy passes, odds do not). Reading it: the accuracy result is what a
   Trade Calc value would rest on; the odds result bars showing a "chance of a starter season" on a card. Either use needs
   Steve's approval.
