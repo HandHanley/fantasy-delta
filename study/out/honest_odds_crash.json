@@ -1,0 +1,20 @@
+{
+ "fresh_rows": 1359,
+ "runs": 200,
+ "honest_world_judged_honest": 0.85,
+ "honest_world_false_alarms_by_check": {
+  "overall P3": 12,
+  "RB P3": 6,
+  "QB E3": 2,
+  "overall E3": 7,
+  "TE E3": 3,
+  "TE P3": 2,
+  "QB P3": 1
+ },
+ "dishonest_world_caught": 0.935,
+ "dishonest_caught_by_overall_check": {
+  "overall P3": 133,
+  "overall E3": 154
+ },
+ "powered": true
+}
