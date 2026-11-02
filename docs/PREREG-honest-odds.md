@@ -140,3 +140,28 @@ The fresh set is small (two seasons), so first prove it can tell honest odds fro
 
 False alarms in the honest world were spread across checks (overall P3 12, overall E3 7, RB P3 6, others ≤ 3). The
 dishonest world was mostly caught by the overall checks (P3 133 of 200, E3 154 of 200).
+
+### Results (2 Nov 2026) — `study/out/honest_odds_results.json`
+
+**Decision under the locked rule: Fix 2 (Recent Comparables Count More).** It is the only version judged honest on the
+fresh 2021–2022 players, and it passes the accuracy guard.
+
+| Version | Honest On Fresh Players? | Veterans: Said / Happened | Rookies: Said / Happened | Brier (lower is better) |
+|---|---|---|---|---|
+| As-is | No (overall P3, overall E3, WR P3) | 20.6% / 17.1% | 18.0% / 20.8% | 0.0802 |
+| Fix 1, League Size | No; also fails the accuracy guard | 17.3% / 17.1% | 15.2% / 20.8% | 0.0814 |
+| **Fix 2, Recent Count More** | **Yes, all ten checks** | 19.8% / 17.1% | 18.9% / 20.8% | **0.0797** |
+| Both (reported only) | No (overall P3, overall E3) | 17.0% / 17.1% | 16.4% / 20.8% | 0.0809 |
+
+Stated plainly:
+- **Fix 2's pass is narrow.** Its overall P3 error was 0.027 against a limit of 0.029. Veterans still lean about 2.7 points
+  high (19.8% said, 17.1% happened); on 1,359 fresh players that lean is within what an honest forecaster shows by chance.
+  The crash test says this check catches a lean of the 1 Nov size (veterans at 0.835×) 93.5% of the time; Fix 2's lean is
+  smaller (about 0.86×), so "honest" here means "no problem detectable at this sample size", not "perfect".
+- **Fix 1 fixes veterans and breaks rookies.** Scaling for league size brings veterans to 17.3% vs 17.1%, but pushes rookies
+  further below what happened. That fits the two-suspect picture: league growth explains the veterans, era change the rookies.
+- **Seen data (2013–2020, three-year odds, designed-from, decides nothing):** As-is, Fix 1 and Fix 2 are all not honest
+  there; Both is honest there. Fix 2 still leans high on veterans (21.7% vs 18.9%).
+- **Not tested, found after the run:** league-size scaling for veterans only, plus recent-count-more for everyone, would
+  likely beat all four. That is a new idea from seen results and needs fresh players: the 2023 snapshot's three-year window
+  (2024–2026) closes after the 2026 season, in early 2027.
