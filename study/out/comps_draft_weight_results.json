@@ -1,0 +1,321 @@
+{
+ "prereg": "docs/PREREG-draft-weight.md",
+ "equivalence": {
+  "horizon5": {
+   "rows": 5034,
+   "mismatched_rows": 0
+  },
+  "horizon3": {
+   "rows": 1359,
+   "mismatched_rows": 0
+  }
+ },
+ "Q1": {
+  "all": {
+   "n": 5034,
+   "rmse_today": 73.9342101586505,
+   "rmse_k24": 74.12549958389263,
+   "ratio": 1.0025872924703145,
+   "lift": -0.0025872924703145284,
+   "p_k24_better": 0.6691330866913309,
+   "ratio_95_range": [
+    0.9913560654946525,
+    1.0134820955219328
+   ],
+   "mae_today": 36.5038332633426,
+   "mae_k24": 36.323788768110184,
+   "spearman_today": 0.5673259683170547,
+   "spearman_k24": 0.5700070657809717
+  },
+  "veterans_years_1_3": {
+   "n": 2144,
+   "rmse_today": 73.79034471922357,
+   "rmse_k24": 74.68930206259274,
+   "ratio": 1.0121825876649548,
+   "lift": -0.012182587664954836,
+   "p_k24_better": 0.8569143085691431,
+   "ratio_95_range": [
+    0.991949556654452,
+    1.0299209031711922
+   ],
+   "mae_today": 36.96709226010572,
+   "mae_k24": 36.89241344057836,
+   "spearman_today": 0.564669298777284,
+   "spearman_k24": 0.5686324131379636
+  },
+  "veterans_years_4_plus": {
+   "n": 2258,
+   "rmse_today": 69.88657113058393,
+   "rmse_k24": 69.43008460368853,
+   "ratio": 0.9934681796586865,
+   "lift": 0.006531820341313499,
+   "p_k24_better": 0.207979202079792,
+   "ratio_95_range": [
+    0.9774569514489461,
+    1.0074306511536526
+   ],
+   "mae_today": 34.792717433421906,
+   "mae_k24": 34.462233553912014,
+   "spearman_today": 0.5852612580136052,
+   "spearman_k24": 0.5879497452508199
+  },
+  "rookies": {
+   "n": 632,
+   "rmse_today": 87.2823353300058,
+   "rmse_k24": 87.2823353300058,
+   "ratio": 1.0,
+   "lift": 0.0,
+   "p_k24_better": 1.0,
+   "ratio_95_range": [
+    1.0,
+    1.0
+   ],
+   "mae_today": 41.045719742616036,
+   "mae_k24": 41.045719742616036,
+   "spearman_today": 0.5309237844300657,
+   "spearman_k24": 0.5309237844300657
+  },
+  "pass": false
+ },
+ "Q2": {
+  "fresh_2021_2022": {
+   "honest": false,
+   "brier": 0.0788029180216334,
+   "checks": {
+    "overall P3": {
+     "error": 0.03331299171624801,
+     "limit": 0.02825082798585647,
+     "honest": false
+    },
+    "overall E3": {
+     "error": 0.04273478958131941,
+     "limit": 0.04894559638707294,
+     "honest": true
+    },
+    "QB P3": {
+     "error": 0.06423574367771451,
+     "limit": 0.10528002765625814,
+     "honest": true
+    },
+    "QB E3": {
+     "error": 0.20751729155984036,
+     "limit": 0.22329822657416226,
+     "honest": true
+    },
+    "RB P3": {
+     "error": 0.03943481387203819,
+     "limit": 0.06375708861806655,
+     "honest": true
+    },
+    "RB E3": {
+     "error": 0.07882860486449458,
+     "limit": 0.11470894235470545,
+     "honest": true
+    },
+    "WR P3": {
+     "error": 0.052707874880834345,
+     "limit": 0.04945779383463758,
+     "honest": false
+    },
+    "WR E3": {
+     "error": 0.054487584344421615,
+     "limit": 0.0884807514280052,
+     "honest": true
+    },
+    "TE P3": {
+     "error": 0.06824756541666542,
+     "limit": 0.07085652129140503,
+     "honest": true
+    },
+    "TE E3": {
+     "error": 0.04174996149181274,
+     "limit": 0.12069244826377053,
+     "honest": true
+    }
+   },
+   "said_vs_happened": {
+    "V": {
+     "said": 0.19660911955993868,
+     "happened": 0.17083333333333334
+    },
+    "R0": {
+     "said": 0.18924196063332963,
+     "happened": 0.20754716981132076
+    }
+   }
+  },
+  "report_2009_2012": {
+   "honest": false,
+   "brier": 0.10750411781217763,
+   "checks": {
+    "overall P3": {
+     "error": 0.014463053074457412,
+     "limit": 0.02371050958174657,
+     "honest": true
+    },
+    "overall E3": {
+     "error": 0.03732790651981089,
+     "limit": 0.04203053434695614,
+     "honest": true
+    },
+    "QB P3": {
+     "error": 0.09459459091902163,
+     "limit": 0.08071232254638572,
+     "honest": false
+    },
+    "QB E3": {
+     "error": 0.09365914584495812,
+     "limit": 0.17584832250920396,
+     "honest": true
+    },
+    "RB P3": {
+     "error": 0.024053083819268344,
+     "limit": 0.0597395755234754,
+     "honest": true
+    },
+    "RB E3": {
+     "error": 0.06142227570128149,
+     "limit": 0.10759071953025229,
+     "honest": true
+    },
+    "WR P3": {
+     "error": 0.02166135321010187,
+     "limit": 0.04246081063830145,
+     "honest": true
+    },
+    "WR E3": {
+     "error": 0.049662334132179575,
+     "limit": 0.07260047130227193,
+     "honest": true
+    },
+    "TE P3": {
+     "error": 0.03209232216023785,
+     "limit": 0.05478700487912082,
+     "honest": true
+    },
+    "TE E3": {
+     "error": 0.055693830902752366,
+     "limit": 0.09501012396802089,
+     "honest": true
+    }
+   },
+   "said_vs_happened": {
+    "V": {
+     "said": 0.23494510395226295,
+     "happened": 0.21917124313529707
+    },
+    "R0": {
+     "said": 0.1426268631498876,
+     "happened": 0.19242902208201892
+    }
+   }
+  },
+  "pass": false
+ },
+ "display": {
+  "Marvin Harrison Jr.": {
+   "today": {
+    "pick_range": [
+     2,
+     16
+    ],
+    "picks_65_plus": 0,
+    "names_65_plus": []
+   },
+   "k24": {
+    "pick_range": [
+     2,
+     13
+    ],
+    "picks_65_plus": 0,
+    "names_65_plus": []
+   }
+  },
+  "CeeDee Lamb": {
+   "today": {
+    "pick_range": [
+     4,
+     84
+    ],
+    "picks_65_plus": 5,
+    "names_65_plus": [
+     "Chris Godwin Jr.",
+     "Darrell Jackson",
+     "Keenan Allen",
+     "Steve Smith"
+    ]
+   },
+   "k24": {
+    "pick_range": [
+     7,
+     54
+    ],
+    "picks_65_plus": 0,
+    "names_65_plus": []
+   }
+  },
+  "Brock Bowers": {
+   "today": {
+    "pick_range": [
+     6,
+     113
+    ],
+    "picks_65_plus": 7,
+    "names_65_plus": [
+     "Aaron Hernandez",
+     "Jimmy Graham",
+     "Jordan Reed"
+    ]
+   },
+   "k24": {
+    "pick_range": [
+     6,
+     42
+    ],
+    "picks_65_plus": 0,
+    "names_65_plus": []
+   }
+  },
+  "Javonte Williams": {
+   "today": {
+    "pick_range": [
+     12,
+     128
+    ],
+    "picks_65_plus": 15,
+    "names_65_plus": [
+     "David Montgomery",
+     "Devin Singletary",
+     "Jamaal Charles",
+     "Kareem Hunt",
+     "Kenyan Drake",
+     "Kevan Barlow",
+     "Lamar Miller",
+     "Marion Barber",
+     "Michael Pittman",
+     "Rudi Johnson",
+     "Tevin Coleman",
+     "Tony Pollard"
+    ]
+   },
+   "k24": {
+    "pick_range": [
+     12,
+     100
+    ],
+    "picks_65_plus": 10,
+    "names_65_plus": [
+     "David Montgomery",
+     "Devin Singletary",
+     "Jamaal Charles",
+     "Kareem Hunt",
+     "Kenyan Drake",
+     "Kevan Barlow",
+     "Rudi Johnson",
+     "Tevin Coleman"
+    ]
+   }
+  }
+ },
+ "decision": "keep today"
+}
