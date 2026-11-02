@@ -2529,6 +2529,35 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
 .cfb-about summary::after{font-size:13px}
 .cfb-about .cfb-about-body{font-size:13px}
 </style>
+<style id="dl-college">
+/* College Rankings and Transfer Portal, redesign rules (1 Nov 2026). 20px titles; the panel lockups go
+   (phones already hid them; the other panels lost theirs in step 2); 36px pills and menus; 44px search
+   boxes at 16px; the five sizes in the table text (the board's own column labels and rank stay, as on
+   Rankings). */
+:is(#panel-college,#panel-portal) > div:first-of-type > svg{display:none}
+.dl-cf-title{font-size:20px;font-weight:800;color:var(--paper);margin-bottom:4px}
+#panel-college #cfb-season{min-height:32px;font-size:13px !important;padding:0 8px !important;border-radius:10px !important}
+#panel-college #cfb-season-label{font-size:12px}
+:is(#panel-college,#panel-portal) .set-pill{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;font-weight:700}
+:is(#panel-college,#panel-portal) .set-sel{min-height:36px;font-size:13px;border-radius:14px;padding:0 10px}
+.dl-cf-in{min-width:180px;min-height:44px;box-sizing:border-box;font-family:var(--sans);font-size:16px;background:var(--ink-2);color:var(--paper);
+  border:1px solid var(--line);border-radius:14px;padding:0 14px;outline:none}
+.dl-cf-in::placeholder{font-size:13px;color:var(--fog-2)}
+.dl-cf-in:focus{border-color:var(--teal-br)}
+#panel-college .dl-cf-count{font-size:12px}
+:is(#panel-college,#panel-portal) .dl-b-tp{font-size:12px}
+#panel-college .dl-cf-rank{font-size:12px}
+#panel-college .dtable td.dl-cf-prod{font-size:12px}
+#panel-college :is(.dl-cf-tag,.dl-cf-g5){font-size:12px}
+#panel-college .dl-cf-g5{border-radius:8px;padding:0 6px;background:var(--violet-tint);color:var(--violet)}
+#panel-portal .dl-pt-from{font-size:12px}
+#panel-portal .dl-pt-lvl,#panel-portal .dl-pt-fcs{font-size:12px}
+@media(max-width:600px){
+  #panel-portal .dtable, #panel-college .dtable{font-size:12px}
+  #panel-portal .dtable td, #panel-college .dtable td{padding:7px 5px}
+  .dl-cf-in{flex:1 1 100%}
+}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -8375,7 +8404,7 @@ document.addEventListener('click', function(e) {
 <div id="panel-cfbroles" class="panel"><div id="crc-root"></div></div>
 
 <div id="panel-portal" class="panel">
-  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">Transfer Portal</div></div></div>
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:.25rem"><svg width="46" height="46" viewBox="0 0 128 128" aria-hidden="true" style="flex-shrink:0;display:block"><g filter="url(#cfbOGlow)" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOStroke)" stroke-width="7.5"/><path d="M64 22 L24 106 L104 106 Z" stroke="url(#cfbOCore)" stroke-width="2.3" stroke-opacity="0.5"/></g><line x1="64" y1="32" x2="64" y2="102" stroke="#CCFBF1" stroke-width="1.6" stroke-opacity="0.5"/><g stroke="#CCFBF1" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"><line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/></g></svg><div><div class="dl-cf-title">Transfer Portal</div></div></div>
   <details class="cfb-about"><summary>About</summary><div class="cfb-about-body">Skill-position transfers landing at an FBS school. A move changes three things at once — the player’s
     level of competition, the target competition he walks into, and the share he vacates behind him.
     <b style="color:var(--paper)">Facts only</b>: no score, no projection.</div></details>
@@ -8387,8 +8416,7 @@ document.addEventListener('click', function(e) {
     <button class="set-pill" data-ppos="TE" onclick="ptSetPos('TE')">TE</button>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
-    <input id="pt-q" aria-label="Search Transfer Portal" oninput="renderPortal()" placeholder="Search name or school…"
-      style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:180px">
+    <input id="pt-q" class="dl-cf-in" aria-label="Search Transfer Portal" oninput="renderPortal()" placeholder="Search name or school…">
     <select id="pt-move" aria-label="Portal Move Type" onchange="renderPortal()" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="">Any move</option>
       <option value="up">Stepped up to Power 4</option>
@@ -8418,7 +8446,7 @@ document.addEventListener('click', function(e) {
       </g>
     </svg>
     <div>
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">College Tracking</div>
+      <div class="dl-cf-title">College Tracking</div>
       <div style="font-size:11px;color:var(--fog-2);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
         <span id="cfb-season-label"></span>
         <select id="cfb-season" aria-label="College Season" onchange="cfbSetSeason(this.value)" style="display:none;font-family:var(--mono);
@@ -8436,8 +8464,7 @@ document.addEventListener('click', function(e) {
     <button class="set-pill" data-cpos="WATCH" onclick="cfbSetPos('WATCH')">Watchlist</button>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:.75rem">
-    <input id="cfb-q" aria-label="Search College Players" oninput="renderCollege()" placeholder="Search players…"
-      style="font-size:12px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:170px">
+    <input id="cfb-q" class="dl-cf-in" aria-label="Search College Players" oninput="renderCollege()" placeholder="Search players…">
     <select id="cfb-sort" aria-label="Sort College Players" onchange="cfbSortFromDropdown(this.value)" class="set-sel" style="margin-bottom:0;width:auto">
       <option value="scout">Scout order (pedigree + level + production)</option>
       <option value="mover">Weekly movers (last 3 vs prior 3)</option>
@@ -8471,7 +8498,7 @@ document.addEventListener('click', function(e) {
     <button class="set-pill" id="cfb-blue" onclick="cfbToggleBlue()" title="4-5 star recruits only">Blue-chip only</button>
   </div>
   <div id="cfb-body"></div>
-  <div id="cfb-foot" style="font-size:9.5px;color:var(--fog-2);margin-top:10px;line-height:1.55"></div>
+  <div id="cfb-foot" style="font-size:12px;color:var(--fog-2);margin-top:10px;line-height:1.55"></div>
 </div>
 
 <div class="about-overlay" id="cfb-overlay" onclick="if(event.target===this)closeCfbCard()">
@@ -8545,7 +8572,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01o</span>
+  <span class="foot-build">2026-11-01p</span>
 </footer>
 
 
@@ -8946,9 +8973,9 @@ function cfbCols(pos){
   const num =v=>(v==null||v===0)?'-':v;
   const ddomCell=p=>{ const d=cfbDDOM(p); return d?'<span style="color:var(--teal-br)">'+d.pct+'</span>':'<span style="color:var(--fog-2)">-</span>'; };
   const trendCell=p=>{ const s=cfbRecentSplit(p,3); if(!s) return '<span style="color:var(--fog-2)">-</span>';
-    const up=s.diff>=0, col=up?'var(--emerald)':'var(--coral)';
+    const up=s.diff>=0, col=up?'var(--sky)':'var(--violet)';   // direction, not a call (BRAND.md: sky up, violet down)
     return '<span style="font-weight:700;color:'+col+'">'+(up?'\u25b2':'\u25bc')+' '+Math.abs(Math.round(s.diff))+'</span>'
-      +'<span style="font-size:9px;color:var(--fog-2)"> ypg</span>'; };
+      +'<span style="font-size:12px;color:var(--fog-2)"> ypg</span>'; };
   const DDOM={k:'ddom',label:'dDOM',mob:1,bold:1,cell:ddomCell,
     tip:'dDOM \u2014 DELTA\u2019s competition-adjusted production as a 0-100 percentile WITHIN position (WR/TE dominator, RB rush dominator, QB ANY/A), ranked among QUALIFIED players only. An analytical signal, not the ranking order. Low-volume players show \u2018-\u2019.'};
   const TREND={k:'trend',label:'Trend',mob:0,cell:trendCell,
@@ -9704,7 +9731,7 @@ function renderPortal(){
     +'background:'+col+'-tint);color:var('+col+');white-space:nowrap">'+txt+'</span>';
   const MOVE={ up:['\u2191 to P4','var(--sky)'], down:['\u2193 from P4','var(--coral)'],
                fcs:['\u2191 from FCS','var(--sky)'], lateral:['\u2192 lateral','var(--fog-2)'] };
-  host.innerHTML='<div style="font-size:11px;color:var(--fog-2);margin-bottom:7px">'+yr+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
+  host.innerHTML='<div style="font-size:12px;color:var(--fog-2);margin-bottom:8px">'+yr+rows.length+' transfer'+(rows.length===1?'':'s')+'</div>'
     +'<div class="dl-b-scroll dl-cf-scroll"><table class="dtable dl-board"><thead><tr>'
     +'<th>Player</th><th data-tip="Origin school above, destination below.">Transfer</th>'
     +'<th data-tip="Level change. Power 4 = SEC, Big Ten, Big 12, ACC. Measured on the 2025 season, P4 players reached the NFL at roughly twice the rate of Group of 5 players.">Move</th>'
