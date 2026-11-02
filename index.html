@@ -2558,6 +2558,32 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
   .dl-cf-in{flex:1 1 100%}
 }
 </style>
+<style id="dl-rankings">
+/* Rankings and the controls it shares (1 Nov 2026). The page around the board: 20px title, the desktop
+   lockup gone, 12px league chips, a 36px view switch (also Big Board's class switch), a 44px filter box
+   at 16px, 36px sort menu, Columns button (also My Team) and position pills, the How It's Ranked pill
+   site-wide, 12px position / team lines. The board itself keeps its scale: 14px Δ, 12-13px cells,
+   9.5px column labels and Call pills on phones (BRAND.md §6), shared with every roster table. */
+#panel-rankings > div:first-of-type > svg{display:none}
+.rk-chip{font-size:12px;min-height:32px;display:inline-flex;align-items:center;border-radius:10px}
+.dl-rk-views-l{font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fog)}
+.dl-rk-vseg{border-radius:14px;padding:4px}
+.dl-rk-vseg button{min-height:36px;border-radius:10px;font-size:13px}
+.fld-8{min-height:44px;font-size:16px;border-radius:14px;padding:0 14px}
+.fld-8::placeholder{font-size:13px}
+#panel-rankings .set-sel{min-height:44px;font-size:13px;border-radius:14px}
+.dl-rk-colbtn{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px}
+#panel-rankings .set-pill{min-height:36px;padding:0 14px;border-radius:18px;font-size:13px;font-weight:700}
+.howbtn{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:18px;font-size:13px}
+#panel-rankings .dl-b-tp{font-size:12px}
+/* At 36px the six position pills no longer fit one line on a phone; the row scrolls sideways
+   instead of wrapping, so the board does not drop by a whole row. Same for College. */
+@media(max-width:600px){
+  :is(#rk-pos-row,#cfb-pos-row){flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  :is(#rk-pos-row,#cfb-pos-row)::-webkit-scrollbar{display:none}
+  :is(#rk-pos-row,#cfb-pos-row) .set-pill{flex:none}
+}
+</style>
 <style id="dl-safe-top">
 /* TOP SAFE AREA (31 Oct 2026). viewport-fit=cover (step 2, for the bottom bar) plus the installed
    app's see-through status bar (black-translucent) let the page run up under the clock and battery.
@@ -2877,7 +2903,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       </g>
     </svg>
     <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px;color:var(--paper)">NFL Rankings</div>
+      <div class="dl-cf-title">NFL Rankings</div>
       <!-- Filled by dlLeagueBadge(). The subtitle IS the live league state: these three
            settings rescore all 409 players, so they belong on screen rather than behind
            the gear. College has no equivalent state and keeps a plain subtitle. -->
@@ -8572,7 +8598,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-01p</span>
+  <span class="foot-build">2026-11-01q</span>
 </footer>
 
 
