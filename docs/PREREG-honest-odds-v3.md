@@ -59,3 +59,17 @@ they are only 3–11 seasons older than the players, and the effects these fixes
 
   So the only real result is Q-B: is Fix 2 honest on 2009–2012? `study/honest_odds_v3.py` was changed before lock to
   compute Q-B only.
+
+### Results (2 Nov 2026) — `study/out/honest_odds_v3_results.json`
+
+**Q-B: Fix 2 is honest on the 2009–2012 players too** (all ten checks; overall P3 error 0.016 vs limit 0.023). That is its
+second pass on players nobody had graded. **Q-A (Fix 3) was not run** (size check: too weak).
+
+| Group | Fix 2 Said | Happened |
+|---|---|---|
+| Veterans (2,003) | 23.7% | 21.9% |
+| Incoming rookies (317) | 14.3% | 19.2% |
+
+Stated plainly: **rookies read low in both fresh tests** (2021–22: 18.9% said, 20.8% happened; 2009–12: 14.3% vs 19.2%).
+The honesty rule checks positions, not rookies vs veterans, and rookies are a small share, so it passes. On a card that
+means rookies' odds are conservative, likely by a few points. A rookie-specific check belongs in the early-2027 test.
