@@ -322,6 +322,13 @@ comparables; nothing was excluded.
   **Result: no answer flips** (Q1 +5.2%, Q2 +6.7%, both p < 0.001; Q3 not honest). The current-player display uses the
   roster-position run.
 
+- **A12 (post-lock, 2 Nov 2026). Positions, part two.** A11's roster-position fix dropped any season whose roster label
+  was outside QB/RB/WR/TE (mostly FB), counting it as zero: 286 player-seasons since 1999, three of them real seasons
+  (Reuben Droughns 2004, Nick Goings 2004, Chris Cooley 2005). Found on the 2 Nov Career Comps mock (Mike Tolbert showed
+  "Did Not Play"). Fixed in `comps_value_study.load`: such labels fall back to the stats file's position. Re-checked
+  2 Nov: the honest-odds decision (Fix 2) and the draft-drop decision (Version A) are unchanged. The locked 1 Nov verdict
+  used stats-file positions and is unaffected.
+
 ### Results (1 Nov 2026) — `study/out/comps_value_results.json`, `study/out/report_comps_value.txt`
 
 | Question | CV | Baseline | Lift | p | Answer |

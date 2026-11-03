@@ -74,7 +74,10 @@ def load(data_dir, roster_dir=None):
         R = R.rename(columns={'gsis_id': 'player_id', 'position': 'rpos'})
         st = st.merge(R, on=['player_id', 'season'], how='left')
         st['stats_position'] = st.position
-        st['position'] = st.rpos.where(st.rpos.notna(), st.position)
+        # POST-LOCK A12 (2 Nov 2026): a roster label outside QB/RB/WR/TE (FB, KR, ...) falls back to the stats
+        # file's position. Before this, such seasons were dropped and counted as zero (286 player-seasons, e.g.
+        # Reuben Droughns 2004, Chris Cooley 2005 listed FB). Default path (no roster_dir) unchanged.
+        st['position'] = st.rpos.where(st.rpos.isin(POS), st.position)
         st = st.drop(columns='rpos')
     st = st[st.position.isin(POS)].copy()
     st['games'] = st.games.fillna(0)
