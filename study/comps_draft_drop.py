@@ -14,32 +14,20 @@ import comps_draft_weight as DW
 CUT = {'A': 2, 'B': 3}
 
 
-def install(mode):
-    """Point comps_draft_weight's weight function at `mode` (today / A / B) using career year from the caller's rows."""
-    def w(_, G, n, cy=None):
-        base = DW.weights('today', G, n)
-        if mode in CUT:
-            base = base.copy(); base[cy >= CUT[mode], 2] = 0.0
-        return base
-    return w
+def vet_weights(mode, G, cy):
+    """Today's veteran weights (via DW.weights, unchanged), with draft weight set to 0 at career year >= the cut."""
+    W = DW.weights('today', G, len(G)).copy()
+    if mode in CUT:
+        W[cy >= CUT[mode], 2] = 0.0
+    return W
 
 
 def neighbours(S, rows, mode, pool_max_t=None):
-    """Same construction as DW.neighbours; the veteran weight call also gets that block's career years."""
-    orig = DW.weights
-    _current_cy.clear()
-    DW.weights = lambda m, G, n: install(mode)(m, G, n, cy=_current_cy.pop(0))
-    try:
-        return _neighbours_tracking(S, rows, mode, pool_max_t)
-    finally:
-        DW.weights = orig
-
-
-_current_cy = []
+    return _neighbours_tracking(S, rows, mode, pool_max_t)
 
 
 def _neighbours_tracking(S, rows, mode, pool_max_t):
-    """Re-implements DW.neighbours' loop only to queue each veteran block's career years before DW's weight call."""
+    """DW.neighbours' loop, with career-year-aware veteran weights."""
     keys = S.key.values; tt = S.t.values; pos = S.pos.values; kind = S.kind.values
     out_rows, out_nn = [], []
     for t in sorted(set(tt[rows])):
@@ -56,8 +44,7 @@ def _neighbours_tracking(S, rows, mode, pool_max_t):
                 mu, sd = P.mean(0), P.std(0); sd[sd == 0] = 1.0
                 Pz = (P - mu) / sd; Tz = (S.loc[trow, feats].values.astype(float) - mu) / sd
                 if kd == 'V':
-                    _current_cy.append(S.cy.values[trow])
-                    W = DW.weights('x', S.loc[trow, 'G'].values.astype(float), len(trow))
+                    W = vet_weights(mode, S.loc[trow, 'G'].values.astype(float), S.cy.values[trow])
                 else:
                     W = np.tile([C.W_R0['draft'], C.W_R0['age']], (len(trow), 1))
                 d2 = (((Tz[:, None, :] - Pz[None, :, :]) ** 2) * W[:, None, :]).sum(2)

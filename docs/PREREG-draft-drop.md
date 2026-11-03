@@ -29,6 +29,11 @@ Nothing fitted. Same code path as `study/comps_draft_weight.py` (equivalence re-
 Disclosure: today's version's numbers on these sets are known; neither new version's are. Motivation is card design, not
 any result.
 
+## Amendments
+
+- **A1 (pre-result).** The locked script (`e363bc1`) crashed before computing anything (its weight hook called itself).
+  Fixed by computing the veteran weights directly in the loop; no rule changed. The equivalence check still runs first.
+
 ## Results
 
 _Filled in after the single run._
