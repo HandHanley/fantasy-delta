@@ -78,6 +78,9 @@ def load(data_dir, roster_dir=None):
         # file's position. Before this, such seasons were dropped and counted as zero (286 player-seasons, e.g.
         # Reuben Droughns 2004, Chris Cooley 2005 listed FB). Default path (no roster_dir) unchanged.
         st['position'] = st.rpos.where(st.rpos.isin(POS), st.position)
+        # A12, part two: fantasy platforms list fullbacks as running backs, so FB counts as RB here (Mike Tolbert
+        # was FB on both the roster and the stats file for 2012-14 and showed as "Did Not Play").
+        st.loc[st.position == 'FB', 'position'] = 'RB'
         st = st.drop(columns='rpos')
     st = st[st.position.isin(POS)].copy()
     st['games'] = st.games.fillna(0)
