@@ -34,6 +34,21 @@ any result.
 - **A1 (pre-result).** The locked script (`e363bc1`) crashed before computing anything (its weight hook called itself).
   Fixed by computing the veteran weights directly in the loop; no rule changed. The equivalence check still runs first.
 
-## Results
+## Results (2 Nov 2026) — `study/out/comps_draft_drop_results.json`
 
-_Filled in after the single run._
+**Decision under the rule: Version A** (draft slot drops out once a player has two seasons on record). Both versions passed.
+Equivalence check: today's weights through this script matched `precompute` on all 5,034 rows.
+
+| | Version A (2+ seasons) | Version B (3+ seasons) |
+|---|---|---|
+| Accuracy, all 5,034 | 0.4% **better** (73.7 vs 73.9) | 0.5% better (73.5) |
+| Accuracy, veterans it changes | 0.5% better (3,664) | 1.0% better (2,920) |
+| Is the gain clearly real? | No (p = 0.25) | No (p = 0.09) |
+| Odds honest, fresh 2021–22 | **Yes** | Yes |
+| Odds miss (Brier), fresh 2021–22 | 0.0816 (today 0.0797) | 0.0807 |
+| Odds honest, 2009–12 (reported) | No (overall E3) | No (overall E3) |
+
+Stated plainly: dropping draft slot did not cost accuracy; both versions came out slightly ahead, within noise. B edged A on
+every measure, but the rule named A ahead of time and the gaps are small. Both versions' odds are a touch less sharp than
+today's (Brier about 1–2% higher) and, unlike today's, fail one check on 2009–12, so the odds remain "honest, narrowly".
+

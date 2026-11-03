@@ -1,0 +1,71 @@
+{
+ "prereg": "docs/PREREG-draft-drop.md",
+ "equivalence_mismatches": 0,
+ "A": {
+  "all": {
+   "n": 5034,
+   "rmse_today": 73.9342101586505,
+   "rmse_new": 73.67340163166934,
+   "ratio": 0.9964724242482402,
+   "p_new_better": 0.24727527247275272
+  },
+  "changed_veterans": {
+   "n": 3664,
+   "rmse_today": 70.14261242243602,
+   "rmse_new": 69.76456324569136,
+   "ratio": 0.9946102780650963,
+   "p_new_better": 0.24377562243775622
+  },
+  "Q1_pass": true,
+  "odds": {
+   "fresh_2021_2022": {
+    "honest": true,
+    "brier": 0.08159580444253657,
+    "failed_checks": []
+   },
+   "report_2009_2012": {
+    "honest": false,
+    "brier": 0.10775193960794248,
+    "failed_checks": [
+     "overall E3"
+    ]
+   }
+  },
+  "Q2_pass": true,
+  "pass": true
+ },
+ "B": {
+  "all": {
+   "n": 5034,
+   "rmse_today": 73.9342101586505,
+   "rmse_new": 73.54001247069966,
+   "ratio": 0.9946682640268294,
+   "p_new_better": 0.08819118088191182
+  },
+  "changed_veterans": {
+   "n": 2920,
+   "rmse_today": 69.71575098262582,
+   "rmse_new": 68.99322079692834,
+   "ratio": 0.9896360553316346,
+   "p_new_better": 0.0888911108889111
+  },
+  "Q1_pass": true,
+  "odds": {
+   "fresh_2021_2022": {
+    "honest": true,
+    "brier": 0.08066784339935756,
+    "failed_checks": []
+   },
+   "report_2009_2012": {
+    "honest": false,
+    "brier": 0.1065380720661663,
+    "failed_checks": [
+     "overall E3"
+    ]
+   }
+  },
+  "Q2_pass": true,
+  "pass": true
+ },
+ "decision": "A"
+}
