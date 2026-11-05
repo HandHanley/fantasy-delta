@@ -52,6 +52,10 @@ a:hover{text-decoration:underline}
   /* The cards are inline-blocks, i.e. lines of text to the browser, and the default 'keep at least two
      lines together' rule (orphans/widows 2) kept a two-card tab in one column (4 Nov 2026). */
   .pp-pane{orphans:1;widows:1}
+  /* A tab with a single card (a quarterback's Role: Playcaller Tendencies only) centres it at half width
+     instead of leaving it in the left column beside an empty right one (owner, 5 Nov 2026). */
+  .pp-pane.pp-one{column-count:1}
+  .pp-pane.pp-one > *{display:block;max-width:calc(50% - 8px);margin-left:auto;margin-right:auto}
   .pp-pane > *,#tab-cfb > *{break-inside:avoid;display:inline-block;width:100%;margin-bottom:16px}
   .pp-pane > .pp-span,#tab-cfb > .pp-span{column-span:all;display:block}
   /* THE TOP FOUR ARE A GRID, NOT COLUMNS (4 Oct 2026). In the column flow the
@@ -459,7 +463,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-11-04a</span>
+    <span class="foot-build">2026-11-05a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1911,6 +1915,7 @@ function _renderPlayerPage(p) {
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
   placeSide();
+  document.querySelectorAll('.pp-pane').forEach(el => el.classList.toggle('pp-one', el.children.length === 1));
   if(_TAB==='cfb'){ ensureCollegeData(p); loadCombine(); }
   mkWire(p);   // Market Value card: data loads when it scrolls into view
   // Preseason · Now · Actual (shared engine helper). Needs the frozen file, fetched once.
