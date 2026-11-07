@@ -90,6 +90,40 @@ a:hover{text-decoration:underline}
 .pp-tabs button.on{background:var(--teal-tint);color:var(--teal-br);box-shadow:inset 0 0 0 1px var(--teal-br)}
 @media(hover:hover){.pp-tabs button:hover:not(.on){color:var(--paper)}}
 #ov-head{margin-bottom:12px}
+/* Comparable Players: History | Today (7 Nov 2026) */
+.cp-sw{display:flex;gap:4px;background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:2px}
+.cp-sw button{height:32px;padding:0 12px;border:0;border-radius:16px;background:transparent;color:var(--fog);
+  font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer}
+.cp-sw button.on{background:var(--teal-tint);color:var(--teal-br);box-shadow:inset 0 0 0 1px var(--teal-br)}
+.hc-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.hc-title{font-size:13px;font-weight:700;color:var(--fog)}
+.hc-chip{font-size:12px;font-weight:700;color:var(--fog);background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:3px 8px;white-space:nowrap}
+.hc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.hc-tile{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.hc-pct{font-family:var(--mono);font-size:20px;font-weight:800;line-height:1.1}
+.hc-lab{font-size:12px;font-weight:700;color:var(--fog);line-height:1.25}
+.hc-bar{display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden;background:var(--ink-2);margin-bottom:12px}
+.hc-more{width:100%;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);
+  font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer}
+@media(hover:hover){.hc-more:hover{border-color:var(--teal-br)}}
+#cp-more{margin-top:12px}
+.hc-box{background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;column-gap:16px;row-gap:6px;align-items:baseline;margin-bottom:12px}
+.hc-h{font-size:12px;font-weight:700;color:var(--fog)}
+.hc-k{font-size:12px;color:var(--fog)}
+.hc-v{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--paper)}
+.hc-n{font-family:var(--mono);font-size:13px;color:var(--fog)}
+.hc-r{text-align:right}
+.hc-exh,.hc-rows{display:grid;grid-template-columns:minmax(0,1fr) 48px 56px;column-gap:8px}
+.hc-exh{padding:0 0 8px 16px;font-size:12px;font-weight:700;color:var(--fog)}
+.hc-grp{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+.hc-gl{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--fog)}
+.hc-gl i{width:8px;height:8px;border-radius:4px;flex-shrink:0}
+.hc-rows{padding-left:16px;row-gap:4px;align-items:baseline}
+.hc-nm{font-size:13px;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-when{font-family:var(--mono);font-size:12px;color:var(--fog-2)}
+.hc-best{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--paper)}
+.hc-foot{font-size:12px;color:var(--fog-2);padding-top:10px;border-top:1px solid var(--line)}
 #ov-head:empty{display:none}
 #ov-head .dlh-tiles{margin-top:0}
 html[data-look="glass"] #tabstrip{background:transparent;-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
@@ -463,7 +497,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-11-05a</span>
+    <span class="foot-build">2026-11-07a</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1233,7 +1267,7 @@ function buildAgeCurveHTML(p) {
 function buildComparableHTML(p) {
   const pos = p.pos || p.p || 'WR';
   const ds = p.dsScore;
-  if (ds == null) return '';
+  if (ds == null) return cpShell(p, '');
 
   const myOpp = getOppScore(p.n, pos) || 50;
 
@@ -1254,7 +1288,6 @@ function buildComparableHTML(p) {
   });
 
   const comps = scored.sort((a, b) => a.sim - b.sim).slice(0, 3);
-  if (!comps.length) return '';
 
   const cards = comps.map(({peer, dsDiff, ageDiff}) => {
     const vt = (vTag(peer).match(/>([a-z ]+)</) || [,''])[1];
@@ -1282,11 +1315,88 @@ function buildComparableHTML(p) {
       + '</div>';
   }).join('');
 
-  return '<div class="card">'
-    + '<div class="card-label" style="margin-bottom:2px">Comparable Players</div>'
-    + '<div class="card-sub" style="margin-bottom:10px">Closest DELTA matches at ' + pos + ' — ranked by score, age, and opportunity similarity</div>'
-    + '<div style="display:flex;flex-direction:column;gap:6px">' + cards + '</div>'
+  return cpShell(p, comps.length ? '<div class="card-sub" style="margin-bottom:10px">Closest DELTA matches at ' + pos + ' — ranked by score, age, and opportunity similarity</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">' + cards + '</div>' : '');
+}
+
+/* ── COMPARABLE PLAYERS: HISTORY | TODAY (owner, 3–7 Nov 2026; claude/PLAN-player-tabs.md step 2) ──
+   History = Historical Comps: how his 30 closest past matches did over the three seasons after the matched
+   season (data/historical-comps.json, built yearly by study/build_historical_comps.py under the tested rules:
+   Version A matching, Fix 2 weights). Display only; never part of the DELTA Score, a value or a call.
+   Today = the three current players above, unchanged. History opens first when he has a row; with no row the
+   card is Today only, and with neither the card is not shown. Nothing here is remembered between visits. */
+function cpShell(p, todayHTML) {
+  return '<div class="card" id="cp-card" data-today="' + (todayHTML ? 1 : 0) + '" style="display:none">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+    + '<div class="card-label" style="margin:0">Comparable Players</div>'
+    + '<div class="cp-sw" id="cp-sw" role="group" aria-label="Which comparable players" style="display:none">'
+    + '<button type="button" data-v="hist" onclick="cpView(\'hist\')">History</button>'
+    + '<button type="button" data-v="today" onclick="cpView(\'today\')">Today</button></div></div>'
+    + '<div id="cp-hist" style="display:none"></div>'
+    + '<div id="cp-today" style="display:none">' + todayHTML + '</div>'
     + '</div>';
+}
+let HC = null;
+function loadHistComps(p) {
+  const card = document.getElementById('cp-card');
+  if (!card) return;
+  const done = row => {
+    if (!document.getElementById('cp-card') || CUR_P !== p) return;
+    const hasT = card.dataset.today === '1';
+    if (!row && !hasT) { const w = card.closest('.pp-tw'); (w || card).style.display = 'none'; return; }
+    if (row) document.getElementById('cp-hist').innerHTML = hcHTML(row);
+    document.getElementById('cp-sw').style.display = row && hasT ? '' : 'none';
+    card.style.display = '';
+    cpView(row ? 'hist' : 'today');
+  };
+  (HC || (HC = fetch('./data/historical-comps.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
+    .then(d => done(d && d.players ? d.players[p.n] || null : null));
+}
+function cpView(v) {
+  const h = document.getElementById('cp-hist'), t = document.getElementById('cp-today');
+  if (!h || !t) return;
+  h.style.display = v === 'hist' ? '' : 'none';
+  t.style.display = v === 'today' ? '' : 'none';
+  document.querySelectorAll('#cp-sw button').forEach(b => {
+    const on = b.dataset.v === v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+  });
+}
+function cpMatches(btn) {
+  const box = document.getElementById('cp-more'); if (!box) return;
+  const open = box.style.display === 'none';
+  box.style.display = open ? '' : 'none';
+  btn.textContent = open ? 'Hide Matches' : 'Show Matches';
+  btn.setAttribute('aria-expanded', open);
+}
+function hcHTML(r) {
+  const LAB = ['No Starter Seasons', 'One Starter Season', 'Two Or More Starter Seasons'];
+  const COL = ['var(--coral)', 'var(--sky)', 'var(--emerald)'];   // the Start Profile's Miss / Hit / Elite
+  const rookie = r.k === 'R', m = r.m, e = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const tiles = r.pct.map((v, i) => '<div class="hc-tile" style="background:color-mix(in srgb,' + COL[i] + ' 16%,var(--panel));border-color:color-mix(in srgb,' + COL[i] + ' 45%,var(--panel))">'
+    + '<span class="hc-pct" style="color:' + COL[i] + '">' + v + '%</span><span class="hc-lab">' + LAB[i] + '</span></div>').join('');
+  const bar = '<div class="hc-bar" role="img" aria-label="' + r.pct.map((v, i) => LAB[i] + ' ' + v + '%').join(', ') + '">'
+    + r.pct.map((v, i) => v > 0 ? '<div style="width:' + v + '%;background:' + COL[i] + '"></div>' : '').join('') + '</div>';
+  const rng = (a, b) => a === b ? String(a) : a + '–' + b;
+  const rows = [];
+  if (m.ppg) rows.push(['Recent Points Per Game', m.ppg[0], rng(m.ppg[1], m.ppg[2])]);
+  if (m.pick) rows.push(['Draft Pick', m.pick[0] == null ? 'Undrafted' : m.pick[0],
+    (m.pick[1] != null ? rng(m.pick[1], m.pick[2]) : '') + (m.pick[3] ? (m.pick[1] != null ? ' + ' : '') + m.pick[3] + ' Undrafted' : '')]);
+  rows.push([rookie ? 'Age At Draft' : 'Age In 2025', m.age[0], rng(m.age[1], m.age[2])]);
+  if (m.games) rows.push(['Games In 2025', m.games[0] == null ? '—' : m.games[0], rng(m.games[1], m.games[2])]);
+  if (m.cy) rows.push(['Year In The League', m.cy[0], rng(m.cy[1], m.cy[2])]);
+  const matched = '<div class="hc-box"><span class="hc-h">Matched On</span><span class="hc-h hc-r">Him</span><span class="hc-h hc-r">Matches</span>'
+    + rows.map(x => '<span class="hc-k">' + x[0] + '</span><span class="hc-v hc-r">' + x[1] + '</span><span class="hc-n hc-r">' + x[2] + '</span>').join('') + '</div>';
+  const ex = '<div class="hc-exh"><span>Examples</span><span class="hc-r">' + (rookie ? 'Class' : 'As Of') + '</span><span class="hc-r">Best</span></div>'
+    + r.ex.map((g, i) => '<div class="hc-grp"><span class="hc-gl"><i style="background:' + COL[i] + '"></i>' + LAB[i] + '</span><div class="hc-rows">'
+      + (g.length ? g.map(x => '<span class="hc-nm">' + e(x[0]) + '</span><span class="hc-when hc-r">' + x[1] + '</span><span class="hc-best hc-r">' + (x[2] || '—') + '</span>').join('')
+        : '<span class="hc-when">None</span><span></span><span></span>') + '</div></div>').join('');
+  const foot = 'Based on ' + r.n + ' past ' + (rookie ? 'rookies · ' + r.s[0] + '–' + r.s[1] + ' draft classes' : 'players · ' + r.s[0] + '–' + r.s[1] + ' seasons')
+    + ' · Best = his best finish in those three seasons';
+  return '<div class="hc-head"><span class="hc-title">Historical Comps</span><span class="hc-chip">Next 3 Years</span></div>'
+    + '<div class="card-sub" style="margin:-4px 0 10px">How his closest past matches did over the three seasons after</div>'
+    + '<div class="hc-tiles">' + tiles + '</div>' + bar
+    + '<button type="button" class="hc-more" aria-expanded="false" aria-controls="cp-more" onclick="cpMatches(this)">Show Matches</button>'
+    + '<div id="cp-more" style="display:none">' + matched + ex + '<div class="hc-foot">' + foot + '</div></div>';
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
@@ -1915,6 +2025,7 @@ function _renderPlayerPage(p) {
     <div class="freshness">Data refreshes nightly · DELTA v1.0</div>
   `);
   placeSide();
+  loadHistComps(p);
   document.querySelectorAll('.pp-pane').forEach(el => el.classList.toggle('pp-one', el.children.length === 1));
   if(_TAB==='cfb'){ ensureCollegeData(p); loadCombine(); }
   mkWire(p);   // Market Value card: data loads when it scrolls into view
