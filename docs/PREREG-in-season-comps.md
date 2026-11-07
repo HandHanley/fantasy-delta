@@ -104,3 +104,26 @@ For each week W, on 2021–22:
 - **A3. Noise crash test: 100 runs instead of 20.** The first 20-run noise test had 2 false alarms (10%). A
   100-run check then had 4 (4%), with the p-values spread evenly as they should be under noise. Twenty runs can't
   measure a 5% rate; 2 of 20 happens by chance about a quarter of the time. Thresholds unchanged.
+
+## Results (7 Nov 2026) — `study/out/comps_in_season_results.json`
+
+**Decision under the rule: keep season-end matching all year.** No week passed: the odds were not honest at
+weeks 5, 9 or 13. The Brier guard passed at every week.
+
+| Week | Rows (2021–22) | Brier, In-Season | Brier, Baseline | Better? (p) | Said vs Happened | Honest? | What Failed |
+|---|---|---|---|---|---|---|---|
+| 5 | 1,370 | 0.0754 | 0.0756 | No (0.47) | 17.3% vs 14.8% | No | Overall expected starter seasons (0.053 vs limit 0.045) |
+| 9 | 1,422 | 0.0677 | 0.0740 | Yes (0.012) | 16.8% vs 14.3% | No | Overall expected starter seasons (0.044 vs limit 0.042) |
+| 13 | 1,459 | 0.0659 | 0.0735 | Yes (0.003) | 16.4% vs 14.2% | No | Overall chance (0.027 vs 0.024); WR chance (0.0434 vs 0.0431) |
+
+Reported only:
+- **2009–12:** in-season more accurate at all three weeks (p < 0.001). Honest at week 13 only.
+- **Every season 2005–22, Brier only:** in-season 7%, 11% and 13% better at weeks 5, 9 and 13 (p ≈ 0.0001).
+
+Stated plainly: this season's play makes the matches clearly **more accurate** from week 9 on. But the odds lean
+**high**, by about 2.5 points on 2021–22, and that fails the honesty rule by small margins. The baseline, which is what
+the card effectively shows in mid-season today, leaned higher still (17.6–18.0% said). It wasn't judged for honesty,
+because the bar didn't ask for that. The lean looks like the known veteran high-lean in the season-end odds (2.7 points
+on 2021–22), not something in-season matching introduced. Fixing that lean is its own pre-registration. "Fix 3"
+(league size for veterans) is already waiting for the 2023 players' windows to close in early 2027. No partial
+adoption.
