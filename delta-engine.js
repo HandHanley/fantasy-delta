@@ -3843,7 +3843,7 @@ function mvAssetRaw(pl){
 // <contracts-backup>
 /* Built-in copy of data/delta-contracts.json, written by scripts/build-contracts-backup.js.
    Do not edit by hand: change the table, then run the script. The nightly fails if they differ. */
-const DL_CONTRACTS_BACKUP_ASOF="2026-11-01";
+const DL_CONTRACTS_BACKUP_ASOF="2026-11-05";
 const DL_CONTRACTS_BACKUP={
   "A.J. Brown":{team:"NE",end:2029,kind:"extension",aav:32,total:96},
   "AJ Barner":{team:"SEA",end:2027,kind:"rookie",aav:null,total:null},
@@ -3860,7 +3860,7 @@ const DL_CONTRACTS_BACKUP={
   "Antonio Williams":{team:"WAS",end:2029,kind:"rookie",aav:null,total:null},
   "Arian Smith":{team:"NYJ",end:2028,kind:"rookie",aav:null,total:null},
   "Ashton Jeanty":{team:"LV",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
-  "Audric Estime":{team:"CLE",end:2026,kind:"veteran",aav:null,total:null},
+  "Audric Estime":{team:"NO",end:2026,kind:"veteran",aav:null,total:null},
   "Austin Ekeler":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
   "Baker Mayfield":{team:"TB",end:2029,kind:"extension",aav:55,total:165},
   "Barion Brown":{team:"NO",end:2029,kind:"rookie",aav:null,total:null},
@@ -4174,7 +4174,7 @@ const DL_CONTRACTS_BACKUP={
   "Ricky Pearsall":{team:"SF",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
   "Rico Dowdle":{team:"PIT",end:2027,kind:"veteran",aav:6.13,total:12.25},
   "Riley Leonard":{team:"IND",end:2028,kind:"rookie",aav:null,total:null},
-  "Robert Henry":{team:"SEA",end:2026,kind:"veteran",aav:null,total:null},
+  "Robert Henry":{team:"WAS",end:2026,kind:"veteran",aav:null,total:null},
   "Roman Hemby":{team:"LV",end:2026,kind:"practice_squad",aav:null,total:null},
   "Roman Wilson":{team:"PIT",end:2027,kind:"rookie",aav:null,total:null},
   "Rome Odunze":{team:"CHI",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
