@@ -1,0 +1,22 @@
+{
+ "prereg": "docs/PREREG-in-season-comps-v3.md",
+ "points_check": {
+  "player_seasons": 14713,
+  "points_off_by_more_than_5": 0.014137157615713995,
+  "games_off_by_more_than_1": 0.0107388024196289
+ },
+ "crash_week_9": {
+  "honest_world": {
+   "honest_passes": 30,
+   "runs": 40,
+   "k_2020_year2plus_WR_mean": 0.9984147554737485
+  },
+  "lean_world": {
+   "honest_passes": 30,
+   "runs": 40,
+   "k_2020_year2plus_WR_mean": 0.8416936996667618
+  },
+  "uncorrected_in_lean_world_caught": 20,
+  "ok": false
+ }
+}
