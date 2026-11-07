@@ -1,0 +1,43 @@
+{
+ "prereg": "docs/PREREG-vegas-team-context.md",
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1605,
+   "V": 10740
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1643,
+  "test_scored": 5125,
+  "test_excluded_lt10": 0,
+  "ratio_missing_A": 964,
+  "ratio_missing_B": 4282
+ },
+ "crash": {
+  "noise_false_passes": 0,
+  "noise_runs": 5,
+  "planted_1.0_passes": 0,
+  "planted_1.0_runs": 40,
+  "planted_0.5_passes": 0,
+  "planted_0.5_runs": 50,
+  "perm": 200,
+  "planted_1.0_median": {
+   "Q1_lift": 0.007415097778416868,
+   "Q2_diff": 0.02801684722548553,
+   "beta": 0.9
+  },
+  "planted_0.5_median": {
+   "Q1_lift": 0.0008855088895814434,
+   "Q2_diff": 0.006918555812982119,
+   "beta": 0.4275
+  },
+  "ok": false,
+  "note": "Reduced run (5 noise, 40 + 50 planted, 200 permutations): the planted lift is far below the 2% bar, so the outcome does not hinge on run counts."
+ }
+}
