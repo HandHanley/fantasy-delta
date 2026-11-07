@@ -1,0 +1,727 @@
+{
+ "prereg": "docs/PREREG-own-value-scale.md",
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1605,
+   "V": 10740
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1643,
+  "test_scored": 5125,
+  "test_excluded_lt10": 0,
+  "trades_built": {
+   "one_for_one": 12000,
+   "two_for_one": 12000
+  }
+ },
+ "Q1": {
+  "n": 5125,
+  "players": 1643,
+  "rmse_ovs": 72.42115620970391,
+  "rmse_b2": 77.18039290069626,
+  "lift": 0.06166380491371426,
+  "p": 9.999000099990002e-05,
+  "pass": true
+ },
+ "Q2": {
+  "n_trades": 19075,
+  "dropped_ties_all_trades": 4925,
+  "acc_ovs": 0.5988466579292268,
+  "acc_b2": 0.47517693315858456,
+  "diff": 0.1236697247706422,
+  "p": 9.999000099990002e-05,
+  "pass": true
+ },
+ "Q2_breakdown": {
+  "one_for_one": {
+   "n_trades": 8349,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.5964786201940352,
+   "acc_b2": 0.4702359564019643,
+   "diff": 0.12624266379207089,
+   "p": null,
+   "pass": false
+  },
+  "two_for_one": {
+   "n_trades": 10726,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.6006899123624837,
+   "acc_b2": 0.47902293492448256,
+   "diff": 0.12166697743800114,
+   "p": null,
+   "pass": false
+  },
+  "young_vs_old": {
+   "n_trades": 5522,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.5929011227816009,
+   "acc_b2": 0.4788120246287577,
+   "diff": 0.11408909815284318,
+   "p": null,
+   "pass": false
+  },
+  "with_a_rookie": {
+   "n_trades": 5950,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.6220168067226891,
+   "acc_b2": 0.4194957983193277,
+   "diff": 0.2025210084033614,
+   "p": null,
+   "pass": false
+  },
+  "single_side_QB": {
+   "n_trades": 5147,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.5987954148047406,
+   "acc_b2": 0.4740625607149796,
+   "diff": 0.12473285408976104,
+   "p": null,
+   "pass": false
+  },
+  "single_side_RB": {
+   "n_trades": 5131,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.6090430715260183,
+   "acc_b2": 0.4645293315143247,
+   "diff": 0.14451374001169365,
+   "p": null,
+   "pass": false
+  },
+  "single_side_WR": {
+   "n_trades": 6872,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.5926949941792782,
+   "acc_b2": 0.4835564610011641,
+   "diff": 0.10913853317811406,
+   "p": null,
+   "pass": false
+  },
+  "single_side_TE": {
+   "n_trades": 1925,
+   "dropped_ties_all_trades": 4925,
+   "acc_ovs": 0.5937662337662337,
+   "acc_b2": 0.4766233766233766,
+   "diff": 0.1171428571428571,
+   "p": null,
+   "pass": false
+  }
+ },
+ "sureness_ovs": {
+  "1.00-1.10": {
+   "n": 3606,
+   "bigger_side_won": 0.49944536882972823
+  },
+  "1.10-1.25": {
+   "n": 4442,
+   "bigger_side_won": 0.5623592976136875
+  },
+  "1.25-1.50": {
+   "n": 4867,
+   "bigger_side_won": 0.5964659954797616
+  },
+  "1.50-99.00": {
+   "n": 6160,
+   "bigger_side_won": 0.6852272727272727
+  }
+ },
+ "breakdown": {
+  "all": {
+   "n": 5125,
+   "OVS": {
+    "rmse": 72.42115620970391,
+    "mae": 35.399816649222196,
+    "spearman": 0.5662100315382657
+   },
+   "CV": {
+    "rmse": 73.20441804270719,
+    "mae": 35.67145788498212,
+    "spearman": 0.5678356999808106
+   },
+   "B1": {
+    "rmse": 78.40057993565472,
+    "mae": 41.19639973032821,
+    "spearman": 0.5007000122915769
+   },
+   "B2": {
+    "rmse": 77.18039290069626,
+    "mae": 40.613458451980364,
+    "spearman": 0.5197066056218179
+   },
+   "B3": {
+    "rmse": 85.45502286624843,
+    "mae": 44.52073772085976,
+    "spearman": 0.37343746538291717
+   }
+  },
+  "QB": {
+   "n": 681,
+   "OVS": {
+    "rmse": 123.19812080465499,
+    "mae": 73.80789134903938,
+    "spearman": 0.6762284091733182
+   },
+   "CV": {
+    "rmse": 125.66029443202063,
+    "mae": 75.4108047215859,
+    "spearman": 0.6678588406315955
+   },
+   "B1": {
+    "rmse": 131.83635726423427,
+    "mae": 88.46931456405906,
+    "spearman": 0.5999848782929862
+   },
+   "B2": {
+    "rmse": 131.63685238628761,
+    "mae": 87.59884869979521,
+    "spearman": 0.6176918439776498
+   },
+   "B3": {
+    "rmse": 143.50165133817612,
+    "mae": 93.61675826377592,
+    "spearman": 0.3506430858569858
+   }
+  },
+  "RB": {
+   "n": 1462,
+   "OVS": {
+    "rmse": 64.92104570535905,
+    "mae": 32.089604674807276,
+    "spearman": 0.5378780044078446
+   },
+   "CV": {
+    "rmse": 65.06297618269944,
+    "mae": 31.922149869539446,
+    "spearman": 0.5413554827261163
+   },
+   "B1": {
+    "rmse": 72.0577237343701,
+    "mae": 37.073369424253265,
+    "spearman": 0.47841662579052135
+   },
+   "B2": {
+    "rmse": 70.82863832646288,
+    "mae": 37.70223715552856,
+    "spearman": 0.500340562509668
+   },
+   "B3": {
+    "rmse": 74.05270671281141,
+    "mae": 36.89546865625631,
+    "spearman": 0.360074461548584
+   }
+  },
+  "WR": {
+   "n": 1943,
+   "OVS": {
+    "rmse": 63.395156925967086,
+    "mae": 32.796654468296644,
+    "spearman": 0.5784163804422946
+   },
+   "CV": {
+    "rmse": 64.1231493353382,
+    "mae": 33.2124984389089,
+    "spearman": 0.5797177035746186
+   },
+   "B1": {
+    "rmse": 68.57710579960684,
+    "mae": 37.144074999786795,
+    "spearman": 0.5138020111991116
+   },
+   "B2": {
+    "rmse": 66.22979522130235,
+    "mae": 36.0757629624152,
+    "spearman": 0.531374067714044
+   },
+   "B3": {
+    "rmse": 76.92522421267611,
+    "mae": 43.130739123107084,
+    "spearman": 0.3827509712303412
+   }
+  },
+  "TE": {
+   "n": 1039,
+   "OVS": {
+    "rmse": 49.762585664003716,
+    "mae": 19.75166954003784,
+    "spearman": 0.4384871276280514
+   },
+   "CV": {
+    "rmse": 49.373823701894835,
+    "mae": 19.498937506320182,
+    "spearman": 0.4491288625087981
+   },
+   "B1": {
+    "rmse": 53.16273020024178,
+    "mae": 23.591666580330923,
+    "spearman": 0.3681364272486732
+   },
+   "B2": {
+    "rmse": 52.56614213882913,
+    "mae": 22.39969243934873,
+    "spearman": 0.3918515718091191
+   },
+   "B3": {
+    "rmse": 61.16432015547444,
+    "mae": 25.670420741223403,
+    "spearman": 0.20725976057227966
+   }
+  },
+  "cy0": {
+   "n": 632,
+   "OVS": {
+    "rmse": 87.37261603281894,
+    "mae": 41.33898812515017,
+    "spearman": 0.524231155637605
+   },
+   "CV": {
+    "rmse": 87.35985766486965,
+    "mae": 41.07402785601266,
+    "spearman": 0.5310452650242045
+   },
+   "B1": {
+    "rmse": 98.12327999068589,
+    "mae": 55.01145556348427,
+    "spearman": 0.1510177206994674
+   },
+   "B2": {
+    "rmse": 97.70102920698606,
+    "mae": 56.09766774513743,
+    "spearman": 0.16613036406819776
+   },
+   "B3": {
+    "rmse": 84.26847580277885,
+    "mae": 41.81576594384964,
+    "spearman": 0.5023486150459099
+   }
+  },
+  "cy1": {
+   "n": 750,
+   "OVS": {
+    "rmse": 78.45193225811327,
+    "mae": 38.68052665964442,
+    "spearman": 0.5524488976219087
+   },
+   "CV": {
+    "rmse": 78.4074198709768,
+    "mae": 38.84274340915556,
+    "spearman": 0.5591159847577826
+   },
+   "B1": {
+    "rmse": 83.46760112647283,
+    "mae": 37.16833772353324,
+    "spearman": 0.4580043111755593
+   },
+   "B2": {
+    "rmse": 82.34486630719253,
+    "mae": 43.77636593564364,
+    "spearman": 0.48157704876559804
+   },
+   "B3": {
+    "rmse": 86.25535518764187,
+    "mae": 42.096731536689134,
+    "spearman": 0.4781017690417816
+   }
+  },
+  "cy2": {
+   "n": 756,
+   "OVS": {
+    "rmse": 71.24470821858557,
+    "mae": 37.03311011183984,
+    "spearman": 0.5537593081136934
+   },
+   "CV": {
+    "rmse": 71.35947028973725,
+    "mae": 35.83388762671958,
+    "spearman": 0.5644214064851004
+   },
+   "B1": {
+    "rmse": 73.2892309954269,
+    "mae": 34.13104101745791,
+    "spearman": 0.5324944341376804
+   },
+   "B2": {
+    "rmse": 74.10338969096853,
+    "mae": 39.48117460459739,
+    "spearman": 0.5346698239383902
+   },
+   "B3": {
+    "rmse": 83.96350917853323,
+    "mae": 41.860613870756985,
+    "spearman": 0.4198173198243535
+   }
+  },
+  "cy3-5": {
+   "n": 1662,
+   "OVS": {
+    "rmse": 68.99472503438625,
+    "mae": 32.86089465662678,
+    "spearman": 0.5699393423677657
+   },
+   "CV": {
+    "rmse": 70.58868036563777,
+    "mae": 33.53764018973125,
+    "spearman": 0.5677076275396996
+   },
+   "B1": {
+    "rmse": 69.80610802483784,
+    "mae": 35.33964616172734,
+    "spearman": 0.5559122206592634
+   },
+   "B2": {
+    "rmse": 71.03308623636079,
+    "mae": 35.793605466129776,
+    "spearman": 0.541500239471418
+   },
+   "B3": {
+    "rmse": 88.44100310345308,
+    "mae": 43.19742104606201,
+    "spearman": 0.31802487629072823
+   }
+  },
+  "cy6+": {
+   "n": 1325,
+   "OVS": {
+    "rmse": 65.53200620029824,
+    "mae": 32.96270692344974,
+    "spearman": 0.6016940315314244
+   },
+   "CV": {
+    "rmse": 66.72503996984463,
+    "mae": 33.88332185474214,
+    "spearman": 0.59956679581231
+   },
+   "B1": {
+    "rmse": 77.85806178846579,
+    "mae": 48.2645256446574,
+    "spearman": 0.5873133171437319
+   },
+   "B2": {
+    "rmse": 72.02213646297848,
+    "mae": 38.12923306713694,
+    "spearman": 0.5884549042155548
+   },
+   "B3": {
+    "rmse": 82.54507975903206,
+    "mae": 50.360702057003124,
+    "spearman": 0.2802904142745439
+   }
+  }
+ },
+ "current_players": {
+  "top25": [
+   {
+    "name": "Josh Allen",
+    "pos": "QB",
+    "kind": "V",
+    "age": 29.3,
+    "value": 10000,
+    "rank": 1
+   },
+   {
+    "name": "Lamar Jackson",
+    "pos": "QB",
+    "kind": "V",
+    "age": 28.7,
+    "value": 9984,
+    "rank": 2
+   },
+   {
+    "name": "Baker Mayfield",
+    "pos": "QB",
+    "kind": "V",
+    "age": 30.4,
+    "value": 9735,
+    "rank": 3
+   },
+   {
+    "name": "Bo Nix",
+    "pos": "QB",
+    "kind": "V",
+    "age": 25.5,
+    "value": 8979,
+    "rank": 4
+   },
+   {
+    "name": "Jahmyr Gibbs",
+    "pos": "RB",
+    "kind": "V",
+    "age": 23.5,
+    "value": 8934,
+    "rank": 5
+   },
+   {
+    "name": "Jared Goff",
+    "pos": "QB",
+    "kind": "V",
+    "age": 30.9,
+    "value": 8758,
+    "rank": 6
+   },
+   {
+    "name": "Patrick Mahomes",
+    "pos": "QB",
+    "kind": "V",
+    "age": 30.0,
+    "value": 8755,
+    "rank": 7
+   },
+   {
+    "name": "Bijan Robinson",
+    "pos": "RB",
+    "kind": "V",
+    "age": 23.6,
+    "value": 8730,
+    "rank": 8
+   },
+   {
+    "name": "Jalen Hurts",
+    "pos": "QB",
+    "kind": "V",
+    "age": 27.1,
+    "value": 8605,
+    "rank": 9
+   },
+   {
+    "name": "Drake Maye",
+    "pos": "QB",
+    "kind": "V",
+    "age": 23.0,
+    "value": 8442,
+    "rank": 10
+   },
+   {
+    "name": "Jaxson Dart",
+    "pos": "QB",
+    "kind": "V",
+    "age": 22.3,
+    "value": 8249,
+    "rank": 11
+   },
+   {
+    "name": "Amon-Ra St. Brown",
+    "pos": "WR",
+    "kind": "V",
+    "age": 25.9,
+    "value": 8192,
+    "rank": 12
+   },
+   {
+    "name": "De'Von Achane",
+    "pos": "RB",
+    "kind": "V",
+    "age": 23.9,
+    "value": 8061,
+    "rank": 13
+   },
+   {
+    "name": "Ja'Marr Chase",
+    "pos": "WR",
+    "kind": "V",
+    "age": 25.5,
+    "value": 8058,
+    "rank": 14
+   },
+   {
+    "name": "Trevor Lawrence",
+    "pos": "QB",
+    "kind": "V",
+    "age": 25.9,
+    "value": 7940,
+    "rank": 15
+   },
+   {
+    "name": "Jaxon Smith-Njigba",
+    "pos": "WR",
+    "kind": "V",
+    "age": 23.6,
+    "value": 7675,
+    "rank": 16
+   },
+   {
+    "name": "Puka Nacua",
+    "pos": "WR",
+    "kind": "V",
+    "age": 24.3,
+    "value": 7564,
+    "rank": 17
+   },
+   {
+    "name": "Dak Prescott",
+    "pos": "QB",
+    "kind": "V",
+    "age": 32.1,
+    "value": 7488,
+    "rank": 18
+   },
+   {
+    "name": "Caleb Williams",
+    "pos": "QB",
+    "kind": "V",
+    "age": 23.8,
+    "value": 7434,
+    "rank": 19
+   },
+   {
+    "name": "Trey McBride",
+    "pos": "TE",
+    "kind": "V",
+    "age": 25.8,
+    "value": 6983,
+    "rank": 20
+   },
+   {
+    "name": "Rashee Rice",
+    "pos": "WR",
+    "kind": "V",
+    "age": 25.4,
+    "value": 6944,
+    "rank": 21
+   },
+   {
+    "name": "Justin Herbert",
+    "pos": "QB",
+    "kind": "V",
+    "age": 27.5,
+    "value": 6777,
+    "rank": 22
+   },
+   {
+    "name": "Jeremiyah Love",
+    "pos": "RB",
+    "kind": "R0",
+    "age": 21.3,
+    "value": 6724,
+    "rank": 23
+   },
+   {
+    "name": "Ashton Jeanty",
+    "pos": "RB",
+    "kind": "V",
+    "age": 21.8,
+    "value": 6657,
+    "rank": 24
+   },
+   {
+    "name": "CeeDee Lamb",
+    "pos": "WR",
+    "kind": "V",
+    "age": 26.4,
+    "value": 6418,
+    "rank": 25
+   }
+  ],
+  "named": [
+   {
+    "name": "Marvin Harrison Jr.",
+    "pos": "WR",
+    "kind": "V",
+    "age": 23.1,
+    "value": 1804,
+    "rank": 97
+   },
+   {
+    "name": "Makai Lemon",
+    "pos": "WR",
+    "kind": "R0",
+    "age": 22.3,
+    "value": 2130,
+    "rank": 84
+   },
+   {
+    "name": "CeeDee Lamb",
+    "pos": "WR",
+    "kind": "V",
+    "age": 26.4,
+    "value": 6418,
+    "rank": 25
+   },
+   {
+    "name": "Javonte Williams",
+    "pos": "RB",
+    "kind": "V",
+    "age": 25.4,
+    "value": 1924,
+    "rank": 92
+   },
+   {
+    "name": "Caleb Williams",
+    "pos": "QB",
+    "kind": "V",
+    "age": 23.8,
+    "value": 7434,
+    "rank": 19
+   },
+   {
+    "name": "Brock Bowers",
+    "pos": "TE",
+    "kind": "V",
+    "age": 22.7,
+    "value": 4004,
+    "rank": 50
+   },
+   {
+    "name": "Tua Tagovailoa",
+    "pos": "QB",
+    "kind": "V",
+    "age": 27.5,
+    "value": 5070,
+    "rank": 37
+   },
+   {
+    "name": "Zay Flowers",
+    "pos": "WR",
+    "kind": "V",
+    "age": 25.0,
+    "value": 3126,
+    "rank": 61
+   },
+   {
+    "name": "Michael Penix Jr.",
+    "pos": "QB",
+    "kind": "V",
+    "age": 25.3,
+    "value": 1095,
+    "rank": 143
+   },
+   {
+    "name": "Jadarian Price",
+    "pos": "RB",
+    "kind": "R0",
+    "age": 22.9,
+    "value": 3955,
+    "rank": 52
+   },
+   {
+    "name": "Jaxson Dart",
+    "pos": "QB",
+    "kind": "V",
+    "age": 22.3,
+    "value": 8249,
+    "rank": 11
+   },
+   {
+    "name": "Luther Burden III",
+    "pos": "WR",
+    "kind": "V",
+    "age": 21.7,
+    "value": 2702,
+    "rank": 75
+   },
+   {
+    "name": "De'Zhaun Stribling",
+    "pos": "WR",
+    "kind": "R0",
+    "age": 23.7,
+    "value": 2085,
+    "rank": 86
+   }
+  ],
+  "n_scored": 698
+ }
+}

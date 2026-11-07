@@ -2,7 +2,7 @@
 
 **Drafted:** 7 November 2026, before any result exists. **Status: LOCKED (see lock commit below).**
 Locked by committing this document with `study/own_value_scale.py` and `study/test_own_value_scale.py` before the
-confirmatory run. Lock commit: _(recorded at lock)_. Any change after that is an amendment (§12), never a silent edit.
+confirmatory run. **Lock commit: `63c80df`.** Any change after that is an amendment (§12), never a silent edit.
 
 ---
 
@@ -185,3 +185,45 @@ real outcome before the lock.
 Reading: no false passes on noise; ample power at w = 0.75. A small edge shows up in trade calls well before it clears
 the 2% bar on players, so the trade question is the more sensitive one. Permutations here used 1,000 shuffles; the
 confirmatory run uses 10,000. Saved: `study/out/own_value_scale_crash.json`.
+
+## 13. Results (Confirmatory Run, 7 Nov 2026, Once, After Lock `63c80df`)
+
+**Q1 — Players: PASS.** 5,125 test snapshots from 1,643 players. Typical miss (RMSE, FV5 points):
+OVS 72.4 vs B2 77.2, **6.2% smaller**, p < 0.001 (no shuffle of 10,000 matched it).
+
+**Q2 — Trades: PASS.** 19,075 trades kept (4,925 dropped because both sides produced exactly the
+same, usually nothing). OVS called **59.9%** right, B2 47.5%: **+12.4 points**, p < 0.001.
+
+**How to read the trade rates.** Trades were picked to be close on the average of the two methods, so wherever the two
+disagree one must be right and the other wrong. That pushes the two rates apart and can leave the weaker method below
+50%. The selection treats both methods the same (in the noise world B2 came out ahead), so the gap is the fair measure;
+the absolute rates describe these hand-picked close trades, not trades in general.
+
+| Trades | Kept | OVS Right | B2 Right |
+|---|---|---|---|
+| One-for-one | 8,349 | 59.6% | 47.0% |
+| Two-for-one | 10,726 | 60.1% | 47.9% |
+| Young (years 0–2) vs old (year 5+) | 5,522 | 59.3% | 47.9% |
+| With an incoming rookie | 5,950 | 62.2% | 41.9% |
+
+**How sure a call should sound (OVS):**
+
+| OVS Says The Bigger Side Is | Trades | Bigger Side Actually Produced More |
+|---|---|---|
+| 1.00–1.10× bigger | 3,606 | 50% |
+| 1.10–1.25× bigger | 4,442 | 56% |
+| 1.25–1.50× bigger | 4,867 | 60% |
+| 1.50×+ bigger | 6,160 | 69% |
+
+Under 10% apart is a coin flip; the calculator should call those even.
+
+**By group (RMSE, lower is better):** QB OVS 123.2 vs B2 131.6; RB 64.9 vs 70.8; WR 63.4 vs
+66.2; TE 49.8 vs 52.6. OVS beat B2 at every position and every career year. **Incoming rookies:** draft-slot
+bands (B3) still beat OVS (84.3 vs 87.4), as on 1 Nov; the picks follow-up (§11) should start from that.
+The 1 Nov recipe (CV) scored 73.2: the adopted recipe is a little better (72.4).
+
+**Today's players** (snapshots after the 2025 season, nothing from 2026): see `study/out/own_value_scale_results.json`,
+`current_players`. The 12-team superflex lines put quarterbacks at the top (Allen 10,000, Lamar 9,984).
+
+**Verdict (§10 row 1):** OVS can become the Trade Calc's value, with Steve's OK, once picks (§11) are valued.
+
