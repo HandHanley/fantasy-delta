@@ -159,5 +159,57 @@ value fixed it (20 runs: range about 0.44 wide, typical R 1.03). That trial used
   "within roughly ±25%", not "exactly fair".
 
 **After lock**
+- **A4 (7 Nov), report-only bug.** The first confirmatory run stopped before printing anything: the 1.01's range
+  resampled each class's 36 picks, and a resample can miss that class's single 1.01. Fixed by resampling the eight
+  1.01s among themselves. Nothing that decides was touched; the deciding numbers are seeded, so the rerun is the same
+  run. No result was seen before the fix.
 
-_None yet._
+## 12. Results (7 Nov 2026, Run Once)
+
+`study/out/pick_values_results.json`. All 279 picks scored, every one on the ±10% window (none needed ±20%).
+
+**The deciding number: R = 1.39, 95% range 1.12 to 1.78. The range excludes 1.0, so by the rule every pick value is
+multiplied by 1.39.** Picks went on to produce 39% more than veterans the ruler valued the same.
+
+| Pick | Picks | Five-Season Value | On The Ruler (×1.39) | Range |
+|---|---|---|---|---|
+| 1.01 alone | 8 | 273.5 | 11,236 | 6,631–15,945 |
+| Early 1st (1.01–1.04) | 32 | 179.3 | 7,368 | 5,077–9,843 |
+| Mid 1st | 32 | 123.8 | 5,088 | 3,190–7,045 |
+| Late 1st | 32 | 99.9 | 4,105 | 2,388–6,214 |
+| 2nd | 96 | 64.6 | 2,653 | 1,781–3,635 |
+| 3rd | 87 | 38.8 | 1,595 | 938–2,426 |
+
+Conventions (§4): a 1st with its slot unknown 5,520; a year out 4,968. A year out: Early 1st 6,631, Mid 4,579,
+Late 3,695, 2nd 2,387, 3rd 1,435.
+
+**Reported, deciding nothing (R, with range):**
+
+| Group | Picks | R | Range |
+|---|---|---|---|
+| Early 1st | 32 | 1.08 | 0.88–1.75 |
+| Mid 1st | 32 | 1.33 | 0.96–2.11 |
+| Late 1st | 32 | 1.28 | 0.92–2.31 |
+| 2nd | 96 | 1.71 | 0.99–2.89 |
+| 3rd | 87 | 1.92 | 1.11–3.47 |
+| QB picks | 33 | **4.28** | 1.96–6.11 |
+| RB/WR/TE picks | 246 | 1.15 | 0.91–1.56 |
+| Classes 2014–2017 | 142 | 1.53 | 1.06–2.31 |
+| Classes 2018–2021 | 137 | 1.27 | 0.90–1.85 |
+
+**Riskiness:** a pick out-produced a veteran of the same value in **55%** of one-for-one pairs, even though 45% of
+picks produced nothing above the replacement line in five seasons.
+
+**Exploratory, after the result (not pre-registered).** Why R is above 1, from two plain checks:
+- *Veterans read high.* Across the pick range (five-season value 40–180), veterans produced 57–83% of their OVS value.
+  OVS was tested on *ranking* players against each other, where a level that's uniformly high doesn't matter. Next to
+  picks, whose values are fresh averages, it does.
+- *Quarterback picks.* QB picks produced 2.2× their tier's average; RB 0.87, WR 0.90, TE 0.46. The draft order is
+  1QB; the scoring is superflex. In a superflex rookie draft those QBs go earlier, so this part of the tilt is the
+  order's limitation (§8), not something one multiplier fixes well.
+
+**What this means.** The locked rule holds: picks on the ruler at their tier value × 1.39. Two flags for Steve's OK
+(§9): (1) the 1.01 alone lands above the ruler's 10,000 (11,236, eight picks, very wide range), so the calculator
+should price it as an Early 1st unless Steve wants a separate line; (2) for RB/WR/TE picks alone R was 1.15 and its
+range included 1.0, so the 1.39 is pulled up by quarterbacks — a superflex rookie-draft order (§10, not licensed
+here) is the proper fix and the next study if this goes in the calculator.

@@ -191,17 +191,19 @@ def ruler(picks, y, top, R_fix=1.0, n_boot=BOOT, seed=SEED):
     """Tier values from all eight classes on the 0-10,000 ruler, with resampled ranges."""
     rng = np.random.default_rng(seed + 1)
     by_cls = {c: np.where(picks['cls'] == c)[0] for c in CLASSES}
-    def vals(w):
+    s1 = np.where(picks['slot'] == 1)[0]
+    def vals(w, w1):
         t = [float((w * y)[picks['tier'] == k].sum() / w[picks['tier'] == k].sum()) for k in range(len(TIERS))]
-        s1 = picks['slot'] == 1
-        return t + [float((w * y)[s1].sum() / w[s1].sum())]
-    base = vals(np.ones(len(y)))
+        return t + [float((w1 * y[s1]).sum() / w1.sum())]
+    base = vals(np.ones(len(y)), np.ones(len(s1)))
     bs = []
     for _ in range(n_boot):
         wp = np.zeros(len(y))
         for c, ix in by_cls.items():
             np.add.at(wp, rng.choice(ix, len(ix)), 1.0)
-        bs.append(vals(wp))
+        # post-lock A1: the 1.01s are resampled among themselves (a class's 36 can miss its single 1.01)
+        w1 = np.bincount(rng.integers(0, len(s1), len(s1)), minlength=len(s1)).astype(float)
+        bs.append(vals(wp, w1))
     bs = np.array(bs)
     sc = lambda x: round(10000 * R_fix * x / top)
     names = TIERS + ['1.01 alone']
