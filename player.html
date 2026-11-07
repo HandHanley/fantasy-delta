@@ -128,7 +128,9 @@ a:hover{text-decoration:underline}
 .hc-v{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--paper)}
 .hc-n{font-family:var(--mono);font-size:13px;color:var(--fog)}
 .hc-r{text-align:right}
-.hc-exh,.hc-rows{display:grid;grid-template-columns:minmax(0,1fr) 48px 56px;column-gap:8px}
+.hc-exh,.hc-rows{display:grid;grid-template-columns:minmax(0,1fr) 100px 44px;column-gap:8px}
+.hc-exh span{white-space:nowrap}
+@media(max-width:359px){.hc-exh,.hc-rows{grid-template-columns:minmax(0,1fr) 64px 44px}.hc-exh span{white-space:normal}}   /* the smallest phones: the heading wraps, names keep their room */
 .hc-exh{padding:0 0 8px 16px;font-size:12px;font-weight:700;color:var(--fog)}
 .hc-grp{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
 .hc-gl{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--fog)}
@@ -512,7 +514,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <!-- BUILD MARKER for player.html. Bump on every upload of this file. dlBuildStamp()
          below appends delta-engine.js's DL_BUILD when the two differ, the same pairing
          index.html uses. -->
-    <span class="foot-build">2026-11-07b</span>
+    <span class="foot-build">2026-11-07c</span>
   </footer>
 </div>
 <script src="delta-engine.js"></script>
@@ -1404,9 +1406,13 @@ function hcHTML(r) {
   const matched = '<div class="hc-box"><span class="hc-bh">Matched On · ' + (rookie ? 'At The Draft' : 'As Of The End Of Last Season') + '</span>'
     + '<span></span><span class="hc-h hc-r">Him</span><span class="hc-h hc-r">Matches</span>'
     + rows.map(x => '<span class="hc-k">' + x[0] + '</span><span class="hc-v hc-r">' + x[1] + '</span><span class="hc-n hc-r">' + x[2] + '</span>').join('') + '</div>';
-  const ex = '<div class="hc-exh"><span>Examples</span><span class="hc-r">' + (rookie ? 'Class' : 'As Of') + '</span><span class="hc-r">Best</span></div>'
+  // Years Counted (owner, 7 Nov 2026): the three seasons each example's starter seasons come from, so a
+  // Jaylen Waddle with one doesn't read as his whole career. Veterans: the three after the matched season;
+  // rookies: his class year and the two after.
+  const span = y => { const a = rookie ? y : y + 1; return a + '–' + String(a + 2).slice(-2); };
+  const ex = '<div class="hc-exh"><span>Examples</span><span class="hc-r">Years Counted</span><span class="hc-r">Best</span></div>'
     + r.ex.map((g, i) => '<div class="hc-grp"><span class="hc-gl"><i style="background:' + COL[i] + '"></i>' + LAB[i] + '</span><div class="hc-rows">'
-      + (g.length ? g.map(x => '<span class="hc-nm">' + e(x[0]) + '</span><span class="hc-when hc-r">' + x[1] + '</span><span class="hc-best hc-r">' + (x[2] || '—') + '</span>').join('')
+      + (g.length ? g.map(x => '<span class="hc-nm">' + e(x[0]) + '</span><span class="hc-when hc-r">' + span(x[1]) + '</span><span class="hc-best hc-r">' + (x[2] || '—') + '</span>').join('')
         : '<span class="hc-when">None</span><span></span><span></span>') + '</div></div>').join('');
   const foot = 'Based on ' + r.n + ' past ' + (rookie ? 'rookies · ' + r.s[0] + '–' + r.s[1] + ' draft classes' : 'players · ' + r.s[0] + '–' + r.s[1] + ' seasons')
     + ' · Best = his best finish in those three seasons';
