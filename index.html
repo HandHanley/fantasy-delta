@@ -154,6 +154,15 @@ tr:hover td{background:var(--panel)}
   box-shadow:0 14px 34px rgba(0,0,0,.55)}
 .drop-item{padding:8px 11px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
 .drop-item:last-child{border-bottom:none}
+/* Header search results (7 Nov 2026, owner: hard to see on a phone): 48px rows, names at 16px, the five
+   text sizes, a clear edge. Glass makes the box solid (delta-looks.css), so the page never shows through. */
+#deck-drop{border:1px solid var(--line);border-radius:14px !important}
+#deck-drop .drop-item{min-height:48px;padding:10px 14px;align-items:center;box-sizing:border-box}
+.dd-sr-nm{font-size:16px;font-weight:700;color:var(--paper)}
+.dd-sr-meta{font-size:13px;color:var(--fog);white-space:nowrap}
+.dd-sr-sub{display:block;font-size:13px;color:var(--fog);margin-top:2px}   /* position and team always on their own line */
+.dd-sr-call{font-size:13px;font-weight:700}
+.dd-sr-cfb{font-size:12px;font-weight:700;color:var(--teal-br);border:1px solid var(--teal-br);border-radius:4px;padding:0 4px;margin-left:8px}
 .drop-item:hover{background:var(--row-hi)}
 .added{display:flex;align-items:flex-start;gap:8px;padding:9px 13px;background:transparent;
   border-radius:0;margin-bottom:0;border-top:1px solid var(--line)}
@@ -2631,7 +2640,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <span class="dl-search-ico">⌕</span>
     <div id="deck-drop" style="display:none;position:absolute;top:100%;left:0;right:0;
       border-radius:8px;z-index:50;
-      max-height:240px;overflow-y:auto;margin-top:3px;box-shadow:0 10px 28px rgba(0,0,0,.55)">
+      max-height:min(60vh,520px);overflow-y:auto;margin-top:6px;box-shadow:0 14px 36px rgba(0,0,0,.6)">
     </div>
   </div>
 </div>
@@ -7760,10 +7769,10 @@ function deckSearchInput(){
     return `<div class="drop-item" data-cfb="${c.n.replace(/"/g,'&quot;')}"
       onclick="deckSearchSelectCfb(this.dataset.cfb)"
       style="display:flex;justify-content:space-between;align-items:center">
-      <div><span style="font-weight:600;font-size:12px">${c.n}</span>
-        <span style="font-size:9px;font-weight:700;color:var(--teal-br);border:1px solid var(--teal-br);border-radius:3px;padding:0 3px;margin-left:5px">CFB</span>
-        <span style="font-size:10px;color:var(--fog-2);margin-left:5px">${c.pos} \u00b7 ${c.tm||''}</span></div>
-      <span style="font-size:10px;color:var(--fog-2)">${yds} yds</span></div>`;
+      <div><span class="dd-sr-nm">${c.n}</span>
+        <span class="dd-sr-cfb">CFB</span>
+        <span class="dd-sr-sub">${c.pos} \u00b7 ${c.tm||''}</span></div>
+      <span class="dd-sr-meta">${yds} yds</span></div>`;
   }).join('');
   drop.innerHTML=matches.map((p,i)=>{
     // The call comes from vTag(), like everywhere else (22 Oct 2026). This used to work out its
@@ -7771,16 +7780,16 @@ function deckSearchInput(){
     const vt=(vTag(p).match(/>([a-z ]+)</)||[,''])[1];
     const dotColor=/buy/.test(vt)?'var(--emerald)':/sell/.test(vt)?'var(--coral)':'var(--topaz)';
     const dotLabel=/buy/.test(vt)?'Buy':/sell/.test(vt)?'Sell':'Hold';
-    const dot=`<span style="font-size:9px;font-weight:700;color:${dotColor}">${dotLabel}</span>`;
+    const dot=`<span class="dd-sr-call" style="color:${dotColor}">${dotLabel}</span>`;
     return`<div class="drop-item" data-name="${p.n}" data-idx="${i}"
       onclick="deckSearchSelect(this.dataset.name)"
       style="display:flex;justify-content:space-between;align-items:center">
       <div>
-        <span style="font-weight:600;font-size:12px">${p.n}</span>
-        <span style="font-size:10px;color:var(--fog);margin-left:6px">${p.pos} · ${p.t}</span>
+        <span class="dd-sr-nm">${p.n}</span>
+        <span class="dd-sr-sub">${p.pos} · ${p.t}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;font-size:10px">
-        <span style="color:var(--fog)">Mkt ${p.ktcEff.toLocaleString()}</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="dd-sr-meta">Mkt ${p.ktcEff.toLocaleString()}</span>
         <span>${dot}</span>
       </div>
     </div>`;
@@ -8608,7 +8617,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-07b</span>
+  <span class="foot-build">2026-11-07c</span>
 </footer>
 
 

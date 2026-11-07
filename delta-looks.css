@@ -77,6 +77,8 @@ html[data-look="glass"] :is(#settings-pop,.dd-card,.about-card,.dl-ap-sheet,.dl-
   -webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);border-color:var(--g-edge);
 }
 html[data-look="glass"] :is(.dd-card,.about-card){background-color:rgba(20,27,40,.80);border-radius:24px}
+/* Header search results: solid, so the pills under it never show through (owner, 7 Nov 2026). */
+html[data-look="glass"] #deck-drop{background-color:var(--g-solid) !important;border-color:var(--g-edge) !important;box-shadow:0 16px 40px rgba(0,0,0,.6) !important}
 html[data-look="glass"] #settings-pop{background-color:rgba(20,27,40,.86) !important;border-radius:18px !important}
 html[data-look="glass"] :is(#dd-actbar,.dd-actbar){background-color:rgba(20,27,40,.72)}
 html[data-look="glass"] [data-tip]::after{background:rgba(20,27,40,.92);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
