@@ -2025,6 +2025,7 @@ tr.dl-fa-det td{background:var(--ink-2);border-top:0}
     transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
   .dd-overlay.open .dd-card{transform:translateY(0)}
   .dd-card.dd-dragging{transition:none}
+  .dd-card,#cfb-card{overscroll-behavior:contain}   /* the page behind never takes the card's pull */
   #cfb-overlay{align-items:flex-end;justify-content:stretch;padding:0;overflow:hidden}
   #cfb-card{max-width:none !important;width:100%;border-radius:18px 18px 0 0;border-bottom:0;
     max-height:calc(100% - 44px - env(safe-area-inset-top,0px));
@@ -7309,11 +7310,18 @@ function closeDeckNow(){
     if(!onGrab&&!onTop) return;
     y0=e.touches[0].clientY; dy=0; t0=Date.now(); card.classList.add('dd-dragging');
   },{passive:true});
+  /* Not passive (7 Nov 2026, owner: in Glass, as a home-screen app, the sheet would not drag down). A passive
+     listener can't stop the phone's own scrolling, so iPhones started rubber-banding the card under the finger
+     and could take the gesture away mid-drag. Now, once the finger moves down, the drag owns it (preventDefault).
+     A finger that moves UP first is a scroll, so the drag lets go and the card scrolls as usual. */
   document.addEventListener('touchmove',e=>{
     if(y0==null||!card) return;
-    dy=Math.max(0,e.touches[0].clientY-y0);
+    const d=e.touches[0].clientY-y0;
+    if(dy===0&&d<0){ card.classList.remove('dd-dragging'); card.style.transform=''; y0=null; return; }
+    dy=Math.max(0,d);
+    if(e.cancelable) e.preventDefault();
     card.style.transform='translateY('+dy+'px)';
-  },{passive:true});
+  },{passive:false});
   const end=()=>{
     if(y0==null||!card) return;
     card.classList.remove('dd-dragging');
@@ -8600,7 +8608,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-07a</span>
+  <span class="foot-build">2026-11-07b</span>
 </footer>
 
 
