@@ -118,3 +118,52 @@ The boost per class; QB picks' R in the new order (expected to fall toward 1); s
 
   **PASS**, and order sanity passed. (A first crash run on the scarcity-math order also passed, 97 and 92 of 100; it
   was superseded by A1.) The sanity code checks the scarcity boost is above 1; the fitted boost (1.90) is too.
+
+## 11. Results (7 Nov 2026, Run Once)
+
+`study/out/pick_values_sf_results.json`. Boost 1.90 (fitted, §1).
+
+**The reality check passed (§4): our superflex order matched real superflex rookie rankings better than the 1QB order
+in both unseen years.** So by §8 these replace the formats study's superflex rows.
+
+| Class | Rookies Compared | Our Order vs Real Superflex | 1QB Order vs Real Superflex | Top Two QBs' Average Slot (Ours / 1QB / Real) |
+|---|---|---|---|---|
+| 2022 | 31 | 0.976 | 0.898 | 9.5 / 19.0 / 11.5 |
+| 2023 | 32 | 0.952 | 0.924 | 1.5 / 7.5 / 3.5 |
+
+Our order takes the top QBs about two slots *earlier* than real superflex rankings did, so real drafters are not
+reaching beyond the math; if anything the reverse (§7's worry ran the other way).
+
+**Pick values (each format's fix applied; each format's own ruler):**
+
+| Format | Fix (R) | 95% Range | Slots 1–4 | 5–8 | 9–12 | 13–24 | 25–36 | Before (1QB Order), 1–4 / 5–8 / 9–12 |
+|---|---|---|---|---|---|---|---|---|
+| 10-team Superflex Standard | ×1.47 | 1.10–1.80 | 7,314 | 5,664 | 5,321 | 2,250 | 1,476 | 7,497 / 5,004 / 3,888 |
+| 10-team Superflex Standard TE Premium | ×1.51 | 1.10–1.83 | 7,500 | 5,823 | 5,463 | 2,331 | 1,519 | 7,240 / 4,823 / 3,816 |
+| 10-team Superflex Half PPR | ×1.44 | 1.13–1.97 | 7,379 | 6,099 | 5,110 | 2,329 | 1,493 | 8,066 / 5,357 / 4,126 |
+| 10-team Superflex Half PPR TE Premium | ×1.57 | 1.17–2.02 | 8,041 | 6,666 | 5,571 | 2,570 | 1,640 | 8,010 / 5,308 / 4,153 |
+| 10-team Superflex Full PPR | ×1.52 | 1.18–2.02 | 7,278 | 5,939 | 5,302 | 2,360 | 1,500 | 7,392 / 4,997 / 3,731 |
+| 10-team Superflex Full PPR TE Premium | ×1.58 | 1.19–2.01 | 7,529 | 6,270 | 5,389 | 2,418 | 1,629 | 7,581 / 5,110 / 3,873 |
+| 12-team Superflex Standard | ×1.39 | 1.11–1.71 | 6,465 | 4,883 | 4,888 | 1,955 | 1,413 | 6,610 / 4,520 / 3,697 |
+| 12-team Superflex Standard TE Premium | ×1.42 | 1.13–1.72 | 6,611 | 5,495 | 4,500 | 2,178 | 1,281 | 6,618 / 4,516 / 3,718 |
+| 12-team Superflex Half PPR | ×1.52 | 1.12–1.80 | 7,594 | 6,386 | 5,366 | 2,570 | 1,531 | 7,047 / 4,878 / 3,872 |
+| 12-team Superflex Half PPR TE Premium | ×1.61 | 1.15–1.83 | 8,083 | 6,817 | 5,725 | 2,779 | 1,654 | 7,368 / 5,088 / 4,105 |
+| 12-team Superflex Full PPR | ×1.33 | 1.13–1.87 | 6,930 | 5,706 | 5,357 | 2,437 | 1,497 | 7,244 / 5,152 / 3,994 |
+| 12-team Superflex Full PPR TE Premium | ×1.47 | 1.11–1.79 | 7,620 | 6,582 | 5,609 | 2,965 | 1,391 | 7,557 / 5,359 / 4,209 |
+| 14-team Superflex Standard | ×1.27 | 1.08–1.64 | 5,605 | 4,142 | 4,416 | 1,854 | 1,066 | 6,224 / 4,234 / 3,904 |
+| 14-team Superflex Standard TE Premium | ×1.26 | 1.09–1.62 | 5,574 | 4,242 | 4,296 | 1,875 | 1,077 | 6,004 / 4,066 / 3,806 |
+| 14-team Superflex Half PPR | ×1.31 | 1.10–1.63 | 6,141 | 4,796 | 4,873 | 2,121 | 1,276 | 6,554 / 4,649 / 4,069 |
+| 14-team Superflex Half PPR TE Premium | ×1.41 | 1.10–1.63 | 6,627 | 5,195 | 5,262 | 2,534 | 1,147 | 6,497 / 4,595 / 4,063 |
+| 14-team Superflex Full PPR | ×1.37 | 1.11–1.66 | 6,916 | 5,665 | 5,521 | 2,710 | 1,311 | 6,760 / 4,900 / 4,138 |
+| 14-team Superflex Full PPR TE Premium | ×1.43 | 1.11–1.67 | 6,896 | 6,264 | 5,774 | 2,877 | 1,388 | 6,844 / 4,952 / 4,237 |
+
+**QB picks:** underpricing fell from ×2.86–4.70 (1QB order) to ×1.62–2.27. Better, not gone: even in
+a superflex order, rookie QBs went on to produce more than their draft spot's average.
+
+**Mid and Late 1st rise, 2nd and 3rd mostly fall:** quarterbacks now sit in the first round, so the first round is worth more.
+
+**Out of order in 5 formats:** slots 9–12 come out slightly above 5–8 (12-team Superflex Standard, 14-team Superflex Standard, 14-team Superflex Standard TE Premium, 14-team Superflex Half PPR, 14-team Superflex Half PPR TE Premium). Each range holds 32 picks,
+so this is noise; a calculator can't show a Late 1st above a Mid 1st. How to smooth it is Steve's call (not decided here).
+
+**What it allows (Steve's OK needed):** these superflex values in the Trade Calc in place of the 1QB-order ones; the
+1QB formats keep the formats study's values.
