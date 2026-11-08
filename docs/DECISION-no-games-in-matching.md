@@ -147,6 +147,47 @@ so those still count as missed. Short game-day inactives before 2009 can't be to
   job" signal, kept.
 - Today's page, rebuilt.
 
-### Results
+### Results (8 Nov 2026, Run Once)
 
-(Filled in after the one run.)
+`study/out/ovs_injury_games_results.json`. **Decision line: injury-neutral games in-season** (the fallback did not trigger).
+
+| Week 9 (6,808 rows) | Typical Miss | Close Trades Called Right |
+|---|---|---|
+| Injury-neutral vs with games | 48.07 vs 47.61 (**1.0% worse**) | 54.1% vs 56.9% (2.8 points worse) |
+| Injury-neutral vs no games | 48.07 vs 48.88 (**1.7% better**, p = 0.0007) | 57.8% vs 52.7% (5.1 points better) |
+
+Each comparison builds its own close trades, so the trade figures differ between rows. By position, injury-neutral vs
+with games: QB −0.3%, RB −1.6%, WR −1.5%, TE −0.5%. 1,455 rows have at least one week out hurt.
+
+**What each group went on to produce, as a share of its value:**
+
+| Group | With Games | No Games | Injury-Neutral |
+|---|---|---|---|
+| 2+ weeks out hurt (986 rows) | 99% | 81% | 69% |
+| 5 or fewer games, never hurt (3,176 rows) | 53% | 33% | 55% |
+
+- **Players who've been out hurt:** historically they produced less afterwards, and the old games count priced that in
+  almost exactly. They are now valued at what healthy comparables went on to do, about 45% above their own history. That
+  is the price of DELTA's rule, paid deliberately.
+- **Players short on games without being hurt:** the "does he have a job" signal is kept.
+
+**Today's page (week 9, full PPR, 12-team superflex):**
+
+| Player | Weeks Out Hurt | With Games | Injury-Neutral |
+|---|---|---|---|
+| Caleb Williams | 2 | 25 | **12** |
+| Zach Charbonnet | 7 | 346 | 220 |
+| Alec Pierce | 6 | 323 | 128 |
+| Jaxson Dart | 5 | 113 | 30 |
+| A.J. Brown | 4 | 161 | 203 |
+| Brock Bowers | 2 | 40 | 36 |
+
+- **Healthy players:** close to where they were with games (Maye 2, Burrow 9, Malik Willis 43, Goff 22, McBride 24).
+- **The bigger shifts in §4 came from somewhere else.** Without games, Maye was 10th, Willis 65th and TEs rose. Those
+  moves came from dropping games for healthy players, not from the injury fix.
+- **Position balance (average rank in the market top 150, market in brackets):** QB 48 (60), RB 88 (76), WR 74 (79),
+  TE 99 (90).
+- **Agreement with FantasyCalc:** 0.81 (with games 0.78).
+
+**Why A.J. Brown falls:** he has 3 games and 4 weeks out hurt, so he is now matched with healthy receivers on his
+production this season.

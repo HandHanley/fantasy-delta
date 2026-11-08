@@ -10,6 +10,7 @@ _ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], 
 _ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
 _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
+_ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
 _args = _ap.parse_args(); SP = _args.data
 C.HORIZON = 3
 import glob, os, comps_in_season as CI
@@ -57,6 +58,13 @@ C.POOL_LAG, C.SNAP_FIRST = I.LAG, I.FIRST_Y
 if _args.no_games:
     C.W_V['games'] = 0.0
     assert (DD.vet_weights('A', np.array([0.0, 50.0]), np.array([1, 5]))[:, 4] == 0).all()
+if _args.injury_games:
+    assert not _args.no_games
+    import injury_weeks as J
+    _inj = J.injured_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 9)
+    Sin['games_raw'] = Sin.games
+    Sin['games'], _add = J.neutral_games(Sin, _inj, 9)
+    Sin['out_hurt'] = _add
 pa = DD.neighbours(Sin, rows, 'A', pool_max_t=None)
 val = {}
 for r, nn in zip(pa['test'], pa['nn'][30]):
@@ -87,7 +95,8 @@ M['r_fc'] = M.mkt.rank(ascending=False, method='min').astype(int)
 M['r_dv'] = M.mv.rank(ascending=False, method='min').astype(int)
 M['r_wk9'] = M.val.rank(ascending=False, method='min').astype(int)
 M = M.merge(prev, on='n', how='left').merge(first, on='n', how='left')
-M['games26'] = [int(Sin.games.values[r]) for r in M.r]
+M['games26'] = [int((Sin.games_raw if 'games_raw' in Sin else Sin.games).values[r]) for r in M.r]
+M['out_hurt26'] = [int(Sin.out_hurt.values[r]) if 'out_hurt' in Sin else 0 for r in M.r]
 M['rookie'] = [bool(Sin.rookie_Y.values[r]) for r in M.r]
 M['age'] = [round(float(Sin.age.values[r]), 1) for r in M.r]
 T = M.sort_values('mkt', ascending=False).head(150)

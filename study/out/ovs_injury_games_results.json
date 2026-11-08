@@ -1,0 +1,84 @@
+{
+ "decision_doc": "docs/DECISION-no-games-in-matching.md \u00a75",
+ "week": 9,
+ "rows": 6808,
+ "injury_data": {
+  "reserve_weeks": 27858,
+  "report_weeks": 10523,
+  "report_only_weeks": 9666,
+  "older_format_seasons": [
+   2002,
+   2003,
+   2004,
+   2005,
+   2006,
+   2007,
+   2008,
+   2009,
+   2010,
+   2011,
+   2012,
+   2013,
+   2014,
+   2015
+  ],
+  "team_code_check": {
+   "reserve_rows": 46351,
+   "reserve_rows_on_a_club_week": 44113
+  }
+ },
+ "rows_with_weeks_out_hurt": 1455,
+ "J_vs_G": {
+  "rmse_a": 48.069966780327235,
+  "rmse_b": 47.60794638539464,
+  "change": -0.009704690708405073,
+  "p_a_better": 0.9977002299770023,
+  "trades_a": 0.5411154223738955,
+  "trades_b": 0.568650366976766,
+  "trades_diff": -0.027534944602870426
+ },
+ "J_vs_N": {
+  "rmse_a": 48.069966780327235,
+  "rmse_b": 48.87972651245391,
+  "change": 0.016566371989015893,
+  "p_a_better": 0.0006999300069993001,
+  "trades_a": 0.5777975299401198,
+  "trades_b": 0.5268291541916168,
+  "trades_diff": 0.05096837574850299
+ },
+ "by_position_J_vs_G": {
+  "QB": -0.0026799697561543656,
+  "RB": -0.016082133575797908,
+  "WR": -0.014573141743462026,
+  "TE": -0.0046046059492708125
+ },
+ "out_hurt_2plus": {
+  "G": {
+   "rows": 986,
+   "produced_over_predicted": 0.9884782402279096
+  },
+  "N": {
+   "rows": 986,
+   "produced_over_predicted": 0.8135390170002191
+  },
+  "J": {
+   "rows": 986,
+   "produced_over_predicted": 0.6925618280490915
+  }
+ },
+ "low_games_never_hurt": {
+  "G": {
+   "rows": 3176,
+   "produced_over_predicted": 0.5284809257161079
+  },
+  "N": {
+   "rows": 3176,
+   "produced_over_predicted": 0.3299399264514796
+  },
+  "J": {
+   "rows": 3176,
+   "produced_over_predicted": 0.552052620051256
+  }
+ },
+ "decision": "injury-neutral games in-season"
+}
