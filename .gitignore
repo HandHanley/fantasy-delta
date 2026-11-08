@@ -1,3 +1,7 @@
 
 # Built at deploy time from the raw college files (scripts/build-college-board.js); never committed
 data/college-board*.json
+
+# Local download cache and Python bytecode from study scripts; never committed
+data-cache/
+__pycache__/
