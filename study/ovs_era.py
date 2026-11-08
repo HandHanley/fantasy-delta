@@ -25,6 +25,8 @@ ALPHA = 0.05            # one deciding question (Q1); project rule
 TRADE_GUARD = -1.0      # Q2 point estimate may not be worse than this (points)
 N_PERM = 10_000
 MIN_GAMES = 8
+HORIZON = 3             # amendment A1 (Steve, 7 Nov): value = the next three seasons
+TEST = (2013, 2022)     # A1: three-season windows close sooner, so two more test seasons
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 
 
@@ -54,26 +56,39 @@ def era_prod(st, S):
 
 
 def setup(nflverse, rosters):
-    st, S, pre, nnA, W, counts = V.setup(nflverse, rosters)          # the locked OVS, unchanged
+    """The Own Value Scale's own setup (own_value_scale.setup), with the three-season outcome (A1)."""
+    C.HORIZON, C.POOL_LAG = HORIZON, HORIZON
+    V.TEST = TEST                                                    # the trade builder loops over V.TEST
+    st, dp, pl = C.load(nflverse, rosters)
+    S, counts = C.build(st, dp, pl, snap_last=TEST[1], extra_seasons=(2025,), check_complete=False)
+    S = S.reset_index(drop=True)
+    assert S[S.t <= TEST[1]].complete.all(), 'a snapshot has an unfinished three-season window'
+    rows = S.index[(S.t >= TEST[0]) & (S.t <= TEST[1])].values
+    pre = C.precompute(S, ks=(C.K_MAIN,), test_rows=rows)
+    pa = DD.neighbours(S, rows, 'A')
+    assert np.array_equal(pre['test'], pa['test'])
+    T = pre['test']
     S2 = S.copy()
     S2['prod'], lvl = era_prod(st, S)
     S2.loc[S2.kind == 'R0', 'prod'] = np.nan
-    T = pre['test']
-    pa = DD.neighbours(S2, T, 'A')
-    assert np.array_equal(pa['test'], T), 'era rows differ from the locked rows'
-    for r, nn in zip(T, pa['nn'][30]):
-        assert (S2.t.values[nn] <= S2.t.values[r] - 5).all(), 'pool leak'
-        assert S2.key.values[r] not in set(S2.key.values[nn]), 'self in pool'
-    W2 = []
-    for r, nn in zip(T, pa['nn'][30]):
-        w = 0.5 ** ((S2.t.values[r] - S2.t.values[nn]) / V.HALF_LIFE); W2.append(w / w.sum())
-    # rookies are untouched: their matches must be identical
+    pb = DD.neighbours(S2, T, 'A')
+    assert np.array_equal(pb['test'], T), 'era rows differ from the locked rows'
+    def weights(SS, nns):
+        out = []
+        for r, nn in zip(T, nns):
+            assert (SS.t.values[nn] <= SS.t.values[r] - HORIZON).all(), 'pool leak'
+            assert SS.key.values[r] not in set(SS.key.values[nn]), 'self in pool'
+            w = 0.5 ** ((SS.t.values[r] - SS.t.values[nn]) / V.HALF_LIFE); out.append(w / w.sum())
+        return out
+    nnA, nn2 = pa['nn'][30], pb['nn'][30]
+    W, W2 = weights(S, nnA), weights(S2, nn2)
     rk = S.kind.values[T] == 'R0'
-    same = [np.array_equal(a, b) for a, b, k in zip(nnA, pa['nn'][30], rk) if k]
+    same = [np.array_equal(a, b) for a, b, k in zip(nnA, nn2, rk) if k]
     assert all(same), 'rookie matches changed'
-    counts['rookie_rows_unchanged'] = int(len(same))
-    counts['starter_level_examples'] = {f'{p} {y}': round(lvl[(y, p)], 2) for p in C.POS for y in (2004, 2008, 2016, 2025)}
-    return st, S, S2, pre, nnA, W, pa['nn'][30], W2, counts
+    counts.update({'horizon': HORIZON, 'test_seasons': list(TEST), 'test_scored': int(len(T)),
+                   'test_players': int(len(set(S.key.values[T]))), 'rookie_rows_unchanged': int(len(same)),
+                   'starter_level_examples': {f'{p} {y}': round(lvl[(y, p)], 2) for p in C.POS for y in (2004, 2008, 2016, 2025)}})
+    return st, S, S2, pre, nnA, W, nn2, W2, counts
 
 
 def preds(nn, W, y):
@@ -98,7 +113,7 @@ def calibration(S, pre, p, y):
     T = pre['test']; v = S.kind.values[T] == 'V'
     out = {}
     for ps in C.POS:
-        m = v & (S.pos.values[T] == ps) & (p > 60)
+        m = v & (S.pos.values[T] == ps) & (p > 35)        # A1: three-season units
         out[ps] = {'n': int(m.sum()), 'produced_over_predicted': round(float(y[T][m].sum() / p[m].sum()), 3)}
     return out
 
@@ -149,11 +164,12 @@ def main():
         print('crash tests:', 'PASS' if res['noise']['ok'] and res['planted_0.75']['ok'] else 'FAIL')
         return
     pe, pl = preds(nn2, W2, y), preds(nnA, W, y)
-    locked = V.predictions(S, pre, nnA, W, y)['OVS']
-    assert np.allclose(pl, locked), 'locked OVS not reproduced'
+    P_all = V.predictions(S, pre, nnA, W, y)
+    assert np.allclose(pl, P_all['OVS']), 'locked OVS not reproduced'
     yt = y[T]
     res = {'prereg': 'docs/PREREG-ovs-era.md', 'counts': counts, 'Q1': q1(S, pre, pe, pl, yt), 'Q2': q2(S, pre, pe, pl, yt),
-           'calibration_era': calibration(S, pre, pe, y), 'calibration_locked': calibration(S, pre, pl, y)}
+           'calibration_era': calibration(S, pre, pe, y), 'calibration_locked': calibration(S, pre, pl, y),
+           'reported_vs_production_age': {'locked': V.q1(S, pre, pl, P_all['B2'], yt), 'era': V.q1(S, pre, pe, P_all['B2'], yt)}}
     res['decision'] = 'adopt era matching' if res['Q1']['pass'] and res['Q2']['guard_ok'] else 'keep locked matching'
     json.dump(res, open(os.path.join(OUT, 'ovs_era_results.json'), 'w'), indent=1, default=float)
     print(json.dumps({k: res[k] for k in ('Q1', 'Q2', 'calibration_era', 'calibration_locked', 'decision')}, indent=1, default=float))

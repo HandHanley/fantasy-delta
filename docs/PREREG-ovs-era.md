@@ -28,12 +28,12 @@ next five seasons at least 2% better than the current one?
   but of `(his points per game that season) ÷ (that season's starter level at his position that season)`. Same seasons
   counted, same games, same weights.
 - **Unchanged:** rookies (draft slot and age; their matches are asserted identical), age, games, draft slot (Version A),
-  career year, the matching weights, 30 matches, Fix 2 weights (half-life 8), the pool (`≤ t − 5`), the outcome (FV5,
-  12-team superflex lines), test seasons 2013–2020.
+  career year, the matching weights, 30 matches, Fix 2 weights (half-life 8), 12-team superflex lines. **Outcome, pool
+  and test seasons per amendment A1:** the next three seasons (FV3), pool `≤ t − 3`, test seasons 2013–2022.
 
 ## 2. The Questions
 
-- **Q1 (decides):** RMSE on FV5 of the era version vs the locked version, on the same 5,125 test snapshots. Paired
+- **Q1 (decides):** RMSE on FV3 (A1) of the era version vs the locked matching, on the same 6,484 test snapshots. Paired
   permutation test, 10,000 shuffles, a player's snapshots swapped together, one-sided. **Pass: lift ≥ 2% and p < 0.05**
   (DELTA's model-change rule; one deciding question).
 - **Q2 (guard):** the OVS study's synthetic trades, rebuilt from these two methods' predictions with the same rules and
@@ -89,6 +89,21 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 ## 9. Amendments
 
 **Before lock**
+- **A1 (7 Nov, Steve): value looks three seasons ahead, not five.** "We should be valuing at the next 2-3 years as our
+  North Star. That's the discipline we've used in different other areas of DELTA. Five years is too long." So, for both
+  versions: outcome FV3 = Σ 0.9^(k−1) × max(0, points − replacement line) over seasons t+1..t+3 (the same window as
+  Historical Comps); pool `≤ t − 3`; test seasons 2013–2022 (6,484 snapshots, 1,890 players); "valued above 60" in §3
+  becomes "above 35" (three-season units). Reported only: each version against production + age, since the Own Value
+  Scale's pass (6.2%) was measured on five seasons. The crash tests below were rerun on this outcome; the five-season
+  crash results are kept for the record. The preview below was on five seasons.
+- **Crash tests on three seasons (7 Nov, `study/out/ovs_era_crash.json`; the five-season run is in git history):**
+  noise world 0 of 20 (pass); planted w = 0.75 passed Q1 in only **96 of 200 (48%, bar 80%)**, typical lift 1.97%;
+  w = 0.6: 0 of 50. **FAIL.** Over three seasons the two versions differ less across all players, so even a clearly
+  better version shows about a 2% gain, on the bar. The change acts mostly on QBs: average change in prediction 17.4
+  on an average of 73 for veteran QBs, against 3–5 for RBs, WRs and TEs.
+- **Proposed A2, for Steve's decision (not adopted):** decide on veteran QBs (754 rows), where the fix acts. Pass: QB
+  lift ≥ 2%, p < 0.05, **and** all rows no more than 0.5% worse, **and** the trade guard. Its crash test, same worlds:
+  planted w = 0.75 passed **176 of 200 (88%)**, typical QB lift 4.3%; w = 0.6 passed 17 of 50; noise world 0 of 20.
 - **Crash tests (7 Nov, `study/out/ovs_era_crash.json`):** noise world passed Q1 in **0 of 20** (bar ≤ 1); planted
   w = 0.75 passed in **198 of 200** (bar 80%), typical lift 3.5%; w = 0.6 passed 26 of 50, typical lift 2.1%. **PASS.**
 - **Preview of today's values (7 Nov), disclosed.** Before asking for the OK to run, today's 2025 values were computed

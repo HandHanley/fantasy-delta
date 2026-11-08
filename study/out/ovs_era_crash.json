@@ -6,16 +6,16 @@
  },
  "planted_0.75": {
   "runs": 200,
-  "passed": 198,
-  "share": 0.99,
-  "median_lift": 0.034577823077613645,
-  "ok": true
+  "passed": 96,
+  "share": 0.48,
+  "median_lift": 0.019747305183872632,
+  "ok": false
  },
  "planted_0.6": {
   "runs": 50,
-  "passed": 26,
-  "share": 0.52,
-  "median_lift": 0.02098353979533868
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": 0.00840983471428014
  },
  "counts": {
   "excluded": {},
@@ -23,17 +23,21 @@
   "V_career_pre1999": 1128,
   "R0_age_imputed": 72,
   "snapshots": {
-   "R0": 1605,
-   "V": 10740
+   "R0": 1764,
+   "V": 11940
   },
   "test": {
    "R0": 632,
    "V": 4493
   },
-  "test_players": 1643,
-  "test_scored": 5125,
-  "test_excluded_lt10": 0,
-  "rookie_rows_unchanged": 632,
+  "test_players": 1890,
+  "horizon": 3,
+  "test_seasons": [
+   2013,
+   2022
+  ],
+  "test_scored": 6484,
+  "rookie_rows_unchanged": 791,
   "starter_level_examples": {
    "QB 2004": 15.09,
    "QB 2008": 14.36,
