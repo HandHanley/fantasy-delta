@@ -171,3 +171,7 @@ lower on superflex rulers because a superflex ruler's 10,000 is a quarterback wo
 
 **What it allows (Steve's OK needed):** this table as the Trade Calc's pick values by format. The superflex rows carry
 the 1QB-order caveat until a superflex order is built (next: a scarcity-based superflex order, its own plan).
+
+**Final table (7 Nov).** The Trade Calc's pick values for all 36 formats are in `study/out/pick_values_final.json`:
+1QB formats from this study, superflex formats from `docs/PREREG-superflex-pick-order.md` (which passed), with
+Steve's rule that a later pick is never worth more than an earlier one (no 1QB format needed it).

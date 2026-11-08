@@ -167,3 +167,11 @@ so this is noise; a calculator can't show a Late 1st above a Mid 1st. How to smo
 
 **What it allows (Steve's OK needed):** these superflex values in the Trade Calc in place of the 1QB-order ones; the
 1QB formats keep the formats study's values.
+
+**After results — display rule (Steve, 7 Nov).** A later pick is never worth more than an earlier one: if a later slot
+range comes out above an earlier one, the ranges are averaged (weighted by slots), repeated until the order holds.
+Applied to all 36 formats in `study/out/pick_values_final.json` (built by `study/build_pick_values_final.py`, which
+also keeps the measured values). It changed only the five superflex formats above, by at most 137 points:
+14-team Superflex Standard 1.05–1.12 both 4,279 (measured 4,142 and 4,416); 12-team Superflex Standard both 4,886;
+14-team Superflex Standard TE Premium 4,269; 14-team Superflex Half PPR 4,834; 14-team Superflex Half PPR TE Premium
+5,228. A display rule, not a model change: the measured values stay in the results.
