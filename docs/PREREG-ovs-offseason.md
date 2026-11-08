@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Own Value Scale: Offseason Changes
 
-**Drafted:** 8 November 2026. **Status: DRAFT, NOT LOCKED.** Steve: "Offseason changes. Draft it and run it."
+**Drafted:** 8 November 2026. **Status: LOCKED 8 Nov 2026 (amendment A1).** Steve: "Offseason changes. Draft it and run it."
 Locks by committing this document with `study/ovs_offseason.py` and its crash results; runs only if they pass.
 
 Follows `docs/PREREG-market-head-to-head.md` (8 Nov): at running back the market's late-summer order beat DELTA's
@@ -84,3 +84,8 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 passed 110 of 200 (55%), noise 0 of 20. Worse, because the features move running backs most.
 
 Per §6 this goes to Steve before any real result. Nothing has been run.
+
+**A1 (8 Nov, Steve: "Run it"), after hearing the crash result:** run under the RB rule as written, knowing the test
+catches a real 2.7%-sized gain about 77 times in 100. Read the result this way, decided now: **a pass counts** (the
+noise world never passed); **a fail is inconclusive**, not evidence the features don't help, and the test is repeated
+when the 2023 class's window closes (early 2027).
