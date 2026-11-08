@@ -1,0 +1,70 @@
+{
+ "decision_doc": "docs/DECISION-no-games-in-matching.md",
+ "preseason": {
+  "rows": 6484,
+  "rmse_with_games": 50.67694510419144,
+  "rmse_without": 50.536348249023796,
+  "change": 0.00277437511038936,
+  "p_better": 0.20517948205179481,
+  "by_position": {
+   "QB": 0.008725521760650667,
+   "RB": 0.002730133221251818,
+   "WR": -0.002072841107106038,
+   "TE": -0.004526190617451187
+  },
+  "trades": {
+   "n_trades": 23437,
+   "acc_era": 0.5462729871570593,
+   "acc_locked": 0.5533131373469301,
+   "diff": -0.0070401501898708085,
+   "p": 0.8232176782321767,
+   "guard_ok": true
+  },
+  "missed_time": {
+   "rows": 3203,
+   "produced_over_predicted_with_games": 0.8665071151448669,
+   "produced_over_predicted_without": 0.7876362046790558,
+   "rmse_change": 0.014882651174022765
+  },
+  "did_not_miss": {
+   "rows": 2490,
+   "produced_over_predicted_with_games": 0.9289016672759388,
+   "produced_over_predicted_without": 0.9561385921834479,
+   "rmse_change": 0.0009491959730878463
+  },
+  "veteran_rows_with_new_matches": 5692
+ },
+ "week9": {
+  "rows": 6808,
+  "rmse_with_games": 47.60794638539464,
+  "rmse_without": 48.87972651245391,
+  "change": -0.026713610302868007,
+  "p_better": 1.0,
+  "by_position": {
+   "QB": -0.038414190935748715,
+   "RB": -0.02308013166159073,
+   "WR": -0.023333437473856078,
+   "TE": -0.005581918802423758
+  },
+  "trades": {
+   "n_trades": 21246,
+   "acc_in_season": 0.5126612068154005,
+   "acc_baseline": 0.5813800244751953,
+   "diff": -0.06871881765979482,
+   "p": 1.0,
+   "guard_ok": false
+  },
+  "missed_time": {
+   "rows": 4216,
+   "produced_over_predicted_with_games": 0.7352282100280381,
+   "produced_over_predicted_without": 0.49563593405334627,
+   "rmse_change": -0.13845738427129928
+  },
+  "did_not_miss": {
+   "rows": 2592,
+   "produced_over_predicted_with_games": 0.9187612722038919,
+   "produced_over_predicted_without": 1.0562232311140285,
+   "rmse_change": -0.003677614383529537
+  }
+ }
+}

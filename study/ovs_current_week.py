@@ -9,6 +9,7 @@ _ap = argparse.ArgumentParser(); _ap.add_argument('--data', required=True, help=
 _ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], help='full = full PPR, no TE premium (display only; tested on half_tep)')
 _ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
 _ap.add_argument('--out', default='values_week9.json')
+_ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
 _args = _ap.parse_args(); SP = _args.data
 C.HORIZON = 3
 import glob, os, comps_in_season as CI
@@ -53,6 +54,9 @@ print('2026 weekly rows kept:', int((W.season == 2026).sum()), '| 2026 snapshots
 y = np.nan_to_num(Sin.FV.values.astype(float))
 rows = Sin.index[Sin.t == 2026].values
 C.POOL_LAG, C.SNAP_FIRST = I.LAG, I.FIRST_Y
+if _args.no_games:
+    C.W_V['games'] = 0.0
+    assert (DD.vet_weights('A', np.array([0.0, 50.0]), np.array([1, 5]))[:, 4] == 0).all()
 pa = DD.neighbours(Sin, rows, 'A', pool_max_t=None)
 val = {}
 for r, nn in zip(pa['test'], pa['nn'][30]):

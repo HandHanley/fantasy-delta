@@ -47,6 +47,53 @@ Test seasons 2013–2022, same rows as the adopted value. `study/ovs_no_games.py
 The adopted value's results are known. On 8 Nov the week-9 page was eye-tested and games played was suspected for Caleb
 Williams, A.J. Brown and Charbonnet. No without-games prediction has been compared with any outcome.
 
-## 4. Results
+## 4. Results (8 Nov 2026, Run Once)
 
-(Filled in after the one run.)
+`study/out/ovs_no_games_results.json`.
+
+| | Preseason (6,484 rows) | Week 9 (6,808 rows) |
+|---|---|---|
+| Typical miss, with games → without | 50.68 → 50.54 (**0.3% better**, p = 0.21) | 47.61 → 48.88 (**2.7% worse**) |
+| Close trades called right | 55.3% → 54.6% (0.7 points worse) | 58.1% → 51.3% (**6.9 points worse**) |
+| "Missed time" rows: produced ÷ predicted | 87% → 79% (3,203 rows, ≤ 10 games) | 74% → **50%** (4,216 rows, ≤ 5 games) |
+| Everyone else: produced ÷ predicted | 93% → 96% | 92% → 106% |
+
+By position, week 9: QB −3.8%, RB −2.3%, WR −2.3%, TE −0.6%. Preseason: QB +0.9%, RB +0.3%, WR −0.2%, TE −0.5%.
+
+**What it means.**
+
+- **Preseason:** removing games costs nothing.
+- **Week 9:** removing games costs a lot. Most of the "missed time" rows are not injured starters: 62% of all week-9
+  rows have five or fewer games, so they are mostly backups, cut players and practice-squad players. For them, "games so
+  far" carries a real message: he isn't on the field. With games removed, their values sit at twice what they went on
+  to produce.
+- **So in-season games does two jobs.** One is the injury penalty DELTA forbids. The other is a legitimate "does he have
+  a job" signal. Removing the column removes both.
+
+**Today's page (week 9, full PPR, 12-team superflex, without games):**
+
+- Agreement with FantasyCalc's top-150 order rises from 0.78 to 0.81.
+- Average rank by position (market in brackets): QB 57 (60), RB 87 (76), WR 71 (79), TE 96 (90). With games it was QB
+  57, RB 99, WR 88, TE 124.
+- Player moves:
+  - Caleb Williams 25 → 18
+  - Drake Maye 2 → 10
+  - Burrow 7 → 11
+  - Malik Willis 36 → 65
+  - Bowers 40 → 35
+  - McBride 22 → 25 and Goff 21 → 26, so McBride is now ahead
+  - A.J. Brown 161 → 240
+  - Charbonnet 346 → 222
+
+**Distinctness check (reported, deciding nothing).** Within position, among the market top 150:
+
+| Comparison | Rank agreement |
+|---|---|
+| New value vs FantasyCalc | 0.82 |
+| New value vs DELTA Score | 0.66 |
+| FantasyCalc vs DELTA Score | 0.73 |
+
+The new value sits closer to the market than to the DELTA Score, and further from the Score than the market itself is.
+
+**Next (Steve's call).** An injury-neutral version of games: weeks out hurt count as available; weeks cut, on the
+practice squad, a healthy scratch, suspended or off a roster still count as missed. Preseason stays without games.
