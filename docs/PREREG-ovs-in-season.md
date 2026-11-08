@@ -1,8 +1,7 @@
 # PRE-REGISTRATION — Own Value Scale: This Season's Games
 
-**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED — waits for `docs/PREREG-ovs-era.md`'s result**, because it
-builds on whichever matching that leaves standing. Code (`study/ovs_in_season.py`) and crash tests come next; locks by
-committing them with this document, before the one real run.
+**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED.** Builds on `docs/PREREG-ovs-era.md` (passed 8 Nov: era-adjusted matching, three
+seasons). Locks by committing this document with `study/ovs_in_season.py` and its crash results, before the one real run.
 
 ---
 
@@ -15,7 +14,7 @@ QB who has been QB30 for seven weeks (Baker Mayfield, 10.4 points a game) looks 
 in-season Historical Comps study did it. A player at week 9 is matched against past players at week 9 of their own
 seasons, so a hot or cold half-season is compared with other hot or cold half-seasons, not with full seasons.
 
-**The test.** At weeks 5, 9 and 13 of past seasons, does counting the season so far predict the next five seasons at
+**The test.** At weeks 5, 9 and 13 of past seasons, does counting the season so far predict the next three seasons at
 least 2% better than ignoring it (what the value does today)?
 
 ## 1. Snapshots
@@ -28,18 +27,21 @@ counts:
   season's rookies are year-1 veterans (production, games, age, draft slot).
 - **Baseline (what the value does mid-season today):** this season ignored; 3/2/1 over the last three full seasons;
   games = last season's; this season's rookies matched as at the draft.
-- **Production is era-adjusted in both** if `PREREG-ovs-era.md` passes (each season's points per game ÷ that season's
-  starter level; for this season, the starter level through week W), and raw in both if it fails.
+- **Production is era-adjusted in both** (it passed): each season's points per game ÷ that season's starter level at
+  his position — the average points per game of the top 24 QBs/RBs/WRs or 12 TEs with 8+ games, from the weekly file;
+  for this season, the same through week W among players with at least half the weeks so far (3 at week 5, 5 at week
+  9, 7 at week 13).
 - Age and career year are the same in both.
 
 ## 2. Matching And Outcome
 
 - Version A, 30 matches, Fix 2 weights, as the Own Value Scale. A row at week W of season Y is matched only against pool
-  rows at **the same week W** of seasons **≤ Y − 5**, from 2002 (the first season with three seasons of weekly data
-  behind it).
-- **Outcome:** FV5 over seasons Y + 1 to Y + 5, 12-team superflex lines, half PPR + TE premium, from the season file
-  (as the Own Value Scale). The rest of season Y isn't counted, in either version.
-- **Test seasons:** Y = 2013–2020.
+  rows at **the same week W** of seasons **≤ Y − 4** (their three seasons ahead had finished by Y − 1, before week W of
+  Y), from 2002 (the first season with three seasons of weekly data behind it).
+- **Outcome:** FV3 over seasons Y + 1 to Y + 3 (Steve, 8 Nov: three seasons), 12-team superflex lines, half PPR + TE
+  premium, from the season file. Checked identical to the era study's outcome on all 10,604 shared rows. The rest of
+  season Y isn't counted, in either version.
+- **Test seasons:** Y = 2013–2022 (week 9: 6,808 rows, 1,829 players, 947 of them in their rookie season).
 
 ## 3. The Questions
 
