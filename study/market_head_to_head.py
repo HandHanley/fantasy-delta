@@ -110,7 +110,8 @@ def compare(D, I, J, P, n_boot=N_BOOT, seed=SEED):
         lo, hi = np.quantile(diffs, [(1 - LEVEL) / 2, 1 - (1 - LEVEL) / 2])
         verdict = 'market better' if lo > 0 else ('DELTA better' if hi < 0 else 'no clear winner')
         out[ps] = {'pairs': int(sel.sum()), 'market_right': float(mi.mean()), 'delta_right': float(di.mean()),
-                   'diff': float(mi.mean() - di.mean()), 'range': [float(lo), float(hi)], 'verdict': verdict}
+                   'diff': float(mi.mean() - di.mean()), 'range': [float(lo), float(hi)], 'verdict': verdict,
+                   'decides': ps == 'RB'}                      # A1: only running backs decide; the rest are leanings
     return out
 
 

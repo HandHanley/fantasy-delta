@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Market Vs DELTA, Head To Head, By Position
 
-**Drafted:** 8 November 2026. **Status: DRAFT, NOT LOCKED.** Steve: "Sounds good let's do it" (8 Nov). Locks by
+**Drafted:** 8 November 2026. **Status: LOCKED 8 Nov 2026 (amendment A1: running backs decide).** Steve: "Sounds good let's do it" (8 Nov). Locks by
 committing this document with `study/market_head_to_head.py` and its crash results, before the one real run.
 
 ---
@@ -99,3 +99,8 @@ Synthetic outcomes from each method's standing within its year and position (sta
 
 Never a false winner. RB has the power to decide; TE (179 players, 1,469 pairs) doesn't. Per §7, this goes to Steve
 before any real result; nothing has been run.
+
+**A1 (8 Nov, Steve: "Go" to option A): only running backs decide.** RB's verdict uses the 98.75% range the crash test
+passed with. WR, QB, TE and all positions together are reported with their ranges as **leanings, not verdicts**; the TE
+result especially cannot settle anything (right verdict in about 30 of 100 planted runs). The table in §4 now reads
+"verdict at RB". Decided before any real result.
