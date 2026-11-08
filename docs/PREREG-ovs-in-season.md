@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Own Value Scale: This Season's Games
 
-**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED.** Builds on `docs/PREREG-ovs-era.md` (passed 8 Nov: era-adjusted matching, three
+**Drafted:** 7 November 2026. **Status: LOCKED 8 Nov 2026 (Steve: "Yeah let's do 1 first").** Builds on `docs/PREREG-ovs-era.md` (passed 8 Nov: era-adjusted matching, three
 seasons). Locks by committing this document with `study/ovs_in_season.py` and its crash results, before the one real run.
 
 ---
