@@ -97,3 +97,56 @@ The new value sits closer to the market than to the DELTA Score, and further fro
 
 **Next (Steve's call).** An injury-neutral version of games: weeks out hurt count as available; weeks cut, on the
 practice squad, a healthy scratch, suspended or off a roster still count as missed. Preseason stays without games.
+
+## 5. Amendment: Injury-Neutral Games In-Season (8 Nov 2026, Before Its Run)
+
+Steve: "Yeah let's do both." Committed before this run.
+
+**The rule.** In-season, "games so far" becomes **games played + weeks out hurt**, never above the week number.
+Code: `study/injury_weeks.py`. A week counts as out hurt when his club played that week, he recorded no pass, carry,
+target or catch, and either:
+
+- **he was on a reserve list** (weekly roster status RES, PUP or RSN). How that reads depends on the season's file:
+  - **2016 onward:** the files are week by week, so his status that week is used.
+  - **2002–2015:** the weekly files carry one end-of-season status and drop players once they go on injured reserve,
+    so every week after his last listing counts when that last listing is a reserve status. A season counts as this
+    older style when more than 5% of its reserve listings fall in weeks he played (about half do before 2016, none
+    after). That is set by the file format, not by any outcome.
+- **or, from 2009, the official injury report** (nflverse) listed him Out or Doubtful that week.
+
+Weeks cut, on the practice squad, a healthy scratch, suspended, on the exempt list or off a roster still count as
+missed. The rule is about injuries.
+
+**Checked by hand before any outcome was read (through week 9):**
+
+| Player | Season | Weeks Out Hurt | What Happened |
+|---|---|---|---|
+| Dez Bryant | 2015 | 5 | Missed weeks 2–6, foot |
+| Le'Veon Bell | 2015 | 1 | Hurt in week 8, so week 9 counts; his suspension weeks don't |
+| Jamaal Charles | 2015 | 3 | Torn ACL in week 5 |
+| Christian McCaffrey | 2020 | 6 | Missed weeks 3–8 |
+| Saquon Barkley | 2020 | 7 | Torn ACL in week 2 |
+| Adrian Peterson | 2014 | 0 | Exempt list, not an injury |
+| Josh Jacobs | 2026 | 0 | Exempt list, weeks 1–6 |
+
+**Known gap.** The 2002–2015 files leave out players who spent the whole season on injured reserve (Jordy Nelson 2015),
+so those still count as missed. Short game-day inactives before 2009 can't be told apart from healthy scratches.
+
+**Decision, set now.**
+
+- In-season matching uses injury-neutral games.
+- Fallback: if it is worse than no games at all on both the typical miss and close trades, in-season uses no games.
+- Preseason stays without games (§4: removing it there costs nothing).
+- Either way, no injury penalty.
+
+**Measured (week 9, 2013–2022, same rows as §4), deciding nothing beyond the line above:**
+
+- Typical miss and close trades: injury-neutral vs with games (the cost of the rule, done precisely) and vs no games.
+- Players with 2+ weeks out hurt: produced ÷ predicted. This is the size of the penalty removed.
+- Low-games players never hurt (5 or fewer games, 0 weeks out hurt): produced ÷ predicted. This is the "does he have a
+  job" signal, kept.
+- Today's page, rebuilt.
+
+### Results
+
+(Filled in after the one run.)
