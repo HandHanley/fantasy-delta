@@ -85,4 +85,8 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 
 ## 9. Amendments
 
-_None yet._
+**Before lock**
+- **A1 (8 Nov, Steve):** three seasons ahead, era-adjusted production, pool `≤ Y − 4`, test seasons 2013–2022 (§1–§2).
+- **Crash tests (8 Nov, week 9, `study/out/ovs_in_season_crash.json`, 1,000 permutations):** noise world **0 of 20**
+  (bar ≤ 1); planted w = 0.75 **200 of 200** (bar 80%), typical lift 5.2%; w = 0.6: 16 of 50, typical lift 1.5%.
+  **PASS.** Leak checks asserted. Outcome identical to the era study's on all 10,604 shared rows.

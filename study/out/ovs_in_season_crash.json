@@ -1,0 +1,29 @@
+{
+ "counts": {
+  "week": 9,
+  "rows_scored": 6808,
+  "players": 1829,
+  "rookies_this_season": 947,
+  "skipped": {
+   "no game in Y-1..Y-3": 17
+  }
+ },
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 200,
+  "share": 1.0,
+  "median_lift": 0.052314808614234876,
+  "ok": true
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 16,
+  "share": 0.32,
+  "median_lift": 0.0153943682739342
+ }
+}
