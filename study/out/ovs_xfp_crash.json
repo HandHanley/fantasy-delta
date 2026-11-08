@@ -1,0 +1,30 @@
+{
+ "counts": {
+  "week": 9,
+  "ep_coverage_of_games": 1.0,
+  "rows_dropped_no_ep": 1,
+  "skipped": {
+   "no game in Y-1..Y-3": 17
+  },
+  "rows_scored": 5470,
+  "players": 1577
+ },
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": 0.007287116964646179,
+  "ok": false
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": 0.0029055801712010165
+ }
+}
