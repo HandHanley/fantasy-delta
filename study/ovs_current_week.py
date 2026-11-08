@@ -5,7 +5,11 @@ sys.path.insert(0, '/home/claude/fantasy-delta/study')
 import comps_value_study as C, comps_draft_drop as DD, own_value_scale as V, ovs_in_season as I
 
 import argparse
-_ap = argparse.ArgumentParser(); _ap.add_argument('--data', required=True, help='folder with nflv/, rosters/, rosters2026/, weekly/, live_values.json'); SP = _ap.parse_args().data
+_ap = argparse.ArgumentParser(); _ap.add_argument('--data', required=True, help='folder with nflv/, rosters/, rosters2026/, weekly/, live_values.json')
+_ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], help='full = full PPR, no TE premium (display only; tested on half_tep)')
+_ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
+_ap.add_argument('--out', default='values_week9.json')
+_args = _ap.parse_args(); SP = _args.data
 C.HORIZON = 3
 import glob, os, comps_in_season as CI
 # The season file stops at 2025, and CI.load keeps only weekly rows whose (player, season) has a season-file position,
@@ -28,6 +32,20 @@ def load_with_2026(nflverse, rosters):
     assert st2[st2.season <= 2025].shape[0] == st.shape[0]
     return st2, dp, pl
 C.load = load_with_2026
+if _args.scoring == 'full':
+    # full PPR, no TE premium: points = fantasy_points_ppr in the season file and the weekly file (both loaders)
+    _l26 = C.load
+    def load_full(nflverse, rosters):
+        st, dp, pl = _l26(nflverse, rosters)
+        st['P'] = st.fantasy_points_ppr.fillna(0).where(st.season <= 2025, 0.0)
+        return st, dp, pl
+    C.load = load_full
+    _ci_load = CI.load
+    def ci_load_full(*a, **k):
+        st, dp, pl, W = _ci_load(*a, **k)
+        W['P'] = np.where(W.g == 1, W.fantasy_points_ppr.fillna(0), 0.0)
+        return st, dp, pl, W
+    CI.load = ci_load_full
 st, W, Sin, Sb, sk = I.build(f'{SP}/nflv', f'{SP}/rosters', f'{SP}/weekly', 9, extra=(2026,))
 assert (W.season == 2026).sum() > 0, '2026 weekly rows still missing'
 print('2026 weekly rows kept:', int((W.season == 2026).sum()), '| 2026 snapshots:', int((Sin.t == 2026).sum()),
@@ -55,7 +73,7 @@ idx = {}
 for r in val:
     for n in {norm(Sin.name.values[r])} | alias.get(Sin.key.values[r], set()):
         idx.setdefault((n, Sin.pos.values[r]), set()).add(r)
-L = pd.DataFrame(json.load(open(f'{SP}/live_values.json'))['players'])
+L = pd.DataFrame(json.load(open(f'{SP}/{_args.live}'))['players'])
 L['r'] = [next(iter(idx[(norm(n), p)])) if len(idx.get((norm(n), p), ())) == 1 else None for n, p in zip(L.n, L.pos)]
 prev = pd.read_json(f'{SP}/values_era3.json')[['n', 'r_now']].rename(columns={'r_now': 'r_era'})
 first = pd.read_json(f'{SP}/top150.json')[['n', 'r_new']].rename(columns={'r_new': 'r_first'})
@@ -81,4 +99,4 @@ show = ['Josh Allen', 'Jahmyr Gibbs', 'Jaxon Smith-Njigba', 'Bijan Robinson', "J
         'Trey McBride', 'Jeremiyah Love', 'Jared Goff', 'Jaxson Dart', 'Bo Nix', 'Baker Mayfield', 'Mike Evans', 'Daniel Jones',
         'Drake Maye', 'Jalen Hurts', 'Lamar Jackson', 'Isaiah Likely']
 print(M[M.n.isin(show)].sort_values('r_fc')[['n', 'pos', 'games26', 'r_fc', 'r_first', 'r_era', 'r_wk9']].to_string(index=False))
-M.to_json(f'{SP}/values_week9.json', orient='records')
+M.to_json(f'{SP}/{_args.out}', orient='records')
