@@ -1,0 +1,88 @@
+{
+ "prereg": "docs/PREREG-ovs-peers.md",
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1764,
+   "V": 11940
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1890,
+  "horizon": 3,
+  "test_seasons": [
+   2013,
+   2022
+  ],
+  "test_scored": 6484,
+  "rookie_rows_unchanged": 791,
+  "starter_level_examples": {
+   "QB 2004": 15.09,
+   "QB 2008": 14.36,
+   "QB 2016": 17.79,
+   "QB 2025": 17.6,
+   "RB 2004": 16.46,
+   "RB 2008": 14.6,
+   "RB 2016": 14.65,
+   "RB 2025": 14.66,
+   "WR 2004": 13.84,
+   "WR 2008": 13.21,
+   "WR 2016": 13.1,
+   "WR 2025": 12.87,
+   "TE 2004": 11.51,
+   "TE 2008": 11.18,
+   "TE 2016": 12.55,
+   "TE 2025": 12.91
+  },
+  "veteran_rows": 12558,
+  "no_first_game_roster": 3029,
+  "share_median_by_pos": {
+   "QB": 0.281,
+   "RB": 0.076,
+   "WR": 0.098,
+   "TE": 0.163
+  },
+  "capital_rows_with_pick": 1429,
+  "elite_rows": 587,
+  "elite_by_position": {
+   "QB": 82,
+   "RB": 165,
+   "WR": 218,
+   "TE": 122
+  }
+ },
+ "Q": {
+  "elite_rows": 587,
+  "rmse_peers": 110.1365469389347,
+  "rmse_30": 105.75826833707076,
+  "elite_lift": -0.04139892483781571,
+  "elite_p": 0.9994000599940006,
+  "all_lift": -0.016524047775587913,
+  "lift": -0.04139892483781571,
+  "pass": false
+ },
+ "trades": {
+  "n_trades": 23280,
+  "acc_era": 0.54643470790378,
+  "acc_locked": 0.5576030927835052,
+  "diff": -0.011168384879725157,
+  "p": 0.9613038696130387,
+  "guard_ok": false
+ },
+ "by_position_elite": {
+  "QB": -0.04113661535092916,
+  "RB": -0.04964936370904005,
+  "WR": -0.03762549124845882,
+  "TE": -0.03360184553159007
+ },
+ "elite_calibration": {
+  "produced_over_predicted_30": 1.049362077629096,
+  "produced_over_predicted_peers": 1.0048096101272368
+ },
+ "decision": "keep 30 matches"
+}

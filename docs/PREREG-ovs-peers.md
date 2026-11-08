@@ -62,3 +62,21 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 
 **Crash tests (8 Nov, `study/out/ovs_peers_crash.json`): PASS.** Noise world 0 of 20; planted w = 0.75 **192 of 200**
 (96%), typical elite lift 7.8%; w = 0.6: 16 of 50.
+
+## 9. Results (8 Nov 2026, Run Once)
+
+`study/out/ovs_peers_results.json`. **Failed: keep 30 matches for everyone.**
+
+| Question | 10 Closest | 30 Matches | Result |
+|---|---|---|---|
+| Elite players (587 rows): typical miss (RMSE, FV3) | 110.1 | 105.8 | **4.1% worse** (p = 0.9994) |
+| All rows | — | — | 1.7% worse (guard: no more than 0.5%) |
+| Close synthetic trades called right | 54.6% | 55.8% | 1.1 points worse (guard: no more than 1.0) |
+
+Worse at every position among elite players: QB −4.1%, RB −5.0%, WR −3.8%, TE −3.4%.
+
+**Reported.** Elite players produced **105%** of their 30-match value and 100% of their 10-match value. So the 30 matches
+pull elite players down only about 5% on average, and narrowing to 10 removes that but adds more noise than it saves.
+
+**What it means.** The "merely good players drag the elite down" effect is real but small (about 5%). Being compared with
+a wider group is, on balance, the more accurate guide, even for game-breakers.
