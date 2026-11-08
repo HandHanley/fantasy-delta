@@ -104,3 +104,27 @@ before any real result; nothing has been run.
 passed with. WR, QB, TE and all positions together are reported with their ranges as **leanings, not verdicts**; the TE
 result especially cannot settle anything (right verdict in about 30 of 100 planted runs). The table in §4 now reads
 "verdict at RB". Decided before any real result.
+
+## 10. Results (8 Nov 2026, Run Once)
+
+`study/out/market_h2h_results.json`. **Verdict at running back (deciding): the market is better.**
+
+| Position | Pairs | Market Ordered Right | DELTA Ordered Right | Gap | 98.75% Range | Reading |
+|---|---|---|---|---|---|---|
+| **RB (decides)** | 11,361 | **73.3%** | 69.2% | **+4.1** | +0.4 to +7.9 | **Market better** |
+| WR | 16,606 | 72.1% | 71.2% | +0.9 | −2.3 to +3.9 | Leaning market, no verdict |
+| QB | 2,465 | 69.2% | 65.0% | +4.2 | −3.0 to +11.4 | Leaning market, no verdict |
+| TE | 1,469 | 68.1% | 64.7% | +3.4 | −4.8 to +11.1 | Leaning market, no verdict (underpowered) |
+| All together | 31,901 | 72.1% | 69.7% | +2.4 | +0.3 to +4.6 | Reported |
+
+**Reported, deciding nothing.** Veterans-only pairs: market 73.5%, DELTA 71.0%. Rookies-only pairs: market 67.4%, DELTA
+64.8%. By year, the market was ahead in 7 of 9 (2015, 2017, 2018, 2019, 2021, 2022, 2023), about even in 2016 and 2020.
+
+**How to read it.** The market's late-summer order knew things DELTA's offseason value can't: free agency, the NFL
+draft, depth charts, camp (§8). Running backs' roles change most in exactly that window, so part or all of the market's
+edge may be offseason news, not a better read of how long elite players last. Either way, at running back the market's
+order has been the better guide to the next three seasons, by about 4 pairs in 100.
+
+**Next (each its own pre-registration, Steve's OK):** what the market sees that DELTA doesn't, starting with the
+"true peers for elite players" idea (fewer, closer matches for rare players) and an offseason-news signal DELTA could
+measure itself (role and team changes between seasons).

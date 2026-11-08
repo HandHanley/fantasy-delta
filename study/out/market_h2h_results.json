@@ -1,0 +1,170 @@
+{
+ "prereg": "docs/PREREG-market-head-to-head.md",
+ "counts": {
+  "market_rows": 1534,
+  "matched": 1485,
+  "ambiguous": 6,
+  "unmatched": 43,
+  "unmatched_examples": [
+   "2015 Marvin Jones Jr. WR",
+   "2015 Sam Bradford QB",
+   "2016 Josh Gordon WR",
+   "2016 Kevin White WR",
+   "2016 Jordy Nelson WR",
+   "2016 Kelvin Benjamin WR",
+   "2016 Breshad Perriman WR",
+   "2016 Robert Griffin III QB",
+   "2016 Lache Seastrunk RB",
+   "2016 Marcus Lattimore RB",
+   "2016 Victor Cruz WR",
+   "2016 Montee Ball RB",
+   "2016 Jace Amaro TE",
+   "2016 Denarius Moore WR",
+   "2016 Maurice Jones-Drew RB",
+   "2017 Martavis Bryant WR",
+   "2017 Marshawn Lynch RB",
+   "2017 Josh Gordon WR",
+   "2018 Andrew Luck QB",
+   "2018 Julian Edelman WR",
+   "2018 Cameron Meredith WR",
+   "2018 Chris Thompson RB",
+   "2018 Spencer Ware RB",
+   "2018 Kenneth Dixon RB",
+   "2018 Quincy Enunwa WR"
+  ],
+  "matched_by_position": {
+   "WR": 590,
+   "RB": 499,
+   "QB": 217,
+   "TE": 179
+  },
+  "matched_rookies": 185,
+  "pairs_by_position": {
+   "QB": 2465,
+   "RB": 11361,
+   "WR": 16606,
+   "TE": 1469
+  }
+ },
+ "by_position": {
+  "QB": {
+   "pairs": 2465,
+   "market_right": 0.6922920892494929,
+   "delta_right": 0.6501014198782962,
+   "diff": 0.042190669371196754,
+   "range": [
+    -0.02979073789121051,
+    0.1141846243958203
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "RB": {
+   "pairs": 11361,
+   "market_right": 0.7334741660065135,
+   "delta_right": 0.6923686295220491,
+   "diff": 0.041105536484464356,
+   "range": [
+    0.004144077090869639,
+    0.0787013236509078
+   ],
+   "verdict": "market better",
+   "decides": true
+  },
+  "WR": {
+   "pairs": 16606,
+   "market_right": 0.7207334698301818,
+   "delta_right": 0.7120619053354209,
+   "diff": 0.00867156449476092,
+   "range": [
+    -0.02275229200495967,
+    0.03928540869304504
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "TE": {
+   "pairs": 1469,
+   "market_right": 0.6807351940095303,
+   "delta_right": 0.6466984343090538,
+   "diff": 0.03403675970047648,
+   "range": [
+    -0.04750664517588509,
+    0.11079562364718615
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "ALL": {
+   "pairs": 31901,
+   "market_right": 0.7212313093633428,
+   "delta_right": 0.6972508698786872,
+   "diff": 0.023980439484655558,
+   "range": [
+    0.002629102007803653,
+    0.045607092422234895
+   ],
+   "verdict": "market better",
+   "decides": false
+  }
+ },
+ "rookies_vs_veterans": {
+  "R0": {
+   "pairs": 556,
+   "market_right": 0.6735611510791367,
+   "delta_right": 0.6483812949640287
+  },
+  "V": {
+   "pairs": 24085,
+   "market_right": 0.7352709155075773,
+   "delta_right": 0.7101307867967614
+  }
+ },
+ "by_year": {
+  "2015": {
+   "pairs": 2992,
+   "market_right": 0.7082219251336899,
+   "delta_right": 0.6447192513368984
+  },
+  "2016": {
+   "pairs": 3449,
+   "market_right": 0.7107857349956509,
+   "delta_right": 0.7123804001159757
+  },
+  "2017": {
+   "pairs": 4487,
+   "market_right": 0.6775128147983063,
+   "delta_right": 0.6630265210608425
+  },
+  "2018": {
+   "pairs": 4003,
+   "market_right": 0.7383212590557082,
+   "delta_right": 0.6738695978016488
+  },
+  "2019": {
+   "pairs": 4068,
+   "market_right": 0.7426253687315634,
+   "delta_right": 0.70968534906588
+  },
+  "2020": {
+   "pairs": 3574,
+   "market_right": 0.7225797425853385,
+   "delta_right": 0.7263570229434807
+  },
+  "2021": {
+   "pairs": 2442,
+   "market_right": 0.7391482391482391,
+   "delta_right": 0.7037264537264537
+  },
+  "2022": {
+   "pairs": 3855,
+   "market_right": 0.7520103761348897,
+   "delta_right": 0.7434500648508431
+  },
+  "2023": {
+   "pairs": 3031,
+   "market_right": 0.7042230287033983,
+   "delta_right": 0.6984493566479709
+  }
+ }
+}
