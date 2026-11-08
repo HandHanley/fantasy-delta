@@ -1,0 +1,56 @@
+{
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 198,
+  "share": 0.99,
+  "median_lift": 0.034577823077613645,
+  "ok": true
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 26,
+  "share": 0.52,
+  "median_lift": 0.02098353979533868
+ },
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1605,
+   "V": 10740
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1643,
+  "test_scored": 5125,
+  "test_excluded_lt10": 0,
+  "rookie_rows_unchanged": 632,
+  "starter_level_examples": {
+   "QB 2004": 15.09,
+   "QB 2008": 14.36,
+   "QB 2016": 17.79,
+   "QB 2025": 17.6,
+   "RB 2004": 16.46,
+   "RB 2008": 14.6,
+   "RB 2016": 14.65,
+   "RB 2025": 14.66,
+   "WR 2004": 13.84,
+   "WR 2008": 13.21,
+   "WR 2016": 13.1,
+   "WR 2025": 12.87,
+   "TE 2004": 11.51,
+   "TE 2008": 11.18,
+   "TE 2016": 12.55,
+   "TE 2025": 12.91
+  }
+ }
+}
