@@ -1,0 +1,69 @@
+{
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 154,
+  "share": 0.77,
+  "median_lift": 0.02662607848372467,
+  "ok": false
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 6,
+  "share": 0.12,
+  "median_lift": 0.009553946559180126
+ },
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1764,
+   "V": 11940
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1890,
+  "horizon": 3,
+  "test_seasons": [
+   2013,
+   2022
+  ],
+  "test_scored": 6484,
+  "rookie_rows_unchanged": 791,
+  "starter_level_examples": {
+   "QB 2004": 15.09,
+   "QB 2008": 14.36,
+   "QB 2016": 17.79,
+   "QB 2025": 17.6,
+   "RB 2004": 16.46,
+   "RB 2008": 14.6,
+   "RB 2016": 14.65,
+   "RB 2025": 14.66,
+   "WR 2004": 13.84,
+   "WR 2008": 13.21,
+   "WR 2016": 13.1,
+   "WR 2025": 12.87,
+   "TE 2004": 11.51,
+   "TE 2008": 11.18,
+   "TE 2016": 12.55,
+   "TE 2025": 12.91
+  },
+  "veteran_rows": 12558,
+  "no_first_game_roster": 3029,
+  "share_median_by_pos": {
+   "QB": 0.281,
+   "RB": 0.076,
+   "WR": 0.098,
+   "TE": 0.163
+  },
+  "capital_rows_with_pick": 1429
+ }
+}
