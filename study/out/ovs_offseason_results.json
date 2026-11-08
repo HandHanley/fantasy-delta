@@ -1,0 +1,75 @@
+{
+ "prereg": "docs/PREREG-ovs-offseason.md",
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1764,
+   "V": 11940
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1890,
+  "horizon": 3,
+  "test_seasons": [
+   2013,
+   2022
+  ],
+  "test_scored": 6484,
+  "rookie_rows_unchanged": 791,
+  "starter_level_examples": {
+   "QB 2004": 15.09,
+   "QB 2008": 14.36,
+   "QB 2016": 17.79,
+   "QB 2025": 17.6,
+   "RB 2004": 16.46,
+   "RB 2008": 14.6,
+   "RB 2016": 14.65,
+   "RB 2025": 14.66,
+   "WR 2004": 13.84,
+   "WR 2008": 13.21,
+   "WR 2016": 13.1,
+   "WR 2025": 12.87,
+   "TE 2004": 11.51,
+   "TE 2008": 11.18,
+   "TE 2016": 12.55,
+   "TE 2025": 12.91
+  },
+  "veteran_rows": 12558,
+  "no_first_game_roster": 3029,
+  "share_median_by_pos": {
+   "QB": 0.281,
+   "RB": 0.076,
+   "WR": 0.098,
+   "TE": 0.163
+  },
+  "capital_rows_with_pick": 1429
+ },
+ "Q": {
+  "rb_rows": 1624,
+  "rb_lift": 0.025813652106432827,
+  "rb_p": 0.043995600439956005,
+  "all_lift": 0.016548651583340845,
+  "lift": 0.025813652106432827,
+  "pass": true
+ },
+ "trades": {
+  "n_trades": 23385,
+  "acc_era": 0.5680136839854608,
+  "acc_locked": 0.5312807355142185,
+  "diff": 0.03673294847124231,
+  "p": 0.0004999500049995,
+  "guard_ok": true
+ },
+ "by_position": {
+  "QB": 0.015719251371002274,
+  "RB": 0.020123559110212574,
+  "WR": 0.015624218082239127,
+  "TE": 0.011759901893965141
+ },
+ "decision": "adopt offseason features"
+}

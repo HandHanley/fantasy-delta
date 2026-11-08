@@ -89,3 +89,32 @@ Per §6 this goes to Steve before any real result. Nothing has been run.
 catches a real 2.7%-sized gain about 77 times in 100. Read the result this way, decided now: **a pass counts** (the
 noise world never passed); **a fail is inconclusive**, not evidence the features don't help, and the test is repeated
 when the 2023 class's window closes (early 2027).
+
+## 10. Results (8 Nov 2026, Run Once)
+
+`study/out/ovs_offseason_results.json`. **Passed: the offseason value uses the two features** (Steve's OK given before
+the run).
+
+| Question | With Offseason Changes | Without | Result |
+|---|---|---|---|
+| Veteran running backs (1,624 rows) | — | — | **2.6% better, p = 0.044** (bar 2%, p < 0.05) |
+| All 6,484 rows | — | — | 1.7% better (guard: no more than 0.5% worse) |
+| Close synthetic trades called right (23,385) | 56.8% | 53.1% | **+3.7 points, p = 0.0005** (guard: no more than 1 worse) |
+
+Every position improved (all rows of each): QB 1.6%, RB 2.0%, WR 1.6%, TE 1.2%. The deciding p-value is close to the
+bar (0.044 against 0.05); stated plainly, not rounded away.
+
+**Reported: the market head-to-head rerun with the new value** (`study/out/ovs_offseason_h2h_reported.json`).
+
+| Position | Market Ordered Right | DELTA Before | DELTA Now | Verdict Now |
+|---|---|---|---|---|
+| RB | 73.3% | 69.2% | **70.1%** | No clear winner (was: market better) |
+| WR | 72.1% | 71.2% | 71.3% | No clear winner |
+| QB | 69.2% | 65.0% | 66.2% | No clear winner |
+| TE | 68.1% | 64.7% | 65.9% | No clear winner |
+
+The RB gap shrank from 4.1 to 3.2 points and is no longer clearly in the market's favour; the market still leads at
+every position.
+
+**Live use:** the offseason value reads each veteran's current club and that spring's draft as they happen (free agency
+in March, the draft in April); from week 5 the in-season value takes over.

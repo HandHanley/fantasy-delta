@@ -1,0 +1,66 @@
+{
+ "note": "reported only (PREREG-ovs-offseason.md \u00a74): market head-to-head rerun with the offseason-feature value",
+ "by_position": {
+  "QB": {
+   "pairs": 2465,
+   "market_right": 0.6922920892494929,
+   "delta_right": 0.6622718052738337,
+   "diff": 0.030020283975659257,
+   "range": [
+    -0.05227747954070893,
+    0.11455730582430847
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "RB": {
+   "pairs": 11361,
+   "market_right": 0.7334741660065135,
+   "delta_right": 0.7014787430683919,
+   "diff": 0.03199542293812163,
+   "range": [
+    -0.0019338282638490672,
+    0.06656339553641182
+   ],
+   "verdict": "no clear winner",
+   "decides": true
+  },
+  "WR": {
+   "pairs": 16606,
+   "market_right": 0.7207334698301818,
+   "delta_right": 0.7129953029025653,
+   "diff": 0.00773816692761653,
+   "range": [
+    -0.023160107501465202,
+    0.036689369309022765
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "TE": {
+   "pairs": 1469,
+   "market_right": 0.6807351940095303,
+   "delta_right": 0.6589516678012253,
+   "diff": 0.021783526208305037,
+   "range": [
+    -0.05472104558292846,
+    0.09101244830362697
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  },
+  "ALL": {
+   "pairs": 31901,
+   "market_right": 0.7212313093633428,
+   "delta_right": 0.7024858154916773,
+   "diff": 0.018745493871665464,
+   "range": [
+    -0.0032684164819380447,
+    0.04009613574014681
+   ],
+   "verdict": "no clear winner",
+   "decides": false
+  }
+ },
+ "matched": 1485
+}
