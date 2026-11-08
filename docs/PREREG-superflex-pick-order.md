@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — A Superflex Rookie-Draft Order From Scarcity Math
 
-**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED — waiting for Steve's OK.** Locked by committing this
+**Drafted:** 7 November 2026. **Status: LOCKED 7 Nov 2026 (Steve's OK).** Locked by committing this
 document with `study/pick_values_sf.py` before the confirmatory run. Changes after that are amendments (§10).
 
 Follows `docs/PREREG-pick-values-formats.md` (run 7 Nov). There, in every superflex format, quarterback picks came out
