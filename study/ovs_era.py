@@ -23,6 +23,7 @@ import own_value_scale as V
 LIFT_BAR = 0.02
 ALPHA = 0.05            # one deciding question (Q1); project rule
 TRADE_GUARD = -1.0      # Q2 point estimate may not be worse than this (points)
+ALL_GUARD = -0.005      # A2: all rows together may be at most 0.5% worse
 N_PERM = 10_000
 MIN_GAMES = 8
 HORIZON = 3             # amendment A1 (Steve, 7 Nov): value = the next three seasons
@@ -96,10 +97,16 @@ def preds(nn, W, y):
 
 
 def q1(S, pre, p_new, p_old, yt, n_perm=N_PERM):
-    cl = S.key.values[pre['test']]
-    lift, p = C.perm_test(yt, p_new, p_old, cl, n_perm)
-    return {'rmse_era': C.rmse(p_new, yt), 'rmse_locked': C.rmse(p_old, yt), 'lift': float(lift), 'p': float(p),
-            'pass': bool(lift >= LIFT_BAR and p < ALPHA)}
+    """Amendment A2 (Steve, 8 Nov): decided on veteran QBs, where the change acts; all rows may be at most 0.5% worse."""
+    T = pre['test']; cl = S.key.values[T]
+    qb = (S.kind.values[T] == 'V') & (S.pos.values[T] == 'QB')
+    lift_q, p_q = C.perm_test(yt[qb], p_new[qb], p_old[qb], cl[qb], n_perm)
+    lift_all = 1 - C.rmse(p_new, yt) / C.rmse(p_old, yt)
+    return {'qb_rows': int(qb.sum()), 'qb_rmse_era': C.rmse(p_new[qb], yt[qb]), 'qb_rmse_locked': C.rmse(p_old[qb], yt[qb]),
+            'qb_lift': float(lift_q), 'qb_p': float(p_q),
+            'all_rmse_era': C.rmse(p_new, yt), 'all_rmse_locked': C.rmse(p_old, yt), 'all_lift': float(lift_all),
+            'lift': float(lift_q),
+            'pass': bool(lift_q >= LIFT_BAR and p_q < ALPHA and lift_all >= ALL_GUARD)}
 
 
 def q2(S, pre, p_new, p_old, yt, n_perm=N_PERM, seed=13):

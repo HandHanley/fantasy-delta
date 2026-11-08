@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Own Value Scale: Era-Adjusted Matching
 
-**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED.** Locks by committing this document with `study/ovs_era.py`
+**Drafted:** 7 November 2026. **Status: LOCKED 8 Nov 2026 (amendments A1, A2).** Locks by committing this document with `study/ovs_era.py`
 and its crash results, before the one real run. Changes after that are amendments (§9).
 
 Changes one thing in `docs/PREREG-own-value-scale.md` (locked `63c80df`, passed 7 Nov).
@@ -33,9 +33,10 @@ next five seasons at least 2% better than the current one?
 
 ## 2. The Questions
 
-- **Q1 (decides):** RMSE on FV3 (A1) of the era version vs the locked matching, on the same 6,484 test snapshots. Paired
-  permutation test, 10,000 shuffles, a player's snapshots swapped together, one-sided. **Pass: lift ≥ 2% and p < 0.05**
-  (DELTA's model-change rule; one deciding question).
+- **Q1 (decides, per A2):** on the **754 veteran QB** test snapshots, RMSE on FV3 (A1) of the era version vs the locked
+  matching; and on all 6,484, no more than 0.5% worse. Paired
+  permutation test on the QB rows, 10,000 shuffles, a player's snapshots swapped together, one-sided. **Pass: QB lift
+  ≥ 2% and p < 0.05, and all rows no more than 0.5% worse** (DELTA's model-change rule on where the change acts).
 - **Q2 (guard):** the OVS study's synthetic trades, rebuilt from these two methods' predictions with the same rules and
   seed. The era version may not call them more than 1.0 point worse (point estimate).
 - **Decision:** Q1 passes and the guard holds → era-adjusted matching replaces the locked matching in the Own Value Scale
@@ -101,9 +102,11 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
   w = 0.6: 0 of 50. **FAIL.** Over three seasons the two versions differ less across all players, so even a clearly
   better version shows about a 2% gain, on the bar. The change acts mostly on QBs: average change in prediction 17.4
   on an average of 73 for veteran QBs, against 3–5 for RBs, WRs and TEs.
-- **Proposed A2, for Steve's decision (not adopted):** decide on veteran QBs (754 rows), where the fix acts. Pass: QB
+- **A2 (8 Nov, Steve chose it: "Let's do option A"):** decide on veteran QBs (754 rows), where the fix acts. Pass: QB
   lift ≥ 2%, p < 0.05, **and** all rows no more than 0.5% worse, **and** the trade guard. Its crash test, same worlds:
   planted w = 0.75 passed **176 of 200 (88%)**, typical QB lift 4.3%; w = 0.6 passed 17 of 50; noise world 0 of 20.
+  Rerun from the committed code (8 Nov, `study/out/ovs_era_crash.json`): identical, 0 of 20 / 176 of 200 / 17 of 50.
+  **PASS.**
 - **Crash tests (7 Nov, `study/out/ovs_era_crash.json`):** noise world passed Q1 in **0 of 20** (bar ≤ 1); planted
   w = 0.75 passed in **198 of 200** (bar 80%), typical lift 3.5%; w = 0.6 passed 26 of 50, typical lift 2.1%. **PASS.**
 - **Preview of today's values (7 Nov), disclosed.** Before asking for the OK to run, today's 2025 values were computed
