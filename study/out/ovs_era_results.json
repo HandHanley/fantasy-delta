@@ -1,0 +1,120 @@
+{
+ "prereg": "docs/PREREG-ovs-era.md",
+ "counts": {
+  "excluded": {},
+  "draft_from_players_csv": 4,
+  "V_career_pre1999": 1128,
+  "R0_age_imputed": 72,
+  "snapshots": {
+   "R0": 1764,
+   "V": 11940
+  },
+  "test": {
+   "R0": 632,
+   "V": 4493
+  },
+  "test_players": 1890,
+  "horizon": 3,
+  "test_seasons": [
+   2013,
+   2022
+  ],
+  "test_scored": 6484,
+  "rookie_rows_unchanged": 791,
+  "starter_level_examples": {
+   "QB 2004": 15.09,
+   "QB 2008": 14.36,
+   "QB 2016": 17.79,
+   "QB 2025": 17.6,
+   "RB 2004": 16.46,
+   "RB 2008": 14.6,
+   "RB 2016": 14.65,
+   "RB 2025": 14.66,
+   "WR 2004": 13.84,
+   "WR 2008": 13.21,
+   "WR 2016": 13.1,
+   "WR 2025": 12.87,
+   "TE 2004": 11.51,
+   "TE 2008": 11.18,
+   "TE 2016": 12.55,
+   "TE 2025": 12.91
+  }
+ },
+ "Q1": {
+  "qb_rows": 754,
+  "qb_rmse_era": 83.65083022847176,
+  "qb_rmse_locked": 88.31496005357546,
+  "qb_lift": 0.052812454676696374,
+  "qb_p": 0.0032996700329967,
+  "all_rmse_era": 51.52969202368831,
+  "all_rmse_locked": 52.405406407139985,
+  "all_lift": 0.016710382448868133,
+  "lift": 0.052812454676696374,
+  "pass": true
+ },
+ "Q2": {
+  "n_trades": 23347,
+  "acc_era": 0.5567953056067161,
+  "acc_locked": 0.5443525934809611,
+  "diff": 0.012442712125754984,
+  "p": 0.13038696130386962,
+  "guard_ok": true
+ },
+ "calibration_era": {
+  "QB": {
+   "n": 305,
+   "produced_over_predicted": 1.063
+  },
+  "RB": {
+   "n": 377,
+   "produced_over_predicted": 0.811
+  },
+  "WR": {
+   "n": 465,
+   "produced_over_predicted": 0.882
+  },
+  "TE": {
+   "n": 116,
+   "produced_over_predicted": 0.99
+  }
+ },
+ "calibration_locked": {
+  "QB": {
+   "n": 346,
+   "produced_over_predicted": 0.834
+  },
+  "RB": {
+   "n": 352,
+   "produced_over_predicted": 0.837
+  },
+  "WR": {
+   "n": 477,
+   "produced_over_predicted": 0.848
+  },
+  "TE": {
+   "n": 141,
+   "produced_over_predicted": 0.87
+  }
+ },
+ "reported_vs_production_age": {
+  "locked": {
+   "n": 6484,
+   "players": 1890,
+   "rmse_ovs": 52.405406407139985,
+   "rmse_b2": 55.713183069212306,
+   "lift": 0.05937152537063051,
+   "p": 9.999000099990002e-05,
+   "pass": true
+  },
+  "era": {
+   "n": 6484,
+   "players": 1890,
+   "rmse_ovs": 51.52969202368831,
+   "rmse_b2": 55.713183069212306,
+   "lift": 0.07508978692398272,
+   "p": 9.999000099990002e-05,
+   "pass": true
+  }
+ },
+ "decision": "adopt era matching"
+}

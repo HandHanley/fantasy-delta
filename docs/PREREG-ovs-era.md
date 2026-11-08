@@ -115,3 +115,29 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
   QBs' average rank among FantasyCalc's top 150: 54 → 64 (FantasyCalc 63). Unchanged: young QBs at the very top (Dart
   #2, Maye #3, Hurts #4, Caleb Williams #5, Nix #6); RBs (117 vs FantasyCalc 77) and TEs (140 vs 90) far below the
   market; overall rank agreement with FantasyCalc 0.705 → 0.704.
+
+## 10. Results (8 Nov 2026, Run Once)
+
+`study/out/ovs_era_results.json`. **Passed. Era-adjusted matching replaces the locked matching** (Steve's OK given
+before the run, "Let's do option A").
+
+| Question | Era-Adjusted | Locked Matching | Result |
+|---|---|---|---|
+| Veteran QBs (754 rows): typical miss (RMSE, FV3) | 83.7 | 88.3 | **5.3% better, p = 0.003** (bar 2%, p < 0.05) |
+| All 6,484 rows | 51.5 | 52.4 | 1.7% better (guard: no more than 0.5% worse) |
+| Close synthetic trades called right (23,347) | 55.7% | 54.4% | +1.2 points, p = 0.13 (guard: no more than 1 point worse) |
+
+**Reported, deciding nothing.**
+- Against production + age on three seasons: locked matching 5.9% better, era-adjusted **7.5% better** (both p ≈ 0.0001).
+  So the Own Value Scale's pass holds on the three-season outcome, and the fix adds to it.
+- Produced ÷ predicted, veterans valued above 35: QB **0.83 → 1.06**, RB 0.84 → 0.81, WR 0.85 → 0.88, TE 0.87 → 0.99.
+  QBs are no longer overvalued; if anything slightly under.
+
+**Today's values (2025 snapshots, pool ≤ 2022), display only.** Agreement with FantasyCalc's top-150 order 0.708 → 0.721.
+Baker Mayfield #3 → #17; Jared Goff #6 → #23; Mike Evans #256 → #174. Still unlike the market: young QBs at the top (Jaxson
+Dart #2, Jalen Hurts #3, Drake Maye #4), and RBs (average rank 113 vs FantasyCalc 77) and TEs (139 vs 90) low. In 2026 to
+week 9: Gibbs RB1, Bowers TE1, McBride TE2, Smith-Njigba WR1; Mayfield QB36, Nix QB23, Hurts QB17; Dart has played two
+games. That is Plan 2's subject (`docs/PREREG-ovs-in-season.md`).
+
+**Consequence:** every pick-value number built on 7 Nov used the five-season, locked-matching ruler. They are re-measured
+once the value settles (after Plan 2).
