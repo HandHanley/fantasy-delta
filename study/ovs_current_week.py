@@ -67,6 +67,7 @@ M['r_wk9'] = M.val.rank(ascending=False, method='min').astype(int)
 M = M.merge(prev, on='n', how='left').merge(first, on='n', how='left')
 M['games26'] = [int(Sin.games.values[r]) for r in M.r]
 M['rookie'] = [bool(Sin.rookie_Y.values[r]) for r in M.r]
+M['age'] = [round(float(Sin.age.values[r]), 1) for r in M.r]
 T = M.sort_values('mkt', ascending=False).head(150)
 sp = lambda a, b: round(pd.Series(list(a)).rank().corr(pd.Series(list(b)).rank()), 3)
 out = {'matched': int(len(M)), 'site_players': int(len(L)), 'missing': sorted(set(L.n) - set(M.n)),
