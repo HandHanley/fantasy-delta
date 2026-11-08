@@ -1,0 +1,46 @@
+{
+ "counts": {
+  "test_rows": 6484,
+  "end_of_deal_test_rows": 465,
+  "by_group_test": {
+   "kept": 207,
+   "moved": 172,
+   "none": 86
+  },
+  "by_position_test": {
+   "WR": 173,
+   "RB": 136,
+   "TE": 97,
+   "QB": 59
+  },
+  "history_rows": 730,
+  "history_by_group": {
+   "kept": 343,
+   "moved": 241,
+   "none": 146
+  },
+  "history_seasons": [
+   2004,
+   2019
+  ],
+  "no_last_club_listing": 0
+ },
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 13,
+  "share": 0.065,
+  "median_lift": 0.006340477201607353,
+  "ok": false
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 2,
+  "share": 0.04,
+  "median_lift": -0.0016005583957329206
+ }
+}

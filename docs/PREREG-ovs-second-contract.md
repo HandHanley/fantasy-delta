@@ -94,4 +94,20 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 
 ## 8. Amendments
 
-(None yet.)
+**Crash tests (8 Nov, `study/out/ovs_second_contract_crash.json`): FAIL.**
+
+| World | Result | Bar |
+|---|---|---|
+| Noise | 0 of 20 passed | At most 1 of 20 |
+| Planted, w = 0.75 | **13 of 200 (6.5%)**, typical lift 0.6% | 80% |
+| Planted, w = 0.6 | 2 of 50 | Reported only |
+
+**What it means.**
+
+- The scaling that history implies moves these players' values only a little compared with how unpredictable their
+  next three seasons are.
+- Even if that scaling were fully right, it would cut the typical miss by about 0.6%, under the 2% bar. With 465 rows
+  the test also can't tell it from noise.
+- **This is a prior look.** The planted world is built from the scaled values, which were learned from real outcomes,
+  so the size of the adjustment (not whether it is right) is now known.
+- Per §5 this goes to Steve. No real run has been made.
