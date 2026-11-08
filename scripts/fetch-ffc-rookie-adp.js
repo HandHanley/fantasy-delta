@@ -20,12 +20,16 @@
  * Usage:
  *   node scripts/fetch-ffc-rookie-adp.js                        # 2014 .. current year
  *   node scripts/fetch-ffc-rookie-adp.js --years 2014-2019
- *   node scripts/fetch-ffc-rookie-adp.js --from-dir test/ffc    # no network: reads <dir>/rookie-<year>.json
+ *   node scripts/fetch-ffc-rookie-adp.js --from-dir test/ffc    # no network: reads <dir>/<format>-<year>.json
+ *   node scripts/fetch-ffc-rookie-adp.js --format dynasty      # 8 Nov 2026: dynasty startup ADP (head-to-head study)
+ *   node scripts/fetch-ffc-rookie-adp.js --format 2qb          # 2-QB ADP (a superflex signal)
+ * Formats: rookie (default, unchanged), dynasty, 2qb. Files: data/fixtures/ffc-<format>-adp-<year>.json.
  */
 const fs = require('fs');
 const path = require('path');
 
-const API = 'https://fantasyfootballcalculator.com/api/v1/adp/rookie';
+const API_BASE = 'https://fantasyfootballcalculator.com/api/v1/adp/';
+const FORMATS = ['rookie', 'dynasty', '2qb'];
 const OUT_DEFAULT = path.join(__dirname, '..', 'data', 'fixtures');
 const FIRST_YEAR = 2014;               // first year in FFC's rookie year selector
 const TEAMS = 12;
@@ -34,7 +38,7 @@ const ATTRIBUTION = 'ADP data courtesy of Fantasy Football Calculator — https:
 
 function parseArgs(argv) {
   const now = new Date().getUTCFullYear();
-  const args = { from: FIRST_YEAR, to: now, out: OUT_DEFAULT, fromDir: null };
+  const args = { from: FIRST_YEAR, to: now, out: OUT_DEFAULT, fromDir: null, format: 'rookie' };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--years') {
@@ -43,19 +47,23 @@ function parseArgs(argv) {
       args.from = +m[1]; args.to = +(m[2] || m[1]);
     } else if (a === '--out') { args.out = argv[++i]; }
     else if (a === '--from-dir') { args.fromDir = argv[++i]; }
+    else if (a === '--format') {
+      args.format = argv[++i];
+      if (!FORMATS.includes(args.format)) throw new Error(`--format takes one of ${FORMATS.join(', ')}`);
+    }
     else throw new Error(`unrecognised argument: ${a}`);
   }
   if (args.from > args.to) throw new Error('--years: first year is after the last');
   return args;
 }
 
-const urlFor = y => `${API}?teams=${TEAMS}&year=${y}&position=all`;
+const urlFor = (y, format) => `${API_BASE}${format}?teams=${TEAMS}&year=${y}&position=all`;
 
 function source(args) {
   if (args.fromDir) {
     return {
       get: async y => {
-        const f = path.join(args.fromDir, `rookie-${y}.json`);
+        const f = path.join(args.fromDir, `${args.format}-${y}.json`);
         if (!fs.existsSync(f)) throw new Error(`no stub file ${f}`);
         return JSON.parse(fs.readFileSync(f, 'utf8'));
       },
@@ -64,7 +72,7 @@ function source(args) {
   }
   return {
     get: async y => {
-      const r = await fetch(urlFor(y), { headers: { 'User-Agent': 'DELTA research fetch (fantasydelta.com)' } });
+      const r = await fetch(urlFor(y, args.format), { headers: { 'User-Agent': 'DELTA research fetch (fantasydelta.com)' } });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
     },
@@ -96,14 +104,14 @@ async function main() {
       const s = summarise(resp);
       if (s.players === 0) throw new Error(`no players in response (status ${s.status})`);
       const payload = {
-        source: 'fantasyfootballcalculator', format: 'rookie', teams: TEAMS, year: y,
-        url: urlFor(y), fetched: new Date().toISOString(), attribution: ATTRIBUTION,
+        source: 'fantasyfootballcalculator', format: args.format, teams: TEAMS, year: y,
+        url: urlFor(y, args.format), fetched: new Date().toISOString(), attribution: ATTRIBUTION,
         response: resp,
       };
-      const file = path.join(args.out, `ffc-rookie-adp-${y}.json`);
+      const file = path.join(args.out, `ffc-${args.format}-adp-${y}.json`);
       fs.writeFileSync(file, JSON.stringify(payload, null, 1));
       ok.push(y);
-      console.log(`[FFC] ${y}: ${s.players} players · ${s.drafts} drafts · ${s.window} -> ${path.relative(process.cwd(), file)}`);
+      console.log(`[FFC] ${args.format} ${y}: ${s.players} players · ${s.drafts} drafts · ${s.window} -> ${path.relative(process.cwd(), file)}`);
     } catch (e) {
       failed.push(y);
       console.log(`[FFC] ${y}: FAILED — ${e.message}`);

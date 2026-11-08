@@ -1,10 +1,12 @@
-name: Fetch FFC Rookie ADP (one-off)
+name: Fetch FFC ADP (one-off)
 
-# Pulls Fantasy Football Calculator's Dynasty Rookie ADP (12-team) for 2014 to this year and commits
-# one file per year to data/fixtures/ — research material for the Future First study.
-# FFC's API is free for personal and commercial use with attribution; every file carries it.
+# Pulls Fantasy Football Calculator's ADP (12-team) for 2014 to this year and commits one file per year to
+# data/fixtures/ffc-<format>-adp-<year>.json — research material only (Future First, pick values, and the
+# market head-to-head). Formats: rookie (default), dynasty (startup), 2qb.
+# FFC's API is free for personal and commercial use; it asks for "a link or mention of some kind", which DELTA
+# gives on the About page. Every file carries the attribution line.
 #
-# MANUAL ONLY. No schedule. Thirteen calls, a second apart.
+# MANUAL ONLY. No schedule. One call per year, a second apart.
 #
 # DELIBERATELY NOT IN THE DEPLOY PAGES TRIGGER LIST — same reasoning as fetch-league-history.yml:
 # nothing in the app reads data/fixtures/. If that ever changes, this workflow MUST be added there.
@@ -16,6 +18,12 @@ on:
         description: 'Years to fetch: YYYY or YYYY-YYYY (blank = 2014 to this year)'
         required: false
         type: string
+      format:
+        description: 'Draft format: rookie (default), dynasty, or 2qb'
+        required: false
+        default: 'rookie'
+        type: choice
+        options: [rookie, dynasty, 2qb]
 
 permissions:
   contents: write
@@ -32,12 +40,13 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Fetch rookie ADP
+      - name: Fetch ADP
         run: |
+          FMT="${{ inputs.format || 'rookie' }}"
           if [ -n "${{ inputs.years }}" ]; then
-            node scripts/fetch-ffc-rookie-adp.js --years "${{ inputs.years }}"
+            node scripts/fetch-ffc-rookie-adp.js --format "$FMT" --years "${{ inputs.years }}"
           else
-            node scripts/fetch-ffc-rookie-adp.js
+            node scripts/fetch-ffc-rookie-adp.js --format "$FMT"
           fi
 
       - name: Commit fixtures
@@ -48,6 +57,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes — skipping commit"
           else
-            git commit -m "chore: FFC rookie ADP fixtures [skip ci]"
+            git commit -m "chore: FFC ${{ inputs.format || 'rookie' }} ADP fixtures [skip ci]"
             git push
           fi
