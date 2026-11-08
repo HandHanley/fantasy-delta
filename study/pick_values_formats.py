@@ -67,7 +67,7 @@ def run(f, nflverse, rosters, n_boot=P.BOOT):
     if f == DELTA_FMT:
         assert abs(est['R'] - LOCKED_R) < 1e-9, est['R']
     ci = P.bootstrap(picks, vet, M, yp, yv, n_boot=n_boot)
-    fair = ci['includes_1']; mult = 1.0 if fair else est['R']
+    fair = ci['includes_1']; mult = est['R']          # amendment A1: always apply the measured R
     top = P.ruler_top(S)
     G = P.groups(picks); w1 = np.ones(len(yp))
     slot = picks['slot']
@@ -76,7 +76,7 @@ def run(f, nflverse, rosters, n_boot=P.BOOT):
     first = {t: round(np.mean([sv[min(next(i for i, (a, b) in enumerate(BINS) if a <= s <= b), 4)]
                                for s in range(1, t + 1)])) for t in TEAMS}
     return {'format': name(f), 'key': list(f), 'lines': C.REPL_N, 'R': est['R'], 'range': [ci['lo'], ci['hi']],
-            'decision': 'fair' if fair else 'tilted', 'multiplier': mult,
+            'range_includes_1': fair, 'multiplier': mult,
             'picks_scored': int(est['keep'].sum()),
             'R_QB_picks': P.sub_R(yp, est['m'], est['keep'], w1, G['QB']), 'R_QB_range': ci['groups']['QB'],
             'R_other_picks': P.sub_R(yp, est['m'], est['keep'], w1, G['RB/WR/TE']),
@@ -99,7 +99,7 @@ def main():
     for f in fmts:
         r = run(f, a.nflverse, a.rosters)
         out.append(r)
-        print(f"{r['format']:<40} R {r['R']:.2f} [{r['range'][0]:.2f}-{r['range'][1]:.2f}] {r['decision']:<6} "
+        print(f"{r['format']:<40} R {r['R']:.2f} [{r['range'][0]:.2f}-{r['range'][1]:.2f}] {'(range incl. 1)' if r['range_includes_1'] else '':<16} "
               f"bins {list(r['slot_bins'].values())}  QB {r['R_QB_picks']:.2f} rest {r['R_other_picks']:.2f}  "
               f"{time.time() - t0:.0f}s", flush=True)
     if not a.only:

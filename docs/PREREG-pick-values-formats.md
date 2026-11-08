@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Rookie Pick Values By League Format
 
-**Drafted:** 7 November 2026. **Status: DRAFT, NOT LOCKED — on hold after a failed crash test (§9).** Locked by committing this document with
+**Drafted:** 7 November 2026. **Status: LOCKED 7 Nov 2026 (after amendment A1, §9).** Locked by committing this document with
 `study/pick_values_formats.py` before the confirmatory run. Changes after that are amendments (§9).
 
 Follows `docs/PREREG-pick-values.md` (locked `d5a2a2d`, run 7 Nov: R = 1.39 in DELTA's format). Same method, same
@@ -46,8 +46,8 @@ Everything as in `PREREG-pick-values.md` §3–§5, rebuilt from scratch for the
 production features used for matching, veterans' Own Value Scale values, tier values (leave one class out), matched
 veterans (±10%, then ±20%, 10 minimum), R and its 95% range from 4,000 resamples (seed 20261107).
 
-**Decision, per format:** range includes 1.0 → pick values as measured; range excludes 1.0 → that format's picks × that
-format's R. The 1.01 is priced as part of slots 1–4 (Steve's decision, 7 Nov).
+**Decision, per format (amendment A1):** that format's picks × that format's measured R, always. The 95% range is
+reported beside it as how sure we are; it no longer decides whether the fix applies. The 1.01 is priced as part of slots 1–4 (Steve's decision, 7 Nov).
 
 ## 3. Pricing By Pick Number
 
@@ -105,3 +105,10 @@ Superflex rookie-draft order, class strength, landing spot, and anything after t
   **FAIL.** In the shallow format the study can't reliably see a 30% tilt: fewer players clear the replacement lines
   there, so more picks and veterans score zero and the ratio gets noisy. Never a false alarm in either. Per §4, this
   goes to Steve before any real result; the confirmatory run is on hold.
+- **A1 (7 Nov), Steve's choice after the failed crash test.** Apply each format's measured R always (§2), instead of
+  only when its range excludes 1.0. Reason: the crash tests show the measured R lands in the right place on average in
+  both formats (no tilt: typical 1.01; planted 0.70: typical 0.71–0.73); in shallow formats it is only noisier. Under the
+  old rule a shallow format would usually get no fix even when picks are underpriced, and in DELTA's format the fix was
+  ×1.39. Formats with wide ranges are flagged, and the study is rerun as more classes finish five seasons. In DELTA's
+  format both rules give the same answer (its range excluded 1.0), asserted. Decided before any real result outside
+  DELTA's own format was seen.
