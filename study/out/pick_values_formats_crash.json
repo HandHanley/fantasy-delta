@@ -1,0 +1,42 @@
+{
+ "10-team 1QB Standard": {
+  "fair": {
+   "runs": 100,
+   "range_includes_1": 100,
+   "median_R": 1.013780360120261,
+   "ok": true
+  },
+  "tilted_0.7": {
+   "runs": 100,
+   "range_includes_1": 55,
+   "median_R": 0.7306248995051361,
+   "ok": false
+  },
+  "lines": {
+   "QB": 10,
+   "RB": 25,
+   "WR": 35,
+   "TE": 12
+  }
+ },
+ "14-team Superflex Full PPR TE Premium": {
+  "fair": {
+   "runs": 100,
+   "range_includes_1": 100,
+   "median_R": 1.0136700870062105,
+   "ok": true
+  },
+  "tilted_0.7": {
+   "runs": 100,
+   "range_includes_1": 4,
+   "median_R": 0.7079375323608021,
+   "ok": true
+  },
+  "lines": {
+   "QB": 28,
+   "RB": 35,
+   "WR": 49,
+   "TE": 16
+  }
+ }
+}

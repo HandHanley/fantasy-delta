@@ -213,3 +213,12 @@ picks produced nothing above the replacement line in five seasons.
 should price it as an Early 1st unless Steve wants a separate line; (2) for RB/WR/TE picks alone R was 1.15 and its
 range included 1.0, so the 1.39 is pulled up by quarterbacks — a superflex rookie-draft order (§10, not licensed
 here) is the proper fix and the next study if this goes in the calculator.
+
+**Steve's decisions (7 Nov).**
+- **The 1.01 is priced as an Early 1st (7,368), not on its own.** Eight 1.01s is too few: Ezekiel Elliott (15,133
+  before ×1.39) and Todd Gurley (14,506) carry the average; without them it falls from 8,071 to 5,822. The Early 1st
+  tier already carries its misses (Sankey, Coleman, Treadwell, Doctson, Freeman, Kerryon Johnson all scored zero).
+- **Pick values must follow league format** (scoring, league size, 1QB or superflex), priced by pick number, with the
+  fairness check rerun per format: `docs/PREREG-pick-values-formats.md`.
+- **Class strength and landing spot** are priced only after the NFL draft, from draft slot and team (a later study);
+  before it, every class is an average class.
