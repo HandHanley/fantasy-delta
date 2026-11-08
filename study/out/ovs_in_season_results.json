@@ -1,0 +1,153 @@
+{
+ "prereg": "docs/PREREG-ovs-in-season.md",
+ "weeks": {
+  "5": {
+   "counts": {
+    "week": 5,
+    "rows_scored": 6567,
+    "players": 1810,
+    "rookies_this_season": 754,
+    "skipped": {
+     "no game in Y-1..Y-3": 12
+    }
+   },
+   "Q": {
+    "rmse_in_season": 49.64588347101357,
+    "rmse_baseline": 51.83841144660726,
+    "lift": 0.042295431407113115,
+    "p": 0.00019998000199980003,
+    "pass": true
+   },
+   "trades": {
+    "n_trades": 21257,
+    "acc_in_season": 0.5687067789434069,
+    "acc_baseline": 0.4945429740791269,
+    "diff": 0.07416380486428004,
+    "p": 9.999000099990002e-05,
+    "guard_ok": true
+   },
+   "by_position": {
+    "QB": {
+     "rows": 814,
+     "lift": 0.052585909488426785
+    },
+    "RB": {
+     "rows": 1908,
+     "lift": 0.05303964127278993
+    },
+    "WR": {
+     "rows": 2489,
+     "lift": 0.03162138505597267
+    },
+    "TE": {
+     "rows": 1356,
+     "lift": 0.010313186434237953
+    }
+   },
+   "rookies_this_season": {
+    "rows": 754,
+    "lift": 0.05405195836097276
+   },
+   "pass": true
+  },
+  "9": {
+   "counts": {
+    "week": 9,
+    "rows_scored": 6808,
+    "players": 1829,
+    "rookies_this_season": 947,
+    "skipped": {
+     "no game in Y-1..Y-3": 17
+    }
+   },
+   "Q": {
+    "rmse_in_season": 47.60794638539465,
+    "rmse_baseline": 50.98779102479284,
+    "lift": 0.0662873321528038,
+    "p": 9.999000099990002e-05,
+    "pass": true
+   },
+   "trades": {
+    "n_trades": 21312,
+    "acc_in_season": 0.597362987987988,
+    "acc_baseline": 0.4676238738738739,
+    "diff": 0.12973911411411415,
+    "p": 9.999000099990002e-05,
+    "guard_ok": true
+   },
+   "by_position": {
+    "QB": {
+     "rows": 853,
+     "lift": 0.059418604717963786
+    },
+    "RB": {
+     "rows": 1966,
+     "lift": 0.06975720602867463
+    },
+    "WR": {
+     "rows": 2581,
+     "lift": 0.0800368023740462
+    },
+    "TE": {
+     "rows": 1408,
+     "lift": 0.043357183647335984
+    }
+   },
+   "rookies_this_season": {
+    "rows": 947,
+    "lift": 0.059668136115670345
+   },
+   "pass": true
+  },
+  "13": {
+   "counts": {
+    "week": 13,
+    "rows_scored": 6981,
+    "players": 1842,
+    "rookies_this_season": 1088,
+    "skipped": {
+     "no game in Y-1..Y-3": 20
+    }
+   },
+   "Q": {
+    "rmse_in_season": 46.039327589926174,
+    "rmse_baseline": 50.50487401947919,
+    "lift": 0.08841812827472251,
+    "p": 9.999000099990002e-05,
+    "pass": true
+   },
+   "trades": {
+    "n_trades": 21336,
+    "acc_in_season": 0.6081739782527185,
+    "acc_baseline": 0.4556617922759655,
+    "diff": 0.15251218597675298,
+    "p": 9.999000099990002e-05,
+    "guard_ok": true
+   },
+   "by_position": {
+    "QB": {
+     "rows": 876,
+     "lift": 0.08436050251259264
+    },
+    "RB": {
+     "rows": 2010,
+     "lift": 0.08539951682260749
+    },
+    "WR": {
+     "rows": 2649,
+     "lift": 0.10659184909949149
+    },
+    "TE": {
+     "rows": 1446,
+     "lift": 0.060862975849525935
+    }
+   },
+   "rookies_this_season": {
+    "rows": 1088,
+    "lift": 0.07510008140726698
+   },
+   "pass": true
+  }
+ },
+ "decision": "count this season from week 5"
+}

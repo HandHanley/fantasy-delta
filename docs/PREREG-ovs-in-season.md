@@ -90,3 +90,27 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 - **Crash tests (8 Nov, week 9, `study/out/ovs_in_season_crash.json`, 1,000 permutations):** noise world **0 of 20**
   (bar ≤ 1); planted w = 0.75 **200 of 200** (bar 80%), typical lift 5.2%; w = 0.6: 16 of 50, typical lift 1.5%.
   **PASS.** Leak checks asserted. Outcome identical to the era study's on all 10,604 shared rows.
+
+## 10. Results (8 Nov 2026, Run Once)
+
+`study/out/ovs_in_season_results.json`. **Passed at all three weeks: the value counts this season's games from week 5.**
+
+| Week | Typical Miss, This Season Counted | This Season Ignored | Better By | Close Trades Called Right (Counted / Ignored) |
+|---|---|---|---|---|
+| 5 | 49.6 | 51.8 | **4.2%**, p = 0.0002 | 56.9% / 49.5% (+7.4 points) |
+| 9 | 47.6 | 51.0 | **6.6%**, p = 0.0001 | 59.7% / 46.8% (+13.0 points) |
+| 13 | 46.0 | 50.5 | **8.8%**, p = 0.0001 | 60.8% / 45.6% (+15.3 points) |
+
+Bar: 2% and p < 0.0167 each week; trades no more than 1 point worse. By position and for this season's rookies:
+`ovs_in_season_results.json`.
+
+**Today's values (2026 week 9), display only (`study/ovs_current_week.py`).**
+- **A bug in the first display build, caught before reporting.** The weekly loader (`comps_in_season.load`) keeps only
+  weekly rows whose player-season has a position in the season file, which ends at 2025, so every 2026 game was dropped
+  and every player showed 0 games this season. The display build now gives 2026 rows positions by the same rules
+  (2026 roster file, A11/A12). The locked test reads only 2013–2022, all in the season file, so it was unaffected.
+  The check that caught it: the games-this-season column read 0 for everyone.
+- After the fix: 500 of 680 current players have 2026 games. Agreement with FantasyCalc's top-150 order **0.711 → 0.788**.
+  Top 10: Allen, Maye, Burrow, Chase, Bijan Robinson, Smith-Njigba, Nacua, St. Brown, Gibbs, Purdy. Baker Mayfield
+  #17 → #102; Jaxson Dart #2 → #108 (two games); Gibbs #14 → #9; Bowers #44 → #38; McBride #31 → #18.
+- Still apart from the market: QBs average rank 54 (FantasyCalc 63), RBs 96 (76), TEs 120 (91).
