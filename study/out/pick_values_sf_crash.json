@@ -1,0 +1,80 @@
+{
+ "board_rows": 388,
+ "boost": 1.9,
+ "12-team Superflex Half PPR TE Premium": {
+  "sanity": {
+   "boost_min": 3.3990055346455397,
+   "boost_max": 3.7282208034147706,
+   "boost": {
+    "2014": 3.417,
+    "2015": 3.399,
+    "2016": 3.399,
+    "2017": 3.466,
+    "2018": 3.537,
+    "2019": 3.6,
+    "2020": 3.645,
+    "2021": 3.671,
+    "2022": 3.714,
+    "2023": 3.728
+   },
+   "qbs_on_board_2014_2021": 35,
+   "qbs_in_sf_top36": 35,
+   "qbs_in_1qb_top36": 33,
+   "mean_qb_move_up": 10.085714285714285,
+   "fitted_boost": 1.9,
+   "ok": true
+  },
+  "picks": 279,
+  "qb_picks": 35,
+  "fair": {
+   "runs": 100,
+   "range_includes_1": 100,
+   "median_R": 0.9987968030905436,
+   "ok": true
+  },
+  "tilted_0.7": {
+   "runs": 100,
+   "range_includes_1": 12,
+   "median_R": 0.701837025104387,
+   "ok": true
+  }
+ },
+ "10-team Superflex Standard": {
+  "sanity": {
+   "boost_min": 3.0539147698925753,
+   "boost_max": 3.278632519687815,
+   "boost": {
+    "2014": 3.08,
+    "2015": 3.054,
+    "2016": 3.067,
+    "2017": 3.112,
+    "2018": 3.146,
+    "2019": 3.177,
+    "2020": 3.189,
+    "2021": 3.202,
+    "2022": 3.25,
+    "2023": 3.279
+   },
+   "qbs_on_board_2014_2021": 35,
+   "qbs_in_sf_top36": 35,
+   "qbs_in_1qb_top36": 33,
+   "mean_qb_move_up": 7.285714285714286,
+   "fitted_boost": 1.9,
+   "ok": true
+  },
+  "picks": 279,
+  "qb_picks": 35,
+  "fair": {
+   "runs": 100,
+   "range_includes_1": 100,
+   "median_R": 1.0076080153474876,
+   "ok": true
+  },
+  "tilted_0.7": {
+   "runs": 100,
+   "range_includes_1": 16,
+   "median_R": 0.712060732531658,
+   "ok": true
+  }
+ }
+}
