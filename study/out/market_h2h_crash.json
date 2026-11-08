@@ -1,0 +1,82 @@
+{
+ "tie": {
+  "runs": 100,
+  "right_verdict": {
+   "QB": 99,
+   "RB": 100,
+   "WR": 100,
+   "TE": 99,
+   "ALL": 100
+  },
+  "typical_market_right": 0.7306371101926896
+ },
+ "market_planted": {
+  "runs": 100,
+  "right_verdict": {
+   "QB": 37,
+   "RB": 85,
+   "WR": 78,
+   "TE": 33,
+   "ALL": 100
+  },
+  "typical_market_right": 0.7486313134023939
+ },
+ "delta_planted": {
+  "runs": 100,
+  "right_verdict": {
+   "QB": 42,
+   "RB": 81,
+   "WR": 79,
+   "TE": 29,
+   "ALL": 100
+  },
+  "typical_market_right": 0.711717030755193
+ },
+ "ok": false,
+ "counts": {
+  "market_rows": 1534,
+  "matched": 1485,
+  "ambiguous": 6,
+  "unmatched": 43,
+  "unmatched_examples": [
+   "2015 Marvin Jones Jr. WR",
+   "2015 Sam Bradford QB",
+   "2016 Josh Gordon WR",
+   "2016 Kevin White WR",
+   "2016 Jordy Nelson WR",
+   "2016 Kelvin Benjamin WR",
+   "2016 Breshad Perriman WR",
+   "2016 Robert Griffin III QB",
+   "2016 Lache Seastrunk RB",
+   "2016 Marcus Lattimore RB",
+   "2016 Victor Cruz WR",
+   "2016 Montee Ball RB",
+   "2016 Jace Amaro TE",
+   "2016 Denarius Moore WR",
+   "2016 Maurice Jones-Drew RB",
+   "2017 Martavis Bryant WR",
+   "2017 Marshawn Lynch RB",
+   "2017 Josh Gordon WR",
+   "2018 Andrew Luck QB",
+   "2018 Julian Edelman WR",
+   "2018 Cameron Meredith WR",
+   "2018 Chris Thompson RB",
+   "2018 Spencer Ware RB",
+   "2018 Kenneth Dixon RB",
+   "2018 Quincy Enunwa WR"
+  ],
+  "matched_by_position": {
+   "WR": 590,
+   "RB": 499,
+   "QB": 217,
+   "TE": 179
+  },
+  "matched_rookies": 185,
+  "pairs_by_position": {
+   "QB": 2465,
+   "RB": 11361,
+   "WR": 16606,
+   "TE": 1469
+  }
+ }
+}
