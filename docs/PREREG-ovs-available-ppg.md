@@ -135,3 +135,21 @@ Position balance (average rank among all valued players, market in brackets): QB
 
 **Open question for Steve:** should a rookie sitting behind a starter (Mendoza) count his healthy inactive weeks as
 zeros, like a benched veteran?
+
+## 7. Amendment: Rookie QBs Who Sit (9 Nov 2026, Before Its Run)
+
+Steve: "what about no, but only for QBs? … rookie QBs are usually taken with the expectation of sitting … I don't think
+it should work that way for RBs, WRs and TEs, as those positions earn reps more than a planned QB."
+
+**The rule (Steve's design call, not decided by a test):**
+
+- A QB in his first NFL season (no games in any earlier season) counts only the games he played that season. His
+  healthy weeks not played don't count.
+- The same rule applies to the history the matches come from, so past sitting rookie QBs are treated the same way.
+- Every other player and season is unchanged from §1.
+
+**Measured once, deciding nothing (`study/ovs_rookie_qb.py`):**
+
+- Week 9, 2013–2022, all rows and the first-year QB rows: typical miss with and without the rule.
+- First-year QBs: what they produced ÷ each version's value.
+- Today's page rebuilt (Fernando Mendoza and the other first-year QBs).

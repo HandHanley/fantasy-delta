@@ -21,7 +21,7 @@ WEEK = 9
 RMSE_GUARD, TRADE_GUARD = -0.01, -1.0
 
 
-def prod_available(Sin, W, week, L_full, L_upto, st, A_full, A_upto):
+def prod_available(Sin, W, week, L_full, L_upto, st, A_full, A_upto, rookie_qb_sits=False):
     """ovs_in_season.era_adjust's veteran production with each season's denominator = available games (>= played)."""
     full = W.groupby(['player_id', 'season']).agg(P=('P', 'sum'), G=('g', 'sum'))
     upto = W[W.week <= week].groupby(['player_id', 'season']).agg(P=('P', 'sum'), G=('g', 'sum'))
@@ -40,13 +40,14 @@ def prod_available(Sin, W, week, L_full, L_upto, st, A_full, A_upto):
             if v is not None: num += w * v; d += w
         return num / d if d else np.nan
     out = []
-    for k, Y, pos, kin in zip(Sin.key.values, Sin.t.values, Sin.pos.values, Sin.kind.values):
+    rk = Sin.rookie_Y.values if 'rookie_Y' in Sin.columns else np.zeros(len(Sin), bool)
+    for k, Y, pos, kin, rook in zip(Sin.key.values, Sin.t.values, Sin.pos.values, Sin.kind.values, rk):
         ps = lambda yr: spos.get((k, yr), pos)
 
         def full_term(yr):
             a = den(A_full, FG, (k, yr), 'full')
             return (FP.get((k, yr), 0.0) / a) / L_full[(yr, ps(yr))] if a >= 1 and (yr, ps(yr)) in L_full else None
-        aY = den(A_upto, UG, (k, Y), 'upto')
+        aY = UG.get((k, Y), 0) if (rookie_qb_sits and rook and pos == 'QB') else den(A_upto, UG, (k, Y), 'upto')   # §7
         if aY >= 1:
             cur = (UP.get((k, Y), 0.0) / aY) / L_upto[(Y, ps(Y), week)]
             v = ppg([(3, cur), (2, full_term(Y - 1)), (1, full_term(Y - 2))])
