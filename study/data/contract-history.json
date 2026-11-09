@@ -1,0 +1,2488 @@
+{
+ "_about": "Contract history for measuring opportunity security (docs/PLAN-contract-history.md). STUDY DATA ONLY: nothing on the site reads this file; the site reads data/delta-contracts.json. Built from original news reports found through outside research and checked by hand; never copied from OverTheCap or Spotrac. Keyed by nflverse player ID. Money is in $ millions. `signed` is the date the deal or option decision was made or first reported, so each snapshot can use only what was known then: take the latest contract signed before the season, and honour `released`. `total` and `aav` cover the new years only, except where `money_covers` says otherwise. `guaranteed_at_signing` is what was fully guaranteed that day and can include money from older years on the deal, so never divide it by `total`. On a fifth-year option it is the full amount for the 2018 draft class onward (the 2020 labour deal) and null before that (guaranteed for injury only until the option season's league year). `option`: exercised, declined, or extended (a new deal replaced the decision).",
+ "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then). Owner exception: a player who has left his team and stopped reporting (no longer with the team, though it holds his rights) counts as no contract, kind `left_team` (Brandon Aiyuk).",
+ "updated": "2026-11-09",
+ "coverage": {
+  "fifth_year_option_players": {
+   "done": 69,
+   "of": 69
+  },
+  "extension_checks": {
+   "done": 0,
+   "of": 187
+  },
+  "veteran_players": {
+   "done": 0,
+   "of": 511
+  }
+ },
+ "team_codes": "Follow the site where the codes differ (JAC, LAR), and keep the club name of the day otherwise (OAK).",
+ "open_items": [
+  "Jared Goff contract 2: $57M guaranteed at signing is unconfirmed (cited page would not open).",
+  "Joe Burrow contract 2: $146.51M guaranteed at signing is unconfirmed (cited page not opened).",
+  "Justin Herbert contract 1: date and amount not opened (site blocked); amount matches Burrow."
+ ],
+ "corrections": [
+  {
+   "player": "Blake Bortles",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": null,
+   "to": "19.053",
+   "why": "exact option figure; the decision article only said about $18M.",
+   "source": "https://abcnews.com/Sports/jaguars-reach-year-54m-deal-qb-blake-bortles/story?id=53336065"
+  },
+  {
+   "player": "Blake Bortles",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": null,
+   "to": "19.053",
+   "why": "exact option figure; the decision article only said about $18M.",
+   "source": "https://abcnews.com/Sports/jaguars-reach-year-54m-deal-qb-blake-bortles/story?id=53336065"
+  },
+  {
+   "player": "DeVante Parker",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": "9.5",
+   "to": "9.387",
+   "why": "exact option figure; the decision article only said roughly $9.5M.",
+   "source": "https://www.profootballrumors.com/2018/04/dolphins-pick-up-devante-parker-option"
+  },
+  {
+   "player": "DeVante Parker",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": "9.5",
+   "to": "9.387",
+   "why": "exact option figure; the decision article only said roughly $9.5M.",
+   "source": "https://www.profootballrumors.com/2018/04/dolphins-pick-up-devante-parker-option"
+  },
+  {
+   "player": "Evan Engram",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": null,
+   "to": "6.013",
+   "why": "option amount was missing.",
+   "source": "https://www.si.com/nfl/giants/big-blue-plus/giants-2022-ufa-primer-te-evan-engram"
+  },
+  {
+   "player": "Evan Engram",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": null,
+   "to": "6.013",
+   "why": "option amount was missing.",
+   "source": "https://www.si.com/nfl/giants/big-blue-plus/giants-2022-ufa-primer-te-evan-engram"
+  },
+  {
+   "player": "Andrew Luck",
+   "contract": 2,
+   "field": "Total ($M)",
+   "from": null,
+   "to": "122.97",
+   "why": "new-money total worked out: $139.125M whole deal minus the $16.155M option."
+  },
+  {
+   "player": "Christian McCaffrey",
+   "contract": 2,
+   "field": "Total ($M)",
+   "from": null,
+   "to": "64.06",
+   "why": "new-money total worked out: $75.36M whole deal minus $11.299M from the old deal.",
+   "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-christian-mccaffrey-contract"
+  },
+  {
+   "player": "Josh Allen",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": "23.106",
+   "to": "23.016",
+   "why": "reports differ ($23.106M and $23.016M); owner rule is the lower figure.",
+   "source": "https://www.audacy.com/wgr550/sports/bills/bills-exercise-fifth-year-options-on-allen-edmunds"
+  },
+  {
+   "player": "Josh Allen",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": "23.106",
+   "to": "23.016",
+   "why": "reports differ ($23.106M and $23.016M); owner rule is the lower figure.",
+   "source": "https://www.audacy.com/wgr550/sports/bills/bills-exercise-fifth-year-options-on-allen-edmunds"
+  },
+  {
+   "player": "Ryan Tannehill",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": "16.1",
+   "to": "16.155",
+   "why": "exact figure; reports rounded it. Same 2012 top-10 quarterback amount as Luck and Griffin."
+  },
+  {
+   "player": "Ryan Tannehill",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": "16.1",
+   "to": "16.155",
+   "why": "exact figure; reports rounded it. Same 2012 top-10 quarterback amount as Luck and Griffin."
+  },
+  {
+   "player": "Ryan Tannehill",
+   "contract": 2,
+   "field": "Guaranteed At Signing ($M)",
+   "from": "25",
+   "to": "21.5",
+   "why": "fully guaranteed at signing was $21.5M; another $3.5M became guaranteed in March 2016.",
+   "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/ryan-tannehill-gets-21-5-million-fully-guaranteed-at-signing"
+  },
+  {
+   "player": "T.J. Hockenson",
+   "contract": 2,
+   "field": "Total ($M)",
+   "from": "66",
+   "to": "65.448",
+   "why": "reports differ; owner rule is the lower figure (effective new money)."
+  },
+  {
+   "player": "T.J. Hockenson",
+   "contract": 2,
+   "field": "AAV ($M)",
+   "from": "16.5",
+   "to": "16.362",
+   "why": "reports differ; owner rule is the lower figure (effective new money)."
+  },
+  {
+   "player": "Daniel Jones",
+   "contract": 2,
+   "field": "row",
+   "from": null,
+   "to": "added",
+   "why": "new deal signed before the 2023 season was missing."
+  }
+ ],
+ "players": {
+  "00-0027942": {
+   "name": "A.J. Green",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 4,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2014-04-21",
+     "kind": "rookie_option",
+     "first": 2015,
+     "end": 2015,
+     "years": 1,
+     "total": 10.176,
+     "aav": 10.176,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2015 option was injury-guaranteed when exercised.",
+     "source": "https://www.nfl.com/news/a-j-green-patrick-peterson-have-options-picked-up-0ap2000000342648",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "CIN",
+     "signed": "2015-09-11",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2019,
+     "years": 4,
+     "total": 60.0,
+     "aav": 15.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons after 2015 option; 2020 franchise tag was later.",
+     "source": "https://www.bengals.com/news/down-home-green-settles-in-15848997",
+     "outlet": "Cincinnati Bengals"
+    }
+   ]
+  },
+  "00-0031544": {
+   "name": "Amari Cooper",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 4,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "OAK",
+     "signed": "2018-04-23",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 13.9,
+     "aav": 13.9,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "About $13.9M; traded to DAL during 2018.",
+     "source": "https://www.nfl.com/news/raiders-exercise-fifth-year-option-on-amari-cooper-0ap3000000928050",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0029668": {
+   "name": "Andrew Luck",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": "2015-04-09",
+     "kind": "rookie_option",
+     "first": 2016,
+     "end": 2016,
+     "years": 1,
+     "total": 16.155,
+     "aav": 16.155,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Option guaranteed for injury only when exercised; later extended.",
+     "source": "https://www.nfl.com/news/colts-pick-up-fifth-year-option-on-andrew-luck-0ap3000000484524",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "IND",
+     "signed": "2016-06-29",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2021,
+     "years": 5,
+     "total": 122.97,
+     "aav": 24.594,
+     "guaranteed_at_signing": 44.0,
+     "option": null,
+     "released": null,
+     "basis": "Reworked 2016 option; entire 2016-21 deal $139.125M. New-money total not stated in linked report; $24.594M new-money AAV. Retired 2019. Corrected: new-money total worked out: $139.125M whole deal minus the $16.155M option.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/the-full-andrew-luck-contract",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0034855": {
+   "name": "Baker Mayfield",
+   "pos": "QB",
+   "draft_year": 2018,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": "2021-04-23",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 18.86,
+     "aav": 18.86,
+     "guaranteed_at_signing": 18.86,
+     "option": "exercised",
+     "released": "2022-12-05",
+     "basis": "Traded to CAR in 2022; released Dec. 5 and claimed by LAR.",
+     "source": "https://abcnews.com/Sports/source-cleveland-browns-exercise-baker-mayfields-year-option/story?id=77267359",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0031407": {
+   "name": "Blake Bortles",
+   "pos": "QB",
+   "draft_year": 2014,
+   "pick": 3,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": "2017-05-01",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 19.053,
+     "aav": 19.053,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "AP reported option of about $18M; precise value not given in decision report. Replaced by 2018 deal. Corrected: exact option figure; the decision article only said about $18M. https://abcnews.com/Sports/jaguars-reach-year-54m-deal-qb-blake-bortles/story?id=53336065",
+     "source": "https://www.cbsnews.com/detroit/news/jaguars-exercise-5th-year-option-on-qb-blake-bortles/",
+     "outlet": "Associated Press (via CBS News)"
+    },
+    {
+     "contract": 2,
+     "team": "JAC",
+     "signed": "2018-02-24",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2020,
+     "years": 2,
+     "total": 54.0,
+     "aav": 18.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2019-03-13",
+     "basis": "$54M and $18M AAV cover entire revised 2018-20 contract, including existing option year; only 2019-20 newly added. $26.5M overall guaranteed; released 2019.",
+     "source": "https://abcnews.com/Sports/blake-bortles-year-54-million-extension-jaguars/story?id=53336921",
+     "outlet": "ESPN (via ABC News)",
+     "money_covers": "2018-2020"
+    }
+   ]
+  },
+  "00-0031236": {
+   "name": "Brandin Cooks",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 20,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": "2017-04-29",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 8.459,
+     "aav": 8.459,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "NE exercised option after NO trade; traded to LA in 2018 before extension.",
+     "source": "https://www.bostonglobe.com/sports/patriots/2017/04/29/what-deal-with-diluted-drug-test-samples-nfl-combine/DO9DuxuZEzKXGaixkUwzEL/story.html",
+     "outlet": "The Boston Globe"
+    },
+    {
+     "contract": 2,
+     "team": "LAR",
+     "signed": "2018-07-17",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2023,
+     "years": 5,
+     "total": 81.0,
+     "aav": 16.2,
+     "guaranteed_at_signing": 20.5,
+     "option": null,
+     "released": null,
+     "basis": "NE-to-LA trade Apr. 2018; $50.5M total guarantees vs $20.5M at signing. Traded to HOU in 2020.",
+     "source": "https://www.nfl.com/news/rams-brandin-cooks-signs-five-year-81m-extension-0ap3000000940666",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036261": {
+   "name": "Brandon Aiyuk",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 25,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": "2023-04-28",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 14.12,
+     "aav": 14.12,
+     "guaranteed_at_signing": 14.12,
+     "option": "exercised",
+     "released": null,
+     "basis": "Fully guaranteed option; superseded by 2024 extension.",
+     "source": "https://www.sfchronicle.com/sports/49ers/article/49ers-pick-brandon-aiyuk-s-fifth-year-contract-17926184.php",
+     "outlet": "San Francisco Chronicle"
+    }
+   ]
+  },
+  "00-0034837": {
+   "name": "Calvin Ridley",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 26,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": "2021-05-03",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 11.116,
+     "aav": 11.116,
+     "guaranteed_at_signing": 11.116,
+     "option": "exercised",
+     "released": null,
+     "basis": "Original 2022 option was tolled to 2023 due to suspension; later traded to JAX.",
+     "source": "https://www.ajc.com/sports/atlanta-falcons/falcons-pick-up-calvin-ridleys-111-million-fifth-year-option/2QIO5IZIUVDTLKM67DACM3PGYI/",
+     "outlet": "The Atlanta Journal-Constitution"
+    }
+   ]
+  },
+  "00-0027939": {
+   "name": "Cam Newton",
+   "pos": "QB",
+   "draft_year": 2011,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": "2014-04-24",
+     "kind": "rookie_option",
+     "first": 2015,
+     "end": 2015,
+     "years": 1,
+     "total": 14.67,
+     "aav": 14.67,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2015 option injury-guaranteed; superseded by June 2015 extension.",
+     "source": "https://www.cbssports.com/nfl/news/panthers-exercise-fifth-year-option-on-cam-newtons-rookie-deal/",
+     "outlet": "CBS Sports"
+    },
+    {
+     "contract": 2,
+     "team": "CAR",
+     "signed": "2015-06-02",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2020,
+     "years": 5,
+     "total": 103.8,
+     "aav": 20.76,
+     "guaranteed_at_signing": 31.0,
+     "option": null,
+     "released": "2020-03-24",
+     "basis": "2015 option replaced by extension; $60M injury guaranteed vs $31M guaranteed at signing. Cut Mar. 2020.",
+     "source": "https://www.nfl.com/news/cam-newton-100m-contract-won-t-change-how-i-play-0ap3000000495403",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032950": {
+   "name": "Carson Wentz",
+   "pos": "QB",
+   "draft_year": 2016,
+   "pick": 2,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2019-04-29",
+     "kind": "rookie_option",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 22.783,
+     "aav": 22.783,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2020 option injury-guaranteed; four-year extension agreed June 2019.",
+     "source": "https://prod.aws.phillyvoice.com/eagles-exercise-qb-carson-wentzs-fifth-year-option/",
+     "outlet": "PhillyVoice"
+    },
+    {
+     "contract": 2,
+     "team": "PHI",
+     "signed": "2019-06-06",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2024,
+     "years": 4,
+     "total": 128.0,
+     "aav": 32.0,
+     "guaranteed_at_signing": 66.0,
+     "option": null,
+     "released": null,
+     "basis": "2020 exercised option remained; $107.9M overall guarantees vs $66M at signing; traded to IND in 2021.",
+     "source": "https://www.nfl.com/news/eagles-carson-wentz-agree-to-four-year-extension-0ap3000001033006",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036358": {
+   "name": "CeeDee Lamb",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 17,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": "2023-04-20",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 17.99,
+     "aav": 17.99,
+     "guaranteed_at_signing": 17.99,
+     "option": "exercised",
+     "released": null,
+     "basis": "2024 option fully guaranteed; superseded by Aug. 2024 extension.",
+     "source": "https://www.dallascowboys.com/news/cowboys-pick-up-5th-year-option-for-ceedee-lamb",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0033280": {
+   "name": "Christian McCaffrey",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 8,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "extended",
+     "released": null,
+     "basis": "NFL 2020 tracker lists Extended, not exercised/declined; no separate fifth-year decision verified.",
+     "source": "https://www.nfl.com/news/fifth-year-option-tracker-for-2017-first-round-picks-0ap3000001111914",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "CAR",
+     "signed": "2020-04-13",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2025,
+     "years": 4,
+     "total": 64.06,
+     "aav": 16.01853,
+     "guaranteed_at_signing": 30.0625,
+     "option": null,
+     "released": null,
+     "basis": "Four new years; 2021 original option incorporated without separate exercise. Source reports new-money AAV but no precise new-money total; original deal announced Apr. 13 and finalized Apr. 16, 2020; traded to SF 2022. Corrected: new-money total worked out: $75.36M whole deal minus $11.299M from the old deal. https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-christian-mccaffrey-contract",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-christian-mccaffrey-contract",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0027950": {
+   "name": "Christian Ponder",
+   "pos": "QB",
+   "draft_year": 2011,
+   "pick": 12,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2014-05-03",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2015 option; left after 2014 season.",
+     "source": "https://www.nfl.com/news/minnesota-vikings-don-t-pick-up-ponder-s-option-0ap2000000346384",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036360": {
+   "name": "Clyde Edwards-Helaire",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 32,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": "2023-05-02",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2024 option; became free agent after 2023.",
+     "source": "https://abcnews.com/amp/Sports/chiefs-sign-jerick-mckinnon-decline-edwards-helaire-option/story?id=99024292",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0030578": {
+   "name": "Cordarrelle Patterson",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 29,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2016-05-02",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2017 option; later departed in free agency.",
+     "source": "https://www.foxnews.com/sports/vikings-decline-5th-year-option-on-wr-cordarrelle-patterson",
+     "outlet": "Associated Press (via Fox News)"
+    }
+   ]
+  },
+  "00-0033871": {
+   "name": "Corey Davis",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 5,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": "2020-05-01",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2021 option; signed with NYJ in 2021 free agency.",
+     "source": "https://abcnews.com/Sports/sources-titans-declining-year-option-corey-davis/story?id=70454976",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0034827": {
+   "name": "D.J. Moore",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 24,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": "2021-04-30",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 11.116,
+     "aav": 11.116,
+     "guaranteed_at_signing": 11.116,
+     "option": "exercised",
+     "released": null,
+     "basis": "2022 option fully guaranteed; later incorporated into Mar. 2022 extension.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/panthers-pick-up-sam-darnolds-2022-option",
+     "outlet": "NBC Sports / Pro Football Talk"
+    },
+    {
+     "contract": 2,
+     "team": "CAR",
+     "signed": "2022-03-18",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2025,
+     "years": 3,
+     "total": 61.884,
+     "aav": 20.628,
+     "guaranteed_at_signing": 41.6,
+     "option": null,
+     "released": null,
+     "basis": "2022 option retained; $73M full 2022-25 contract; $41.61M total guaranteed vs $41.6M at signing. Traded to CHI 2023.",
+     "source": "https://www.cbssports.com/nfl/news/agents-take-breaking-down-20-notable-multi-year-contracts-handed-out-this-offseason/",
+     "outlet": "CBS Sports"
+    }
+   ]
+  },
+  "00-0035710": {
+   "name": "Daniel Jones",
+   "pos": "QB",
+   "draft_year": 2019,
+   "pick": 6,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": "2022-04-28",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2023 option; re-signed on four-year contract in Mar. 2023.",
+     "source": "https://www.nfl.com/_amp/giants-declining-fifth-year-option-of-qb-daniel-jones-exercising-dl-dexter-lawre",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "NYG",
+     "signed": "2023-03-07",
+     "kind": "veteran",
+     "first": 2023,
+     "end": 2026,
+     "years": 4,
+     "total": 160.0,
+     "aav": 40.0,
+     "guaranteed_at_signing": 82.0,
+     "option": null,
+     "released": null,
+     "basis": "Added by hand after the batch check.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-daniel-jones-deal",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0030564": {
+   "name": "DeAndre Hopkins",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 27,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "HOU",
+     "signed": "2016-04-15",
+     "kind": "rookie_option",
+     "first": 2017,
+     "end": 2017,
+     "years": 1,
+     "total": 7.915,
+     "aav": 7.915,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2017 option injury-guaranteed; superseded by Aug. 2017 extension.",
+     "source": "https://www.houstonchronicle.com/sports/texans/article/DeAndre-Hopkins-excited-about-arrival-of-Will-7467018.php",
+     "outlet": "Houston Chronicle"
+    },
+    {
+     "contract": 2,
+     "team": "HOU",
+     "signed": "2017-08-31",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2022,
+     "years": 5,
+     "total": 81.0,
+     "aav": 16.2,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$49M overall guarantees; signing-day share not verified. Traded to ARI 2020.",
+     "source": "https://www.nfl.com/news/texans-sign-deandre-hopkins-to-5-year-81m-deal-0ap3000000837455",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031547": {
+   "name": "DeVante Parker",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 14,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": "2018-04-24",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 9.387,
+     "aav": 9.387,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Decision article says approximately $9.5M for 2019; replaced by Mar. 2019 deal. Corrected: exact option figure; the decision article only said roughly $9.5M. https://www.profootballrumors.com/2018/04/dolphins-pick-up-devante-parker-option",
+     "source": "https://www.nfl.com/news/dolphins-pick-up-devante-parker-s-fifth-year-option-0ap3000000928292",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033537": {
+   "name": "Deshaun Watson",
+   "pos": "QB",
+   "draft_year": 2017,
+   "pick": 12,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "HOU",
+     "signed": "2020-04-27",
+     "kind": "rookie_option",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 17.3,
+     "aav": 17.3,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Approximately $17.3M as reported; superseded by Sept. 2020 extension.",
+     "source": "https://www.nfl.com/news/texans-exercise-deshaun-watson-s-fifth-year-option-0ap3000001111994",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "HOU",
+     "signed": "2020-09-05",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2025,
+     "years": 4,
+     "total": 156.0,
+     "aav": 39.0,
+     "guaranteed_at_signing": 73.0,
+     "option": null,
+     "released": null,
+     "basis": "$156M new money for 2022-25; $73M guaranteed at signing. Traded to CLE in 2022.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-deshaun-watson-contract",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0029613": {
+   "name": "Doug Martin",
+   "pos": "RB",
+   "draft_year": 2012,
+   "pick": 31,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": "2015-05-04",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Declined 2016 option; re-signed with TB in March 2016.",
+     "source": "https://fantasy-www.nfl.com/news/buccaneers-decline-fifth-year-option-of-doug-martin-0ap3000000490835",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031387": {
+   "name": "Eric Ebron",
+   "pos": "TE",
+   "draft_year": 2014,
+   "pick": 10,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": "2017-05-02",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 8.25,
+     "aav": 8.25,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": "2018-03-14",
+     "basis": "2018 option approximately $8.25M; released 2018-03-14 before option vested.",
+     "source": "https://www.nfl.com/news/lions-pick-up-fifth-year-option-on-te-eric-ebron-0ap3000000805788",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033881": {
+   "name": "Evan Engram",
+   "pos": "TE",
+   "draft_year": 2017,
+   "pick": 23,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": "2020-04-29",
+     "kind": "rookie_option",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 6.013,
+     "aav": 6.013,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2021 option injury-guaranteed; amount not stated in team report. Corrected: option amount was missing. https://www.si.com/nfl/giants/big-blue-plus/giants-2022-ufa-primer-te-evan-engram",
+     "source": "https://www.giants.com/news/evan-engram-jabrill-peppers-pick-up-fifth-year-options-nfl-tight-end-safety",
+     "outlet": "New York Giants"
+    }
+   ]
+  },
+  "00-0033045": {
+   "name": "Ezekiel Elliott",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 4,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": "2019-04-24",
+     "kind": "rookie_option",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 9.1,
+     "aav": 9.1,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "About $9.1M; superseded by Sep. 2019 extension.",
+     "source": "https://www.ksl.com/article/46538472",
+     "outlet": "Associated Press (via KSL)"
+    },
+    {
+     "contract": 2,
+     "team": "DAL",
+     "signed": "2019-09-04",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2026,
+     "years": 6,
+     "total": 90.0,
+     "aav": 15.0,
+     "guaranteed_at_signing": 28.0,
+     "option": null,
+     "released": "2023-03-15",
+     "basis": "Six new years after 2020 option; $50.05M overall guarantees vest in stages vs $28M at signing. Released Mar. 2023.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/ezekiel-elliott-tops-50-million-in-first-four-years",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0034830": {
+   "name": "Hayden Hurst",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 25,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": "2021-05-03",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2022 option declined; would have cost $5.428M.",
+     "source": "https://www.nfl.com/_amp/falcons-declining-fifth-year-option-on-te-hayden-hurst",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0027946": {
+   "name": "Jake Locker",
+   "pos": "QB",
+   "draft_year": 2011,
+   "pick": 8,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": "2014-04-30",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Titans declined 2015 option; no qualifying new contract before 2014 season.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/titans-wont-pick-up-jake-lockers-fifth-year-option",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0031503": {
+   "name": "Jameis Winston",
+   "pos": "QB",
+   "draft_year": 2015,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": "2018-04-17",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 20.922,
+     "aav": 20.922,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2019 option; no extension signed before 2019 kickoff.",
+     "source": "https://amp.nfl.com/news/buccaneers-pick-up-jameis-winston-s-fifth-year-option-0ap3000000926838",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033106": {
+   "name": "Jared Goff",
+   "pos": "QB",
+   "draft_year": 2016,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": "2019-04-23",
+     "kind": "rookie_option",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 22.783,
+     "aav": 22.783,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $22.783M from CBS: https://www.cbssports.com/nfl/news/agents-take-lets-take-a-look-at-the-contracts-2019-first-round-picks-are-expected-to-sign/ ; later extended.",
+     "source": "https://www.therams.com/news/rams-exercise-jared-goff-s-fifth-year-option",
+     "outlet": "Los Angeles Rams"
+    },
+    {
+     "contract": 2,
+     "team": "LAR",
+     "signed": "2019-09-03",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2024,
+     "years": 4,
+     "total": 134.0,
+     "aav": 33.5,
+     "guaranteed_at_signing": 57.0,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons beyond 2020 option; $57M guaranteed at signing per original Albert Breer report: https://www.si.com/nfl/2019/09/09/week-1-lamar-jackson-ravens-sammy-watkins-dak-prescott-cowboys-patriots-steelers ; traded to DET in 2021.",
+     "source": "https://www.nfl.com/news/rams-goff-agree-to-terms-on-4-year-134m-extension-0ap3000001047170",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036407": {
+   "name": "Jerry Jeudy",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 15,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DEN",
+     "signed": "2023-05-01",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 12.987,
+     "aav": 12.987,
+     "guaranteed_at_signing": 12.987,
+     "option": "exercised",
+     "released": null,
+     "basis": "2024 option; no extension before 2023 kickoff.",
+     "source": "https://www.denvergazette.com/2023/05/01/broncos-pick-up-fifth-year-option-on-wr-jerry-jeudy-for-12-987-million-094712d2-e839-11ed-8b1d-b3300da0630a/",
+     "outlet": "Denver Gazette"
+    }
+   ]
+  },
+  "00-0036442": {
+   "name": "Joe Burrow",
+   "pos": "QB",
+   "draft_year": 2020,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2023-04-25",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 29.504,
+     "aav": 29.504,
+     "guaranteed_at_signing": 29.504,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact option $29.504M from original CBS Joel Corry: https://www.cbssports.com/nfl/news/agents-take-a-guide-to-fifth-year-option-decisions-for-2020-first-round-picks-including-chase-young/ ; later extended.",
+     "source": "https://www.bengals.com/news/joe-burrow-fifth-year-option-2024-season",
+     "outlet": "Cincinnati Bengals"
+    },
+    {
+     "contract": 2,
+     "team": "CIN",
+     "signed": "2023-09-07",
+     "kind": "extension",
+     "first": 2025,
+     "end": 2029,
+     "years": 5,
+     "total": 275.0,
+     "aav": 55.0,
+     "guaranteed_at_signing": 146.51,
+     "option": null,
+     "released": null,
+     "basis": "Agreed before Cincinnati 2023 season opener. $146.51M fully guaranteed at signing (versus $219.01M total guarantees) per original Mike Florio: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-joe-burrow-deal",
+     "source": "https://www.bengals.com/news/report-joe-burrow-agrees-to-extend-bengals-career-through-2029",
+     "outlet": "Cincinnati Bengals"
+    }
+   ]
+  },
+  "00-0033460": {
+   "name": "John Ross",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 9,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2020-05-02",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2021 option declined; no qualifying new deal before 2020 season.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/report-bengals-decline-john-ross-fifth-year-option",
+     "outlet": "NBC Sports / Pro Football Talk"
+    }
+   ]
+  },
+  "00-0034857": {
+   "name": "Josh Allen",
+   "pos": "QB",
+   "draft_year": 2018,
+   "pick": 7,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": "2021-05-03",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 23.016,
+     "aav": 23.016,
+     "guaranteed_at_signing": 23.016,
+     "option": "exercised",
+     "released": null,
+     "basis": "2022 option; extended August 2021. Corrected: reports differ ($23.106M and $23.016M); owner rule is the lower figure. https://www.audacy.com/wgr550/sports/bills/bills-exercise-fifth-year-options-on-allen-edmunds",
+     "source": "https://www.nfl.com/_amp/bills-exercise-fifth-year-options-on-qb-josh-allen-and-lb-tremaine-edmunds",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "BUF",
+     "signed": "2021-08-06",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2028,
+     "years": 6,
+     "total": 258.0,
+     "aav": 43.0,
+     "guaranteed_at_signing": 100.0,
+     "option": null,
+     "released": null,
+     "basis": "$100M fully guaranteed at signing; $150M injury guarantees in overall deal. Details: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-josh-allen-deal",
+     "source": "https://www.nfl.com/_amp/josh-allen-bills-agree-to-extension-through-2028",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032760": {
+   "name": "Josh Doctson",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 22,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": "2019-05-01",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2020 option declined; Washington released him Aug. 31 2019; signed with MIN September 2019.",
+     "source": "https://www.washingtonpost.com/sports/2019/05/01/redskins-will-not-pick-up-wide-receiver-josh-doctsons-fifth-year-option/",
+     "outlet": "The Washington Post"
+    },
+    {
+     "contract": 2,
+     "team": "MIN",
+     "signed": "2019-09-02",
+     "kind": "veteran",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2019-11-26",
+     "basis": "One-year veteran-minimum deal; exact figure not stated. Released Nov. 26 2019 by Minnesota.",
+     "source": "https://amp.nfl.com/news/vikings-sign-josh-doctson-days-after-cutting-treadwell-0ap3000001046107",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0035700": {
+   "name": "Josh Jacobs",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 24,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LV",
+     "signed": "2022-04-29",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2023 option declined; team later issued unsigned franchise tender, replaced by a new one-year contract.",
+     "source": "https://www.raiders.com/news/statement-from-general-manager-dave-ziegler",
+     "outlet": "Las Vegas Raiders"
+    },
+    {
+     "contract": 2,
+     "team": "LV",
+     "signed": "2023-08-26",
+     "kind": "veteran",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 11.8,
+     "aav": 11.8,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$11.8M base with $0.2M incentive upside, per NFL Network insider Tom Pelissero; original subsequent Washington Post reporting: https://www.washingtonpost.com/sports/2024/08/26/saquon-barkley-eagles-josh-jacobs-packers-derrick-henry-ravens/ ; replaces UNSIGNED $10.091M franchise tender.",
+     "source": "https://www.nfl.com/news/raiders-rb-josh-jacobs-agrees-to-terms-on-one-year-contract-worth-up-to-12-milli",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0027944": {
+   "name": "Julio Jones",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 6,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": "2014-04-29",
+     "kind": "rookie_option",
+     "first": 2015,
+     "end": 2015,
+     "years": 1,
+     "total": 10.176,
+     "aav": 10.176,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $10.176M for 2015 option stated in ESPN original report: https://abcnews.com/Sports/lifetime-guarantee-julio-jones-falcons-reach-year-7125m/story?id=33406468 ; later extended.",
+     "source": "https://www.ajc.com/blog/atlanta-falcons/falcons-exercise-5th-year-option-julio-jones-contract/180uOKFPnoIQvDvG05PHKO/",
+     "outlet": "Atlanta Journal-Constitution"
+    },
+    {
+     "contract": 2,
+     "team": "ATL",
+     "signed": "2015-08-29",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2020,
+     "years": 5,
+     "total": 71.25,
+     "aav": 14.25,
+     "guaranteed_at_signing": 35.5,
+     "option": null,
+     "released": null,
+     "basis": "$47M total guarantees versus $35.5M fully guaranteed at signing per CBS contract analyst: https://www.cbssports.com/nfl/news/agents-take-what-the-falcons-should-do-about-julio-jones-contract-discontent/",
+     "source": "https://www.nfl.com/news/julio-jones-signs-5-year-extension-47m-in-guarantees-0ap3000000517695",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036355": {
+   "name": "Justin Herbert",
+   "pos": "QB",
+   "draft_year": 2020,
+   "pick": 6,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAC",
+     "signed": "2023-04-28",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 29.504,
+     "aav": 29.504,
+     "guaranteed_at_signing": 29.504,
+     "option": "exercised",
+     "released": null,
+     "basis": "2024 option; superseded by extension signed July 2023.",
+     "source": "https://www.latimes.com/sports/chargers/story/2023-04-28/chargers-exercise-fifth-year-option-justin-herbert",
+     "outlet": "Los Angeles Times"
+    },
+    {
+     "contract": 2,
+     "team": "LAC",
+     "signed": "2023-07-25",
+     "kind": "extension",
+     "first": 2025,
+     "end": 2029,
+     "years": 5,
+     "total": 262.5,
+     "aav": 52.5,
+     "guaranteed_at_signing": 133.738,
+     "option": null,
+     "released": null,
+     "basis": "New-money extension through 2029; $133.738M fully guaranteed at signing per Mike Florio original: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-justin-herbert-deal",
+     "source": "https://abcnews.com/amp/Sports/sources-chargers-justin-herbert-agree-5-year-2625m/story?id=101653173",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0036322": {
+   "name": "Justin Jefferson",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 22,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2023-04-25",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 19.743,
+     "aav": 19.743,
+     "guaranteed_at_signing": 19.743,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $19.743M from original Pioneer Press reporter Chris Tomasson syndicated by Yahoo: https://sports.yahoo.com/vikings-justin-jefferson-line-earn-173700736.html ; no extension before 2023 season.",
+     "source": "https://www.startribune.com/justin-jefferson-minnesota-vikings-contract-fifth-year-option-2024-nfl/600270044",
+     "outlet": "Star Tribune"
+    }
+   ]
+  },
+  "00-0031359": {
+   "name": "Kelvin Benjamin",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 28,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": "2017-05-02",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 8.459,
+     "aav": 8.459,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": "2018-12-04",
+     "basis": "Exact option from SI contemporary option tracker: https://www.si.com/nfl/2017/05/02/fifth-year-option-tracker ; traded to BUF in 2017; cut Dec. 4 2018.",
+     "source": "https://www.panthers.com/news/panthers-exercise-kelvin-benjamin-s-fifth-year-option-18817372",
+     "outlet": "Carolina Panthers"
+    }
+   ]
+  },
+  "00-0029708": {
+   "name": "Kendall Wright",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 20,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": "2015-04-28",
+     "kind": "rookie_option",
+     "first": 2016,
+     "end": 2016,
+     "years": 1,
+     "total": 7.32,
+     "aav": 7.32,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $7.32M stated in later original press reporting carried by Raiders club media: https://static.clubs.nfl.com/image/upload/raiders/gy3wr1rjaizkgujiav74.pdf ; NFL originally reported $7.3M.",
+     "source": "https://www.tennesseetitans.com/news/titans-pick-up-5th-year-option-on-wr-kendall-wright-15200717",
+     "outlet": "Tennessee Titans"
+    }
+   ]
+  },
+  "00-0035228": {
+   "name": "Kyler Murray",
+   "pos": "QB",
+   "draft_year": 2019,
+   "pick": 1,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": "2022-04-27",
+     "kind": "rookie_option",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 29.703,
+     "aav": 29.703,
+     "guaranteed_at_signing": 29.703,
+     "option": "exercised",
+     "released": null,
+     "basis": "2023 option; replaced by July 2022 extension.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/cardinals-pick-up-kyler-murrays-fifth-year-option",
+     "outlet": "NBC Sports / Pro Football Talk"
+    },
+    {
+     "contract": 2,
+     "team": "ARI",
+     "signed": "2022-07-21",
+     "kind": "extension",
+     "first": 2024,
+     "end": 2028,
+     "years": 5,
+     "total": 230.5,
+     "aav": 46.1,
+     "guaranteed_at_signing": 105.0,
+     "option": null,
+     "released": null,
+     "basis": "$105M fully guaranteed at signing; larger total injury-guarantee figure reported separately.",
+     "source": "https://abcnews.com/Sports/arizona-cardinals-star-kyler-murray-agrees-2305-million/story?id=87195276",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0034796": {
+   "name": "Lamar Jackson",
+   "pos": "QB",
+   "draft_year": 2018,
+   "pick": 32,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": "2021-04-30",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 23.016,
+     "aav": 23.016,
+     "guaranteed_at_signing": 23.016,
+     "option": "exercised",
+     "released": null,
+     "basis": "2022 option; April 2023 extension occurred after start of 2022 season and is outside this lookup cutoff.",
+     "source": "https://www.baltimoreravens.com/news/ravens-exercise-lamar-jackson-s-contract-option",
+     "outlet": "Baltimore Ravens"
+    }
+   ]
+  },
+  "00-0033856": {
+   "name": "Leonard Fournette",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 4,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": "2020-05-04",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2021 option declined (would cost $8.43M); released by JAX Aug. 31 2020; later signed twice with TB.",
+     "source": "https://www.jaguars.com/news/leonard-fournette-fifth-year-option-not-picked-up",
+     "outlet": "Jacksonville Jaguars"
+    },
+    {
+     "contract": 2,
+     "team": "TB",
+     "signed": "2020-09-02",
+     "kind": "veteran",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 2.0,
+     "aav": 2.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$2M base; incentives could raise value to $3.5M; signed after Jaguars release.",
+     "source": "https://www.nfl.com/news/rb-leonard-fournette-signing-with-buccaneers",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 3,
+     "team": "TB",
+     "signed": "2021-03-26",
+     "kind": "veteran",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 3.25,
+     "aav": 3.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "One year $3.25M base; up to $4M with incentives.",
+     "source": "https://www.fox13news.com/sports/fournette-agrees-to-1-year-deal-to-stay-with-bucs",
+     "outlet": "Associated Press (via FOX 13 Tampa Bay)"
+    }
+   ]
+  },
+  "00-0032268": {
+   "name": "Marcus Mariota",
+   "pos": "QB",
+   "draft_year": 2015,
+   "pick": 2,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": "2018-04-24",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 20.922,
+     "aav": 20.922,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $20.922M from original Paul Kuharsky reporting prior to formal exercise: https://www.paulkuharsky.com/news/titans-to-exercise-marcus-mariota-s-fifth-year-option-for-2019",
+     "source": "https://amp.nfl.com/news/titans-pick-up-marcus-mariota-s-fifth-year-option-0ap3000000927112",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0027966": {
+   "name": "Mark Ingram",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 28,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NO",
+     "signed": "2014-05-03",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "2015 option declined; later re-signed with Saints before the 2015 season.",
+     "source": "https://www.nfl.com/news/saints-decline-mark-ingram-s-fifth-year-option-0ap2000000346413",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "NO",
+     "signed": "2015-03-07",
+     "kind": "veteran",
+     "first": 2015,
+     "end": 2018,
+     "years": 4,
+     "total": 16.0,
+     "aav": 4.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four-year re-signing after declined 2015 option; overall guarantees not established as fully guaranteed at signing.",
+     "source": "https://abcnews.com/Sports/saints-giving-mark-ingram-16m/story?id=29474029",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0035662": {
+   "name": "Marquise Brown",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 25,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": "2022-04-29",
+     "kind": "rookie_option",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 13.413,
+     "aav": 13.413,
+     "guaranteed_at_signing": 13.413,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $13.413M option from original CBS analysis: https://www.cbssports.com/nfl/news/agents-take-a-guide-to-fifth-year-option-decisions-for-2019-first-round-picks/ ; traded BAL to ARI before option exercise.",
+     "source": "https://arizonasports.com/nfl/arizona-cardinals/marquise-brown-5th-year-option-picked-up-by-arizona-cardinals",
+     "outlet": "Arizona Sports"
+    }
+   ]
+  },
+  "00-0032144": {
+   "name": "Melvin Gordon",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 15,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAC",
+     "signed": "2018-05-02",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 5.605,
+     "aav": 5.605,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $5.605M reported in ESPN original: https://www.espn.com/nfl/story/_/id/27608301/source-gordon-holdout-not-leveon-situation ; held out in 2019.",
+     "source": "https://www.chargers.com/news/chargers-exercise-fifth-year-option-on-melvin-gordon-165691",
+     "outlet": "Los Angeles Chargers"
+    }
+   ]
+  },
+  "00-0029638": {
+   "name": "Michael Floyd",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 13,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": "2015-04-29",
+     "kind": "rookie_option",
+     "first": 2016,
+     "end": 2016,
+     "years": 1,
+     "total": 7.32,
+     "aav": 7.32,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": "2016-12-14",
+     "basis": "Exact $7.32M reported by Cardinals before exercise: https://www.azcardinals.com/news/draft-primer-2015-wide-receivers-15189215 ; cut Dec. 14 2016.",
+     "source": "https://www.azcardinals.com/news/cardinals-exercise-michael-floyd-option-15207123",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0031408": {
+   "name": "Mike Evans",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 7,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": "2017-04-17",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 13.258,
+     "aav": 13.258,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $13.258M option stated by CBS contract analyst: https://www.cbssports.com/nfl/news/agents-take-will-an-odell-beckham-jr-deal-be-a-major-reset-of-the-wide-receiver-market/ ; later extended.",
+     "source": "https://www.buccaneers.com/news/bucs-pick-up-option-on-mike-evans-18742361",
+     "outlet": "Tampa Bay Buccaneers"
+    },
+    {
+     "contract": 2,
+     "team": "TB",
+     "signed": "2018-03-09",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2023,
+     "years": 5,
+     "total": 82.5,
+     "aav": 16.5,
+     "guaranteed_at_signing": 38.258,
+     "option": null,
+     "released": null,
+     "basis": "$38.258M guaranteed at signing; $55.008M overall guarantees. Exact terms by CBS: https://www.cbssports.com/nfl/news/agents-take-will-an-odell-beckham-jr-deal-be-a-major-reset-of-the-wide-receiver-market/",
+     "source": "https://www.cbssports.com/nfl/news/buccaneers-sign-mike-evans-to-one-of-historys-biggest-contracts-for-a-receiver/",
+     "outlet": "CBS Sports"
+    }
+   ]
+  },
+  "00-0033536": {
+   "name": "Mike Williams",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 7,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAC",
+     "signed": "2020-04-30",
+     "kind": "rookie_option",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 15.68,
+     "aav": 15.68,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $15.68M option in later original Los Angeles Times report: https://www.latimes.com/sports/chargers/story/2021-04-19/highly-paid-mike-williams-can-improve-in-chargers-receiving-corps ; re-signed in 2022 after cutoff.",
+     "source": "https://sports.yahoo.com/chargers-exercise-fifth-option-receiver-174812565.html",
+     "outlet": "Los Angeles Times (via Yahoo Sports)"
+    }
+   ]
+  },
+  "00-0033869": {
+   "name": "Mitchell Trubisky",
+   "pos": "QB",
+   "draft_year": 2017,
+   "pick": 2,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": "2020-05-02",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Chicago declined his 2021 fifth-year option; became a free agent after 2020.",
+     "source": "https://abcnews.com/Sports/source-bears-decline-year-option-qb-mitchell-trubisky/story?id=70474317",
+     "outlet": "ESPN (via ABC News)"
+    },
+    {
+     "contract": 2,
+     "team": "BUF",
+     "signed": "2021-03-18",
+     "kind": "veteran",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 2.5,
+     "aav": 2.5,
+     "guaranteed_at_signing": 1.5,
+     "option": null,
+     "released": null,
+     "basis": "One-year backup QB deal; $2M additional incentives possible.",
+     "source": "https://www.nfl.com/_amp/former-bears-qb-mitch-trubisky-agrees-to-one-year-deal-with-bills",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031549": {
+   "name": "Nelson Agholor",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 20,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2018-04-30",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 9.387,
+     "aav": 9.387,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact 2019 option $9.387M reported separately by NFL.com: https://www.nfl.com/news/2019-nfl-free-agency-glossary-all-the-terms-you-need-to-know-0ap3000001021617 ; no new deal before 2019.",
+     "source": "https://www.philadelphiaeagles.com/news/eagles-exercise-fifth-year-option-on-wr-nelson-agholor-20616691",
+     "outlet": "Philadelphia Eagles"
+    }
+   ]
+  },
+  "00-0035644": {
+   "name": "Noah Fant",
+   "pos": "TE",
+   "draft_year": 2019,
+   "pick": 20,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": "2022-04-12",
+     "kind": "rookie_option",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 6.85,
+     "aav": 6.85,
+     "guaranteed_at_signing": 6.85,
+     "option": "exercised",
+     "released": null,
+     "basis": "Originally drafted by DEN; traded to SEA March 2022. $6.85M from original Tacoma News Tribune reporting: https://www.thenewstribune.com/sports/nfl/seattle-seahawks/article262104652.html ; no new deal before 2023.",
+     "source": "https://www.nfl.com/news/seahawks-pick-up-te-noah-fant-s-fifth-year-option",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033879": {
+   "name": "O.J. Howard",
+   "pos": "TE",
+   "draft_year": 2017,
+   "pick": 19,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": "2020-04-29",
+     "kind": "rookie_option",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 6.013,
+     "aav": 6.013,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $6.013M from CBS Sports analysis: https://www.cbssports.com/nfl/news/eight-players-cowboys-can-target-to-replace-leighton-vander-esch-blake-jarwin-clay-matthews-leads-the-list/ ; no new deal before 2020 season.",
+     "source": "https://www.buccaneers.com/news/o-j-howard-fifth-year-option-bucs-te",
+     "outlet": "Tampa Bay Buccaneers"
+    }
+   ]
+  },
+  "00-0031235": {
+   "name": "Odell Beckham",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 12,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": "2017-04-24",
+     "kind": "rookie_option",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": 8.459,
+     "aav": 8.459,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "2018 option $8.459M from CBS Sports original agent analysis: https://www.cbssports.com/nfl/news/agents-take-will-an-odell-beckham-jr-deal-be-a-major-reset-of-the-wide-receiver-market/ ; later superseded by extension.",
+     "source": "https://www.nfl.com/news/giants-exercise-5th-year-option-on-odell-beckham-0ap3000000802050",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "NYG",
+     "signed": "2018-08-27",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2023,
+     "years": 5,
+     "total": 90.0,
+     "aav": 18.0,
+     "guaranteed_at_signing": 41.0,
+     "option": null,
+     "released": "2021-11-08",
+     "basis": "Base $90M, $5M additional escalators (max $95M); $41M fully guaranteed at signing, $65M injury/total guarantees. Traded to CLE in 2019; Browns waived 2021-11-08; 2022-23 years removed in 2021 settlement.",
+     "source": "https://www.cbssports.com/nfl/news/giants-odell-beckham-reportedly-agree-to-five-year-95-million-extension-with-65-million-guaranteed/",
+     "outlet": "CBS Sports (Jason La Canfora)"
+    }
+   ]
+  },
+  "00-0033873": {
+   "name": "Patrick Mahomes",
+   "pos": "QB",
+   "draft_year": 2017,
+   "pick": 10,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": "2020-04-30",
+     "kind": "rookie_option",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": 24.837,
+     "aav": 24.837,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exact $24.837M option reported separately by CBS Sports: https://www.cbssports.com/nfl/news/chiefs-exercise-patrick-mahomes-fifth-year-option-and-heres-where-hes-slated-to-rank-in-2021-salary/ ; superseded by July 2020 extension.",
+     "source": "https://www.nfl.com/news/chiefs-exercise-qb-patrick-mahomes-fifth-year-option-0ap3000001112345",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "KC",
+     "signed": "2020-07-06",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2031,
+     "years": 10,
+     "total": 450.0,
+     "aav": 45.0,
+     "guaranteed_at_signing": 63.081905,
+     "option": null,
+     "released": null,
+     "basis": "10 new seasons; $450M base, up to $503M including incentives. Exact signing guarantee $63.081905M from CBS agent Joel Corry original analysis: https://www.cbssports.com/nfl/news/agents-take-will-any-other-quarterback-sign-a-patrick-mahomes-type-contract-and-what-could-it-look-like/",
+     "source": "https://abcnews.com/Sports/chiefs-lock-patrick-mahomes-2031-massive-extension/story?id=71642862",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0034750": {
+   "name": "Rashaad Penny",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 27,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": "2021-05-03",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Seahawks declined 2022 option; 2022 new one-year deal instead.",
+     "source": "https://www.nfl.com/news/fifth-year-option-tracker-for-2018-first-round-picks",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "SEA",
+     "signed": "2022-03-20",
+     "kind": "veteran",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 5.75,
+     "aav": 5.75,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Base $5.75M; can reach $6.5M with incentives. Signing guarantee not stated in cited report.",
+     "source": "https://www.nfl.com/_amp/rashaad-penny-seahawks-one-year-deal-2022",
+     "outlet": "NFL.com (Ian Rapoport)"
+    }
+   ]
+  },
+  "00-0029665": {
+   "name": "Robert Griffin",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 2,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": "2015-04-27",
+     "kind": "rookie_option",
+     "first": 2016,
+     "end": 2016,
+     "years": 1,
+     "total": 16.155,
+     "aav": 16.155,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": "2016-03-07",
+     "basis": "Decision article rounded to $16.2M; exact $16.155M in original Washington Post release report: https://www.washingtonpost.com/news/football-insider/wp/2016/03/07/redskins-release-robert-griffin-iii/ ; cut before option became fully guaranteed.",
+     "source": "https://abcnews.com/Sports/redskins-exercise-robert-griffin-iiis-162m-option-2016/story?id=30615662",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0029701": {
+   "name": "Ryan Tannehill",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 8,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": "2015-04-29",
+     "kind": "rookie_option",
+     "first": 2016,
+     "end": 2016,
+     "years": 1,
+     "total": 16.155,
+     "aav": 16.155,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "NFL decision reported $16M placeholder; contemporaneous original ProFootballTalk specified $16.1M: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dolphins-extend-tannehill ; option superseded by May extension. Corrected: exact figure; reports rounded it. Same 2012 top-10 quarterback amount as Luck and Griffin.",
+     "source": "https://www.nfl.com/_amp/dolphins-exercise-fifth-year-option-on-ryan-tannehill-0ap3000000489009",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "MIA",
+     "signed": "2015-05-18",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2020,
+     "years": 4,
+     "total": 77.0,
+     "aav": 19.25,
+     "guaranteed_at_signing": 21.5,
+     "option": null,
+     "released": null,
+     "basis": "Four NEW seasons: $77M; six-year value including 2015-16 $95M. $25M originally reported as fully guaranteed, $45M conditional. Traded to TEN in 2019; no release. Corrected: fully guaranteed at signing was $21.5M; another $3.5M became guaranteed in March 2016. https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/ryan-tannehill-gets-21-5-million-fully-guaranteed-at-signing",
+     "source": "https://www.nfl.com/_amp/miami-dolphins-sign-ryan-tannehill-to-big-extension-0ap3000000493141",
+     "outlet": "NFL.com (Ian Rapoport)"
+    }
+   ]
+  },
+  "00-0034869": {
+   "name": "Sam Darnold",
+   "pos": "QB",
+   "draft_year": 2018,
+   "pick": 3,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": "2021-04-30",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 18.858,
+     "aav": 18.858,
+     "guaranteed_at_signing": 18.858,
+     "option": "exercised",
+     "released": null,
+     "basis": "Originally drafted NYJ; CAR acquired through April 2021 trade. No new deal before 2022 season.",
+     "source": "https://www.nfl.com/news/panthers-pick-up-qb-sam-darnold-fifth-year-option",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031325": {
+   "name": "Sammy Watkins",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 4,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": "2017-05-02",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Buffalo declined 2018 option; traded to Rams before 2017 season; subsequently joined KC.",
+     "source": "https://www.nfl.com/news/bills-decline-to-pick-up-wr-sammy-watkins-option-0ap3000000805913",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "KC",
+     "signed": "2018-03-13",
+     "kind": "veteran",
+     "first": 2018,
+     "end": 2020,
+     "years": 3,
+     "total": 48.0,
+     "aav": 16.0,
+     "guaranteed_at_signing": 30.0,
+     "option": null,
+     "released": null,
+     "basis": "$21M signing bonus; $30M fully guaranteed at signing.",
+     "source": "https://www.nfl.com/_amp/sammy-watkins-chiefs-deal-has-21m-signing-bonus-0ap3000000920815",
+     "outlet": "NFL.com (Ian Rapoport; Tom Pelissero)"
+    }
+   ]
+  },
+  "00-0034844": {
+   "name": "Saquon Barkley",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 2,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": "2021-04-28",
+     "kind": "rookie_option",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 7.217,
+     "aav": 7.217,
+     "guaranteed_at_signing": 7.217,
+     "option": "exercised",
+     "released": null,
+     "basis": "2022 option; no new contract before 2022 season. 2023 franchise tag occurred after cutoff.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/giants-exercise-saquon-barkleys-fifth-year-option/",
+     "outlet": "NBC Sports / ProFootballTalk"
+    }
+   ]
+  },
+  "00-0034845": {
+   "name": "Sony Michel",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 31,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": "2021-05-03",
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": "declined",
+     "released": null,
+     "basis": "Patriots declined 2022 option; traded to Rams ahead of 2021 season.",
+     "source": "https://www.cbssports.com/nfl/news/nfl-fifth-year-option-tracker-for-2018-first-round-picks-bills-bringing-back-josh-allen-in-2022/",
+     "outlet": "CBS Sports"
+    },
+    {
+     "contract": 2,
+     "team": "MIA",
+     "signed": "2022-05-10",
+     "kind": "veteran",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": 2.1,
+     "aav": 2.1,
+     "guaranteed_at_signing": 0.85,
+     "option": null,
+     "released": "2022-08-29",
+     "basis": "Miami signed one-year deal May 10, released Aug 29. NFL original report details $2.1M and $850K guaranteed: https://www.nfl.com/_amp/dolphins-release-veteran-rb-sony-michel",
+     "source": "https://www.miamidolphins.com/news/roster-move-dolphins-sign-michel",
+     "outlet": "Miami Dolphins"
+    },
+    {
+     "contract": 3,
+     "team": "LAC",
+     "signed": "2022-08-31",
+     "kind": "veteran",
+     "first": 2022,
+     "end": 2022,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2022-12-31",
+     "basis": "Signed after Miami preseason release; Chargers waived Dec 31 (team transactions): https://www.chargers.com/team/transactions/2022 ; financial terms not established by original report.",
+     "source": "https://www.chargers.com/news/chargers-sign-rb-sony-michel",
+     "outlet": "Los Angeles Chargers"
+    }
+   ]
+  },
+  "00-0035229": {
+   "name": "T.J. Hockenson",
+   "pos": "TE",
+   "draft_year": 2019,
+   "pick": 8,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": "2022-04-26",
+     "kind": "rookie_option",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 9.392,
+     "aav": 9.392,
+     "guaranteed_at_signing": 9.392,
+     "option": "exercised",
+     "released": null,
+     "basis": "Detroit exercised Apr 26 (team transaction recorded in 2023 Vikings guide); option $9.392M. Traded to MIN Nov 2022; superseded by extension.",
+     "source": "https://www.cbssports.com/nfl/news/agents-take-a-guide-to-fifth-year-option-decisions-for-2019-first-round-picks/",
+     "outlet": "CBS Sports (Joel Corry)"
+    },
+    {
+     "contract": 2,
+     "team": "MIN",
+     "signed": "2023-08-31",
+     "kind": "extension",
+     "first": 2024,
+     "end": 2027,
+     "years": 4,
+     "total": 65.448,
+     "aav": 16.362,
+     "guaranteed_at_signing": 29.292,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons $66M stated base value; original report notes effective $65.448M after an existing 17th-game payment. Up to $68.5M including incentives. $29.292M signing guarantee from original disclosed components: $18M bonus + $1.392M 2023 base + $9.9M 2024 base. Corrected: reports differ; owner rule is the lower figure (effective new money).",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-t-j-hockenson-deal",
+     "outlet": "NBC Sports / ProFootballTalk (Mike Florio)"
+    }
+   ]
+  },
+  "00-0030525": {
+   "name": "Tavon Austin",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 8,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": "2016-05-02",
+     "kind": "rookie_option",
+     "first": 2017,
+     "end": 2017,
+     "years": 1,
+     "total": 12.268,
+     "aav": 12.268,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "CBS reports Rams exercised $12.268M option for 2017; decision date also in contemporaneous NFL.com tracker: https://amp.nfl.com/news/fifth-year-option-tracker-for-2013-first-round-picks-0ap3000000659379 ; superseded by August extension.",
+     "source": "https://www.cbssports.com/nfl/news/agents-take-contract-awards-for-the-best-and-worst-nfl-signings-of-2016/",
+     "outlet": "CBS Sports (Joel Corry)"
+    },
+    {
+     "contract": 2,
+     "team": "LAR",
+     "signed": "2016-08-27",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2021,
+     "years": 4,
+     "total": 42.0,
+     "aav": 10.5,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons 2018-21; up to $52M with incentives. Reported $30M aggregate guarantees not identified as fully guaranteed at signing, so signing guarantee left blank; traded to DAL in 2018. March 2018 renegotiation removed years after 2018: https://www.latimes.com/sports/rams/la-sp-rams-tavon-austin-20180315-story.html",
+     "source": "https://abcnews.com/Sports/source-tavon-austin-rams-agree-year-42-million/story?id=41695175",
+     "outlet": "ESPN (Adam Schefter, via ABC News)"
+    }
+   ]
+  },
+  "00-0032241": {
+   "name": "Todd Gurley",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 10,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": "2018-04-24",
+     "kind": "rookie_option",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": 9.63,
+     "aav": 9.63,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Exercised 2019 option prior to 2018 extension; superseded by July 2018 deal.",
+     "source": "https://amp.nfl.com/news/rams-exercise-options-on-todd-gurley-marcus-peters-0ap3000000928263",
+     "outlet": "NFL.com"
+    },
+    {
+     "contract": 2,
+     "team": "LAR",
+     "signed": "2018-07-24",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2023,
+     "years": 4,
+     "total": 57.5,
+     "aav": 14.375,
+     "guaranteed_at_signing": 21.95,
+     "option": null,
+     "released": "2020-03-19",
+     "basis": "Four new seasons, $57.5M base; max $60M with escalators; $21.95M fully guaranteed at signing ($45M rolling guarantees). Rams released him Mar 19 2020.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-todd-gurleys-new-deal",
+     "outlet": "NBC Sports / ProFootballTalk (Mike Florio)"
+    }
+   ]
+  },
+  "00-0036212": {
+   "name": "Tua Tagovailoa",
+   "pos": "QB",
+   "draft_year": 2020,
+   "pick": 5,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": "2023-03-10",
+     "kind": "rookie_option",
+     "first": 2024,
+     "end": 2024,
+     "years": 1,
+     "total": 23.171,
+     "aav": 23.171,
+     "guaranteed_at_signing": 23.171,
+     "option": "exercised",
+     "released": null,
+     "basis": "Option decision communicated March 10 and finalized by team March 20. Exact $23.171M from CBS original NFL option tracker: https://www.cbssports.com/nfl/news/nfl-fifth-year-option-tracker-full-list-of-every-teams-decision-about-first-round-picks-from-2020-nfl-draft/ ; no new deal before 2023 season.",
+     "source": "https://www.nfl.com/_amp/dolphins-picking-up-qb-tua-tagovailoa-s-fifth-year-option",
+     "outlet": "NFL.com (Mike Garafolo)"
+    }
+   ]
+  },
+  "00-0030549": {
+   "name": "Tyler Eifert",
+   "pos": "TE",
+   "draft_year": 2013,
+   "pick": 21,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2016-04-12",
+     "kind": "rookie_option",
+     "first": 2017,
+     "end": 2017,
+     "years": 1,
+     "total": 4.782,
+     "aav": 4.782,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Date confirmed Bengals 2016 transactions (Apr 12): https://www.bengals.com/team/transactions/2016 ; exact $4.782M original CBS agent report: https://www.cbssports.com/nfl/news/agents-take-2017-nfl-offseason-key-dates-and-what-they-mean-for-your-team/ ; no new deal before 2017.",
+     "source": "https://amp.nfl.com/news/bengals-exercise-tyler-eifert-s-fifth-year-option-0ap3000000652602",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033127": {
+   "name": "Will Fuller",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 21,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "HOU",
+     "signed": "2019-04-26",
+     "kind": "rookie_option",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 10.162,
+     "aav": 10.162,
+     "guaranteed_at_signing": null,
+     "option": "exercised",
+     "released": null,
+     "basis": "Houston exercised 2020 option; no new contract before 2020 season.",
+     "source": "https://www.chron.com/sports/texans/article/Texans-exercise-option-on-WR-Will-Fuller-13799127.php",
+     "outlet": "Houston Chronicle (John McClain)"
+    }
+   ]
+  }
+ }
+}
