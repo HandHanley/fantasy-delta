@@ -84,6 +84,54 @@ slot on 2 November.
 
 The DELTA Score, the site's model value, buy/sell calls. Nothing on the site changes.
 
-## 6. Results
+## 6. Results (9 Nov 2026, Run Once)
 
-(Filled in after the one run.)
+`study/out/ovs_available_ppg_results.json`. The lock commit was rebased onto the nightly data update before the push (no
+study files touched); the locked commit is `8baa510`. Equivalence check: with available = played, the new production
+code reproduced today's production on every row. Production changed on 5,109 of the 6,808 rows.
+
+**Decision: passes. In-season uses points per available game, with no games number.**
+
+| Week 9 (6,808 rows) | Typical Miss | Close Trades Called Right |
+|---|---|---|
+| Per available game vs today | 48.28 vs 48.07 (**0.4% worse**, bar 1%) | 55.7% vs 54.3% (**1.3 points better**) |
+| Per available game + games number vs today (reported) | 48.04 vs 48.07 (0.1% better) | 56.7% vs 54.2% (2.5 points better) |
+| Per available game + games number vs per available game alone (reported) | 0.5% better (p = 0.03) | 1.4 points better |
+
+By position, per available game vs today: QB −0.1%, RB 0.0%, WR −1.1%, TE −0.9%.
+
+**What each group produced, as a share of its value:**
+
+| Group | Today | Per Available Game | Plus Games Number |
+|---|---|---|---|
+| 2+ weeks out hurt (986 rows) | 69% | 74% | 69% |
+| 5 or fewer games, never hurt (3,176 rows) | 55% | 39% | 51% |
+
+**What it means.**
+
+- **Accuracy:** points per available game is about as accurate as today, and calls close trades slightly better.
+- **Steve's hunch was partly right:** a "how many games is this based on" number still adds a little (0.5%, real but
+  small). But the games number tested here is the credited-games version, the patch this change replaces.
+- **Injured players:** now valued a bit closer to what they went on to do.
+- **Low-games players who were never hurt:** valued further above what they went on to do.
+
+**Today's page (week 9, full PPR, 12-team superflex; injury credit → per available game):**
+
+| Player | Injury Credit | Per Available Game | Why |
+|---|---|---|---|
+| Malik Willis | 43 | **138** | 2025: played 4 of 17 active weeks as a backup |
+| Drake Maye | 2 | 6 | |
+| Puka Nacua | 6 | 2 | |
+| Brock Purdy | 7 | 7 | |
+| Caleb Williams | 12 | 12 | |
+| Goff vs McBride | 22 vs 24 | 17 vs 23 | |
+| Baker Mayfield | 77 | 85 | |
+| Josh Jacobs | 103 | 57 | Exempt weeks left out |
+| Cam Skattebo | 49 | 111 | One healthy week not played; no games number |
+| Fernando Mendoza | 69 | 130 | Rookie, active all 8 weeks, played 1 |
+
+Position balance (average rank among all valued players, market in brackets): QB 56 (60), RB 101 (76), WR 84 (79), TE
+119 (90). Agreement with FantasyCalc: 0.81 (unchanged).
+
+**Open question for Steve:** should a rookie sitting behind a starter (Mendoza) count his healthy inactive weeks as
+zeros, like a benched veteran?

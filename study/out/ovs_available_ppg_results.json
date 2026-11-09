@@ -1,0 +1,92 @@
+{
+ "prereg": "docs/PREREG-ovs-available-ppg.md",
+ "week": 9,
+ "rows": 6808,
+ "available_data": {
+  "played_weeks": 70601,
+  "healthy_zero_weeks": 270185,
+  "older_format_seasons": [
+   2002,
+   2003,
+   2004,
+   2005,
+   2006,
+   2007,
+   2008,
+   2009,
+   2010,
+   2011,
+   2012,
+   2013,
+   2014,
+   2015
+  ]
+ },
+ "denominator_lifted_to_played": {
+  "full": 0,
+  "upto": 0
+ },
+ "production_changed_rows": 5109,
+ "N_vs_today": {
+  "rmse_new": 48.282763885829695,
+  "rmse_today": 48.069966780327235,
+  "change": -0.0044268203153730035,
+  "p_new_better": 0.7677232276772322,
+  "trades_new": 0.5566677429770746,
+  "trades_today": 0.5432446146039946,
+  "trades_diff": 0.013423128373079907
+ },
+ "NG_vs_today": {
+  "rmse_new": 48.041580237078826,
+  "rmse_today": 48.069966780327235,
+  "change": 0.000590525543279985,
+  "p_new_better": 0.44265573442655737,
+  "trades_new": 0.5672112885258076,
+  "trades_today": 0.5418678054214631,
+  "trades_diff": 0.025343483104344533
+ },
+ "NG_vs_N": {
+  "rmse_new": 48.041580237078826,
+  "rmse_today": 48.282763885829695,
+  "change": 0.004995232860346754,
+  "p_new_better": 0.0287971202879712,
+  "trades_new": 0.5623121387283238,
+  "trades_today": 0.5485780346820809,
+  "trades_diff": 0.013734104046242868
+ },
+ "by_position_N_vs_today": {
+  "QB": -0.0013943942306828827,
+  "RB": 0.00022501568453114906,
+  "WR": -0.010812694238456544,
+  "TE": -0.009030742910445921
+ },
+ "out_hurt_2plus": {
+  "today": {
+   "rows": 986,
+   "produced_over_predicted": 0.6925618280490915
+  },
+  "N": {
+   "rows": 986,
+   "produced_over_predicted": 0.7390394221202783
+  },
+  "NG": {
+   "rows": 986,
+   "produced_over_predicted": 0.6853530709583727
+  }
+ },
+ "low_games_never_hurt": {
+  "today": {
+   "rows": 3176,
+   "produced_over_predicted": 0.552052620051256
+  },
+  "N": {
+   "rows": 3176,
+   "produced_over_predicted": 0.39422853152196174
+  },
+  "NG": {
+   "rows": 3176,
+   "produced_over_predicted": 0.511419900327838
+  }
+ },
+ "decision": "points per available game, no games number"
+}

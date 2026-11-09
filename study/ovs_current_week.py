@@ -10,6 +10,7 @@ _ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], 
 _ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
 _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
+_ap.add_argument('--available-ppg', action='store_true', help='production per available game, no games number (docs/PREREG-ovs-available-ppg.md)')
 _ap.add_argument('--show-matches', default='', help='print the 30 matches for this player name (Sin.name)')
 _ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
@@ -70,6 +71,15 @@ if _args.injury_games:
     Sin['games_raw'] = Sin.games
     Sin['games'], _add = J.neutral_games(Sin, _inj, 9)
     Sin['out_hurt'] = _add
+if _args.available_ppg:
+    assert not (_args.injury_games or _args.no_games)
+    import injury_weeks as J, ovs_available_ppg as AP
+    _Lf, _Lu = I.levels(W)
+    _Au = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 9)
+    _Af = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 22)
+    Sin['prod'], _lift = AP.prod_available(Sin, W, 9, _Lf, _Lu, st, _Af, _Au)
+    Sin['games_raw'] = Sin.games
+    C.W_V['games'] = 0.0
 pa = DD.neighbours(Sin, rows, 'A', pool_max_t=None)
 val = {}
 for r, nn in zip(pa['test'], pa['nn'][30]):
