@@ -1,0 +1,27 @@
+{
+ "amendment": "docs/PREREG-ovs-available-ppg.md \u00a77",
+ "rows": 6808,
+ "first_year_qb_rows_all_seasons_changed": 119,
+ "first_year_qb_test_rows": 82,
+ "first_year_qb_test_rows_changed": 61,
+ "all_rows": {
+  "rmse_rule": 48.55828955702862,
+  "rmse_without": 48.282763885829695,
+  "change": -0.005706501637943617
+ },
+ "first_year_qbs": {
+  "rmse_rule": 111.10532949586545,
+  "rmse_without": 101.48623637378365,
+  "change": -0.0947822430487395,
+  "produced_over_rule": 1.0061324082402021,
+  "produced_over_without": 1.36564887465543
+ },
+ "trades": {
+  "n_trades": 21345,
+  "acc_in_season": 0.5610213164675568,
+  "acc_baseline": 0.5648161161864605,
+  "diff": -0.0037947997189037297,
+  "p": 0.8685131486851315,
+  "guard_ok": true
+ }
+}

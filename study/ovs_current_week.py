@@ -11,6 +11,7 @@ _ap.add_argument('--live', default='live_values.json', help='live site values fi
 _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
 _ap.add_argument('--available-ppg', action='store_true', help='production per available game, no games number (docs/PREREG-ovs-available-ppg.md)')
+_ap.add_argument('--rookie-qb-sits', action='store_true', help='with --available-ppg: first-year QBs count only games played (PREREG-ovs-available-ppg.md section 7)')
 _ap.add_argument('--show-matches', default='', help='print the 30 matches for this player name (Sin.name)')
 _ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
@@ -77,7 +78,7 @@ if _args.available_ppg:
     _Lf, _Lu = I.levels(W)
     _Au = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 9)
     _Af = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 22)
-    Sin['prod'], _lift = AP.prod_available(Sin, W, 9, _Lf, _Lu, st, _Af, _Au)
+    Sin['prod'], _lift = AP.prod_available(Sin, W, 9, _Lf, _Lu, st, _Af, _Au, rookie_qb_sits=_args.rookie_qb_sits)
     Sin['games_raw'] = Sin.games
     C.W_V['games'] = 0.0
 pa = DD.neighbours(Sin, rows, 'A', pool_max_t=None)

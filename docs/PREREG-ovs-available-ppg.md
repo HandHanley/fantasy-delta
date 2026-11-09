@@ -153,3 +153,26 @@ it should work that way for RBs, WRs and TEs, as those positions earn reps more 
 - Week 9, 2013–2022, all rows and the first-year QB rows: typical miss with and without the rule.
 - First-year QBs: what they produced ÷ each version's value.
 - Today's page rebuilt (Fernando Mendoza and the other first-year QBs).
+
+### Results (9 Nov 2026, Run Once)
+
+`study/out/ovs_rookie_qb_results.json`. 119 first-year QB rows changed across all seasons (82 in the 2013–2022 test
+rows, 61 of them changed). No other row changed (asserted).
+
+| Week 9 | Without The Rule | With The Rule |
+|---|---|---|
+| All rows: typical miss | 48.28 | 48.56 (0.6% worse) |
+| First-year QBs: typical miss | 101.5 | 111.1 (9.5% worse) |
+| First-year QBs: produced ÷ value | **137%** | **101%** |
+| Close trades called right | 56.5% | 56.1% |
+
+**What it means.**
+
+- **Without the rule, sitting rookie QBs were undervalued as a group:** they went on to produce about a third more than
+  their value.
+- **With the rule, the group is valued about right on average.**
+- **But each guess misses by more.** A sitting rookie's points per game now rests on the one or two games he did play.
+  That is Steve's "how many games is this based on" concern showing up exactly where expected.
+
+**Today's page:** Fernando Mendoza 130 → 110 (market 43). Other QBs shift a few places through their matches, e.g. Maye
+6 → 11 and Purdy 7 → 6.
