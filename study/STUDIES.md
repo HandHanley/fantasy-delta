@@ -117,6 +117,7 @@ found, misses included. Checked against the record before listing (method lesson
 | **Own Value Scale: The Second-Contract Moment** | At the end of a rookie deal, does kept / moved / no club change value beyond his comparables? | **Crash FAIL 8 Nov** (planted 6.5%, typical lift 0.6%): too small to matter or detect. Not run. `docs/PREREG-ovs-second-contract.md` |
 | **Own Value Scale: Draft Pedigree Back For Veterans** | Fading draft weight (1.5 × 24/(G+24)) for career year 2+, instead of none? | **Crash FAIL 8 Nov** (planted 0/200, typical lift 0.9%): can never reach 2%. Not run. `docs/PREREG-ovs-draft-back.md` |
 | **Own Value Scale: Points Per Available Game** | In-season production per available game (healthy weeks not played = 0; hurt, suspended, exempt left out), no games number. No more than 1% worse? | **Passed 9 Nov, adopted:** 0.4% worse, trades 1.3 pts better. Adding the games number back: 0.5% better still (reported). `docs/PREREG-ovs-available-ppg.md` |
+| **Power Check: Contract Bump** | Made-up contracts: could the usual test detect a contract bump, and how precisely could history measure one? | **9 Nov:** never passes the 2% bar (±20% bump: 2 of 40); history would measure the size to about ±4 points. `docs/POWER-contract-bump.md` |
 | The TE Year-3 Breakout | Do tight ends really break out later than receivers? | Idea. Partly covered by the breakout-odds study |
 
 **Off the list on purpose:** anything that would measure or label injury-proneness.
