@@ -73,8 +73,10 @@ By position, week 9: QB −3.8%, RB −2.3%, WR −2.3%, TE −0.6%. Preseason: 
 **Today's page (week 9, full PPR, 12-team superflex, without games):**
 
 - Agreement with FantasyCalc's top-150 order rises from 0.78 to 0.81.
-- Average rank by position (market in brackets): QB 57 (60), RB 87 (76), WR 71 (79), TE 96 (90). With games it was QB
-  57, RB 99, WR 88, TE 124.
+- Average rank by position, rank among all valued players (market in brackets): QB 62 (60), RB 107 (76), WR 84 (79),
+  TE 121 (90). With games it was QB 57, RB 99, WR 88, TE 124. *(Corrected 8 Nov: the first version put the no-games
+  ranks within the top 150 next to the others' ranks among all players, which made TEs look about 28 places higher
+  than they were.)*
 - Player moves:
   - Caleb Williams 25 → 18
   - Drake Maye 2 → 10
@@ -183,10 +185,10 @@ with games: QB −0.3%, RB −1.6%, WR −1.5%, TE −0.5%. 1,455 rows have at l
 | Brock Bowers | 2 | 40 | 36 |
 
 - **Healthy players:** close to where they were with games (Maye 2, Burrow 9, Malik Willis 43, Goff 22, McBride 24).
-- **The bigger shifts in §4 came from somewhere else.** Without games, Maye was 10th, Willis 65th and TEs rose. Those
+- **The bigger shifts in §4 came from somewhere else.** Without games, Maye was 10th and Willis 65th. Those
   moves came from dropping games for healthy players, not from the injury fix.
-- **Position balance (average rank in the market top 150, market in brackets):** QB 48 (60), RB 88 (76), WR 74 (79),
-  TE 99 (90).
+- **Position balance (average rank in the market top 150, rank among all valued players, market in brackets):** QB 49
+  (60), RB 102 (76), WR 86 (79), TE 121 (90). QBs sit higher than with games (57), the opposite of what's wanted.
 - **Agreement with FantasyCalc:** 0.81 (with games 0.78).
 
 **Why A.J. Brown falls:** he has 3 games and 4 weeks out hurt, so he is now matched with healthy receivers on his
