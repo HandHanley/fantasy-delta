@@ -1,0 +1,31 @@
+{
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted_0.75": {
+  "runs": 200,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": 0.008733585126516674,
+  "ok": false
+ },
+ "planted_0.6": {
+  "runs": 50,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": 0.004486526503399646
+ },
+ "counts": {
+  "test_rows": 6484,
+  "rows_decided": 4769,
+  "by_position": {
+   "QB": 672,
+   "RB": 1323,
+   "WR": 1766,
+   "TE": 1008
+  },
+  "decided_rows_with_new_matches": 4769
+ }
+}

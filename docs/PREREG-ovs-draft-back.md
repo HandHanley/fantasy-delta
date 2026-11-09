@@ -67,4 +67,21 @@ The DELTA Score, the site's model value, buy/sell calls. Nothing on the site cha
 
 ## 8. Amendments
 
-(None yet.)
+**Crash tests (8 Nov, `study/out/ovs_draft_back_crash.json`): FAIL.**
+
+- **Rows:** 4,769 decided (QB 672, RB 1,323, WR 1,766, TE 1,008). Every one gets new matches.
+
+| World | Result | Bar |
+|---|---|---|
+| Noise | 0 of 20 passed | At most 1 of 20 |
+| Planted, w = 0.75 | **0 of 200**, typical lift 0.9% | 80% |
+| Planted, w = 0.6 | 0 of 50, typical lift 0.4% | Reported only |
+
+**What it means.**
+
+- Across all veterans, putting draft slot back changes their predicted next three seasons only a little.
+- Even if the change were fully right, it would cut the typical miss by under 1%, so it can never reach the 2% bar.
+- It moves a few players' ranks a lot (Willis), but most veterans barely move.
+- **This is a prior look.** The planted world is built from values learned from real outcomes, so the size of the change
+  (not whether it is right) is now known.
+- Per §5 this goes to Steve. No real run has been made.
