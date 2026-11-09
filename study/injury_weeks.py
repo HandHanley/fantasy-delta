@@ -83,7 +83,7 @@ INJ_REPORT_ANY = {'Out', 'Doubtful', 'Questionable'}
 ACTIVE = {'ACT', 'INA'}                    # week-by-week files: on the game-day roster
 
 
-def available_weeks(weekly_dir, wrost_dir, inj_dir, week, return_parts=False):
+def available_weeks(weekly_dir, wrost_dir, inj_dir, week, return_parts=False, drop=frozenset(), add=frozenset()):
     """{(gsis_id, season): weeks available through `week`} = weeks he played, plus weeks he was on a club's game-day
     roster, his club played, and he did not play and was not hurt. Hurt = the injured_weeks rule, plus any injury-report
     listing (Out, Doubtful or Questionable) in a week he did not play. Weeks suspended, exempt, on bye or on no club are
@@ -112,6 +112,7 @@ def available_weeks(weekly_dir, wrost_dir, inj_dir, week, return_parts=False):
         key = (g, int(s), int(w))
         if key in avail or (s, t, w) not in team_weeks or key in reported: continue
         avail.add(key); healthy_zero += 1
+    avail = (avail - set(drop)) | {k for k in add if k[2] <= week}        # QB cameos out, QB starts without a stat in
     out = {}
     for g, s, w in avail: out[(g, s)] = out.get((g, s), 0) + 1
     if return_parts:

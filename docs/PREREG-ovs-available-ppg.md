@@ -176,3 +176,46 @@ rows, 61 of them changed). No other row changed (asserted).
 
 **Today's page:** Fernando Mendoza 130 → 110 (market 43). Other QBs shift a few places through their matches, e.g. Maye
 6 → 11 and Purdy 7 → 6.
+
+## 8. Amendment: QB Games Follow The Start Profile Rule (9 Nov 2026, Before Its Run)
+
+Steve: "can you look at how we calculate starts for QBs in the Start Profile? I think we need to merge that here …
+That helps us filter out the 'Mendoza game in at the end of the game when they were getting blown out'."
+
+**The rule (Steve's design call, the engine's `qbSpCounts`, measured and not decided by a test).** Code:
+`study/qb_games.py`.
+
+- **A QB week is a game** when he took part (a pass, carry, target or catch, or any offensive snap) and any of these
+  holds:
+  - **He started it:** the nflverse schedules name him, by player ID, back to 1999. An injury exit still counts.
+  - **He played 75%+ of the snaps:** nflverse snap counts, 2012 onward.
+  - **Before 2012, with no snap counts:** he threw his team's most passes that week, 10 or more.
+- **The engine's correction is kept:** a listed start doesn't count when another QB on the team played 95%+ of the
+  snaps.
+- **Any other week he took part in is a cameo:** mop-up, kneel-downs, a planned rest. Its points and the week itself
+  are left out, for every QB.
+- **Everything else in §1 and §7 is unchanged:**
+  - A dressed veteran backup's week with no game is a 0-point available week.
+  - A first-year QB counts only his games.
+- **A first-year QB with no game yet** has no production to match on. He is valued as an incoming rookie (draft slot and
+  age, matched with past incoming rookies) and is left out of everyone else's matches.
+
+**Checked by hand before any outcome was read:**
+
+| Case | Games | Cameos |
+|---|---|---|
+| Fernando Mendoza 2026 | none | week 5 (blowout) |
+| Josh Allen 2024 / 2025 | 16 / 16 | week 18 rest, both years |
+| Drake Maye 2024, C.J. Stroud 2024 | 11, 16 | week 18 rest (Maye also week 3 relief) |
+| Joe Flacco 2024 | 7 | week 8 (listed; Richardson played 98%) |
+| Jayden Daniels 2024 | 17 (weeks 9–13 the schedule wrongly listed Mariota) | none |
+
+Across 1999–2026 there are 14,460 QB games (14,117 starts, 102 by 75% of snaps, 241 by most passes before 2012) and
+2,705 cameos.
+
+**Measured once, deciding nothing (`study/ovs_qb_starts.py`):**
+
+- Week 9, 2013–2022: typical miss and close trades vs the value as of §7.
+- QB rows, and first-year QB rows: typical miss, and produced ÷ value.
+- How many rows switch to incoming-rookie values.
+- Today's page.
