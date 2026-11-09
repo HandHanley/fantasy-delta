@@ -10,6 +10,7 @@ _ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], 
 _ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
 _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
+_ap.add_argument('--show-matches', default='', help='print the 30 matches for this player name (Sin.name)')
 _ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
 _args = _ap.parse_args(); SP = _args.data
@@ -76,6 +77,11 @@ for r, nn in zip(pa['test'], pa['nn'][30]):
     assert Sin.key.values[r] not in set(Sin.key.values[nn])
     w = 0.5 ** ((2026 - Sin.t.values[nn]) / V.HALF_LIFE); w /= w.sum()
     val[int(r)] = float((w * y[nn]).sum())
+    if _args.show_matches and Sin.name.values[r] == _args.show_matches and Sin.t.values[r] == 2026:
+        _cols = [c for c in ('pick', 'draft', 'prod', 'age', 'cy', 'G', 'games') if c in Sin.columns]
+        _D = Sin.loc[nn, ['name', 't'] + _cols].copy(); _D['weight'] = w.round(3); _D['next3'] = y[nn].round(1)
+        print('MATCHES', _args.show_matches, 'self:', Sin.loc[r, _cols].to_dict(), 'value', round(val[int(r)], 1))
+        print(_D.to_string(index=False), flush=True)
 top = max(val.values())
 
 def norm(s):
