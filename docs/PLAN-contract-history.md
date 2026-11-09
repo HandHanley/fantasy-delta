@@ -60,3 +60,37 @@ Fantasy-relevant means a top QB 36, RB 60, WR 84 or TE 36 by fantasy points that
 
 Steve picks the size (full or recent only). Then the lookups run in batches across sessions, starting with the 69
 option decisions and 187 extension checks, the quickest and most decisive group.
+
+## The Lookups Are Being Filled By ChatGPT (9 Nov 2026)
+
+Steve is having ChatGPT research `study/out/contract_lookups_2013_2022.csv`. The prompt he was given asks for a **new**
+CSV, one row per contract, with exactly these columns:
+
+`Player ID, Player, Position, What To Look Up, Contract Number, Team, Signed Date, Kind, First Season, Last Season,
+Years, Total ($M), AAV ($M), Guaranteed At Signing ($M), Option Status, Released Date, Source URL, Source Outlet, Notes,
+Confidence`
+
+**What the prompt asked for:**
+
+- **Kind** is one of: rookie, rookie_option, veteran, extension, franchise_tag, transition_tag, rfa_tender,
+  practice_squad, none.
+- **Dates** are YYYY-MM-DD. **Money** is in $ millions, as reported, blank if not reported.
+- **Confidence** is high, medium or low.
+- **Seasons:** First Season for an extension is the first new season added. Last Season is the last playable season
+  written into the deal: no void years, and the fifth-year option only if exercised (DELTA's `contract_rule`).
+- **Sources:** original reports only. Wikipedia is allowed only to find a deal. Never overthecap.com or spotrac.com.
+  No invented links: when unsure, Confidence is low.
+- **Order:** option rows first, then extension checks, then veteran deals, in batches of about 25 players. Steve sends
+  the option and extension rows back first, for a quality check before the rest.
+
+**Checks before anything is used:**
+
+- no overthecap.com or spotrac.com links;
+- every input player present;
+- dates in order, and First/Last Season consistent with the signing date;
+- teams match the season rosters;
+- extension First Season after the old deal;
+- a hand spot-check of about 20 deals against their sources.
+
+Then store it as `study/data/contract-history.json`, pre-register the measurement (opportunity kept, and points
+delivered, by contract status and money committed), and run it.
