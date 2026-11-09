@@ -219,3 +219,7 @@ Across 1999–2026 there are 14,460 QB games (14,117 starts, 102 by 75% of snaps
 - QB rows, and first-year QB rows: typical miss, and produced ÷ value.
 - How many rows switch to incoming-rookie values.
 - Today's page.
+
+**§8 note A (before any outcome was compared).** The first run stopped on its own safety check (no non-QB row may
+change): 5 rows of position-switchers changed (Taysom Hill and Feleipe Franks as TEs, Joe Webb and B.J. Daniels as
+WRs). The rule now applies only in seasons the player is valued as a QB (season file position). No rule changed.

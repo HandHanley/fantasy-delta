@@ -31,6 +31,8 @@ def qb_frame(W, games, cameos):
 
 def build_S(Sin, W, st, L_full, L_upto, a, sched, snaps, players):
     games, cameos = QG.qb_weeks(a.weekly, sched, snaps, players, 22)
+    qb_season = {(k, int(y)) for k, y, p in zip(st.player_id, st.season, st.position) if p == 'QB'}   # §8 note A
+    games = {x for x in games if (x[0], x[1]) in qb_season}; cameos = {x for x in cameos if (x[0], x[1]) in qb_season}
     W2, n_cam, n_add = qb_frame(W, games, cameos)
     A_up = J.available_weeks(a.weekly, a.wrost, a.inj, WEEK, drop=cameos, add=games)
     A_fu = J.available_weeks(a.weekly, a.wrost, a.inj, 22, drop=cameos, add=games)
