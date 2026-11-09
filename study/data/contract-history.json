@@ -1,5 +1,5 @@
 {
- "_about": "Contract history for measuring opportunity security (docs/PLAN-contract-history.md). STUDY DATA ONLY: nothing on the site reads this file; the site reads data/delta-contracts.json. Built from original news reports found through outside research and checked by hand; never copied from OverTheCap or Spotrac. Keyed by nflverse player ID. Money is in $ millions. `signed` is the date the deal or option decision was made or first reported, so each snapshot can use only what was known then: take the latest contract signed before the season, and honour `released`. `total` and `aav` cover the new years only, except where `money_covers` says otherwise. `guaranteed_at_signing` is what was fully guaranteed that day and can include money from older years on the deal, so never divide it by `total`. On a fifth-year option it is the full amount for the 2018 draft class onward (the 2020 labour deal) and null before that (guaranteed for injury only until the option season's league year). `option`: exercised, declined, or extended (a new deal replaced the decision).",
+ "_about": "Contract history for measuring opportunity security (docs/PLAN-contract-history.md). STUDY DATA ONLY: nothing on the site reads this file; the site reads data/delta-contracts.json. Built from original news reports found through outside research and checked by hand; never copied from OverTheCap or Spotrac. Keyed by nflverse player ID. Money is in $ millions. `signed` is the date the deal or option decision was made or first reported, so each snapshot can use only what was known then: take the latest contract signed before the season, and honour `released`. `total` and `aav` cover the new years only, except where `money_covers` says otherwise. `guaranteed_at_signing` is what was fully guaranteed that day and can include money from older years on the deal, so never divide it by `total`. On a fifth-year option it is the full amount for the 2018 draft class onward (the 2020 labour deal) and null before that (guaranteed for injury only until the option season's league year). `option`: exercised, declined, or extended (a new deal replaced the decision). `kind: none` on an extension check means no extension before the season after that player's lookup season; he stays on his rookie deal unless `released` says otherwise. Some of these rows have no `source` because no report of a non-event could be found; they were tested against whether the player changed teams the next year.",
  "contract_rule": "Owner, 25 Oct 2026: `end` is the last playable season written into the contract, even when the team can decline, cut or void later years. Never counted: void years (salary-cap placeholders that can never be played) and a first-rounder's fifth-year option until the team picks it up (that year is not in the rookie deal until then). Owner exception: a player who has left his team and stopped reporting (no longer with the team, though it holds his rights) counts as no contract, kind `left_team` (Brandon Aiyuk).",
  "updated": "2026-11-09",
  "coverage": {
@@ -8,7 +8,7 @@
    "of": 69
   },
   "extension_checks": {
-   "done": 0,
+   "done": 187,
    "of": 187
   },
   "veteran_players": {
@@ -20,7 +20,10 @@
  "open_items": [
   "Jared Goff contract 2: $57M guaranteed at signing is unconfirmed (cited page would not open).",
   "Joe Burrow contract 2: $146.51M guaranteed at signing is unconfirmed (cited page not opened).",
-  "Justin Herbert contract 1: date and amount not opened (site blocked); amount matches Burrow."
+  "Justin Herbert contract 1: date and amount not opened (site blocked); amount matches Burrow.",
+  "Greg Little: his 2014 Oakland deal is not recorded.",
+  "Jordan Reed, C.J. Fiedorowicz and DK Metcalf contract 1: cited pages would not open; terms match what is widely reported.",
+  "Jakeem Grant contract 1: only an \"up to $24M\" figure was reported."
  ],
  "corrections": [
   {
@@ -160,6 +163,54 @@
    "from": null,
    "to": "added",
    "why": "new deal signed before the 2023 season was missing."
+  },
+  {
+   "player": "Colin Kaepernick",
+   "contract": 1,
+   "field": "Total ($M)",
+   "from": "126",
+   "to": "114",
+   "why": "reports differ; the $126M was the most he could earn, and de-escalators could cut it by $12M. Owner rule is the lower figure."
+  },
+  {
+   "player": "Colin Kaepernick",
+   "contract": 1,
+   "field": "AAV ($M)",
+   "from": "21",
+   "to": "19",
+   "why": "reports differ; the $126M was the most he could earn, and de-escalators could cut it by $12M. Owner rule is the lower figure."
+  },
+  {
+   "player": "Alex Collins",
+   "contract": 1,
+   "field": "Released Date",
+   "from": null,
+   "to": "2019-02-28",
+   "why": "waived before the 2019 season; the date was only in the notes."
+  },
+  {
+   "player": "Greg Little",
+   "contract": 1,
+   "field": "Released Date",
+   "from": null,
+   "to": "2014-05-16",
+   "why": "released before the 2014 season; the date was only in the notes."
+  },
+  {
+   "player": "Daniel Thomas",
+   "contract": 1,
+   "field": "Released Date",
+   "from": null,
+   "to": "2014-08-30",
+   "why": "waived before the 2014 season; the date was only in the notes."
+  },
+  {
+   "player": "Joseph Randle",
+   "contract": 1,
+   "field": "Released Date",
+   "from": null,
+   "to": "2015-11-03",
+   "why": "waived before the 2016 season; the date was only in the notes."
   }
  ],
  "players": {
@@ -2481,6 +2532,4851 @@
      "basis": "Houston exercised 2020 option; no new contract before 2020 season.",
      "source": "https://www.chron.com/sports/texans/article/Texans-exercise-option-on-WR-Will-Fuller-13799127.php",
      "outlet": "Houston Chronicle (John McClain)"
+    }
+   ]
+  },
+  "00-0035676": {
+   "name": "A.J. Brown",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 51,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2022-04-28",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2026,
+     "years": 4,
+     "total": 100.0,
+     "aav": 25.0,
+     "guaranteed_at_signing": 40.0,
+     "option": null,
+     "released": null,
+     "basis": "Acquired from TEN; $57M total guarantees includes injury-only amounts. $40M fully guaranteed at signing per original breakdown: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-a-j-brown-deal",
+     "source": "https://www.nfl.com/news/eagles-receive-a-j-brown-in-trade-with-titans-wr-to-sign-four-year-100-million-c",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036265": {
+   "name": "A.J. Dillon",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 62,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; entered final year of 2020 rookie deal.",
+     "source": "https://www.packers.com/news/pre-draft-picture-packers-dynamic-backfield-duo-provides-offensive-foundation",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0033293": {
+   "name": "Aaron Jones",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 182,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; entered final year of rookie deal (re-signed in 2021, outside cutoff).",
+     "source": "https://www.packers.com/news/aaron-jones-would-love-to-be-a-lifelong-packer",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0032426": {
+   "name": "Alex Collins",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 171,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2019-02-28",
+     "basis": "No extension before 2019 season; waived 2019-02-28. Corrected: waived before the 2019 season; the date was only in the notes.",
+     "source": "https://www.baltimoreravens.com/team/transactions/2019",
+     "outlet": "Baltimore Ravens"
+    }
+   ]
+  },
+  "00-0034972": {
+   "name": "Alexander Mattison",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 102,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; entered fourth and final rookie year.",
+     "source": "https://www.vikings.com/news/dalvin-cook-adam-thielen-justin-jefferson-alexander-mattison-2022-free-agency",
+     "outlet": "Minnesota Vikings"
+    }
+   ]
+  },
+  "00-0029141": {
+   "name": "Alfred Morris",
+   "pos": "RB",
+   "draft_year": 2012,
+   "pick": 173,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; entered final year of contract, later left in free agency.",
+     "source": "https://www.washingtonpost.com/news/football-insider/wp/2015/10/29/a-closer-look-at-why-the-redskins-alfred-morris-is-struggling/",
+     "outlet": "The Washington Post"
+    }
+   ]
+  },
+  "00-0031428": {
+   "name": "Allen Robinson",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 61,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; in final rookie year, torn ACL in Week 1. Signed with CHI in 2018, outside cutoff.",
+     "source": "https://abcnews.com/amp/Sports/jaguars-allen-robinson-torn-acl-miss-rest-season/story?id=49776651",
+     "outlet": "ESPN via ABC News"
+    }
+   ]
+  },
+  "00-0029137": {
+   "name": "Alshon Jeffery",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 45,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; rookie contract expired March 2016, later franchise-tagged.",
+     "source": "https://www.chicagobears.com/news/jeffery-discusses-his-uncertain-future-16639276",
+     "outlet": "Chicago Bears"
+    }
+   ]
+  },
+  "00-0033906": {
+   "name": "Alvin Kamara",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 67,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NO",
+     "signed": "2020-09-12",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2025,
+     "years": 5,
+     "total": 75.0,
+     "aav": 15.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$77.133M across six years including existing 2020 season; $34.333M total guarantees, not substantiated as fully guaranteed at signing. Original deal analysis: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-alvin-kamara-tie-the-knot",
+     "source": "https://abcnews.com/Sports/sources-alvin-kamara-orleans-saints-finalizing-year-75/story?id=72971418",
+     "outlet": "ESPN via ABC News"
+    }
+   ]
+  },
+  "00-0032104": {
+   "name": "Ameer Abdullah",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 54,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; entered final rookie contract year, waived 2018-11-06.",
+     "source": "https://www.nfl.com/_amp/ameer-abdullah-a-healthy-scratch-for-lions-vs-jets-0ap3000000960658",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0030287": {
+   "name": "Andre Ellington",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 187,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; in final year of rookie contract, re-signed March 2017 (outside cutoff).",
+     "source": "https://www.azcardinals.com/news/free-agency-primer-2016-running-back-16876912",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0027973": {
+   "name": "Andy Dalton",
+   "pos": "QB",
+   "draft_year": 2011,
+   "pick": 35,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2014-08-04",
+     "kind": "extension",
+     "first": 2015,
+     "end": 2020,
+     "years": 6,
+     "total": 96.0,
+     "aav": 16.0,
+     "guaranteed_at_signing": 17.0,
+     "option": null,
+     "released": "2020-04-30",
+     "basis": "Base extension $96M (not $115M maximum); $17M fully guaranteed at signing. Released 2020-04-30, before final contract season.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dalton-gets-17-million-now-22-million-through-early-march",
+     "outlet": "NBC Sports / ProFootballTalk"
+    }
+   ]
+  },
+  "00-0034353": {
+   "name": "Anthony Miller",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 51,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; traded to HOU in July 2021 while entering final rookie year.",
+     "source": "https://chicago.suntimes.com/bears/2021/7/24/22592392/bears-trade-anthony-miller-wide-receiver-texans-fight-saints-cj-gardner-johnson-training-camp-2021",
+     "outlet": "Chicago Sun-Times"
+    }
+   ]
+  },
+  "00-0036328": {
+   "name": "Antonio Gibson",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 66,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; 2023 rookie performance escalator noted. Signed with NE in 2024 (outside cutoff).",
+     "source": "https://www.nfl.com/news/2023-nfl-free-agency-explainer-vital-information-on-franchise-tags-contract-term",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032392": {
+   "name": "Austin Hooper",
+   "pos": "TE",
+   "draft_year": 2016,
+   "pick": 81,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; played out rookie deal and signed with CLE in 2020 (outside cutoff).",
+     "source": "https://www.ajc.com/sports/football/updated-falcons-2020-free-agency-tracker/AL2mDT9q1qVeiR107GrwCL/",
+     "outlet": "The Atlanta Journal-Constitution"
+    }
+   ]
+  },
+  "00-0028016": {
+   "name": "Austin Pettis",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 78,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "STL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; released 2014-10-20 after in-season roster role diminished.",
+     "source": "https://www.nfl.com/_amp/austin-pettis-released-by-st-louis-rams-0ap3000000414488",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0028064": {
+   "name": "Bilal Powell",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 126,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; contemporaneous original report confirming rookie-contract status not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034414": {
+   "name": "Boston Scott",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 201,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; signed an exclusive-rights free-agent tender 2021-03-31.",
+     "source": "https://www.philadelphiaeagles.com/team/transactions/2021",
+     "outlet": "Philadelphia Eagles"
+    },
+    {
+     "contract": 2,
+     "team": "PHI",
+     "signed": "2021-03-31",
+     "kind": "veteran",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Signed exclusive-rights free-agent tender (ERFA, not RFA); financial terms not in team report.",
+     "source": "https://www.philadelphiaeagles.com/team/transactions/2021",
+     "outlet": "Philadelphia Eagles"
+    }
+   ]
+  },
+  "00-0034419": {
+   "name": "Braxton Berrios",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 210,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; original contract expired after 2021 (re-signed March 2022, outside cutoff).",
+     "source": "https://www.newyorkjets.com/news/jets-braxton-berrios-surveys-where-he-s-been-where-he-s-headed",
+     "outlet": "New York Jets"
+    }
+   ]
+  },
+  "00-0031589": {
+   "name": "Brett Hundley",
+   "pos": "QB",
+   "draft_year": 2015,
+   "pick": 147,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; traded from GB to SEA on 2018-08-29/30 with existing rookie deal.",
+     "source": "https://www.seahawks.com/news/seahawks-acquire-quarterback-brett-hundley-in-trade-with-packers",
+     "outlet": "Seattle Seahawks"
+    }
+   ]
+  },
+  "00-0033567": {
+   "name": "Brian Hill",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 156,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; original-round RFA tender offered.",
+     "source": "https://www.atlantafalcons.com/news/falcons-tender-running-back-brian-hill",
+     "outlet": "Atlanta Falcons"
+    },
+    {
+     "contract": 2,
+     "team": "ATL",
+     "signed": "2020-03-17",
+     "kind": "rfa_tender",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Original-round restricted-free-agent tender; team article does not give value, amount intentionally blank.",
+     "source": "https://www.atlantafalcons.com/news/falcons-tender-running-back-brian-hill",
+     "outlet": "Atlanta Falcons"
+    }
+   ]
+  },
+  "00-0031302": {
+   "name": "C.J. Fiedorowicz",
+   "pos": "TE",
+   "draft_year": 2014,
+   "pick": 65,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "HOU",
+     "signed": "2017-08-31",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2020,
+     "years": 3,
+     "total": 21.5,
+     "aav": 7.166667,
+     "guaranteed_at_signing": 10.097,
+     "option": null,
+     "released": null,
+     "basis": "Three added seasons; $10.097M in guaranteed 2017/18 salaries and 2017 roster bonus per original breakdown: https://www.chron.com/sports/texans/article/Breaking-down-structure-of-Texans-new-contracts-12170423.php. Retired March 2018.",
+     "source": "https://www.chron.com/sports/texans/article/Texans-inking-C-J-Fiedorowicz-to-7-million-per-12165308.php",
+     "outlet": "Houston Chronicle"
+    }
+   ]
+  },
+  "00-0036414": {
+   "name": "Cam Akers",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 52,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; team explicitly says final year of rookie contract.",
+     "source": "https://www.therams.com/news/countdown-to-camp-running-backs-cam-akers-build-on-strong-finish-to-2022-season",
+     "outlet": "Los Angeles Rams"
+    }
+   ]
+  },
+  "00-0031045": {
+   "name": "Carlos Hyde",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 57,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; entered final rookie-contract year.",
+     "source": "https://www.49ers.com/news/49ers-rb-carlos-hyde-looks-tremendous-entering-fourth-nfl-season-19056761",
+     "outlet": "San Francisco 49ers"
+    }
+   ]
+  },
+  "00-0028052": {
+   "name": "Cecil Shorts",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 114,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; 2015 ESPN original report recounts 2014 final rookie year. Joined Texans in 2015, after cutoff.",
+     "source": "https://abc13.com/post/texans-agree-with-wr-cecil-shorts/560131/",
+     "outlet": "ESPN via ABC13"
+    }
+   ]
+  },
+  "00-0028112": {
+   "name": "Charles Clay",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 174,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; original report of 2015 transition tag after rookie deal confirms subsequent free agency; tag outside cutoff.",
+     "source": "https://www.nfl.com/news/charles-clay-hit-with-miami-dolphins-transition-tag-0ap3000000475828",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036326": {
+   "name": "Chase Claypool",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 49,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; entered final rookie year with Chicago; traded to Miami during 2023.",
+     "source": "https://www.nfl.com/_amp/bears-wr-chase-claypool-on-2023-it-s-the-biggest-year-of-my-life",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0034681": {
+   "name": "Chase Edmonds",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 134,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; team describes upcoming final rookie-contract year.",
+     "source": "https://www.azcardinals.com/news/chase-edmonds-now-or-never-to-secure-starting-running-back-status",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0033594": {
+   "name": "Chris Carson",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 249,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; completed four-year rookie deal in 2020 and re-signed March 2021, outside cutoff.",
+     "source": "https://www.seahawks.com/news/chris-carson-re-signing-with-seahawks-was-the-right-decision",
+     "outlet": "Seattle Seahawks"
+    }
+   ]
+  },
+  "00-0033921": {
+   "name": "Chris Godwin",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 84,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; team 2020 roster review states fourth rookie-contract season.",
+     "source": "https://www.buccaneers.com/news/bucs-2020-post-draft-roster-review-wide-receivers-mike-evans-chris-godwin",
+     "outlet": "Tampa Bay Buccaneers"
+    }
+   ]
+  },
+  "00-0034775": {
+   "name": "Christian Kirk",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 47,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; entered last season of his contract; joined Jacksonville March 2022.",
+     "source": "https://www.azcardinals.com/news/confident-christian-kirk-making-the-plays-the-cardinals-need",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0034766": {
+   "name": "Christopher Herndon",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 107,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; traded from Jets to Vikings August 2021 with remaining rookie contract.",
+     "source": "https://www.newyorkjets.com/news/jets-acquire-4th-rounder-from-vikings-in-exchange-for-te-chris-herndon-pick",
+     "outlet": "New York Jets"
+    }
+   ]
+  },
+  "00-0029697": {
+   "name": "Coby Fleener",
+   "pos": "TE",
+   "draft_year": 2012,
+   "pick": 34,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; original report explicitly says final contract year; joined New Orleans March 2016.",
+     "source": "https://amp.nfl.com/news/coby-fleener-facing-new-competition-for-targets-0ap3000000499005",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036244": {
+   "name": "Colby Parkinson",
+   "pos": "TE",
+   "draft_year": 2020,
+   "pick": 133,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; listed as unrestricted free agent in 2024 after Seahawks rookie deal.",
+     "source": "https://www.seahawks.com/news/seahawks-2024-free-agency-primer",
+     "outlet": "Seattle Seahawks"
+    }
+   ]
+  },
+  "00-0036290": {
+   "name": "Cole Kmet",
+   "pos": "TE",
+   "draft_year": 2020,
+   "pick": 43,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": "2023-07-26",
+     "kind": "extension",
+     "first": 2024,
+     "end": 2027,
+     "years": 4,
+     "total": 50.0,
+     "aav": 12.5,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons; ESPN original reports $32.8M total guaranteed, not all necessarily fully at signing; signing-only guarantee unreported.",
+     "source": "https://abcnews.com/Sports/bears-cole-kmet-agrees-4-year-50m-extension/story?id=101670934",
+     "outlet": "ESPN"
+    }
+   ]
+  },
+  "00-0027974": {
+   "name": "Colin Kaepernick",
+   "pos": "QB",
+   "draft_year": 2011,
+   "pick": 36,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": "2014-06-04",
+     "kind": "extension",
+     "first": 2015,
+     "end": 2020,
+     "years": 6,
+     "total": 114.0,
+     "aav": 19.0,
+     "guaranteed_at_signing": 13.073,
+     "option": null,
+     "released": null,
+     "basis": "Six added seasons; $126M reported maximum subject to $12M de-escalators; only $13.073M fully guaranteed at signing per original detail https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/the-full-kaepernick-contract-details. Opted out after 2016, not cut. Corrected: reports differ; the $126M was the most he could earn, and de-escalators could cut it by $12M. Owner rule is the lower figure.",
+     "source": "https://www.nfl.com/news/colin-kaepernick-49ers-reach-six-year-deal-extension-0ap2000000356009",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033908": {
+   "name": "Cooper Kupp",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 69,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": "2020-09-12",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2023,
+     "years": 3,
+     "total": 48.0,
+     "aav": 16.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Three added seasons; $48M announced amount (Los Angeles Times described it as up to $48M). Signing-only guarantee not established in cited report.",
+     "source": "https://www.nfl.com/news/wr-cooper-kupp-rams-close-to-finalizing-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033282": {
+   "name": "Curtis Samuel",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 40,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; original contemporaneous analysis states final rookie-contract year. No contract figures taken from its secondary cap reference.",
+     "source": "https://589.racing.cbssports.com/nfl/news/ranking-panthers-five-biggest-2020-salary-cap-bargains-taylor-moton-headlines-this-talented-young/",
+     "outlet": "CBS Sports"
+    }
+   ]
+  },
+  "00-0036275": {
+   "name": "D'Andre Swift",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 35,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; traded from Detroit to Eagles April 2023; Eagles original article says final year of existing contract.",
+     "source": "https://www.philadelphiaeagles.com/news/spadaro-eagles-2023-draft-picks-fit-in",
+     "outlet": "Philadelphia Eagles"
+    }
+   ]
+  },
+  "00-0034777": {
+   "name": "D.J. Chark",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 61,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Jaguars original report confirms final rookie-contract year.",
+     "source": "https://www.jaguars.com/news/jaguars-thursday-chark-for-sure-to-play-week-1",
+     "outlet": "Jacksonville Jaguars"
+    }
+   ]
+  },
+  "00-0035640": {
+   "name": "DK Metcalf",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 64,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": "2022-07-28",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2025,
+     "years": 3,
+     "total": 72.0,
+     "aav": 24.0,
+     "guaranteed_at_signing": 30.0,
+     "option": null,
+     "released": null,
+     "basis": "$58.2M total potential guarantees includes amounts vesting in later years; $30M fully guaranteed at signing per original contract review https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-dk-metcalf-deal. Later traded to Pittsburgh.",
+     "source": "https://www.nfl.com/_amp/wide-receiver-dk-metcalf-seahawks-agree-to-terms-on-three-year-72-million-extens",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033077": {
+   "name": "Dak Prescott",
+   "pos": "QB",
+   "draft_year": 2016,
+   "pick": 135,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; original team report states entering final rookie-contract year. Franchise tagged in 2020, after cutoff.",
+     "source": "https://www.dallascowboys.com/news/sorting-out-the-cowboys-contract-logjam",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0034351": {
+   "name": "Dallas Goedert",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 49,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2021-11-19",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2025,
+     "years": 4,
+     "total": 57.0,
+     "aav": 14.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four newly added seasons; $35M guarantees reported but signing-only portion unspecified; contract confirmed by team.",
+     "source": "https://amp.nfl.com/news/dallas-goedert-eagles-extension-four-year-2025-season",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0034383": {
+   "name": "Dalton Schultz",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 137,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Cowboys original report states entering fourth and final rookie-contract year. Avoided cap figures attributed there to excluded contract database.",
+     "source": "https://www.dallascowboys.com/news/progress-report-dalton-schultz-s-breakout-moment",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0033893": {
+   "name": "Dalvin Cook",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 41,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2020-09-12",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2025,
+     "years": 5,
+     "total": 63.0,
+     "aav": 12.6,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2023-06-09",
+     "basis": "$28.2M total guarantees, but no original breakdown of fully guaranteed on signing. $15.5M signing bonus. Vikings released him June 2023.",
+     "source": "https://abcnews.com/Sports/source-vikings-reach-deal-dalvin-cook-year-63/story?id=72971977",
+     "outlet": "ESPN"
+    }
+   ]
+  },
+  "00-0035657": {
+   "name": "Damien Harris",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 87,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; team original roster review identifies 2022 as final rookie-contract year.",
+     "source": "https://www.patriots.com/news/roster-rundown",
+     "outlet": "New England Patriots"
+    }
+   ]
+  },
+  "00-0028000": {
+   "name": "Daniel Thomas",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 62,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2014-08-30",
+     "basis": "No extension before 2014 season; waived August 30, 2014. Re-signed September 15, 2014, after season kickoff and therefore outside cutoff. Corrected: waived before the 2014 season; the date was only in the notes.",
+     "source": "https://www.nfl.com/_amp/daniel-thomas-released-by-miami-dolphins-0ap3000000386238",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036309": {
+   "name": "Darnell Mooney",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 173,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; Falcons' 2024 original signing report says Mooney completed all four rookie-deal years in Chicago; joined Falcons March 2024.",
+     "source": "https://www.atlantafalcons.com/news/wide-receiver-darnell-mooney-signed-chicago-bears-free-agency",
+     "outlet": "Atlanta Falcons"
+    }
+   ]
+  },
+  "00-0035664": {
+   "name": "Darrell Henderson",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 70,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; Rams original transactions confirm he remained on original contract, waived Nov 22, 2022.",
+     "source": "https://www.therams.com/team/transactions/2022",
+     "outlet": "Los Angeles Rams"
+    }
+   ]
+  },
+  "00-0031381": {
+   "name": "Davante Adams",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 53,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; Packers reached extension December 29, 2017, after the 2017 kickoff cutoff.",
+     "source": "https://www.packers.com/news/packers-sign-wr-davante-adams-to-contract-extension-20160626",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0035685": {
+   "name": "David Montgomery",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 73,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; team original report states final rookie-contract year; joined Lions March 2023.",
+     "source": "https://www.chicagobears.com/news/david-montgomery-driven-by-humble-past-promising-future-training-camp",
+     "outlet": "Chicago Bears"
+    }
+   ]
+  },
+  "00-0035689": {
+   "name": "Dawson Knox",
+   "pos": "TE",
+   "draft_year": 2019,
+   "pick": 96,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": "2022-09-07",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2026,
+     "years": 4,
+     "total": 53.6,
+     "aav": 13.4,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Agreed day before Bills 2022 opener; more than $31M in total guarantees (not necessarily fully guaranteed on signing); original report includes $53.6M announced value.",
+     "source": "https://www.nfl.com/news/dawson-knox-bills-four-year-extension-through-2026-season",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0028009": {
+   "name": "DeMarco Murray",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 71,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; original team review confirms signed through 2014 on rookie deal.",
+     "source": "https://www.dallascowboys.com/news/roster-rundown-murray-faced-with-improving-on-2013-346861",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0033839": {
+   "name": "Dede Westbrook",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 110,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; original contemporaneous report states 2020 final rookie year; knee injury October 2020.",
+     "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jaguars-lose-dede-westbrook-to-knee-injury",
+     "outlet": "NBC Sports / ProFootballTalk"
+    }
+   ]
+  },
+  "00-0035719": {
+   "name": "Deebo Samuel",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 36,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": "2022-07-31",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2025,
+     "years": 3,
+     "total": 71.55,
+     "aav": 23.85,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Original CBS report states $71.55M base and $73.5M maximum with incentives; $58.1M total potential guarantees, signing-only amount not established. Traded to Washington in 2025.",
+     "source": "https://www.cbssports.com/nfl/news/deebo-samuel-49ers-agree-on-a-three-year-71-55-million-extension/",
+     "outlet": "CBS Sports"
+    }
+   ]
+  },
+  "00-0032775": {
+   "name": "Demarcus Robinson",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 126,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; original report of March 2020 re-signing says 2019 completed four-year rookie deal; re-signed after cutoff.",
+     "source": "https://www.nfl.com/news/chiefs-re-signing-wr-demarcus-robinson-to-1-year-deal-0ap3000001107802",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0028086": {
+   "name": "Denarius Moore",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 148,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "OAK",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; could not verify an original contemporaneous report describing contract status after targeted search.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0031280": {
+   "name": "Derek Carr",
+   "pos": "QB",
+   "draft_year": 2014,
+   "pick": 36,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "OAK",
+     "signed": "2017-06-22",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2022,
+     "years": 5,
+     "total": 125.0,
+     "aav": 25.0,
+     "guaranteed_at_signing": 40.0,
+     "option": null,
+     "released": null,
+     "basis": "$70M total potential guarantees but only $40M fully guaranteed on signing; 5 new seasons to 2022.",
+     "source": "https://amp.nfl.com/news/raiders-derek-carr-finalize-5-year-125m-extension-0ap3000000816968",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032764": {
+   "name": "Derrick Henry",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 45,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; team original June 2019 report says final contract year; received franchise tag and multi-year deal during 2020, after cutoff.",
+     "source": "https://www.tennesseetitans.com/news/it-s-all-about-the-here-and-now-for-titans-rb-derrick-henry",
+     "outlet": "Tennessee Titans"
+    }
+   ]
+  },
+  "00-0036331": {
+   "name": "Devin Duvernay",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 92,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; original Ravens 2023 mailbag says entering final year of rookie contract.",
+     "source": "https://www.baltimoreravens.com/news/mailbag-why-haven-t-the-ravens-made-any-additions",
+     "outlet": "Baltimore Ravens"
+    }
+   ]
+  },
+  "00-0032055": {
+   "name": "Devin Funchess",
+   "pos": "TE",
+   "draft_year": 2015,
+   "pick": 41,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; team original report states rookie contract would expire after 2018.",
+     "source": "https://www.panthers.com/news/devin-funchess-isn-t-losing-perspective-over-contract-situation",
+     "outlet": "Carolina Panthers"
+    }
+   ]
+  },
+  "00-0035250": {
+   "name": "Devin Singletary",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 74,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; later joined Houston in 2023. Contemporaneous original report of contract status not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0031285": {
+   "name": "Devonta Freeman",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 103,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": "2017-08-09",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2022,
+     "years": 5,
+     "total": 41.25,
+     "aav": 8.25,
+     "guaranteed_at_signing": 17.3,
+     "option": null,
+     "released": "2020-03-16",
+     "basis": "Original NFL Network reports $17.3M fully guaranteed on signing, $22M total potential guarantees. Atlanta released him March 2020; reported release March 2020.",
+     "source": "https://www.nfl.com/news/devonta-freeman-falcons-agree-on-five-year-contract-extension-0ap3000000827390",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0035216": {
+   "name": "Diontae Johnson",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 66,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": "2022-08-04",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2024,
+     "years": 2,
+     "total": 36.71,
+     "aav": 18.355,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$27M in total guarantees, signing-only portion not established. $39.5M incentive maximum per ESPN; original base $36.71M. Later traded to Carolina.",
+     "source": "https://www.nfl.com/_amp/diontae-johnson-steelers-extension-sign-wr-two-year-36-million",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036233": {
+   "name": "Donovan Peoples-Jones",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 187,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; traded from Cleveland to Detroit October 31, 2023 in fourth NFL season.",
+     "source": "https://www.detroitlions.com/news/lions-agree-to-trade-terms-with-cleveland-browns-for-wr-donovan-peoples-jones",
+     "outlet": "Detroit Lions"
+    }
+   ]
+  },
+  "00-0031339": {
+   "name": "Donte Moncrief",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 90,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; Colts explicitly identified 2017 as contract year. Joined Jacksonville in 2018.",
+     "source": "https://www.colts.com/news/donte-moncrief-with-specific-goal-entering-contract-year-18849981",
+     "outlet": "Indianapolis Colts"
+    }
+   ]
+  },
+  "00-0032257": {
+   "name": "Duke Johnson",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 77,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": "2018-06-07",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2021,
+     "years": 3,
+     "total": 15.6,
+     "aav": 5.2,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$7.7M reported guaranteed overall, not explicitly fully guaranteed at signing. Traded to Houston in 2019.",
+     "source": "https://www.nfl.com/news/duke-johnson-browns-agree-to-3-year-15-6m-deal-0ap3000000936304",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0029689": {
+   "name": "Dwayne Allen",
+   "pos": "TE",
+   "draft_year": 2012,
+   "pick": 64,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; completed rookie contract in 2015 and re-signed with Colts in March 2016, after cutoff.",
+     "source": "https://www.colts.com/news/who-are-the-colts-2016-free-agents-16664246",
+     "outlet": "Indianapolis Colts"
+    }
+   ]
+  },
+  "00-0030485": {
+   "name": "Eddie Lacy",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 61,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; team confirmed 2016 was final year of rookie contract.",
+     "source": "https://www.packers.com/news/future-at-running-back-not-entirely-clear-for-packers-17029852",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0036383": {
+   "name": "Eno Benjamin",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 222,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; Arizona waived him November 14, 2022 and he was subsequently claimed off waivers by Houston and New Orleans.",
+     "source": "https://www.azcardinals.com/news/cardinals-release-eno-benjamin",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0034981": {
+   "name": "Foster Moreau",
+   "pos": "TE",
+   "draft_year": 2019,
+   "pick": 137,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LV",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; finished rookie deal in Las Vegas and signed with New Orleans in 2023. No qualifying contemporaneous contract-status source verified.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0036196": {
+   "name": "Gabe Davis",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 128,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; team-published April 2023 draft roundup reproduces ESPN report identifying 2023 as his contract year.",
+     "source": "https://www.buffalobills.com/news/bills-2023-nfl-draft-mock-draft-watch-10-27th-pick",
+     "outlet": "Buffalo Bills"
+    }
+   ]
+  },
+  "00-0033288": {
+   "name": "George Kittle",
+   "pos": "TE",
+   "draft_year": 2017,
+   "pick": 146,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": "2020-08-13",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2025,
+     "years": 5,
+     "total": 75.0,
+     "aav": 15.0,
+     "guaranteed_at_signing": 30.0,
+     "option": null,
+     "released": null,
+     "basis": "Agreement reported Aug. 13; team announced signing Aug. 14. $30M fully guaranteed at signing; $40M total guarantees including later triggers.",
+     "source": "https://www.nfl.com/news/george-kittle-49ers-agree-to-five-year-75m-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033895": {
+   "name": "Gerald Everett",
+   "pos": "TE",
+   "draft_year": 2017,
+   "pick": 44,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; general manager identified Everett among players whose rookie contracts expire in 2020. Signed with Seattle in 2021.",
+     "source": "https://www.therams.com/news/from-the-podium-les-snead-jared-goff-training-camp",
+     "outlet": "Los Angeles Rams"
+    }
+   ]
+  },
+  "00-0030456": {
+   "name": "Giovani Bernard",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 37,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2016-06-08",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2019,
+     "years": 3,
+     "total": 15.5,
+     "aav": 5.166667,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Original team story confirms three-year $15.5M extension through 2019; signing-only guarantees not reported.",
+     "source": "https://www.bengals.com/news/dealing-dreams-17236222",
+     "outlet": "Cincinnati Bengals"
+    }
+   ]
+  },
+  "00-0027997": {
+   "name": "Greg Little",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 59,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2014-05-16",
+     "basis": "No extension before 2014 season; Cleveland released him May 16, 2014 (https://www.nfl.com/_amp/greg-little-released-by-cleveland-browns-0ap2000000350729); Oakland later waived him August 30. No original rookie-contract-status report verified. Corrected: released before the 2014 season; the date was only in the notes.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034983": {
+   "name": "Hunter Renfrow",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 149,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LV",
+     "signed": "2022-06-10",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2024,
+     "years": 2,
+     "total": 32.0,
+     "aav": 16.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2024-03-13",
+     "basis": "$21M total guarantees, but amount fully guaranteed at signing not established. Raiders released him Mar. 13, 2024 (https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-march-13).",
+     "source": "https://www.nfl.com/news/raiders-signing-wide-receiver-hunter-renfrow-to-2-year-32m-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036165": {
+   "name": "Isaiah Hodgins",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 207,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; as exclusive-rights free agent, re-signed to one-year veteran contract February 2023 (Contract 2).",
+     "source": "https://www.giants.com/news/giants-sign-wr-isaiah-hodgins",
+     "outlet": "New York Giants"
+    },
+    {
+     "contract": 2,
+     "team": "NYG",
+     "signed": "2023-02-16",
+     "kind": "veteran",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": 0.87,
+     "aav": 0.87,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Original reporting by Pat Leonard: exclusive-rights free agent signed 1 year for $870,000; team announcement Feb. 17 (https://www.giants.com/news/giants-sign-wr-isaiah-hodgins).",
+     "source": "https://sports.yahoo.com/giants-sign-productive-receiver-isaiah-214500509.html",
+     "outlet": "New York Daily News / Yahoo Sports"
+    }
+   ]
+  },
+  "00-0032112": {
+   "name": "J.J. Nelson",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 159,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; later signed with Raiders in 2019. Original report of 2018 rookie-contract status not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0036158": {
+   "name": "J.K. Dobbins",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 55,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; injury limited 2023 season, signed with Chargers in 2024 after cutoff. Contemporaneous original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0028083": {
+   "name": "Jacquizz Rodgers",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 145,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; signed with Chicago in 2015 after cutoff. Original 2014 contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032791": {
+   "name": "Jakeem Grant",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 186,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": "2019-08-20",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2023,
+     "years": 4,
+     "total": 24.0,
+     "aav": 6.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Original NFL Network report states deal worth UP TO $24M at $6M/year; incentive-free base not itemized. Dolphins announced signing Aug. 21, 2019; traded to Chicago in 2021.",
+     "source": "https://www.nfl.com/news/jakeem-grant-gets-four-year-extension-from-dolphins-0ap3000001043104",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036389": {
+   "name": "Jalen Hurts",
+   "pos": "QB",
+   "draft_year": 2020,
+   "pick": 53,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2023-04-17",
+     "kind": "extension",
+     "first": 2024,
+     "end": 2028,
+     "years": 5,
+     "total": 255.0,
+     "aav": 51.0,
+     "guaranteed_at_signing": 110.0,
+     "option": null,
+     "released": null,
+     "basis": "$110M fully guaranteed at signing, $126.5M fully guaranteed by March 2024, $179.304M total guarantees. Additional $15M incentives; no-trade clause.",
+     "source": "https://www.nfl.com/news/jalen-hurts-eagles-five-year-255-million-contract-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033948": {
+   "name": "Jamaal Williams",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 134,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; 2020 original team report identifies his contract year. Signed with Detroit in 2021.",
+     "source": "https://www.packers.com/news/leaner-crisper-jamaal-williams-making-all-around-impact-on-packers-offense",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0033553": {
+   "name": "James Conner",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 105,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; team states rookie deal runs through 2020; signed with Arizona in March 2021.",
+     "source": "https://www.steelers.com/news/asked-and-answered-dec-26",
+     "outlet": "Pittsburgh Steelers"
+    }
+   ]
+  },
+  "00-0034676": {
+   "name": "James Washington",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 60,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; original ESPN reporting Aug. 6, 2021 says entering final rookie-deal year. Signed with Dallas in 2022.",
+     "source": "https://abcnews.com/Sports/james-washington-approaches-pittsburgh-steelers-requesting-trade-source/story?id=79319071",
+     "outlet": "ESPN via ABC News"
+    }
+   ]
+  },
+  "00-0031062": {
+   "name": "James White",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 130,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": "2017-04-18",
+     "kind": "extension",
+     "first": 2018,
+     "end": 2020,
+     "years": 3,
+     "total": 12.0,
+     "aav": 4.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "$4.69M reported total guarantees; not explicitly signing-only guarantees. Three new seasons through 2020.",
+     "source": "https://www.nfl.com/news/pats-sign-super-bowl-hero-james-white-to-extension-0ap3000000800832",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031941": {
+   "name": "Jamison Crowder",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 105,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; original team report confirms final contract season. Joined Jets in 2019.",
+     "source": "https://www.commanders.com/news/jamison-crowder-has-been-training-at-duke-and-working-on-explosiveness-20515293",
+     "outlet": "Washington Commanders"
+    }
+   ]
+  },
+  "00-0029572": {
+   "name": "Jarius Wright",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 118,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2015-09-10",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2019,
+     "years": 4,
+     "total": 14.8,
+     "aav": 3.7,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2018-03-16",
+     "basis": "$7M total guarantees, signing-only amount not specified. Vikings released him Mar. 16, 2018 (Vikings team transactions).",
+     "source": "https://www.nfl.com/news/jarius-wright-signs-four-year-extension-with-vikings-0ap3000000525066",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031382": {
+   "name": "Jarvis Landry",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 63,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; original report says Landry in final rookie year and suspended negotiations at season start. Franchise tag issued in February 2018, after cutoff.",
+     "source": "https://amp.nfl.com/news/jarvis-landry-no-contract-talks-once-season-starts-0ap3000000819085",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031577": {
+   "name": "Javorius Allen",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 125,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; remained on rookie contract through 2018, later joined Giants in 2019; original contemporaneous contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0031590": {
+   "name": "Jay Ajayi",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 149,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; 2018 was final year of rookie contract. Left Philadelphia after 2018.",
+     "source": "https://www.nfl.com/news/jay-ajayi-excited-to-get-into-that-lead-role-for-eagles-0ap3000000935096",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032436": {
+   "name": "Jeff Driskel",
+   "pos": "QB",
+   "draft_year": 2016,
+   "pick": 207,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; waived from injured reserve with injury settlement Sept. 11, 2019; Lions signed Sept. 17 (after season start).",
+     "source": "https://www.bengals.com/news/bengals-waive-jeff-driskel",
+     "outlet": "Cincinnati Bengals"
+    }
+   ]
+  },
+  "00-0031301": {
+   "name": "Jeremy Hill",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 55,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; team reported in 2016 he was signed through 2017. Joined Patriots in 2018.",
+     "source": "https://www.bengals.com/news/hobson-s-choice-trades-and-grades-17021403",
+     "outlet": "Cincinnati Bengals"
+    }
+   ]
+  },
+  "00-0028091": {
+   "name": "Jeremy Kerley",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 153,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; new Jets agreement was announced October 2014, after season began.",
+     "source": "https://www.cbsnews.com/newyork/news/report-jets-expected-to-sign-jeremy-kerley-to-4-year-extension/",
+     "outlet": "CBS New York"
+    }
+   ]
+  },
+  "00-0031376": {
+   "name": "Jerick McKinnon",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 96,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; completed 2017 under rookie deal and left for San Francisco in 2018; no contemporary contract-status original located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0028021": {
+   "name": "Jerrel Jernigan",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 83,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; Giants did not sign an extension by 2014 opener; qualifying contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032135": {
+   "name": "Jesse James",
+   "pos": "TE",
+   "draft_year": 2015,
+   "pick": 160,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; departed Pittsburgh for Detroit in March 2019; contemporary original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0033897": {
+   "name": "Joe Mixon",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 48,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2020-09-01",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2024,
+     "years": 4,
+     "total": 48.0,
+     "aav": 12.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons through 2024; 2024 club option is a playable season. $10M signing bonus; guarantee on signing day not stated. Team announced signed Sept. 2.",
+     "source": "https://www.nfl.com/news/bengals-signing-rb-joe-mixon-to-4-year-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031051": {
+   "name": "John Brown",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 91,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; played out rookie deal and reached free agency after 2017.",
+     "source": "https://www.azcardinals.com/news/free-agency-primer-2018-wide-receiver-20395508",
+     "outlet": "Arizona Cardinals"
+    }
+   ]
+  },
+  "00-0036223": {
+   "name": "Jonathan Taylor",
+   "pos": "RB",
+   "draft_year": 2020,
+   "pick": 41,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; NFL report June 2023 confirms final rookie year. Three-year extension announced Oct. 7, 2023 after season began.",
+     "source": "https://www.nfl.com/_amp/colts-rb-jonathan-taylor-hopeful-of-extension-before-season-it-s-kind-of-on-them",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033858": {
+   "name": "Jonnu Smith",
+   "pos": "TE",
+   "draft_year": 2017,
+   "pick": 100,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TEN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; completed rookie deal and joined New England in 2021; contemporary original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034364": {
+   "name": "Jordan Akins",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 98,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "HOU",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Houston Chronicle says final year of four-year rookie deal (Nov. 2021).",
+     "source": "https://www.houstonchronicle.com/texas-sports-nation/texans/article/Brevin-Jordan-role-expands-Jordan-Akins-sits-16642190.php",
+     "outlet": "Houston Chronicle"
+    }
+   ]
+  },
+  "00-0028040": {
+   "name": "Jordan Cameron",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 102,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; NFL.com reported final rookie contract season in Sept. 2014.",
+     "source": "https://www.nfl.com/news/cameron-expects-to-deal-with-sprained-ac-joint-all-year-0ap3000000403472",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032780": {
+   "name": "Jordan Howard",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 150,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; rookie contract originally through 2019; traded to Eagles Mar. 2019.",
+     "source": "https://www.chicagobears.com/news/howard-a-bright-spot-in-dark-season-18543359",
+     "outlet": "Chicago Bears"
+    }
+   ]
+  },
+  "00-0031299": {
+   "name": "Jordan Matthews",
+   "pos": "TE",
+   "draft_year": 2014,
+   "pick": 42,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; traded with expiring rookie contract to Bills Aug. 2017.",
+     "source": "https://www.buffalobills.com/news/how-wr-jordan-matthews-and-cb-e-j-gaines-fit-the-bills-roster-plans-for-19172874",
+     "outlet": "Buffalo Bills"
+    }
+   ]
+  },
+  "00-0030472": {
+   "name": "Jordan Reed",
+   "pos": "TE",
+   "draft_year": 2013,
+   "pick": 85,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": "2016-05-05",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2021,
+     "years": 5,
+     "total": 46.75,
+     "aav": 9.35,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2020-02-20",
+     "basis": "Five added seasons 2017-2021. Original detailed report: $48.421M aggregate including existing 2016 terms; 2017-21 new money $46.75M based on reported $9.35M AAV. $22M total guarantees, immediate amount unspecified. Released 2020-02-20: https://www.commanders.com/news/redskins-release-jordan-reed-tight-end",
+     "source": "https://www.washingtonpost.com/news/football-insider/wp/2016/05/09/heres-a-detailed-look-at-tight-end-jordan-reeds-five-year-extension/",
+     "outlet": "The Washington Post"
+    }
+   ]
+  },
+  "00-0028121": {
+   "name": "Jordan Todman",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 183,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; March team report shows Todman retained; April 2014 one-year re-signing separately recorded.",
+     "source": "https://www.jaguars.com/news/jaguars-release-forsett-12724099",
+     "outlet": "Jacksonville Jaguars"
+    },
+    {
+     "contract": 2,
+     "team": "JAC",
+     "signed": "2014-04-17",
+     "kind": "veteran",
+     "first": 2014,
+     "end": 2014,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Exclusive-rights free-agent re-signing 2014-04-17; historical transactions list signing but qualifying contemporaneous original contract announcement and dollar figures not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030388": {
+   "name": "Joseph Randle",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 151,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2015-11-03",
+     "basis": "No extension before 2016 season; waived Nov. 3, 2015 before rookie contract expired. No subsequent qualifying deal. Corrected: waived before the 2016 season; the date was only in the notes.",
+     "source": "https://www.dallascowboys.com/news/with-issues-on-off-field-rb-joseph-randle-officially-released-by-cowboys-391186",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0033857": {
+   "name": "JuJu Smith-Schuster",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 62,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; 2021 one-year re-signing came March 2021, after cutoff. Original report confirms rookie four-season tenure.",
+     "source": "https://www.steelers.com/news/smith-schuster-signed-to-a-one-year-contract",
+     "outlet": "Pittsburgh Steelers"
+    }
+   ]
+  },
+  "00-0028067": {
+   "name": "Julius Thomas",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 129,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DEN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; Broncos original July 2014 report explicitly states final year of first contract.",
+     "source": "https://www.denverbroncos.com/news/te-thomas-keeps-focus-on-field-13293872",
+     "outlet": "Denver Broncos"
+    }
+   ]
+  },
+  "00-0036345": {
+   "name": "K.J. Osborn",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 176,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; played out rookie deal, joined New England in 2024; suitable original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034799": {
+   "name": "Kalen Ballage",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 131,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season with Chargers; signed one-year deal with Steelers March 2021 instead. Contemporaneous Chargers contract-status report not located.",
+     "source": null,
+     "outlet": null
+    },
+    {
+     "contract": 2,
+     "team": "PIT",
+     "signed": "2021-03-29",
+     "kind": "veteran",
+     "first": 2021,
+     "end": 2021,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Team transactions dated Mar. 29 explicitly announce one-year deal; terms undisclosed.",
+     "source": "https://www.steelers.com/team/transactions/2021",
+     "outlet": "Pittsburgh Steelers"
+    }
+   ]
+  },
+  "00-0033923": {
+   "name": "Kareem Hunt",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 86,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": "2020-04-17",
+     "kind": "rfa_tender",
+     "first": 2020,
+     "end": 2020,
+     "years": 1,
+     "total": 3.259,
+     "aav": 3.259,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Signed second-round RFA tender April 17. $3.259M precise 2020 second-round-tender figure in contemporaneous NFL free agency rule explainer https://www.nfl.com/news/2020-nfl-free-agency-glossary-all-the-terms-you-need-to-know-0ap3000001106817 ; immediate guarantee not stated. CBS attributes signing to Mary Kay Cabot.",
+     "source": "https://www.cbssports.com/fantasy/football/news/browns-kareem-hunt-inks-contract-tender/",
+     "outlet": "CBS Sports"
+    },
+    {
+     "contract": 2,
+     "team": "CLE",
+     "signed": "2020-09-08",
+     "kind": "extension",
+     "first": 2021,
+     "end": 2022,
+     "years": 2,
+     "total": 13.25,
+     "aav": 6.625,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "2021-2022 extension replaces 2020 tender. $8.5M reported guaranteed overall, not necessarily fully at signing.",
+     "source": "https://www.nfl.com/news/kareem-hunt-browns-agree-to-two-year-13-25-million-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0030279": {
+   "name": "Keenan Allen",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 76,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SD",
+     "signed": "2016-06-10",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2020,
+     "years": 4,
+     "total": 45.0,
+     "aav": 11.25,
+     "guaranteed_at_signing": 20.0,
+     "option": null,
+     "released": null,
+     "basis": "$45M base, max $49M with incentives; $20M reported fully guaranteed and $9.5M signing bonus. Agreed June 10, signed June 14.",
+     "source": "https://www.nfl.com/news/keenan-allen-chargers-agree-on-four-year-extension-0ap3000000668666",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0028053": {
+   "name": "Kendall Hunter",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 115,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; August 2014 original report notes pending free agency after 2014. Later one-year deal signed Nov. 2014, after kickoff.",
+     "source": "https://www.nfl.com/news/san-francisco-49ers-waived-injured-rb-kendall-hunter-0ap2000000374121",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033932": {
+   "name": "Kenny Golladay",
+   "pos": "WR",
+   "draft_year": 2017,
+   "pick": 96,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; club report confirmed no long-term deal at end of 2020 rookie contract. Signed Giants deal March 2021, after cutoff.",
+     "source": "https://www.detroitlions.com/news/notebook-golladay-ruled-out-for-sunday-ending-his-season",
+     "outlet": "Detroit Lions"
+    }
+   ]
+  },
+  "00-0030085": {
+   "name": "Kenny Stills",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 144,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; Dolphins extended him March 2017 (after 2016 season began). Suitable 2016 original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0033118": {
+   "name": "Kenyan Drake",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 73,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; NFL original reporting confirms final rookie year and no continuing extension talks; traded to Arizona Oct. 2019.",
+     "source": "https://www.nfl.com/news/dolphins-engaged-in-talks-to-trade-rb-kenyan-drake-0ap3000001066483",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0029604": {
+   "name": "Kirk Cousins",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 102,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; team report Dec. 29, 2014 says entering final rookie contract year in 2015. Tagged 2016 after cutoff.",
+     "source": "https://www.commanders.com/news/kirk-cousins-i-m-not-demanding-anything-14683199",
+     "outlet": "Washington Commanders"
+    }
+   ]
+  },
+  "00-0028045": {
+   "name": "Kris Durham",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 107,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; re-signed on one-year exclusive-rights agreement March 2014.",
+     "source": null,
+     "outlet": null
+    },
+    {
+     "contract": 2,
+     "team": "DET",
+     "signed": "2014-03-11",
+     "kind": "veteran",
+     "first": 2014,
+     "end": 2014,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2014-08-30",
+     "basis": "Signed 2014 exclusive-rights free-agent one-year deal; dollar figure not in team announcement. Released before 2014 season; original NFL announcement https://www.nfl.com/_amp/kris-durham-released-by-detroit-lions-0ap3000000386260.",
+     "source": "https://www.detroitlions.com/team/transactions/2014",
+     "outlet": "Detroit Lions"
+    }
+   ]
+  },
+  "00-0027981": {
+   "name": "Kyle Rudolph",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 43,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2014-07-27",
+     "kind": "extension",
+     "first": 2015,
+     "end": 2019,
+     "years": 5,
+     "total": 36.5,
+     "aav": 7.3,
+     "guaranteed_at_signing": 7.46,
+     "option": null,
+     "released": null,
+     "basis": "Five new seasons. Reported $19.4M total guarantees includes $12M initially injury-only; ESPN original detail: https://abc7.com/post/kyle-rudolph-vikings-agree-on-deal/224395/ ($6.5M signing bonus plus $0.96M 2014 salary fully guaranteed at signing); $40M incentives maximum.",
+     "source": "https://www.nfl.com/news/kyle-rudolph-minnesota-vikings-sign-5-year-contract-0ap2000000370348",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0029615": {
+   "name": "Lamar Miller",
+   "pos": "RB",
+   "draft_year": 2012,
+   "pick": 97,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; first post-rookie new-team agreement was with Houston in 2016, after cutoff; no timely original contract-status source located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0027985": {
+   "name": "Lance Kendricks",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 47,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "STL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; Rams re-signing took place in 2015, after cutoff; contemporaneous original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030513": {
+   "name": "Latavius Murray",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 181,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "OAK",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; left for Minnesota in free agency in 2017; contemporaneous original report on option-year status not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030496": {
+   "name": "Le'Veon Bell",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 48,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; original team article says 2016 was still to be final year of rookie deal.",
+     "source": "https://www.steelers.com/news/asked-and-answered-dec-1-16408186",
+     "outlet": "Pittsburgh Steelers"
+    }
+   ]
+  },
+  "00-0028017": {
+   "name": "Leonard Hankerson",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 79,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; later joined Atlanta as free agent in 2015; contemporaneous original report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034753": {
+   "name": "Mark Andrews",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 86,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": "2021-09-06",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2025,
+     "years": 4,
+     "total": 56.0,
+     "aav": 14.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons; $37.6M reported as total guarantees, not verified fully guaranteed on signing day.",
+     "source": "https://www.nfl.com/news/ravens-agree-to-four-year-56m-extension-with-te-mark-andrews",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0030460": {
+   "name": "Markus Wheaton",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 79,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PIT",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; moved to Chicago after 2016 season; contemporaneous original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0033951": {
+   "name": "Marlon Mack",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 143,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; later one-year Colts deal was signed 2021, after cutoff; original 2020 rookie-deal status source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0031431": {
+   "name": "Marqise Lee",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 39,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "JAC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; Jaguars re-signed March 2018 after cutoff; contemporaneous original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030047": {
+   "name": "Marquess Wilson",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 236,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; no timely original rookie-contract report located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034272": {
+   "name": "Marquez Valdes-Scantling",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 174,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Aug. 2021 team report describes fourth-season receiver entering final rookie-contract year.",
+     "source": "https://www.packers.com/news/it-s-all-about-what-s-next-for-packers-wr-marquez-valdes-scantling",
+     "outlet": "Green Bay Packers"
+    }
+   ]
+  },
+  "00-0035140": {
+   "name": "Mecole Hardman",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 56,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; Jets signing followed in 2023, after cutoff; contemporaneous original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034764": {
+   "name": "Michael Gallup",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 81,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Aug. 2021 original team update identifies final year of rookie deal; extension signed March 2022 after cutoff.",
+     "source": "https://www.dallascowboys.com/news/updates-august-2021",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0036252": {
+   "name": "Michael Pittman",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 34,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; signed Colts extension March 2024 after cutoff; pre-2023 original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032765": {
+   "name": "Michael Thomas",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 47,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NO",
+     "signed": "2019-07-31",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2024,
+     "years": 5,
+     "total": 96.25,
+     "aav": 19.25,
+     "guaranteed_at_signing": 35.6,
+     "option": null,
+     "released": null,
+     "basis": "2019 deal headline $100M reflects escalators; original NFL reporting clarifies $96.25M base for five new years and $35.6M fully guaranteed at signing: https://www.nfl.com/news/christian-mccaffrey-michael-thomas-on-2020-nfl-all-paid-team-0ap3000001112570. Later contract renegotiations affected 2024.",
+     "source": "https://www.nfl.com/news/michael-thomas-agrees-to-5-year-100m-extension-0ap3000001038144",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0034829": {
+   "name": "Mike Gesicki",
+   "pos": "TE",
+   "draft_year": 2018,
+   "pick": 42,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; 2022 franchise tag followed after 2021 season began; contemporaneous original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0035243": {
+   "name": "Miles Sanders",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 53,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; signed Carolina contract in 2023 after cutoff; timely rookie-contract report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029632": {
+   "name": "Mohamed Sanu",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 83,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; joined Atlanta as free agent in 2016 after cutoff; timely original final-year report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0035311": {
+   "name": "Myles Gaskin",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 234,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; original pre-2022 rookie-contract status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034791": {
+   "name": "Nick Chubb",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 35,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": "2021-07-31",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2024,
+     "years": 3,
+     "total": 36.6,
+     "aav": 12.2,
+     "guaranteed_at_signing": 20.0,
+     "option": null,
+     "released": null,
+     "basis": "Three newly added seasons; NFL original report states $20M fully guaranteed.",
+     "source": "https://www.nfl.com/news/browns-rb-nick-chubb-agree-to-three-year-36-6m-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0029567": {
+   "name": "Nick Foles",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 88,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "STL",
+     "signed": "2015-08-07",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2017,
+     "years": 2,
+     "total": 24.5,
+     "aav": 12.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2016-07-27",
+     "basis": "Acquired in trade from Eagles March 2015, then extended by St. Louis Rams; $24.5M exact two-year added value. Released July 27 2016 with 2017 season remaining. Release originally reported https://www.nfl.com/news/rams-cut-quarterback-nick-foles-after-release-request-0ap3000000677136.",
+     "source": "https://abcnews.com/Sports/rams-nick-foles-swapped-sam-bradford-march-extended/story?id=32958283",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0032117": {
+   "name": "Nick O'Leary",
+   "pos": "TE",
+   "draft_year": 2015,
+   "pick": 194,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; signed one-year exclusive-rights agreement April 2018, not a multi-year extension.",
+     "source": null,
+     "outlet": null
+    },
+    {
+     "contract": 2,
+     "team": "BUF",
+     "signed": "2018-04-16",
+     "kind": "veteran",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2018-09-01",
+     "basis": "Club reports exclusive-rights free-agent one-year re-signing; no dollars stated; waived Sept. 1 before 2018 season; team original report https://www.buffalobills.com/news/bills-make-these-moves-to-reach-the-53-man-roster-limit.",
+     "source": "https://www.buffalobills.com/news/bills-re-sign-o-leary-pitts-thomas-yarbrough-20541598",
+     "outlet": "Buffalo Bills"
+    }
+   ]
+  },
+  "00-0032394": {
+   "name": "Nick Vannett",
+   "pos": "TE",
+   "draft_year": 2016,
+   "pick": 94,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; traded to Steelers September 2019, after cutoff; no timely original report confirming extension status located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034367": {
+   "name": "Nyheim Hines",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 104,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": "2021-09-10",
+     "kind": "extension",
+     "first": 2022,
+     "end": 2024,
+     "years": 3,
+     "total": 18.6,
+     "aav": 6.2,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Agreement Sep. 10, before Colts Sep. 12 season opener but after NFL-wide Thursday kickoff; Colts signed contract Sep. 10 per https://www.colts.com/team/transactions/2021. $12M overall guarantees not confirmed fully at signing; traded to Buffalo in 2022.",
+     "source": "https://www.nfl.com/news/nyheim-hines-colts-agree-to-three-year-18-6-million-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031023": {
+   "name": "Quincy Enunwa",
+   "pos": "WR",
+   "draft_year": 2014,
+   "pick": 209,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; Jets extension was December 2018, after cutoff; timely original status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0028002": {
+   "name": "Randall Cobb",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 64,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; re-signed with Green Bay March 2015 after cutoff; timely original status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032977": {
+   "name": "Rashard Higgins",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 172,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CLE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; Browns tendered and re-signed restricted free agent March 2019, not a multiyear extension.",
+     "source": null,
+     "outlet": null
+    },
+    {
+     "contract": 2,
+     "team": "CLE",
+     "signed": "2019-03-31",
+     "kind": "rfa_tender",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Tendered March 8 and signed March 31, per original Browns reporting/transactions; tender amount not in cited announcement. Tender report: https://www.clevelandbrowns.com/news/browns-tender-3-players",
+     "source": "https://www.clevelandbrowns.com/team/transactions/2019",
+     "outlet": "Cleveland Browns"
+    }
+   ]
+  },
+  "00-0028007": {
+   "name": "Rob Housler",
+   "pos": "TE",
+   "draft_year": 2011,
+   "pick": 69,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ARI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; joined Cleveland as a free agent in 2015; no timely original source located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029273": {
+   "name": "Robert Turbin",
+   "pos": "RB",
+   "draft_year": 2012,
+   "pick": 106,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; waived during 2015; no timely original report confirming rookie status located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030431": {
+   "name": "Robert Woods",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 41,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BUF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; signed Los Angeles Rams contract March 2017 after cutoff; timely original report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034816": {
+   "name": "Ronald Jones",
+   "pos": "RB",
+   "draft_year": 2018,
+   "pick": 38,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "TB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; signed Chiefs deal in 2022 after cutoff; timely original report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029683": {
+   "name": "Ronnie Hillman",
+   "pos": "RB",
+   "draft_year": 2012,
+   "pick": 67,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DEN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; re-signed with Denver in 2016 after cutoff; timely original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0028043": {
+   "name": "Roy Helu",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 105,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; signed Oakland free-agent deal in 2015 after cutoff; timely original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029262": {
+   "name": "Rueben Randle",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 63,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2015 season; signed Eagles free-agent deal in 2016 after cutoff; timely original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0034411": {
+   "name": "Russell Gage",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 194,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; signed Tampa Bay free-agent contract March 2022 after cutoff; timely original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029263": {
+   "name": "Russell Wilson",
+   "pos": "QB",
+   "draft_year": 2012,
+   "pick": 75,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": "2015-07-31",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2019,
+     "years": 4,
+     "total": 87.6,
+     "aav": 21.9,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons; $61.53M widely reported overall guarantees includes protection not confirmed at signing, so signing-only guarantee blank. $31M signing bonus cited but remainder not independently established as fully guaranteed.",
+     "source": "https://www.nfl.com/news/seahawks-sign-russell-wilson-to-87-6m-extension-0ap3000000505334",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0027994": {
+   "name": "Shane Vereen",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 56,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; joined New York Giants in March 2015 after cutoff; timely original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030414": {
+   "name": "Spencer Ware",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 194,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": "2016-03-31",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2018,
+     "years": 2,
+     "total": 3.6,
+     "aav": 1.8,
+     "guaranteed_at_signing": 2.35,
+     "option": null,
+     "released": null,
+     "basis": "Two new seasons; $3.6M base plus incentives up to $9.6M; source expressly reports $2.35M fully guaranteed on signing.",
+     "source": "https://www.nfl.com/news/chiefs-sign-charcandrick-west-spencer-ware-to-deals-0ap3000000649181",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0031588": {
+   "name": "Stefon Diggs",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 146,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "MIN",
+     "signed": "2018-07-31",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2023,
+     "years": 5,
+     "total": 72.0,
+     "aav": 14.4,
+     "guaranteed_at_signing": 16.9,
+     "option": null,
+     "released": null,
+     "basis": "Five newly added seasons. NFL original report identifies $40M in broad guarantees, but specifically $15M signing bonus plus $1.9M then-current 2018 base fully guaranteed at signing; $81M is incentives maximum. Traded to Buffalo March 2020.",
+     "source": "https://www.nfl.com/news/vikings-wr-stefon-diggs-signs-five-year-extension-0ap3000000943201",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032385": {
+   "name": "Sterling Shepard",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 40,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYG",
+     "signed": "2019-04-10",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2023,
+     "years": 4,
+     "total": 41.0,
+     "aav": 10.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Agreed Apr. 10, signing officially confirmed Apr. 12. Four newly added seasons; signing-only guaranteed amount not established in original report.",
+     "source": "https://www.nfl.com/news/giants-finalizing-41m-extension-with-sterling-shepard-0ap3000001025950",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0028011": {
+   "name": "Stevan Ridley",
+   "pos": "RB",
+   "draft_year": 2011,
+   "pick": 73,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NE",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; joined Jets in 2015 after cutoff; contemporaneous original final-rookie-year report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0029608": {
+   "name": "T.Y. Hilton",
+   "pos": "WR",
+   "draft_year": 2012,
+   "pick": 92,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "IND",
+     "signed": "2015-08-13",
+     "kind": "extension",
+     "first": 2016,
+     "end": 2020,
+     "years": 5,
+     "total": 65.0,
+     "aav": 13.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Five new seasons. Original NFL reporting gives $39M broadly guaranteed, but does not isolate fully guaranteed upon signing; signed Aug. 13.",
+     "source": "https://www.nfl.com/news/colts-t-y-hilton-agree-to-contract-extension-0ap3000000509225",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033556": {
+   "name": "Tarik Cohen",
+   "pos": "RB",
+   "draft_year": 2017,
+   "pick": 119,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2020 season; original September 2020 team report confirms he was in final year of rookie deal before extension was signed Sept. 20, after Bears Week 1 on Sept. 13.",
+     "source": "https://www.chicagobears.com/news/cohen-reflects-on-signing-three-year-extension",
+     "outlet": "Chicago Bears"
+    }
+   ]
+  },
+  "00-0036410": {
+   "name": "Tee Higgins",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 33,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; Sep. 8 2023 original ESPN player interview states still on final rookie-contract year and no deal before first Bengals game. Franchise tag followed in 2024 after cutoff.",
+     "source": "https://abcnews.com/amp/Sports/bengals-wr-tee-higgins-long-term-deal-clue/story?id=103035165",
+     "outlet": "ESPN (via ABC News)"
+    }
+   ]
+  },
+  "00-0031375": {
+   "name": "Terrance West",
+   "pos": "RB",
+   "draft_year": 2014,
+   "pick": 94,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2017 season; signed one-year restricted free-agent tender May 2017, not an extension.",
+     "source": null,
+     "outlet": null
+    },
+    {
+     "contract": 2,
+     "team": "BAL",
+     "signed": "2017-05-08",
+     "kind": "rfa_tender",
+     "first": 2017,
+     "end": 2017,
+     "years": 1,
+     "total": 1.797,
+     "aav": 1.797,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Ravens original report confirms 2017 original-round RFA tender signing. Exact $1.797M in NBC Sports original contemporaneous report: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/terrance-west-signs-tender-with-ravens",
+     "source": "https://www.baltimoreravens.com/news/terrance-west-signs-his-restricted-free-agent-contract-18835763",
+     "outlet": "Baltimore Ravens"
+    }
+   ]
+  },
+  "00-0030542": {
+   "name": "Terrance Williams",
+   "pos": "WR",
+   "draft_year": 2013,
+   "pick": 74,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; Dallas contract signed March 2017 after cutoff; original pre-2016 report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0035659": {
+   "name": "Terry McLaurin",
+   "pos": "WR",
+   "draft_year": 2019,
+   "pick": 76,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "WAS",
+     "signed": "2022-06-28",
+     "kind": "extension",
+     "first": 2023,
+     "end": 2025,
+     "years": 3,
+     "total": 68.2,
+     "aav": 22.733,
+     "guaranteed_at_signing": 34.6,
+     "option": null,
+     "released": null,
+     "basis": "Three new seasons; $68.2M base originally documented via source-derived PFT $22.733M new-money AAV https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-terry-mclaurin-deal and later AP report https://www.foxsports.com/articles/nfl/commanders-activate-terry-mclaurin-off-the-pup-list-as-contract-extension-talks-linger. NFL reporter gives $34.6M fully guaranteed at signing and $53.15M total guarantees; excluded 2026 void year and ~$70M incentive maximum.",
+     "source": "https://www.nfl.com/news/commanders-wr-terry-mclaurin-agrees-to-contract-extension",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0032058": {
+   "name": "Tevin Coleman",
+   "pos": "RB",
+   "draft_year": 2015,
+   "pick": 73,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "ATL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; moved to San Francisco in free agency 2019 after cutoff; timely original status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030107": {
+   "name": "Theo Riddick",
+   "pos": "RB",
+   "draft_year": 2013,
+   "pick": 199,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DET",
+     "signed": "2016-09-09",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2019,
+     "years": 3,
+     "total": 12.75,
+     "aav": 4.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": "2019-07-26",
+     "basis": "Announced Fri Sept. 9 2016, before Lions season opener Sept. 11 but after Thu NFL-wide kickoff; team explicitly calls it pre-regular-season. Three newly added seasons. Guarantee at signing not reported. Lions official transactions show July 26 release https://www.detroitlions.com/team/transactions/2019.",
+     "source": "https://www.nfl.com/news/theo-riddick-sam-martin-agree-to-lions-extensions-0ap3000000697551",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0035261": {
+   "name": "Tony Pollard",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 128,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; team original 2022 off-season article identifies 2022 as final rookie-contract year; 2023 franchise tag outside cutoff.",
+     "source": "https://www.dallascowboys.com/news/progress-report-tony-pollard-s-super-efficient-21",
+     "outlet": "Dallas Cowboys"
+    }
+   ]
+  },
+  "00-0027996": {
+   "name": "Torrey Smith",
+   "pos": "WR",
+   "draft_year": 2011,
+   "pick": 58,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "BAL",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2014 season; joined San Francisco free agency in 2015; timely original report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030506": {
+   "name": "Travis Kelce",
+   "pos": "TE",
+   "draft_year": 2013,
+   "pick": 63,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": "2016-01-29",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2021,
+     "years": 5,
+     "total": 46.0,
+     "aav": 9.2,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Five new seasons through 2021. $20.5M broadly guaranteed includes $10M signing bonus; source does not establish complete signing-day fully guaranteed amount.",
+     "source": "https://www.nfl.com/news/chiefs-sign-pro-bowler-travis-kelce-to-5-year-extension-0ap3000000629839",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0034765": {
+   "name": "Tre'Quan Smith",
+   "pos": "WR",
+   "draft_year": 2018,
+   "pick": 91,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NO",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2021 season; Saints re-signed March 2022 after cutoff; contemporaneous original source not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032156": {
+   "name": "Trevor Siemian",
+   "pos": "QB",
+   "draft_year": 2015,
+   "pick": 250,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "DEN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; traded to Minnesota March 2018 under existing contract; no new contract signed prior to 2018 opener.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0035537": {
+   "name": "Ty Johnson",
+   "pos": "RB",
+   "draft_year": 2019,
+   "pick": 186,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "NYJ",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2022 season; contemporaneous original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032200": {
+   "name": "Ty Montgomery",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 94,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "GB",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; traded to Baltimore October 2018 under existing rookie contract; contemporaneous original contract-status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0033009": {
+   "name": "Tyler Boyd",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 55,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": "2019-07-23",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2023,
+     "years": 4,
+     "total": 43.0,
+     "aav": 10.75,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons through 2023; 2019 last rookie year was not counted among new seasons. Source does not specify signing-day guaranteed amount.",
+     "source": "https://www.nfl.com/news/bengals-wr-tyler-boyd-signs-4-year-43m-extension-0ap3000001036624",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033110": {
+   "name": "Tyler Higbee",
+   "pos": "TE",
+   "draft_year": 2016,
+   "pick": 110,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": "2019-09-05",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2023,
+     "years": 4,
+     "total": 29.0,
+     "aav": 7.25,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Four new seasons 2020-23; Rams officially signed Sept. 5. Exact $29M base independently established by NFL first-hand reporting https://www.nfl.com/_amp/rams-sign-te-tyler-higbee-two-year-27m-contract-extension-2025-season (2023 report cites original 2019 terms). No guarantee-at-signing breakdown reported.",
+     "source": "https://www.therams.com/news/rams-tyler-higbee-agree-to-terms-on-four-year-extension",
+     "outlet": "Los Angeles Rams"
+    }
+   ]
+  },
+  "00-0032214": {
+   "name": "Tyler Kroft",
+   "pos": "TE",
+   "draft_year": 2015,
+   "pick": 85,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "CIN",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2018 season; signed Bills contract March 2019 after cutoff; original pre-2018 contract status report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032211": {
+   "name": "Tyler Lockett",
+   "pos": "WR",
+   "draft_year": 2015,
+   "pick": 69,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SEA",
+     "signed": "2018-08-29",
+     "kind": "extension",
+     "first": 2019,
+     "end": 2021,
+     "years": 3,
+     "total": 31.8,
+     "aav": 10.6,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Three new seasons, $31.8M base vs $37.8M potential maximum. $20M broadly guaranteed; full immediate signing guarantee not specified.",
+     "source": "https://www.nfl.com/news/tyler-lockett-seahawks-reach-three-year-extension-0ap3000000952087",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0033040": {
+   "name": "Tyreek Hill",
+   "pos": "WR",
+   "draft_year": 2016,
+   "pick": 165,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "KC",
+     "signed": "2019-09-06",
+     "kind": "extension",
+     "first": 2020,
+     "end": 2022,
+     "years": 3,
+     "total": 54.0,
+     "aav": 18.0,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Three new seasons. Agreed Sept. 6, 2019, after NFL-wide Thursday opener but before Chiefs first regular-season game Sept. 8; treated as pre-season for player. $35.5M broad guarantees, not fully guaranteed at signing; $5.8M signing bonus. Traded to Miami March 2022.",
+     "source": "https://www.nfl.com/_amp/chiefs-wr-tyreek-hill-signs-3-year-54m-extension-0ap3000001051530",
+     "outlet": "NFL.com"
+    }
+   ]
+  },
+  "00-0036415": {
+   "name": "Van Jefferson",
+   "pos": "WR",
+   "draft_year": 2020,
+   "pick": 57,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "LAR",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2023 season; Rams traded him to Atlanta Oct. 2023 on original contract, no new deal prior to opener; original Falcons report later states 2023 was last existing deal year.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030470": {
+   "name": "Vance McDonald",
+   "pos": "TE",
+   "draft_year": 2013,
+   "pick": 55,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "SF",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2016 season; 49ers extended in December 2016 after cutoff; original final-rookie-deal report not located.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0032782": {
+   "name": "Wendell Smallwood",
+   "pos": "RB",
+   "draft_year": 2016,
+   "pick": 153,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": null,
+     "kind": "none",
+     "first": null,
+     "end": null,
+     "years": null,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "No extension before 2019 season; waived by Philadelphia Aug. 31 2019 and claimed by Washington Sept. 1, 2019 on existing contract; waiver claim does not constitute new signed contract.",
+     "source": null,
+     "outlet": null
+    }
+   ]
+  },
+  "00-0030061": {
+   "name": "Zach Ertz",
+   "pos": "TE",
+   "draft_year": 2013,
+   "pick": 35,
+   "contracts": [
+    {
+     "contract": 1,
+     "team": "PHI",
+     "signed": "2016-01-25",
+     "kind": "extension",
+     "first": 2017,
+     "end": 2021,
+     "years": 5,
+     "total": 42.5,
+     "aav": 8.5,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Five newly added seasons; article headline says $42M but NFL insider reports more precise $42.5M in article text. $20M in broadly reported guarantees, not verified fully guaranteed at signing; traded to Arizona Oct. 2021.",
+     "source": "https://www.nfl.com/news/eagles-ink-zach-ertz-to-a-5-year-42-million-extension-0ap3000000628108",
+     "outlet": "NFL.com"
     }
    ]
   }
