@@ -227,3 +227,8 @@ WRs). The rule now applies only in seasons the player is valued as a QB (season 
 **§8 note B (before any outcome was compared).** Note A was not the cause. The 5 rows are TE/WR rows whose production
 blends earlier QB seasons (Taysom Hill 2022 blends his 2020–2021 QB seasons). The rule correctly applies to those
 seasons. The check now asserts that every changed non-QB row has a QB season in its blend, and lists them.
+
+**§8 note C (before any outcome was compared).** The next check stopped the run: 4 veteran QB rows had no production left,
+because their only action was cameos (Tee Martin, Dameyune Craig and Mark Rypien in 2002, Tommy Stevens in 2021). A
+veteran whose only action is cameos produced nothing, so his production is 0. Only first-year QBs take incoming-rookie
+values.

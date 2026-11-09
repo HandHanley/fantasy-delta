@@ -38,9 +38,11 @@ def build_S(Sin, W, st, L_full, L_upto, a, sched, snaps, players):
     A_fu = J.available_weeks(a.weekly, a.wrost, a.inj, 22, drop=cameos, add=games)
     prod, _ = AP.prod_available(Sin, W2, WEEK, L_full, L_upto, st, A_fu, A_up, rookie_qb_sits=True)
     S = Sin.copy(); S['prod'] = prod
-    none = (S.kind.values == 'V') & np.isnan(prod)
+    nan = (S.kind.values == 'V') & np.isnan(prod)
+    none = nan & S.rookie_Y.values                                      # first-year QB, no game yet
+    S.loc[nan & ~S.rookie_Y.values, 'prod'] = 0.0                       # §8 note C: a veteran with only cameos produced nothing
     S.loc[none, 'kind'] = 'X'                                           # incoming-rookie value; out of every pool
-    return S, none, {'cameo_rows_emptied': n_cam, 'starts_without_stat_added': n_add}
+    return S, none, {'cameo_rows_emptied': n_cam, 'starts_without_stat_added': n_add, 'veterans_set_to_zero': S.loc[nan & ~S.rookie_Y.values, 'name'].tolist()}
 
 
 def main():
