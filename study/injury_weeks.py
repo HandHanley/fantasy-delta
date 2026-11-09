@@ -76,3 +76,44 @@ def neutral_games(S, inj, week):
     add = np.array([inj.get((k, int(t)), 0) for k, t in zip(S.key.values, S.t.values)], float)
     g = S.games.values.astype(float)
     return np.where(np.isnan(g), g, np.minimum(g + add, week)), add
+
+
+# ── Available games (docs/PREREG-ovs-available-ppg.md) ───────────────────────────────────────────────────────────────
+INJ_REPORT_ANY = {'Out', 'Doubtful', 'Questionable'}
+ACTIVE = {'ACT', 'INA'}                    # week-by-week files: on the game-day roster
+
+
+def available_weeks(weekly_dir, wrost_dir, inj_dir, week, return_parts=False):
+    """{(gsis_id, season): weeks available through `week`} = weeks he played, plus weeks he was on a club's game-day
+    roster, his club played, and he did not play and was not hurt. Hurt = the injured_weeks rule, plus any injury-report
+    listing (Out, Doubtful or Questionable) in a week he did not play. Weeks suspended, exempt, on bye or on no club are
+    not available. Older-format seasons (weekly files list only active-roster weeks, one status per season): every
+    listing counts as on the game-day roster."""
+    W = _read(os.path.join(weekly_dir, 'stats_player_week_*.csv'),
+              ['player_id', 'season', 'week', 'season_type', 'team', 'attempts', 'carries', 'targets', 'receptions'])
+    W = W[(W.season_type == 'REG') & (W.week <= week)]
+    W['g'] = W[['attempts', 'carries', 'targets', 'receptions']].fillna(0).sum(axis=1) > 0
+    team_weeks = set(zip(W.season, W.team, W.week))
+    played = set(zip(W.player_id[W.g], W.season[W.g], W.week[W.g]))
+    R = _read(os.path.join(wrost_dir, 'roster_weekly_*.csv'), ['season', 'week', 'team', 'gsis_id', 'status', 'game_type'])
+    R['team'] = R.team.replace(TO_STATS)
+    R = R[(R.game_type == 'REG') & (R.week <= week) & R.gsis_id.notna()]
+    res_pl = pd.Series([(g, s, w) in played for g, s, w in zip(R.gsis_id, R.season, R.week)], index=R.index)
+    rr = R.status.isin(RESERVE)
+    share = res_pl[rr].groupby(R.season[rr]).mean().to_dict()
+    old = {int(s) for s, v in share.items() if v > OLD_FORMAT_PLAYED}
+    I = _read(os.path.join(inj_dir, 'injuries_*.csv'), ['season', 'game_type', 'team', 'week', 'gsis_id', 'report_status'])
+    I = I[(I.game_type == 'REG') & (I.week <= week) & I.report_status.isin(INJ_REPORT_ANY) & I.gsis_id.notna()]
+    reported = set(zip(I.gsis_id, I.season.astype(int), I.week.astype(int)))
+    on_roster = R[R.season.isin(old) | R.status.isin(ACTIVE)]
+    avail = {(g, int(s), int(w)) for g, s, w in played}
+    healthy_zero = 0
+    for g, s, w, t in zip(on_roster.gsis_id, on_roster.season, on_roster.week, on_roster.team):
+        key = (g, int(s), int(w))
+        if key in avail or (s, t, w) not in team_weeks or key in reported: continue
+        avail.add(key); healthy_zero += 1
+    out = {}
+    for g, s, w in avail: out[(g, s)] = out.get((g, s), 0) + 1
+    if return_parts:
+        return out, {'played_weeks': len(played), 'healthy_zero_weeks': healthy_zero, 'older_format_seasons': sorted(old)}
+    return out
