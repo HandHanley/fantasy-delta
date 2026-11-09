@@ -43,6 +43,7 @@ def main():
     for k in ('nflverse', 'rosters', 'week1'): ap.add_argument('--' + k, required=True)
     ap.add_argument('--sims', type=int, default=40)
     ap.add_argument('--precision', action='store_true')
+    ap.add_argument('--relevant-from', default='', help='contract_history_rows.csv: measure only relevant 2013-2022 rows')
     ap.add_argument('--bumps', default='')
     a = ap.parse_args()
     st, S, pre, nn2, W2, nn3, W3, counts = O.setup(a.nflverse, a.rosters, a.week1)
@@ -54,6 +55,11 @@ def main():
     allrows, nn_, W_ = SC.base_value(S, allrows)                          # adopted preseason value (games out)
     ix = {int(r): j for j, r in enumerate(allrows)}
     H = np.array([r for r in H if int(r) in ix], int)
+    if a.relevant_from:                                                   # measure only the rows we would collect contracts for
+        Rv = pd.read_csv(a.relevant_from); Rv = Rv[Rv.relevant & (Rv.season >= 2013)]
+        keep = set(zip(Rv.gsis_id, Rv.season))
+        H = np.array([r for r in H if (S.key.values[r], int(S.t.values[r])) in keep], int)
+        res_rows = int(len(H)); print('measured rows', res_rows, flush=True)
     Tj = np.array([ix[int(r)] for r in T]); Hj = np.array([ix[int(r)] for r in H])
     mask = vet[T]; tT = S.t.values[T]; tH = S.t.values[H]
     rng = np.random.default_rng(2026); res = {'decided_rows': int(mask.sum()), 'history_rows': int(len(H)), 'sims': a.sims}
