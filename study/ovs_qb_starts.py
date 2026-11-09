@@ -57,7 +57,9 @@ def main():
     SB = Sin.copy(); SB['prod'] = pB_
     SS, none, parts = build_S(Sin, W, st, L_full, L_upto, a, a.sched, a.snaps, players)
     changed = ~np.isclose(SB['prod'].values, SS['prod'].values, equal_nan=True)
-    assert not (changed & (Sin.pos.values != 'QB')).any(), 'a non-QB row changed'
+    nonqb = changed & (Sin.pos.values != 'QB')                          # §8 note B: earlier QB seasons of position-switchers
+    qbs = {(k, int(y)) for k, y, p in zip(st.player_id, st.season, st.position) if p == 'QB'}
+    assert all(any((k, int(t) - j) in qbs for j in (1, 2)) for k, t in zip(Sin.key.values[nonqb], Sin.t.values[nonqb])), 'a non-QB row changed without a QB season'
     assert (Sin.pos.values[none] == 'QB').all() and Sin.rookie_Y.values[none].all()
     C.W_V['games'] = 0.0
     ti, nn, w = I.match(SB, rows); pB = AP.paired(rows, ti, nn, w, yi)
@@ -77,7 +79,7 @@ def main():
                 'produced_over_rule': float(yt[m].sum() / pS[m].sum()), 'produced_over_before': float(yt[m].sum() / pB[m].sum())}
     res = {'amendment': 'docs/PREREG-ovs-available-ppg.md §8', 'rows': int(len(rows)), 'data': parts,
            'qb_rows_production_changed_all_seasons': int(changed.sum()), 'rows_valued_as_incoming_rookie_all_seasons': int(none.sum()),
-           'rows_valued_as_incoming_rookie_test': int(len(xr)),
+           'rows_valued_as_incoming_rookie_test': int(len(xr)), 'non_qb_rows_changed': Sin.loc[nonqb, 'name'].tolist(),
            'all_rows': part(np.ones(len(rows), bool)), 'qb_rows': part(q), 'first_year_qb_rows': part(rq),
            'trades': I.trades(Sin, rows, pS, pB, yt)}
     json.dump(res, open(os.path.join(OUT, 'ovs_qb_starts_results.json'), 'w'), indent=1, default=float)

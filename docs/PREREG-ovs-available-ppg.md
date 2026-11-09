@@ -223,3 +223,7 @@ Across 1999–2026 there are 14,460 QB games (14,117 starts, 102 by 75% of snaps
 **§8 note A (before any outcome was compared).** The first run stopped on its own safety check (no non-QB row may
 change): 5 rows of position-switchers changed (Taysom Hill and Feleipe Franks as TEs, Joe Webb and B.J. Daniels as
 WRs). The rule now applies only in seasons the player is valued as a QB (season file position). No rule changed.
+
+**§8 note B (before any outcome was compared).** Note A was not the cause. The 5 rows are TE/WR rows whose production
+blends earlier QB seasons (Taysom Hill 2022 blends his 2020–2021 QB seasons). The rule correctly applies to those
+seasons. The check now asserts that every changed non-QB row has a QB season in its blend, and lists them.
