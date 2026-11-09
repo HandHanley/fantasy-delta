@@ -10,6 +10,7 @@ _ap.add_argument('--scoring', default='half_tep', choices=['half_tep', 'full'], 
 _ap.add_argument('--live', default='live_values.json', help='live site values file in --data to compare against')
 _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
+_ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
 _args = _ap.parse_args(); SP = _args.data
 C.HORIZON = 3
@@ -55,6 +56,9 @@ print('2026 weekly rows kept:', int((W.season == 2026).sum()), '| 2026 snapshots
 y = np.nan_to_num(Sin.FV.values.astype(float))
 rows = Sin.index[Sin.t == 2026].values
 C.POOL_LAG, C.SNAP_FIRST = I.LAG, I.FIRST_Y
+if _args.draft_back:
+    DD.CUT['A'] = 99
+    assert DD.vet_weights('A', np.array([24.0]), np.array([5]))[0, 2] == C.W_V['draft'] / 2
 if _args.no_games:
     C.W_V['games'] = 0.0
     assert (DD.vet_weights('A', np.array([0.0, 50.0]), np.array([1, 5]))[:, 4] == 0).all()
