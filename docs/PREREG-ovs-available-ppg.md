@@ -232,3 +232,40 @@ seasons. The check now asserts that every changed non-QB row has a QB season in 
 because their only action was cameos (Tee Martin, Dameyune Craig and Mark Rypien in 2002, Tommy Stevens in 2021). A
 veteran whose only action is cameos produced nothing, so his production is 0. Only first-year QBs take incoming-rookie
 values.
+
+### Results (9 Nov 2026, Run Once)
+
+`study/out/ovs_qb_starts_results.json`.
+
+- **What changed:** 2,495 QB cameo weeks were emptied. 1,261 QB rows changed production across all seasons. 48 first-year
+  QB rows (18 in the test seasons) took incoming-rookie values.
+- **Position-switchers:** Joe Webb, Taysom Hill and Feleipe Franks changed only through their QB seasons (note B).
+
+| Week 9, 2013–2022 | Before (§7) | With The Start Profile Rule |
+|---|---|---|
+| All rows: typical miss | 48.56 | 48.46 (**0.2% better**) |
+| QB rows (853): typical miss | 81.56 | 81.09 (**0.6% better**) |
+| First-year QB rows (82): typical miss | 111.1 | 108.8 (**2.0% better**) |
+| First-year QBs: produced ÷ value | 101% | 96% |
+| Close trades called right | 55.9% | 56.1% |
+
+**What it means.** Dropping cameos makes QB values slightly more accurate, and recovers about a fifth of what the
+rookie rule (§7) cost on first-year QBs, while keeping that group close to right on average.
+
+**Today's page (week 9, full PPR, 12-team superflex), §7 → with §8:**
+
+| Player | Market | §7 | §8 |
+|---|---|---|---|
+| Fernando Mendoza | 43 | 110 | **26** (incoming-rookie value) |
+| Drake Maye | 6 | 11 | 9 |
+| Jaxson Dart | 42 | 28 | 40 |
+| Michael Penix Jr. | 93 | 106 | 151 |
+| J.J. McCarthy | 103 | 162 | 146 |
+| Josh Allen | 1 | 3 | 1 |
+
+Jack Strand is the other first-year QB valued as an incoming rookie. Position balance (average rank among all valued
+players, market in brackets): QB 55 (60), RB 102 (76), WR 84 (79), TE 119 (90). Agreement with FantasyCalc: 0.82.
+
+**Note for Steve:** as an incoming rookie, a #1-overall QB is valued around 26th overall, above the market's 43rd. That
+is history's view of top-3 pick QBs (`docs/PREREG-ovs-available-ppg.md` discussion, 9 Nov: 33% of their first three
+seasons were top-12, against 22% for picks 4–32).

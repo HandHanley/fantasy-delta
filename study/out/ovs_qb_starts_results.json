@@ -1,0 +1,54 @@
+{
+ "amendment": "docs/PREREG-ovs-available-ppg.md \u00a78",
+ "rows": 6808,
+ "data": {
+  "cameo_rows_emptied": 2495,
+  "starts_without_stat_added": 0,
+  "veterans_set_to_zero": [
+   "Tee Martin",
+   "Mark Rypien",
+   "Dameyune Craig",
+   "Tommy Stevens"
+  ]
+ },
+ "qb_rows_production_changed_all_seasons": 1261,
+ "rows_valued_as_incoming_rookie_all_seasons": 48,
+ "rows_valued_as_incoming_rookie_test": 18,
+ "non_qb_rows_changed": [
+  "Joe Webb",
+  "Taysom Hill",
+  "Feleipe Franks"
+ ],
+ "all_rows": {
+  "rows": 6808,
+  "rmse_rule": 48.46098402883503,
+  "rmse_before": 48.55828955702863,
+  "change": 0.002003891180708095,
+  "produced_over_rule": 0.8256371027423762,
+  "produced_over_before": 0.8255133965698384
+ },
+ "qb_rows": {
+  "rows": 853,
+  "rmse_rule": 81.09405251310932,
+  "rmse_before": 81.56005580128237,
+  "change": 0.005713621497617116,
+  "produced_over_rule": 0.9907436471246615,
+  "produced_over_before": 0.9898070584150406
+ },
+ "first_year_qb_rows": {
+  "rows": 82,
+  "rmse_rule": 108.84196033740884,
+  "rmse_before": 111.10532949586543,
+  "change": 0.02037138244156711,
+  "produced_over_rule": 0.9602773978119296,
+  "produced_over_before": 1.0061324082402021
+ },
+ "trades": {
+  "n_trades": 21492,
+  "acc_in_season": 0.5610924995347106,
+  "acc_baseline": 0.558859110366648,
+  "diff": 0.002233389168062594,
+  "p": 0.290970902909709,
+  "guard_ok": true
+ }
+}

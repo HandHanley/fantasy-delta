@@ -12,6 +12,7 @@ _ap.add_argument('--out', default='values_week9.json')
 _ap.add_argument('--no-games', action='store_true', help='games played out of matching (docs/DECISION-no-games-in-matching.md)')
 _ap.add_argument('--available-ppg', action='store_true', help='production per available game, no games number (docs/PREREG-ovs-available-ppg.md)')
 _ap.add_argument('--rookie-qb-sits', action='store_true', help='with --available-ppg: first-year QBs count only games played (PREREG-ovs-available-ppg.md section 7)')
+_ap.add_argument('--qb-starts', action='store_true', help='with --available-ppg: QB games by the Start Profile rule (PREREG-ovs-available-ppg.md section 8)')
 _ap.add_argument('--show-matches', default='', help='print the 30 matches for this player name (Sin.name)')
 _ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
@@ -78,7 +79,15 @@ if _args.available_ppg:
     _Lf, _Lu = I.levels(W)
     _Au = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 9)
     _Af = J.available_weeks(f'{SP}/weekly', f'{SP}/wrost', f'{SP}/inj', 22)
-    Sin['prod'], _lift = AP.prod_available(Sin, W, 9, _Lf, _Lu, st, _Af, _Au, rookie_qb_sits=_args.rookie_qb_sits)
+    _X = np.zeros(len(Sin), bool)
+    if _args.qb_starts:
+        assert _args.rookie_qb_sits
+        import types, ovs_qb_starts as QS
+        _a = types.SimpleNamespace(weekly=f'{SP}/weekly', wrost=f'{SP}/wrost', inj=f'{SP}/inj')
+        _SS, _X, _parts = QS.build_S(Sin, W, st, _Lf, _Lu, _a, f'{SP}/sched/games.csv', f'{SP}/snaps', f'{SP}/nflv/players.csv')
+        Sin['prod'] = _SS['prod'].values; Sin['kind'] = _SS['kind'].values
+    else:
+        Sin['prod'], _lift = AP.prod_available(Sin, W, 9, _Lf, _Lu, st, _Af, _Au, rookie_qb_sits=_args.rookie_qb_sits)
     Sin['games_raw'] = Sin.games
     C.W_V['games'] = 0.0
 pa = DD.neighbours(Sin, rows, 'A', pool_max_t=None)
@@ -93,6 +102,14 @@ for r, nn in zip(pa['test'], pa['nn'][30]):
         _D = Sin.loc[nn, ['name', 't'] + _cols].copy(); _D['weight'] = w.round(3); _D['next3'] = y[nn].round(1)
         print('MATCHES', _args.show_matches, 'self:', Sin.loc[r, _cols].to_dict(), 'value', round(val[int(r)], 1))
         print(_D.to_string(index=False), flush=True)
+if _args.available_ppg and _args.qb_starts and _X[rows].any():        # first-year QB, no game yet: incoming-rookie value
+    _xr = rows[_X[rows]]; _yb = np.nan_to_num(Sb.FV.values.astype(float))
+    _pb = DD.neighbours(Sb, _xr, 'A', pool_max_t=None)
+    for r, nn in zip(_pb['test'], _pb['nn'][30]):
+        assert (Sb.t.values[nn] <= 2022).all() and Sb.kind.values[r] == 'R0'
+        w = 0.5 ** ((2026 - Sb.t.values[nn]) / V.HALF_LIFE); w /= w.sum()
+        val[int(r)] = float((w * _yb[nn]).sum())
+    print('incoming-rookie values for:', list(Sin.name.values[_xr]))
 top = max(val.values())
 
 def norm(s):
