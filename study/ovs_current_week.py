@@ -15,6 +15,7 @@ _ap.add_argument('--rookie-qb-sits', action='store_true', help='with --available
 _ap.add_argument('--qb-starts', action='store_true', help='with --available-ppg: QB games by the Start Profile rule (PREREG-ovs-available-ppg.md section 8)')
 _ap.add_argument('--show-matches', default='', help='print the 30 matches for this player name (Sin.name)')
 _ap.add_argument('--draft-back', action='store_true', help='veterans keep the fading draft weight (docs/PREREG-ovs-draft-back.md)')
+_ap.add_argument('--contract-security', choices=['off', 'contract_year', 'none'], default='off', help='Contract Security layer (study/contract_layer.py); the value is how a deal ending this season is treated')
 _ap.add_argument('--injury-games', action='store_true', help='games so far + weeks out hurt (same doc, section 5); needs wrost/ and inj/ in --data')
 _args = _ap.parse_args(); SP = _args.data
 C.HORIZON = 3
@@ -110,6 +111,13 @@ if _args.available_ppg and _args.qb_starts and _X[rows].any():        # first-ye
         w = 0.5 ** ((2026 - Sb.t.values[nn]) / V.HALF_LIFE); w /= w.sum()
         val[int(r)] = float((w * _yb[nn]).sum())
     print('incoming-rookie values for:', list(Sin.name.values[_xr]))
+CS = {}
+if _args.contract_security != 'off':                                    # docs/PREREG-contract-security.md §11
+    import contract_layer as CL
+    _T = CL.load('/home/claude/fantasy-delta/data/delta-contracts.json')
+    for r in val:
+        f, lab = CL.factor(Sin.name.values[r], _T, 2026, _args.contract_security); val[r] *= f; CS[r] = (round(f, 3), lab)
+    print('contract security:', pd.Series([lab for _, lab in CS.values()]).value_counts().to_dict())
 top = max(val.values())
 
 def norm(s):
@@ -137,6 +145,8 @@ M['games26'] = [int((Sin.games_raw if 'games_raw' in Sin else Sin.games).values[
 M['out_hurt26'] = [int(Sin.out_hurt.values[r]) if 'out_hurt' in Sin else 0 for r in M.r]
 M['rookie'] = [bool(Sin.rookie_Y.values[r]) for r in M.r]
 M['age'] = [round(float(Sin.age.values[r]), 1) for r in M.r]
+M['contract'] = [CS.get(r, (1.0, 'off'))[1] for r in M.r]
+M['cs_factor'] = [CS.get(r, (1.0, 'off'))[0] for r in M.r]
 T = M.sort_values('mkt', ascending=False).head(150)
 sp = lambda a, b: round(pd.Series(list(a)).rank().corr(pd.Series(list(b)).rank()), 3)
 out = {'matched': int(len(M)), 'site_players': int(len(L)), 'missing': sorted(set(L.n) - set(M.n)),
