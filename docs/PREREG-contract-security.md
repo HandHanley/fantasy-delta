@@ -1,8 +1,8 @@
 # PRE-REGISTRATION — Own Value Scale: Contract Security
 
-**Drafted:** 10 November 2026. **Status: DRAFT, NOT LOCKED. The planted crash test failed (§10), so this goes back
-to Steve before any real run.** It locks by committing it with `study/ovs_contract_security.py` and passing crash
-results.
+**Drafted:** 10 November 2026. **Status: LOCKED** by the commit that adds the §10 decision below. The method is
+`study/ovs_contract_security.py` as of commit 82d4351, unchanged since the crash tests. The planted crash test fell
+short (§10); Steve chose to run as planned, accepting the lower power.
 
 - **9 Nov, Steve:** contracts buy opportunity, not performance, and "I don't want to arbitrarily set a percentage."
 - **10 Nov, Steve:**
@@ -273,3 +273,9 @@ That removes any real effect without revealing it. The lean is corrected in ever
 **The rookie rows assume too much.** Those runs plant the bump on rookie deals too, so they assume rookie deals react
 the same way. If they don't react, mixing them in waters a real bump down by about a third. Their power is the
 best case.
+
+**Steve's decision (10 Nov, before any real run):** "I guess lets run it as planned."
+
+- **Nothing changes:** the method, the bar (corrected 95% range), and team-signed deals only.
+- **The lower power is accepted:** a real 10% bump is shown about 2 times in 3.
+- **How to read a "not shown" result:** it means the size couldn't be pinned down, not that contracts don't matter.
