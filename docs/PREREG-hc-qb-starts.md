@@ -92,3 +92,19 @@ The DELTA Score, model value, the Own Value Scale. This is the Historical Comps 
 - **This is a tougher test than 1 Nov's.** That one was graded on fresh 2021–22 rows, with the per-position check at the
   99.4th percentile. This one is 2013–2022, QBs only, at the 95th. On 2 Nov, Version A (draft dropped from career year
   2) was already "honest, narrowly".
+
+## 6. Shipped (10 Nov 2026)
+
+Steve: "Yes let's put in the minimum and ship it". The start rule + 4-game minimum ships, overriding §3 by the owner's
+call. It was better than today's card on every check, though not honest for all QBs.
+
+- **The build:** `build_historical_comps.py --qb-starts WEEKLY SCHEDULE SNAPS --qb-min-games 4`.
+- **What changed:** only the 54 QB players.
+- **Caught before shipping:** the first build also moved three TEs (Kittle 58% → 52% two-or-more, Kelce, Jonnu Smith).
+  The cause was Taysom Hill's QB-listed seasons in the TE pool losing their trick-play points. The rule now applies
+  only to a row valued as a QB (`comps_value_study.build`). The QB rows graded in §5 are unaffected, and the 54 QB
+  entries are identical to the first build.
+- **Unchanged without the switch:** the default build still reproduces the old file exactly.
+- **On the card:** Darnold 13.4 → 15.6 PPG (54% → 57% two-or-more). Eight QBs show 0 PPG (no season with 4+ real
+  games): Malik Willis, Jalen Milroe, Riley Leonard, Quinn Ewers, Joe Milton, Trey Lance, Davis Mills, Tanner McKee.
+- **Still open:** the card is about 5 points too rosy on QBs in every version.
