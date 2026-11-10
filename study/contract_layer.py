@@ -4,7 +4,8 @@ Measured on deals a team signed: contract year x0.77, 1 year left x0.95, 2+ year
 and anyone not in the table get no layer (x1.00). Years left count from NEXT season, the first season of the value's
 three-season window (a week-W value of season Y covers Y+1..Y+3; the study measured status at that first kickoff).
 A deal ending this season (`expiring`) has no measured group: `expiring='contract_year'` treats it as x0.77,
-`expiring='none'` leaves it at x1.00 until he signs. Display only; not part of any locked test.
+`expiring='none'` leaves it at x1.00 until he signs. Steve, 10 Nov: `contract_year` ("The next contract isn't
+guaranteed"). Display only; not part of any locked test.
 """
 import json, re
 
