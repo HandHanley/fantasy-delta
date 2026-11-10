@@ -1,0 +1,51 @@
+{
+ "test_rows": 5693,
+ "valued_rows": 5693,
+ "elite_rows": {
+  "QB": 30,
+  "RB": 30,
+  "WR": 30,
+  "TE": 30
+ },
+ "tier_rows": {
+  "QB": 210,
+  "RB": 210,
+  "WR": 210,
+  "TE": 210
+ },
+ "runs": 200,
+ "planted_0.0": {
+  "TE": {
+   "excluded_one": 14,
+   "mean_estimate": 0.9760353876441812
+  },
+  "pooled": {
+   "excluded_one": 10,
+   "mean_estimate": 0.9935982712325659
+  }
+ },
+ "planted_0.25": {
+  "TE": {
+   "excluded_one": 10,
+   "mean_estimate": 1.25758606649664
+  },
+  "pooled": {
+   "excluded_one": 85,
+   "mean_estimate": 1.258450574086587
+  }
+ },
+ "planted_0.15": {
+  "TE": {
+   "excluded_one": 22,
+   "mean_estimate": 1.247466139975598
+  },
+  "pooled": {
+   "excluded_one": 37,
+   "mean_estimate": 1.167219633964291
+  }
+ },
+ "pass": {
+  "TE": false,
+  "pooled": false
+ }
+}
