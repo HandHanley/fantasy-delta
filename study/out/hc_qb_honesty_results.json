@@ -1,0 +1,165 @@
+{
+ "prereg": "docs/PREREG-hc-qb-starts.md",
+ "versions": {
+  "Today": {
+   "version": "Today",
+   "rows": 754,
+   "few_rows": 368,
+   "honest_all": false,
+   "honest_few": false,
+   "brier_all": 0.12926356841465295,
+   "brier_few": 0.07871073648952953,
+   "checks": {
+    "overall P3": {
+     "n": 754,
+     "error": 0.056552882157802735,
+     "limit": 0.04526048300481081,
+     "honest": false
+    },
+    "overall E3": {
+     "n": 754,
+     "error": 0.15718835756466987,
+     "limit": 0.10290255757374685,
+     "honest": false
+    },
+    "few P3": {
+     "n": 368,
+     "error": 0.0467994161699436,
+     "limit": 0.04602367316365046,
+     "honest": false
+    },
+    "few E3": {
+     "n": 368,
+     "error": 0.08490753760694655,
+     "limit": 0.09417139934444231,
+     "honest": true
+    }
+   },
+   "said_vs_happened": {
+    "overall": {
+     "two_plus_said": 0.30102443039348853,
+     "two_plus_happened": 0.2519893899204244,
+     "one_said": 0.11064549188066923,
+     "one_happened": 0.10610079575596817,
+     "none_said": 0.5883300777258422,
+     "none_happened": 0.6419098143236074
+    },
+    "few": {
+     "two_plus_said": 0.04850584254714316,
+     "two_plus_happened": 0.035326086956521736,
+     "one_said": 0.07477081921968454,
+     "one_happened": 0.051630434782608696,
+     "none_said": 0.8767233382331724,
+     "none_happened": 0.9130434782608695
+    }
+   }
+  },
+  "Start rule": {
+   "version": "Start rule",
+   "rows": 754,
+   "few_rows": 368,
+   "honest_all": false,
+   "honest_few": false,
+   "brier_all": 0.12799453855454346,
+   "brier_few": 0.07665678341328722,
+   "checks": {
+    "overall P3": {
+     "n": 754,
+     "error": 0.06332975278971176,
+     "limit": 0.04639741503073405,
+     "honest": false
+    },
+    "overall E3": {
+     "n": 754,
+     "error": 0.15206318447112582,
+     "limit": 0.10418775239747985,
+     "honest": false
+    },
+    "few P3": {
+     "n": 368,
+     "error": 0.06641480870240941,
+     "limit": 0.050297147035363504,
+     "honest": false
+    },
+    "few E3": {
+     "n": 368,
+     "error": 0.10970945915907358,
+     "limit": 0.1034722318049743,
+     "honest": false
+    }
+   },
+   "said_vs_happened": {
+    "overall": {
+     "two_plus_said": 0.30092056602961775,
+     "two_plus_happened": 0.2519893899204244,
+     "one_said": 0.11376478608594799,
+     "one_happened": 0.10610079575596817,
+     "none_said": 0.5853146478844342,
+     "none_happened": 0.6419098143236074
+    },
+    "few": {
+     "two_plus_said": 0.05953208854631267,
+     "two_plus_happened": 0.035326086956521736,
+     "one_said": 0.08480144257076241,
+     "one_happened": 0.051630434782608696,
+     "none_said": 0.855666468882925,
+     "none_happened": 0.9130434782608695
+    }
+   }
+  },
+  "Start rule + 4 minimum": {
+   "version": "Start rule + 4 minimum",
+   "rows": 754,
+   "few_rows": 368,
+   "honest_all": false,
+   "honest_few": true,
+   "brier_all": 0.12636305495201322,
+   "brier_few": 0.078099824252222,
+   "checks": {
+    "overall P3": {
+     "n": 754,
+     "error": 0.04680372144147598,
+     "limit": 0.04535971180066834,
+     "honest": false
+    },
+    "overall E3": {
+     "n": 754,
+     "error": 0.12862285983733004,
+     "limit": 0.0999923422095713,
+     "honest": false
+    },
+    "few P3": {
+     "n": 368,
+     "error": 0.03315366953344078,
+     "limit": 0.046096365936266086,
+     "honest": true
+    },
+    "few E3": {
+     "n": 368,
+     "error": 0.0638086354943135,
+     "limit": 0.09105184385289608,
+     "honest": true
+    }
+   },
+   "said_vs_happened": {
+    "overall": {
+     "two_plus_said": 0.29418112334929586,
+     "two_plus_happened": 0.2519893899204244,
+     "one_said": 0.11071278376857269,
+     "one_happened": 0.10610079575596817,
+     "none_said": 0.5951060928821315,
+     "none_happened": 0.6419098143236074
+    },
+    "few": {
+     "two_plus_said": 0.04167836934023345,
+     "two_plus_happened": 0.035326086956521736,
+     "one_said": 0.07843182193233775,
+     "one_happened": 0.051630434782608696,
+     "none_said": 0.8798898087274288,
+     "none_happened": 0.9130434782608695
+    }
+   }
+  }
+ },
+ "decision": "keep today (back to Steve)"
+}

@@ -43,6 +43,7 @@ def main():
     ap.add_argument('--qb-starts', nargs=3, metavar=('WEEKLY_DIR', 'SCHEDULE_FILE', 'SNAPS_DIR'),
                     help="QB production from games only (start or 75%% of snaps; cameos out), the Start Profile rule "
                          "(Steve, 10 Nov 2026; study/qb_games.py)")
+    ap.add_argument('--qb-min-games', type=int, default=0, help='with --qb-starts: a season with fewer real games is left out (docs/PREREG-hc-qb-starts.md)')
     a = ap.parse_args()
     SNAP, POOL_MAX = a.snap, a.snap - 3
 
@@ -63,6 +64,8 @@ def main():
         tot, cnt = gp['sum'].to_dict(), gp['size'].to_dict()
         qb = st[st.position == 'QB']
         override = {(k, int(y)): (float(tot.get((k, y), 0.0)), int(cnt.get((k, y), 0))) for k, y in zip(qb.player_id, qb.season)}
+        if a.qb_min_games:
+            override = {k: (v if v[1] >= a.qb_min_games else (0.0, 0)) for k, v in override.items()}
         print(f'QB start rule: {len(override)} QB seasons; {sum(1 for v in override.values() if v[1] == 0)} with no game')
     S, _ = C.build(st, dp, pl, snap_last=POOL_MAX, extra_seasons=(SNAP,), check_complete=False, prod_override=override)
     S = S.reset_index(drop=True)
@@ -148,7 +151,8 @@ def main():
 
     doc = {'built': datetime.date.today().isoformat(), 'snap': SNAP, 'pool_to': POOL_MAX,
            'rules': 'Version A matching (PREREG-draft-drop), Fix 2 weights (PREREG-honest-odds), 3-season window; display only'
-                    + ('; QB production and games from games only (start or 75%+ of snaps), the Start Profile rule' if a.qb_starts else ''),
+                    + ('; QB production and games from games only (start or 75%+ of snaps), the Start Profile rule' if a.qb_starts else '')
+                    + (f'; a QB season needs {a.qb_min_games}+ real games to count' if a.qb_starts and a.qb_min_games else ''),
            'labels': LABELS, 'players': out}
     json.dump(doc, open(a.out, 'w'), separators=(',', ':'), ensure_ascii=False)
     dropped = [n for n in names if n not in out]

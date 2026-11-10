@@ -60,6 +60,35 @@ unaffected.
 
 The DELTA Score, model value, the Own Value Scale. This is the Historical Comps card only.
 
-## 5. Results
+## 5. Results (10 Nov 2026, Run Once)
 
-(Filled in after the one run.)
+`study/out/hc_qb_honesty_results.json`. 754 veteran QB rows, 368 of them with 4 or fewer real games in season t.
+
+**Decision under §3: no new version is honest in both groups, so the card stays as it is and this goes back to Steve.**
+**Today's card is not honest for QBs either.**
+
+| Check (error vs honest-luck limit) | Today | Start Rule | Start Rule + 4 Minimum |
+|---|---|---|---|
+| All QBs: chance of 1+ starter season | 0.057 vs 0.045 ✗ | 0.063 vs 0.046 ✗ | **0.047 vs 0.045 ✗ (just)** |
+| All QBs: expected starter seasons | 0.157 vs 0.103 ✗ | 0.152 vs 0.104 ✗ | **0.129 vs 0.100 ✗** |
+| Few real games: chance of 1+ | 0.047 vs 0.046 ✗ | 0.066 vs 0.050 ✗ | **0.033 vs 0.046 ✓** |
+| Few real games: expected | 0.085 vs 0.094 ✓ | 0.110 vs 0.104 ✗ | **0.064 vs 0.091 ✓** |
+| Miss size, all QBs (Brier, lower is better) | 0.1293 | 0.1280 | **0.1264** |
+
+**Said vs happened, all QBs (the card's own shares):**
+
+| Share | Said (All Three) | Happened |
+|---|---|---|
+| Two or more starter seasons | 29–30% | 25% |
+| One starter season | 11% | 11% |
+| None | 59–60% | 64% |
+
+**What it means.**
+
+- **The card is a little too rosy on QBs in every version.** It says about 30% get two or more starter seasons; 25% did.
+- **The start rule on its own makes the few-games QBs worse.** That is the Willis problem.
+- **The start rule + 4-game minimum is the best of the three on every check and on miss size,** and it is honest for
+  QBs with few real games. It still misses narrowly on all QBs.
+- **This is a tougher test than 1 Nov's.** That one was graded on fresh 2021–22 rows, with the per-position check at the
+  99.4th percentile. This one is 2013–2022, QBs only, at the 95th. On 2 Nov, Version A (draft dropped from career year
+  2) was already "honest, narrowly".
