@@ -122,7 +122,7 @@ Also: rookie deals 726 (reported), unsigned 83 (reported), gaps 14 (excluded).
 **Correcting the lean:**
 
 - **The problem:** the crash tests (§7) showed that with no real link, this kind of ratio reads slightly above zero,
-  about +1.3 points.
+  about +1.5 points (+1.3 and +1.7 in two runs).
 - **The fix:**
   1. Shuffle the contract labels among players of the same position and season 200 times, and average what each
      estimate reads.
@@ -259,3 +259,17 @@ That removes any real effect without revealing it. The lean is corrected in ever
 - **The test is too small to reliably catch a real 10% bump.** With 1,339 rows the 95% range is about ±9 points wide.
   A true 10% bump clears it about 2 times in 3, and a true 5% bump about 1 time in 4.
 - **No real run has been made, and no outcome by contract group has been read.** Per §7, this goes to Steve.
+
+**The options, measured the same way** (100 runs each, shuffled labels; `study/ovs_contract_security_options.py`,
+`study/out/ovs_contract_security_power_options.json`):
+
+| Option | Rows | Catches A Real 10% | Catches A Real 5% | Fake Layer Shown (Nothing Real) |
+|---|---|---|---|---|
+| As drafted: team-signed deals, 95% range | 1,339 | 69 of 100 | 23 of 100 | 2 of 100 |
+| Team-signed deals, 90% range | 1,339 | 80 of 100 | 29 of 100 | 9 of 100 |
+| Rookie deals back in, 95% range | 2,065 | 84 of 100 | 34 of 100 | 3 of 100 |
+| Rookie deals back in, 90% range | 2,065 | 89 of 100 | 52 of 100 | 6 of 100 |
+
+**The rookie rows assume too much.** Those runs plant the bump on rookie deals too, so they assume rookie deals react
+the same way. If they don't react, mixing them in waters a real bump down by about a third. Their power is the
+best case.
