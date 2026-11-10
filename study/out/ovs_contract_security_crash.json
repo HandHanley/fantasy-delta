@@ -1,0 +1,23 @@
+{
+ "decided_rows": 1339,
+ "runs": 200,
+ "planted_0.0": {
+  "excluded_zero": 10,
+  "mean_estimate": 0.0011488843219491442,
+  "uncorrected_excluded_zero": 15,
+  "uncorrected_mean_estimate": 0.017433756392418256
+ },
+ "planted_0.1": {
+  "excluded_zero": 127,
+  "mean_estimate": 0.08992552353516249,
+  "uncorrected_excluded_zero": 172,
+  "uncorrected_mean_estimate": 0.11243965787047241
+ },
+ "planted_0.05": {
+  "excluded_zero": 50,
+  "mean_estimate": 0.04554299684995794,
+  "uncorrected_excluded_zero": 87,
+  "uncorrected_mean_estimate": 0.06487186837365057
+ },
+ "pass": false
+}

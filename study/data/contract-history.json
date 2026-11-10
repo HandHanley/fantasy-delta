@@ -30,7 +30,8 @@
   "Jonas Gray: only a 2014 futures deal is recorded; the 2015 season start is uncovered (released before the opener).",
   "Run 4: 52 contract rows have no source (vs 2, 2 and 14 in runs 1-3); 13 of them carry dollar figures that cannot be checked.",
   "Rob Gronkowski: his 2019 retirement tolled a year of his deal into 2020 (traded to TB); end year is as written (2019).",
-  "Seth Roberts and Terrelle Pryor: one season start each (2017, 2015) has no contract recorded."
+  "Seth Roberts and Terrelle Pryor: one season start each (2017, 2015) has no contract recorded.",
+  "Gaps left out of the contract-security measurement (on a club in week 1 with no deal recorded at kickoff): see study/out/contract_security_gaps.csv. Ricky Seals-Jones 2022: Giants deal shows a 31 Aug release but he was on injured reserve in week 1; release date unconfirmed."
  ],
  "corrections": [
   {
@@ -370,6 +371,22 @@
    "from": "2019-11-09",
    "to": "",
    "why": "Carolina claimed him off waivers, so this Bears contract carried on; it was not ended on that date."
+  },
+  {
+   "player": "Ricky Seals-Jones",
+   "contract": 1,
+   "field": "Released Date",
+   "from": "2019-08-31",
+   "to": "",
+   "why": "Cleveland claimed him off waivers on 1 Sep 2019, so this deal carried on (waiver claims do not end a deal)."
+  },
+  {
+   "player": "Tajae Sharpe",
+   "contract": 1,
+   "field": "Released Date",
+   "from": "2020-09-05",
+   "to": "2020-12-14",
+   "why": "nflverse rosters show him active for Minnesota in weeks 1-2 of 2020; he was waived on 14 Dec 2020, not before the season."
   }
  ],
  "players": {
@@ -1169,6 +1186,25 @@
      "outlet": "ESPN / Michael Rothstein",
      "confidence": "high",
      "batch": "veteran run 2"
+    },
+    {
+     "contract": 5,
+     "team": "OAK",
+     "signed": "2017-03-13",
+     "kind": "veteran",
+     "first": 2017,
+     "end": 2018,
+     "years": 2,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Two-year free-agent deal; reported as voidable to one year on playing-time/catch triggers, which is not a void year, so both written years count.",
+     "source": "https://nfl.com/news/cordarrelle-patterson-signs-deal-with-oakland-raiders-0ap3000000792948",
+     "outlet": "NFL.com (Ian Rapoport)",
+     "confidence": "high",
+     "batch": "gap-fix 2026-11-10"
     }
    ]
   },
@@ -2906,6 +2942,25 @@
      "outlet": null,
      "confidence": "low",
      "batch": "veteran run 4"
+    },
+    {
+     "contract": 5,
+     "team": "BAL",
+     "signed": "2023-07-21",
+     "kind": "veteran",
+     "first": 2023,
+     "end": 2023,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "One-year deal (reported \"up to $3.1M\", so no total recorded). nflverse rosters show him on the Ravens practice squad in week 1; either way a one-year deal at kickoff.",
+     "source": "https://www.nfl.com/news/ravens-sign-rb-melvin-gordon-to-one-year-deal-worth-up-to-3-1-million",
+     "outlet": "NFL.com (Tom Pelissero)",
+     "confidence": "high",
+     "batch": "gap-fix 2026-11-10"
     }
    ]
   },
@@ -16116,6 +16171,25 @@
      "outlet": "Green Bay Packers",
      "confidence": "medium",
      "batch": "veteran run 2"
+    },
+    {
+     "contract": 2,
+     "team": "IND",
+     "signed": "2017-06-01",
+     "kind": "veteran",
+     "first": 2017,
+     "end": 2017,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "Signed as a free agent by the Colts on 1 June 2017 after Green Bay released him; terms not disclosed; one-year (re-signed by the Colts in March 2018).",
+     "source": "https://www.espn.com/nfl/story/_/id/19514019/christine-michael-signs-indianapolis-colts-free-agent-deal",
+     "outlet": "ESPN",
+     "confidence": "medium",
+     "batch": "gap-fix 2026-11-10"
     }
    ]
   },
@@ -23787,6 +23861,25 @@
      "outlet": null,
      "confidence": "low",
      "batch": "veteran run 4"
+    },
+    {
+     "contract": 2,
+     "team": "NO",
+     "signed": "2018-09-02",
+     "kind": "veteran",
+     "first": 2018,
+     "end": 2018,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "One-year deal a day after New England released him, before the 2018 opener.",
+     "source": "https://www.cbssports.com/nfl/news/saints-will-reportedly-sign-former-patriots-running-back-mike-gillislee-to-one-year-deal",
+     "outlet": "CBS Sports (Ian Rapoport report)",
+     "confidence": "high",
+     "batch": "gap-fix 2026-11-10"
     }
    ]
   },
@@ -25136,7 +25229,7 @@
      "aav": null,
      "guaranteed_at_signing": null,
      "option": null,
-     "released": "2019-08-31",
+     "released": null,
      "basis": "Cardinals 2019 contract/ERFA one year, claimed by Cleveland after preseason waiver; signed tender report not verified. If this was only a tender offer, do not count as signed without source.",
      "source": null,
      "outlet": null,
@@ -26108,6 +26201,25 @@
      "outlet": "Oakland Raiders",
      "confidence": "medium",
      "batch": "veteran run 5"
+    },
+    {
+     "contract": 3,
+     "team": "BAL",
+     "signed": "2019-04-05",
+     "kind": "veteran",
+     "first": 2019,
+     "end": 2019,
+     "years": 1,
+     "total": null,
+     "aav": null,
+     "guaranteed_at_signing": null,
+     "option": null,
+     "released": null,
+     "basis": "One-year deal announced by the team a day after Oakland released him.",
+     "source": "https://www.baltimoreravens.com/news/press-release-ravens-agree-to-terms-with-seth-roberts",
+     "outlet": "Baltimore Ravens",
+     "confidence": "high",
+     "batch": "gap-fix 2026-11-10"
     }
    ]
   },
@@ -26418,7 +26530,7 @@
      "aav": null,
      "guaranteed_at_signing": null,
      "option": null,
-     "released": "2020-09-05",
+     "released": "2020-12-14",
      "basis": "One-year agreement after initial Tennessee rookie deal 2016-19; Vikings waived him before 2020 opener. Team announcement link/date require verification.",
      "source": "https://www.vikings.com/news/tajae-sharpe-signing-free-agency-2020",
      "outlet": "Minnesota Vikings",
