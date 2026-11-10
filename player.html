@@ -1395,7 +1395,7 @@ function hcHTML(r) {
     + r.pct.map((v, i) => v > 0 ? '<div style="width:' + v + '%;background:' + COL[i] + '"></div>' : '').join('') + '</div>';
   const rng = (a, b) => a === b ? String(a) : a + '–' + b;
   const rows = [];
-  if (m.ppg) rows.push(['Points Per Game, Last 3 Years', m.ppg[0], rng(m.ppg[1], m.ppg[2])]);
+  if (m.ppg) rows.push(['Weighted PPG, Last 3 Years', m.ppg[0], rng(m.ppg[1], m.ppg[2])]);
   if (m.pick) rows.push(['Draft Pick', m.pick[0] == null ? 'Undrafted' : m.pick[0],
     (m.pick[1] != null ? rng(m.pick[1], m.pick[2]) : '') + (m.pick[3] ? (m.pick[1] != null ? ' + ' : '') + m.pick[3] + ' Undrafted' : '')]);
   rows.push(['Age', m.age[0], rng(m.age[1], m.age[2])]);
