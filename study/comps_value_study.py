@@ -111,7 +111,10 @@ def age_on(birth, season):
 # ═════════════════════════════════════════════════════════════════════════════
 # 2. SNAPSHOTS (§4) AND OUTCOMES (§5)
 # ═════════════════════════════════════════════════════════════════════════════
-def build(st, dp, pl, snap_last=SNAP_LAST, extra_seasons=(), check_complete=True):
+def build(st, dp, pl, snap_last=SNAP_LAST, extra_seasons=(), check_complete=True, prod_override=None):
+    # prod_override {(player_id, season): (points, games)} replaces a season's points and games in the production and
+    # games features only (Historical Comps: QB games by the Start Profile rule, Steve 10 Nov 2026). Outcomes,
+    # eligibility and career games are untouched. Default None = every locked run, unchanged.
     """Return (snaps, counts). One row per snapshot, features use only seasons <= t.
     Outcome columns (FV, n_start, any_start, complete) use t+1..t+5 and are never read by
     eligibility or features. `extra_seasons` adds snapshot seasons beyond snap_last whose
@@ -164,10 +167,17 @@ def build(st, dp, pl, snap_last=SNAP_LAST, extra_seasons=(), check_complete=True
             # recent production, DELTA 3/2/1 over seasons actually played
             num = den = 0.0
             for w, yr in ((3, t), (2, t - 1), (1, t - 2)):
-                g = gms.get((pid, yr), 0)
+                if prod_override is not None and (pid, yr) in prod_override:
+                    p_, g = prod_override[(pid, yr)]
+                else:
+                    g = gms.get((pid, yr), 0); p_ = pts.get((pid, yr), 0.0)
                 if g >= 1:
-                    num += w * pts[(pid, yr)] / g; den += w
-            prod = num / den
+                    num += w * p_ / g; den += w
+            if den == 0:                      # only with prod_override: a QB whose seasons were all cameos produced nothing
+                assert prod_override is not None
+                prod = 0.0
+            else:
+                prod = num / den
             dinfo = draft.get(pid)
             if dinfo is None and pid in pl_draft:
                 dinfo = (pl_draft[pid][0], pl_draft[pid][1], np.nan); counts['draft_from_players_csv'] += 1
@@ -190,7 +200,8 @@ def build(st, dp, pl, snap_last=SNAP_LAST, extra_seasons=(), check_complete=True
             cy = t - min(cands) + 1
             fv, ns, comp = outcome(pid, pos, t)
             rows.append(dict(kind='V', key=pid, name=names.get(pid, pid), t=t, pos=pos, prod=prod,
-                             games=float(r.games), age=age, cy=cy, pick=pick,
+                             games=float(prod_override[(pid, t)][1] if prod_override is not None and (pid, t) in prod_override else r.games),
+                             age=age, cy=cy, pick=pick,
                              draft=math.log(min(pick, UNDRAFTED_PICK)), undrafted=undrafted, G=np.nan, FV=fv, n_start=ns, any_start=int(ns > 0),
                              complete=comp))
     snaps_v = pd.DataFrame(rows)

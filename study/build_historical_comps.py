@@ -40,12 +40,31 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('nflverse'); ap.add_argument('rosters'); ap.add_argument('universe'); ap.add_argument('out')
     ap.add_argument('--snap', type=int, default=2025, help='season the current snapshots are taken at')
+    ap.add_argument('--qb-starts', nargs=3, metavar=('WEEKLY_DIR', 'SCHEDULE_FILE', 'SNAPS_DIR'),
+                    help="QB production from games only (start or 75%% of snaps; cameos out), the Start Profile rule "
+                         "(Steve, 10 Nov 2026; study/qb_games.py)")
     a = ap.parse_args()
     SNAP, POOL_MAX = a.snap, a.snap - 3
 
     C.HORIZON, C.POOL_LAG = 3, 3
     st, dp, pl = C.load(a.nflverse, a.rosters)
-    S, _ = C.build(st, dp, pl, snap_last=POOL_MAX, extra_seasons=(SNAP,), check_complete=False)
+    override = None
+    if a.qb_starts:
+        import glob, os as _os, pandas as _pd, qb_games as QG
+        wk, sched, snaps = a.qb_starts
+        games, _cam = QG.qb_weeks(wk, sched, snaps, _os.path.join(a.nflverse, 'players.csv'), 22)
+        W = _pd.concat([_pd.read_csv(f, low_memory=False, usecols=['player_id', 'season', 'week', 'season_type',
+                                                                   'fantasy_points', 'fantasy_points_ppr'])
+                        for f in sorted(glob.glob(_os.path.join(wk, 'stats_player_week_*.csv')))], ignore_index=True)
+        W = W[W.season_type == 'REG']
+        W['P'] = (W.fantasy_points.fillna(0) + W.fantasy_points_ppr.fillna(0)) / 2      # a QB's points (no TE bonus)
+        keep = np.array([(k, int(y), int(w)) in games for k, y, w in zip(W.player_id, W.season, W.week)])
+        gp = W[keep].groupby(['player_id', 'season']).P.agg(['sum', 'size'])
+        tot, cnt = gp['sum'].to_dict(), gp['size'].to_dict()
+        qb = st[st.position == 'QB']
+        override = {(k, int(y)): (float(tot.get((k, y), 0.0)), int(cnt.get((k, y), 0))) for k, y in zip(qb.player_id, qb.season)}
+        print(f'QB start rule: {len(override)} QB seasons; {sum(1 for v in override.values() if v[1] == 0)} with no game')
+    S, _ = C.build(st, dp, pl, snap_last=POOL_MAX, extra_seasons=(SNAP,), check_complete=False, prod_override=override)
     S = S.reset_index(drop=True)
     assert S[S.t <= POOL_MAX].complete.all(), 'pool has an unfinished three-year window'
 
@@ -128,7 +147,8 @@ def main():
                    's': [int(sea.min()) + (1 if rookie else 0), int(sea.max()) + (1 if rookie else 0)]}
 
     doc = {'built': datetime.date.today().isoformat(), 'snap': SNAP, 'pool_to': POOL_MAX,
-           'rules': 'Version A matching (PREREG-draft-drop), Fix 2 weights (PREREG-honest-odds), 3-season window; display only',
+           'rules': 'Version A matching (PREREG-draft-drop), Fix 2 weights (PREREG-honest-odds), 3-season window; display only'
+                    + ('; QB production and games from games only (start or 75%+ of snaps), the Start Profile rule' if a.qb_starts else ''),
            'labels': LABELS, 'players': out}
     json.dump(doc, open(a.out, 'w'), separators=(',', ':'), ensure_ascii=False)
     dropped = [n for n in names if n not in out]
