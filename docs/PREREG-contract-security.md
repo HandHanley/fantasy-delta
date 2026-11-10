@@ -279,3 +279,56 @@ best case.
 - **Nothing changes:** the method, the bar (corrected 95% range), and team-signed deals only.
 - **The lower power is accepted:** a real 10% bump is shown about 2 times in 3.
 - **How to read a "not shown" result:** it means the size couldn't be pinned down, not that contracts don't matter.
+
+**Wording correction (10 Nov, after the run; the method is unchanged):**
+
+- "Points delivered" is the studies' usual outcome, FV: value over the replacement line (QB 24, RB 30, WR 42, TE 14)
+  summed over the next three seasons. It is not raw fantasy points.
+- A season below the line counts as zero. That's why all 83 unsigned rows read zero.
+- The code was always this; only the plain-English description in §2 was loose.
+
+## 11. Result (The One Real Run, 10 Nov, `study/out/ovs_contract_security_results.json`)
+
+**The contract-status layer passes all three conditions and is used.**
+
+| Contract Status At Kickoff | Rows | Value Delivered vs Comparables (95% Range) | Opportunity Kept vs Comparables (95% Range) | Layer (Pulled Toward Zero) |
+|---|---|---|---|---|
+| Contract year | 418 | 0.75 (0.60–0.90) | 0.90 (0.84–0.96) | **× 0.77** |
+| 1 year left | 333 | 0.91 (0.80–1.02) | 0.96 (0.92–1.01) | **× 0.95** |
+| 2+ years left | 588 | 1.09 (1.03–1.15) | 1.06 (1.03–1.09) | **× 1.08** |
+
+1. **The contract bump: +17.1%** (95% range +7.4% to +26.3%, after removing a +1.6 lean). The range excludes zero.
+2. **Opportunity moved the same way: +7.9%** (+3.9% to +12.0%).
+3. **No harm:** 0.28% worse on the deciding rows, inside the 0.5% allowance.
+   - **It does not make the values more accurate.** The power check said a layer this size wouldn't. It passes the
+     guard only.
+
+**Money committed: not used.**
+
+- Value: +8.5% (−11.3% to +24.0%).
+- Opportunity: −1.3% (−8.6% to +6.1%).
+- Once years left is known, how much the deal pays adds nothing that can be measured.
+
+**Reported, deciding nothing:**
+
+- **By position, contract bump:**
+  - **WR +25%** (+15% to +36%), the only position whose range excludes zero.
+  - QB +9% (−15% to +29%).
+  - RB +14% (−8% to +36%).
+  - TE +33% (−1% to +53%).
+- **Without the 52 unsourced rows:** +18.3% (+7.9% to +27.7%), essentially the same.
+- **Rookie deals, measured the same way:** +12.2% (0.0% to +23.2%), 726 rows.
+  - The effect shows here too, so §1's reason for leaving them out ("years left is just experience") looks only partly
+    right.
+  - They stay out of the decision as locked.
+- **Unsigned at kickoff (83 rows):** zero value delivered against comparables who predicted some. Opportunity was 45%
+  of what the comparables had.
+
+**What it means:**
+
+- **The direction is the one Steve predicted.** Players with years left on a deal their team signed keep more of their
+  opportunity and deliver more value than their comparables. Players in a contract year keep less and deliver much less.
+- **It still can't separate cause (§8).** A short deal is partly the team saying it doesn't trust the player. The layer
+  captures that signal as well as the security itself.
+- **Licensed:** a labelled Contract Security layer in the Own Value Scale (§3).
+- **Not licensed (§9):** the site, the DELTA Score, or a per-position layer.
