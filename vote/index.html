@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Would You Rather Have?</title>
+<style>
+  :root {
+    --ink: #0A0F1A; --ink-2: #0D1420; --panel: #111A28; --line: #1E2A3A;
+    --paper: #EAF0F4; --fog: #8CA0B3; --fog-2: #748A9C;
+    --teal-br: #2DD4BF; --teal: #14B8A6; --emerald: #10B981; --emerald-deep: #047857; --mint: #CCFBF1;
+    --topaz: #E0B34D;
+    --teal-tint: color-mix(in srgb, var(--teal-br) 14%, var(--panel));
+    --sans: "Nunito Sans", "Avenir Next", system-ui, -apple-system, sans-serif;
+    --mono: SFMono-Regular, ui-monospace, "JetBrains Mono", monospace;
+    --geo: "Century Gothic", Futura, Questrial, "Josefin Sans", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--sans); -webkit-tap-highlight-color: transparent; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom)); min-height: 100vh; display: flex; flex-direction: column; gap: 16px; }
+  .mock { font-size: 12px; font-weight: 700; color: var(--topaz); border: 1px solid color-mix(in srgb, var(--topaz) 45%, var(--line)); background: color-mix(in srgb, var(--topaz) 10%, var(--panel)); border-radius: 10px; padding: 8px 12px; line-height: 1.4; }
+  header { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--paper); }
+  .brand svg { width: 32px; height: 32px; }
+  .brand span { font-family: var(--geo); font-weight: 700; font-size: 16px; letter-spacing: .04em; }
+  .count { font-size: 12px; color: var(--fog); }
+  .count b { font-family: var(--mono); color: var(--paper); font-weight: 500; }
+  h1 { font-size: 20px; font-weight: 800; margin: 0; text-align: center; }
+  .sub { font-size: 13px; color: var(--fog); margin: 4px 0 0; text-align: center; }
+  .pair { display: grid; gap: 10px; }
+  @media (min-width: 640px) { .pair { grid-template-columns: 1fr auto 1fr; align-items: stretch; } }
+  .or { align-self: center; justify-self: center; font-size: 12px; font-weight: 700; color: var(--fog-2); }
+  .card { position: relative; width: 100%; min-height: 128px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--paper); font: inherit; text-align: left; padding: 18px 16px; cursor: pointer; display: grid; align-content: center; gap: 6px; overflow: hidden; transition: border-color .15s, opacity .2s, transform .1s; }
+  .card:active { transform: scale(.985); }
+  .card:focus-visible { outline: 2px solid var(--teal-br); outline-offset: 2px; }
+  .name { font-size: 20px; font-weight: 800; line-height: 1.2; white-space: nowrap; overflow: hidden; position: relative; }
+  .meta { display: flex; gap: 6px; flex-wrap: wrap; position: relative; }
+  .chip { font-size: 12px; font-weight: 700; color: var(--fog); background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; }
+  .chip .num { font-family: var(--mono); font-weight: 500; }
+  .bar { position: absolute; inset: 0 auto 0 0; width: 0; background: color-mix(in srgb, var(--fog) 10%, var(--panel)); transition: width .5s ease; }
+  .pct { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 20px; font-weight: 700; opacity: 0; transition: opacity .3s; }
+  .voted .card { cursor: default; }
+  .voted .card.pick { border-color: var(--teal-br); }
+  .voted .card.pick .bar { background: var(--teal-tint); }
+  .voted .card.pick .pct { color: var(--teal-br); }
+  .voted .card:not(.pick) { opacity: .7; }
+  .voted .pct { opacity: 1; }
+  .result { min-height: 20px; text-align: center; font-size: 13px; color: var(--fog); }
+  .result b { color: var(--paper); }
+  .actions { display: grid; gap: 10px; margin-top: auto; }
+  .next { height: 48px; border-radius: 14px; border: 0; background: var(--teal-br); color: var(--ink); font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+  .next[disabled] { opacity: .35; cursor: default; }
+  .skip { height: 36px; border-radius: 18px; border: 1px solid var(--line); background: var(--ink-2); color: var(--fog); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; justify-self: center; padding: 0 14px; }
+  footer { font-size: 12px; color: var(--fog-2); text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="https://fantasydelta.com" aria-label="DELTA">
+      <svg viewBox="0 0 128 128" aria-hidden="true">
+        <defs>
+          <linearGradient id="lf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--teal-br)"/><stop offset="1" stop-color="var(--teal)"/></linearGradient>
+          <linearGradient id="rf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--emerald)"/><stop offset="1" stop-color="var(--emerald-deep)"/></linearGradient>
+        </defs>
+        <path d="M64 22 L24 106 L64 106 Z" fill="url(#lf)"/>
+        <path d="M64 22 L64 106 L104 106 Z" fill="url(#rf)"/>
+        <line x1="64" y1="25" x2="64" y2="106" stroke="var(--mint)" stroke-width="2" opacity=".7"/>
+        <g stroke="var(--mint)" stroke-width="3" stroke-linecap="round" opacity=".85">
+          <line x1="58" y1="52" x2="70" y2="52"/><line x1="55" y1="70" x2="73" y2="70"/><line x1="52" y1="88" x2="76" y2="88"/>
+        </g>
+      </svg>
+      <span>DELTA</span>
+    </a>
+    <div class="count">Your Votes <b id="n">0</b></div>
+  </header>
+
+  <div>
+    <h1>Who Would You Rather Have?</h1>
+    <p class="sub">Dynasty, superflex. Tap one.</p>
+  </div>
+
+  <div class="pair" id="pair">
+    <button class="card" type="button" data-side="0"><div class="bar"></div><div class="name"></div><div class="meta"></div><div class="pct"></div></button>
+    <div class="or">Or</div>
+    <button class="card" type="button" data-side="1"><div class="bar"></div><div class="name"></div><div class="meta"></div><div class="pct"></div></button>
+  </div>
+
+  <div class="result" id="result" aria-live="polite"></div>
+
+  <div class="actions">
+    <button class="next" id="next" type="button" disabled>Next</button>
+    <button class="skip" id="skip" type="button">Don't Know Them, Skip</button>
+  </div>
+
+  <footer>Votes are anonymous. Picks are 2027 rookie picks.</footer>
+</div>
+
+<script>
+const ITEMS = [{"n":"Jahmyr Gibbs","pos":"RB","team":"DET","age":24,"r":1},{"n":"Jaxon Smith-Njigba","pos":"WR","team":"SEA","age":24,"r":2},{"n":"Josh Allen","pos":"QB","team":"BUF","age":30,"r":3},{"n":"Bijan Robinson","pos":"RB","team":"ATL","age":24,"r":4},{"n":"Ja'Marr Chase","pos":"WR","team":"CIN","age":26,"r":5},{"n":"Puka Nacua","pos":"WR","team":"LAR","age":25,"r":6},{"n":"Amon-Ra St. Brown","pos":"WR","team":"DET","age":26,"r":7},{"n":"Joe Burrow","pos":"QB","team":"CIN","age":29,"r":8},{"n":"Trey McBride","pos":"TE","team":"ARI","age":26,"r":9},{"n":"Drake Maye","pos":"QB","team":"NE","age":24,"r":10},{"n":"CeeDee Lamb","pos":"WR","team":"DAL","age":27,"r":11},{"n":"Brock Bowers","pos":"TE","team":"LV","age":23,"r":12},{"n":"Caleb Williams","pos":"QB","team":"CHI","age":24,"r":13},{"n":"Brock Purdy","pos":"QB","team":"SF","age":26,"r":14},{"n":"Justin Jefferson","pos":"WR","team":"MIN","age":27,"r":15},{"n":"Kenneth Walker III","pos":"RB","team":"KC","age":25,"r":16},{"n":"Jordan Love","pos":"QB","team":"GB","age":27,"r":17},{"n":"Trevor Lawrence","pos":"QB","team":"JAC","age":26,"r":18},{"n":"Chris Olave","pos":"WR","team":"NO","age":26,"r":19},{"n":"Jonathan Taylor","pos":"RB","team":"IND","age":27,"r":20},{"n":"Lamar Jackson","pos":"QB","team":"BAL","age":29,"r":21},{"n":"Jayden Daniels","pos":"QB","team":"WAS","age":25,"r":22},{"n":"James Cook","pos":"RB","team":"BUF","age":27,"r":23},{"n":"Drake London","pos":"WR","team":"ATL","age":25,"r":24},{"n":"Patrick Mahomes","pos":"QB","team":"KC","age":31,"r":25},{"n":"Zay Flowers","pos":"WR","team":"BAL","age":26,"r":26},{"n":"Christian McCaffrey","pos":"RB","team":"SF","age":30,"r":27},{"n":"Malik Nabers","pos":"WR","team":"NYG","age":23,"r":28},{"n":"Ashton Jeanty","pos":"RB","team":"LV","age":22,"r":29},{"n":"Tee Higgins","pos":"WR","team":"CIN","age":27,"r":30},{"n":"De'Von Achane","pos":"RB","team":"MIA","age":24,"r":31},{"n":"Kyren Williams","pos":"RB","team":"LAR","age":26,"r":32},{"n":"Nico Collins","pos":"WR","team":"HOU","age":27,"r":33},{"n":"Christian Watson","pos":"WR","team":"GB","age":27,"r":34},{"n":"Bucky Irving","pos":"RB","team":"TB","age":24,"r":35},{"n":"George Pickens","pos":"WR","team":"DAL","age":25,"r":36},{"n":"Tetairoa McMillan","pos":"WR","team":"CAR","age":23,"r":37},{"n":"Matthew Golden","pos":"WR","team":"GB","age":23,"r":38},{"n":"C.J. Stroud","pos":"QB","team":"HOU","age":24,"r":39},{"n":"Luther Burden","pos":"WR","team":"CHI","age":22,"r":40},{"n":"Jeremiyah Love","pos":"RB","team":"ARI","age":21,"r":41},{"n":"Jared Goff","pos":"QB","team":"DET","age":31,"r":42},{"n":"Rashee Rice","pos":"WR","team":"KC","age":26,"r":43},{"n":"Bo Nix","pos":"QB","team":"DEN","age":26,"r":44},{"n":"Jaxson Dart","pos":"QB","team":"NYG","age":23,"r":45},{"n":"Colston Loveland","pos":"TE","team":"CHI","age":22,"r":46},{"n":"Tyler Warren","pos":"TE","team":"IND","age":24,"r":47},{"n":"Tyler Shough","pos":"QB","team":"NO","age":26,"r":48},{"n":"Parker Washington","pos":"WR","team":"JAC","age":24,"r":49},{"n":"Dak Prescott","pos":"QB","team":"DAL","age":33,"r":50},{"n":"Bryce Young","pos":"QB","team":"CAR","age":25,"r":51},{"n":"Javonte Williams","pos":"RB","team":"DAL","age":26,"r":52},{"n":"D'Andre Swift","pos":"RB","team":"CHI","age":27,"r":53},{"n":"Justin Herbert","pos":"QB","team":"LAC","age":28,"r":54},{"n":"Jalen Hurts","pos":"QB","team":"PHI","age":28,"r":55},{"n":"Breece Hall","pos":"RB","team":"NYJ","age":25,"r":56},{"n":"Tucker Kraft","pos":"TE","team":"GB","age":25,"r":57},{"n":"Jameson Williams","pos":"WR","team":"DET","age":25,"r":58},{"n":"Harold Fannin Jr.","pos":"TE","team":"CLE","age":22,"r":59},{"n":"Sam LaPorta","pos":"TE","team":"DET","age":25,"r":60},{"n":"George Kittle","pos":"TE","team":"SF","age":32,"r":61},{"n":"Fernando Mendoza","pos":"QB","team":"LV","age":22,"r":62},{"n":"Garrett Wilson","pos":"WR","team":"NYJ","age":26,"r":63},{"n":"Chase Brown","pos":"RB","team":"CIN","age":26,"r":64},{"n":"Omarion Hampton","pos":"RB","team":"LAC","age":23,"r":65},{"n":"DeVonta Smith","pos":"WR","team":"PHI","age":27,"r":66},{"n":"Carnell Tate","pos":"WR","team":"TEN","age":21,"r":67},{"n":"A.J. Brown","pos":"WR","team":"NE","age":29,"r":68},{"n":"Bhayshul Tuten","pos":"RB","team":"JAC","age":24,"r":69},{"n":"Chuba Hubbard","pos":"RB","team":"CAR","age":27,"r":70},{"n":"Isaiah Likely","pos":"TE","team":"NYG","age":26,"r":71},{"n":"Jaylen Warren","pos":"RB","team":"PIT","age":27,"r":72},{"n":"Dalton Kincaid","pos":"TE","team":"BUF","age":26,"r":73},{"n":"Jordyn Tyson","pos":"WR","team":"NO","age":22,"r":74},{"n":"Quinshon Judkins","pos":"RB","team":"CLE","age":22,"r":75},{"n":"Jonah Coleman","pos":"RB","team":"DEN","age":23,"r":76},{"n":"Emeka Egbuka","pos":"WR","team":"TB","age":23,"r":77},{"n":"Michael Wilson","pos":"WR","team":"ARI","age":26,"r":78},{"n":"Ladd McConkey","pos":"WR","team":"LAC","age":24,"r":79},{"n":"Rome Odunze","pos":"WR","team":"CHI","age":24,"r":80},{"n":"Saquon Barkley","pos":"RB","team":"PHI","age":29,"r":81},{"n":"Jaylen Waddle","pos":"WR","team":"DEN","age":27,"r":82},{"n":"Josh Jacobs","pos":"RB","team":"GB","age":28,"r":83},{"n":"Michael Penix Jr.","pos":"QB","team":"ATL","age":26,"r":84},{"n":"Baker Mayfield","pos":"QB","team":"TB","age":31,"r":85},{"n":"Sam Darnold","pos":"QB","team":"SEA","age":29,"r":86},{"n":"Matthew Stafford","pos":"QB","team":"LAR","age":38,"r":87},{"n":"Cam Ward","pos":"QB","team":"TEN","age":24,"r":88},{"n":"Derrick Henry","pos":"RB","team":"BAL","age":32,"r":89},{"n":"Jadarian Price","pos":"RB","team":"SEA","age":22,"r":90},{"n":"Jalen Coker","pos":"WR","team":"CAR","age":24,"r":91},{"n":"TreVeyon Henderson","pos":"RB","team":"NE","age":23,"r":92},{"n":"KC Concepcion","pos":"WR","team":"CLE","age":22,"r":93},{"n":"D.J. Moore","pos":"WR","team":"BUF","age":28,"r":94},{"n":"Makai Lemon","pos":"WR","team":"PHI","age":22,"r":95},{"n":"Cam Skattebo","pos":"RB","team":"NYG","age":24,"r":96},{"n":"Denzel Boston","pos":"WR","team":"CLE","age":22,"r":97},{"n":"Travis Etienne","pos":"RB","team":"NO","age":27,"r":98},{"n":"Omar Cooper","pos":"WR","team":"NYJ","age":22,"r":99},{"n":"Kyle Pitts","pos":"TE","team":"ATL","age":25,"r":100},{"n":"Brian Thomas Jr.","pos":"WR","team":"JAC","age":23,"r":101},{"n":"Kyler Murray","pos":"QB","team":"MIN","age":29,"r":102},{"n":"Rhamondre Stevenson","pos":"RB","team":"NE","age":28,"r":103},{"n":"Alec Pierce","pos":"WR","team":"IND","age":26,"r":104},{"n":"Blake Corum","pos":"RB","team":"LAR","age":25,"r":105},{"n":"Kyle Monangai","pos":"RB","team":"CHI","age":24,"r":106},{"n":"Malik Willis","pos":"QB","team":"MIA","age":27,"r":107},{"n":"Ty Simpson","pos":"QB","team":"LAR","age":23,"r":108},{"n":"Kenyon Sadiq","pos":"TE","team":"NYJ","age":21,"r":109},{"n":"T.J. Hockenson","pos":"TE","team":"MIN","age":29,"r":110},{"n":"Cedric Tillman","pos":"WR","team":"NO","age":26,"r":111},{"n":"Zach Charbonnet","pos":"RB","team":"SEA","age":25,"r":112},{"n":"RJ Harvey","pos":"RB","team":"DEN","age":25,"r":113},{"n":"Terrance Ferguson","pos":"TE","team":"LAR","age":23,"r":114},{"n":"Marvin Harrison Jr.","pos":"WR","team":"HOU","age":24,"r":115},{"n":"Daniel Jones","pos":"QB","team":"IND","age":29,"r":116},{"n":"Josh Downs","pos":"WR","team":"IND","age":25,"r":117},{"n":"Brenton Strange","pos":"TE","team":"JAC","age":25,"r":118},{"n":"Khalil Shakir","pos":"WR","team":"BUF","age":26,"r":119},{"n":"Jordan Addison","pos":"WR","team":"MIN","age":24,"r":120},{"n":"DK Metcalf","pos":"WR","team":"PIT","age":28,"r":121},{"n":"J.J. McCarthy","pos":"QB","team":"NYG","age":23,"r":122},{"n":"Juwan Johnson","pos":"TE","team":"NO","age":30,"r":123},{"n":"De'Zhaun Stribling","pos":"WR","team":"SF","age":23,"r":124},{"n":"Kirk Cousins","pos":"QB","team":"LV","age":38,"r":125},{"n":"Tony Pollard","pos":"RB","team":"TEN","age":29,"r":126},{"n":"Isaac Guerendo","pos":"RB","team":"SF","age":26,"r":127},{"n":"Germie Bernard","pos":"WR","team":"PIT","age":22,"r":128},{"n":"Wan'Dale Robinson","pos":"WR","team":"TEN","age":25,"r":129},{"n":"Jayden Higgins","pos":"WR","team":"HOU","age":23,"r":130},{"n":"Emmett Johnson","pos":"RB","team":"KC","age":22,"r":131},{"n":"Carson Beck","pos":"QB","team":"ARI","age":24,"r":132},{"n":"Dallas Goedert","pos":"TE","team":"PHI","age":31,"r":133},{"n":"Antonio Williams","pos":"WR","team":"WAS","age":22,"r":134},{"n":"Travis Kelce","pos":"TE","team":"KC","age":36,"r":135},{"n":"Mike Washington Jr.","pos":"RB","team":"LV","age":23,"r":136},{"n":"Davante Adams","pos":"WR","team":"LAR","age":33,"r":137},{"n":"Caleb Douglas","pos":"WR","team":"MIA","age":23,"r":138},{"n":"Jake Ferguson","pos":"TE","team":"DAL","age":27,"r":139},{"n":"Ricky Pearsall","pos":"WR","team":"SF","age":26,"r":140},{"n":"Stefon Diggs","pos":"WR","team":"WAS","age":32,"r":141},{"n":"Woody Marks","pos":"RB","team":"HOU","age":25,"r":142},{"n":"Jakobi Meyers","pos":"WR","team":"JAC","age":29,"r":143},{"n":"Shedeur Sanders","pos":"QB","team":"CLE","age":24,"r":144},{"n":"Kaelon Black","pos":"RB","team":"SF","age":24,"r":145},{"n":"Mike Evans","pos":"WR","team":"SF","age":33,"r":146},{"n":"Rico Dowdle","pos":"RB","team":"PIT","age":28,"r":147},{"n":"Eli Stowers","pos":"TE","team":"PHI","age":23,"r":148},{"n":"Ryan Flournoy","pos":"WR","team":"DAL","age":26,"r":149},{"n":"Adonai Mitchell","pos":"WR","team":"NYJ","age":23,"r":150},{"n":"2027 Early 1st","pos":"PICK","team":"","age":null,"r":28.5},{"n":"2027 Mid 1st","pos":"PICK","team":"","age":null,"r":42.5},{"n":"2027 Late 1st","pos":"PICK","team":"","age":null,"r":58.5},{"n":"2027 Early 2nd","pos":"PICK","team":"","age":null,"r":82.5},{"n":"2027 Mid 2nd","pos":"PICK","team":"","age":null,"r":98.5},{"n":"2027 Late 2nd","pos":"PICK","team":"","age":null,"r":112.5},{"n":"2027 Early 3rd","pos":"PICK","team":"","age":null,"r":128.5},{"n":"2027 Mid 3rd","pos":"PICK","team":"","age":null,"r":140.5},{"n":"2027 Late 3rd","pos":"PICK","team":"","age":null,"r":149.5}];
+const BOARD = '2026-11-10';                                   // which player list these votes were cast on
+const API = 'https://zpashsoixmsbzvvuodro.supabase.co/rest/v1';
+const KEY = 'sb_publishable_hwGjxh5PXKlD95i_e_4i9Q_VZzb9s_G'; // publishable: safe in a page; the table only accepts new votes
+const OWNER_HASH = '9d7e93b5a23dbb56234802a6ca428060806070b62d3b408c034eedc35f39e966';
+const $ = (s) => document.querySelector(s);
+let cur = null, curType = '', shownAt = 0, voted = false, votes = 0, last = new Set(), tag = 'organic', session = '';
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+};
+function newId() {
+  try { return crypto.randomUUID(); } catch (e) { return 'x' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+}
+session = store.get('dv_session') || newId(); store.set('dv_session', session);
+votes = Number(store.get('dv_votes') || 0) || 0;
+tag = store.get('dv_tag') === 'owner' ? 'owner' : 'organic';
+
+async function sha256(s) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+async function checkOwnerLink() {                              // ?k=CODE marks this device as the owner's, once
+  const k = new URLSearchParams(location.search).get('k');
+  if (!k) return;
+  try { if (await sha256(k) === OWNER_HASH) { tag = 'owner'; store.set('dv_tag', 'owner'); } } catch (e) {}
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+}
+
+async function save(pick) {
+  const row = { board: BOARD, session, tag, a: cur[0].n, b: cur[1].n, pick, pair_type: curType, ms: Math.min(3600000, Math.round(performance.now() - shownAt)) };
+  const r = await fetch(API + '/vote_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) });
+  if (!r.ok) throw new Error('save ' + r.status);
+}
+async function share(a, b) {
+  const r = await fetch(API + '/rpc/vote_share', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_a: a, p_b: b }) });
+  if (!r.ok) throw new Error('share ' + r.status);
+  const j = await r.json(); const x = Array.isArray(j) ? j[0] : j;
+  return [Number(x.a_votes) || 0, Number(x.b_votes) || 0];
+}
+
+function pickPair() {
+  const roll = Math.random(), pool = ITEMS.filter((x) => !last.has(x.n));
+  const a = pool[Math.floor(Math.random() * pool.length)];
+  let cands;
+  if (roll < 0.06) { curType = 'gimme'; cands = pool.filter((x) => Math.abs(x.r - a.r) >= 90); }   // a quality check
+  else if (roll < 0.26) { curType = 'random'; cands = pool.filter((x) => x !== a); }
+  else { curType = 'close'; cands = pool.filter((x) => x !== a && Math.abs(x.r - a.r) <= 12); }
+  if (!cands.length) { curType = 'random'; cands = pool.filter((x) => x !== a); }
+  const b = cands[Math.floor(Math.random() * cands.length)];
+  last = new Set([a.n, b.n]);
+  return Math.random() < 0.5 ? [a, b] : [b, a];
+}
+
+function chips(x) {
+  if (x.pos === 'PICK') return '<span class="chip">Rookie Pick</span>';
+  const s = [`<span class="chip">${x.pos}</span>`];
+  if (x.team) s.push(`<span class="chip">${x.team}</span>`);
+  if (x.age != null) s.push(`<span class="chip">Age <span class="num">${x.age}</span></span>`);
+  return s.join('');
+}
+
+function show() {
+  cur = pickPair(); voted = false; shownAt = performance.now();
+  $('#pair').classList.remove('voted'); $('#result').textContent = ''; $('#next').disabled = true;
+  document.querySelectorAll('.card').forEach((c, i) => {
+    const x = cur[i];
+    c.classList.remove('pick');
+    const nm = c.querySelector('.name'); nm.textContent = x.n; nm.style.fontSize = '';
+    for (let f = 20; f > 13 && nm.scrollWidth > nm.clientWidth; f -= 1) nm.style.fontSize = f - 1 + 'px';   // names never wrap or cut
+    c.querySelector('.meta').innerHTML = chips(x);
+    c.querySelector('.bar').style.width = '0';
+    c.querySelector('.pct').textContent = '';
+    c.setAttribute('aria-label', x.n);
+  });
+}
+
+async function vote(side) {
+  if (voted) return;
+  voted = true;
+  const pair = cur;
+  $('#pair').classList.add('voted');
+  document.querySelectorAll('.card').forEach((c, i) => { if (i === side) c.classList.add('pick'); });
+  $('#result').textContent = 'Saving…';
+  try { await save(pair[side].n); }
+  catch (e) { $('#result').textContent = "Couldn't save that vote. Check your connection and try the next one."; $('#next').disabled = false; return; }
+  votes += 1; store.set('dv_votes', String(votes)); $('#n').textContent = votes;
+  $('#next').disabled = false;
+  let n;
+  try { n = await share(pair[0].n, pair[1].n); } catch (e) { n = null; }
+  if (cur !== pair) return;                                   // moved on already
+  if (!n || n[0] + n[1] === 0) { $('#result').textContent = 'Vote saved.'; return; }
+  const tot = n[0] + n[1];
+  const pct = [Math.round(100 * n[0] / tot), 100 - Math.round(100 * n[0] / tot)];
+  document.querySelectorAll('.card').forEach((c, i) => {
+    c.querySelector('.bar').style.width = pct[i] + '%';
+    c.querySelector('.pct').textContent = pct[i] + '%';
+  });
+  if (tot === 1) $('#result').innerHTML = "<b>First vote</b> on this pair. You set the market.";
+  else $('#result').innerHTML = `<b>${pct[side]}%</b> of ${tot} voters agreed with you.`;
+}
+
+document.querySelectorAll('.card').forEach((c) => c.addEventListener('click', () => vote(Number(c.dataset.side))));
+$('#next').addEventListener('click', show);
+$('#skip').addEventListener('click', () => {
+  if (!voted) save(null).catch(() => {});                     // a skip is data too; never blocks the next pair
+  show();
+});
+$('#n').textContent = votes;
+checkOwnerLink();
+show();
+</script>
+</body>
+</html>
