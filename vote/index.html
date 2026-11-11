@@ -140,15 +140,35 @@ async function share(a, b) {
   return [Number(x.a_votes) || 0, Number(x.b_votes) || 0];
 }
 
+// Fewer votes, more often (PREREG-crowd-values A1): an item with v votes is drawn with weight (1 + v)^-1.5.
+// Uses vote COUNTS only, never who won. Without counts (offline, or the first load), every item is equally likely.
+let COUNTS = {}, sinceCounts = 0;
+async function loadCounts() {
+  try {
+    const r = await fetch(API + '/rpc/item_vote_counts', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD }) });
+    if (!r.ok) return;
+    const j = await r.json(), c = {};
+    (Array.isArray(j) ? j : []).forEach((x) => { c[x.name] = Number(x.votes) || 0; });
+    COUNTS = c; sinceCounts = 0;
+  } catch (e) {}
+}
+const need = (x) => Math.pow(1 + (COUNTS[x.n] || 0), -1.5);
+function draw(list) {
+  let t = 0; for (const x of list) t += need(x);
+  let u = Math.random() * t;
+  for (const x of list) { u -= need(x); if (u <= 0) return x; }
+  return list[list.length - 1];
+}
+
 function pickPair() {
   const roll = Math.random(), pool = ITEMS.filter((x) => !last.has(x.n));
-  const a = pool[Math.floor(Math.random() * pool.length)];
+  const a = draw(pool);
   let cands;
   if (roll < 0.06) { curType = 'gimme'; cands = pool.filter((x) => Math.abs(x.r - a.r) >= 90); }   // a quality check
   else if (roll < 0.26) { curType = 'random'; cands = pool.filter((x) => x !== a); }
   else { curType = 'close'; cands = pool.filter((x) => x !== a && Math.abs(x.r - a.r) <= 12); }
   if (!cands.length) { curType = 'random'; cands = pool.filter((x) => x !== a); }
-  const b = cands[Math.floor(Math.random() * cands.length)];
+  const b = curType === 'gimme' ? cands[Math.floor(Math.random() * cands.length)] : draw(cands);
   last = new Set([a.n, b.n]);
   return Math.random() < 0.5 ? [a, b] : [b, a];
 }
@@ -186,6 +206,8 @@ async function vote(side) {
   try { await save(pair[side].n); }
   catch (e) { $('#result').textContent = "Couldn't save that vote. Check your connection and try the next one."; $('#next').disabled = false; return; }
   votes += 1; store.set('dv_votes', String(votes)); $('#n').textContent = votes;
+  COUNTS[pair[0].n] = (COUNTS[pair[0].n] || 0) + 1; COUNTS[pair[1].n] = (COUNTS[pair[1].n] || 0) + 1;
+  if (++sinceCounts >= 25) loadCounts();
   $('#next').disabled = false;
   let n;
   try { n = await share(pair[0].n, pair[1].n); } catch (e) { n = null; }
@@ -209,7 +231,7 @@ $('#skip').addEventListener('click', () => {
 });
 $('#n').textContent = votes;
 checkOwnerLink();
-show();
+Promise.race([loadCounts(), new Promise((r) => setTimeout(r, 1500))]).then(show, show);   // never wait long for counts
 </script>
 </body>
 </html>

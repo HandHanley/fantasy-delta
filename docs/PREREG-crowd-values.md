@@ -106,4 +106,15 @@ the table says. Even so, the first full board needs about 5,000 votes.
 
 ## 9. Amendments
 
-None.
+**A1 (11 Nov 2026, before any vote was read; Steve: "yeah let's do 1 first"): the page favours players with fewer
+votes.**
+
+- **The change:** when choosing a pair, an item with v real votes on this board is drawn with weight (1 + v)^−1.5.
+  This applies to the first item, and to the second in close and random pairs. Gimme pairs are unchanged.
+- **Where the counts come from:** a new Supabase function, `item_vote_counts(board)`, which returns counts only and
+  never who won. The page loads it on open and refreshes every 25 votes. Without it, every item is equally likely, as
+  before.
+- **Why the fit is unaffected:** the order in which pairs are shown depends only on how many votes items already
+  have, never on the outcomes. So the fit in §3 stands as written.
+- **Why it's worth doing:** it gets more items to the 30-vote minimum sooner.
+- **Votes cast before A1** stay in, exactly as they are.

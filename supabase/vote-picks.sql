@@ -42,3 +42,18 @@ $$;
 
 revoke all on function public.vote_share(text, text) from public;
 grant execute on function public.vote_share(text, text) to anon, authenticated;
+
+-- Added 11 Nov 2026 (PREREG-crowd-values A1): vote COUNTS per player, so the page can show under-voted players more.
+-- Returns counts only — never who won a pair.
+create or replace function public.item_vote_counts(p_board text)
+returns table (name text, votes bigint)
+language sql stable security definer set search_path = public as $$
+  select n, count(*) from (
+    select a as n from public.vote_picks where board = p_board and pick is not null
+    union all
+    select b from public.vote_picks where board = p_board and pick is not null
+  ) x group by n;
+$$;
+
+revoke all on function public.item_vote_counts(text) from public;
+grant execute on function public.item_vote_counts(text) to anon, authenticated;
