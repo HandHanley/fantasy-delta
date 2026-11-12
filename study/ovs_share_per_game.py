@@ -2,11 +2,14 @@
 """
 DELTA — OWN VALUE SCALE: ROSTER SHARE PER GAME. Implements docs/DECISION-roster-share-per-game.md.
 
-Decided by rule (no availability penalty); this measures the cost once and decides nothing. The preseason value's
-roster share used his season TOTAL points, so games he missed lowered it. Now his points are his points per game times
-his club's games that season ("as if he'd played every game at his rate"); teammates' totals are unchanged.
+Decided by rule (no availability penalty); this measures the cost and decides nothing. The preseason value's roster
+share used his season TOTAL points, so weeks he missed hurt lowered it.
+  v1 (first measurement, superseded): points per game x his club's games. It also rescaled healthy backups who simply
+     didn't play (Hoyer, Howell, Barkley with one game), which is a bonus for not playing, not injury neutrality.
+  v2 (the rule): points per AVAILABLE game x (available weeks + weeks out hurt): only weeks hurt are filled in, at his
+     rate; healthy weeks he didn't play stay zeros. Same available/hurt definitions as the adopted in-season value.
 
-    python ovs_share_per_game.py --nflverse D --rosters D --week1 FILE
+    python ovs_share_per_game.py --nflverse D --rosters D --week1 FILE --weekly D --wrost D --inj D [--v1]
 """
 import argparse, json, os
 import numpy as np
@@ -16,18 +19,24 @@ import comps_draft_drop as DD
 import ovs_era as E
 import ovs_offseason as O
 import own_value_scale as V
+import injury_weeks as J
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 MISSED = 10                                     # "missed time": <= 10 games in the snapshot season (as ovs_no_games.py)
-EXPECT_ADOPTED_RMSE = 50.536348249023796        # out/ovs_no_games_results.json preseason.rmse_without (adopted value)
+EXPECT_ADOPTED_RMSE = 50.53434058613906         # ovs_no_games.py re-run 12 Nov on this data folder (preseason.rmse_without);
+                                                # the 8 Nov results file reads 50.536348 (data refresh, 0.004%)
 
 
 def season_games(t):
     return 16 if t <= 2020 else 17
 
 
+HURT, AVAIL = {}, {}                            # filled by main for v2: {(gsis_id, season): weeks}
+MODE = 'v2'
+
+
 def features_per_game(S, st, dp, R):
-    """ovs_offseason.features with one change: his own season-t points become points per game x his club's games."""
+    """ovs_offseason.features with one change: his own season-t points are rescaled (v1 or v2, see the docstring)."""
     team = {(int(s), g): t for s, g, t in zip(R.season, R.gsis_id, R.team)}
     pts = {(k, int(y)): (float(p), ps, float(g)) for k, y, p, ps, g in zip(st.player_id, st.season, st.P, st.position, st.games)}
     grp = {}
@@ -46,8 +55,12 @@ def features_per_game(S, st, dp, R):
         g = grp.get((int(t) + 1, c, ps), 0.0)
         if mine > 0 and mps != ps: g += mine                                     # counted under another position
         if mg >= 1:
-            full = mine / mg * max(mg, season_games(int(t)))                     # never below what he actually scored
-            if full > mine: scaled += 1
+            if MODE == 'v1':
+                full = mine / mg * max(mg, season_games(int(t)))                 # never below what he actually scored
+            else:
+                av = max(AVAIL.get((k, int(t)), 0), mg)                           # available weeks (>= games played)
+                full = mine + mine / av * HURT.get((k, int(t)), 0) * (season_games(int(t)) > 0)
+            if full > mine + 1e-9: scaled += 1                                   # float-safe count
             if mps == ps or mine > 0: g = g - mine + full                        # his own points in the group, rescaled
             mine = full
         share.append(mine / g if g > 0 else 1.0)
@@ -69,8 +82,12 @@ def match(S, T):
 
 def main():
     ap = argparse.ArgumentParser()
-    for k in ('nflverse', 'rosters', 'week1'): ap.add_argument('--' + k, required=True)
+    for k in ('nflverse', 'rosters', 'week1', 'weekly', 'wrost', 'inj'): ap.add_argument('--' + k, required=True)
+    ap.add_argument('--v1', action='store_true', help='the superseded all-games rescale')
     a = ap.parse_args()
+    global MODE
+    MODE = 'v1' if a.v1 else 'v2'
+    HURT.update(J.injured_weeks(a.weekly, a.wrost, a.inj, 22)); AVAIL.update(J.available_weeks(a.weekly, a.wrost, a.inj, 22))
     st, S, pre, nn2, W2, nn3, W3, counts = O.setup(a.nflverse, a.rosters, a.week1)   # S carries today's share/capital
     C.W_V['games'] = 0.0                                                                # adopted: games out (8 Nov)
     T = pre['test']; y = S.FV.values.astype(float); yt = y[T]
@@ -95,7 +112,7 @@ def main():
     lift, p = C.perm_test(yt, pn, po, cl, E.N_PERM)
     missed = vet & (S.games.values[T] <= MISSED)
     moved = v[T] & ~np.isclose(S2.share.values[T], S.share.values[T])
-    res = {'decision_doc': 'docs/DECISION-roster-share-per-game.md', 'rows': int(len(T)),
+    res = {'decision_doc': 'docs/DECISION-roster-share-per-game.md', 'mode': MODE, 'rows': int(len(T)),
            'veteran_rows_share_raised_all_seasons': int(scaled),
            'test_rows_share_changed': int(moved.sum()),
            'rmse_today': C.rmse(po, yt), 'rmse_per_game': C.rmse(pn, yt), 'change': float(lift), 'p_better': float(p),
@@ -110,7 +127,8 @@ def main():
                       'share_today': S.share.values[T], 'share_new': S2.share.values[T], 'value_today': po, 'value_new': pn})
     d = d[moved].assign(up=lambda x: x.share_new - x.share_today).sort_values('up', ascending=False).head(12)
     res['examples'] = d.round(3).to_dict('records')
-    json.dump(res, open(os.path.join(OUT, 'ovs_share_per_game_results.json'), 'w'), indent=1, default=float)
+    name = 'ovs_share_per_game_results_v1_all_games.json' if MODE == 'v1' else 'ovs_share_per_game_results.json'
+    json.dump(res, open(os.path.join(OUT, name), 'w'), indent=1, default=float)
     print(json.dumps(res, indent=1, default=float))
 
 

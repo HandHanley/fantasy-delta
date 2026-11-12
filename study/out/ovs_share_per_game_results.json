@@ -1,0 +1,177 @@
+{
+ "decision_doc": "docs/DECISION-roster-share-per-game.md",
+ "mode": "v2",
+ "rows": 6484,
+ "veteran_rows_share_raised_all_seasons": 2568,
+ "test_rows_share_changed": 1645,
+ "rmse_today": 50.53434058613906,
+ "rmse_per_game": 50.539545001514526,
+ "change": -0.00010298769737770996,
+ "p_better": 0.5193480651934806,
+ "by_position": {
+  "QB": 0.00249328236160562,
+  "RB": 0.0014580467862301827,
+  "WR": -0.0018297180312942807,
+  "TE": -0.00849891215999854
+ },
+ "trades": {
+  "n_trades": 23313,
+  "acc_era": 0.5525672371638142,
+  "acc_locked": 0.5545403851928109,
+  "diff": -0.0019731480289967296,
+  "p": 0.6094390560943905,
+  "guard_ok": true
+ },
+ "missed_time": {
+  "rows": 3203,
+  "produced_over_value_today": 0.787708951840488,
+  "produced_over_value_per_game": 0.701126117234672,
+  "rmse_change": -0.0033967247302355563
+ },
+ "did_not_miss": {
+  "rows": 2490,
+  "produced_over_value_today": 0.9560763925343182,
+  "produced_over_value_per_game": 0.9582363952852213,
+  "rmse_change": 0.0005335563246335884
+ },
+ "share_changed": {
+  "rows": 1645,
+  "produced_over_value_today": 0.911686076240809,
+  "produced_over_value_per_game": 0.842348673265048,
+  "rmse_change": -0.0028502375544907643
+ },
+ "examples": [
+  {
+   "name": "David Johnson",
+   "t": 2017,
+   "pos": "RB",
+   "games": 1.0,
+   "share_today": 0.267,
+   "share_new": 0.853,
+   "value_today": 79.712,
+   "value_new": 183.006,
+   "up": 0.587
+  },
+  {
+   "name": "C.J. Uzomah",
+   "t": 2020,
+   "pos": "TE",
+   "games": 2.0,
+   "share_today": 0.223,
+   "share_new": 0.697,
+   "value_today": 10.029,
+   "value_new": 6.048,
+   "up": 0.474
+  },
+  {
+   "name": "Delanie Walker",
+   "t": 2018,
+   "pos": "TE",
+   "games": 1.0,
+   "share_today": 0.063,
+   "share_new": 0.519,
+   "value_today": 6.308,
+   "value_new": 35.856,
+   "up": 0.456
+  },
+  {
+   "name": "Dwayne Allen",
+   "t": 2013,
+   "pos": "TE",
+   "games": 1.0,
+   "share_today": 0.057,
+   "share_new": 0.478,
+   "value_today": 3.316,
+   "value_new": 39.684,
+   "up": 0.42
+  },
+  {
+   "name": "Saquon Barkley",
+   "t": 2020,
+   "pos": "RB",
+   "games": 2.0,
+   "share_today": 0.13,
+   "share_new": 0.545,
+   "value_today": 24.356,
+   "value_new": 50.57,
+   "up": 0.415
+  },
+  {
+   "name": "Sam Bradford",
+   "t": 2017,
+   "pos": "QB",
+   "games": 2.0,
+   "share_today": 0.444,
+   "share_new": 0.857,
+   "value_today": 15.644,
+   "value_new": 25.673,
+   "up": 0.413
+  },
+  {
+   "name": "Cam Newton",
+   "t": 2019,
+   "pos": "QB",
+   "games": 2.0,
+   "share_today": 0.462,
+   "share_new": 0.873,
+   "value_today": 16.343,
+   "value_new": 95.408,
+   "up": 0.411
+  },
+  {
+   "name": "Matt Cassel",
+   "t": 2014,
+   "pos": "QB",
+   "games": 3.0,
+   "share_today": 0.281,
+   "share_new": 0.675,
+   "value_today": 10.581,
+   "value_new": 9.859,
+   "up": 0.395
+  },
+  {
+   "name": "Ahmad Bradshaw",
+   "t": 2013,
+   "pos": "RB",
+   "games": 3.0,
+   "share_today": 0.219,
+   "share_new": 0.599,
+   "value_today": 30.737,
+   "value_new": 111.923,
+   "up": 0.38
+  },
+  {
+   "name": "Ben Roethlisberger",
+   "t": 2019,
+   "pos": "QB",
+   "games": 2.0,
+   "share_today": 0.105,
+   "share_new": 0.484,
+   "value_today": 0.248,
+   "value_new": 14.181,
+   "up": 0.379
+  },
+  {
+   "name": "Trey Quinn",
+   "t": 2018,
+   "pos": "WR",
+   "games": 2.0,
+   "share_today": 0.268,
+   "share_new": 0.647,
+   "value_today": 29.908,
+   "value_new": 64.578,
+   "up": 0.379
+  },
+  {
+   "name": "Jimmy Garoppolo",
+   "t": 2018,
+   "pos": "QB",
+   "games": 3.0,
+   "share_today": 0.195,
+   "share_new": 0.563,
+   "value_today": 10.733,
+   "value_new": 33.718,
+   "up": 0.369
+  }
+ ]
+}

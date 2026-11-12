@@ -1,0 +1,176 @@
+{
+ "decision_doc": "docs/DECISION-roster-share-per-game.md",
+ "rows": 6484,
+ "veteran_rows_share_raised_all_seasons": 7513,
+ "test_rows_share_changed": 3528,
+ "rmse_today": 50.53434058613906,
+ "rmse_per_game": 50.741325738991364,
+ "change": -0.004095930617705301,
+ "p_better": 0.9308069193080692,
+ "by_position": {
+  "QB": -0.005839329249715641,
+  "RB": -0.0025705737980408205,
+  "WR": -0.0012622585488704097,
+  "TE": -0.00999636849348673
+ },
+ "trades": {
+  "n_trades": 23173,
+  "acc_era": 0.5453113537306348,
+  "acc_locked": 0.5614508263927847,
+  "diff": -0.01613947266214988,
+  "p": 0.9722027797220278,
+  "guard_ok": false
+ },
+ "missed_time": {
+  "rows": 3203,
+  "produced_over_value_today": 0.787708951840488,
+  "produced_over_value_per_game": 0.6490748471030641,
+  "rmse_change": -0.03291991738162259
+ },
+ "did_not_miss": {
+  "rows": 2490,
+  "produced_over_value_today": 0.9560763925343182,
+  "produced_over_value_per_game": 0.9888702242210371,
+  "rmse_change": 0.0008097451960359381
+ },
+ "share_changed": {
+  "rows": 3528,
+  "produced_over_value_today": 0.8884801096558845,
+  "produced_over_value_per_game": 0.8392207526140913,
+  "rmse_change": -0.00783013081393058
+ },
+ "examples": [
+  {
+   "name": "Tyler Eifert",
+   "t": 2014,
+   "pos": "TE",
+   "games": 1.0,
+   "share_today": 0.265,
+   "share_new": 0.852,
+   "value_today": 5.495,
+   "value_new": 13.292,
+   "up": 0.587
+  },
+  {
+   "name": "David Johnson",
+   "t": 2017,
+   "pos": "RB",
+   "games": 1.0,
+   "share_today": 0.267,
+   "share_new": 0.853,
+   "value_today": 79.712,
+   "value_new": 174.5,
+   "up": 0.587
+  },
+  {
+   "name": "Brian Hoyer",
+   "t": 2020,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.134,
+   "share_new": 0.712,
+   "value_today": 5.514,
+   "value_new": 14.816,
+   "up": 0.578
+  },
+  {
+   "name": "Sam Howell",
+   "t": 2022,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.098,
+   "share_new": 0.648,
+   "value_today": 20.178,
+   "value_new": 97.037,
+   "up": 0.55
+  },
+  {
+   "name": "Matt Barkley",
+   "t": 2018,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.092,
+   "share_new": 0.62,
+   "value_today": 38.808,
+   "value_new": 103.779,
+   "up": 0.527
+  },
+  {
+   "name": "Marcus Mariota",
+   "t": 2020,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.086,
+   "share_new": 0.601,
+   "value_today": 20.751,
+   "value_new": 108.324,
+   "up": 0.515
+  },
+  {
+   "name": "Nick Foles",
+   "t": 2021,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.07,
+   "share_new": 0.561,
+   "value_today": 10.655,
+   "value_new": 29.753,
+   "up": 0.491
+  },
+  {
+   "name": "Josh Freeman",
+   "t": 2015,
+   "pos": "QB",
+   "games": 1.0,
+   "share_today": 0.073,
+   "share_new": 0.559,
+   "value_today": 0.142,
+   "value_new": 28.965,
+   "up": 0.486
+  },
+  {
+   "name": "Chase Coffman",
+   "t": 2015,
+   "pos": "TE",
+   "games": 2.0,
+   "share_today": 0.266,
+   "share_new": 0.744,
+   "value_today": 0.0,
+   "value_new": 9.735,
+   "up": 0.478
+  },
+  {
+   "name": "Trey Quinn",
+   "t": 2018,
+   "pos": "WR",
+   "games": 2.0,
+   "share_today": 0.268,
+   "share_new": 0.746,
+   "value_today": 29.908,
+   "value_new": 51.097,
+   "up": 0.477
+  },
+  {
+   "name": "C.J. Uzomah",
+   "t": 2020,
+   "pos": "TE",
+   "games": 2.0,
+   "share_today": 0.223,
+   "share_new": 0.697,
+   "value_today": 10.029,
+   "value_new": 5.849,
+   "up": 0.474
+  },
+  {
+   "name": "Sean Culkin",
+   "t": 2018,
+   "pos": "TE",
+   "games": 1.0,
+   "share_today": 0.069,
+   "share_new": 0.542,
+   "value_today": 1.916,
+   "value_new": 7.679,
+   "up": 0.473
+  }
+ ]
+}
