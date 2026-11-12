@@ -1,6 +1,6 @@
 # DECISION — Where Should The Lines Be? (12-Team Superflex)
 
-**Drafted:** 12 November 2026, before any allocation was run. **Status: MEASUREMENT; the decision is Steve's.** Steve, 12
+**Drafted:** 12 November 2026, before any allocation was run. **Status: MEASURED 12 Nov 2026; the decision is Steve's (§7).** Steve, 12
 Nov: "should QB24 REALLY be the bar we're setting for a usable QB? … yep let's do the lines".
 
 ---
@@ -57,3 +57,54 @@ and TE14 (QB24 about 13.8 a game vs the best remaining flex option about 10–11
 - **Not a 2% accuracy test:** the lines define what value means, so there's nothing to predict.
 - **Adopting new lines is Steve's call.** It would mean rebuilding values and re-checking the studies that depend on
   them.
+
+## 7. Results (12 November 2026)
+
+`study/replacement_lines.py`, `study/out/replacement_lines_results.json`. A hand check of 2025 (DELTA lineup, half
+PPR + TE premium) reproduced the code's counts exactly: QB 24, RB 34, WR 41, TE 21. The superflex spot went to a QB on
+all 12 teams (Dart, Darnold, Love … Geno Smith). The flex spots went RB 10, TE 9, WR 5.
+
+**Starters per position, DELTA's lineup (average per season):**
+
+| Scoring, Method, Seasons | QB | RB | WR | TE |
+|---|---|---|---|---|
+| Today's lines | 24 | 30 | 42 | 14 |
+| Half PPR + TE premium, season totals, 2021–2025 (decides) | **24.0** | **34.2** | **44.0** | **17.8** |
+| Half PPR + TE premium, season totals, 2002–2025 | 23.8 | 34.7 | 45.3 | 16.1 |
+| Half PPR + TE premium, week by week, 2021–2025 | 24.0 | 33.1 | 45.3 | 17.7 |
+| Full PPR, season totals, 2021–2025 | 24.0 | 34.0 | 48.4 | 13.6 |
+| Full PPR, week by week, 2021–2025 | 24.0 | 32.6 | 49.4 | 14.1 |
+
+**2-WR lineup (reported), half PPR + TE premium, 2021–2025:** QB 24.0, RB 31.4, WR 38.6, TE 14.0.
+
+**The lines in points (half PPR + TE premium, 2021–2025, season totals):**
+
+- **QB:** the last starter scored 171.9, against 163.4 for the best QB left out. The best RB, WR or TE left out scored
+  about 121–122, so a QB always takes the superflex spot.
+- **RB, WR and TE:** the last starters scored 124–127.
+
+**What it means.**
+
+- **QB24 is right.** In every scoring and method, 24 QBs start, because the superflex spot always goes to a QB.
+- **The other lines are too shallow.** Today's lines fill only 14 of the 24 flex spots. Measured, all 24 fill, so more
+  RBs, WRs and TEs start than the lines assume.
+- **Scoring decides the TE line.** With the TE premium, 18 TEs start; in full PPR without it, about 14.
+- **Share of all value above the line (half PPR + TE premium, 2021–2025 average):**
+
+| Position | Today's Lines | Measured Lines |
+|---|---|---|
+| QB | 32.1% | 28.1% |
+| RB | 27.3% | 30.9% |
+| WR | 32.4% | 30.7% |
+| TE | 8.1% | 10.3% |
+
+The top five TEs' points above the line rise about 21% (84 → 101 a season); the top five RBs' about 12%.
+
+**Options for Steve:**
+
+1. Adopt the measured lines per scoring: half PPR + TE premium QB24 / RB34 / WR44 / TE18; full PPR QB24 / RB34 / WR48 /
+   TE14.
+2. Keep today's lines.
+
+Adopting means rebuilding the values on the new lines. Earlier studies were judged on the old lines; their conclusions
+compare two versions on the same line, so they're unlikely to flip, but the values themselves move.
