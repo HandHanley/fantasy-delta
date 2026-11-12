@@ -93,28 +93,42 @@ def _capture(Sin, W, week, L_full, L_upto, st, A_full, A_upto, rookie_qb_sits=Fa
     return out
 
 
-def add_unplayed_rookies(D, Sb, Sin, season):
-    """R0 rows (draft slot and age, as comps_in_season.snapshots builds them) for drafted first-year players on the
-    season roster who have no snapshot yet because they haven't played. Only for this build; no study frame changes."""
+def add_unplayed_rookies(D, Sb, Sin, season, played_ever):
+    """R0 rows (draft slot and age, as comps_in_season.snapshots builds them) for players on the season roster who have
+    never played an NFL game and so have no snapshot: this year's rookies, earlier draftees still waiting, and
+    undrafted players (valued at the undrafted slot). Only for this build; no study frame changes."""
     rs = pd.read_csv(os.path.join(D, 'rosters', f'roster_{season}.csv'), low_memory=False, usecols=['gsis_id', 'position', 'full_name'])
     rs = rs.dropna(subset=['gsis_id']).drop_duplicates('gsis_id')
-    rs = rs[rs.position.isin(POS) & ~rs.gsis_id.isin(set(Sin.key.values[Sin.t.values == season]))]
+    rs = rs[rs.position.isin(POS) & ~rs.gsis_id.isin(set(Sin.key.values[Sin.t.values == season])) & ~rs.gsis_id.isin(played_ever)]
     dp = pd.read_csv(os.path.join(D, 'nflv', 'draft_picks.csv'), low_memory=False)
-    dq = dp[dp.gsis_id.notna() & (dp.season == season)].drop_duplicates('gsis_id').set_index('gsis_id')
+    dq = dp[dp.gsis_id.notna() & (dp.season <= season)].sort_values(['season', 'pick']).drop_duplicates('gsis_id').set_index('gsis_id')
     pl = pd.read_csv(os.path.join(D, 'nflv', 'players.csv'), low_memory=False).set_index('gsis_id')
     rows = []
     for k, ps, nm in zip(rs.gsis_id, rs.position, rs.full_name):
-        if k not in dq.index: continue                                    # undrafted and unplayed: not valued
-        pick = int(dq.pick[k])
-        b = pl.birth_date.get(k)
+        if k in dq.index:
+            pick, dy, dage = int(dq.pick[k]), int(dq.season[k]), dq.age[k]
+        elif k in pl.index and pd.notna(pl.draft_pick.get(k)) and pd.notna(pl.draft_year.get(k)) and pl.draft_year[k] <= season:
+            pick, dy, dage = int(pl.draft_pick[k]), int(pl.draft_year[k]), np.nan
+        else:
+            pick, dy, dage = C.UNDRAFTED_PICK, (int(pl.rookie_season[k]) if k in pl.index and pd.notna(pl.rookie_season.get(k)) else season), np.nan
+        undrafted = pick >= C.UNDRAFTED_PICK
+        b = pl.birth_date.get(k) if k in pl.index else None
         if isinstance(b, str): age = C.age_on(b, season)
-        elif pd.notna(dq.age[k]): age = float(dq.age[k])
+        elif pd.notna(dage): age = float(dage) + (season - dy)
         else: continue
-        rows.append(dict(key=k, name=nm, t=season, pos=ps, age=age, cy=1, pick=pick, draft=np.log(min(pick, C.UNDRAFTED_PICK)),
-                         undrafted=False, n_start=0, any_start=0, complete=False, FV=np.nan, rookie_Y=True,
-                         kind='R0', prod=np.nan, games=np.nan, G=np.nan))
+        rows.append(dict(key=k, name=nm, t=season, pos=ps, age=age, cy=season - dy + 1, pick=pick,
+                         draft=np.log(min(pick, C.UNDRAFTED_PICK)), undrafted=undrafted, n_start=0, any_start=0,
+                         complete=False, FV=np.nan, rookie_Y=True, kind='R0', prod=np.nan, games=np.nan, G=np.nan))
     Sb2 = pd.concat([Sb, pd.DataFrame(rows).reindex(columns=Sb.columns)], ignore_index=True)
     return Sb2, np.arange(len(Sb), len(Sb2))
+
+
+def name_key(n, pos):
+    """Same rule as index.html nvKey: lower case, drop . ' ’ and Jr/Sr/II-V, letters only, then |POS."""
+    import re
+    s = re.sub(r"[.'’]", '', str(n).lower())
+    s = re.sub(r'\b(jr|sr|ii|iii|iv|v)\b', '', s)
+    return re.sub(r'[^a-z]', '', s) + '|' + pos
 
 
 def values(S, rows, y, season):
@@ -156,8 +170,8 @@ def build(D, season, week, contracts):
     xrows = Sin.index[incoming].values
     v_in = values(Sin, vrows, y, season)
     v_x = values(Sb, xrows, yb, season)
-    # drafted first-year players on the season roster with no row at all (no game yet): incoming-rookie value
-    Sb2, extra = add_unplayed_rookies(D, Sb, Sin, season)
+    # players on the season roster who have never played an NFL game and have no row: incoming-rookie value
+    Sb2, extra = add_unplayed_rookies(D, Sb, Sin, season, set(W.player_id[W.g == 1]))
     yb2 = np.concatenate([yb, np.zeros(len(Sb2) - len(Sb))])
     v_x.update(values(Sb2, extra, yb2, season))
     NAME = dict(zip(range(len(Sb2)), Sb2.name.values)); KEY = dict(zip(range(len(Sb2)), Sb2.key.values))
@@ -171,6 +185,16 @@ def build(D, season, week, contracts):
                     'age': round(float(S_.age.values[r]), 1) if S_.age.values[r] == S_.age.values[r] else None,
                     'games': int(g_), 'rookie': bool(S_.rookie_Y.values[r]), 'contract': lab, 'contract_factor': round(float(f), 4),
                     'basis': 'incoming rookie' if r in v_x else 'this season', 'raw': v * f})
+    # name keys for the site, which matches by name and position (index.html nvKey uses the same rule)
+    pl = pd.read_csv(os.path.join(D, 'nflv', 'players.csv'), low_memory=False).set_index('gsis_id')
+    for o in out:
+        names = {o['name']}
+        if o['gsis_id'] in pl.index:
+            r = pl.loc[o['gsis_id']]
+            names |= {x for x in [r.get('display_name')] if isinstance(x, str)}
+            names |= {f"{f} {r.get('last_name')}" for f in (r.get('first_name'), r.get('football_name'), r.get('common_first_name'))
+                      if isinstance(f, str) and isinstance(r.get('last_name'), str)}
+        o['keys'] = sorted({name_key(n, o['pos']) for n in names})
     top = max(o['raw'] for o in out)
     for o in out:
         o['value'] = int(round(10000 * o.pop('raw') / top))

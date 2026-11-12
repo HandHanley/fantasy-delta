@@ -3663,6 +3663,17 @@ const RK_COLS=[
   tip:"DELTA's internal valuation combining projected PPG, age, EPA, opportunity, and contract — adjusted for positional scarcity and format. Higher than Mkt Val = underpriced; lower = overpriced. Drives the buy/sell verdict.",
   fn:(p,R)=>`<td class="dl-b-r dl-rk-mv" style="color:${mvAsset(p)>p.ktcEff?'var(--emerald)':mvAsset(p)<p.ktcEff*.9?'var(--coral)':'var(--paper)'}">${mvAsset(p)>=19999?"19,999+":mvAsset(p).toLocaleString()}</td>`},
 
+ /* NEW VALUE (12 Nov 2026, owner): DELTA's own value scale, DEV ONLY (?dev=1). Visitors never see it: these two
+    entries are removed from RK_COLS right after the list when DELTA_DEV is false, and data/new-value.json is fetched
+    only when one of them draws. Built weekly by .github/workflows/new-value-weekly.yml (study/new_value_weekly.py):
+    full PPR, 12-team superflex, whatever format the site is set to. Matched to the board by name and position. */
+ {k:'nv', dev:true, al:'r', lbl:'New Val', full:'New Value (Dev)', sort:p=>{ const r=nvRec(p); return r?r.value:-1; }, mob:false,
+  tip:"Dev only. DELTA's own value scale: what the 30 most similar past players went on to produce over the next three seasons, 0-10,000. Full PPR, 12-team superflex, whatever format the site is set to. No market data.",
+  fn:(p,R)=>{ if(NV_STATE!=='ok'){ nvLoad(); return rkNum(null,''); } const r=nvRec(p); return rkNum(r?r.value:null, r?r.value.toLocaleString():'', null); }},
+ {k:'nvr', dev:true, al:'r', lbl:'New Rk', full:'New Rank (Dev)', sort:p=>{ const r=nvRec(p); return r?-r.rank:-1e9; }, mob:false,
+  tip:"Dev only. Rank on the New Value scale, among every player it values.",
+  fn:(p,R)=>{ if(NV_STATE!=='ok'){ nvLoad(); return rkNum(null,''); } const r=nvRec(p); return rkNum(r?r.rank:null, r?String(r.rank):'', null); }},
+
  {k:'sys', al:'c', lbl:'Sys', full:'System Score', sort:'sys', mob:false,
   tip:"Offensive System Score (0-100): rates coordinator quality, scheme fit, and role clarity. Shown as context only — it does not adjust the projection. OC mark = a coordinator change this cycle.",
   fn:(p,R)=>`<td class="dl-b-c">${sTag(p.sys)}</td>`},
@@ -3745,6 +3756,23 @@ const RK_COLS=[
 /* 600px is the live breakpoint — the same one col-hide-mobile fires at, so a
    phone and the Columns menu agree on what a phone is. */
 const RK_MQ = window.matchMedia('(max-width:600px)');
+/* New Value is dev only: outside ?dev=1 its columns don't exist, so no saved set, menu, sort or default can show them. */
+if(typeof DELTA_DEV==='undefined'||!DELTA_DEV){ for(let i=RK_COLS.length-1;i>=0;i--) if(RK_COLS[i].dev) RK_COLS.splice(i,1); }
+let NV=null, NV_STATE='idle', _nvAsked=false;
+/* Same rule as study/new_value_weekly.py name_key: lower case, drop . ' ’ and Jr/Sr/II-V, letters only, then |POS. */
+function nvKey(n,pos){ return String(n||'').toLowerCase().replace(/[.'\u2019]/g,'').replace(/\b(jr|sr|ii|iii|iv|v)\b/g,'').replace(/[^a-z]/g,'')+'|'+pos; }
+function nvLoad(){
+  if(_nvAsked) return; _nvAsked=true; NV_STATE='loading';
+  fetch('data/new-value.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{
+    if(!j||!Array.isArray(j.players)){ NV_STATE='failed'; return; }
+    const by={};                                   // a key two players share matches neither
+    j.players.forEach(x=>{ (x.keys||[nvKey(x.name,x.pos)]).forEach(k=>{ by[k]=(k in by && by[k]!==x)?null:x; }); });
+    NV={meta:j.meta,by:by}; NV_STATE='ok';
+    if(typeof renderRankings==='function') renderRankings();
+  }).catch(()=>{ NV_STATE='failed'; });
+}
+function nvRec(p){ return NV ? (NV.by[nvKey(p.n,p.pos)]||null) : null; }
+
 /* The Efficiency columns read data/efficiency.json, fetched only when one of them is on. */
 let _rkEffAsked=false;
 function rkEffLoad(){ if(_rkEffAsked) return; _rkEffAsked=true; ensureEfficiency().then(()=>{ if(typeof renderRankings==='function') renderRankings(); }); }
@@ -3862,6 +3890,12 @@ function rkColsGet(dev){
   const clean = Array.isArray(saved) ? saved.filter(k=>RK_COLS.some(c=>c.k===k)) : null;
   const set = (clean && clean.length) ? clean : RK_DEF[dev].slice();
   RK_COLS.forEach(c=>{ if(c.locked && set.indexOf(c.k)<0) set.push(c.k); });
+  /* Dev only (New Value): added once to a desktop set, so a saved board shows them the first time; untick sticks. */
+  if(dev==='d' && RK_COLS.some(c=>c.dev)){
+    let seen=null; try{ seen=localStorage.getItem('delta_nv_cols_added'); }catch(e){}
+    if(!seen){ RK_COLS.forEach(c=>{ if(c.dev && set.indexOf(c.k)<0) set.push(c.k); });
+      try{ localStorage.setItem('delta_nv_cols_added','1'); localStorage.setItem(RK_LS[dev], JSON.stringify(set)); }catch(e){} }
+  }
   rkSel[dev]=set;
   return set;
 }
