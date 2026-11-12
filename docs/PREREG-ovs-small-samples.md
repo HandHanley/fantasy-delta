@@ -131,3 +131,48 @@ lift 3.0%; K re-picked as 4 in 174 runs, 8 in 26). PASS.
 ## 9. Amendments
 
 None yet.
+
+## 10. Results (12 November 2026, One Run)
+
+**Decision: no change.** Files: `study/out/ovs_small_samples_results.json`; today's page from
+`study/ovs_small_samples_page.py` (full PPR display build; its today values reproduce the Top 150 dashboard's New
+Value exactly, e.g. Smith-Njigba 10,000, Allen 9,810, Cooper 3,797).
+
+| Check | Result |
+|---|---|
+| K picked on 2006–2012 | 1, the smallest offered. Even K = 1 missed by more than today there (53.44 vs 53.29) |
+| Test, 2013–2022 (decides) | 48.12 vs 48.46: 0.7% better, p = 0.007. Real, but under the 2% bar |
+| Close trades | 56.5% vs 55.7% right (guard passes) |
+| Best K on the test rows (reported) | K = 2, 0.7%; K = 8 and 16 are worse than today |
+| By position | QB +1.2%, RB +0.6%, WR +0.1%, TE +0.9% |
+
+**What each group produced, as a share of its value (test rows):**
+
+| Group | Rows | Today | Mixed (K = 1) |
+|---|---|---|---|
+| Rookies | 947 | 93% | 96% |
+| 5 or fewer games, never hurt | 3,176 | 37% | 34% |
+| 2+ weeks out hurt | 986 | 74% | 72% |
+| Healthy veterans, 6+ games | 2,970 | 89% | 91% |
+| Veterans, no game this season | 1,410 | 17% | 16% |
+
+**What it means.**
+
+- **The idea was backwards for most low-game players.** A veteran with few games and no injury has usually lost his job,
+  and his preseason value is higher still. Pulling him toward it made that group worse (37% → 34%).
+- **A small, real gain** for everyone else, too small to pass.
+- **Injured players barely moved** (74% → 72%), as option 1 intended.
+
+**Today's page (reported, rank among all 689 players valued at week 9):**
+
+| Player | Games | Today | Preseason | Mixed K = 1 | Mixed K = 4 |
+|---|---|---|---|---|---|
+| Omar Cooper Jr. | 5 | 3,797 (47th) | 1,685 | 3,445 (51st) | 2,858 (57th) |
+| Caleb Douglas | 5 | 2,895 (64th) | 1,008 | 2,581 (64th) | 2,056 (80th) |
+| Antonio Williams | 8 | 2,691 (65th) | 1,097 | 2,514 (67th) | 2,159 (75th) |
+| Jaxson Dart | 2 | 4,403 (39th) | 7,225 | 5,344 (29th) | 6,284 (22nd) |
+| De'Von Achane | 3 | 3,418 (50th) | 5,927 | 4,045 (43rd) | 4,852 (33rd) |
+| Justin Jefferson | 7 | 2,064 (81st) | 3,734 | 2,272 (73rd) | 2,671 (64th) |
+| Deshaun Watson | 8 | 3,168 (59th) | 614 | 2,884 (60th) | 2,316 (70th) |
+
+Even a heavy pull (K = 4) leaves Cooper 57th. His number comes from who his comparables are, not from too few games.
