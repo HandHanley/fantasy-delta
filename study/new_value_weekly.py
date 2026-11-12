@@ -204,8 +204,21 @@ def build(D, season, week, contracts):
     meta = {'season': season, 'through_week': week, 'built_utc': dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'scoring': 'full PPR, no TE premium, 12-team superflex', 'lines': C.REPL_N,
             'contract_security': 'on (deal ending this season counts as a contract year)',
-            'players': len(out), 'incoming_rookie_values': len(v_x), 'note': 'Display build. Not used by the site\'s engine.'}
-    return {'meta': meta, 'players': out}
+            'players': len(out), 'incoming_rookie_values': len(v_x), 'top_raw': top,
+            'note': 'Display build. Not used by the site\'s engine.'}
+    meta['picks'] = 'Stage 1 slot values (docs/PLAN-pick-values-now.md), scaled by this week\'s top_raw'
+    return {'meta': meta, 'players': out, 'picks': pick_rows(season + 1, top)}
+
+
+def pick_rows(cls, top):
+    """Next class's rookie picks: Stage 1 of docs/PLAN-pick-values-now.md (history of what each slot produced over a
+    rookie's first three seasons), on this week's scale. Board names (Early/Mid/Late) and each slot 1.01-3.12."""
+    pv = json.load(open(os.path.join(HERE, 'out', 'pick_values_now.json')))['stage1']['new_lines']
+    rows = [{'name': f'{cls} {nm.split()[1]} {nm.split()[0]}', 'value': int(round(10000 * d['fv3'] / top))}
+            for nm, d in pv['names'].items()]
+    curve = pv['per_slot_curve_fv3']
+    rows += [{'name': f'{cls} {1 + k // 12}.{1 + k % 12:02d}', 'value': int(round(10000 * curve[k] / top))} for k in range(36)]
+    return rows
 
 
 def main():
