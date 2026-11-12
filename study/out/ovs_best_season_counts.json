@@ -1,0 +1,27 @@
+{
+ "rows_fit": 4355,
+ "rows_test": 6808,
+ "valued_rows_with_no_earlier_season": 1514,
+ "valued_rows_where_peak_is_this_production": 2565,
+ "peak_quantiles_valued_rows": {
+  "0.1": 0.0810566449931097,
+  "0.5": 0.4995010016038187,
+  "0.9": 1.1289486299760303,
+  "0.99": 1.5348392976840954
+ },
+ "test_rows_whose_matches_change_by_weight": {
+  "1.0": 6790,
+  "1.5": 6790,
+  "3.0": 6790
+ },
+ "data": {
+  "cameo_rows_emptied": 2495,
+  "starts_without_stat_added": 0,
+  "veterans_set_to_zero": [
+   "Mark Rypien",
+   "Tee Martin",
+   "Dameyune Craig",
+   "Tommy Stevens"
+  ]
+ }
+}
