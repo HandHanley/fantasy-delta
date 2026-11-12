@@ -1,0 +1,104 @@
+{
+ "deciding_rows": 3981,
+ "players": 1242,
+ "player_seasons": 1242,
+ "by_week": {
+  "5": 739,
+  "9": 929,
+  "13": 1071,
+  "17": 1242
+ },
+ "by_position": {
+  "WR": 1672,
+  "RB": 1230,
+  "TE": 791,
+  "QB": 288
+ },
+ "pool_first_test_season": {
+  "5": {
+   "season": 2013,
+   "by_position": {
+    "QB": {
+     "rookie_rows": 25,
+     "all_rows": 668
+    },
+    "RB": {
+     "rookie_rows": 174,
+     "all_rows": 1495
+    },
+    "WR": {
+     "rookie_rows": 160,
+     "all_rows": 1576
+    },
+    "TE": {
+     "rookie_rows": 94,
+     "all_rows": 891
+    }
+   }
+  },
+  "9": {
+   "season": 2013,
+   "by_position": {
+    "QB": {
+     "rookie_rows": 33,
+     "all_rows": 686
+    },
+    "RB": {
+     "rookie_rows": 216,
+     "all_rows": 1548
+    },
+    "WR": {
+     "rookie_rows": 226,
+     "all_rows": 1650
+    },
+    "TE": {
+     "rookie_rows": 118,
+     "all_rows": 925
+    }
+   }
+  },
+  "13": {
+   "season": 2013,
+   "by_position": {
+    "QB": {
+     "rookie_rows": 45,
+     "all_rows": 707
+    },
+    "RB": {
+     "rookie_rows": 246,
+     "all_rows": 1581
+    },
+    "WR": {
+     "rookie_rows": 269,
+     "all_rows": 1700
+    },
+    "TE": {
+     "rookie_rows": 144,
+     "all_rows": 957
+    }
+   }
+  },
+  "17": {
+   "season": 2013,
+   "by_position": {
+    "QB": {
+     "rookie_rows": 65,
+     "all_rows": 739
+    },
+    "RB": {
+     "rookie_rows": 279,
+     "all_rows": 1618
+    },
+    "WR": {
+     "rookie_rows": 315,
+     "all_rows": 1750
+    },
+    "TE": {
+     "rookie_rows": 173,
+     "all_rows": 989
+    }
+   }
+  }
+ },
+ "week9_today_rmse_all_rows_reproduced": 48.461133390000334
+}
