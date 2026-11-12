@@ -1,0 +1,109 @@
+{
+ "prereg": "docs/PREREG-ovs-rookies-match-rookies.md (A1: weeks 5, 9, 13, 17 pooled)",
+ "deciding_rows": 3981,
+ "players": 1242,
+ "decides": {
+  "rmse_new": 53.6927803484504,
+  "rmse_today": 52.62784815867267,
+  "lift": -0.02023514597379994,
+  "p": 0.8314168583141686,
+  "pass": false,
+  "trades_by_week": {
+   "5": {
+    "n_trades": 21526,
+    "acc_in_season": 0.5489175880330763,
+    "acc_baseline": 0.5562110935612747,
+    "diff": -0.007293505528198407,
+    "p": 0.8833116688331167,
+    "guard_ok": true
+   },
+   "9": {
+    "n_trades": 21524,
+    "acc_in_season": 0.5626277643560677,
+    "acc_baseline": 0.5680867868425943,
+    "diff": -0.005459022486526632,
+    "p": 0.8202179782021798,
+    "guard_ok": true
+   },
+   "13": {
+    "n_trades": 21902,
+    "acc_in_season": 0.5583964934709159,
+    "acc_baseline": 0.5634645237877819,
+    "diff": -0.005068030316865979,
+    "p": 0.7972202779722027,
+    "guard_ok": true
+   },
+   "17": {
+    "n_trades": 22202,
+    "acc_in_season": 0.5605801279164039,
+    "acc_baseline": 0.5641834069002792,
+    "diff": -0.0036032789838753576,
+    "p": 0.7195280471952805,
+    "guard_ok": true
+   }
+  },
+  "trades_diff_pooled": -0.005341120315762874
+ },
+ "middle_rookies_plus_second_year": {
+  "rmse": 52.7540207888059,
+  "lift_vs_today": -0.0023974499157333184,
+  "produced_over_value": 0.9420325918434567
+ },
+ "by_week": {
+  "5": {
+   "rows": 739,
+   "lift": -0.02733203128482642,
+   "lift_middle": -0.010921341837929699,
+   "produced_over_value_today": 0.9922435963334344,
+   "produced_over_value_rookies_only": 1.0232575013533438
+  },
+  "9": {
+   "rows": 929,
+   "lift": -0.013022516699146003,
+   "lift_middle": 0.006488983605947296,
+   "produced_over_value_today": 0.8974357321889339,
+   "produced_over_value_rookies_only": 0.9716615279997446
+  },
+  "13": {
+   "rows": 1071,
+   "lift": -0.02098613919134351,
+   "lift_middle": -0.0009013592600093379,
+   "produced_over_value_today": 0.8898712780201026,
+   "produced_over_value_rookies_only": 0.9570947145679577
+  },
+  "17": {
+   "rows": 1242,
+   "lift": -0.019731504829254787,
+   "lift_middle": -0.004239872114493615,
+   "produced_over_value_today": 0.8787123022219389,
+   "produced_over_value_rookies_only": 1.00252660592956
+  }
+ },
+ "by_position": {
+  "QB": {
+   "rows": 288,
+   "lift": -0.027875573226338046,
+   "lift_middle": 0.00018576245688872728
+  },
+  "RB": {
+   "rows": 1230,
+   "lift": -0.03077300533709293,
+   "lift_middle": -0.0033474231527585996
+  },
+  "WR": {
+   "rows": 1672,
+   "lift": 0.0009232569627628529,
+   "lift_middle": -0.0017732936038306057
+  },
+  "TE": {
+   "rows": 791,
+   "lift": -0.013473103591723268,
+   "lift_middle": -0.007171756851922506
+  }
+ },
+ "produced_over_value": {
+  "today": 0.9107429021036918,
+  "rookies_only": 0.98765693482608
+ },
+ "decision": "no change"
+}

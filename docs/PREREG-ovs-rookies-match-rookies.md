@@ -114,3 +114,43 @@ also include 17 as well". Replaces §2, §3 and §6 where they differ:
 (84.5%, median lift 3.9%). PASS. The week-9-only result is kept in `ovs_rookies_match_crash_week9.json`. The 93% power
 figure in §6 shuffled each row's miss on its own, which overstates power when a player has several rows. 84.5% is the
 honest number.
+
+## 10. Results (12 November 2026, One Run)
+
+**Decision: no change.** Rookies matched only to rookies predicted **worse**. File:
+`study/out/ovs_rookies_match_results.json`.
+
+| Check | Result |
+|---|---|
+| Rookies only vs today (decides, 3,981 rows) | 53.69 vs 52.63: **2.0% worse**, p = 0.83 |
+| Close trades (guard) | 0.5 points worse, pooled (inside the guard, but moot) |
+| Rookies + second-year only (reported) | 0.2% worse: no real difference from today |
+
+**By week (rookies only vs today):** week 5 2.7% worse, week 9 1.3% worse, week 13 2.1% worse, week 17 2.0% worse.
+**By position:** QB 2.8% worse, RB 3.1% worse, WR even, TE 1.3% worse.
+
+**What they produced ÷ value:** today 91%, rookies only 99%. On average, rookies-only values sit closer to the right
+level, but they rank rookies against each other worse, so individual misses grow.
+
+**What it means.**
+
+- **Second-year comparables help rookies.** They widen the pool, so matches are closer on draft slot, age and
+  production. A rookie-only pool is about a seventh the size.
+- **Today's mix stays.** Keeping it to rookies + second-year players is no different, so there's nothing to change.
+- **Week 17 tells the same story,** so late-season values aren't helped by this either.
+
+**Today's page (reported, `study/out/ovs_rookies_match_page_2026.csv`, full PPR, ranks among all 689 players):**
+
+| Player | Today | Rookies + Second-Year | Rookies Only |
+|---|---|---|---|
+| Jeremiyah Love | 4,188 (42nd) | 3,932 (45th) | 4,595 (38th) |
+| Carnell Tate | 4,116 (43rd) | 4,671 (36th) | 4,313 (41st) |
+| Omar Cooper Jr. | 3,797 (47th) | 3,997 (45th) | 4,456 (39th) |
+| Caleb Douglas | 2,895 (64th) | 4,008 (44th) | 3,684 (48th) |
+| Antonio Williams | 2,691 (65th) | 2,688 (65th) | 2,688 (65th) |
+| Denzel Boston | 2,583 (68th) | 3,557 (49th) | 3,557 (49th) |
+| Jadarian Price | 1,851 (92nd) | 3,337 (51st) | 3,455 (50th) |
+| Makai Lemon | 1,273 (117th) | 1,910 (89th) | 1,910 (89th) |
+
+Cooper's rookie-only comparables: 77% produced above the starter line over the next three seasons, with a median of
+100. They include CeeDee Lamb, Chris Olave, Garrett Wilson, A.J. Brown, DeVonta Smith and DK Metcalf.
