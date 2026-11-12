@@ -73,3 +73,32 @@ truth, overall accuracy would move about 1%, under the 2% bar.
   - **A1 (12 Nov, after the crash test failed, before any real run).** Steve: "yeah if we have it written, may as well
     run it to see." The run is a measurement only. It decides nothing, and no result can ship the feature. Everything
     else runs exactly as written. The "decision" field in the results file is ignored; the decision is no change.
+
+## 10. Results (12 November 2026, One Run, Measurement Only)
+
+**Decision: no change** (A1: nothing could ship). File: `study/out/ovs_best_season_results.json`.
+
+| Check | Result |
+|---|---|
+| Weight picked on 2006–2012 | 3.0 (fit: 52.87 vs today 53.29, 0.8% better there) |
+| Test, 2013–2022 | 48.55 vs 48.46: **0.2% worse**, p = 0.63 |
+| Weights 1.0 and 1.5 on the test rows | both 0.3% worse |
+| Close trades | 0.8 points worse |
+| By position | QB 1.0% worse, RB 1.0% better, WR 0.6% worse, TE 0.6% better |
+
+**The groups it was meant for (test rows):**
+
+| Group | Rows | Produced ÷ Today | Produced ÷ Best-Season | Accuracy |
+|---|---|---|---|---|
+| Former stars now 20%+ off their best | 505 | 87% | 78% | 2.4% worse |
+| Former-star WRs now 20%+ off | 139 | 59% | 49% | 13.9% worse |
+| Stars near their best | 212 | 99% | 101% | 0.2% worse |
+| All veterans | 5,861 | 81% | 82% | 0.1% worse |
+
+**What it means.** Giving credit for a past peak raises former stars' values, and history says they then produce even
+less of their value. Receivers are hit hardest. DELTA's three-season window is already right about fallen stars.
+
+**Today's page (reported, full PPR, `study/ovs_best_season_page.py`):** Jefferson 2,064 (80th) → 4,549 (38th) with best
+season. Others: Lamb 7,432 → 8,201, Chase 9,765 → 9,815, McCaffrey 1,856 → 1,939, Watson 3,168 → 2,747, Barkley 768 → 472.
+(Ranks: the new value placed among everyone else's current values. One small mismatch with the Top 150 build, Kendre
+Miller, comes from a contract update pulled after that build.)
