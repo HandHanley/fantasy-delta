@@ -108,3 +108,20 @@ The top five TEs' points above the line rise about 21% (84 → 101 a season); th
 
 Adopting means rebuilding the values on the new lines. Earlier studies were judged on the old lines; their conclusions
 compare two versions on the same line, so they're unlikely to flip, but the values themselves move.
+
+## 8. Adopted (12 November 2026)
+
+Steve: "I like the updated weights and measurements, and I think we should lock it in and see an updated top 150."
+
+- **Lines:** half PPR + TE premium QB24 / RB34 / WR44 / TE18 (`comps_value_study.REPL_N_ADOPTED`); full PPR QB24 /
+  RB34 / WR48 / TE14 (`REPL_N_FULL_ADOPTED`). `REPL_N` keeps the old lines so every locked study reproduces; new builds
+  and new studies use the adopted ones.
+- **Not run against his own league,** by Steve's choice ("I don't want to influence the data").
+- **Top 150 dashboard rebuilt** (`top150_v6.csv`, full PPR, Contract Security on; `study/top150_v6_values.py` and
+  `top150_v6_rank.py`).
+  - **Check:** the old lines reproduce the 10 Nov values exactly (all 146 valued rows). Ranks among site players
+    differ by at most 3, because the site list matched 371 players instead of 374.
+  - **"Lines Move"** compares old and new lines on the same rebuild.
+- **Average move in the top 150:** QB −6.3 spots, RB +3.7, WR +4.7, TE −9.4. Examples:
+  - Allen 2 → 3, Purdy 4 → 6, Bowers 36 → 40, McBride 21 → 23;
+  - Bucky Irving 20 → 15, Cooper 47 → 43, Jefferson 80 → 75, Watson 58 → 64.

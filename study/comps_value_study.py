@@ -24,6 +24,10 @@ import pandas as pd
 # ── pre-registered constants ─────────────────────────────────────────────────
 POS = ['QB', 'RB', 'WR', 'TE']
 REPL_N = {'QB': 24, 'RB': 30, 'WR': 42, 'TE': 14}        # §5 replacement line
+# Measured lines, adopted 12 Nov 2026 (docs/DECISION-replacement-lines.md, Steve: "lock it in"). REPL_N above stays as
+# it was so every locked study reproduces; new builds and new studies set C.REPL_N to one of these.
+REPL_N_ADOPTED = {'QB': 24, 'RB': 34, 'WR': 44, 'TE': 18}       # half PPR + TE premium (study scoring)
+REPL_N_FULL_ADOPTED = {'QB': 24, 'RB': 34, 'WR': 48, 'TE': 14}  # full PPR, no TE premium (display scoring)
 STARTER_N = {'QB': 24, 'RB': 24, 'WR': 24, 'TE': 12}     # §5 secondary outcome
 DISCOUNT = 0.9                                           # §5, fixed
 HORIZON = 5
