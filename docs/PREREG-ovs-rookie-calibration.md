@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Own Value Scale: Draft-Day Rookie Values Learn From Past Misses
 
-**Drafted:** 12 November 2026. **Status: DRAFT, NOT LOCKED. Crash test failed (§6); taken to Steve.** Steve, 12 Nov: "I agree with your assumption that it's
+**Drafted:** 12 November 2026. **Status: LOCKED 12 Nov 2026 as a measured layer (amendment A1).** The 2% test's crash failed (§6). Steve, 12 Nov: "I agree with your assumption that it's
 likely because today's rookies do historically produce more than older years. We should do that study." It locks by
 committing this document with `study/ovs_rookie_calibration.py` and passing crash results, before the one real run.
 
@@ -118,4 +118,23 @@ The DELTA Score, the live site, buy/sell calls.
 
 ## 9. Amendments
 
-None yet.
+**A1 (12 Nov, after the crash test failed, before any real run).** Steve chose option 1: "Im good with option 1." This
+replaces §3's test with a measured layer, built the way Contract Security was (`PREREG-contract-security.md`):
+
+- **Two places, measured separately** (full PPR, measured lines QB24 / RB34 / WR48 / TE14, the display build; half PPR
+  + TE premium is reported):
+  - **Draft day:** the offseason value's incoming-rookie rows (§1), t = 2004–2022. This sets Stage 2 pick values and
+    the preseason value.
+  - **In season, no game yet:** the in-season value's "this season ignored" rookie rows (`ovs_in_season` frame Sb,
+    kind R0, week 9, pool ≤ t − 4), t = 2006–2022. The weekly build uses these for first-year players who haven't
+    played.
+- **Per draft range b** (§2's five): r = Σ w × outcome ÷ Σ w × value over that place's rows, with
+  w = 0.5^((2026 − t) / 8), recency measured from today, as live matching does. d = r − 1.
+- **Uncertainty:** 2,000 resamples of rows within each season (seed 20261112). se = the resamples' standard deviation of
+  d, and the 95% range is their 2.5th–97.5th percentiles.
+- **Shrunk:** d* = d × max(0, 1 − se² ÷ d²), as Contract Security.
+- **Applied** only where the 95% range of d excludes 0. Otherwise the factor is 1. **Factor = 1 + d*.**
+- **Reported:**
+  - each factor with its range;
+  - the rolling version (§2) for each class, to show how stable the factors are;
+  - what changes: first-year players with no game in this week's build, and Stage 2 picks for the 2026 class.
