@@ -196,7 +196,9 @@ def build(D, season, week, contracts):
     v_in = values(Sin, vrows, y, season)
     v_x = values(Sb, xrows, yb, season)
     # players on the season roster who have never played an NFL game and have no row: incoming-rookie value
-    Sb2, extra = add_unplayed_rookies(D, Sb, Sin, season, set(W.player_id[W.g == 1]))
+    # "Has played" counts games up to this build's week only. Counting later games (the data can run past the build week)
+    # dropped Robert Henry Jr., whose first game was week 10: no longer an unplayed rookie, and no week-9 row (13 Nov).
+    Sb2, extra = add_unplayed_rookies(D, Sb, Sin, season, set(W.player_id[(W.g == 1) & (W.week <= week)]))
     yb2 = np.concatenate([yb, np.zeros(len(Sb2) - len(Sb))])
     v_x.update(values(Sb2, extra, yb2, season))
     NAME = dict(zip(range(len(Sb2)), Sb2.name.values)); KEY = dict(zip(range(len(Sb2)), Sb2.key.values))
@@ -210,6 +212,23 @@ def build(D, season, week, contracts):
                     'age': round(float(S_.age.values[r]), 1) if S_.age.values[r] == S_.age.values[r] else None,
                     'games': int(g_), 'rookie': bool(S_.rookie_Y.values[r]), 'contract': lab, 'contract_factor': round(float(f), 4),
                     'basis': 'incoming rookie' if r in v_x else 'this season', 'raw': v * f})
+    # NO NFL ROSTER, NO GAME THIS SEASON -> NO NEW VALUE UNTIL HE SIGNS (Steve, 13 Nov 2026). The model sees only what
+    # a player did on the field, so an unsigned veteran was valued off last season as if active (Tyreek Hill 77th,
+    # Taysom Hill 64th, Philip Rivers 195th in the withdrawn 13 Nov freeze). History, 2016-2022: of former fantasy
+    # starters with no game in a season and on no roster at any point through week 11, 6% played again and 3% were
+    # starters again (Lynch, Witten, Gronkowski, all un-retiring); on a roster (incl. injured reserve and practice
+    # squad), 47% and 13%. "On a roster" = any team's weekly roster this season, any status but CUT/RET, in ANY week the
+    # roster file has, including weeks after this build's game week: whether he has a team is a fact about today, so the
+    # newest roster wins (Matt Lauter joined a practice squad in week 10 and must not drop out of a week-9 build). Injured
+    # reserve (RES) and practice squads (DEV) are kept: no injury penalty. His first signing brings him back.
+    wr = pd.read_csv(os.path.join(D, 'wrost', f'roster_weekly_{season}.csv'), low_memory=False, usecols=['gsis_id', 'week', 'status', 'team'])
+    assert wr[wr.week == wr.week.max()].team.nunique() >= 26, 'weekly roster file looks incomplete; refusing to apply the no-roster rule'
+    on_roster = set(wr[~wr.status.isin(['CUT', 'RET'])].gsis_id)
+    # Never-played players (basis 'incoming rookie') follow the same rule once the season has started: a rookie cut and
+    # unsigned (Damien Martinez, cut in week 1, was 170th) has no team either. Not separately measured: the history
+    # above covers veterans; this applies Steve's rule ("no team, no value until he signs") to everyone.
+    unsigned = [o for o in out if o['games'] == 0 and o['gsis_id'] not in on_roster]
+    out = [o for o in out if not (o['games'] == 0 and o['gsis_id'] not in on_roster)]
     # name keys for the site, which matches by name and position (index.html nvKey uses the same rule)
     pl = pd.read_csv(os.path.join(D, 'nflv', 'players.csv'), low_memory=False).set_index('gsis_id')
     for o in out:
@@ -234,6 +253,9 @@ def build(D, season, week, contracts):
             'scoring': 'full PPR, no TE premium, 12-team superflex', 'lines': C.REPL_N,
             'contract_security': 'on (deal ending this season counts as a contract year)',
             'players': len(out), 'incoming_rookie_values': len(v_x), 'top_raw': top,
+            'no_roster_rule': {'rule': 'no game this season and on no NFL roster (any status but CUT/RET) up to this week '
+                                       '-> no value until he signs (Steve, 13 Nov 2026)',
+                               'not_valued': sorted(f"{o['name']} ({o['pos']})" for o in unsigned)},
             'note': 'Display build. Not used by the site\'s engine.'}
     meta['picks'] = 'Stage 1 slot values (docs/PLAN-pick-values-now.md), scaled by this week\'s top_raw'
     return {'meta': meta, 'players': out, 'picks': pick_rows(season + 1, top)}

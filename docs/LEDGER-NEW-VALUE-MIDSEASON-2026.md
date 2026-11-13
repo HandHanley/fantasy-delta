@@ -110,3 +110,38 @@ never part of this ledger.
 | February 2029 | Test A, partial (2027–2028). |
 | Sunday before Week 1, 2029 | Test B, third read. |
 | February 2030 | **Test A, final** (2027–2029). |
+
+---
+
+## 8. Version 1 Withdrawn, 13 November 2026 (Before Any Outcome)
+
+Dated entry, added under rule 4. **`data/freeze-2026-nv-midseason.json` (version 1) stays in the repo exactly as
+written: never edited, never deleted.** It is withdrawn as the graded freeze, and a version 2 replaces it.
+
+**Why.** Within an hour of the freeze, Steve spotted Tyreek Hill as its top buy: no NFL team, no game in over a year.
+The cause was systemic, not a ranking anyone disagreed with. New Value sees only on-field production, so players on
+no NFL roster were valued off last season as if active (Taysom Hill 64th, Tyreek Hill 77th, Philip Rivers 195th; 50
+veterans in all), and a cut, unsigned rookie kept his draft-slot value (Damien Martinez 170th). A second bug left out
+eight rookies whose first game came after the build's week (Robert Henry Jr. among them).
+
+**Why a replacement is honest here.** Rule 1 exists to stop a freeze being changed after its results are seen. None
+exist: Test A counts 2027–2029 games and Test B first reads in September 2027. The fixes are general rules, not
+player edits, and were decided from history and Steve's standing rule, not from any outcome:
+
+1. **No game this season and on no NFL roster** (any team, any status but cut or retired, injured reserve and practice
+   squads included) **→ no New Value until he signs.** History, 2016–2022: former fantasy starters in that position
+   played again 6% of the time and were starters again 3% (all three were un-retiring stars); on a roster, 47% and
+   13%. Applied to never-played rookies too (not separately measured).
+2. **"Has played" counts games up to the build's week only.**
+
+Both are in `study/new_value_weekly.py`. Checked on the same week-9 data: every remaining player's value is unchanged.
+
+**What was not changed.** Injured players on a roster (Trey Benson, James Conner, Jayden Higgins, Ricky Pearsall) keep
+their values: DELTA does not penalise injury. Steve's view that Benson and Conner have lost their role to Jeremiyah
+Love is a disagreement with the model's call, not a missing fact, so it is left for the freeze to grade (and for a
+possible later study of a teammate taking over a role).
+
+**Version 2.** Built by the weekly run with week 10 data, eye-tested by Steve (top 50, all buys and sells) before it
+is written, frozen before Thursday 19 November's game as `data/freeze-2026-nv-midseason-v2.json`, with FantasyCalc and
+KeepTradeCut captured fresh that day. Sections 2–7 apply to it unchanged; its dates replace version 1's. **At grading,
+version 2 is the result; version 1 is reported beside it**, so the withdrawal hides nothing.
