@@ -123,6 +123,31 @@ def add_unplayed_rookies(D, Sb, Sin, season, played_ever):
     return Sb2, np.arange(len(Sb), len(Sb2))
 
 
+# Common first-name forms, both ways. The site names players as Sleeper does ("Matt Hibner", "Drew Ogletree",
+# "Scotty Miller") and nflverse often has the full form ("Matthew", "Andrew", "Scott"), so the site found no New Value
+# for them (13 Nov 2026: 3 of the site's 843 rostered skill players). Each player also gets these spellings as keys,
+# unless one would equal another player's own key.
+NICKNAMES = [('matthew', 'matt'), ('andrew', 'drew'), ('andrew', 'andy'), ('scott', 'scotty'), ('michael', 'mike'),
+             ('christopher', 'chris'), ('joshua', 'josh'), ('nicholas', 'nick'), ('william', 'will'), ('robert', 'rob'),
+             ('robert', 'bobby'), ('daniel', 'danny'), ('benjamin', 'ben'), ('joseph', 'joe'), ('kenneth', 'kenny'),
+             ('zachary', 'zach'), ('jonathan', 'jon'), ('samuel', 'sam'), ('thomas', 'tommy'), ('anthony', 'tony'),
+             ('gabriel', 'gabe'), ('jacob', 'jake'), ('timothy', 'tim'), ('cameron', 'cam'), ('alexander', 'alex'),
+             ('jeffrey', 'jeff'), ('gregory', 'greg'), ('patrick', 'pat'), ('richard', 'ricky'), ('edward', 'eddie'),
+             ('charles', 'charlie'), ('james', 'jimmy'), ('david', 'dave'), ('steven', 'steve'), ('stephen', 'steve'),
+             ('nathaniel', 'nate'), ('donald', 'don'), ('ronald', 'ron'), ('frederick', 'fred'), ('lawrence', 'larry')]
+
+
+def nickname_forms(name):
+    """Other spellings of a full name with a common first-name form swapped, e.g. Matthew Hibner -> Matt Hibner."""
+    parts = str(name).split()
+    if len(parts) < 2: return set()
+    first = parts[0].lower().strip('.'); out = set()
+    for a, b in NICKNAMES:
+        for x, y in ((a, b), (b, a)):
+            if first == x: out.add(' '.join([y.capitalize()] + parts[1:]))
+    return out
+
+
 def name_key(n, pos):
     """Same rule as index.html nvKey: lower case, drop . ' ’ and Jr/Sr/II-V, letters only, then |POS."""
     import re
@@ -195,6 +220,10 @@ def build(D, season, week, contracts):
             names |= {f"{f} {r.get('last_name')}" for f in (r.get('first_name'), r.get('football_name'), r.get('common_first_name'))
                       if isinstance(f, str) and isinstance(r.get('last_name'), str)}
         o['keys'] = sorted({name_key(n, o['pos']) for n in names})
+    own = {k for o in out for k in o['keys']}
+    for o in out:
+        extra = {name_key(n, o['pos']) for nm in [o['name']] for n in nickname_forms(nm)} - own
+        o['keys'] = sorted(set(o['keys']) | extra)
     top = max(o['raw'] for o in out)
     for o in out:
         o['value'] = int(round(10000 * o.pop('raw') / top))
