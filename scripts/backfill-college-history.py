@@ -131,6 +131,13 @@ def run_season(y, scratch):
     # call() in fetch-college.py turns a failed request into an empty answer, so an outage or a used-up key can
     # look exactly like a season CFBD has no data for. Its "FAILED:" line is the only way to tell them apart.
     failed = [ln.strip() for ln in p.stdout.splitlines() if re.match(r'^\s*\[\s*\d+\].*FAILED:', ln)]
+    # One known exception: fetch-college.py always asks for week 0 (late-August games before week 1), and CFBD
+    # answers 400 Bad Request for a season that had no week 0 (2013, seen 12 Nov 2026). That is "no such week",
+    # not an outage, so it is noted and not counted. Every other failure still stops the backfill.
+    no_wk0 = [ln for ln in failed if re.search(r'GET /games/players wk0\s+FAILED: \(400\)', ln)]
+    if no_wk0:
+        row['no_week0'] = True
+        failed = [ln for ln in failed if ln not in no_wk0]
     if failed:
         row['failed_calls'] = failed[:5]
     f = data / f'college-players-{y}.json'
