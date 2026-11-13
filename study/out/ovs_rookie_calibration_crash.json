@@ -1,0 +1,21 @@
+{
+ "noise": {
+  "runs": 20,
+  "passed": 0,
+  "ok": true
+ },
+ "planted": {
+  "runs": 200,
+  "factors": [
+   1.4,
+   1.4,
+   1.25,
+   1.25,
+   1.0
+  ],
+  "passed": 33,
+  "share": 0.165,
+  "ok": false,
+  "median_lift": 0.011982850825501767
+ }
+}
