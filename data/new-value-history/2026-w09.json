@@ -2,7 +2,7 @@
  "meta": {
   "season": 2026,
   "through_week": 9,
-  "built_utc": "2026-11-12T23:32:26Z",
+  "built_utc": "2026-11-13T18:09:38Z",
   "scoring": "full PPR, no TE premium, 12-team superflex",
   "lines": {
    "QB": 24,
@@ -11,9 +11,11 @@
    "TE": 14
   },
   "contract_security": "on (deal ending this season counts as a contract year)",
-  "players": 885,
-  "incoming_rookie_values": 198,
-  "note": "Display build. Not used by the site's engine."
+  "players": 884,
+  "incoming_rookie_values": 197,
+  "top_raw": 304.0181508277835,
+  "note": "Display build. Not used by the site's engine.",
+  "picks": "Stage 1 slot values (docs/PLAN-pick-values-now.md), scaled by this week's top_raw"
  },
  "players": [
   {
@@ -3483,22 +3485,6 @@
    "rank": 214
   },
   {
-   "gsis_id": "00-0040311",
-   "name": "Theo Wease Jr.",
-   "pos": "WR",
-   "age": 25.2,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "theowease|WR"
-   ],
-   "value": 439,
-   "rank": 215
-  },
-  {
    "gsis_id": "00-0040024",
    "name": "Darius Cooper",
    "pos": "WR",
@@ -3510,6 +3496,22 @@
    "basis": "this season",
    "keys": [
     "dariuscooper|WR"
+   ],
+   "value": 439,
+   "rank": 215
+  },
+  {
+   "gsis_id": "00-0040311",
+   "name": "Theo Wease Jr.",
+   "pos": "WR",
+   "age": 25.2,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "theowease|WR"
    ],
    "value": 439,
    "rank": 215
@@ -5444,17 +5446,17 @@
    "rank": 335
   },
   {
-   "gsis_id": "00-0039410",
-   "name": "Ryan Flournoy",
+   "gsis_id": "00-0038647",
+   "name": "Ronnie Bell",
    "pos": "WR",
-   "age": 26.9,
-   "games": 9,
+   "age": 26.6,
+   "games": 0,
    "rookie": false,
-   "contract": "contract year",
-   "contract_factor": 0.7693,
+   "contract": "not in table",
+   "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "ryanflournoy|WR"
+    "ronniebell|WR"
    ],
    "value": 193,
    "rank": 337
@@ -5476,17 +5478,17 @@
    "rank": 337
   },
   {
-   "gsis_id": "00-0038647",
-   "name": "Ronnie Bell",
+   "gsis_id": "00-0039410",
+   "name": "Ryan Flournoy",
    "pos": "WR",
-   "age": 26.6,
-   "games": 0,
+   "age": 26.9,
+   "games": 9,
    "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
+   "contract": "contract year",
+   "contract_factor": 0.7693,
    "basis": "this season",
    "keys": [
-    "ronniebell|WR"
+    "ryanflournoy|WR"
    ],
    "value": 193,
    "rank": 337
@@ -6849,6 +6851,22 @@
    "rank": 423
   },
   {
+   "gsis_id": "00-0036422",
+   "name": "Adam Trautman",
+   "pos": "TE",
+   "age": 29.6,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "adamtrautman|TE"
+   ],
+   "value": 130,
+   "rank": 423
+  },
+  {
    "gsis_id": "00-0033885",
    "name": "David Njoku",
    "pos": "TE",
@@ -6861,22 +6879,6 @@
    "keys": [
     "chiefnjoku|TE",
     "davidnjoku|TE"
-   ],
-   "value": 130,
-   "rank": 423
-  },
-  {
-   "gsis_id": "00-0036422",
-   "name": "Adam Trautman",
-   "pos": "TE",
-   "age": 29.6,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "adamtrautman|TE"
    ],
    "value": 130,
    "rank": 423
@@ -7171,22 +7173,6 @@
    "rank": 443
   },
   {
-   "gsis_id": "00-0036414",
-   "name": "Cam Akers",
-   "pos": "RB",
-   "age": 27.2,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "camakers|RB"
-   ],
-   "value": 116,
-   "rank": 444
-  },
-  {
    "gsis_id": "00-0037746",
    "name": "Brian Robinson",
    "pos": "RB",
@@ -7198,6 +7184,22 @@
    "basis": "this season",
    "keys": [
     "brianrobinson|RB"
+   ],
+   "value": 116,
+   "rank": 444
+  },
+  {
+   "gsis_id": "00-0036414",
+   "name": "Cam Akers",
+   "pos": "RB",
+   "age": 27.2,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "camakers|RB"
    ],
    "value": 116,
    "rank": 444
@@ -7445,22 +7447,6 @@
    "rank": 460
   },
   {
-   "gsis_id": "00-0036244",
-   "name": "Colby Parkinson",
-   "pos": "TE",
-   "age": 27.7,
-   "games": 7,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "colbyparkinson|TE"
-   ],
-   "value": 103,
-   "rank": 460
-  },
-  {
    "gsis_id": "00-0040244",
    "name": "Moliki Matavao",
    "pos": "TE",
@@ -7472,6 +7458,22 @@
    "basis": "this season",
    "keys": [
     "molikimatavao|TE"
+   ],
+   "value": 103,
+   "rank": 460
+  },
+  {
+   "gsis_id": "00-0036244",
+   "name": "Colby Parkinson",
+   "pos": "TE",
+   "age": 27.7,
+   "games": 7,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "colbyparkinson|TE"
    ],
    "value": 103,
    "rank": 460
@@ -7703,22 +7705,6 @@
    "rank": 476
   },
   {
-   "gsis_id": "00-0040890",
-   "name": "Cyrus Allen",
-   "pos": "WR",
-   "age": 23.6,
-   "games": 6,
-   "rookie": true,
-   "contract": "rookie",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "cyrusallen|WR"
-   ],
-   "value": 89,
-   "rank": 477
-  },
-  {
    "gsis_id": "00-0036980",
    "name": "Elijah Moore",
    "pos": "WR",
@@ -7730,6 +7716,22 @@
    "basis": "this season",
    "keys": [
     "elijahmoore|WR"
+   ],
+   "value": 89,
+   "rank": 477
+  },
+  {
+   "gsis_id": "00-0040890",
+   "name": "Cyrus Allen",
+   "pos": "WR",
+   "age": 23.6,
+   "games": 6,
+   "rookie": true,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "cyrusallen|WR"
    ],
    "value": 89,
    "rank": 477
@@ -7915,22 +7917,6 @@
    "rank": 489
   },
   {
-   "gsis_id": "00-0033881",
-   "name": "Evan Engram",
-   "pos": "TE",
-   "age": 32.0,
-   "games": 9,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "evanengram|TE"
-   ],
-   "value": 78,
-   "rank": 490
-  },
-  {
    "gsis_id": "00-0040187",
    "name": "Mitchell Evans",
    "pos": "TE",
@@ -7942,6 +7928,22 @@
    "basis": "this season",
    "keys": [
     "mitchellevans|TE"
+   ],
+   "value": 78,
+   "rank": 490
+  },
+  {
+   "gsis_id": "00-0033881",
+   "name": "Evan Engram",
+   "pos": "TE",
+   "age": 32.0,
+   "games": 9,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "evanengram|TE"
    ],
    "value": 78,
    "rank": 490
@@ -7963,22 +7965,6 @@
    "rank": 490
   },
   {
-   "gsis_id": "00-0041178",
-   "name": "Robert Henry Jr.",
-   "pos": "RB",
-   "age": 24.7,
-   "games": 0,
-   "rookie": true,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "incoming rookie",
-   "keys": [
-    "roberthenry|RB"
-   ],
-   "value": 75,
-   "rank": 493
-  },
-  {
    "gsis_id": "00-0037340",
    "name": "Zaire Mitchell-Paden",
    "pos": "TE",
@@ -7992,7 +7978,7 @@
     "zairemitchellpaden|TE"
    ],
    "value": 73,
-   "rank": 494
+   "rank": 493
   },
   {
    "gsis_id": "00-0039398",
@@ -8008,7 +7994,7 @@
     "joemilton|QB"
    ],
    "value": 72,
-   "rank": 495
+   "rank": 494
   },
   {
    "gsis_id": "00-0041096",
@@ -8024,7 +8010,7 @@
     "kaytronallen|RB"
    ],
    "value": 71,
-   "rank": 496
+   "rank": 495
   },
   {
    "gsis_id": "00-0037282",
@@ -8040,7 +8026,7 @@
     "jamesmitchell|TE"
    ],
    "value": 71,
-   "rank": 496
+   "rank": 495
   },
   {
    "gsis_id": "00-0033110",
@@ -8056,7 +8042,7 @@
     "tylerhigbee|TE"
    ],
    "value": 69,
-   "rank": 498
+   "rank": 497
   },
   {
    "gsis_id": "00-0033955",
@@ -8072,7 +8058,7 @@
     "jeremymcnichols|RB"
    ],
    "value": 68,
-   "rank": 499
+   "rank": 498
   },
   {
    "gsis_id": "00-0039407",
@@ -8088,7 +8074,7 @@
     "dylanlaube|RB"
    ],
    "value": 67,
-   "rank": 500
+   "rank": 499
   },
   {
    "gsis_id": "00-0041467",
@@ -8104,7 +8090,7 @@
     "lewisbond|WR"
    ],
    "value": 67,
-   "rank": 500
+   "rank": 499
   },
   {
    "gsis_id": "00-0032211",
@@ -8120,7 +8106,7 @@
     "tylerlockett|WR"
    ],
    "value": 66,
-   "rank": 502
+   "rank": 501
   },
   {
    "gsis_id": "00-0039356",
@@ -8136,7 +8122,7 @@
     "jatavionsanders|TE"
    ],
    "value": 66,
-   "rank": 502
+   "rank": 501
   },
   {
    "gsis_id": "00-0038720",
@@ -8152,7 +8138,7 @@
     "julianhill|TE"
    ],
    "value": 65,
-   "rank": 504
+   "rank": 503
   },
   {
    "gsis_id": "00-0038710",
@@ -8168,7 +8154,7 @@
     "blakewhiteheart|TE"
    ],
    "value": 64,
-   "rank": 505
+   "rank": 504
   },
   {
    "gsis_id": "00-0041104",
@@ -8184,7 +8170,7 @@
     "demondclaiborne|RB"
    ],
    "value": 63,
-   "rank": 506
+   "rank": 505
   },
   {
    "gsis_id": "00-0040930",
@@ -8200,7 +8186,7 @@
     "camdenbrown|WR"
    ],
    "value": 63,
-   "rank": 506
+   "rank": 505
   },
   {
    "gsis_id": "00-0041308",
@@ -8216,7 +8202,7 @@
     "treyvhonsaunders|WR"
    ],
    "value": 63,
-   "rank": 506
+   "rank": 505
   },
   {
    "gsis_id": "00-0041359",
@@ -8232,7 +8218,7 @@
     "wesleygrimes|WR"
    ],
    "value": 62,
-   "rank": 509
+   "rank": 508
   },
   {
    "gsis_id": "00-0040363",
@@ -8248,7 +8234,7 @@
     "kelekilatu|TE"
    ],
    "value": 61,
-   "rank": 510
+   "rank": 509
   },
   {
    "gsis_id": "00-0035589",
@@ -8264,7 +8250,7 @@
     "garyjennings|WR"
    ],
    "value": 61,
-   "rank": 510
+   "rank": 509
   },
   {
    "gsis_id": "00-0038590",
@@ -8280,7 +8266,7 @@
     "justinshorter|WR"
    ],
    "value": 61,
-   "rank": 510
+   "rank": 509
   },
   {
    "gsis_id": "00-0039603",
@@ -8296,7 +8282,7 @@
     "britishbrooks|RB"
    ],
    "value": 60,
-   "rank": 513
+   "rank": 512
   },
   {
    "gsis_id": "00-0038359",
@@ -8312,7 +8298,7 @@
     "xaviersmith|WR"
    ],
    "value": 60,
-   "rank": 513
+   "rank": 512
   },
   {
    "gsis_id": "00-0039847",
@@ -8329,7 +8315,7 @@
     "theojohnson|TE"
    ],
    "value": 60,
-   "rank": 513
+   "rank": 512
   },
   {
    "gsis_id": "00-0035662",
@@ -8345,7 +8331,7 @@
     "marquisebrown|WR"
    ],
    "value": 59,
-   "rank": 516
+   "rank": 515
   },
   {
    "gsis_id": "00-0039679",
@@ -8361,7 +8347,7 @@
     "bennikkel|WR"
    ],
    "value": 58,
-   "rank": 517
+   "rank": 516
   },
   {
    "gsis_id": "00-0040558",
@@ -8377,7 +8363,7 @@
     "isaiahneyor|WR"
    ],
    "value": 58,
-   "rank": 517
+   "rank": 516
   },
   {
    "gsis_id": "00-0040570",
@@ -8393,7 +8379,7 @@
     "jeremiahwebb|WR"
    ],
    "value": 58,
-   "rank": 517
+   "rank": 516
   },
   {
    "gsis_id": "00-0040609",
@@ -8409,23 +8395,7 @@
     "truedwards|WR"
    ],
    "value": 58,
-   "rank": 517
-  },
-  {
-   "gsis_id": "00-0034775",
-   "name": "Christian Kirk",
-   "pos": "WR",
-   "age": 29.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "christiankirk|WR"
-   ],
-   "value": 57,
-   "rank": 521
+   "rank": 516
   },
   {
    "gsis_id": "00-0038911",
@@ -8442,7 +8412,23 @@
     "micalecunningham|WR"
    ],
    "value": 57,
-   "rank": 521
+   "rank": 520
+  },
+  {
+   "gsis_id": "00-0034775",
+   "name": "Christian Kirk",
+   "pos": "WR",
+   "age": 29.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "christiankirk|WR"
+   ],
+   "value": 57,
+   "rank": 520
   },
   {
    "gsis_id": "00-0033526",
@@ -8458,7 +8444,7 @@
     "samajeperine|RB"
    ],
    "value": 56,
-   "rank": 523
+   "rank": 522
   },
   {
    "gsis_id": "00-0038740",
@@ -8474,7 +8460,7 @@
     "jalencropper|WR"
    ],
    "value": 56,
-   "rank": 523
+   "rank": 522
   },
   {
    "gsis_id": "00-0040633",
@@ -8490,7 +8476,7 @@
     "kyreserowan|WR"
    ],
    "value": 56,
-   "rank": 523
+   "rank": 522
   },
   {
    "gsis_id": "00-0041139",
@@ -8506,7 +8492,7 @@
     "damonbankston|RB"
    ],
    "value": 55,
-   "rank": 526
+   "rank": 525
   },
   {
    "gsis_id": "00-0040431",
@@ -8522,7 +8508,7 @@
     "dalencambre|WR"
    ],
    "value": 55,
-   "rank": 526
+   "rank": 525
   },
   {
    "gsis_id": "00-0040438",
@@ -8538,7 +8524,7 @@
     "antwanewells|WR"
    ],
    "value": 55,
-   "rank": 526
+   "rank": 525
   },
   {
    "gsis_id": "00-0040445",
@@ -8554,7 +8540,7 @@
     "courtneyjackson|WR"
    ],
    "value": 55,
-   "rank": 526
+   "rank": 525
   },
   {
    "gsis_id": "00-0041542",
@@ -8570,7 +8556,7 @@
     "malickmeiga|WR"
    ],
    "value": 55,
-   "rank": 526
+   "rank": 525
   },
   {
    "gsis_id": "00-0036328",
@@ -8586,7 +8572,7 @@
     "antoniogibson|RB"
    ],
    "value": 54,
-   "rank": 531
+   "rank": 530
   },
   {
    "gsis_id": "00-0041323",
@@ -8602,7 +8588,7 @@
     "mylesmontgomery|RB"
    ],
    "value": 54,
-   "rank": 531
+   "rank": 530
   },
   {
    "gsis_id": "00-0040894",
@@ -8618,7 +8604,7 @@
     "malikbenson|WR"
    ],
    "value": 52,
-   "rank": 533
+   "rank": 532
   },
   {
    "gsis_id": "00-0036628",
@@ -8634,7 +8620,7 @@
     "johnbates|TE"
    ],
    "value": 51,
-   "rank": 534
+   "rank": 533
   },
   {
    "gsis_id": "00-0037291",
@@ -8650,7 +8636,7 @@
     "jalennailor|WR"
    ],
    "value": 50,
-   "rank": 535
+   "rank": 534
   },
   {
    "gsis_id": "00-0036415",
@@ -8667,7 +8653,7 @@
     "vanjefferson|WR"
    ],
    "value": 50,
-   "rank": 535
+   "rank": 534
   },
   {
    "gsis_id": "00-0037086",
@@ -8683,7 +8669,7 @@
     "grantcalcaterra|TE"
    ],
    "value": 50,
-   "rank": 535
+   "rank": 534
   },
   {
    "gsis_id": "00-0036309",
@@ -8699,7 +8685,7 @@
     "darnellmooney|WR"
    ],
    "value": 49,
-   "rank": 538
+   "rank": 537
   },
   {
    "gsis_id": "00-0041263",
@@ -8715,7 +8701,7 @@
     "lakemcree|TE"
    ],
    "value": 48,
-   "rank": 539
+   "rank": 538
   },
   {
    "gsis_id": "00-0029263",
@@ -8731,7 +8717,7 @@
     "russellwilson|QB"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040934",
@@ -8747,7 +8733,7 @@
     "jordanhudson|WR"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040194",
@@ -8763,7 +8749,7 @@
     "jacksonhawes|TE"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040567",
@@ -8779,7 +8765,7 @@
     "brocklampe|RB"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040566",
@@ -8795,7 +8781,7 @@
     "cjdippre|TE"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040955",
@@ -8811,7 +8797,7 @@
     "johnmichaelgyllenborg|TE"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0041357",
@@ -8827,7 +8813,7 @@
     "khalildinkins|TE"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0041422",
@@ -8844,7 +8830,7 @@
     "danvillari|TE"
    ],
    "value": 47,
-   "rank": 540
+   "rank": 539
   },
   {
    "gsis_id": "00-0040046",
@@ -8860,7 +8846,7 @@
     "rivaldofairweather|TE"
    ],
    "value": 46,
-   "rank": 548
+   "rank": 547
   },
   {
    "gsis_id": "00-0041170",
@@ -8876,7 +8862,7 @@
     "haydenlarge|TE"
    ],
    "value": 46,
-   "rank": 548
+   "rank": 547
   },
   {
    "gsis_id": "00-0034837",
@@ -8892,7 +8878,7 @@
     "calvinridley|WR"
    ],
    "value": 45,
-   "rank": 550
+   "rank": 549
   },
   {
    "gsis_id": "00-0036647",
@@ -8908,7 +8894,7 @@
     "cornellpowell|WR"
    ],
    "value": 45,
-   "rank": 550
+   "rank": 549
   },
   {
    "gsis_id": "00-0041016",
@@ -8924,7 +8910,7 @@
     "patrickgurd|TE"
    ],
    "value": 45,
-   "rank": 550
+   "rank": 549
   },
   {
    "gsis_id": "00-0039798",
@@ -8940,7 +8926,7 @@
     "isaiahdavis|RB"
    ],
    "value": 44,
-   "rank": 553
+   "rank": 552
   },
   {
    "gsis_id": "00-0038181",
@@ -8957,7 +8943,7 @@
     "luckyjackson|WR"
    ],
    "value": 43,
-   "rank": 554
+   "rank": 553
   },
   {
    "gsis_id": "00-0036906",
@@ -8973,7 +8959,7 @@
     "khalilherbert|RB"
    ],
    "value": 42,
-   "rank": 555
+   "rank": 554
   },
   {
    "gsis_id": "00-0039359",
@@ -8989,7 +8975,7 @@
     "cadestover|TE"
    ],
    "value": 42,
-   "rank": 555
+   "rank": 554
   },
   {
    "gsis_id": "00-0038685",
@@ -9006,23 +8992,7 @@
     "christopherbrooks|RB"
    ],
    "value": 41,
-   "rank": 557
-  },
-  {
-   "gsis_id": "00-0033591",
-   "name": "Noah Brown",
-   "pos": "WR",
-   "age": 30.7,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "noahbrown|WR"
-   ],
-   "value": 41,
-   "rank": 557
+   "rank": 556
   },
   {
    "gsis_id": "00-0032775",
@@ -9038,7 +9008,23 @@
     "demarcusrobinson|WR"
    ],
    "value": 41,
-   "rank": 557
+   "rank": 556
+  },
+  {
+   "gsis_id": "00-0033591",
+   "name": "Noah Brown",
+   "pos": "WR",
+   "age": 30.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "noahbrown|WR"
+   ],
+   "value": 41,
+   "rank": 556
   },
   {
    "gsis_id": "00-0037666",
@@ -9054,7 +9040,7 @@
     "jalentolbert|WR"
    ],
    "value": 41,
-   "rank": 557
+   "rank": 556
   },
   {
    "gsis_id": "00-0037112",
@@ -9070,7 +9056,7 @@
     "jaketonges|TE"
    ],
    "value": 41,
-   "rank": 557
+   "rank": 556
   },
   {
    "gsis_id": "00-0041092",
@@ -9086,7 +9072,7 @@
     "taylengreen|QB"
    ],
    "value": 41,
-   "rank": 557
+   "rank": 556
   },
   {
    "gsis_id": "00-0041453",
@@ -9102,7 +9088,7 @@
     "lukealtmyer|QB"
    ],
    "value": 41,
-   "rank": 557
+   "rank": 556
   },
   {
    "gsis_id": "00-0039397",
@@ -9118,39 +9104,7 @@
     "tejhaunpalmer|WR"
    ],
    "value": 41,
-   "rank": 557
-  },
-  {
-   "gsis_id": "00-0030035",
-   "name": "Adam Thielen",
-   "pos": "WR",
-   "age": 36.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "adamthielen|WR"
-   ],
-   "value": 40,
-   "rank": 565
-  },
-  {
-   "gsis_id": "00-0039451",
-   "name": "Isaiah Williams",
-   "pos": "WR",
-   "age": 25.6,
-   "games": 8,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "isaiahwilliams|WR"
-   ],
-   "value": 40,
-   "rank": 565
+   "rank": 556
   },
   {
    "gsis_id": "00-0039365",
@@ -9166,7 +9120,39 @@
     "jacobcowing|WR"
    ],
    "value": 40,
-   "rank": 565
+   "rank": 564
+  },
+  {
+   "gsis_id": "00-0030035",
+   "name": "Adam Thielen",
+   "pos": "WR",
+   "age": 36.0,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "adamthielen|WR"
+   ],
+   "value": 40,
+   "rank": 564
+  },
+  {
+   "gsis_id": "00-0039451",
+   "name": "Isaiah Williams",
+   "pos": "WR",
+   "age": 25.6,
+   "games": 8,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "isaiahwilliams|WR"
+   ],
+   "value": 40,
+   "rank": 564
   },
   {
    "gsis_id": "00-0037380",
@@ -9182,7 +9168,7 @@
     "kadendavis|WR"
    ],
    "value": 40,
-   "rank": 565
+   "rank": 564
   },
   {
    "gsis_id": "00-0039473",
@@ -9198,7 +9184,7 @@
     "xavierjohnson|WR"
    ],
    "value": 40,
-   "rank": 565
+   "rank": 564
   },
   {
    "gsis_id": "00-0039041",
@@ -9214,7 +9200,7 @@
     "elijahhiggins|TE"
    ],
    "value": 39,
-   "rank": 570
+   "rank": 569
   },
   {
    "gsis_id": "00-0038883",
@@ -9230,7 +9216,7 @@
     "isaiahwinstead|WR"
    ],
    "value": 39,
-   "rank": 570
+   "rank": 569
   },
   {
    "gsis_id": "00-0039329",
@@ -9246,7 +9232,7 @@
     "julianhicks|WR"
    ],
    "value": 39,
-   "rank": 570
+   "rank": 569
   },
   {
    "gsis_id": "00-0040337",
@@ -9262,7 +9248,7 @@
     "elipancol|WR"
    ],
    "value": 39,
-   "rank": 570
+   "rank": 569
   },
   {
    "gsis_id": "00-0040551",
@@ -9279,7 +9265,7 @@
     "nicknash|WR"
    ],
    "value": 39,
-   "rank": 570
+   "rank": 569
   },
   {
    "gsis_id": "00-0036898",
@@ -9295,7 +9281,7 @@
     "davismills|QB"
    ],
    "value": 38,
-   "rank": 575
+   "rank": 574
   },
   {
    "gsis_id": "00-0030564",
@@ -9311,7 +9297,7 @@
     "deandrehopkins|WR"
    ],
    "value": 38,
-   "rank": 575
+   "rank": 574
   },
   {
    "gsis_id": "00-0039259",
@@ -9327,7 +9313,7 @@
     "daytonwade|WR"
    ],
    "value": 38,
-   "rank": 575
+   "rank": 574
   },
   {
    "gsis_id": "00-0041318",
@@ -9343,7 +9329,7 @@
     "kyledixon|WR"
    ],
    "value": 38,
-   "rank": 575
+   "rank": 574
   },
   {
    "gsis_id": "00-0039474",
@@ -9359,7 +9345,7 @@
     "lawrencekeys|WR"
    ],
    "value": 37,
-   "rank": 579
+   "rank": 578
   },
   {
    "gsis_id": "00-0040901",
@@ -9375,7 +9361,7 @@
     "jarenkanak|TE"
    ],
    "value": 37,
-   "rank": 579
+   "rank": 578
   },
   {
    "gsis_id": "00-0040939",
@@ -9391,7 +9377,7 @@
     "michaeltrigg|TE"
    ],
    "value": 37,
-   "rank": 579
+   "rank": 578
   },
   {
    "gsis_id": "00-0039626",
@@ -9407,7 +9393,7 @@
     "coleburgess|WR"
    ],
    "value": 36,
-   "rank": 582
+   "rank": 581
   },
   {
    "gsis_id": "00-0039722",
@@ -9423,7 +9409,7 @@
     "jaquaejackson|WR"
    ],
    "value": 36,
-   "rank": 582
+   "rank": 581
   },
   {
    "gsis_id": "00-0040247",
@@ -9439,23 +9425,7 @@
     "juniorbergen|WR"
    ],
    "value": 36,
-   "rank": 582
-  },
-  {
-   "gsis_id": "00-0037557",
-   "name": "Ronnie Rivers",
-   "pos": "RB",
-   "age": 27.6,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "ronnierivers|RB"
-   ],
-   "value": 35,
-   "rank": 585
+   "rank": 581
   },
   {
    "gsis_id": "00-0033699",
@@ -9471,39 +9441,23 @@
     "austinekeler|RB"
    ],
    "value": 35,
-   "rank": 585
+   "rank": 584
   },
   {
-   "gsis_id": "00-0039623",
-   "name": "Mason Tipton",
-   "pos": "WR",
-   "age": 25.9,
-   "games": 0,
+   "gsis_id": "00-0037557",
+   "name": "Ronnie Rivers",
+   "pos": "RB",
+   "age": 27.6,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "masontipton|WR"
+    "ronnierivers|RB"
    ],
    "value": 35,
-   "rank": 585
-  },
-  {
-   "gsis_id": "00-0039650",
-   "name": "Bryce Oliver",
-   "pos": "WR",
-   "age": 26.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "bryceoliver|WR"
-   ],
-   "value": 35,
-   "rank": 585
+   "rank": 584
   },
   {
    "gsis_id": "00-0036259",
@@ -9520,7 +9474,39 @@
     "jauanjennings|WR"
    ],
    "value": 35,
-   "rank": 585
+   "rank": 584
+  },
+  {
+   "gsis_id": "00-0039650",
+   "name": "Bryce Oliver",
+   "pos": "WR",
+   "age": 26.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "bryceoliver|WR"
+   ],
+   "value": 35,
+   "rank": 584
+  },
+  {
+   "gsis_id": "00-0039623",
+   "name": "Mason Tipton",
+   "pos": "WR",
+   "age": 25.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "masontipton|WR"
+   ],
+   "value": 35,
+   "rank": 584
   },
   {
    "gsis_id": "00-0039379",
@@ -9536,7 +9522,7 @@
     "jamarithrash|WR"
    ],
    "value": 35,
-   "rank": 585
+   "rank": 584
   },
   {
    "gsis_id": "00-0037015",
@@ -9552,7 +9538,7 @@
     "salcannella|TE"
    ],
    "value": 35,
-   "rank": 585
+   "rank": 584
   },
   {
    "gsis_id": "00-0031687",
@@ -9569,7 +9555,7 @@
     "raheemmostert|RB"
    ],
    "value": 34,
-   "rank": 592
+   "rank": 591
   },
   {
    "gsis_id": "00-0036849",
@@ -9586,7 +9572,7 @@
     "tutuatwell|WR"
    ],
    "value": 33,
-   "rank": 593
+   "rank": 592
   },
   {
    "gsis_id": "00-0041294",
@@ -9602,7 +9588,7 @@
     "josephmanjack|WR"
    ],
    "value": 33,
-   "rank": 593
+   "rank": 592
   },
   {
    "gsis_id": "00-0038416",
@@ -9618,7 +9604,7 @@
     "tysonbagent|QB"
    ],
    "value": 32,
-   "rank": 595
+   "rank": 594
   },
   {
    "gsis_id": "00-0039751",
@@ -9634,7 +9620,7 @@
     "jordanwhittington|WR"
    ],
    "value": 32,
-   "rank": 595
+   "rank": 594
   },
   {
    "gsis_id": "00-0038658",
@@ -9650,7 +9636,7 @@
     "adrianmartinez|QB"
    ],
    "value": 31,
-   "rank": 597
+   "rank": 596
   },
   {
    "gsis_id": "00-0037252",
@@ -9667,7 +9653,7 @@
     "gregorydulcich|TE"
    ],
    "value": 31,
-   "rank": 597
+   "rank": 596
   },
   {
    "gsis_id": "00-0037304",
@@ -9683,7 +9669,7 @@
     "connorheyward|RB"
    ],
    "value": 30,
-   "rank": 599
+   "rank": 598
   },
   {
    "gsis_id": "00-0039325",
@@ -9699,23 +9685,7 @@
     "carsonsteele|RB"
    ],
    "value": 30,
-   "rank": 599
-  },
-  {
-   "gsis_id": "00-0041067",
-   "name": "Bryce Lance",
-   "pos": "WR",
-   "age": 24.0,
-   "games": 8,
-   "rookie": true,
-   "contract": "rookie",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brycelance|WR"
-   ],
-   "value": 30,
-   "rank": 599
+   "rank": 598
   },
   {
    "gsis_id": "00-0040075",
@@ -9731,7 +9701,23 @@
     "lajohntaywester|WR"
    ],
    "value": 30,
-   "rank": 599
+   "rank": 598
+  },
+  {
+   "gsis_id": "00-0041067",
+   "name": "Bryce Lance",
+   "pos": "WR",
+   "age": 24.0,
+   "games": 8,
+   "rookie": true,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "brycelance|WR"
+   ],
+   "value": 30,
+   "rank": 598
   },
   {
    "gsis_id": "00-0041094",
@@ -9747,7 +9733,7 @@
     "bauersharp|TE"
    ],
    "value": 29,
-   "rank": 603
+   "rank": 602
   },
   {
    "gsis_id": "00-0036924",
@@ -9763,7 +9749,7 @@
     "michaelcarter|RB"
    ],
    "value": 28,
-   "rank": 604
+   "rank": 603
   },
   {
    "gsis_id": "00-0040432",
@@ -9780,7 +9766,7 @@
     "ccollins|WR"
    ],
    "value": 28,
-   "rank": 604
+   "rank": 603
   },
   {
    "gsis_id": "00-0041579",
@@ -9796,7 +9782,7 @@
     "seydoutraore|TE"
    ],
    "value": 28,
-   "rank": 604
+   "rank": 603
   },
   {
    "gsis_id": "00-0038046",
@@ -9812,7 +9798,7 @@
     "charliekolar|TE"
    ],
    "value": 27,
-   "rank": 607
+   "rank": 606
   },
   {
    "gsis_id": "00-0040581",
@@ -9828,7 +9814,7 @@
     "dontethornton|WR"
    ],
    "value": 26,
-   "rank": 608
+   "rank": 607
   },
   {
    "gsis_id": "00-0040390",
@@ -9844,7 +9830,7 @@
     "jacksonmeeks|TE"
    ],
    "value": 26,
-   "rank": 608
+   "rank": 607
   },
   {
    "gsis_id": "00-0040598",
@@ -9860,7 +9846,7 @@
     "markredman|TE"
    ],
    "value": 26,
-   "rank": 608
+   "rank": 607
   },
   {
    "gsis_id": "00-0033662",
@@ -9876,7 +9862,7 @@
     "cooperrush|QB"
    ],
    "value": 25,
-   "rank": 611
+   "rank": 610
   },
   {
    "gsis_id": "00-0037742",
@@ -9892,7 +9878,7 @@
     "treylonburks|WR"
    ],
    "value": 24,
-   "rank": 612
+   "rank": 611
   },
   {
    "gsis_id": "00-0037617",
@@ -9908,7 +9894,7 @@
     "hassanhaskins|RB"
    ],
    "value": 23,
-   "rank": 613
+   "rank": 612
   },
   {
    "gsis_id": "00-0037741",
@@ -9924,7 +9910,7 @@
     "jahandotson|WR"
    ],
    "value": 23,
-   "rank": 613
+   "rank": 612
   },
   {
    "gsis_id": "00-0039471",
@@ -9941,7 +9927,7 @@
     "franklingore|RB"
    ],
    "value": 22,
-   "rank": 615
+   "rank": 614
   },
   {
    "gsis_id": "00-0039737",
@@ -9957,7 +9943,7 @@
     "tipreiman|TE"
    ],
    "value": 21,
-   "rank": 616
+   "rank": 615
   },
   {
    "gsis_id": "00-0040895",
@@ -9973,7 +9959,7 @@
     "emmanuelhenderson|WR"
    ],
    "value": 21,
-   "rank": 616
+   "rank": 615
   },
   {
    "gsis_id": "00-0036893",
@@ -9989,7 +9975,7 @@
     "najeeharris|RB"
    ],
    "value": 20,
-   "rank": 618
+   "rank": 617
   },
   {
    "gsis_id": "00-0040506",
@@ -10005,7 +9991,7 @@
     "mylesprice|WR"
    ],
    "value": 20,
-   "rank": 618
+   "rank": 617
   },
   {
    "gsis_id": "00-0033857",
@@ -10022,7 +10008,7 @@
     "jujusmithschuster|WR"
    ],
    "value": 20,
-   "rank": 618
+   "rank": 617
   },
   {
    "gsis_id": "00-0037801",
@@ -10038,39 +10024,7 @@
     "kavontaeturpin|WR"
    ],
    "value": 19,
-   "rank": 621
-  },
-  {
-   "gsis_id": "00-0033282",
-   "name": "Curtis Samuel",
-   "pos": "WR",
-   "age": 30.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "curtissamuel|WR"
-   ],
-   "value": 19,
-   "rank": 621
-  },
-  {
-   "gsis_id": "00-0034860",
-   "name": "Dante Pettis",
-   "pos": "WR",
-   "age": 30.9,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "dantepettis|WR"
-   ],
-   "value": 19,
-   "rank": 621
+   "rank": 620
   },
   {
    "gsis_id": "00-0034407",
@@ -10087,7 +10041,39 @@
     "rayraymccloud|WR"
    ],
    "value": 19,
-   "rank": 621
+   "rank": 620
+  },
+  {
+   "gsis_id": "00-0033282",
+   "name": "Curtis Samuel",
+   "pos": "WR",
+   "age": 30.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "curtissamuel|WR"
+   ],
+   "value": 19,
+   "rank": 620
+  },
+  {
+   "gsis_id": "00-0034860",
+   "name": "Dante Pettis",
+   "pos": "WR",
+   "age": 30.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "dantepettis|WR"
+   ],
+   "value": 19,
+   "rank": 620
   },
   {
    "gsis_id": "00-0036755",
@@ -10103,7 +10089,7 @@
     "jaretpatterson|RB"
    ],
    "value": 18,
-   "rank": 625
+   "rank": 624
   },
   {
    "gsis_id": "00-0040142",
@@ -10119,7 +10105,7 @@
     "kalebjohnson|RB"
    ],
    "value": 18,
-   "rank": 625
+   "rank": 624
   },
   {
    "gsis_id": "00-0040164",
@@ -10136,7 +10122,7 @@
     "joshualane|WR"
    ],
    "value": 17,
-   "rank": 627
+   "rank": 626
   },
   {
    "gsis_id": "00-0041176",
@@ -10152,7 +10138,7 @@
     "jadenbradley|WR"
    ],
    "value": 17,
-   "rank": 627
+   "rank": 626
   },
   {
    "gsis_id": "00-0030061",
@@ -10169,7 +10155,7 @@
     "zachertz|TE"
    ],
    "value": 17,
-   "rank": 627
+   "rank": 626
   },
   {
    "gsis_id": "00-0040739",
@@ -10185,7 +10171,7 @@
     "elijaharroyo|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0040240",
@@ -10201,7 +10187,7 @@
     "caleblohner|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0040331",
@@ -10217,7 +10203,7 @@
     "patrickherbert|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0040528",
@@ -10233,7 +10219,7 @@
     "jjgalbreath|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0040552",
@@ -10249,7 +10235,7 @@
     "joshuasimon|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0040853",
@@ -10265,7 +10251,7 @@
     "carsontowt|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0041133",
@@ -10281,7 +10267,7 @@
     "dallenbentley|TE"
    ],
    "value": 16,
-   "rank": 630
+   "rank": 629
   },
   {
    "gsis_id": "00-0039299",
@@ -10297,7 +10283,7 @@
     "georgeholani|RB"
    ],
    "value": 15,
-   "rank": 637
+   "rank": 636
   },
   {
    "gsis_id": "00-0040782",
@@ -10313,7 +10299,7 @@
     "isaiahbond|WR"
    ],
    "value": 15,
-   "rank": 637
+   "rank": 636
   },
   {
    "gsis_id": "00-0040060",
@@ -10329,7 +10315,7 @@
     "marshalllang|TE"
    ],
    "value": 15,
-   "rank": 637
+   "rank": 636
   },
   {
    "gsis_id": "00-0040938",
@@ -10345,7 +10331,7 @@
     "djrogers|TE"
    ],
    "value": 15,
-   "rank": 637
+   "rank": 636
   },
   {
    "gsis_id": "00-0039796",
@@ -10361,7 +10347,7 @@
     "rasheenali|RB"
    ],
    "value": 14,
-   "rank": 641
+   "rank": 640
   },
   {
    "gsis_id": "00-0038738",
@@ -10377,7 +10363,7 @@
     "hunterluepke|RB"
    ],
    "value": 14,
-   "rank": 641
+   "rank": 640
   },
   {
    "gsis_id": "00-0039144",
@@ -10393,7 +10379,7 @@
     "lukemusgrave|TE"
    ],
    "value": 13,
-   "rank": 643
+   "rank": 642
   },
   {
    "gsis_id": "00-0037805",
@@ -10409,7 +10395,7 @@
     "jeremyruckert|TE"
    ],
    "value": 13,
-   "rank": 643
+   "rank": 642
   },
   {
    "gsis_id": "00-0038115",
@@ -10425,7 +10411,7 @@
     "danielbellinger|TE"
    ],
    "value": 12,
-   "rank": 645
+   "rank": 644
   },
   {
    "gsis_id": "00-0039437",
@@ -10441,7 +10427,7 @@
     "corneliusjohnson|WR"
    ],
    "value": 12,
-   "rank": 645
+   "rank": 644
   },
   {
    "gsis_id": "00-0037524",
@@ -10458,7 +10444,7 @@
     "taymartin|WR"
    ],
    "value": 10,
-   "rank": 647
+   "rank": 646
   },
   {
    "gsis_id": "00-0039489",
@@ -10474,7 +10460,7 @@
     "haydenrucci|TE"
    ],
    "value": 10,
-   "rank": 647
+   "rank": 646
   },
   {
    "gsis_id": "00-0036841",
@@ -10491,7 +10477,7 @@
     "stephentrammell|WR"
    ],
    "value": 9,
-   "rank": 649
+   "rank": 648
   },
   {
    "gsis_id": "00-0038891",
@@ -10507,23 +10493,7 @@
     "shedrickjackson|WR"
    ],
    "value": 9,
-   "rank": 649
-  },
-  {
-   "gsis_id": "00-0039710",
-   "name": "Jeshaun Jones",
-   "pos": "WR",
-   "age": 26.7,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jeshaunjones|WR"
-   ],
-   "value": 8,
-   "rank": 651
+   "rank": 648
   },
   {
    "gsis_id": "00-0038839",
@@ -10540,7 +10510,7 @@
     "mitchtinsley|WR"
    ],
    "value": 8,
-   "rank": 651
+   "rank": 650
   },
   {
    "gsis_id": "00-0038840",
@@ -10556,7 +10526,23 @@
     "brycentremayne|WR"
    ],
    "value": 8,
-   "rank": 651
+   "rank": 650
+  },
+  {
+   "gsis_id": "00-0039710",
+   "name": "Jeshaun Jones",
+   "pos": "WR",
+   "age": 26.7,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jeshaunjones|WR"
+   ],
+   "value": 8,
+   "rank": 650
   },
   {
    "gsis_id": "00-0038129",
@@ -10572,7 +10558,7 @@
     "cadeotton|TE"
    ],
    "value": 8,
-   "rank": 651
+   "rank": 650
   },
   {
    "gsis_id": "00-0035289",
@@ -10588,7 +10574,7 @@
     "gardnerminshew|QB"
    ],
    "value": 7,
-   "rank": 655
+   "rank": 654
   },
   {
    "gsis_id": "00-0034771",
@@ -10605,7 +10591,7 @@
     "masonrudolph|QB"
    ],
    "value": 6,
-   "rank": 656
+   "rank": 655
   },
   {
    "gsis_id": "00-0037120",
@@ -10621,7 +10607,7 @@
     "tylergoodson|RB"
    ],
    "value": 6,
-   "rank": 656
+   "rank": 655
   },
   {
    "gsis_id": "00-0033891",
@@ -10638,7 +10624,7 @@
     "zayjones|WR"
    ],
    "value": 6,
-   "rank": 656
+   "rank": 655
   },
   {
    "gsis_id": "00-0033375",
@@ -10655,7 +10641,7 @@
     "timpatrick|WR"
    ],
    "value": 6,
-   "rank": 656
+   "rank": 655
   },
   {
    "gsis_id": "00-0034272",
@@ -10671,7 +10657,7 @@
     "marquezvaldesscantling|WR"
    ],
    "value": 6,
-   "rank": 656
+   "rank": 655
   },
   {
    "gsis_id": "00-0039021",
@@ -10687,7 +10673,7 @@
     "roschonjohnson|RB"
    ],
    "value": 5,
-   "rank": 661
+   "rank": 660
   },
   {
    "gsis_id": "00-0032398",
@@ -10704,7 +10690,7 @@
     "christophermoore|WR"
    ],
    "value": 5,
-   "rank": 661
+   "rank": 660
   },
   {
    "gsis_id": "00-0040215",
@@ -10720,7 +10706,7 @@
     "gavinbartholomew|TE"
    ],
    "value": 5,
-   "rank": 661
+   "rank": 660
   },
   {
    "gsis_id": "00-0041317",
@@ -10736,7 +10722,7 @@
     "nickdegennaro|WR"
    ],
    "value": 5,
-   "rank": 661
+   "rank": 660
   },
   {
    "gsis_id": "00-0038728",
@@ -10752,7 +10738,7 @@
     "jaredwayne|WR"
    ],
    "value": 4,
-   "rank": 665
+   "rank": 664
   },
   {
    "gsis_id": "00-0037324",
@@ -10768,7 +10754,7 @@
     "chrisoladokun|QB"
    ],
    "value": 3,
-   "rank": 666
+   "rank": 665
   },
   {
    "gsis_id": "00-0037614",
@@ -10784,7 +10770,7 @@
     "johnmetchie|WR"
    ],
    "value": 3,
-   "rank": 666
+   "rank": 665
   },
   {
    "gsis_id": "00-0038102",
@@ -10801,7 +10787,7 @@
     "kennypickett|QB"
    ],
    "value": 2,
-   "rank": 668
+   "rank": 667
   },
   {
    "gsis_id": "00-0037329",
@@ -10817,39 +10803,7 @@
     "brittainbrown|RB"
    ],
    "value": 2,
-   "rank": 668
-  },
-  {
-   "gsis_id": "00-0038705",
-   "name": "Emari Demercado",
-   "pos": "RB",
-   "age": 27.6,
-   "games": 3,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "emaridemercado|RB"
-   ],
-   "value": 1,
-   "rank": 670
-  },
-  {
-   "gsis_id": "00-0037563",
-   "name": "Malik Davis",
-   "pos": "RB",
-   "age": 27.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "malikdavis|RB"
-   ],
-   "value": 1,
-   "rank": 670
+   "rank": 667
   },
   {
    "gsis_id": "00-0037276",
@@ -10866,7 +10820,39 @@
     "tykeviouschandler|RB"
    ],
    "value": 1,
-   "rank": 670
+   "rank": 669
+  },
+  {
+   "gsis_id": "00-0038705",
+   "name": "Emari Demercado",
+   "pos": "RB",
+   "age": 27.6,
+   "games": 3,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "emaridemercado|RB"
+   ],
+   "value": 1,
+   "rank": 669
+  },
+  {
+   "gsis_id": "00-0037563",
+   "name": "Malik Davis",
+   "pos": "RB",
+   "age": 27.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "malikdavis|RB"
+   ],
+   "value": 1,
+   "rank": 669
   },
   {
    "gsis_id": "00-0040265",
@@ -10882,190 +10868,7 @@
     "jaseemreed|WR"
    ],
    "value": 1,
-   "rank": 670
-  },
-  {
-   "gsis_id": "00-0039107",
-   "name": "Stetson Bennett",
-   "pos": "QB",
-   "age": 28.9,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "stetsonbennett|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032434",
-   "name": "Brandon Allen",
-   "pos": "QB",
-   "age": 34.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brandonallen|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033319",
-   "name": "Nick Mullens",
-   "pos": "QB",
-   "age": 31.5,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "nicholasmullens|QB",
-    "nickmullens|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0027973",
-   "name": "Andy Dalton",
-   "pos": "QB",
-   "age": 38.9,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "andrewdalton|QB",
-    "andydalton|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0028118",
-   "name": "Tyrod Taylor",
-   "pos": "QB",
-   "age": 37.1,
-   "games": 1,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "tyrodtaylor|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0026158",
-   "name": "Joe Flacco",
-   "pos": "QB",
-   "age": 41.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "joeflacco|QB",
-    "josephflacco|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0028986",
-   "name": "Case Keenum",
-   "pos": "QB",
-   "age": 38.6,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "casekeenum|QB",
-    "caseykeenum|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035264",
-   "name": "Jarrett Stidham",
-   "pos": "QB",
-   "age": 30.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jarrettstidham|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033949",
-   "name": "Joshua Dobbs",
-   "pos": "QB",
-   "age": 31.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "joshuadobbs|QB",
-    "robertdobbs|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0031345",
-   "name": "Jimmy Garoppolo",
-   "pos": "QB",
-   "age": 34.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jamesgaroppolo|QB",
-    "jimmygaroppolo|QB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0026300",
-   "name": "Josh Johnson",
-   "pos": "QB",
-   "age": 40.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "joshjohnson|QB",
-    "joshuajohnson|QB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 669
   },
   {
    "gsis_id": "00-0031237",
@@ -11082,23 +10885,7 @@
     "theodorebridgewater|QB"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034577",
-   "name": "Kyle Allen",
-   "pos": "QB",
-   "age": 30.5,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "kyleallen|QB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0033869",
@@ -11114,538 +10901,206 @@
     "mitchelltrubisky|QB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0034367",
-   "name": "Nyheim Hines",
-   "pos": "RB",
-   "age": 29.8,
+   "gsis_id": "00-0028118",
+   "name": "Tyrod Taylor",
+   "pos": "QB",
+   "age": 37.1,
+   "games": 1,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "tyrodtaylor|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0026158",
+   "name": "Joe Flacco",
+   "pos": "QB",
+   "age": 41.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "joeflacco|QB",
+    "josephflacco|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032434",
+   "name": "Brandon Allen",
+   "pos": "QB",
+   "age": 34.0,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "nyheimhines|RB"
+    "brandonallen|QB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036187",
-   "name": "Reggie Gilliam",
-   "pos": "RB",
-   "age": 29.0,
+   "gsis_id": "00-0033949",
+   "name": "Joshua Dobbs",
+   "pos": "QB",
+   "age": 31.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "joshuadobbs|QB",
+    "robertdobbs|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0027973",
+   "name": "Andy Dalton",
+   "pos": "QB",
+   "age": 38.9,
    "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "reggiegilliam|RB"
+    "andrewdalton|QB",
+    "andydalton|QB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0035291",
-   "name": "Trayveon Williams",
-   "pos": "RB",
+   "gsis_id": "00-0035264",
+   "name": "Jarrett Stidham",
+   "pos": "QB",
+   "age": 30.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jarrettstidham|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033319",
+   "name": "Nick Mullens",
+   "pos": "QB",
+   "age": 31.5,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "nicholasmullens|QB",
+    "nickmullens|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0026300",
+   "name": "Josh Johnson",
+   "pos": "QB",
+   "age": 40.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "joshjohnson|QB",
+    "joshuajohnson|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0031345",
+   "name": "Jimmy Garoppolo",
+   "pos": "QB",
+   "age": 34.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jamesgaroppolo|QB",
+    "jimmygaroppolo|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0028986",
+   "name": "Case Keenum",
+   "pos": "QB",
+   "age": 38.6,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "casekeenum|QB",
+    "caseykeenum|QB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039107",
+   "name": "Stetson Bennett",
+   "pos": "QB",
    "age": 28.9,
-   "games": 0,
-   "rookie": false,
+   "games": 1,
+   "rookie": true,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "trayveonwilliams|RB"
+    "stetsonbennett|QB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036360",
-   "name": "Clyde Edwards-Helaire",
-   "pos": "RB",
-   "age": 27.4,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "clydeedwardshelaire|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036265",
-   "name": "AJ Dillon",
-   "pos": "RB",
-   "age": 28.4,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "ajdillon|RB",
-    "algiersdillon|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033376",
-   "name": "Patrick Ricard",
-   "pos": "RB",
-   "age": 32.3,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "patrickricard|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036842",
-   "name": "Kene Nwangwu",
-   "pos": "RB",
-   "age": 28.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "kenenwangwu|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040067",
-   "name": "Jacardia Wright",
-   "pos": "RB",
-   "age": 25.9,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jacardiawright|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035628",
-   "name": "D'Ernest Johnson",
-   "pos": "RB",
+   "gsis_id": "00-0034577",
+   "name": "Kyle Allen",
+   "pos": "QB",
    "age": 30.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "dernestjohnson|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0041376",
-   "name": "Gregory Desrosiers",
-   "pos": "RB",
-   "age": 25.4,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "gregorydesrosiers|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038040",
-   "name": "Zamir White",
-   "pos": "RB",
-   "age": 27.0,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "zamirwhite|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038930",
-   "name": "Carlos Washington",
-   "pos": "RB",
-   "age": 27.7,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "carloswashington|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037594",
-   "name": "Julius Chestnut",
-   "pos": "RB",
-   "age": 25.9,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "juliuschestnut|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038488",
-   "name": "Brady Russell",
-   "pos": "RB",
-   "age": 28.0,
    "games": 2,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "bradyrussell|RB"
+    "kyleallen|QB"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040205",
-   "name": "Kalel Mullings",
-   "pos": "RB",
-   "age": 23.9,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "kalelmullings|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038440",
-   "name": "Zavier Scott",
-   "pos": "RB",
-   "age": 27.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "zavierscott|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039875",
-   "name": "Ray Davis",
-   "pos": "RB",
-   "age": 26.8,
-   "games": 6,
-   "rookie": false,
-   "contract": "rookie",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "raydavis|RB",
-    "remahndavis|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038794",
-   "name": "Jaleel McLaughlin",
-   "pos": "RB",
-   "age": 26.0,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jaleelmclaughlin|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038098",
-   "name": "Pierre Strong",
-   "pos": "RB",
-   "age": 27.7,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "pierrestrong|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0029892",
-   "name": "Kyle Juszczyk",
-   "pos": "RB",
-   "age": 35.4,
-   "games": 6,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "kylejuszczyk|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035311",
-   "name": "Myles Gaskin",
-   "pos": "RB",
-   "age": 29.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "mylesgaskin|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032918",
-   "name": "C.J. Ham",
-   "pos": "RB",
-   "age": 33.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "cjham|RB",
-    "cortezham|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0041081",
-   "name": "Max Bredeson",
-   "pos": "RB",
-   "age": 23.9,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "maxbredeson|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0041398",
-   "name": "Riley Nowakowski",
-   "pos": "RB",
-   "age": 24.2,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "rileynowakowski|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038458",
-   "name": "Owen Wright",
-   "pos": "RB",
-   "age": 27.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "owenwright|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037745",
-   "name": "Velus Jones Jr.",
-   "pos": "RB",
-   "age": 29.3,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "velusjones|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038896",
-   "name": "Jacob Saylors",
-   "pos": "RB",
-   "age": 26.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jacobsaylors|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037085",
-   "name": "Tyler Badie",
-   "pos": "RB",
-   "age": 27.6,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tylerbadie|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032104",
-   "name": "Ameer Abdullah",
-   "pos": "RB",
-   "age": 33.2,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "ameerabdullah|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0031595",
-   "name": "Michael Burton",
-   "pos": "RB",
-   "age": 34.6,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "michaelburton|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036020",
-   "name": "Salvon Ahmed",
-   "pos": "RB",
-   "age": 27.7,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "salvonahmed|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038409",
-   "name": "Lew Nichols III",
-   "pos": "RB",
-   "age": 25.1,
-   "games": 2,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "lewnichols|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040547",
-   "name": "Nate Carter",
-   "pos": "RB",
-   "age": 24.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "natecarter|RB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0033854",
@@ -11662,39 +11117,7 @@
     "oluwadareogunbowale|RB"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036727",
-   "name": "Adam Prentice",
-   "pos": "RB",
-   "age": 29.6,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "adamprentice|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040039",
-   "name": "Amar Johnson",
-   "pos": "RB",
-   "age": 23.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "amarjohnson|RB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039364",
@@ -11710,23 +11133,7 @@
     "sionevaki|RB"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035125",
-   "name": "Alec Ingold",
-   "pos": "RB",
-   "age": 30.2,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "alecingold|RB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0034959",
@@ -11742,87 +11149,23 @@
     "andrewbeck|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0038614",
-   "name": "Scott Matlock",
+   "gsis_id": "00-0038409",
+   "name": "Lew Nichols III",
    "pos": "RB",
-   "age": 26.2,
-   "games": 0,
-   "rookie": false,
+   "age": 25.1,
+   "games": 2,
+   "rookie": true,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "scottmatlock|RB"
+    "lewnichols|RB"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039757",
-   "name": "Terrell Jennings",
-   "pos": "RB",
-   "age": 25.7,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "terrelljennings|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036425",
-   "name": "DeeJay Dallas",
-   "pos": "RB",
-   "age": 28.0,
-   "games": 7,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "deejaydallas|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035567",
-   "name": "Craig Reynolds",
-   "pos": "RB",
-   "age": 30.2,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "craigreynolds|RB"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035594",
-   "name": "Travis Homer",
-   "pos": "RB",
-   "age": 28.1,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "travishomer|RB"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0038397",
@@ -11838,23 +11181,490 @@
     "evanhull|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039266",
-   "name": "Kendall Milton",
+   "gsis_id": "00-0038458",
+   "name": "Owen Wright",
    "pos": "RB",
-   "age": 24.6,
+   "age": 27.5,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "kendallmilton|RB"
+    "owenwright|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036727",
+   "name": "Adam Prentice",
+   "pos": "RB",
+   "age": 29.6,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "adamprentice|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040205",
+   "name": "Kalel Mullings",
+   "pos": "RB",
+   "age": 23.9,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kalelmullings|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036187",
+   "name": "Reggie Gilliam",
+   "pos": "RB",
+   "age": 29.0,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "reggiegilliam|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038098",
+   "name": "Pierre Strong",
+   "pos": "RB",
+   "age": 27.7,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "pierrestrong|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038040",
+   "name": "Zamir White",
+   "pos": "RB",
+   "age": 27.0,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "zamirwhite|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037085",
+   "name": "Tyler Badie",
+   "pos": "RB",
+   "age": 27.6,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tylerbadie|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040067",
+   "name": "Jacardia Wright",
+   "pos": "RB",
+   "age": 25.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jacardiawright|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0029892",
+   "name": "Kyle Juszczyk",
+   "pos": "RB",
+   "age": 35.4,
+   "games": 6,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kylejuszczyk|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0041376",
+   "name": "Gregory Desrosiers",
+   "pos": "RB",
+   "age": 25.4,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "gregorydesrosiers|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035311",
+   "name": "Myles Gaskin",
+   "pos": "RB",
+   "age": 29.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "mylesgaskin|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0031595",
+   "name": "Michael Burton",
+   "pos": "RB",
+   "age": 34.6,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "michaelburton|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0041398",
+   "name": "Riley Nowakowski",
+   "pos": "RB",
+   "age": 24.2,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "rileynowakowski|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037745",
+   "name": "Velus Jones Jr.",
+   "pos": "RB",
+   "age": 29.3,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "velusjones|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035567",
+   "name": "Craig Reynolds",
+   "pos": "RB",
+   "age": 30.2,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "craigreynolds|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036842",
+   "name": "Kene Nwangwu",
+   "pos": "RB",
+   "age": 28.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kenenwangwu|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035291",
+   "name": "Trayveon Williams",
+   "pos": "RB",
+   "age": 28.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "trayveonwilliams|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040547",
+   "name": "Nate Carter",
+   "pos": "RB",
+   "age": 24.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "natecarter|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036265",
+   "name": "AJ Dillon",
+   "pos": "RB",
+   "age": 28.4,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ajdillon|RB",
+    "algiersdillon|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032104",
+   "name": "Ameer Abdullah",
+   "pos": "RB",
+   "age": 33.2,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ameerabdullah|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038794",
+   "name": "Jaleel McLaughlin",
+   "pos": "RB",
+   "age": 26.0,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jaleelmclaughlin|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034367",
+   "name": "Nyheim Hines",
+   "pos": "RB",
+   "age": 29.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "nyheimhines|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036020",
+   "name": "Salvon Ahmed",
+   "pos": "RB",
+   "age": 27.7,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "salvonahmed|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035125",
+   "name": "Alec Ingold",
+   "pos": "RB",
+   "age": 30.2,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "alecingold|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038488",
+   "name": "Brady Russell",
+   "pos": "RB",
+   "age": 28.0,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "bradyrussell|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039875",
+   "name": "Ray Davis",
+   "pos": "RB",
+   "age": 26.8,
+   "games": 6,
+   "rookie": false,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "raydavis|RB",
+    "remahndavis|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0041081",
+   "name": "Max Bredeson",
+   "pos": "RB",
+   "age": 23.9,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "maxbredeson|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032918",
+   "name": "C.J. Ham",
+   "pos": "RB",
+   "age": 33.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "cjham|RB",
+    "cortezham|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038930",
+   "name": "Carlos Washington",
+   "pos": "RB",
+   "age": 27.7,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "carloswashington|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038614",
+   "name": "Scott Matlock",
+   "pos": "RB",
+   "age": 26.2,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "scottmatlock|RB"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0040208",
@@ -11870,44 +11680,28 @@
     "tahjbrooks|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0032464",
-   "name": "Kalif Raymond",
-   "pos": "WR",
-   "age": 32.1,
-   "games": 9,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "kalifraymond|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034418",
-   "name": "Cedrick Wilson Jr.",
-   "pos": "WR",
-   "age": 30.8,
+   "gsis_id": "00-0040039",
+   "name": "Amar Johnson",
+   "pos": "RB",
+   "age": 23.6,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "cedrickwilson|WR"
+    "amarjohnson|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039521",
-   "name": "Xavier Weaver",
-   "pos": "WR",
+   "gsis_id": "00-0037594",
+   "name": "Julius Chestnut",
+   "pos": "RB",
    "age": 25.9,
    "games": 0,
    "rookie": false,
@@ -11915,75 +11709,186 @@
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "xavierweaver|WR"
+    "juliuschestnut|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0031763",
-   "name": "DeAndre Carter",
-   "pos": "WR",
-   "age": 33.4,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "deandrecarter|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034928",
-   "name": "Steven Sims",
-   "pos": "WR",
-   "age": 29.4,
+   "gsis_id": "00-0036360",
+   "name": "Clyde Edwards-Helaire",
+   "pos": "RB",
+   "age": 27.4,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "stevensims|WR"
+    "clydeedwardshelaire|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036862",
-   "name": "Ben Skowronek",
-   "pos": "WR",
-   "age": 29.2,
+   "gsis_id": "00-0035594",
+   "name": "Travis Homer",
+   "pos": "RB",
+   "age": 28.1,
    "games": 3,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "bennettskowronek|WR",
-    "benskowronek|WR"
+    "travishomer|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0032385",
-   "name": "Sterling Shepard",
-   "pos": "WR",
-   "age": 33.6,
+   "gsis_id": "00-0036425",
+   "name": "DeeJay Dallas",
+   "pos": "RB",
+   "age": 28.0,
+   "games": 7,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "deejaydallas|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035628",
+   "name": "D'Ernest Johnson",
+   "pos": "RB",
+   "age": 30.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "dernestjohnson|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039757",
+   "name": "Terrell Jennings",
+   "pos": "RB",
+   "age": 25.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "terrelljennings|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033376",
+   "name": "Patrick Ricard",
+   "pos": "RB",
+   "age": 32.3,
    "games": 2,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "sterlingshepard|WR"
+    "patrickricard|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038896",
+   "name": "Jacob Saylors",
+   "pos": "RB",
+   "age": 26.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jacobsaylors|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039266",
+   "name": "Kendall Milton",
+   "pos": "RB",
+   "age": 24.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kendallmilton|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038440",
+   "name": "Zavier Scott",
+   "pos": "RB",
+   "age": 27.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "zavierscott|RB"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039589",
+   "name": "Kameron Johnson",
+   "pos": "WR",
+   "age": 24.5,
+   "games": 1,
+   "rookie": false,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kameronjohnson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036331",
+   "name": "Devin Duvernay",
+   "pos": "WR",
+   "age": 29.0,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "devinduvernay|WR"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0036620",
@@ -12000,455 +11905,7 @@
     "dwayneeskridge|WR"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0031236",
-   "name": "Brandin Cooks",
-   "pos": "WR",
-   "age": 33.0,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brandincooks|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036775",
-   "name": "Brandon Smith",
-   "pos": "WR",
-   "age": 27.7,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brandonsmith|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038496",
-   "name": "Xavier Gipson",
-   "pos": "WR",
-   "age": 25.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "xaviergipson|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037098",
-   "name": "Samori Toure",
-   "pos": "WR",
-   "age": 28.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "samoritoure|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035602",
-   "name": "Alex Bachman",
-   "pos": "WR",
-   "age": 30.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "alexbachman|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036182",
-   "name": "Nick Westbrook-Ikhine",
-   "pos": "WR",
-   "age": 29.5,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "nickwestbrookikhine|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039816",
-   "name": "Anthony Gould",
-   "pos": "WR",
-   "age": 25.4,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "anthonygould|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040948",
-   "name": "J. Michael Sturdivant",
-   "pos": "WR",
-   "age": 24.0,
-   "games": 3,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jmichaelsturdivant|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034487",
-   "name": "Trent Sherfield",
-   "pos": "WR",
-   "age": 30.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "trentsherfield|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0041132",
-   "name": "Deion Burks",
-   "pos": "WR",
-   "age": 23.7,
-   "games": 7,
-   "rookie": true,
-   "contract": "rookie",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "deionburks|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037132",
-   "name": "Britain Covey",
-   "pos": "WR",
-   "age": 29.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "britaincovey|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033589",
-   "name": "David Moore",
-   "pos": "WR",
-   "age": 31.6,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "davidmoore|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037093",
-   "name": "Dareke Young",
-   "pos": "WR",
-   "age": 27.3,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "darekeyoung|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038938",
-   "name": "Jalin Hyatt",
-   "pos": "WR",
-   "age": 25.0,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jalinhyatt|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039884",
-   "name": "Tahj Washington",
-   "pos": "WR",
-   "age": 25.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tahjwashington|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038576",
-   "name": "Charlie Jones",
-   "pos": "WR",
-   "age": 27.9,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "charliejones|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040298",
-   "name": "Andrew Armstrong",
-   "pos": "WR",
-   "age": 25.9,
-   "games": 2,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "andrewarmstrong|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036630",
-   "name": "Tylan Wallace",
-   "pos": "WR",
-   "age": 27.3,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tylanwallace|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038465",
-   "name": "Malik Heath",
-   "pos": "WR",
-   "age": 26.4,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "malikheath|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036463",
-   "name": "Chris Blair",
-   "pos": "WR",
-   "age": 28.9,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "chrisblair|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035298",
-   "name": "Scott Miller",
-   "pos": "WR",
-   "age": 29.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "scottmiller|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038752",
-   "name": "Jake Bobo",
-   "pos": "WR",
-   "age": 28.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jakebobo|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036176",
-   "name": "Mason Kinsey",
-   "pos": "WR",
-   "age": 28.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "masonkinsey|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038090",
-   "name": "Skyy Moore",
-   "pos": "WR",
-   "age": 26.0,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "skyymoore|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040352",
-   "name": "Coleman Owen",
-   "pos": "WR",
-   "age": 25.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "colemanowen|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039394",
-   "name": "Casey Washington",
-   "pos": "WR",
-   "age": 25.5,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "caseywashington|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035645",
-   "name": "Gunner Olszewski",
-   "pos": "WR",
-   "age": 29.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "gunnerolszewski|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036133",
-   "name": "James Proche",
-   "pos": "WR",
-   "age": 30.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jamesproche|WR"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0038640",
@@ -12464,282 +11921,55 @@
     "jalenbrooks|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0034867",
-   "name": "Malik Turner",
+   "gsis_id": "00-0035602",
+   "name": "Alex Bachman",
    "pos": "WR",
-   "age": 30.6,
+   "age": 30.3,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "malikturner|WR"
+    "alexbachman|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0033943",
-   "name": "Josh Reynolds",
+   "gsis_id": "00-0036775",
+   "name": "Brandon Smith",
    "pos": "WR",
-   "age": 31.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "joshreynolds|WR",
-    "joshuareynolds|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036646",
-   "name": "Simi Fehoko",
-   "pos": "WR",
-   "age": 28.8,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "simifehoko|WR",
-    "simionefehoko|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034521",
-   "name": "Allen Lazard",
-   "pos": "WR",
-   "age": 30.7,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "allenlazard|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035359",
-   "name": "David Sills",
-   "pos": "WR",
-   "age": 31.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "davidsills|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032688",
-   "name": "Robbie Chosen",
-   "pos": "WR",
-   "age": 33.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "robbiechosen|WR",
-    "robertchosen|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036165",
-   "name": "Isaiah Hodgins",
-   "pos": "WR",
-   "age": 27.9,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "isaiahhodgins|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035544",
-   "name": "Tom Kennedy",
-   "pos": "WR",
-   "age": 30.1,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tomkennedy|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035876",
-   "name": "Andre Baccellia",
-   "pos": "WR",
-   "age": 29.7,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "andrebaccellia|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040582",
-   "name": "Arian Smith",
-   "pos": "WR",
-   "age": 24.9,
+   "age": 27.7,
    "games": 1,
-   "rookie": false,
-   "contract": "rookie",
+   "rookie": true,
+   "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "ariansmith|WR"
+    "brandonsmith|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037487",
-   "name": "Deven Thompkins",
+   "gsis_id": "00-0036182",
+   "name": "Nick Westbrook-Ikhine",
    "pos": "WR",
-   "age": 26.7,
+   "age": 29.5,
    "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "deventhompkins|WR"
+    "nickwestbrookikhine|WR"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032951",
-   "name": "Laquon Treadwell",
-   "pos": "WR",
-   "age": 31.2,
-   "games": 9,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "laquontreadwell|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036427",
-   "name": "Tyler Johnson",
-   "pos": "WR",
-   "age": 28.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tylerjohnson|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038519",
-   "name": "Nikko Remigio",
-   "pos": "WR",
-   "age": 26.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "nikkoremigio|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038824",
-   "name": "Ryan Miller",
-   "pos": "WR",
-   "age": 26.5,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "ryanmiller|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034386",
-   "name": "Justin Watson",
-   "pos": "WR",
-   "age": 30.4,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "justinwatson|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038492",
-   "name": "Jason Brownlee",
-   "pos": "WR",
-   "age": 27.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jasonbrownlee|WR"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0037091",
@@ -12756,167 +11986,71 @@
     "milesmelton|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037382",
-   "name": "Brandon Johnson",
+   "gsis_id": "00-0035298",
+   "name": "Scott Miller",
    "pos": "WR",
-   "age": 28.1,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brandonjohnson|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0031235",
-   "name": "Odell Beckham Jr.",
-   "pos": "WR",
-   "age": 33.8,
-   "games": 1,
-   "rookie": false,
-   "contract": "expiring",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "odellbeckham|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036497",
-   "name": "Tim Jones",
-   "pos": "WR",
-   "age": 28.3,
+   "age": 29.1,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "timjones|WR"
+    "scottmiller|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0038953",
-   "name": "Dylan Drummond",
+   "gsis_id": "00-0036176",
+   "name": "Mason Kinsey",
    "pos": "WR",
-   "age": 26.6,
+   "age": 28.0,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "dylandrummond|WR"
+    "masonkinsey|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039920",
-   "name": "Malachi Corley",
+   "gsis_id": "00-0037093",
+   "name": "Dareke Young",
    "pos": "WR",
-   "age": 24.5,
-   "games": 1,
+   "age": 27.3,
+   "games": 2,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "malachicorley|WR"
+    "darekeyoung|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0038573",
-   "name": "Derius Davis",
+   "gsis_id": "00-0039394",
+   "name": "Casey Washington",
    "pos": "WR",
-   "age": 26.0,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "deriusdavis|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0035500",
-   "name": "Greg Dortch",
-   "pos": "WR",
-   "age": 28.3,
+   "age": 25.5,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "gregdortch|WR"
+    "caseywashington|WR"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034419",
-   "name": "Braxton Berrios",
-   "pos": "WR",
-   "age": 30.9,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "braxtonberrios|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034983",
-   "name": "Hunter Renfrow",
-   "pos": "WR",
-   "age": 30.7,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "hunterrenfrow|WR"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039062",
-   "name": "Jonathan Mingo",
-   "pos": "WR",
-   "age": 25.4,
-   "games": 5,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jonathanmingo|WR"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0036959",
@@ -12932,39 +12066,361 @@
     "michaelbandy|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039589",
-   "name": "Kameron Johnson",
+   "gsis_id": "00-0035876",
+   "name": "Andre Baccellia",
    "pos": "WR",
-   "age": 24.5,
-   "games": 1,
+   "age": 29.7,
+   "games": 0,
    "rookie": false,
-   "contract": "rookie",
+   "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "kameronjohnson|WR"
+    "andrebaccellia|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036331",
-   "name": "Devin Duvernay",
+   "gsis_id": "00-0034386",
+   "name": "Justin Watson",
    "pos": "WR",
-   "age": 29.0,
+   "age": 30.4,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "justinwatson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040948",
+   "name": "J. Michael Sturdivant",
+   "pos": "WR",
+   "age": 24.0,
+   "games": 3,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jmichaelsturdivant|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039062",
+   "name": "Jonathan Mingo",
+   "pos": "WR",
+   "age": 25.4,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jonathanmingo|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036646",
+   "name": "Simi Fehoko",
+   "pos": "WR",
+   "age": 28.8,
    "games": 2,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "devinduvernay|WR"
+    "simifehoko|WR",
+    "simionefehoko|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0031235",
+   "name": "Odell Beckham Jr.",
+   "pos": "WR",
+   "age": 33.8,
+   "games": 1,
+   "rookie": false,
+   "contract": "expiring",
+   "contract_factor": 0.7693,
+   "basis": "this season",
+   "keys": [
+    "odellbeckham|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032464",
+   "name": "Kalif Raymond",
+   "pos": "WR",
+   "age": 32.1,
+   "games": 9,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kalifraymond|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036427",
+   "name": "Tyler Johnson",
+   "pos": "WR",
+   "age": 28.0,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tylerjohnson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037132",
+   "name": "Britain Covey",
+   "pos": "WR",
+   "age": 29.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "britaincovey|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032385",
+   "name": "Sterling Shepard",
+   "pos": "WR",
+   "age": 33.6,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "sterlingshepard|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032951",
+   "name": "Laquon Treadwell",
+   "pos": "WR",
+   "age": 31.2,
+   "games": 9,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "laquontreadwell|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034419",
+   "name": "Braxton Berrios",
+   "pos": "WR",
+   "age": 30.9,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "braxtonberrios|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040352",
+   "name": "Coleman Owen",
+   "pos": "WR",
+   "age": 25.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "colemanowen|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036165",
+   "name": "Isaiah Hodgins",
+   "pos": "WR",
+   "age": 27.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "isaiahhodgins|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039884",
+   "name": "Tahj Washington",
+   "pos": "WR",
+   "age": 25.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tahjwashington|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037098",
+   "name": "Samori Toure",
+   "pos": "WR",
+   "age": 28.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "samoritoure|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034418",
+   "name": "Cedrick Wilson Jr.",
+   "pos": "WR",
+   "age": 30.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "cedrickwilson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038824",
+   "name": "Ryan Miller",
+   "pos": "WR",
+   "age": 26.5,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ryanmiller|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039920",
+   "name": "Malachi Corley",
+   "pos": "WR",
+   "age": 24.5,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "malachicorley|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034521",
+   "name": "Allen Lazard",
+   "pos": "WR",
+   "age": 30.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "allenlazard|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032688",
+   "name": "Robbie Chosen",
+   "pos": "WR",
+   "age": 33.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "robbiechosen|WR",
+    "robertchosen|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040298",
+   "name": "Andrew Armstrong",
+   "pos": "WR",
+   "age": 25.9,
+   "games": 2,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "andrewarmstrong|WR"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0040534",
@@ -12980,7 +12436,264 @@
     "keshawnwilliams|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038090",
+   "name": "Skyy Moore",
+   "pos": "WR",
+   "age": 26.0,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "skyymoore|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038953",
+   "name": "Dylan Drummond",
+   "pos": "WR",
+   "age": 26.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "dylandrummond|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040582",
+   "name": "Arian Smith",
+   "pos": "WR",
+   "age": 24.9,
+   "games": 1,
+   "rookie": false,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ariansmith|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034487",
+   "name": "Trent Sherfield",
+   "pos": "WR",
+   "age": 30.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "trentsherfield|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038752",
+   "name": "Jake Bobo",
+   "pos": "WR",
+   "age": 28.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jakebobo|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034983",
+   "name": "Hunter Renfrow",
+   "pos": "WR",
+   "age": 30.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "hunterrenfrow|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036630",
+   "name": "Tylan Wallace",
+   "pos": "WR",
+   "age": 27.3,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tylanwallace|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035359",
+   "name": "David Sills",
+   "pos": "WR",
+   "age": 31.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "davidsills|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038573",
+   "name": "Derius Davis",
+   "pos": "WR",
+   "age": 26.0,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "deriusdavis|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038496",
+   "name": "Xavier Gipson",
+   "pos": "WR",
+   "age": 25.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "xaviergipson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036133",
+   "name": "James Proche",
+   "pos": "WR",
+   "age": 30.0,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jamesproche|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037382",
+   "name": "Brandon Johnson",
+   "pos": "WR",
+   "age": 28.1,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "brandonjohnson|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036862",
+   "name": "Ben Skowronek",
+   "pos": "WR",
+   "age": 29.2,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "bennettskowronek|WR",
+    "benskowronek|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039816",
+   "name": "Anthony Gould",
+   "pos": "WR",
+   "age": 25.4,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "anthonygould|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033589",
+   "name": "David Moore",
+   "pos": "WR",
+   "age": 31.6,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "davidmoore|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0041132",
+   "name": "Deion Burks",
+   "pos": "WR",
+   "age": 23.7,
+   "games": 7,
+   "rookie": true,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "deionburks|WR"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0034854",
@@ -12996,174 +12709,92 @@
     "khadarelhodge|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039631",
-   "name": "Cam Grandy",
-   "pos": "TE",
-   "age": 26.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "camgrandy|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033576",
-   "name": "Eric Saubert",
-   "pos": "TE",
-   "age": 32.3,
+   "gsis_id": "00-0031236",
+   "name": "Brandin Cooks",
+   "pos": "WR",
+   "age": 33.0,
    "games": 5,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "ericsaubert|TE"
+    "brandincooks|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037306",
-   "name": "John FitzPatrick",
-   "pos": "TE",
-   "age": 26.5,
+   "gsis_id": "00-0036497",
+   "name": "Tim Jones",
+   "pos": "WR",
+   "age": 28.3,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "johnfitzpatrick|TE"
+    "timjones|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039824",
-   "name": "Jared Wiley",
-   "pos": "TE",
-   "age": 25.8,
-   "games": 0,
+   "gsis_id": "00-0038938",
+   "name": "Jalin Hyatt",
+   "pos": "WR",
+   "age": 25.0,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "jaredwiley|TE"
+    "jalinhyatt|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037348",
-   "name": "Tanner Conner",
-   "pos": "TE",
-   "age": 28.5,
-   "games": 0,
+   "gsis_id": "00-0031763",
+   "name": "DeAndre Carter",
+   "pos": "WR",
+   "age": 33.4,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "tannerconner|TE"
+    "deandrecarter|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036825",
-   "name": "Feleipe Franks",
-   "pos": "TE",
-   "age": 28.7,
-   "games": 0,
+   "gsis_id": "00-0037487",
+   "name": "Deven Thompkins",
+   "pos": "WR",
+   "age": 26.7,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "feleipefranks|TE"
+    "deventhompkins|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036232",
-   "name": "Harrison Bryant",
-   "pos": "TE",
-   "age": 28.4,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "harrisonbryant|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036429",
-   "name": "Charlie Woerner",
-   "pos": "TE",
-   "age": 28.9,
-   "games": 6,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "charleswoerner|TE",
-    "charliewoerner|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036741",
-   "name": "Jack Stoll",
-   "pos": "TE",
-   "age": 28.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "jackstoll|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034159",
-   "name": "Will Dissly",
-   "pos": "TE",
-   "age": 30.2,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "willdissly|TE",
-    "williamdissly|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034073",
-   "name": "Ross Dwelley",
-   "pos": "TE",
+   "gsis_id": "00-0033943",
+   "name": "Josh Reynolds",
+   "pos": "WR",
    "age": 31.6,
    "games": 0,
    "rookie": false,
@@ -13171,160 +12802,160 @@
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "rossdwelley|TE"
+    "joshreynolds|WR",
+    "joshuareynolds|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039305",
-   "name": "Jack Westover",
-   "pos": "TE",
-   "age": 27.2,
+   "gsis_id": "00-0034867",
+   "name": "Malik Turner",
+   "pos": "WR",
+   "age": 30.6,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "jackwestover|TE"
+    "malikturner|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037277",
-   "name": "Teagan Quitoriano",
-   "pos": "TE",
-   "age": 26.5,
-   "games": 2,
+   "gsis_id": "00-0038519",
+   "name": "Nikko Remigio",
+   "pos": "WR",
+   "age": 26.8,
+   "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "teaganquitoriano|TE"
+    "nikkoremigio|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039686",
-   "name": "Colson Yankoff",
-   "pos": "TE",
-   "age": 26.5,
-   "games": 4,
+   "gsis_id": "00-0035500",
+   "name": "Greg Dortch",
+   "pos": "WR",
+   "age": 28.3,
+   "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "colsonyankoff|TE"
+    "gregdortch|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0038783",
-   "name": "Nate Adkins",
-   "pos": "TE",
-   "age": 27.2,
+   "gsis_id": "00-0038492",
+   "name": "Jason Brownlee",
+   "pos": "WR",
+   "age": 27.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jasonbrownlee|WR"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036463",
+   "name": "Chris Blair",
+   "pos": "WR",
+   "age": 28.9,
    "games": 3,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "nateadkins|TE",
-    "nathanadkins|TE"
+    "chrisblair|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0035249",
-   "name": "Josh Oliver",
-   "pos": "TE",
-   "age": 29.5,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "josholiver|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036332",
-   "name": "Josiah Deguara",
-   "pos": "TE",
-   "age": 29.6,
+   "gsis_id": "00-0038465",
+   "name": "Malik Heath",
+   "pos": "WR",
+   "age": 26.4,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "josiahdeguara|TE"
+    "malikheath|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0035956",
-   "name": "Giovanni Ricci",
-   "pos": "TE",
-   "age": 29.9,
+   "gsis_id": "00-0034928",
+   "name": "Steven Sims",
+   "pos": "WR",
+   "age": 29.4,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "giovanniricci|TE"
+    "stevensims|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0035631",
-   "name": "Drew Sample",
-   "pos": "TE",
-   "age": 30.4,
-   "games": 4,
+   "gsis_id": "00-0039521",
+   "name": "Xavier Weaver",
+   "pos": "WR",
+   "age": 25.9,
+   "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "drewsample|TE"
+    "xavierweaver|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0037755",
-   "name": "Jelani Woods",
-   "pos": "TE",
+   "gsis_id": "00-0038576",
+   "name": "Charlie Jones",
+   "pos": "WR",
    "age": 27.9,
-   "games": 5,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "jelaniwoods|TE"
+    "charliejones|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036534",
-   "name": "Shane Zylstra",
-   "pos": "TE",
+   "gsis_id": "00-0035645",
+   "name": "Gunner Olszewski",
+   "pos": "WR",
    "age": 29.8,
    "games": 0,
    "rookie": false,
@@ -13332,156 +12963,26 @@
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "shanezylstra|TE"
+    "gunnerolszewski|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0040488",
-   "name": "Carter Runyon",
-   "pos": "TE",
-   "age": 25.1,
+   "gsis_id": "00-0035544",
+   "name": "Tom Kennedy",
+   "pos": "WR",
+   "age": 30.1,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "carterrunyon|TE"
+    "tomkennedy|WR"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038589",
-   "name": "Josh Whyle",
-   "pos": "TE",
-   "age": 27.0,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "joshwhyle|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034365",
-   "name": "Ian Thomas",
-   "pos": "TE",
-   "age": 30.3,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "ianthomas|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0031484",
-   "name": "Chris Manhertz",
-   "pos": "TE",
-   "age": 34.4,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "chrismanhertz|TE",
-    "christophermanhertz|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039050",
-   "name": "Payne Durham",
-   "pos": "TE",
-   "age": 26.2,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "paynedurham|TE",
-    "williamdurham|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039912",
-   "name": "Ben Sinnott",
-   "pos": "TE",
-   "age": 24.2,
-   "games": 2,
-   "rookie": false,
-   "contract": "rookie",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "bensinnott|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039530",
-   "name": "Brevyn Spann-Ford",
-   "pos": "TE",
-   "age": 26.7,
-   "games": 8,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brevynspannford|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0034613",
-   "name": "Tanner Hudson",
-   "pos": "TE",
-   "age": 31.8,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tannerhudson|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039754",
-   "name": "Devin Culp",
-   "pos": "TE",
-   "age": 26.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "devinculp|TE"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0033858",
@@ -13497,121 +12998,7 @@
     "jonnusmith|TE"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040058",
-   "name": "Nick Kallerup",
-   "pos": "TE",
-   "age": 25.4,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "nickkallerup|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0036590",
-   "name": "Quintin Morris",
-   "pos": "TE",
-   "age": 27.6,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "quintinmorris|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037654",
-   "name": "Tucker Fisk",
-   "pos": "TE",
-   "age": 27.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "tuckerfisk|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0040509",
-   "name": "Ben Yurosek",
-   "pos": "TE",
-   "age": 24.5,
-   "games": 2,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "benjaminyurosek|TE",
-    "benyurosek|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038809",
-   "name": "Ben Sims",
-   "pos": "TE",
-   "age": 26.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "bensims|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037317",
-   "name": "Nick Muse",
-   "pos": "TE",
-   "age": 27.8,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "nicholasmuse|TE",
-    "nickmuse|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038643",
-   "name": "Brayden Willis",
-   "pos": "TE",
-   "age": 26.8,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "braydenwillis|TE"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0033455",
@@ -13627,40 +13014,55 @@
     "anthonyfirkser|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0034798",
-   "name": "Durham Smythe",
+   "gsis_id": "00-0036232",
+   "name": "Harrison Bryant",
    "pos": "TE",
-   "age": 31.1,
-   "games": 2,
+   "age": 28.4,
+   "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "durhamsmythe|TE"
+    "harrisonbryant|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0033246",
-   "name": "Johnny Mundt",
+   "gsis_id": "00-0036876",
+   "name": "Kylen Granson",
    "pos": "TE",
-   "age": 31.8,
-   "games": 4,
+   "age": 28.4,
+   "games": 1,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "johnmundt|TE",
-    "johnnymundt|TE"
+    "kylengranson|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039824",
+   "name": "Jared Wiley",
+   "pos": "TE",
+   "age": 25.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jaredwiley|TE"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0036887",
@@ -13676,103 +13078,7 @@
     "lukefarrell|TE"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039458",
-   "name": "Brenden Bates",
-   "pos": "TE",
-   "age": 26.9,
-   "games": 0,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "brendenbates|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0037292",
-   "name": "Andrew Ogletree",
-   "pos": "TE",
-   "age": 28.1,
-   "games": 4,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "andrewogletree|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0038547",
-   "name": "Luke Schoonmaker",
-   "pos": "TE",
-   "age": 27.9,
-   "games": 3,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "lukeschoonmaker|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0032392",
-   "name": "Austin Hooper",
-   "pos": "TE",
-   "age": 31.9,
-   "games": 6,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "austinhooper|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0039518",
-   "name": "Treyton Welch",
-   "pos": "TE",
-   "age": 25.7,
-   "games": 1,
-   "rookie": true,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "treytonwelch|TE"
-   ],
-   "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033757",
-   "name": "Robert Tonyan",
-   "pos": "TE",
-   "age": 32.4,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "roberttonyan|TE"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0033217",
@@ -13789,23 +13095,139 @@
     "mohamedaliecox|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0039648",
-   "name": "David Martin-Robinson",
+   "gsis_id": "00-0040058",
+   "name": "Nick Kallerup",
    "pos": "TE",
-   "age": 26.7,
+   "age": 25.4,
    "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "davidmartinrobinson|TE"
+    "nickkallerup|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036590",
+   "name": "Quintin Morris",
+   "pos": "TE",
+   "age": 27.6,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "quintinmorris|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038589",
+   "name": "Josh Whyle",
+   "pos": "TE",
+   "age": 27.0,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "joshwhyle|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040509",
+   "name": "Ben Yurosek",
+   "pos": "TE",
+   "age": 24.5,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "benjaminyurosek|TE",
+    "benyurosek|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034159",
+   "name": "Will Dissly",
+   "pos": "TE",
+   "age": 30.2,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "willdissly|TE",
+    "williamdissly|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033246",
+   "name": "Johnny Mundt",
+   "pos": "TE",
+   "age": 31.8,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "johnmundt|TE",
+    "johnnymundt|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036429",
+   "name": "Charlie Woerner",
+   "pos": "TE",
+   "age": 28.9,
+   "games": 6,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "charleswoerner|TE",
+    "charliewoerner|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0040488",
+   "name": "Carter Runyon",
+   "pos": "TE",
+   "age": 25.1,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "carterrunyon|TE"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0034981",
@@ -13821,23 +13243,103 @@
     "fostermoreau|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
-   "gsis_id": "00-0036876",
-   "name": "Kylen Granson",
+   "gsis_id": "00-0036332",
+   "name": "Josiah Deguara",
    "pos": "TE",
-   "age": 28.4,
-   "games": 1,
+   "age": 29.6,
+   "games": 0,
    "rookie": false,
    "contract": "not in table",
    "contract_factor": 1.0,
    "basis": "this season",
    "keys": [
-    "kylengranson|TE"
+    "josiahdeguara|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037277",
+   "name": "Teagan Quitoriano",
+   "pos": "TE",
+   "age": 26.5,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "teaganquitoriano|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039631",
+   "name": "Cam Grandy",
+   "pos": "TE",
+   "age": 26.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "camgrandy|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039686",
+   "name": "Colson Yankoff",
+   "pos": "TE",
+   "age": 26.5,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "colsonyankoff|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034613",
+   "name": "Tanner Hudson",
+   "pos": "TE",
+   "age": 31.8,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tannerhudson|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033576",
+   "name": "Eric Saubert",
+   "pos": "TE",
+   "age": 32.3,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ericsaubert|TE"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0038394",
@@ -13853,7 +13355,217 @@
     "willmallory|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039050",
+   "name": "Payne Durham",
+   "pos": "TE",
+   "age": 26.2,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "paynedurham|TE",
+    "williamdurham|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039754",
+   "name": "Devin Culp",
+   "pos": "TE",
+   "age": 26.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "devinculp|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038809",
+   "name": "Ben Sims",
+   "pos": "TE",
+   "age": 26.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "bensims|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037306",
+   "name": "John FitzPatrick",
+   "pos": "TE",
+   "age": 26.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "johnfitzpatrick|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039912",
+   "name": "Ben Sinnott",
+   "pos": "TE",
+   "age": 24.2,
+   "games": 2,
+   "rookie": false,
+   "contract": "rookie",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "bensinnott|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037654",
+   "name": "Tucker Fisk",
+   "pos": "TE",
+   "age": 27.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tuckerfisk|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037292",
+   "name": "Andrew Ogletree",
+   "pos": "TE",
+   "age": 28.1,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "andrewogletree|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036825",
+   "name": "Feleipe Franks",
+   "pos": "TE",
+   "age": 28.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "feleipefranks|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039530",
+   "name": "Brevyn Spann-Ford",
+   "pos": "TE",
+   "age": 26.7,
+   "games": 8,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "brevynspannford|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0031484",
+   "name": "Chris Manhertz",
+   "pos": "TE",
+   "age": 34.4,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "chrismanhertz|TE",
+    "christophermanhertz|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034365",
+   "name": "Ian Thomas",
+   "pos": "TE",
+   "age": 30.3,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "ianthomas|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036534",
+   "name": "Shane Zylstra",
+   "pos": "TE",
+   "age": 29.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "shanezylstra|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0032392",
+   "name": "Austin Hooper",
+   "pos": "TE",
+   "age": 31.9,
+   "games": 6,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "austinhooper|TE"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0034270",
@@ -13869,23 +13581,7 @@
     "tylerconklin|TE"
    ],
    "value": 0,
-   "rank": 674
-  },
-  {
-   "gsis_id": "00-0033439",
-   "name": "Pharaoh Brown",
-   "pos": "TE",
-   "age": 32.3,
-   "games": 1,
-   "rookie": false,
-   "contract": "not in table",
-   "contract_factor": 1.0,
-   "basis": "this season",
-   "keys": [
-    "pharaohbrown|TE"
-   ],
-   "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0036556",
@@ -13901,7 +13597,297 @@
     "brevinjordan|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038547",
+   "name": "Luke Schoonmaker",
+   "pos": "TE",
+   "age": 27.9,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "lukeschoonmaker|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034073",
+   "name": "Ross Dwelley",
+   "pos": "TE",
+   "age": 31.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "rossdwelley|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038643",
+   "name": "Brayden Willis",
+   "pos": "TE",
+   "age": 26.8,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "braydenwillis|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039305",
+   "name": "Jack Westover",
+   "pos": "TE",
+   "age": 27.2,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jackwestover|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033439",
+   "name": "Pharaoh Brown",
+   "pos": "TE",
+   "age": 32.3,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "pharaohbrown|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035956",
+   "name": "Giovanni Ricci",
+   "pos": "TE",
+   "age": 29.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "giovanniricci|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039648",
+   "name": "David Martin-Robinson",
+   "pos": "TE",
+   "age": 26.7,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "davidmartinrobinson|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0036741",
+   "name": "Jack Stoll",
+   "pos": "TE",
+   "age": 28.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jackstoll|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037348",
+   "name": "Tanner Conner",
+   "pos": "TE",
+   "age": 28.5,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "tannerconner|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039458",
+   "name": "Brenden Bates",
+   "pos": "TE",
+   "age": 26.9,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "brendenbates|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037755",
+   "name": "Jelani Woods",
+   "pos": "TE",
+   "age": 27.9,
+   "games": 5,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "jelaniwoods|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0033757",
+   "name": "Robert Tonyan",
+   "pos": "TE",
+   "age": 32.4,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "roberttonyan|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0037317",
+   "name": "Nick Muse",
+   "pos": "TE",
+   "age": 27.8,
+   "games": 1,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "nicholasmuse|TE",
+    "nickmuse|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0038783",
+   "name": "Nate Adkins",
+   "pos": "TE",
+   "age": 27.2,
+   "games": 3,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "nateadkins|TE",
+    "nathanadkins|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035631",
+   "name": "Drew Sample",
+   "pos": "TE",
+   "age": 30.4,
+   "games": 4,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "drewsample|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0034798",
+   "name": "Durham Smythe",
+   "pos": "TE",
+   "age": 31.1,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "durhamsmythe|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0039518",
+   "name": "Treyton Welch",
+   "pos": "TE",
+   "age": 25.7,
+   "games": 1,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "treytonwelch|TE"
+   ],
+   "value": 0,
+   "rank": 673
+  },
+  {
+   "gsis_id": "00-0035249",
+   "name": "Josh Oliver",
+   "pos": "TE",
+   "age": 29.5,
+   "games": 2,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "josholiver|TE"
+   ],
+   "value": 0,
+   "rank": 673
   },
   {
    "gsis_id": "00-0040400",
@@ -13917,7 +13903,7 @@
     "donovanedwards|RB"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040553",
@@ -13933,7 +13919,7 @@
     "quincyskinner|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040953",
@@ -13949,7 +13935,7 @@
     "jeffcaldwell|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041361",
@@ -13965,7 +13951,7 @@
     "willpauling|WR"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0037031",
@@ -13981,7 +13967,7 @@
     "nikolakalinic|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0038145",
@@ -13997,7 +13983,7 @@
     "thomasodukoya|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0038406",
@@ -14014,7 +14000,7 @@
     "zackkuntz|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0038735",
@@ -14030,7 +14016,7 @@
     "princetonfant|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039023",
@@ -14046,7 +14032,7 @@
     "joelwilson|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039263",
@@ -14062,7 +14048,7 @@
     "mccallancastles|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039275",
@@ -14078,7 +14064,7 @@
     "messiahswinson|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039550",
@@ -14094,7 +14080,7 @@
     "shawnbowman|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039702",
@@ -14110,7 +14096,7 @@
     "masonpline|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039843",
@@ -14126,7 +14112,7 @@
     "qadirismail|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0039936",
@@ -14142,7 +14128,7 @@
     "thomasyassmin|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040094",
@@ -14158,7 +14144,7 @@
     "trewatson|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040387",
@@ -14174,7 +14160,7 @@
     "zachhorton|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040392",
@@ -14190,7 +14176,7 @@
     "cadenprieskorn|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040504",
@@ -14206,7 +14192,7 @@
     "brysonnesbit|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0040697",
@@ -14222,7 +14208,7 @@
     "thomasgordon|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041001",
@@ -14238,7 +14224,7 @@
     "mattlauter|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041180",
@@ -14254,7 +14240,7 @@
     "quentinmoore|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041246",
@@ -14270,7 +14256,7 @@
     "joshkattus|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041366",
@@ -14286,7 +14272,7 @@
     "jamesongeers|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
   },
   {
    "gsis_id": "00-0041457",
@@ -14302,7 +14288,189 @@
     "mileskitselman|TE"
    ],
    "value": 0,
-   "rank": 674
+   "rank": 673
+  }
+ ],
+ "picks": [
+  {
+   "name": "2027 Early 1st",
+   "value": 5280
+  },
+  {
+   "name": "2027 Mid 1st",
+   "value": 3513
+  },
+  {
+   "name": "2027 Late 1st",
+   "value": 2822
+  },
+  {
+   "name": "2027 Early 2nd",
+   "value": 2401
+  },
+  {
+   "name": "2027 Mid 2nd",
+   "value": 1546
+  },
+  {
+   "name": "2027 Late 2nd",
+   "value": 1103
+  },
+  {
+   "name": "2027 Early 3rd",
+   "value": 955
+  },
+  {
+   "name": "2027 Mid 3rd",
+   "value": 807
+  },
+  {
+   "name": "2027 Late 3rd",
+   "value": 615
+  },
+  {
+   "name": "2027 1.01",
+   "value": 6687
+  },
+  {
+   "name": "2027 1.02",
+   "value": 5076
+  },
+  {
+   "name": "2027 1.03",
+   "value": 5076
+  },
+  {
+   "name": "2027 1.04",
+   "value": 4279
+  },
+  {
+   "name": "2027 1.05",
+   "value": 4065
+  },
+  {
+   "name": "2027 1.06",
+   "value": 3430
+  },
+  {
+   "name": "2027 1.07",
+   "value": 3430
+  },
+  {
+   "name": "2027 1.08",
+   "value": 3128
+  },
+  {
+   "name": "2027 1.09",
+   "value": 3128
+  },
+  {
+   "name": "2027 1.10",
+   "value": 2859
+  },
+  {
+   "name": "2027 1.11",
+   "value": 2859
+  },
+  {
+   "name": "2027 1.12",
+   "value": 2442
+  },
+  {
+   "name": "2027 2.01",
+   "value": 2402
+  },
+  {
+   "name": "2027 2.02",
+   "value": 2402
+  },
+  {
+   "name": "2027 2.03",
+   "value": 2399
+  },
+  {
+   "name": "2027 2.04",
+   "value": 2399
+  },
+  {
+   "name": "2027 2.05",
+   "value": 1546
+  },
+  {
+   "name": "2027 2.06",
+   "value": 1546
+  },
+  {
+   "name": "2027 2.07",
+   "value": 1546
+  },
+  {
+   "name": "2027 2.08",
+   "value": 1546
+  },
+  {
+   "name": "2027 2.09",
+   "value": 1546
+  },
+  {
+   "name": "2027 2.10",
+   "value": 955
+  },
+  {
+   "name": "2027 2.11",
+   "value": 955
+  },
+  {
+   "name": "2027 2.12",
+   "value": 955
+  },
+  {
+   "name": "2027 3.01",
+   "value": 955
+  },
+  {
+   "name": "2027 3.02",
+   "value": 955
+  },
+  {
+   "name": "2027 3.03",
+   "value": 955
+  },
+  {
+   "name": "2027 3.04",
+   "value": 955
+  },
+  {
+   "name": "2027 3.05",
+   "value": 807
+  },
+  {
+   "name": "2027 3.06",
+   "value": 807
+  },
+  {
+   "name": "2027 3.07",
+   "value": 807
+  },
+  {
+   "name": "2027 3.08",
+   "value": 807
+  },
+  {
+   "name": "2027 3.09",
+   "value": 807
+  },
+  {
+   "name": "2027 3.10",
+   "value": 807
+  },
+  {
+   "name": "2027 3.11",
+   "value": 807
+  },
+  {
+   "name": "2027 3.12",
+   "value": 38
   }
  ]
 }
