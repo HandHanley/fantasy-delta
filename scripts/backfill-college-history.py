@@ -23,9 +23,12 @@ WHAT IS DIFFERENT FROM A LIVE SEASON FILE
     Roschon Johnson, Michael Wilson). Costs no API calls. The study must rank everyone against the same fixed
     pool in every season (top N by production at each position), so a wider file does not change percentiles.
   - No draft-board door (DELTA_BOARD_FILE points nowhere): today's board means nothing for 2013.
-  - Roster rescue on (CFBD_RESCUE_UNROSTERED=1, 12 Nov 2026): CFBD's older rosters leave out real players whose
-    box-score rows exist (Chubb and Michel, Georgia 2017). They are kept when CFBD's PPA or usage list names them
-    at a skill position for the same team, and marked "rescued": 1. See fetch-college.py.
+  - Roster rescue on (CFBD_RESCUE_UNROSTERED=1). CFBD's older rosters list some real skill players with position
+    "?" (probe, 13 Nov 2026: Nick Chubb and Sony Michel, Georgia 2017), so the live script never kept them, and
+    CFBD's PPA and usage lists leave them out too (so they have no PPA). With the switch they are kept, given a
+    position from how they were used, and marked "rescued": 1 with the reason in "posInf". See fetch-college.py.
+    Version 1 (12 Nov) looked them up in the PPA and usage lists and found nobody; seasons pulled with it are
+    pulled again.
   - The continuity door reads the season before from the throwaway folder, so seasons run oldest first.
 
 THE BUDGET RULE
@@ -52,6 +55,7 @@ PER_SEASON = 31                  # fbs, roster, usage, talent (+3 carry-forward)
 RUN_COST, RUNS_PER_WEEK, SPARE = 30, 3, 30   # the live refresh's needs until the reset, plus a spare
 QUOTAS = {'Q_QB': '120', 'Q_RB': '250', 'Q_WR': '400', 'Q_TE': '150'}
 MIN_PLAYERS = 300                # a real season file holds well over this; fewer means the pull went wrong
+RESCUE_VERSION = 2               # 1 = PPA/usage lookup (found nobody), 2 = "?" roster players, position from use
 
 KEY = (os.environ.get('CFBD_API_KEY') or '').strip()
 BASE = os.environ.get('CFBD_BASE') or 'https://api.collegefootballdata.com'
@@ -130,7 +134,7 @@ def run_season(y, scratch):
     # early, so the highest number is the season's real cost. No numbered line at all -> assume the estimate.
     m = re.findall(r'^\s*\[\s*(\d+)\]', p.stdout, flags=re.M)
     calls = max(map(int, m)) if m else PER_SEASON
-    row = {'season': y, 'calls': calls, 'exit': p.returncode, 'rescue': True}
+    row = {'season': y, 'calls': calls, 'exit': p.returncode, 'rescue': RESCUE_VERSION}
     # call() in fetch-college.py turns a failed request into an empty answer, so an outage or a used-up key can
     # look exactly like a season CFBD has no data for. Its "FAILED:" line is the only way to tell them apart.
     failed = [ln.strip() for ln in p.stdout.splitlines() if re.match(r'^\s*\[\s*\d+\].*FAILED:', ln)]
@@ -180,12 +184,13 @@ def main():
             f'{LIVE_FROM} onward is already in data/ and live.')
         return 1
     # A re-run after a partial one pays only for the gaps. A season counts as saved only if it was pulled with
-    # the roster rescue (12 Nov 2026): the first 2013-2019 files were saved without it and are pulled again.
+    # the current roster rescue: seasons saved without it, or with version 1 (True in older reports), are pulled
+    # again.
     done = {}
     if REPORT.exists():
         done = {r['season']: r for r in json.load(open(REPORT)).get('seasons', [])}
     have = [y for y in years if (OUT_DIR / f'college-players-{y}.json').exists()
-            and done.get(y, {}).get('status') == 'saved' and done.get(y, {}).get('rescue')]
+            and done.get(y, {}).get('status') == 'saved' and done.get(y, {}).get('rescue') == RESCUE_VERSION]
     if have:
         ann('notice', 'Already saved', f'Skipping {", ".join(map(str, have))}: delete the file to pull a season again.')
         years = [y for y in years if y not in have]

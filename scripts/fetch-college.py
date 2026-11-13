@@ -292,10 +292,18 @@ with cfbd.ApiClient(cfg) as api:
         recruits += call(f"GET /recruiting/players {cy}", recruit_api.get_recruits, year=cy) or []
 
     # ---- roster index (position + class are authoritative here, not inferred) ----
+    # STUDY-ONLY ROSTER RESCUE (12-13 Nov 2026). OFF unless CFBD_RESCUE_UNROSTERED=1, which only
+    # scripts/backfill-college-history.py sets; the live refresh never sets it, so live files are unchanged.
+    # CFBD's older rosters list some real skill players with position "?" (probe, 13 Nov: Nick Chubb and Sony
+    # Michel, Georgia 2017, same athlete ids as their box-score rows), and its PPA and usage lists leave them
+    # out. With the switch on they are kept as position "?", their box-score rows join by id as usual, and
+    # after the game logs they are given a position from how they were used (see "position from use" below)
+    # or dropped. They are marked "rescued": 1 and "posInf" in the file.
+    RESCUE = os.environ.get("CFBD_RESCUE_UNROSTERED") == "1"
     ply = {}
     for p in roster:
         pos = g(p, "position") or ""
-        if pos not in SKILL: continue
+        if pos not in SKILL and not (RESCUE and pos in ("?", "")): continue
         nm = f"{g(p,'first_name','firstName','') or ''} {g(p,'last_name','lastName','') or ''}".strip()
         if not nm: continue
         team = g(p, "team")
@@ -307,7 +315,11 @@ with cfbd.ApiClient(cfg) as api:
             "recruit_ids": g(p, "recruit_ids") or [],
             "g": {}, "prod": 0.0, "usg": None,
         }
+        if pos not in SKILL:
+            ply[(norm(nm), team)].update(pos="?", rescued=1, wt=g(p, "weight"))
     print(f"\n  FBS skill players on rosters: {len(ply):,}")
+    if RESCUE:
+        print(f"  roster rescue on: {sum(1 for v in ply.values() if v.get('rescued')):,} players listed with no position kept for now")
 
     # ---- class standing: guard against a broken roster feed (24 Oct 2026) ----
     # From the 20 Oct run, CFBD's 2026 rosters listed EVERY player as class 1 (the 18 Oct run had
@@ -443,43 +455,6 @@ with cfbd.ApiClient(cfg) as api:
             ov = getattr(uu, "overall", None) if uu is not None else None
             if ov is not None: ply[k]["usg"] = round(float(ov), 4)
 
-    # ---- study-only rescue of players missing from the roster feed (12 Nov 2026) ----
-    # OFF unless CFBD_RESCUE_UNROSTERED=1, which only scripts/backfill-college-history.py sets; the live
-    # refresh never sets it, so live files are unchanged. CFBD's older rosters (2013-2019) leave out some
-    # real players whose box-score rows are there: Nick Chubb and Sony Michel (Georgia 2017), Todd Gurley
-    # (2014), Will Fuller (Notre Dame 2015). With the switch on, a box-score row that matches no roster
-    # player is kept IF CFBD's per-play (PPA) or usage list, both already fetched above, names him at a
-    # skill position for that same team. Rescued players have no class or recruiting match (both come from
-    # the roster) and are marked "rescued": 1 in the file. No extra API calls.
-    RESCUE = os.environ.get("CFBD_RESCUE_UNROSTERED") == "1"
-    RESCUE_IDX, RESCUED = {}, []
-    if RESCUE:
-        for src, rows in (("ppa", ppa_rows), ("usage", usage)):
-            for r in (rows or []):
-                rpos = (g(r, "position") or "").upper(); rtm = g(r, "team"); rnm = g(r, "name"); rid = g(r, "id")
-                if rpos not in SKILL or rtm not in fbs_names or not rnm: continue
-                rec = {"id": rid, "n": rnm, "pos": rpos, "tm": rtm}
-                if src == "usage":
-                    uu = g(r, "usage"); ov = getattr(uu, "overall", None) if uu is not None else None
-                    if ov is not None: rec["usg"] = round(float(ov), 4)
-                for key in ((("id", str(rid)),) if rid is not None else ()) + ((norm(rnm), rtm),):
-                    have = RESCUE_IDX.get(key)
-                    if have is None: RESCUE_IDX[key] = rec
-                    elif have["pos"] == rpos and "usg" in rec: have.setdefault("usg", rec["usg"])
-    def _rescue(aid, anm, tname):
-        rec = (RESCUE_IDX.get(("id", str(aid))) if aid is not None else None) or RESCUE_IDX.get((norm(anm), tname))
-        if rec is None or rec["tm"] != tname: return None
-        k = (norm(rec["n"]), tname)
-        if k in ply: return ply[k]
-        v = {"id": rec["id"] if rec["id"] is not None else aid, "n": rec["n"], "pos": rec["pos"], "tm": tname,
-             "cls": None, "cls_src": "unknown", "stars": 0, "rating": 0.0, "rcls": None,
-             "conf": TEAM_CONF.get(tname, ""), "p4": 1 if TEAM_CONF.get(tname, "") in P4 else 0,
-             "recruit_ids": [], "g": {}, "prod": 0.0, "usg": rec.get("usg"), "rescued": 1}
-        ply[k] = v
-        if v["id"] is not None: by_id[str(v["id"])] = v
-        RESCUED.append(f"{v['n']} ({tname}, {v['pos']})")
-        return v
-
     # ---- weekly game logs ----
     print("\n-- weekly game logs " + "-" * 51)
     STAT_KEYS = collections.Counter()
@@ -542,8 +517,6 @@ with cfbd.ApiClient(cfg) as api:
                                     MISS.append(f"{g(ath,'name')} ({tname})")
                             else:
                                 MATCH["by_id"] += 1
-                            if v is None and RESCUE and tname in fbs_names:
-                                v = _rescue(aid, g(ath, "name"), tname)
                             if v is None: continue
                             row = v["g"].setdefault(wk, {"w": wk, "opp": opp})
                             row.setdefault("_t", tname)   # which team's totals this game uses; removed before emit
@@ -556,8 +529,42 @@ with cfbd.ApiClient(cfg) as api:
           " e.g. OL on a trick play. Defensive rows are no longer counted at all.)")
     if MISS: print("    unmatched samples:", "; ".join(MISS))
     if RESCUE:
-        print(f"  rescued (not on the roster feed, named at a skill position by PPA/usage): {len(RESCUED):,}")
-        if RESCUED: print("    rescued samples:", "; ".join(RESCUED[:12]))
+        # ---- position from use (study only) ----
+        # A "?" player's season box-score line decides his position:
+        #   QB  passes are most of his touches (at least 20 attempts, more than carries + catches)
+        #   RB  otherwise, at least as many carries as catches
+        #   TE  otherwise, listed at 235 lb or more        WR  otherwise (or weight unknown)
+        # Fewer than RESCUE_MIN_TOUCHES offensive touches -> dropped: almost always a defender or a special-
+        # teamer on a trick play (Georgia 2017's other "?" players: Dominick Sanders, John Atkins, Jarvis Wilson).
+        # The rule is a stand-in; the study takes a drafted player's position from his NFL draft record.
+        RESCUE_MIN_TOUCHES = 5
+        kept, dropped = collections.Counter(), 0
+        for k in [k for k, v in ply.items() if v.get("rescued")]:
+            v = ply[k]; car = rec = att = 0.0
+            for row in v["g"].values():
+                try: car += float(row.get("car") or 0)
+                except (TypeError, ValueError): pass
+                try: rec += float(row.get("rec") or 0)
+                except (TypeError, ValueError): pass
+                ca = str(row.get("ca") or "")
+                try: att += float(ca.split("/")[1]) if "/" in ca else float(row.get("pa") or 0)
+                except (TypeError, ValueError, IndexError): pass
+            if car + rec + att < RESCUE_MIN_TOUCHES:
+                del ply[k]
+                if v.get("id") is not None: by_id.pop(str(v["id"]), None)
+                dropped += 1; continue
+            try: wt = float(v.get("wt") or 0)
+            except (TypeError, ValueError): wt = 0.0
+            if att >= 20 and att > car + rec: v["pos"] = "QB"
+            elif car >= rec:                  v["pos"] = "RB"
+            elif wt >= 235:                   v["pos"] = "TE"
+            else:                             v["pos"] = "WR"
+            v["posInf"] = f"use: {att:.0f} att, {car:.0f} car, {rec:.0f} rec, {wt:.0f} lb"
+            kept[v["pos"]] += 1
+        print(f"  roster rescue: kept {sum(kept.values()):,} ({dict(kept)}), dropped {dropped:,} with under "
+              f"{RESCUE_MIN_TOUCHES} offensive touches")
+        top = sorted((v for v in ply.values() if v.get("rescued")), key=lambda v: -len(v["g"]))[:10]
+        if top: print("    rescued:", "; ".join(f"{v['n']} ({v['tm']}, {v['pos']}, {v['posInf']})" for v in top))
     if MATCH['by_id'] + MATCH['by_name'] == 0:
         if sum(MATCH.values()) == 0:
             # Rosters exist but no game stat rows yet — season is between roster release and
@@ -865,7 +872,7 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
         "gms": v["games"],
         "g": [compact_row(v["g"][w]) for w in sorted(v["g"])],
-        **({"rescued": 1} if v.get("rescued") else {}),   # study backfill only; never set in live files
+        **({"rescued": 1, "posInf": v.get("posInf")} if v.get("rescued") else {}),   # study backfill only; never in live files
     })
 
 os.makedirs("data", exist_ok=True)
