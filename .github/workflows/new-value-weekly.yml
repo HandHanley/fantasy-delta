@@ -49,7 +49,11 @@ jobs:
       - name: Fetch nflverse data
         run: bash scripts/fetch-new-value-data.sh "${{ runner.temp }}/nv" 2026
 
+      # PYTHONHASHSEED pinned: with Python's random string hashing, a tie in the comparables search could flip between
+      # runs (Dan Villari 47 or 48 from identical data, 13 Nov 2026). Pinned, the same data always gives the same file.
       - name: Build New Value
+        env:
+          PYTHONHASHSEED: '0'
         run: |
           WEEK_ARG=""
           if [ -n "${{ github.event.inputs.week }}" ]; then WEEK_ARG="--week ${{ github.event.inputs.week }}"; fi

@@ -217,13 +217,15 @@ def build(D, season, week, contracts):
     # Taysom Hill 64th, Philip Rivers 195th in the withdrawn 13 Nov freeze). History, 2016-2022: of former fantasy
     # starters with no game in a season and on no roster at any point through week 11, 6% played again and 3% were
     # starters again (Lynch, Witten, Gronkowski, all un-retiring); on a roster (incl. injured reserve and practice
-    # squad), 47% and 13%. "On a roster" = any team's weekly roster this season, any status but CUT/RET, in ANY week the
-    # roster file has, including weeks after this build's game week: whether he has a team is a fact about today, so the
-    # newest roster wins (Matt Lauter joined a practice squad in week 10 and must not drop out of a week-9 build). Injured
-    # reserve (RES) and practice squads (DEV) are kept: no injury penalty. His first signing brings him back.
+    # squad), 47% and 13%. "On a roster" = his LATEST row in this season's weekly roster file, whatever week that is,
+    # has any status but CUT/RET. Whether he has a team is a fact about today, so the newest row wins, including weeks
+    # after this build's game week (Matt Lauter joined a practice squad in week 10 and stays in a week-9 build). Latest
+    # row, not latest week: teams on a bye have no rows that week. A rookie cut since (Jarquez Hunter, cut week 10) has
+    # no team now. Injured reserve (RES) and practice squads (DEV) are kept: no injury penalty. Signing brings him back.
     wr = pd.read_csv(os.path.join(D, 'wrost', f'roster_weekly_{season}.csv'), low_memory=False, usecols=['gsis_id', 'week', 'status', 'team'])
     assert wr[wr.week == wr.week.max()].team.nunique() >= 26, 'weekly roster file looks incomplete; refusing to apply the no-roster rule'
-    on_roster = set(wr[~wr.status.isin(['CUT', 'RET'])].gsis_id)
+    latest = wr.sort_values('week').drop_duplicates('gsis_id', keep='last')
+    on_roster = set(latest[~latest.status.isin(['CUT', 'RET'])].gsis_id)
     # Never-played players (basis 'incoming rookie') follow the same rule once the season has started: a rookie cut and
     # unsigned (Damien Martinez, cut in week 1, was 170th) has no team either. Not separately measured: the history
     # above covers veterans; this applies Steve's rule ("no team, no value until he signs") to everyone.
