@@ -1,0 +1,68 @@
+# One-off: college seasons before 2020 for the class-strength study (docs/PREREG-pick-class-strength.md).
+# Approved by Steve 12 Nov 2026. Manual only: no schedule, because this is a one-time pull, not a refresh.
+#
+# Writes ONLY study/data/college-history/ (season files plus backfill-report.json). It runs the live
+# scripts/fetch-college.py unchanged from a throwaway folder, so the live portal list, the default season
+# file and the College tab index are never touched, and study/ is never deployed. See the script's header.
+#
+# Default is a DRY RUN: it asks CFBD how many calls are left this month and reports which seasons fit after
+# keeping a reserve for the live college refresh. Nothing is pulled. Set confirm to "yes" to pull and commit.
+#
+# Not in Deploy Pages' workflow_run list on purpose: nothing it writes is published.
+name: Backfill College History
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: "Seasons to pull (2004-2019), e.g. 2013-2019 or 2017,2018"
+        required: false
+        default: "2013-2019"
+      confirm:
+        description: 'Pull and commit? Type "yes". Anything else = dry run (budget and plan only).'
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: college-history-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Same pin as Fetch College Data, so the backfill reads CFBD exactly as the live seasons were read.
+      - name: Install CFBD client
+        run: pip install --quiet cfbd==5.33.0
+
+      - name: Backfill college seasons
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+        run: |
+          MODE=""
+          if [ "${{ github.event.inputs.confirm }}" = "yes" ]; then MODE="--confirm"; fi
+          python scripts/backfill-college-history.py --years "${{ github.event.inputs.years }}" $MODE
+
+      # always(): if a later season fails, the seasons already pulled are still kept (their calls are spent).
+      - name: Commit if changed
+        if: ${{ always() && github.event.inputs.confirm == 'yes' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add study/data/college-history
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "College history backfill (${{ github.event.inputs.years }})"
+            git pull --rebase --autostash
+            git push
+          fi
