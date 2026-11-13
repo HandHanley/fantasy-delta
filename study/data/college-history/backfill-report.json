@@ -1,0 +1,71 @@
+{
+ "generated": "2026-11-13T02:59:34Z",
+ "note": "College seasons before 2020 for docs/PREREG-pick-class-strength.md. Built by scripts/backfill-college-history.py through the unchanged fetch-college.py with wider quotas (QB 120, RB 250, WR 400, TE 150) and no board door. Study data only: never read by the site. Source: CollegeFootballData (credited on the site).",
+ "quotas": {
+  "Q_QB": "120",
+  "Q_RB": "250",
+  "Q_WR": "400",
+  "Q_TE": "150"
+ },
+ "calls_this_run": 31,
+ "postponed": [
+  2014,
+  2015,
+  2016,
+  2017,
+  2018,
+  2019
+ ],
+ "seasons": [
+  {
+   "season": 2013,
+   "calls": 31,
+   "exit": 0,
+   "failed_calls": [
+    "[ 15] GET /games/players wk0                 FAILED: (400)"
+   ],
+   "players": 1082,
+   "by_pos": {
+    "QB": 166,
+    "RB": 283,
+    "WR": 465,
+    "TE": 168
+   },
+   "doors": {
+    "universe": 1082,
+    "production": 920,
+    "pedigree": 162
+   },
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+   ],
+   "coverage": {
+    "ppa": 0.897,
+    "usg": 0.906,
+    "rsh": 1.0,
+    "ddom": 1.0,
+    "dom": 1.0,
+    "stars": 0.77,
+    "cls": 0.791,
+    "rcls": 0.77
+   },
+   "file_season": 2013,
+   "status": "incomplete"
+  }
+ ]
+}
