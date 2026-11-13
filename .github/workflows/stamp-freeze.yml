@@ -1,0 +1,50 @@
+# OpenTimestamps proof for a freeze file (13 Nov 2026). Submits the file's SHA-256 to the public OpenTimestamps
+# calendars and commits FILE.ots beside it: third-party proof, anchored in Bitcoin, that the file existed by now,
+# independent of GitHub. Like data/freeze-2026.json.ots, the proof starts "pending" and can be upgraded later with
+# `ots upgrade FILE.ots`; the calendars keep the commitment, so there is no rush.
+# Refuses if the .ots already exists. Manual only. The freeze file itself is never touched.
+name: Stamp Freeze (OpenTimestamps)
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "Freeze file to stamp"
+        required: false
+        default: "data/freeze-2026-nv-midseason.json"
+
+permissions:
+  contents: write
+
+jobs:
+  stamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Stamp
+        env:
+          FILE: ${{ github.event.inputs.file }}
+        run: |
+          case "$FILE" in data/freeze-*.json) ;; *) echo "::error::only data/freeze-*.json files"; exit 1;; esac
+          test -f "$FILE" || { echo "::error::$FILE not found"; exit 1; }
+          test ! -e "$FILE.ots" || { echo "::error::$FILE.ots already exists"; exit 1; }
+          pip install --quiet opentimestamps-client
+          echo "::notice title=SHA-256 of $FILE::$(sha256sum "$FILE" | cut -d' ' -f1)"
+          ots stamp "$FILE"
+          ots info "$FILE.ots" | head -20
+
+      - name: Commit the proof
+        env:
+          FILE: ${{ github.event.inputs.file }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FILE.ots"
+          git commit -m "OpenTimestamps proof for $FILE"
+          git pull --rebase --autostash
+          git push
