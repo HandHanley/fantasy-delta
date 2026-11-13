@@ -1,0 +1,65 @@
+# One-off diagnostic for the college history backfill (13 Nov 2026). Asks CFBD what each of its sources
+# (roster, PPA, usage, season stats, one week of box scores, player search) says about named players on one
+# team in one season. About 7 calls. Writes only study/data/college-history/probe-YEAR-TEAM.json, which the
+# site never reads. Manual only.
+name: Probe College Roster Gap
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Season"
+        required: false
+        default: "2017"
+      team:
+        description: "Team, as CFBD names it"
+        required: false
+        default: "Georgia"
+      week:
+        description: "One week of box scores to read (the player should have played)"
+        required: false
+        default: "1"
+      names:
+        description: "Players to look for, comma-separated"
+        required: false
+        default: "Nick Chubb,Sony Michel"
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CFBD client
+        run: pip install --quiet cfbd==5.33.0
+
+      - name: Probe
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+          YEAR: ${{ github.event.inputs.year }}
+          TEAM: ${{ github.event.inputs.team }}
+          WEEK: ${{ github.event.inputs.week }}
+          NAMES: ${{ github.event.inputs.names }}
+        run: python scripts/probe-college-roster-gap.py --year "$YEAR" --team "$TEAM" --week "$WEEK" --names "$NAMES"
+
+      - name: Commit if changed
+        if: ${{ always() }}
+        run: |
+          if [ ! -d study/data/college-history ]; then echo "nothing written"; exit 0; fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add study/data/college-history
+          if git diff --staged --quiet; then
+            echo "no change"
+          else
+            git commit -m "College roster-gap probe"
+            git pull --rebase --autostash
+            git push
+          fi
