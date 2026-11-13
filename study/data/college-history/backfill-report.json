@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-13T16:03:24Z",
+ "generated": "2026-11-13T16:13:19Z",
  "note": "College seasons before 2020 for docs/PREREG-pick-class-strength.md. Built by scripts/backfill-college-history.py through the unchanged fetch-college.py with wider quotas (QB 120, RB 250, WR 400, TE 150) and no board door. Study data only: never read by the site. Source: CollegeFootballData (credited on the site).",
  "quotas": {
   "Q_QB": "120",
@@ -7,25 +7,27 @@
   "Q_WR": "400",
   "Q_TE": "150"
  },
- "calls_this_run": 28,
+ "calls_this_run": 174,
  "postponed": [],
  "seasons": [
   {
    "season": 2013,
    "calls": 31,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
-   "players": 1082,
+   "players": 1092,
+   "rescued": 57,
    "by_pos": {
     "QB": 166,
-    "RB": 283,
-    "WR": 465,
+    "RB": 292,
+    "WR": 466,
     "TE": 168
    },
    "doors": {
-    "universe": 1082,
+    "universe": 1092,
     "production": 920,
-    "pedigree": 162
+    "pedigree": 172
    },
    "weeks": [
     1,
@@ -46,14 +48,14 @@
     16
    ],
    "coverage": {
-    "ppa": 0.897,
-    "usg": 0.906,
+    "ppa": 0.85,
+    "usg": 0.858,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.77,
-    "cls": 0.791,
-    "rcls": 0.77
+    "stars": 0.771,
+    "cls": 0.783,
+    "rcls": 0.771
    },
    "file_season": 2013,
    "status": "saved"
@@ -62,19 +64,21 @@
    "season": 2014,
    "calls": 31,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
-   "players": 1228,
+   "players": 1244,
+   "rescued": 57,
    "by_pos": {
-    "RB": 316,
-    "QB": 182,
-    "WR": 535,
-    "TE": 195
+    "RB": 329,
+    "QB": 183,
+    "WR": 539,
+    "TE": 193
    },
    "doors": {
-    "universe": 1228,
+    "universe": 1244,
     "production": 920,
-    "pedigree": 98,
-    "continuity": 210
+    "pedigree": 107,
+    "continuity": 217
    },
    "weeks": [
     1,
@@ -95,14 +99,14 @@
     16
    ],
    "coverage": {
-    "ppa": 0.875,
-    "usg": 0.888,
+    "ppa": 0.836,
+    "usg": 0.849,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.518,
-    "cls": 0.856,
-    "rcls": 0.518
+    "stars": 0.541,
+    "cls": 0.845,
+    "rcls": 0.541
    },
    "file_season": 2014,
    "status": "saved"
@@ -111,12 +115,14 @@
    "season": 2015,
    "calls": 28,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
    "players": 1225,
+   "rescued": 49,
    "by_pos": {
-    "RB": 330,
+    "RB": 333,
     "QB": 184,
-    "WR": 517,
+    "WR": 514,
     "TE": 194
    },
    "doors": {
@@ -143,14 +149,14 @@
     15
    ],
    "coverage": {
-    "ppa": 0.889,
-    "usg": 0.896,
+    "ppa": 0.856,
+    "usg": 0.863,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.038,
-    "cls": 0.983,
-    "rcls": 0.038
+    "stars": 0.042,
+    "cls": 0.982,
+    "rcls": 0.042
    },
    "file_season": 2015,
    "status": "saved"
@@ -159,19 +165,21 @@
    "season": 2016,
    "calls": 28,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
-   "players": 1200,
+   "players": 1198,
+   "rescued": 37,
    "by_pos": {
-    "QB": 171,
-    "RB": 329,
-    "WR": 514,
-    "TE": 186
+    "QB": 170,
+    "RB": 332,
+    "WR": 511,
+    "TE": 185
    },
    "doors": {
-    "universe": 1200,
+    "universe": 1198,
     "production": 920,
     "pedigree": 5,
-    "continuity": 275
+    "continuity": 273
    },
    "weeks": [
     1,
@@ -191,14 +199,14 @@
     15
    ],
    "coverage": {
-    "ppa": 0.922,
-    "usg": 0.928,
+    "ppa": 0.897,
+    "usg": 0.903,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.122,
-    "cls": 0.997,
-    "rcls": 0.122
+    "stars": 0.123,
+    "cls": 0.996,
+    "rcls": 0.123
    },
    "file_season": 2016,
    "status": "saved"
@@ -257,19 +265,21 @@
    "season": 2018,
    "calls": 28,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
-   "players": 1191,
+   "players": 1195,
+   "rescued": 11,
    "by_pos": {
     "QB": 148,
-    "RB": 328,
+    "RB": 332,
     "WR": 519,
     "TE": 196
    },
    "doors": {
-    "universe": 1191,
+    "universe": 1195,
     "production": 920,
-    "pedigree": 19,
-    "continuity": 252
+    "pedigree": 20,
+    "continuity": 255
    },
    "weeks": [
     1,
@@ -289,14 +299,14 @@
     15
    ],
    "coverage": {
-    "ppa": 0.943,
-    "usg": 0.931,
+    "ppa": 0.934,
+    "usg": 0.923,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.631,
+    "stars": 0.632,
     "cls": 1.0,
-    "rcls": 0.636
+    "rcls": 0.638
    },
    "file_season": 2018,
    "status": "saved"
@@ -305,19 +315,21 @@
    "season": 2019,
    "calls": 28,
    "exit": 0,
+   "rescue": 2,
    "no_week0": true,
-   "players": 1186,
+   "players": 1184,
+   "rescued": 1,
    "by_pos": {
     "QB": 147,
-    "RB": 320,
+    "RB": 318,
     "WR": 524,
     "TE": 195
    },
    "doors": {
-    "universe": 1186,
+    "universe": 1184,
     "production": 920,
     "pedigree": 27,
-    "continuity": 239
+    "continuity": 237
    },
    "weeks": [
     1,
@@ -338,13 +350,13 @@
    ],
    "coverage": {
     "ppa": 0.94,
-    "usg": 0.915,
+    "usg": 0.916,
     "rsh": 1.0,
     "ddom": 1.0,
     "dom": 1.0,
-    "stars": 0.675,
+    "stars": 0.673,
     "cls": 1.0,
-    "rcls": 0.684
+    "rcls": 0.682
    },
    "file_season": 2019,
    "status": "saved"
