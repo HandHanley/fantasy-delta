@@ -32,6 +32,10 @@ def factor(name, table, season, expiring='contract_year'):
     if p is None: return 1.0, 'not in table'
     if p.get('kind') not in TEAM_SIGNED or p.get('end') is None: return 1.0, p.get('kind') or 'none'
     left = int(p['end']) - (season + 1)
+    # Labels say what the deal covers, in seasons (Steve, 13 Nov: "1 year left" read wrong for Malik Willis, signed
+    # through 2028). The multiplier is unchanged: `left` counts seasons after NEXT season, the study's own definition
+    # (years left = end - n at kickoff of n = season + 1), so a deal through 2028 in 2026 is group 1 (x0.95).
+    lab = f"signed through {int(p['end'])}"
     if left < 0:
-        return (LAYER[0], 'expiring') if expiring == 'contract_year' else (1.0, 'expiring')
-    return LAYER[min(left, 2)], ['contract year', '1 year left', '2+ years left'][min(left, 2)]
+        return (LAYER[0], f'{lab} (expiring)') if expiring == 'contract_year' else (1.0, f'{lab} (expiring)')
+    return LAYER[min(left, 2)], lab
