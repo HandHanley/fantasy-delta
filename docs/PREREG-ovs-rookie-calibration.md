@@ -1,6 +1,7 @@
 # PRE-REGISTRATION — Own Value Scale: Draft-Day Rookie Values Learn From Past Misses
 
-**Drafted:** 12 November 2026. **Status: LOCKED 12 Nov 2026 as a measured layer (amendment A1).** The 2% test's crash failed (§6). Steve, 12 Nov: "I agree with your assumption that it's
+**Drafted:** 12 November 2026. **Status: LOCKED 12 Nov 2026 as a measured layer (amendment A1); MEASURED (§10), not yet in the weekly build.** The
+2% test's crash failed (§6). Steve, 12 Nov: "I agree with your assumption that it's
 likely because today's rookies do historically produce more than older years. We should do that study." It locks by
 committing this document with `study/ovs_rookie_calibration.py` and passing crash results, before the one real run.
 
@@ -138,3 +139,37 @@ replaces §3's test with a measured layer, built the way Contract Security was (
   - each factor with its range;
   - the rolling version (§2) for each class, to show how stable the factors are;
   - what changes: first-year players with no game in this week's build, and Stage 2 picks for the 2026 class.
+
+## 10. Results (12 November 2026, A1 Measurement)
+
+`study/ovs_rookie_layer.py`, `study/out/ovs_rookie_layer_{draft,inseason}.json`. Full PPR, measured lines.
+
+| NFL Picks | Draft Day: Produced ÷ Value | Range Of d | Factor | No Game Yet (In Season): Produced ÷ Value | Range Of d | Factor |
+|---|---|---|---|---|---|---|
+| 1–12 | 1.78 | +0.41 to +1.15 | **×1.73** | 1.68 | +0.32 to +1.06 | **×1.63** |
+| 13–32 | 1.47 | +0.11 to +0.89 | **×1.39** | 1.33 | −0.07 to +0.74 | ×1.00 (unclear) |
+| 33–64 | 1.30 | +0.04 to +0.59 | **×1.23** | 1.43 | +0.13 to +0.78 | **×1.36** |
+| 65–100 | 1.26 | −0.09 to +0.64 | ×1.00 (unclear) | 1.14 | −0.18 to +0.49 | ×1.00 (unclear) |
+| 101+ | 1.29 | −0.13 to +0.75 | ×1.00 (unclear) | 0.69 | −0.49 to −0.12 | **×0.72** |
+
+**What it changes, this week's build (first-year players with no game yet only; nobody else moves):**
+
+- Fernando Mendoza 5,374 → 8,757 (31st → 4th).
+- De'Zhaun Stribling 2,430 → 3,312 (71st → 58th).
+- Max Klare 973 → 1,326.
+- Ty Simpson unchanged at 4,199. He was pick 13, in the 13–32 range, where the in-season measurement wasn't clear
+  enough.
+- Day 3 and undrafted rookies who haven't played fall 28% (Jarquez Hunter 861 → 619).
+
+**Two flags for Steve before this goes into the weekly build:**
+
+1. **A cliff at pick 12/13 (in season)** and a non-monotone order (13–32 ×1.00 between ×1.63 and ×1.36). Both come
+   from the "apply only where the range excludes zero" rule meeting noisy ranges, not from anything real. Pick 12 gets
+   ×1.63 and pick 13 gets ×1.00.
+2. **Mendoza 4th overall from draft slot alone.** It follows the measured rule (top-12 picks produced 1.68× their
+   in-season "no game" value), but it's a big call on one cameo game.
+
+**Stage 2 picks:** the class-strength version (`PLAN-pick-values-now.md` §7) is barely moved by this layer, because the
+same factors apply to the class and to history and mostly cancel. Sorting the calibrated 2026 class directly still
+falls below Stage 1 from the Late 1st on (for example, 2nd Mid 776 vs 1,546), so the class-strength version is still
+the better Stage 2.
