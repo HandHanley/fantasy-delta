@@ -443,6 +443,43 @@ with cfbd.ApiClient(cfg) as api:
             ov = getattr(uu, "overall", None) if uu is not None else None
             if ov is not None: ply[k]["usg"] = round(float(ov), 4)
 
+    # ---- study-only rescue of players missing from the roster feed (12 Nov 2026) ----
+    # OFF unless CFBD_RESCUE_UNROSTERED=1, which only scripts/backfill-college-history.py sets; the live
+    # refresh never sets it, so live files are unchanged. CFBD's older rosters (2013-2019) leave out some
+    # real players whose box-score rows are there: Nick Chubb and Sony Michel (Georgia 2017), Todd Gurley
+    # (2014), Will Fuller (Notre Dame 2015). With the switch on, a box-score row that matches no roster
+    # player is kept IF CFBD's per-play (PPA) or usage list, both already fetched above, names him at a
+    # skill position for that same team. Rescued players have no class or recruiting match (both come from
+    # the roster) and are marked "rescued": 1 in the file. No extra API calls.
+    RESCUE = os.environ.get("CFBD_RESCUE_UNROSTERED") == "1"
+    RESCUE_IDX, RESCUED = {}, []
+    if RESCUE:
+        for src, rows in (("ppa", ppa_rows), ("usage", usage)):
+            for r in (rows or []):
+                rpos = (g(r, "position") or "").upper(); rtm = g(r, "team"); rnm = g(r, "name"); rid = g(r, "id")
+                if rpos not in SKILL or rtm not in fbs_names or not rnm: continue
+                rec = {"id": rid, "n": rnm, "pos": rpos, "tm": rtm}
+                if src == "usage":
+                    uu = g(r, "usage"); ov = getattr(uu, "overall", None) if uu is not None else None
+                    if ov is not None: rec["usg"] = round(float(ov), 4)
+                for key in ((("id", str(rid)),) if rid is not None else ()) + ((norm(rnm), rtm),):
+                    have = RESCUE_IDX.get(key)
+                    if have is None: RESCUE_IDX[key] = rec
+                    elif have["pos"] == rpos and "usg" in rec: have.setdefault("usg", rec["usg"])
+    def _rescue(aid, anm, tname):
+        rec = (RESCUE_IDX.get(("id", str(aid))) if aid is not None else None) or RESCUE_IDX.get((norm(anm), tname))
+        if rec is None or rec["tm"] != tname: return None
+        k = (norm(rec["n"]), tname)
+        if k in ply: return ply[k]
+        v = {"id": rec["id"] if rec["id"] is not None else aid, "n": rec["n"], "pos": rec["pos"], "tm": tname,
+             "cls": None, "cls_src": "unknown", "stars": 0, "rating": 0.0, "rcls": None,
+             "conf": TEAM_CONF.get(tname, ""), "p4": 1 if TEAM_CONF.get(tname, "") in P4 else 0,
+             "recruit_ids": [], "g": {}, "prod": 0.0, "usg": rec.get("usg"), "rescued": 1}
+        ply[k] = v
+        if v["id"] is not None: by_id[str(v["id"])] = v
+        RESCUED.append(f"{v['n']} ({tname}, {v['pos']})")
+        return v
+
     # ---- weekly game logs ----
     print("\n-- weekly game logs " + "-" * 51)
     STAT_KEYS = collections.Counter()
@@ -505,6 +542,8 @@ with cfbd.ApiClient(cfg) as api:
                                     MISS.append(f"{g(ath,'name')} ({tname})")
                             else:
                                 MATCH["by_id"] += 1
+                            if v is None and RESCUE and tname in fbs_names:
+                                v = _rescue(aid, g(ath, "name"), tname)
                             if v is None: continue
                             row = v["g"].setdefault(wk, {"w": wk, "opp": opp})
                             row.setdefault("_t", tname)   # which team's totals this game uses; removed before emit
@@ -516,6 +555,9 @@ with cfbd.ApiClient(cfg) as api:
     print("    (unmatched here = FBS offensive players outside the QB/RB/WR/TE roster index,"
           " e.g. OL on a trick play. Defensive rows are no longer counted at all.)")
     if MISS: print("    unmatched samples:", "; ".join(MISS))
+    if RESCUE:
+        print(f"  rescued (not on the roster feed, named at a skill position by PPA/usage): {len(RESCUED):,}")
+        if RESCUED: print("    rescued samples:", "; ".join(RESCUED[:12]))
     if MATCH['by_id'] + MATCH['by_name'] == 0:
         if sum(MATCH.values()) == 0:
             # Rosters exist but no game stat rows yet — season is between roster release and
@@ -823,6 +865,7 @@ for v in sorted(picked.values(), key=lambda x: -x["prod"]):
         "py": round(v["tot"]["py"]), "pt": int(v["tot"]["pt"]),    "pi":  int(v["tot"]["pi"]),
         "gms": v["games"],
         "g": [compact_row(v["g"][w]) for w in sorted(v["g"])],
+        **({"rescued": 1} if v.get("rescued") else {}),   # study backfill only; never set in live files
     })
 
 os.makedirs("data", exist_ok=True)

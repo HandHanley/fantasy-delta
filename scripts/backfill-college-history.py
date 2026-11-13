@@ -23,6 +23,9 @@ WHAT IS DIFFERENT FROM A LIVE SEASON FILE
     Roschon Johnson, Michael Wilson). Costs no API calls. The study must rank everyone against the same fixed
     pool in every season (top N by production at each position), so a wider file does not change percentiles.
   - No draft-board door (DELTA_BOARD_FILE points nowhere): today's board means nothing for 2013.
+  - Roster rescue on (CFBD_RESCUE_UNROSTERED=1, 12 Nov 2026): CFBD's older rosters leave out real players whose
+    box-score rows exist (Chubb and Michel, Georgia 2017). They are kept when CFBD's PPA or usage list names them
+    at a skill position for the same team, and marked "rescued": 1. See fetch-college.py.
   - The continuity door reads the season before from the throwaway folder, so seasons run oldest first.
 
 THE BUDGET RULE
@@ -117,7 +120,7 @@ def run_season(y, scratch):
     if prev.exists() and not (data / prev.name).exists():
         shutil.copyfile(prev, data / prev.name)
     env = dict(os.environ, CFBD_YEAR=str(y), CFBD_WEEKS='16', CFBD_CURRENT_SEASON='2026', CFBD_PROBE='',
-               CFBD_PROBE_WEEK='', CFBD_PORTAL_YEAR=str(y),
+               CFBD_PROBE_WEEK='', CFBD_PORTAL_YEAR=str(y), CFBD_RESCUE_UNROSTERED='1',
                DELTA_BOARD_FILE=str(scratch / 'no-board.json'), **QUOTAS)
     print(f'\n{"#" * 72}\n# season {y}\n{"#" * 72}', flush=True)
     p = subprocess.run([sys.executable, str(FETCH)], cwd=str(scratch), env=env, text=True,
@@ -127,7 +130,7 @@ def run_season(y, scratch):
     # early, so the highest number is the season's real cost. No numbered line at all -> assume the estimate.
     m = re.findall(r'^\s*\[\s*(\d+)\]', p.stdout, flags=re.M)
     calls = max(map(int, m)) if m else PER_SEASON
-    row = {'season': y, 'calls': calls, 'exit': p.returncode}
+    row = {'season': y, 'calls': calls, 'exit': p.returncode, 'rescue': True}
     # call() in fetch-college.py turns a failed request into an empty answer, so an outage or a used-up key can
     # look exactly like a season CFBD has no data for. Its "FAILED:" line is the only way to tell them apart.
     failed = [ln.strip() for ln in p.stdout.splitlines() if re.match(r'^\s*\[\s*\d+\].*FAILED:', ln)]
@@ -150,7 +153,8 @@ def run_season(y, scratch):
     d = json.load(open(f))
     pl = d.get('players') or []
     weeks = sorted({r.get('w') for x in pl for r in x.get('g', []) if r.get('w') is not None})
-    row.update(players=len(pl), by_pos=dict(collections.Counter(x['pos'] for x in pl)), doors=d.get('counts'),
+    row.update(players=len(pl), rescued=sum(1 for x in pl if x.get('rescued')),
+               by_pos=dict(collections.Counter(x['pos'] for x in pl)), doors=d.get('counts'),
                weeks=weeks, coverage=coverage(pl), file_season=d.get('season'))
     if d.get('season') != y or len(pl) < MIN_PLAYERS:
         row['status'] = 'rejected'                               # wrong season or implausibly small: not kept
@@ -175,8 +179,14 @@ def main():
         ann('error', 'College history backfill', f'Seasons {bad or a.years} refused: only 2004-{LIVE_FROM - 1}. '
             f'{LIVE_FROM} onward is already in data/ and live.')
         return 1
-    have = [y for y in years if (OUT_DIR / f'college-players-{y}.json').exists()]
-    if have:                                                      # a re-run after a partial one pays only for the gaps
+    # A re-run after a partial one pays only for the gaps. A season counts as saved only if it was pulled with
+    # the roster rescue (12 Nov 2026): the first 2013-2019 files were saved without it and are pulled again.
+    done = {}
+    if REPORT.exists():
+        done = {r['season']: r for r in json.load(open(REPORT)).get('seasons', [])}
+    have = [y for y in years if (OUT_DIR / f'college-players-{y}.json').exists()
+            and done.get(y, {}).get('status') == 'saved' and done.get(y, {}).get('rescue')]
+    if have:
         ann('notice', 'Already saved', f'Skipping {", ".join(map(str, have))}: delete the file to pull a season again.')
         years = [y for y in years if y not in have]
         if not years:
@@ -210,7 +220,7 @@ def main():
             spent += row['calls']; rows.append(row)
             cov = row.get('coverage') or {}
             ann({'saved': 'notice', 'no data': 'warning'}.get(row['status'], 'error'), f'Season {y}: {row["status"]}',
-                f'{row.get("players", 0)} players {row.get("by_pos", {})}, {row["calls"]} calls, '
+                f'{row.get("players", 0)} players ({row.get("rescued", 0)} rescued) {row.get("by_pos", {})}, {row["calls"]} calls, '
                 f'weeks {row.get("weeks", [])[:1]}-{row.get("weeks", [])[-1:]}, PPA {cov.get("ppa")}, '
                 f'usage {cov.get("usg")}, dDOM {cov.get("ddom")}, stars {cov.get("stars")}.')
             if row['status'] in ('failed', 'rejected', 'incomplete'):   # do not keep spending into a broken feed
