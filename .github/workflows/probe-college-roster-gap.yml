@@ -1,4 +1,6 @@
-# One-off diagnostic for the college history backfill (13 Nov 2026). Asks CFBD what each of its sources
+# Diagnostic for CFBD roster players with no position ("?"), 13 Nov 2026. Team "ALL" (the default) scans the whole
+# season and checks the live College tab file for them; a named team does the per-player probe below.
+# Originally: one-off diagnostic for the college history backfill (13 Nov 2026). Asks CFBD what each of its sources
 # (roster, PPA, usage, season stats, one week of box scores, player search) says about named players on one
 # team in one season. About 7 calls. Writes only study/data/college-history/probe-YEAR-TEAM.json, which the
 # site never reads. Manual only.
@@ -10,11 +12,11 @@ on:
       year:
         description: "Season"
         required: false
-        default: "2017"
+        default: "2026"
       team:
-        description: "Team, as CFBD names it"
+        description: 'Team, as CFBD names it, or "ALL" for the league-wide scan (about 4 calls; week and names unused)'
         required: false
-        default: "Georgia"
+        default: "ALL"
       week:
         description: "One week of box scores to read (the player should have played)"
         required: false

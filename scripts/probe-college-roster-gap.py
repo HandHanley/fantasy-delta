@@ -12,6 +12,13 @@ About 7 calls: roster, PPA, usage and season stats for the team (one each), one 
 and one player search per name. Writes study/data/college-history/probe-YEAR-TEAM.json only.
 
     python scripts/probe-college-roster-gap.py --year 2017 --team Georgia --week 1 --names "Nick Chubb,Sony Michel"
+
+LEAGUE-WIDE SCAN (--team ALL, 13 Nov 2026), about 4 calls: the whole FBS roster plus every player's season rushing,
+receiving and passing. Lists roster players with position "?" who touched the ball at least 5 times, and whether each
+is in the live data/college-players-YEAR.json (the College tab). Answers "is the live site missing real players?".
+Writes study/data/college-history/probe-YEAR-ALL.json only.
+
+    python scripts/probe-college-roster-gap.py --year 2026 --team ALL
 """
 import argparse, json, os, re, sys, unicodedata
 from pathlib import Path
@@ -45,6 +52,55 @@ def call(label, fn, **kw):
         return [], msg[:300]
 
 
+def num(x):
+    try: return float(str(x).split('/')[-1]) if x is not None else 0.0
+    except ValueError: return 0.0
+
+
+def scan(year):
+    out = {'year': year, 'mode': 'league-wide', 'errors': {}}
+    with cfbd.ApiClient(cfbd.Configuration(access_token=KEY)) as api:
+        rows, err = call('GET /roster (fbs)', cfbd.TeamsApi(api).get_roster, year=year, classification='fbs')
+        if err: out['errors']['roster'] = err
+        roster = [{'id': str(g(p, 'id')), 'n': f"{g(p, 'first_name') or ''} {g(p, 'last_name') or ''}".strip(),
+                   'pos': g(p, 'position') or '', 'tm': g(p, 'team'), 'wt': g(p, 'weight')} for p in rows]
+        stats = {}
+        for cat in ('rushing', 'receiving', 'passing'):
+            rows, err = call(f'GET /stats/player/season {cat}', cfbd.StatsApi(api).get_player_season_stats,
+                             year=year, category=cat)
+            if err: out['errors'][cat] = err
+            for r in rows:
+                e = stats.setdefault(str(g(r, 'player_id')), {'n': g(r, 'player'), 'pos': g(r, 'position'), 'tm': g(r, 'team')})
+                e[f"{cat}.{g(r, 'stat_type')}"] = g(r, 'stat')
+    from collections import Counter
+    out['roster_positions'] = dict(Counter(r['pos'] or '(blank)' for r in roster).most_common())
+    live_p = ROOT / 'data' / f'college-players-{year}.json'
+    live = {(norm(p['n']), p['tm']) for p in json.load(open(live_p))['players']} if live_p.exists() else set()
+    hits = []
+    for r in roster:
+        if r['pos'] not in ('?', ''): continue
+        st = stats.get(r['id'])
+        if not st: continue
+        car, rec, att = num(st.get('rushing.CAR')), num(st.get('receiving.REC')), num(st.get('passing.ATT') or st.get('passing.C/ATT'))
+        if car + rec + att < 5: continue
+        hits.append({'n': r['n'], 'tm': r['tm'], 'roster_pos': r['pos'] or '(blank)', 'stats_pos': st.get('pos'), 'wt': r['wt'],
+                     'car': car, 'rush_yds': num(st.get('rushing.YDS')), 'rec': rec, 'rec_yds': num(st.get('receiving.YDS')),
+                     'att': att, 'pass_yds': num(st.get('passing.YDS')),
+                     'in_live_file': (norm(r['n']), r['tm']) in live})
+    hits.sort(key=lambda h: -(h['rush_yds'] + h['rec_yds'] + 0.4 * h['pass_yds']))
+    out.update(roster_players=len(roster), unpositioned=sum(1 for r in roster if r['pos'] in ('?', '')),
+               unpositioned_with_touches=len(hits), missing_from_live_file=sum(1 for h in hits if not h['in_live_file']),
+               live_file=str(live_p.relative_to(ROOT)) if live_p.exists() else None, players=hits, calls=CALLS)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    f = OUT_DIR / f'probe-{year}-ALL.json'
+    json.dump(out, open(f, 'w'), indent=1)
+    top = '; '.join(f"{h['n']} ({h['tm']}, {h['rush_yds'] + h['rec_yds']:.0f} yds{'' if h['in_live_file'] else ', NOT on site'})" for h in hits[:8])
+    print(f"::notice title=Scan {year}::{len(roster)} roster players, {out['unpositioned']} with no position, "
+          f"{len(hits)} of them touched the ball 5+ times, {out['missing_from_live_file']} not in the live file. {CALLS} calls.")
+    print(f'::notice title=Scan {year} top::{top}'[:900])
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--year', type=int, default=2017)
@@ -54,6 +110,8 @@ def main():
     a = ap.parse_args()
     if not KEY:
         print('::error title=Roster-gap probe::CFBD_API_KEY is not set.'); return 1
+    if a.team.strip().upper() == 'ALL':
+        return scan(a.year)
     names = [n.strip() for n in a.names.split(',') if n.strip()]
     targets = {norm(n): n for n in names}
     out = {'year': a.year, 'team': a.team, 'week': a.week, 'names': names, 'errors': {}}
