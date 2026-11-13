@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — Own Value Scale: Draft-Day Rookie Values Learn From Past Misses
 
-**Drafted:** 12 November 2026. **Status: LOCKED 12 Nov 2026 as a measured layer (amendment A1); MEASURED (§10), not yet in the weekly build.** The
+**Drafted:** 12 November 2026. **Status: LOCKED 12 Nov 2026 as a measured layer (amendment A1); MEASURED (§10); in-season factor WITHDRAWN (§11), draft-day factor unapplied.** The
 2% test's crash failed (§6). Steve, 12 Nov: "I agree with your assumption that it's
 likely because today's rookies do historically produce more than older years. We should do that study." It locks by
 committing this document with `study/ovs_rookie_calibration.py` and passing crash results, before the one real run.
@@ -173,3 +173,23 @@ replaces §3's test with a measured layer, built the way Contract Security was (
 same factors apply to the class and to history and mostly cancel. Sorting the calibrated 2026 class directly still
 falls below Stage 1 from the Late 1st on (for example, 2nd Mid 776 vs 1,546), so the class-strength version is still
 the better Stage 2.
+
+## 11. Correction (12 November 2026): The In-Season Factor Was Measured On The Wrong Group
+
+Steve: "So history says that the player taken 1.01 went on the be worth the 4th ranked player within the next three
+years? I just don't think that sounds right at all."
+
+**He was right.** The in-season rows A1 measured (the in-season frame's rookie rows) exist only for rookies who had
+played by week 9. That's how the in-season snapshots are built. Among the 72 top-12 picks measured, **none** had
+gone without a game. So the ×1.63 describes top picks already on the field, and was applied to a rookie who hasn't
+played (Mendoza, cameo only). Players who haven't played by week 9 are a different, weaker group, and history here
+has no examples of them to measure.
+
+- **The check should have been:** "does the group measured match the group it's applied to?", asked before applying.
+  It took one line to see zero rows.
+- **Decision:** the in-season factor is **withdrawn**, never applied. First-year players with no game keep today's
+  value (Mendoza 31st). Steve: "I think where he is on the current rankings (31) is perfect."
+- **The draft-day factor** (offseason rows) does measure the right group: every rookie on draft day. It stays measured
+  and unapplied until the 2027 preseason value is built, when Steve decides.
+- **Picks are unaffected.** Stage 1 comes from what picks produced (the 1.01 averages about 23rd overall, consistent
+  with Lawrence, Mayfield and Williams). Stage 2 uses class strength, where the factor cancels.

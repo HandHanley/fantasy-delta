@@ -1,7 +1,7 @@
 # PLAN — Rookie Picks On Today's New Value Scale
 
-**Drafted:** 12 November 2026, before any outcome on today's scale was computed. **Status: STAGE 1 MEASURED 12 Nov (§6); STAGE 2
-REVISION PROPOSED (§7), awaiting Steve.** Steve, 12 Nov: "let's do 1 and 2 now", and on a flat discount: "I do not think all 2027 picks should be
+**Drafted:** 12 November 2026, before any outcome on today's scale was computed. **Status: STAGE 1 MEASURED 12 Nov (§6); STAGE 2 =
+THE CLASS-STRENGTH VERSION (§7), Steve 12 Nov.** Steve, 12 Nov: "let's do 1 and 2 now", and on a flat discount: "I do not think all 2027 picks should be
 worth less than an already-drafted rookie … we need to figure out an informed way to price these".
 
 Builds on `PREREG-pick-values.md`, `PREREG-pick-values-formats.md` and `PREREG-superflex-pick-order.md` (all locked and
@@ -135,3 +135,9 @@ That's a top-heavy class (Love, Mendoza, Tate), then thin.
 
 `study/new_value_weekly.py` adds the next class's picks to `data/new-value.json` (board names and each slot), scaled
 by the week's `top_raw`. They aren't shown on the site.
+
+## 9. Decision (12 November 2026)
+
+Stage 2 is the class-strength version (§7). Steve agreed: "Use the class-strength version for Stage 2 picks after the
+NFL draft" was put to him, and he chose to keep current rookie values as they are. The draft-day rookie calibration
+(`PREREG-ovs-rookie-calibration.md`) isn't needed for picks, because it cancels in the class-strength ratio.
