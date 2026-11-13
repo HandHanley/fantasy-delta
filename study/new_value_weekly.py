@@ -225,7 +225,12 @@ def build(D, season, week, contracts):
     wr = pd.read_csv(os.path.join(D, 'wrost', f'roster_weekly_{season}.csv'), low_memory=False, usecols=['gsis_id', 'week', 'status', 'team'])
     assert wr[wr.week == wr.week.max()].team.nunique() >= 26, 'weekly roster file looks incomplete; refusing to apply the no-roster rule'
     latest = wr.sort_values('week').drop_duplicates('gsis_id', keep='last')
-    on_roster = set(latest[~latest.status.isin(['CUT', 'RET'])].gsis_id)
+    # PRACTICE SQUAD COUNTS AS NO TEAM for a player with no game this season (Steve, 13 Nov 2026). History 2017-2022
+    # (practice squads are listed from 2017): veterans who played the season before, had no game yet and sat on a
+    # practice squad were fantasy starters within three seasons 0 times in 151 (no team: 0.6%; active or injured: 4.9%);
+    # rookies with no game on a practice squad, 1 in 301 (drafted ones 0 in 39). A promotion to the active roster
+    # brings him back. Injured reserve still counts as a team: no injury penalty.
+    on_roster = set(latest[~latest.status.isin(['CUT', 'RET', 'DEV'])].gsis_id)
     # Never-played players (basis 'incoming rookie') follow the same rule once the season has started: a rookie cut and
     # unsigned (Damien Martinez, cut in week 1, was 170th) has no team either. Not separately measured: the history
     # above covers veterans; this applies Steve's rule ("no team, no value until he signs") to everyone.
@@ -255,8 +260,9 @@ def build(D, season, week, contracts):
             'scoring': 'full PPR, no TE premium, 12-team superflex', 'lines': C.REPL_N,
             'contract_security': 'on (deal ending this season counts as a contract year)',
             'players': len(out), 'incoming_rookie_values': len(v_x), 'top_raw': top,
-            'no_roster_rule': {'rule': 'no game this season and on no NFL roster (any status but CUT/RET) up to this week '
-                                       '-> no value until he signs (Steve, 13 Nov 2026)',
+            'no_roster_rule': {'rule': 'no game this season and his latest roster status this season is cut, retired, '
+                                       'practice squad or none -> no value until he is on an active roster or injured '
+                                       'reserve (Steve, 13 Nov 2026)',
                                'not_valued': sorted(f"{o['name']} ({o['pos']})" for o in unsigned)},
             'note': 'Display build. Not used by the site\'s engine.'}
     meta['picks'] = 'Stage 1 slot values (docs/PLAN-pick-values-now.md), scaled by this week\'s top_raw'
