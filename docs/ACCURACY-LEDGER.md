@@ -661,3 +661,16 @@ FFToday, all four positions. Saving what a browser actually renders captures the
 client-side pages the crawler cannot, and the archive's own timestamp is the
 third-party proof. Do it as part of the freeze-day sequence, not as a separate
 task that can be forgotten.
+
+---
+
+## 9. A second freeze: New Value, 13 November 2026
+
+Dated entry, added under section 5 rule 3. **Nothing in sections 1–8 changes**, and `data/freeze-2026.json` was not
+opened.
+
+New Value, the own value scale meant to replace model value, gets its own mid-season freeze with its own
+pre-registration: `docs/LEDGER-NEW-VALUE-MIDSEASON-2026.md` (written before the freeze file) and
+`data/freeze-2026-nv-midseason.json`. It claims value over 2027–2029, not 2026 points, so it is graded on its own
+tests and timeline, head to head with FantasyCalc and KeepTradeCut captured the same day. The September freeze is
+still graded in February 2027 exactly as above.
