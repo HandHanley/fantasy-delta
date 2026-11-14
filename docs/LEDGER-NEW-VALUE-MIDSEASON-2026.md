@@ -145,3 +145,44 @@ possible later study of a teammate taking over a role).
 is written, frozen before Thursday 19 November's game as `data/freeze-2026-nv-midseason-v2.json`, with FantasyCalc and
 KeepTradeCut captured fresh that day. Sections 2–7 apply to it unchanged; its dates replace version 1's. **At grading,
 version 2 is the result; version 1 is reported beside it**, so the withdrawal hides nothing.
+
+## 9. Version 2: What Changed Before Freezing (13 November 2026, Before Any Outcome)
+
+Dated entry, added under rule 4, while version 2 is unfrozen. No outcome exists: Test A counts 2027–2029 games, and
+Test B's first reading is the Sunday before Week 1, 2027.
+
+**New Value rules added since section 8** (all in `study/new_value_weekly.py`, each with its own write-up):
+
+- A practice squad counts as no team for a player with no game this season (history: 0 of 151 veterans and 1 of 301
+  rookies became fantasy starters). Whether he has a team reads his latest row in the weekly roster file.
+- Rookies keep their draft-slot value until 150 offensive snaps (`PREREG-ovs-rookie-snaps.md`).
+- Tested and **not** adopted: capping each match at the third-best (`PREREG-ovs-one-match.md`, 1.77% vs the 2% bar) and
+  a roster-spot cost (`DECISION-roster-spot-cost.md`, moved no one more than 6 places).
+
+**Test B's call rule is replaced.** Steve's eye test of the "30 places apart" calls found them dominated by long shots
+past 120th, where every player is worth close to nothing and rank gaps are cheap, and by a running back vs receiver
+tilt that any dynasty player already knows. Steve, 13 Nov: "This definitely looks better." The new rule:
+
+- **Within position.** QB, RB, WR and TE are each ranked separately: New Value's order and the market's order, among
+  players in both (the common set at that position).
+- **Value at stake** = his New Value − New Value's value for the player at the market's position rank. Both numbers
+  are on New Value's 1–10,000 scale, so the market's own scale doesn't enter.
+- **The pool:** players inside either one's overall top 200 (as before).
+- **A call:** value at stake **+1,000 or more → buy; −1,000 or less → sell** (10% of the top player, about the value of
+  the 150th-best player). Everyone else: no call.
+- **No call on a season-ender:** anyone on `data/injury-overrides.json` on freeze day (Steve's hand-kept, confirmed
+  list) gets no call either way. Their values are unchanged (no injury penalty); they're listed in the freeze and
+  reported, not graded.
+- **Outcome:** the change in his **position rank** in that same market, freeze to the Sunday before Week 1 (2027, 2028,
+  2029). A player who drops out of the list falls to the bottom of his position. Measures as section 4: buys' average
+  move minus sells', share moving the right way, a permutation test shuffling labels within position.
+- **Reported beside it, deciding nothing:** the "30 places apart" overall calls as written in section 4, so nothing
+  about the old rule is hidden.
+
+**Prior looks.** The 1,000 line was proposed from a stated reason before its calls were listed, and the counts it
+gives (not the names) were shown first; Steve then saw the lists on 13 Nov markets. Nobody has seen any market move
+after 13 Nov.
+
+**Freeze date.** Held for the role-change study (Steve, 13 Nov). Version 2 freezes once that study is decided and Steve
+eye-tests the build, with FantasyCalc and KeepTradeCut captured the same day, before the season's last regular-season
+game. Section 8's "before Thursday 19 November" is replaced by this.
