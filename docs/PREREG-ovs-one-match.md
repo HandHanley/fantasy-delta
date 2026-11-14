@@ -50,6 +50,25 @@ miss), with the permutation check. A crash test runs first to see whether the 2%
 - **If the planted test fails,** this goes to Steve before any real run, with options. Nothing is run against real
   outcomes until he decides.
 
+**Results (13 Nov, `study/out/ovs_one_match_crash.json`):** noise passed 0 of 20 (OK). Planted passed **0 of 200,
+FAIL**, median lift −0.6%.
+
+**Why, and a second planted test.** The planted world above is broken by construction: flooring at zero and shuffling
+misses across players lifts long shots' planted outcomes back toward today's value, so "the cap is right" isn't what
+it plants. A cleaner planted world, run before any real run (`study/out/ovs_one_match_crash_draw*.json`): each player
+"becomes" one of his own 30 matches, drawn by match weight, with that match's outcome capped (cap-is-right world) or
+not (today-is-right world). It uses no test player's own outcome.
+
+| World | All Rows: Passes | All Rows: Median Lift | Rows The Cap Moves 20%+: Passes | Median Lift |
+|---|---|---|---|---|
+| Cap is right | 0 of 200 | +0.5% | **200 of 200** | +5.9% |
+| Today is right | 0 of 50 | −0.4% | 0 of 50 | −1.4% |
+
+On all rows the 2% bar can't see this change even when it's exactly right (the same wall as Contract Security and the
+rookie calibration): typical miss is driven by stars' big misses, and long shots' values are small numbers. On the
+rows it moves (3,339 of 6,808 test rows, chosen from values alone, no outcomes), the test sees it every time and
+never falsely. **Taken to Steve before any real run.**
+
 ## 4. Reported, Deciding Nothing
 
 - Caps at the second, fourth and fifth match.
