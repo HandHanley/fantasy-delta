@@ -58,3 +58,24 @@ sure it doesn't make them worse.
 
 - The DELTA Score, the live site's DELTA Value, buy/sell calls on the live site.
 - Any other threshold, or a snaps rule for veterans.
+
+## 6. Results (13 November 2026, One Run) And Decision
+
+`study/out/ovs_rookie_snaps_results.json`. **Passed; shipped** (`study/new_value_weekly.py`).
+
+| Check | Result |
+|---|---|
+| First-year rows, typical miss (decides) | 56.74 today → 55.95 under the rule: 1.4% better (allowed: 0.5% worse) |
+| All rows (reported) | 48.46 → 48.33 |
+| By position (reported) | QB 108.8 → 100.4, TE 37.9 → 36.7, RB 60.2 → 60.8, WR 44.2 → 45.8 |
+| First-year permutation (reported) | p = 0.18 |
+| Low-snap rookies, produced ÷ value (reported) | 55% today, 47% under the rule (615 rows) |
+
+**What it means.** Rookies who barely play usually disappoint, so for RBs and WRs the rule is somewhat generous; for
+QBs and TEs it is clearly better, and overall it is better.
+
+**Steve, 13 Nov:** "I agree that players who receive less work are worse, but I do think this overall enhances our
+perspective and protects against non-context penalizing. I say we keep and ship."
+
+**2026, week 9:** 58 rookies held on draft value; Jordyn Tyson 115th → 49th, Jadarian Price 89th → 40th, Emmett Johnson
+123rd → 201st; no veteran's value changes.
