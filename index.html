@@ -5472,7 +5472,9 @@ function mdRenderSetup(){
     +'<button type="button" class="dl-md-go" onclick="mdStart()">Start Draft</button>'
     +(note?'<p class="dl-md-note">'+note+'</p>':'')
     +'<p class="dl-md-note">Players come from the consensus big board, adjusted for fantasy by position. Bots draft with about as much variation as a real league showed'+(mode==='league'?', leaning slightly toward their team’s needs':'')+'.</p>'
-    +'<p class="dl-md-note"><a href="draft/" style="color:var(--teal-br);font-weight:700">Try The Time Machine Draft</a>: a real past rookie class with the names hidden.</p>'
+    +'<a href="draft/" class="dl-tm-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:14px 16px;border:1px solid var(--teal-br);border-radius:14px;background:var(--teal-tint);text-decoration:none;color:var(--paper)">'
+    +'<span><b style="display:block;font-size:15px;color:var(--teal-br)">Time Machine Draft</b><span style="display:block;font-size:13px;line-height:1.4;color:var(--fog);margin-top:3px">Draft a real past rookie class with the names hidden, then see who they became.</span></span>'
+    +'<span aria-hidden="true" style="font-size:24px;line-height:1;color:var(--teal-br)">&rsaquo;</span></a>'
     +'</div>';
 }
 function mdRender(){
@@ -8644,6 +8646,7 @@ document.addEventListener('click', function(e) {
   <a href="./terms.html" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Terms</a>
   <a href="#" onclick="openAbout();return false;" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">About</a>
   <a href="#" onclick="openNews();return false;" class="dl-nw-link">What's New</a>
+  <a href="./draft/" style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Time Machine Draft</a>
   <a href="https://fantasydelta.substack.com/" target="_blank" rel="noopener noreferrer"
      style="color:var(--fog);text-decoration:none;border-bottom:1px solid var(--line)">Newsletter</a>
   <a href="https://ko-fi.com/fantasydelta" target="_blank" rel="noopener noreferrer"
@@ -8658,7 +8661,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-14a</span>
+  <span class="foot-build">2026-11-14b</span>
 </footer>
 
 

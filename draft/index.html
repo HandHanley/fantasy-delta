@@ -66,6 +66,9 @@ h2{font-size:17px;font-weight:800;margin:6px 0 0}
 .btn:active{transform:scale(.99)}
 .btn.ghost{background:var(--ink-2);color:var(--paper);border:1px solid var(--line)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acts .wide{grid-column:1/-1}
+.shareprev{display:flex;flex-direction:column;gap:8px}
+.shareprev img{width:100%;border-radius:12px;border:1px solid var(--line)}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{min-height:38px;min-width:38px;padding:0 12px;border-radius:19px;border:1px solid var(--line);background:var(--ink-2);color:var(--fog);font-size:13px;font-weight:700;cursor:pointer}
@@ -451,7 +454,7 @@ function renderReveal(instant){
     '<section class="card stg"><div class="cap">The Room, By Pick Grade</div>'+RM.rows.map(function(r){var me=r.team===S.slot;
       return '<div class="srow'+(me?' me':'')+'"><span class="sr">'+ord(r.rank)+'</span><span>'+(me?'You':'Team '+r.team)+'<s class="sp"> \u00b7 '+r.v+' Points</s></span><span class="st">'+r.g+'%</span></div>';}).join('')+'</section>'+
     (away?'<section class="card away stg"><div class="cap">The One That Got Away</div><p>At <b>'+pickLabel(away.k)+'</b> you passed on <b>'+esc(away.b.n)+'</b>, worth <b>'+away.b.v+'</b>. '+(away.b.taken?'He went at '+pickLabel(away.b.taken.k)+'.':'Nobody in this room drafted him.')+'</p></section>':'')+
-    '<div class="acts stg"><button class="btn" type="button" data-act="again">Draft Again</button><button class="btn ghost" type="button" data-act="copy">Copy Result</button></div>'+
+    '<div class="acts stg"><button class="btn" type="button" data-act="share">Share Image</button><button class="btn ghost" type="button" data-act="copy">Copy Text</button><button class="btn ghost wide" type="button" data-act="again">Draft Again</button></div>'+
     '<div id="copyslot"></div>'+
     '<section class="stg"><h2>The Full Board</h2></section>'+
     '<div class="legend stg"><span><i class="dot t-r"></i>No Starter Seasons</span><span><i class="dot t-b"></i>One</span><span><i class="dot t-g"></i>Two Or More</span></div>'+
@@ -459,6 +462,7 @@ function renderReveal(instant){
     (left.length?'<section class="stg"><h2>Not Drafted In This Room</h2></section><section class="board stg">'+left.map(function(p){return boardRow(p,'—');}).join('')+'</section>':'')+
     foot();
   window.scrollTo(0,0);fitNames();[150,600,1500,3000].forEach(function(t){setTimeout(fitNames,t);});
+  prepareShare();
   var els=app.querySelectorAll('.stg'),i;
   if(instant||reduce){for(i=0;i<els.length;i++)els[i].classList.add('in');return;}
   for(i=0;i<els.length;i++){(function(el,n){setTimeout(function(){el.classList.add('in');},n<5?250+n*650:3500+(n-5)*120);})(els[i],i);}
@@ -471,11 +475,68 @@ function fitNames(){
 }
 try{if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',function(){if(S&&S.room)fitNames();});}catch(e){}
 var fitT=null;window.addEventListener('resize',function(){clearTimeout(fitT);fitT=setTimeout(function(){if(S&&S.room)fitNames();},150);});
+var SQ={g:'\ud83d\udfe9',b:'\ud83d\udfe6',r:'\ud83d\udfe5'};  /* green, blue, red squares: the reveal's starter-season colours */
+function finishWords(){return S.room.rank===1&&!S.room.tied?'Best In The Room':(S.room.tied?'Tied ':'')+ord(S.room.rank)+' Of 12';}
 function resultText(){
-  var T=S.tot,d=T.mine-T.mkt;
-  return 'DELTA Time Machine Draft · Class Of '+S.year+' · Slot '+S.slot+' · '+(S.usedDelta?'With DELTA Read':'Box Score Only')+'\n'+
-    'Pick grade '+S.room.g+'% ('+(S.room.tied?'tied ':'')+ord(S.room.rank)+' of 12) \u00b7 '+T.mine+' points (market’s picks at my spots: '+T.mkt+')\n'+
-    S.mine.map(function(x){return pickLabel(x.k)+' '+x.p.n+' ('+x.p.v+')';}).join(' · ');
+  return 'DELTA Time Machine Draft\n'+
+    'Class Of '+S.year+' \u00b7 Pick '+S.slot+' \u00b7 '+(S.usedDelta?'DELTA Read':'Box Score')+'\n'+
+    'Pick Grade '+S.room.g+'% \u00b7 '+finishWords()+'\n\n'+
+    S.mine.map(function(x){return SQ[tier(x.p)]+' '+pickLabel(x.k)+' '+x.p.n+' \u00b7 '+g0(x.p.taken.g)+'%';}).join('\n')+'\n\n'+
+    'Play: fantasydelta.com/draft/';
+}
+/* ---------- share picture ---------- */
+var shareFile=null,shareURL=null;
+function cssv(k){return getComputedStyle(document.documentElement).getPropertyValue(k).trim();}
+function fitText(c,t,max,size,weight,fam){var f=size;c.font=weight+' '+f+'px '+fam;while(c.measureText(t).width>max&&f>size*0.55){f-=1;c.font=weight+' '+f+'px '+fam;}return f;}
+function drawShare(){
+  var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
+  var ink=cssv('--ink'),panel=cssv('--panel'),line=cssv('--line'),paper=cssv('--paper'),fog=cssv('--fog'),teal=cssv('--teal-br'),
+      tc={g:cssv('--emerald'),b:cssv('--sky'),r:cssv('--coral')},SANS='"Nunito Sans",system-ui,sans-serif',MONO='"JetBrains Mono",monospace',GEO='"Josefin Sans",Futura,sans-serif';
+  c.fillStyle=ink;c.fillRect(0,0,W,H);
+  var gl=c.createRadialGradient(140,120,20,140,120,760);gl.addColorStop(0,cssv('--teal-tint')||'rgba(0,0,0,0)');gl.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=gl;c.fillRect(0,0,W,H);
+  /* mark */
+  c.fillStyle=cssv('--teal-br');c.beginPath();c.moveTo(110,78);c.lineTo(78,146);c.lineTo(110,146);c.closePath();c.fill();
+  c.fillStyle=cssv('--emerald');c.beginPath();c.moveTo(110,78);c.lineTo(110,146);c.lineTo(142,146);c.closePath();c.fill();
+  c.fillStyle=paper;c.font='700 40px '+GEO;c.textBaseline='alphabetic';
+  var x=166;'DELTA'.split('').forEach(function(ch){c.fillText(ch,x,136);x+=c.measureText(ch).width+12;});
+  c.fillStyle=fog;c.font='700 30px '+SANS;c.textAlign='right';c.fillText('Time Machine Draft',W-80,132);c.textAlign='left';
+  c.fillStyle=fog;c.font='700 26px '+SANS;c.fillText('THE CLASS OF',80,262);
+  c.fillStyle=teal;c.font='700 150px '+MONO;c.fillText(S.year,72,400);
+  c.fillStyle=fog;c.font='700 26px '+SANS;c.textAlign='right';c.fillText('PICK GRADE',W-80,262);
+  c.fillStyle=paper;c.font='700 150px '+MONO;c.fillText(S.room.g+'%',W-72,400);
+  c.fillStyle=fog;c.font='700 32px '+SANS;c.fillText(finishWords(),W-80,452);c.textAlign='left';
+  c.fillStyle=fog;c.font='600 32px '+SANS;c.fillText('Pick '+S.slot+' \u00b7 '+(S.usedDelta?'DELTA Read':'Box Score'),80,452);
+  c.fillStyle=panel;c.fillRect(80,500,W-160,14);c.fillStyle=teal;c.fillRect(80,500,(W-160)*Math.max(0,Math.min(100,S.room.g))/100,14);
+  var y=570;
+  S.mine.forEach(function(xx){var p=xx.p,t=tier(p);
+    c.fillStyle=panel;c.fillRect(80,y,W-160,190);c.strokeStyle=line;c.lineWidth=2;c.strokeRect(80,y,W-160,190);
+    c.fillStyle=tc[t];c.fillRect(80,y,10,190);
+    c.fillStyle=fog;c.font='700 30px '+MONO;c.fillText(pickLabel(xx.k),120,y+56);
+    c.fillStyle=paper;fitText(c,p.n,W-160-40-250,58,'800',SANS);c.fillText(p.n,120,y+124);
+    c.fillStyle=fog;c.font='600 28px '+SANS;c.fillText(p.pos+' \u00b7 '+shortNfl(p)+' \u00b7 '+tierWord(p),120,y+166);
+    c.textAlign='right';c.fillStyle=tc[t];c.font='700 64px '+MONO;c.fillText(g0(p.taken.g)+'%',W-120,y+112);
+    c.fillStyle=fog;c.font='700 22px '+SANS;c.fillText('PICK GRADE',W-120,y+150);c.textAlign='left';
+    y+=212;});
+  c.fillStyle=fog;c.font='600 28px '+SANS;c.fillText('Draft a real rookie class, names hidden.',80,H-74);
+  c.textAlign='right';c.fillStyle=teal;c.font='800 30px '+SANS;c.fillText('fantasydelta.com/draft',W-80,H-74);c.textAlign='left';
+  return cv;
+}
+function prepareShare(){
+  shareFile=null;if(shareURL){try{URL.revokeObjectURL(shareURL);}catch(e){}shareURL=null;}
+  var go=function(){try{drawShare().toBlob(function(b){if(!b)return;shareURL=URL.createObjectURL(b);
+    try{shareFile=new File([b],'delta-time-machine-'+S.year+'.png',{type:'image/png'});}catch(e){shareFile=null;}},'image/png');}catch(e){}};
+  try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('800 40px "Nunito Sans"'),document.fonts.load('700 40px "JetBrains Mono"'),document.fonts.load('700 40px "Josefin Sans"')]).then(go,go);return;}}catch(e){}
+  go();
+}
+function shareImage(btn){
+  if(!shareURL){btn.textContent='One Moment\u2026';prepareShare();setTimeout(function(){btn.textContent='Share Image';},1200);return;}
+  try{
+    if(shareFile&&navigator.canShare&&navigator.canShare({files:[shareFile]})){
+      navigator.share({files:[shareFile],title:'Time Machine Draft',text:'fantasydelta.com/draft/'}).catch(function(){});return;
+    }
+  }catch(e){}
+  var slot=document.getElementById('copyslot');
+  if(slot)slot.innerHTML='<div class="shareprev"><img src="'+shareURL+'" alt="Your Time Machine Draft result"><a class="btn ghost" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="'+shareURL+'" download="delta-time-machine-'+S.year+'.png">Save Image</a></div>';
 }
 function copyResult(btn){
   var txt=resultText();
@@ -486,7 +547,7 @@ function copyResult(btn){
   }
   try{
     if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(function(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy Result';},1800);},fallback);
+      navigator.clipboard.writeText(txt).then(function(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy Text';},1800);},fallback);
     }else fallback();
   }catch(e){fallback();}
 }
@@ -524,6 +585,7 @@ app.addEventListener('click',function(e){
   else if(a==='draft'){userPick(S.players[parseInt(t.getAttribute('data-i'),10)]);}
   else if(a==='reveal'){renderReveal(false);}
   else if(a==='copy'){copyResult(t);}
+  else if(a==='share'){shareImage(t);}
   else if(a==='view'){setView(t.getAttribute('data-v'));}
 });
 app.addEventListener('change',function(e){if(e.target&&e.target.id==='sort'&&S){S.sort=e.target.value;updateBoard();}});
