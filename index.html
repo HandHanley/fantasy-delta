@@ -5472,6 +5472,7 @@ function mdRenderSetup(){
     +'<button type="button" class="dl-md-go" onclick="mdStart()">Start Draft</button>'
     +(note?'<p class="dl-md-note">'+note+'</p>':'')
     +'<p class="dl-md-note">Players come from the consensus big board, adjusted for fantasy by position. Bots draft with about as much variation as a real league showed'+(mode==='league'?', leaning slightly toward their team’s needs':'')+'.</p>'
+    +'<p class="dl-md-note"><a href="draft/" style="color:var(--teal-br);font-weight:700">Try The Time Machine Draft</a>: a real past rookie class with the names hidden.</p>'
     +'</div>';
 }
 function mdRender(){
@@ -7044,8 +7045,11 @@ function showTab(id,el,skipSection){
   if(id==='watchlist' && typeof openWatchlistTab==='function'){ try{ openWatchlistTab(); }catch(e){ console.warn('watchlist',e); } }
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
-  if(id==='trade') dlPanelTypeWatch('panel-trade');
-  if(id==='mock') dlPanelTypeWatch('panel-mock');
+  /* typeof guards (14 Nov 2026): dlPanelTypeWatch lives in a later <script> block, so a page opened straight onto
+     Trade Calc or Mock Draft (?tab=trade, ?tab=mock) called it before it existed. The throw stopped the rest of
+     this block, What's New included. The panel still gets its watcher on the next tab visit. */
+  if(id==='trade' && typeof dlPanelTypeWatch==='function') dlPanelTypeWatch('panel-trade');
+  if(id==='mock' && typeof dlPanelTypeWatch==='function') dlPanelTypeWatch('panel-mock');
 }
 
 // Depth Charts tab removed — replaced by Contracts tab
@@ -7094,6 +7098,8 @@ function countUp(el, target, duration=600) {
    Seen state is per-device localStorage and deliberately NOT synced — it is a
    display preference, and syncing it would mean a Supabase schema change. */
 const DL_NEWS=[
+  {id:'2026-11-14-time-machine', d:'14 Nov 2026', t:'Time Machine Draft', tab:'mock',
+   b:"Draft a real rookie class from 2014 to 2023 with the names and the year hidden, using only what was known that summer. Then see who they became. Each pick is graded against the players still on the board, so an early slot is no advantage. Switch to DELTA Read to draft on DELTA's college measures. <a href=\"draft/\" style=\"color:var(--teal-br)\">Play it here</a>, or from My Team &rsaquo; Mock Draft."},
   {id:'2026-11-07-player-tabs', d:'7 Nov 2026', t:'Player Pages In Tabs',
    b:"Player pages are split into Overview, Games, Role and Value (plus College when there is one), so the part you want is a tap away instead of a long scroll. Overview now has Historical Comps: the past players most like him and how many starter seasons they had over the next three years, with names like Santonio Holmes and Michael Crabtree beside each group. Tap Today for the current players most like him."},
   {id:'2026-10-31-looks', d:'31 Oct 2026', t:'Choose Your Look',
@@ -8362,6 +8368,7 @@ document.addEventListener('click', function(e) {
           <li><b>Contracts</b> — <b>DELTA's own table, built by hand</b> from the original reports of each signing (team announcements, AP, NFL.com and other outlets), one row per player with a link to its report. Rookie deals show as "Rookie Deal".</li>
           <li><b>Injury designations</b> — <a href="https://docs.sleeper.com" target="_blank" rel="noopener">Sleeper</a> roster tags (IR / PUP / NFI / SUS). Only a separate hand-maintained list of confirmed season-ending injuries ever zeroes a projection: an IR flag means "unavailable now", not "done for the year".</li>
           <li><b>College production, recruiting, PPA</b> — <a href="https://collegefootballdata.com" target="_blank" rel="noopener">College Football Data</a> (CFBD). Regular season only; bowl and playoff games sit in their own section and are excluded from every rating, because participation is not uniform.</li>
+          <li><b>Time Machine Draft</b> — past dynasty rookie ADP (2014–2023) from <a href="https://fantasyfootballcalculator.com" target="_blank" rel="noopener">Fantasy Football Calculator</a>, with the nflverse and CFBD stats above.</li>
           <li><b style="color:var(--topaz)">Play-callers and coaching tendencies</b> — <b>built and verified by hand at DELTA</b>, 2017–2026 at week level, because no public dataset tracks in-season play-calling changes reliably. Of 354 team-seasons: 307 confirmed against contemporaneous reporting, 32 projected for the coming season, 8 likely, 7 unverified. Building it removed 11 coaches other sources list who never actually called plays.</li>
           <li><b>Offense style factors</b> — derived from nflverse play-by-play and FTN charting (2022–2025): pre-snap motion, personnel groupings, pass rate over expected. Each factor was validated against production before it was allowed to move a projection.</li>
           <li><b>Scarcity curves and ripple effects</b> — not sourced, <i>derived</i>. Scarcity is fit on nine seasons of nflverse finishing data; ripples are calibrated on eight seasons of teammate arrivals and departures. Both are DELTA's own work.</li>
@@ -8651,7 +8658,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-07c</span>
+  <span class="foot-build">2026-11-14a</span>
 </footer>
 
 
