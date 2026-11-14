@@ -245,7 +245,7 @@ function laterText(p,short){
   if(short)return 'Later Best '+p.pos+L.b;
   return 'Best finish <b>'+p.pos+L.b+'</b> ('+L.y+') \u00b7 '+(L.n===0?'no starter seasons':L.n===1?'1 starter season':L.n+' starter seasons');
 }
-function tierWord(p){return p.ss===0?'No Starter Seasons':p.ss===1?'One Starter Season':p.ss===2?'Two Starter Seasons':'Three Starter Seasons';}
+function tierWord(p){return (p.ss===0?'No Starter Seasons':p.ss===1?'One Starter Season':p.ss===2?'Two Starter Seasons':'Three Starter Seasons')+' In First 3 Years';}
 function seasons(p){return p.yrs.map(function(y){return y[0]+' '+(y[2]===0?'Did Not Play':y[3]?p.pos+y[3]:y[2]+(y[2]===1?' Game':' Games'));}).join(' · ');}
 function sub(p){var a=[p.pos];if(p.tm)a.push(esc(p.tm));if(p.col)a.push(esc(p.col));return a.join(' · ');}
 
@@ -436,8 +436,8 @@ function pickCard(x){
   return '<article class="pc stg t-'+t+'">'+
     '<div class="pch"><span class="tp">'+pickLabel(x.k)+'</span><span class="blind">'+nflLabel(p)+(p.age!=null?' · Age '+p.age.toFixed(1):'')+'</span></div>'+
     '<div class="pcm"><div class="pcn"><b class="nm">'+esc(p.n)+'</b><s>'+sub(p)+'</s></div><div class="pcv"><b>'+p.v+'</b><s>Over A Starter</s></div></div>'+
-    '<div class="pcs"><span class="c3">His First Three Seasons (What Counts Here)</span><span class="tw">'+tierWord(p)+'</span><span class="ys">'+seasons(p)+'</span>'+
-      (p.lt?'<span class="c3" style="margin-top:6px">Later Career (Not Counted)</span><span class="lt" style="margin-top:0">'+laterText(p)+'</span>':'')+
+    '<div class="pcs"><span class="tw">'+tierWord(p)+'</span><span class="ys">'+seasons(p)+'</span>'+
+      (laterText(p,true)?'<span class="lt">Later: '+laterText(p,true).replace('Later ','')+' ('+p.lt.y+')</span>':'')+
       '<span class="pg">Pick Grade <b>'+g0(p.taken.g)+'%</b></span></div>'+
     '<div class="pcc"><div><s>Market’s Pick Here'+(x.m===p?'':' · '+x.m.v)+'</s><b class="nm">'+(x.m===p?'Same Player':esc(x.m.n))+'</b></div>'+
     '<div><s>Best Available'+(x.b===p?'':' · '+x.b.v)+'</s><b class="nm">'+(x.b===p?'You Got Him':esc(x.b.n))+'</b></div></div></article>';
@@ -469,8 +469,7 @@ function renderReveal(instant){
     '<div class="acts stg"><button class="btn" type="button" data-act="share">Share Image</button><button class="btn ghost" type="button" data-act="copy">Copy Text</button><button class="btn ghost wide" type="button" data-act="again">Draft Again</button></div>'+
     '<div id="copyslot"></div>'+
     '<section class="stg"><h2>The Full Board</h2></section>'+
-    '<p class="note stg">Colours and points count each player\u2019s first three seasons only. \u201cLater Best\u201d shows his best finish after that, for context.</p>'+
-    '<div class="legend stg"><span><i class="dot t-r"></i>No Starter Seasons In Years 1\u20133</span><span><i class="dot t-b"></i>One</span><span><i class="dot t-g"></i>Two Or More</span></div>'+
+    '<div class="legend stg"><span><i class="dot t-r"></i>No Starter Seasons In First 3 Years</span><span><i class="dot t-b"></i>One</span><span><i class="dot t-g"></i>Two Or More</span></div>'+
     '<section class="board stg">'+S.log.map(function(p){return boardRow(p,pickLabel(p.taken.k));}).join('')+'</section>'+
     (left.length?'<section class="stg"><h2>Not Drafted In This Room</h2></section><section class="board stg">'+left.map(function(p){return boardRow(p,'—');}).join('')+'</section>':'')+
     foot();
@@ -526,7 +525,7 @@ function drawShare(){
     c.fillStyle=tc[t];c.fillRect(80,y,10,190);
     c.fillStyle=fog;c.font='700 30px '+MONO;c.fillText(pickLabel(xx.k),120,y+56);
     c.fillStyle=paper;fitText(c,p.n,W-160-40-250,58,'800',SANS);c.fillText(p.n,120,y+124);
-    c.fillStyle=fog;c.font='600 28px '+SANS;var sl=p.pos+' \u00b7 '+shortNfl(p)+' \u00b7 '+tierWord(p)+' In Years 1\u20133';fitText(c,sl,W-160-40-250,28,'600',SANS);c.fillText(sl,120,y+166);
+    c.fillStyle=fog;c.font='600 28px '+SANS;var sl=p.pos+' \u00b7 '+shortNfl(p)+' \u00b7 '+tierWord(p);fitText(c,sl,W-160-40-250,28,'600',SANS);c.fillText(sl,120,y+166);
     c.textAlign='right';c.fillStyle=tc[t];c.font='700 64px '+MONO;c.fillText(g0(p.taken.g)+'%',W-120,y+112);
     c.fillStyle=fog;c.font='700 22px '+SANS;c.fillText('PICK GRADE',W-120,y+150);c.textAlign='left';
     y+=212;});
