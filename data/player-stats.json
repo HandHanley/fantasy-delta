@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-13T15:30:51.952482+00:00",
+  "fetched": "2026-11-14T14:19:30.447664+00:00",
   "seasons": [
     2022,
     2023,
@@ -25565,11 +25565,6 @@
     }
   },
   "qb_roles": {
-    "Kyler Murray": {
-      "role": "backup",
-      "behind": "Kirk Cousins",
-      "source": "depth-chart"
-    },
     "Tua Tagovailoa": {
       "role": "backup",
       "behind": "Michael Penix Jr.",
@@ -25837,7 +25832,7 @@
     "source": "depth-chart",
     "reason": "ok",
     "teams": 32,
-    "snapshot": "2026-11-13T15:17:47Z",
+    "snapshot": "2026-11-14T14:04:32Z",
     "in_season": true
   },
   "qb_start_splits": {
@@ -26814,7 +26809,6 @@
     "Malik Washington": "MIA",
     "Kayshon Boutte": "HOU",
     "Michael Wilson": "ARI",
-    "Marquise Brown": "PHI",
     "Tyrone Tracy": "NYG",
     "Brian Robinson": "ATL",
     "George Holani": "SEA",
@@ -27024,7 +27018,7 @@
       "body_part": "Knee - Meniscus"
     },
     "Kyler Murray": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Hamstring"
     },
     "Malik Willis": {
@@ -27047,9 +27041,9 @@
       "status": "IR",
       "body_part": "Knee"
     },
-    "Tony Pollard": {
+    "Kenneth Walker III": {
       "status": "Questionable",
-      "body_part": "Finger"
+      "body_part": "Groin"
     },
     "Rhamondre Stevenson": {
       "status": "Questionable",
@@ -27059,10 +27053,6 @@
       "status": "Questionable",
       "body_part": "Groin"
     },
-    "Woody Marks": {
-      "status": "Questionable",
-      "body_part": "Knee"
-    },
     "Kyle Monangai": {
       "status": "Out",
       "body_part": "Toe"
@@ -27070,10 +27060,6 @@
     "Jacory Croskey-Merritt": {
       "status": "IR",
       "body_part": "Groin"
-    },
-    "Bhayshul Tuten": {
-      "status": "Questionable",
-      "body_part": "Ankle"
     },
     "Tyjae Spears": {
       "status": "Questionable",
@@ -27111,10 +27097,6 @@
       "status": "Questionable",
       "body_part": "Ribs"
     },
-    "George Pickens": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "Davante Adams": {
       "status": "IR",
       "body_part": "Hamstring"
@@ -27143,13 +27125,13 @@
       "status": "Questionable",
       "body_part": "Back"
     },
-    "Jakobi Meyers": {
-      "status": "Questionable",
-      "body_part": "Ankle"
-    },
     "Romeo Doubs": {
       "status": "IR",
       "body_part": "Shoulder"
+    },
+    "Jordan Addison": {
+      "status": "Questionable",
+      "body_part": "Thumb"
     },
     "Luther Burden": {
       "status": "Questionable",
@@ -27158,10 +27140,6 @@
     "Terry McLaurin": {
       "status": "IR",
       "body_part": "Knee"
-    },
-    "Tre Harris": {
-      "status": "Questionable",
-      "body_part": "Shoulder"
     },
     "Jayden Higgins": {
       "status": "IR",
@@ -27172,11 +27150,11 @@
       "body_part": "Knee - PCL"
     },
     "Mike Evans": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Achilles"
     },
     "Marvin Harrison Jr.": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Hamstring"
     },
     "Garrett Wilson": {
@@ -27187,21 +27165,13 @@
       "status": "DNR",
       "body_part": "Knee - ACL + MCL"
     },
-    "Deebo Samuel": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "Jauan Jennings": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Calf"
     },
     "Jayden Reed": {
       "status": "IR",
       "body_part": "Neck"
-    },
-    "Rashod Bateman": {
-      "status": "Questionable",
-      "body_part": "Calf"
     },
     "Jalen McMillan": {
       "status": "IR",
@@ -27215,24 +27185,12 @@
       "status": "Out",
       "body_part": "Ankle"
     },
-    "Harold Fannin Jr.": {
-      "status": "Questionable",
-      "body_part": "Groin"
-    },
-    "Hunter Henry": {
-      "status": "Questionable",
-      "body_part": "Foot"
-    },
-    "Dalton Kincaid": {
-      "status": "Questionable",
-      "body_part": "Ankle"
-    },
     "Chigoziem Okonkwo": {
       "status": "Questionable",
       "body_part": "Back"
     },
     "T.J. Hockenson": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Wrist"
     },
     "Cole Kmet": {
@@ -27246,6 +27204,10 @@
     "Christian Kirk": {
       "status": "IR",
       "body_part": "Knee - Meniscus"
+    },
+    "Adonai Mitchell": {
+      "status": "Questionable",
+      "body_part": "Knee"
     },
     "Jaylin Noel": {
       "status": "IR",
@@ -27267,17 +27229,9 @@
       "status": "Questionable",
       "body_part": "Hip"
     },
-    "Chris Rodriguez": {
-      "status": "Questionable",
-      "body_part": "Hand"
-    },
     "David Njoku": {
       "status": "IR",
       "body_part": "Lower Leg"
-    },
-    "Colby Parkinson": {
-      "status": "Questionable",
-      "body_part": "Ribs"
     },
     "Terrance Ferguson": {
       "status": "IR",
@@ -27292,7 +27246,7 @@
       "body_part": "Ankle"
     },
     "Carnell Tate": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Shoulder"
     },
     "Omar Cooper": {
@@ -27304,19 +27258,15 @@
       "body_part": "Toe"
     },
     "Zachariah Branch": {
-      "status": "Doubtful",
+      "status": "Out",
       "body_part": "Hamstring"
     },
     "Chris Brazzell II": {
       "status": "IR",
       "body_part": "Knee"
     },
-    "Will Kacmarek": {
-      "status": "Questionable",
-      "body_part": "Quadriceps"
-    },
     "Chris Bell": {
-      "status": "Questionable",
+      "status": "Doubtful",
       "body_part": "Knee"
     },
     "Kendrick Law": {
@@ -27391,10 +27341,6 @@
       "status": "PUP",
       "body_part": "Personal"
     },
-    "Tyler Higbee": {
-      "status": "Questionable",
-      "body_part": "Illness"
-    },
     "Erick All": {
       "status": "IR",
       "body_part": "Knee - ACL"
@@ -27411,10 +27357,6 @@
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Savion Williams": {
-      "status": "Questionable",
-      "body_part": "Groin"
-    },
     "Andrei Iosivas": {
       "status": "IR",
       "body_part": "Thumb"
@@ -27422,10 +27364,6 @@
     "Calvin Austin": {
       "status": "IR",
       "body_part": "Knee"
-    },
-    "KaVontae Turpin": {
-      "status": "Questionable",
-      "body_part": "Ribs"
     },
     "Kendrick Bourne": {
       "status": "IR",
@@ -27450,6 +27388,10 @@
     "De'Zhaun Stribling": {
       "status": "IR",
       "body_part": "Ankle"
+    },
+    "Dont'e Thornton": {
+      "status": "Questionable",
+      "body_part": "Back"
     },
     "Ja'Lynn Polk": {
       "status": "NA",
