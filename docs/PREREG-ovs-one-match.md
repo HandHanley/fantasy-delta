@@ -116,3 +116,24 @@ On 13 Nov, on this frame with today's values, outcomes visible (`/tmp/diag/late_
 ## 7. Not Licensed Here
 
 The DELTA Score, the live site's main rankings, buy/sell calls.
+
+## 8. Results (13 November 2026, The One Real Run)
+
+`study/out/ovs_one_match_run.json`. **Decision (A1): FAIL, no change.**
+
+| Measure | Today | Capped | Change |
+|---|---|---|---|
+| **Decides:** typical miss, the 3,339 rows the cap moves 20%+ | 24.76 | 24.32 | **1.77% better (p = 0.002), bar 2%** |
+| Guard: typical miss, all 6,808 rows | 48.33 | 47.97 | 0.74% better (passes the guard) |
+| Rank correlation with what happened (all rows) | 0.537 | 0.560 | better |
+| Late-round rookies on draft value: produced ÷ value | 0.41 | 0.80 | closer to 1 |
+
+- **By position (all rows), typical miss:** QB 80.04 → 80.04, RB 46.17 → 45.60, WR 41.95 → 41.46, TE 34.82 → 34.54.
+- **Other caps, reported only:** second-best 2.16% on its 2,352 moved rows (0.47% all rows); fourth-best 1.83%
+  (0.91%); fifth-best 1.48% (0.96%). The second-best clearing 2% decides nothing: the cap was fixed at the third-best
+  before the run, and picking the best of four after seeing them is the thing pre-registration exists to stop.
+- **Produced ÷ value by fifths of today's value (all rows):** top 0.87 → 0.91; second 0.61 → 0.81; middle 0.50 → 1.65;
+  fourth 1.42 → 13.1 (tiny values; today's are near zero too); bottom fifth valued 0 by both. Today runs generous in
+  the middle; capped runs stingy there.
+- **Reading:** better on every measure, real (p = 0.002), and short of the bar. Same shape as the 12 Nov rookie blend
+  (1.8%). No change ships.

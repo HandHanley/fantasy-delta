@@ -1,0 +1,104 @@
+{
+ "prereg": "docs/PREREG-ovs-one-match.md",
+ "week": 9,
+ "cap_at": 3,
+ "decides_a1": {
+  "moved_rows": 3339,
+  "rmse_today": 24.758087134853756,
+  "rmse_capped": 24.321098464704313,
+  "lift": 0.01765034058444126,
+  "p": 0.001999800019998,
+  "all_rows": 6808,
+  "all_rmse_today": 48.33379613063222,
+  "all_rmse_capped": 47.97447831461832,
+  "all_rows_worse_by": -0.007434090528349424,
+  "pass": false
+ },
+ "reported": {
+  "original_rule_all_rows": {
+   "rows": 6808,
+   "rmse_today": 48.33379613063222,
+   "rmse_capped": 47.97447831461832,
+   "lift": 0.007434090528349313,
+   "p": 0.00019998000199980003,
+   "pass": false
+  },
+  "other_caps": {
+   "2": {
+    "all_rows_lift": 0.004702655993898963,
+    "moved_rows": 2352,
+    "moved_rows_lift": 0.02155553582388381
+   },
+   "4": {
+    "all_rows_lift": 0.009148714964602234,
+    "moved_rows": 3879,
+    "moved_rows_lift": 0.01834549792137896
+   },
+   "5": {
+    "all_rows_lift": 0.00963364731865457,
+    "moved_rows": 4243,
+    "moved_rows_lift": 0.014754031889635644
+   }
+  },
+  "by_position": {
+   "QB": {
+    "rows": 853,
+    "rmse_today": 80.03963603820578,
+    "rmse_capped": 80.03680851380048
+   },
+   "RB": {
+    "rows": 1966,
+    "rmse_today": 46.1700348467772,
+    "rmse_capped": 45.59822203408093
+   },
+   "WR": {
+    "rows": 2581,
+    "rmse_today": 41.95051465607085,
+    "rmse_capped": 41.46267394558647
+   },
+   "TE": {
+    "rows": 1408,
+    "rmse_today": 34.81800354298091,
+    "rmse_capped": 34.54137188105733
+   }
+  },
+  "spearman": {
+   "today": 0.5372390515810881,
+   "capped": 0.5601979376777858
+  },
+  "produced_over_value_by_band": {
+   "bottom fifth": {
+    "rows": 1362,
+    "today": Infinity,
+    "capped": Infinity
+   },
+   "fourth": {
+    "rows": 1361,
+    "today": 1.421807526733695,
+    "capped": 13.145979680121432
+   },
+   "middle": {
+    "rows": 1362,
+    "today": 0.49807977766850503,
+    "capped": 1.6493472503424818
+   },
+   "second": {
+    "rows": 1361,
+    "today": 0.609197687230807,
+    "capped": 0.8113126576932046
+   },
+   "top fifth": {
+    "rows": 1362,
+    "today": 0.8686644242125335,
+    "capped": 0.9120819835283384
+   }
+  },
+  "late_round_rookies_on_draft_value": {
+   "rows": 545,
+   "produced_over_value_today": 0.40800542331737555,
+   "produced_over_value_capped": 0.7995609626394848,
+   "rmse_today": 24.45949766499285,
+   "rmse_capped": 23.511075775858814
+  }
+ }
+}
