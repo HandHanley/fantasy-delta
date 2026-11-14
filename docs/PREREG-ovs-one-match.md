@@ -1,6 +1,6 @@
 # PRE-REGISTRATION — New Value: No One Match Carries A Player
 
-**Drafted:** 13 November 2026, before any capped value has been compared with any outcome. **Status: LOCKED** by
+**Drafted:** 13 November 2026, before any capped value has been compared with any outcome. **Status: LOCKED; amended A1 before any real run (§3A).** Locked by
 committing this document with `study/ovs_one_match.py`. The crash test runs next; the real run only if it passes.
 Steve, 13 Nov: "Yeah let's do a study for option 1."
 
@@ -68,6 +68,21 @@ On all rows the 2% bar can't see this change even when it's exactly right (the s
 rookie calibration): typical miss is driven by stars' big misses, and long shots' values are small numbers. On the
 rows it moves (3,339 of 6,808 test rows, chosen from values alone, no outcomes), the test sees it every time and
 never falsely. **Taken to Steve before any real run.**
+
+## 3A. Amendment A1 (13 Nov, After The Crash Tests, Before Any Real Run)
+
+Steve approved deciding where the cap acts ("Yep that makes sense"), after the plain version: the all-rows grade
+can't hear a change this small even when it's exactly right; graded on the players it changes, it hears it every time
+and never falsely. **Replaces section 2's decision:**
+
+- **Decided on:** test rows whose value the cap lowers by **20% or more**, chosen from today's and the capped values
+  alone (no outcome read). 3,339 of 6,808.
+- **Passes** if capped RMSE on those rows is at least **2% lower**, permutation p < 0.05 (10,000 shuffles), **and**
+  RMSE on all test rows is at most **0.5% worse**.
+- **Noise check first:** outcomes shuffled within position and season, values and the 20% rows rebuilt from them. May
+  pass at most 1 of 20 (`--mode crash_a1`). Planted: the match-draw test above, 200 of 200.
+- Section 2's all-rows result is reported beside it, deciding nothing. Passes → the weekly build caps at the
+  third-best match. Fails → no change.
 
 ## 4. Reported, Deciding Nothing
 

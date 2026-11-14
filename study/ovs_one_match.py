@@ -24,6 +24,8 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 CAP_AT = 3                      # pre-registered: capped at the third-best match
 REPORT_CAPS = (2, 4, 5)         # reported only, deciding nothing
 BAR, ALPHA, N_PERM = 0.02, 0.05, 10000
+MOVED = 0.20                    # amendment A1: decided on rows whose value the cap lowers by 20%+ (values only)
+GUARD = 0.005                   # amendment A1: all rows may be at most 0.5% worse
 
 
 def rmse(p, y):
@@ -61,12 +63,49 @@ def values(G, y, k=None):
     return np.where(d, pb, pin)
 
 
-def decide(G, today, new, truth, n_perm=N_PERM):
+def decide_all(G, today, new, truth, n_perm=N_PERM):
     m = G['test']
     r0, r1 = rmse(today[m], truth[m]), rmse(new[m], truth[m])
     lift, p = C.perm_test(truth[m], new[m], today[m], G['keys'][m], n_perm)
     return {'rows': int(m.sum()), 'rmse_today': r0, 'rmse_capped': r1, 'lift': float(lift), 'p': float(p),
             'pass': bool(lift >= BAR and p < ALPHA)}
+
+
+decide = decide_all                 # the original rule (section 2), kept for the record and the first crash test
+
+
+def moved_rows(today, new):
+    """Rows whose value the cap lowers by 20% or more. Values only: no outcome is read."""
+    return (today > 0) & ((today - new) >= MOVED * today)
+
+
+def decide_a1(G, today, new, truth, n_perm=N_PERM):
+    """Amendment A1 (Steve, 13 Nov): 2% / p<0.05 on test rows the cap moves 20%+; all test rows at most 0.5% worse."""
+    mv = G['test'] & moved_rows(today, new); m = G['test']
+    r0, r1 = rmse(today[mv], truth[mv]), rmse(new[mv], truth[mv])
+    lift, p = C.perm_test(truth[mv], new[mv], today[mv], G['keys'][mv], n_perm)
+    a0, a1 = rmse(today[m], truth[m]), rmse(new[m], truth[m])
+    worse = a1 / a0 - 1
+    return {'moved_rows': int(mv.sum()), 'rmse_today': r0, 'rmse_capped': r1, 'lift': float(lift), 'p': float(p),
+            'all_rows': int(m.sum()), 'all_rmse_today': a0, 'all_rmse_capped': a1, 'all_rows_worse_by': float(worse),
+            'pass': bool(lift >= BAR and p < ALPHA and worse <= GUARD)}
+
+
+def crash_a1_noise(G, runs=20):
+    """A1's noise check: outcomes shuffled within position and season; values and the moved rows rebuilt from them."""
+    y, rows, S = G['y'], G['rows'], G['S']
+    rng = np.random.default_rng(7)
+    grp = pd.DataFrame({'p': S.pos.values, 't': S.t.values}).groupby(['p', 't']).groups
+    npass = 0; lifts = []
+    for i in range(runs):
+        yn = y.copy()
+        for g in grp.values():
+            g = np.array(list(g)); yn[g] = y[rng.permutation(g)]
+        r = decide_a1(G, values(G, yn), values(G, yn, CAP_AT), yn[rows], n_perm=1000)
+        npass += r['pass']; lifts.append(r['lift'])
+    res = {'noise_a1': {'runs': runs, 'passed': int(npass), 'ok': npass <= 1, 'median_lift': float(np.median(lifts))}}
+    print(res, flush=True)
+    return res
 
 
 def crash(G, runs=200, noise_runs=20):
@@ -103,12 +142,14 @@ def run(G):
     y, rows, m = G['y'], G['rows'], G['test']
     yr = y[rows]
     today, cap = values(G, y), values(G, y, CAP_AT)
-    res = {'prereg': 'docs/PREREG-ovs-one-match.md', 'week': SSm.WEEK, 'cap_at': CAP_AT, 'decides': decide(G, today, cap, yr)}
-    rep = {}
+    res = {'prereg': 'docs/PREREG-ovs-one-match.md', 'week': SSm.WEEK, 'cap_at': CAP_AT, 'decides_a1': decide_a1(G, today, cap, yr)}
+    rep = {'original_rule_all_rows': decide_all(G, today, cap, yr)}
     rep['other_caps'] = {}
     for k in REPORT_CAPS:
         v = values(G, y, k)
-        rep['other_caps'][k] = {'rmse': rmse(v[m], yr[m]), 'lift': float(1 - rmse(v[m], yr[m]) / rmse(today[m], yr[m]))}
+        mv = m & moved_rows(today, v)
+        rep['other_caps'][k] = {'all_rows_lift': float(1 - rmse(v[m], yr[m]) / rmse(today[m], yr[m])), 'moved_rows': int(mv.sum()),
+                                'moved_rows_lift': float(1 - rmse(v[mv], yr[mv]) / rmse(today[mv], yr[mv]))}
     rep['by_position'] = {q: {'rows': int((m & (G['pos'] == q)).sum()),
                               'rmse_today': rmse(today[m & (G['pos'] == q)], yr[m & (G['pos'] == q)]),
                               'rmse_capped': rmse(cap[m & (G['pos'] == q)], yr[m & (G['pos'] == q)])} for q in C.POS}
@@ -130,11 +171,11 @@ def run(G):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--mode', choices=('crash', 'run'), required=True)
+    ap.add_argument('--mode', choices=('crash', 'crash_a1', 'run'), required=True)
     for k in ('nflverse', 'rosters', 'weekly', 'wrost', 'inj', 'sched', 'snaps'): ap.add_argument('--' + k, required=True)
     a = ap.parse_args()
     G = frame(a)
-    res = crash(G) if a.mode == 'crash' else run(G)
+    res = crash(G) if a.mode == 'crash' else crash_a1_noise(G) if a.mode == 'crash_a1' else run(G)
     fn = os.path.join(OUT, f'ovs_one_match_{a.mode}.json')
     json.dump(res, open(fn, 'w'), indent=1, default=float)
     print(json.dumps(res, indent=1, default=float))
