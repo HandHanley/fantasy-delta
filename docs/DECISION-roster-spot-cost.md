@@ -71,3 +71,20 @@ both FV and FV_rc. Fails either → no change.
 ## 6. Prior Looks
 
 The 13 Nov late-round rookie and one-match results (`PREREG-ovs-one-match.md` §5, §8). No FV_rc has been computed.
+
+## 7. Results (13 November 2026)
+
+`study/out/ovs_roster_cost_results.json`; this week's build rerun with FV_rc (`/tmp/diag/nv_roster_cost_build.py`,
+not shipped).
+
+- **The price of a roster spot is small:** c = 1.14 starter points per season (study scoring), 1.66 (full PPR). The
+  252 players ranked 301st–336th in 2006–2012 averaged that because only 6% of them ever produced starter points. The
+  alternative to a long shot is another long shot.
+- **Safety check passed:** rank correlation with FV 0.537 → 0.529 (drop 0.008, allowed 0.01). It got slightly worse
+  and gained nothing.
+- **It barely moves anyone:** in this week's build no top-200 player moves more than 6 places. Klein 127 → 128,
+  Benson 125 → 125, Kaliakmanis 157 → 155, Barion Brown 185 → 182. The buy lists are almost unchanged (FantasyCalc 63
+  → 62). The players just above and below the long shots are steady part-timers who are also under the line most
+  seasons, so they pay the same charge.
+- **Decision: no change.** Recorded as a finding: on DELTA's own history, carrying a long shot costs little, because
+  every bench spot is a long shot.

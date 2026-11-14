@@ -1,0 +1,42 @@
+{
+ "decision_doc": "docs/DECISION-roster-spot-cost.md",
+ "week": 9,
+ "roster_spots": [
+  301,
+  336
+ ],
+ "c": 1.1359898670415274,
+ "c_display": 1.6629634510630824,
+ "c_rows": 252,
+ "c_rows_share_with_any_starter_points": 0.06349206349206349,
+ "safety": {
+  "rows": 6808,
+  "spearman_fv_today": 0.5372390515810881,
+  "spearman_fv_new": 0.5293674928309178,
+  "drop": 0.007871558750170315,
+  "allowed_drop": 0.01,
+  "pass": true
+ },
+ "reported": {
+  "spearman_fv_rc": {
+   "today": 0.17994652087772728,
+   "new": 0.20171253427367009
+  },
+  "rmse_fv": {
+   "today": 48.33379613063222,
+   "new": 48.22591582567473
+  },
+  "rmse_fv_rc": {
+   "today": 48.76671746934915,
+   "new": 48.62557601845644
+  },
+  "share_of_test_rows_charged_at_least_once": 0.5975323149236192,
+  "late_round_rookies_on_draft_value": {
+   "rows": 545,
+   "mean_value_today": 9.147768312053856,
+   "mean_value_new": 7.578695537414184,
+   "mean_fv": 3.732339082568808,
+   "mean_fv_rc": 2.135700113479248
+  }
+ }
+}
