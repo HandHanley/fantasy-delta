@@ -173,6 +173,11 @@ tilt that any dynasty player already knows. Steve, 13 Nov: "This definitely look
 - **No call on a season-ender:** anyone on `data/injury-overrides.json` on freeze day (Steve's hand-kept, confirmed
   list) gets no call either way. Their values are unchanged (no injury penalty); they're listed in the freeze and
   reported, not graded.
+- **No call until 150 snaps:** a rookie still on his draft-slot value (no game, or under 150 offensive snaps; listed in
+  the build's `meta.rookie_snap_rule`) gets no call either way. His value is a draft slot, not demonstrated production,
+  so a call would be a call on draft capital (Steve, 13 Nov: "I love the no call until 150 snaps rule"). On 13 Nov
+  markets this removed Ty Simpson, Jadarian Price, Marlin Klein, Drew Allar, Kaelon Black and Oscar Delp from the
+  buys and nobody from the sells. Listed in the freeze and reported, not graded.
 - **Outcome:** the change in his **position rank** in that same market, freeze to the Sunday before Week 1 (2027, 2028,
   2029). A player who drops out of the list falls to the bottom of his position. Measures as section 4: buys' average
   move minus sells', share moving the right way, a permutation test shuffling labels within position.
