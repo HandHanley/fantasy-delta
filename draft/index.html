@@ -67,6 +67,10 @@ h2{font-size:17px;font-weight:800;margin:6px 0 0}
 .btn.ghost{background:var(--ink-2);color:var(--paper);border:1px solid var(--line)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .acts .wide{grid-column:1/-1}
+.next{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--teal-br);border-radius:var(--r);background:var(--teal-tint);color:var(--paper);text-decoration:none}
+.next b{display:block;font-size:15px;font-weight:800;color:var(--teal-br)}
+.next s{display:block;font-size:13px;line-height:1.4;color:var(--fog);margin-top:3px}
+.next i{font-style:normal;font-size:26px;line-height:1;color:var(--teal-br)}
 .shareprev{display:flex;flex-direction:column;gap:8px}
 .shareprev img{width:100%;border-radius:12px;border:1px solid var(--line)}
 
@@ -467,6 +471,7 @@ function renderReveal(instant){
       return '<div class="srow'+(me?' me':'')+'"><span class="sr">'+ord(r.rank)+'</span><span>'+(me?'You':'Team '+r.team)+'<s class="sp"> \u00b7 '+r.v+' Points</s></span><span class="st">'+r.g+'%</span></div>';}).join('')+'</section>'+
     (away?'<section class="card away stg"><div class="cap">The One That Got Away</div><p>At <b>'+pickLabel(away.k)+'</b> you passed on <b>'+esc(away.b.n)+'</b>, worth <b>'+away.b.v+'</b>. '+(away.b.taken?'He went at '+pickLabel(away.b.taken.k)+'.':'Nobody in this room drafted him.')+'</p></section>':'')+
     '<div class="acts stg"><button class="btn" type="button" data-act="share">Share Image</button><button class="btn ghost" type="button" data-act="copy">Copy Text</button><button class="btn ghost wide" type="button" data-act="again">Draft Again</button></div>'+
+    '<a class="next stg" href="../?tab=mock"><span><b>Now Draft The 2027 Class</b><s>Mock this year\u2019s rookies on DELTA, with projected NFL landing spots.</s></span><i aria-hidden="true">\u203a</i></a>'+
     '<div id="copyslot"></div>'+
     '<section class="stg"><h2>The Full Board</h2></section>'+
     '<div class="legend stg"><span><i class="dot t-r"></i>No Starter Seasons In First 3 Years</span><span><i class="dot t-b"></i>One</span><span><i class="dot t-g"></i>Two Or More</span></div>'+
