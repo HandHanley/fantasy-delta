@@ -33,6 +33,7 @@ import comps_in_season as CI
 import ovs_available_ppg as AP
 import ovs_qb_starts as QS
 import contract_layer as CL
+import rookie_snaps as RS
 import ovs_small_samples as SSm                                    # imported before any patch (it keeps the original)
 
 POS = ('QB', 'RB', 'WR', 'TE')
@@ -190,7 +191,13 @@ def build(D, season, week, contracts):
     rook = Sin.rookie_Y.values.astype(bool)
     # first-year player with no game yet (QBs: no real game, §7/§8; others: no available game) -> incoming-rookie value
     qb = Sin.pos.values == 'QB'
-    incoming = cur & rook & np.where(qb, X, n == 0) & (Sb.kind.values == 'R0')
+    # ROOKIES KEEP DRAFT VALUE UNTIL 150 OFFENSIVE SNAPS (Steve, 13 Nov 2026; docs/PREREG-ovs-rookie-snaps.md). Jordyn
+    # Tyson (pick 8) fell to 115th off one 18-snap game. Week 9, 2013-2022: first-year typical miss 1.4% better under the
+    # rule (passes the 0.5%-worse guard); QB and TE better, WR 3.5% and RB 1.1% worse (reported, deciding nothing).
+    snaps = RS.offense_snaps(os.path.join(D, 'snaps'), os.path.join(D, 'nflv', 'players.csv'), week, seasons={season})
+    under = np.array([RS.under(snaps, k, season) for k in Sin.key.values])
+    incoming = cur & rook & (np.where(qb, X, n == 0) | under) & (Sb.kind.values == 'R0')
+    held = sorted(str(x) for x in Sin.name.values[cur & rook & under & ~np.where(qb, X, n == 0) & (Sb.kind.values == 'R0')])
     vrows = Sin.index[cur & ~incoming & (Sin.kind.values == 'V')].values
     xrows = Sin.index[incoming].values
     v_in = values(Sin, vrows, y, season)
@@ -260,6 +267,8 @@ def build(D, season, week, contracts):
             'scoring': 'full PPR, no TE premium, 12-team superflex', 'lines': C.REPL_N,
             'contract_security': 'on (deal ending this season counts as a contract year)',
             'players': len(out), 'incoming_rookie_values': len(v_x), 'top_raw': top,
+            'rookie_snap_rule': {'rule': 'first-year player under %d offensive snaps this season keeps his incoming-rookie '
+                                         '(draft-slot) value (Steve, 13 Nov 2026)' % RS.THRESHOLD, 'held_on_draft_value': held},
             'no_roster_rule': {'rule': 'no game this season and his latest roster status this season is cut, retired, '
                                        'practice squad or none -> no value until he is on an active roster or injured '
                                        'reserve (Steve, 13 Nov 2026)',

@@ -31,8 +31,8 @@ sure it doesn't make them worse.
 ## 2. The Check (Decides Whether It Ships)
 
 - **Rows:** week 9, test seasons 2013–2022: the rows of `PREREG-ovs-small-samples.md`, built by `ovs_small_samples.py`'s
-  frame, which must reproduce today's value (RMSE 48.4611) first. Snap counts start in 2012, so every test season has
-  them. Nothing is fitted, so the fit seasons are not used.
+  frame, which must reproduce today's value (RMSE 48.4611) first. Snap counts start in 2013 (the 2012 file is empty;
+  found when the script's coverage check stopped it, before any result), so every test season has them. Nothing is fitted, so the fit seasons are not used.
 - **Today, as the live build values rookies:** a first-year QB with no real game, or any other first-year player with no
   available game, takes his incoming-rookie value; everyone else takes the in-season value.
 - **Decides:** on the first-year rows, the typical miss (RMSE, three seasons ahead, FV3) under the rule must be **no more

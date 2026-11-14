@@ -1,0 +1,64 @@
+{
+ "prereg": "docs/PREREG-ovs-rookie-snaps.md",
+ "week": 9,
+ "threshold_snaps": 150,
+ "decides": {
+  "first_year_rows": 947,
+  "rmse_today": 56.73715329400998,
+  "rmse_rule": 55.9508319574159,
+  "change": 0.013859019900406166,
+  "allowed_worse": 0.005,
+  "pass": true
+ },
+ "reported": {
+  "all_rows": {
+   "rmse_today": 48.46113339000034,
+   "rmse_rule": 48.33379613063222
+  },
+  "first_year_perm": {
+   "lift": 0.013859019900406166,
+   "p": 0.17918208179182082
+  },
+  "first_year_rows_under_threshold": 633,
+  "first_year_rows_moved_by_rule": 615,
+  "by_position": {
+   "QB": {
+    "rows": 82,
+    "rmse_today": 108.84196033740884,
+    "rmse_rule": 100.39510431229415
+   },
+   "RB": {
+    "rows": 289,
+    "rmse_today": 60.21658794102382,
+    "rmse_rule": 60.84945091404593
+   },
+   "WR": {
+    "rows": 390,
+    "rmse_today": 44.199266863215726,
+    "rmse_rule": 45.76604919137815
+   },
+   "TE": {
+    "rows": 186,
+    "rmse_today": 37.905792921666176,
+    "rmse_rule": 36.74616044613077
+   }
+  },
+  "produced_over_value": {
+   "first_year_under_150": {
+    "rows": 615,
+    "today": 0.5500210970718692,
+    "rule": 0.4740936354861778
+   },
+   "first_year_150_plus": {
+    "rows": 314,
+    "today": 1.044309115358468,
+    "rule": 1.044309115358468
+   },
+   "first_year_all": {
+    "rows": 947,
+    "today": 0.9279145066057929,
+    "rule": 0.8863301085535608
+   }
+  }
+ }
+}
