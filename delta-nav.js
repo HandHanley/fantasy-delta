@@ -59,7 +59,11 @@
     + '.seg.dl-bnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;margin:0;gap:0;'
     +   'padding:4px max(6px,env(safe-area-inset-right)) max(4px,calc(env(safe-area-inset-bottom) - 12px)) max(6px,env(safe-area-inset-left));'
     +   'background:var(--ink-2);border:0;border-top:1px solid var(--line);border-radius:0;'
-    +   'box-shadow:0 -10px 24px var(--ink)}'
+    +   'box-shadow:0 -10px 24px var(--ink);'
+    /* Its own drawing layer (15 Nov 2026). iPhone Safari could paint the pinned bar mid-screen, mostly
+       in Glass (blur behind it) and on Live, whose box score is rebuilt every 30 seconds while the
+       reader scrolls. A layer of its own keeps it drawn against the screen. Moves nothing. */
+    +   '-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}'
     + '.seg.dl-bnav .seg-btn{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;'
     +   'gap:2px;min-height:52px;padding:4px 2px !important;border:0;border-radius:10px;background:none !important;'
     +   'color:var(--fog);font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.01em;text-decoration:none;cursor:pointer}'
