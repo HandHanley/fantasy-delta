@@ -52,6 +52,7 @@ a{color:var(--teal-br)}
 .brand svg{width:30px;height:30px;flex:none}
 .brand span{font-family:var(--geo);font-weight:700;font-size:16px;letter-spacing:.22em;padding-top:3px}
 .tag{font-size:12px;font-weight:700;color:var(--fog);white-space:nowrap}
+.explore{font-size:13px;font-weight:800;color:var(--teal-br);text-decoration:none;white-space:nowrap;padding:10px 0 10px 12px}
 
 .hero h1{font-size:28px;line-height:1.15;font-weight:800;margin:6px 0 8px;text-wrap:balance}
 .lede{font-size:15px;line-height:1.5;color:var(--fog);margin:0;max-width:44ch}
@@ -253,7 +254,13 @@ function tierWord(p){return (p.ss===0?'No Starter Seasons':p.ss===1?'One Starter
 function seasons(p){return p.yrs.map(function(y){return y[0]+' '+(y[2]===0?'Did Not Play':y[3]?p.pos+y[3]:y[2]+(y[2]===1?' Game':' Games'));}).join(' · ');}
 function sub(p){var a=[p.pos];if(p.tm)a.push(esc(p.tm));if(p.col)a.push(esc(p.col));return a.join(' · ');}
 
-function head(tag){return '<header class="top"><a class="brand" href="../" aria-label="DELTA Home">'+LOGO+'<span>DELTA</span></a>'+(tag?'<span class="tag">'+tag+'</span>':'')+'</header>';}
+/* "Explore DELTA" on every screen (Steve, 15 Nov: Reddit visitors never found the rest of the site). Mid-draft
+   both links open a new tab so the draft isn't lost. */
+function head(tag){
+  var mid=S&&!S.done,nt=mid?' target="_blank" rel="noopener"':'';
+  return '<header class="top"><a class="brand" href="../" aria-label="DELTA Home"'+nt+'>'+LOGO+'<span>DELTA</span></a>'+
+    '<a class="explore" href="../"'+nt+'>Explore DELTA \u203a</a></header>';
+}
 function foot(){return '<footer>12 teams · 3 rounds · one-QB PPR. The other eleven teams draft the way that summer’s real mock drafts went. College stats cover the regular season, before bowl games. Data sources are listed under About on <a href="../">fantasydelta.com</a>.</footer>';}
 function slotLabel(p){return p.rd?('Round '+p.rd+' · Pick '+p.pk):'Undrafted';}
 function fmt(n){return Number(n).toLocaleString('en-US');}
