@@ -52,7 +52,8 @@ a{color:var(--teal-br)}
 .brand svg{width:30px;height:30px;flex:none}
 .brand span{font-family:var(--geo);font-weight:700;font-size:16px;letter-spacing:.22em;padding-top:3px}
 .tag{font-size:12px;font-weight:700;color:var(--fog);white-space:nowrap}
-.plink{color:inherit;text-decoration:underline;text-decoration-color:var(--fog-2);text-decoration-thickness:1px;text-underline-offset:4px}
+.srow .nm{font-weight:700}
+.plink{color:inherit;text-decoration:underline;text-decoration-color:var(--fog);text-decoration-thickness:1px;text-underline-offset:2px;padding-bottom:3px}
 .explore{font-size:13px;font-weight:800;color:var(--teal-br);text-decoration:none;white-space:nowrap;padding:10px 0 10px 12px}
 
 .hero h1{font-size:28px;line-height:1.15;font-weight:800;margin:6px 0 8px;text-wrap:balance}
@@ -236,7 +237,10 @@ function saveStats(){try{localStorage.setItem('tmd-stats',JSON.stringify(stats))
 var LOGO='<svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="fL" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" style="stop-color:var(--teal-br)"/><stop offset="1" style="stop-color:var(--teal)"/></linearGradient><linearGradient id="fR" x1=".55" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--emerald)"/><stop offset="1" style="stop-color:var(--emerald-deep)"/></linearGradient></defs><path d="M64 20 L22 108 L64 108 Z" fill="url(#fL)"/><path d="M64 20 L64 108 L106 108 Z" fill="url(#fR)"/><line x1="64" y1="23" x2="64" y2="108" style="stroke:var(--mint)" stroke-width="3" stroke-opacity=".5"/></svg>';
 
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function gauss(){var u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+/* Bots draw from a seeded generator, one seed per draft, so a Challenge link replays the same room. */
+var RNG=Math.random;
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(){var u=0,v=0;while(!u)u=RNG();while(!v)v=RNG();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
 function pickLabel(k){return (Math.floor(k/TEAMS)+1)+'.'+String(k%TEAMS+1).padStart(2,'0');}
 function htLabel(h){return Math.floor(h/12)+'′'+(h%12)+'″';}
 function nflLabel(p){return p.rd?('NFL Round '+p.rd+' · Pick '+p.pk):'Undrafted By The NFL';}
@@ -327,6 +331,59 @@ function tallyHTML(){
   return '<p class="tally">'+a.join('<br>')+'</p>';
 }
 
+/* ---------- Challenge A Friend (Steve, 16 Nov) ----------
+   The link carries class, slot, seed and the challenger's three picks (lightly scrambled). The friend's draft
+   uses the same seed, so the bots pick exactly as they did until his picks change the board. The challenger's
+   grade is never trusted from the link: it is re-worked by replaying his draft. */
+var CH=null;
+function chEncode(){var n=S.players.length,off=S.seed%n;
+  return 'c='+[S.year,S.slot,S.seed.toString(36)].concat(S.mine.map(function(x){return ((x.p.i+off)%n).toString(36);})).join('.');}
+function replay(y,slot,seed,picks){
+  var save=RNG;RNG=mulberry(seed);
+  var P=DATA.classes[y].map(function(p){return {p:p,t:false};}),mine=[],r=0,k,ok=true;
+  for(k=0;k<TEAMS*ROUNDS;k++){
+    var av=P.filter(function(x){return !x.t;}),pick=null,mineTurn=(k%TEAMS+1===slot);
+    if(mineTurn){pick=av.filter(function(x){return x.p.i===picks[r];})[0];if(!pick){ok=false;break;}r++;
+      var b=0,e=0;av.forEach(function(x){if(x===pick)return;if(x.p.v<pick.p.v)b++;else if(x.p.v===pick.p.v)e++;});
+      var m=av.length-1;mine.push({p:pick.p,k:k,g:m>0?100*(b+0.5*e)/m:100});}
+    else{var bv=Infinity;av.forEach(function(x){var d=x.p.adp+x.p.sd*gauss();if(d<bv){bv=d;pick=x;}});}
+    pick.t=true;
+  }
+  RNG=save;if(!ok)return null;
+  var g=0;mine.forEach(function(x){g+=x.g/ROUNDS;});return {g:g0(g),mine:mine};
+}
+function chDecode(h){
+  var m=/^c=(\d{4})\.(\d{1,2})\.([0-9a-z]{1,7})\.([0-9a-z]{1,2})\.([0-9a-z]{1,2})\.([0-9a-z]{1,2})$/.exec(h||'');if(!m)return null;
+  var y=m[1],sl=+m[2],seed=parseInt(m[3],36);if(!DATA.classes[y]||!(sl>=1&&sl<=TEAMS)||!(seed>=0))return null;
+  var n=DATA.classes[y].length,off=seed%n,picks=[m[4],m[5],m[6]].map(function(c){return ((parseInt(c,36)-off)%n+n)%n;});
+  var r=replay(y,sl,seed,picks);return r?{y:y,s:sl,seed:seed,picks:picks,g:r.g,mine:r.mine}:null;
+}
+function renderChallenge(){
+  app.innerHTML=head('')+
+    '<section class="hero"><h1>You\u2019ve Been Challenged</h1><p class="lede">Draft a real rookie class with the names and the year hidden. A friend drafted this one and earned a <b>'+CH.g+'%</b> pick grade. Same class, same draft slot. Can you beat it?</p></section>'+
+    '<section class="card"><div class="cap">Your Draft Slot</div><p class="note">Pick '+CH.s+' in every round, like your friend.</p></section>'+
+    '<button class="btn" type="button" data-act="accept">Accept Challenge</button>'+
+    '<button class="btn ghost" type="button" data-act="plain">Play A Random Class Instead</button>'+foot();
+}
+function chCard(){
+  var me=S.room.g,fr=S.ch.g,hl=me>fr?'You Beat Your Friend':me<fr?'Your Friend Wins':'Dead Even';
+  return '<section class="card grade stg'+(me>fr?' up':'')+'"><h2>'+hl+' \u00b7 '+me+'% To '+fr+'%</h2>'+
+    '<div class="cap">Your Friend\u2019s Picks</div>'+S.ch.mine.map(function(x){
+      return '<div class="srow"><span class="sr">'+pickLabel(x.k)+'</span><span>'+nameHTML(x.p)+'</span><span class="st">'+g0(x.g)+'%</span></div>';}).join('')+'</section>';
+}
+function sendChallenge(btn){
+  var url=location.origin+location.pathname+'#'+chEncode();
+  var txt='I drafted a real rookie class blind and got a '+S.room.g+'% pick grade. Same class, same pick. Can you beat it?';
+  function fallback(){var slot=document.getElementById('copyslot');if(!slot)return;
+    slot.innerHTML='<label class="cap" for="chbox">Send This To A Friend</label><textarea class="copybox" id="chbox" readonly></textarea>';
+    var ta=document.getElementById('chbox');ta.value=txt+'\n'+url;try{ta.focus();ta.select();}catch(e){}}
+  try{
+    if(navigator.share){navigator.share({title:'Time Machine Draft Challenge',text:txt,url:url}).catch(function(err){if(!err||err.name!=='AbortError')fallback();});return;}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt+' '+url).then(function(){btn.textContent='Link Copied';setTimeout(function(){btn.textContent='Challenge A Friend';},1800);},fallback);return;}
+  }catch(e){}
+  fallback();
+}
+
 /* ---------- start ---------- */
 function renderStart(){
   var ex=DATA.classes['2019'][4];
@@ -341,7 +398,7 @@ function renderStart(){
 }
 
 /* ---------- draft ---------- */
-function startDraft(){
+function startDraft(ch){
   ev('tm-start');
   var years=Object.keys(DATA.classes),pool=years.filter(function(y){return played.indexOf(y)<0;});
   if(!pool.length){played=[];pool=years;}
@@ -349,8 +406,11 @@ function startDraft(){
   var slot=slotChoice||(1+Math.floor(Math.random()*TEAMS));
   if(STOP){y='2017';slot=5;}
   if(AUTO){slot=5;}
+  var seed=Math.floor(Math.random()*2147483647);
+  if(ch){y=ch.y;slot=ch.s;seed=ch.seed;}
+  RNG=mulberry(seed);
   played.push(y);
-  S={year:y,slot:slot,k:0,wait:false,done:false,log:[],mine:[],pos:'ALL',sort:'mr',tot:null,
+  S={seed:seed,ch:ch||null,year:y,slot:slot,k:0,wait:false,done:false,log:[],mine:[],pos:'ALL',sort:'mr',tot:null,
      view:(HASH==='onclock-delta'?'delta':viewPref),usedDelta:(HASH==='onclock-delta'||viewPref==='delta'),
      players:DATA.classes[y].map(function(p){var o={};for(var key in p)o[key]=p[key];o.taken=null;return o;})};
   renderDraftShell();step();
@@ -432,7 +492,7 @@ function updateBoard(){
 
 /* ---------- finish and reveal ---------- */
 function finish(){
-  ev('tm-finish');
+  ev('tm-finish');if(S.ch)ev('tm-challenge-finish');
   var mine=0,mkt=0,best=0;
   S.mine.forEach(function(x){mine+=x.p.v;mkt+=x.m.v;best+=x.b.v;});
   S.tot={mine:mine,mkt:mkt,best:best};S.done=true;S.wait=false;
@@ -482,6 +542,7 @@ function renderReveal(instant){
   var left=avail().sort(function(a,b){return b.v-a.v||a.mr-b.mr;});
   app.innerHTML=head('Time Machine Draft')+
     '<div class="year stg"><s>The Class Of</s><b>'+S.year+'</b></div>'+
+    (S.ch?chCard():'')+
     S.mine.map(pickCard).join('')+
     '<section class="card grade stg'+(RM.rank<=3?' up':'')+'"><h2>'+hl+'</h2>'+
       '<p class="note">Each pick is graded against the players still on the board when it was made. 100% means you took the best one left; 50% means half of them did better. Every team is graded the same way, so an early slot is no advantage.</p>'+
@@ -491,7 +552,7 @@ function renderReveal(instant){
     '<section class="card stg"><div class="cap">The Room, By Pick Grade</div>'+RM.rows.map(function(r){var me=r.team===S.slot;
       return '<div class="srow'+(me?' me':'')+'"><span class="sr">'+ord(r.rank)+'</span><span>'+(me?'You':'Team '+r.team)+'<s class="sp"> \u00b7 '+r.v+' Points</s></span><span class="st">'+r.g+'%</span></div>';}).join('')+'</section>'+
     (away?'<section class="card away stg"><div class="cap">The One That Got Away</div><p>At <b>'+pickLabel(away.k)+'</b> you passed on <b>'+esc(away.b.n)+'</b>, worth <b>'+away.b.v+'</b>. '+(away.b.taken?'He went at '+pickLabel(away.b.taken.k)+'.':'Nobody in this room drafted him.')+'</p></section>':'')+
-    '<div class="acts stg"><button class="btn" type="button" data-act="share">Share Image</button><button class="btn ghost" type="button" data-act="copy">Copy Text</button><button class="btn ghost wide" type="button" data-act="again">Draft Again</button></div>'+
+    '<div class="acts stg"><button class="btn wide" type="button" data-act="challenge">Challenge A Friend</button><button class="btn ghost" type="button" data-act="share">Share Image</button><button class="btn ghost" type="button" data-act="copy">Copy Text</button><button class="btn ghost wide" type="button" data-act="again">Draft Again</button></div>'+
     '<a class="next stg" href="../?tab=mock" data-ev="tm-next-card"><span><b>Now Draft The 2027 Class</b><s>Mock this year\u2019s rookies on DELTA, with projected NFL landing spots.</s></span><i aria-hidden="true">\u203a</i></a>'+
     '<div id="copyslot"></div>'+
     '<section class="stg"><h2>The Full Board</h2></section>'+
@@ -601,6 +662,7 @@ function selfCheck(){
   if(rs!==t.reduce(function(a,p){return a+p.v;},0)){ok=false;msg.push('room sum');}
   if(S.room.rows.filter(function(r){return r.team===S.slot;})[0].v!==S.tot.mine){ok=false;msg.push('room mine');}
   if(t.some(function(p){return !(p.taken.g>=0&&p.taken.g<=100);})){ok=false;msg.push('grade range');}
+  var rt=chDecode(chEncode());if(!rt||rt.g!==S.room.g||rt.mine.some(function(x,j){return x.p.i!==S.mine[j].p.i;})){ok=false;msg.push('challenge replay '+(rt?rt.g:'null')+' vs '+S.room.g);}
   if(HASH==='autobest'&&S.room.rank!==1){ok=false;msg.push('best-available drafter not ranked 1st');}
   if(S.room.rank<1||S.room.rank>TEAMS||S.room.rows.length!==TEAMS){ok=false;msg.push('rank');}
   var nms=app.querySelectorAll('.nm'),cut=0,shr=0;for(var j=0;j<nms.length;j++){if(nms[j].scrollWidth>nms[j].clientWidth+1)cut++;if(nms[j].style.fontSize)shr++;}
@@ -619,6 +681,9 @@ app.addEventListener('click',function(e){
   var a=t.getAttribute('data-act');
   if(a==='slot'){slotChoice=parseInt(t.getAttribute('data-v'),10)||0;document.getElementById('slots').innerHTML=slotChips();}
   else if(a==='go'||a==='again'){startDraft();window.scrollTo(0,0);}
+  else if(a==='accept'&&CH){ev('tm-challenge-accept');startDraft(CH);window.scrollTo(0,0);}
+  else if(a==='plain'){CH=null;try{history.replaceState(null,'',location.pathname);}catch(e){}renderStart();}
+  else if(a==='challenge'){ev('tm-challenge-send');sendChallenge(t);}
   else if(a==='pos'){S.pos=t.getAttribute('data-v');var c=document.querySelectorAll('#posf .chip');for(var i=0;i<c.length;i++)c[i].classList.toggle('on',c[i].getAttribute('data-v')===S.pos);updateBoard();}
   else if(a==='draft'){userPick(S.players[parseInt(t.getAttribute('data-i'),10)]);}
   else if(a==='reveal'){renderReveal(false);}
@@ -629,7 +694,8 @@ app.addEventListener('click',function(e){
 document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('[data-ev]'):null;if(t)ev(t.getAttribute('data-ev'));});
 app.addEventListener('change',function(e){if(e.target&&e.target.id==='sort'&&S){S.sort=e.target.value;updateBoard();}});
 
-if(QUICK)startDraft();else renderStart();
+CH=chDecode(HASH);
+if(CH){ev('tm-challenge-open');renderChallenge();}else if(QUICK)startDraft();else renderStart();
 })();
 </script>
 <script data-goatcounter="https://handhanley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
