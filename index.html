@@ -3310,10 +3310,27 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <script>
 /* Who Would You Rather Have? card on the Market tab (Steve, 17 Nov 2026). Same list, pairing and saving as
    fantasydelta.com/vote/ (delta-vote.js). Starts only when the card scrolls into view, so other tabs cost nothing.
-   Hidden for good on this device with the x (per-device, like every display choice). */
+   The x hides it on this device until the person has been away from DELTA for an hour (Steve, 17 Nov 2026:
+   "come back when the app is closed"; phones don't reliably say when an app closes, so an hour away stands in). */
+var VQ_AWAY=60*60*1000;   // an hour away brings a hidden card back
+/* dv_seen: the last moment DELTA's main page was on screen, refreshed every minute while it is and when it goes
+   to the background. On open (or on coming back to the page), more than an hour since then = away: un-hide. */
+function vqWatchAway(){
+  if(!window.DV) return;
+  function stamp(){ DV.store.set('dv_seen',String(Date.now())); }
+  function check(){
+    var seen=Number(DV.store.get('dv_seen'))||0;
+    if(DV.store.get('dv_card_hidden')==='1'&&Date.now()-seen>=VQ_AWAY){ DV.store.set('dv_card_hidden',''); stamp(); vqInit(); }
+    stamp();
+  }
+  check();
+  setInterval(function(){ if(document.visibilityState==='visible') stamp(); },60000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden') stamp(); else check(); });
+}
 function vqInit(){
   var root=document.getElementById('vq-root');
-  if(!root||!window.DV||DV.store.get('dv_card_hidden')==='1') return;
+  if(!root||!window.DV||DV.store.get('dv_card_hidden')==='1'||root.getAttribute('data-ready')) return;
+  root.setAttribute('data-ready','1');
   var cur=null,type='',shownAt=0,voted=false;
   function ev(name){ try{ if(typeof dlCount==='function') dlCount(name); }catch(e){} }
   function q(sel){ return root.querySelector(sel); }
@@ -3383,7 +3400,7 @@ function vqInit(){
   }
   root.addEventListener('click',function(e){
     var c=e.target.closest('.vq-c'); if(c){ vote(Number(c.dataset.side)); return; }
-    if(e.target.closest('.vq-x')){ DV.store.set('dv_card_hidden','1'); ev('vote-card-hide'); root.innerHTML=''; return; }
+    if(e.target.closest('.vq-x')){ DV.store.set('dv_card_hidden','1'); ev('vote-card-hide'); root.innerHTML=''; root.removeAttribute('data-ready'); return; }
     var a=e.target.closest('[data-act]'); if(!a) return;
     var act=a.getAttribute('data-act');
     if(act==='next') show();
@@ -3400,7 +3417,7 @@ function vqInit(){
     io.observe(root);
   } else start();
 }
-document.addEventListener('DOMContentLoaded',vqInit);
+document.addEventListener('DOMContentLoaded',function(){ vqWatchAway(); vqInit(); });
 </script>
 <script>
 function renderStartProfile(p){
@@ -8788,7 +8805,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-17b</span>
+  <span class="foot-build">2026-11-17c</span>
 </footer>
 
 
