@@ -83,11 +83,14 @@ jobs:
           for f in index.html player.html cfb-player.html live.html; do
             sed -i -E "s#src=\"(delta-engine|delta-sync|delta-nav)\.js\"#src=\"\1.js?v=${v}\"#g" "$f"
           done
+          # delta-vote.js (17 Nov 2026): the vote's player list, pairing and saving, shared by the Market tab and vote/.
+          sed -i -E "s#src=\"delta-vote\.js\"#src=\"delta-vote.js?v=${v}\"#g" index.html
+          sed -i -E "s#src=\"\.\./delta-vote\.js\"#src=\"../delta-vote.js?v=${v}\"#g" vote/index.html
           # delta-looks.css (31 Oct 2026, redesign step 4): the Look stylesheet, linked by six pages.
           for f in index.html player.html cfb-player.html live.html privacy.html terms.html; do
             sed -i -E "s#href=\"delta-looks\.css\"#href=\"delta-looks.css?v=${v}\"#g" "$f"
           done
-          grep -o 'src="delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html live.html || true
+          grep -o 'src="\(\.\./\)\?delta-[a-z]*\.js?v=[0-9a-f]*"' index.html player.html cfb-player.html live.html vote/index.html || true
 
       # Player link-preview pictures (23 Oct 2026). Draws p/<slug>/card.png for every NFL player
       # with the engine's own drawing code in a real browser, and points each /p/<slug>/ page at

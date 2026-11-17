@@ -109,6 +109,35 @@ tr:hover td{background:var(--panel)}
 .tc-btn:hover{background:var(--teal-soft);color:var(--paper);border-color:var(--fog-2)}
 .tc-btn:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
 .tc-active,.tc-active:hover{background:var(--teal-tint);border-color:var(--teal-br);color:var(--teal-br)}
+/* Vote card on the Market tab (17 Nov 2026) */
+.vq{max-width:640px;margin:14px 0 18px;padding:14px 16px;border:1px solid var(--teal-br);border-radius:14px;background:var(--teal-tint);color:var(--paper);position:relative}
+.vq-x{position:absolute;top:6px;right:6px;width:36px;height:36px;border:0;background:none;color:var(--fog);font:inherit;font-size:20px;line-height:1;cursor:pointer;border-radius:18px}
+.vq-x:focus-visible,.vq-c:focus-visible,.vq-go:focus-visible,.vq-ghost:focus-visible,.vq-skip:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+.vq-t{font-size:16px;font-weight:800;margin:0 28px 2px 0}
+.vq-s{font-size:13px;color:var(--fog);margin:0 0 10px;line-height:1.35}
+.vq-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 10px}
+.vq-c{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:12px 10px;text-align:left;color:var(--paper);font:inherit;cursor:pointer;min-width:0}
+.vq-c .nm{font-size:15px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;position:relative}
+.vq-c .mt{font-size:12px;color:var(--fog);margin-top:4px;position:relative}
+.vq-c .pc{font-family:var(--mono);font-size:16px;font-weight:700;margin-top:6px;position:relative}
+.vq-c .pc:empty,.vq-res:empty{display:none}
+.vq-c .fill{position:absolute;inset:0 auto 0 0;width:0;background:color-mix(in srgb,var(--fog) 12%,transparent);transition:width .5s ease}
+.vq.voted .vq-c{cursor:default}
+.vq.voted .vq-c:not(.pick){opacity:.75}
+.vq-c.pick{border-color:var(--teal-br)}
+.vq-c.pick .fill{background:color-mix(in srgb,var(--teal-br) 22%,transparent)}
+.vq-c.pick .pc{color:var(--teal-br)}
+.vq-res{font-size:13px;color:var(--fog);margin:0 0 10px}
+.vq-res b{color:var(--paper)}
+.vq-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.vq-go{height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.vq-ghost{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:13px;font-weight:700;text-decoration:none}
+.vq-skip{height:36px;padding:0 4px;border:0;background:none;color:var(--fog);font:inherit;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.vq-prog{margin-top:12px}
+.vq-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.vq-bar i{display:block;height:100%;width:0;background:var(--teal-br);border-radius:3px;transition:width .5s ease}
+.vq-n{font-size:12px;color:var(--fog);margin-top:5px}
+.vq-n b{font-family:var(--mono);color:var(--paper);font-weight:600}
 .trade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
 .trade-grid.four-col{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -2839,6 +2868,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <div id="mk-state" class="rk-state"></div>
     </div>
   </div>
+  <!-- Who Would You Rather Have? card (17 Nov 2026). Filled by vqInit() once it scrolls into view. -->
+  <div id="vq-root"></div>
 
   <div class="dl-rk-block">
     <div class="dl-rk-mapcol">
@@ -3275,6 +3306,102 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <script src="delta-engine.js"></script>
 <script>/* start every boot download now; the loaders pick them up in order (delta-engine.js, BOOT PREFETCH) */ if(typeof dlPrefetchBoot==='function') dlPrefetchBoot();</script>
 <script src="delta-sync.js" defer></script>
+<script src="delta-vote.js" defer></script>
+<script>
+/* Who Would You Rather Have? card on the Market tab (Steve, 17 Nov 2026). Same list, pairing and saving as
+   fantasydelta.com/vote/ (delta-vote.js). Starts only when the card scrolls into view, so other tabs cost nothing.
+   Hidden for good on this device with the x (per-device, like every display choice). */
+function vqInit(){
+  var root=document.getElementById('vq-root');
+  if(!root||!window.DV||DV.store.get('dv_card_hidden')==='1') return;
+  var cur=null,type='',shownAt=0,voted=false;
+  function ev(name){ try{ if(typeof dlCount==='function') dlCount(name); }catch(e){} }
+  function q(sel){ return root.querySelector(sel); }
+  function fmt(x){ return Number(x).toLocaleString('en-US'); }
+  root.innerHTML='<div class="vq" id="vq">'
+    +'<button type="button" class="vq-x" aria-label="Hide this card">\u00d7</button>'
+    +'<div class="vq-t">Who Would You Rather Have?</div>'
+    +'<div class="vq-s">12-team superflex, full PPR. Your votes build DELTA\u2019s Crowd Rankings.</div>'
+    +'<div class="vq-pair">'
+    +  '<button type="button" class="vq-c" data-side="0"><span class="fill"></span><div class="nm"></div><div class="mt"></div><div class="pc"></div></button>'
+    +  '<button type="button" class="vq-c" data-side="1"><span class="fill"></span><div class="nm"></div><div class="mt"></div><div class="pc"></div></button>'
+    +'</div>'
+    +'<div class="vq-res" aria-live="polite"></div>'
+    +'<div class="vq-links"></div>'
+    +'<div class="vq-prog" hidden><div class="vq-bar"><i></i></div><div class="vq-n"></div></div>'
+    +'</div>';
+  function progress(){
+    var t=DV.total(), mine=DV.myVotes(), box=q('.vq-prog');
+    if(t==null){ box.hidden=true; return; }
+    box.hidden=false;
+    q('.vq-bar i').style.width=Math.min(100,100*t/DV.GOAL).toFixed(1)+'%';
+    q('.vq-n').innerHTML='<b>'+fmt(t)+'</b> of <b>'+fmt(DV.GOAL)+'</b> votes'+(mine>0?' \u00b7 Your Votes <b>'+fmt(mine)+'</b>':'');
+  }
+  function links(){
+    var l=q('.vq-links');
+    if(!voted){ l.innerHTML='<button type="button" class="vq-skip" data-act="skip">Don\u2019t Know Them, Skip</button>'; return; }
+    l.innerHTML='<button type="button" class="vq-go" data-act="next">Next Pair</button>'
+      +'<a class="vq-ghost" href="vote/" data-act="full">Keep Voting Full Screen</a>';
+  }
+  function meta(x){ return x.pos==='PICK'?'Rookie Pick':[x.pos,x.team,x.age!=null?x.age:''].filter(Boolean).join(' \u00b7 '); }
+  function show(){
+    var p=DV.pickPair(); cur=p.pair; type=p.type; voted=false; shownAt=performance.now();
+    q('.vq').classList.remove('voted'); q('.vq-res').textContent='';
+    root.querySelectorAll('.vq-c').forEach(function(c,i){
+      var x=cur[i], nm=c.querySelector('.nm');
+      c.classList.remove('pick');
+      nm.textContent=x.n; nm.style.fontSize=''; nm.style.whiteSpace='';
+      for(var f=15; f>12 && nm.scrollWidth>nm.clientWidth; f--) nm.style.fontSize=(f-1)+'px';   // one line where it fits
+      if(nm.scrollWidth>nm.clientWidth) nm.style.whiteSpace='normal';                         // never cut a name off
+      c.querySelector('.mt').textContent=meta(x);
+      c.querySelector('.pc').textContent='';
+      c.querySelector('.fill').style.width='0';
+      c.setAttribute('aria-label',x.n);
+    });
+    links(); progress();
+  }
+  async function vote(side){
+    if(voted||!cur) return;
+    voted=true;
+    var pair=cur;
+    q('.vq').classList.add('voted');
+    root.querySelectorAll('.vq-c')[side].classList.add('pick');
+    q('.vq-res').textContent='Saving\u2026';
+    try{ await DV.save(pair,type,pair[side].n,performance.now()-shownAt); }
+    catch(e){ q('.vq-res').textContent='Couldn\u2019t save that vote. Check your connection and try the next one.'; links(); return; }
+    DV.noteVote(pair); ev('vote-card-vote'); links(); progress();
+    var n=null;
+    try{ n=await DV.share(pair[0].n,pair[1].n); }catch(e){}
+    if(cur!==pair) return;
+    if(!n||n[0]+n[1]===0){ q('.vq-res').textContent='Vote saved.'; return; }
+    var tot=n[0]+n[1], a=Math.round(100*n[0]/tot), pct=[a,100-a];
+    root.querySelectorAll('.vq-c').forEach(function(c,i){
+      c.querySelector('.fill').style.width=pct[i]+'%';
+      c.querySelector('.pc').textContent=pct[i]+'%';
+    });
+    q('.vq-res').innerHTML=tot===1?'<b>First vote</b> on this pair.':'<b>'+pct[side]+'%</b> of '+fmt(tot)+' voters agreed with you.';
+  }
+  root.addEventListener('click',function(e){
+    var c=e.target.closest('.vq-c'); if(c){ vote(Number(c.dataset.side)); return; }
+    if(e.target.closest('.vq-x')){ DV.store.set('dv_card_hidden','1'); ev('vote-card-hide'); root.innerHTML=''; return; }
+    var a=e.target.closest('[data-act]'); if(!a) return;
+    var act=a.getAttribute('data-act');
+    if(act==='next') show();
+    else if(act==='skip'){ if(!voted&&cur) DV.save(cur,type,null,performance.now()-shownAt).catch(function(){}); show(); }
+    else if(act==='full') ev('vote-card-fullscreen');
+  });
+  var started=false;
+  function start(){
+    if(started) return; started=true;
+    Promise.race([DV.loadCounts(),new Promise(function(r){ setTimeout(r,1500); })]).then(show,show);   // never wait long for counts
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ if(es.some(function(x){ return x.isIntersecting; })){ io.disconnect(); start(); } });
+    io.observe(root);
+  } else start();
+}
+document.addEventListener('DOMContentLoaded',vqInit);
+</script>
 <script>
 function renderStartProfile(p){
   const host=document.getElementById('dd-startprofile');
@@ -8661,7 +8788,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-17a</span>
+  <span class="foot-build">2026-11-17b</span>
 </footer>
 
 
