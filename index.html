@@ -8661,7 +8661,7 @@ document.addEventListener('click', function(e) {
        changed; dlBuildStamp() appends the engine's string here when the two differ.
        Deliberately NOT margin-left:auto — auto margin plus flex-wrap strands it alone
        against the screen edge as soon as the row wraps. -->
-  <span class="foot-build">2026-11-14b</span>
+  <span class="foot-build">2026-11-17a</span>
 </footer>
 
 
@@ -10103,9 +10103,14 @@ function slpStoreActive(st){
   return st.leagues.find(function(l){ return String(l.leagueId)===String(st.active); })||st.leagues[0];
 }
 
+/* GoatCounter event counts (Steve, 17 Nov 2026): counts only, nothing about the league or the person. */
+function dlCount(name){ try{ if(window.goatcounter&&window.goatcounter.count) window.goatcounter.count({path:name,title:name,event:true}); }catch(e){} }
 function slpStoreUpsert(conn){
   const st=slpStoreRead();
   const i=st.leagues.findIndex(function(l){ return String(l.leagueId)===String(conn.leagueId); });
+  /* A league new to this device = someone just connected it (this runs only from slpSelectTeam, the last step of
+     Connect; restores and account sync never come here). Re-picking a team in a saved league is not counted. */
+  if(i<0) dlCount(String(conn.leagueId).indexOf('mfl:')===0?'league-connect-mfl':'league-connect-sleeper');
   /* `synced` means "the account has seen this league". Signed in, slpSelectTeam's
      DSYNC.noteSleeperConnect() pushes it immediately, so it is true on arrival.
      Signed out it stays false, which is what lets the reconciler tell a league
