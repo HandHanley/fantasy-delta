@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-19T16:39:53.562705+00:00",
+  "fetched": "2026-11-20T16:15:52.981855+00:00",
   "seasons": [
     2022,
     2023,
@@ -25643,7 +25643,7 @@
     "Riley Leonard": {
       "role": "backup",
       "behind": "Daniel Jones",
-      "source": "depth-chart"
+      "source": "incumbency-2025"
     },
     "Quinn Ewers": {
       "role": "backup",
@@ -25817,7 +25817,7 @@
     "source": "depth-chart",
     "reason": "ok",
     "teams": 32,
-    "snapshot": "2026-11-19T16:30:49Z",
+    "snapshot": "2026-11-20T16:05:07Z",
     "in_season": true
   },
   "qb_start_splits": {
@@ -27094,10 +27094,6 @@
       "status": "Questionable",
       "body_part": "Head"
     },
-    "DeVonta Smith": {
-      "status": "Questionable",
-      "body_part": "Hamstring"
-    },
     "Michael Pittman Jr.": {
       "status": "IR",
       "body_part": "Foot"
@@ -27194,6 +27190,10 @@
       "status": "IR",
       "body_part": "Toe"
     },
+    "Kayshon Boutte": {
+      "status": "Questionable",
+      "body_part": "Hip"
+    },
     "Michael Wilson": {
       "status": "IR",
       "body_part": "Neck"
@@ -27247,8 +27247,12 @@
       "body_part": "Coach's Decision"
     },
     "Omar Cooper": {
-      "status": "Questionable",
+      "status": "Out",
       "body_part": "Ankle"
+    },
+    "Carson Beck": {
+      "status": "Questionable",
+      "body_part": "Back"
     },
     "Zachariah Branch": {
       "status": "Out",
@@ -27282,6 +27286,10 @@
       "status": "Questionable",
       "body_part": "Hamstring"
     },
+    "Riley Leonard": {
+      "status": "Out",
+      "body_part": "Coach's Decision"
+    },
     "Dillon Gabriel": {
       "status": "Out",
       "body_part": "Coach's Decision"
@@ -27297,6 +27305,14 @@
     "Trey Lance": {
       "status": "IR",
       "body_part": "Groin"
+    },
+    "Jordan James": {
+      "status": "Questionable",
+      "body_part": "Calf"
+    },
+    "Seth McGowan": {
+      "status": "Out",
+      "body_part": "Hamstring"
     },
     "Emanuel Wilson": {
       "status": "Out",
@@ -27442,9 +27458,6 @@
       "status": "Inactive"
     },
     "Tank Bigsby": {
-      "status": "Inactive"
-    },
-    "Puka Nacua": {
       "status": "Inactive"
     },
     "Davante Adams": {
