@@ -1,7 +1,7 @@
 # PRE-REGISTRATION — New Value: A Player Whose Role Grew Is Judged On His New Role
 
 **Drafted:** 25 November 2026, before any role-change value has been built or compared with any outcome. **Status:
-LOCKED** by committing this document with `study/ovs_role_change.py`. Crash tests run next; the real run only if they
+LOCKED; amended A1 before any real run (§5A).** Locked by committing this document with `study/ovs_role_change.py`. Crash tests run next; the real run only if they
 pass. Steve, 25 Nov: "yeah let's do the role change plan and see what that gives us" (plan put to him 13 Nov).
 
 ---
@@ -77,6 +77,22 @@ frame 2010–2022. The rebuilt frame reproduced today's production on every unfl
 
 **Reading:** when the rule is right the gain is large (about 9%), but 134 players are too few for the luck check to
 confirm it reliably. **Taken to Steve before any real run.**
+
+## 5A. Amendment A1 (25 Nov, After The Crash Test, Before Any Real Run)
+
+Steve chose option 1 ("Yeah let's do option 1"): **check each season at weeks 5, 9 and 13, pooled**, as the
+rookies-match-rookies study did (`PREREG-ovs-rookies-match-rookies.md` A1). A role can jump at any point in a season,
+so each checkpoint adds role-change cases. Everything else in sections 1–4 is unchanged and applied at each week:
+
+- Each week's frame is built exactly as week 9's (`ovs_small_samples.frame` with that week), with "today" = the live
+  build's rule at that week (150 snaps counted to that week). Week 9's reproduction check still applies; weeks 5 and 13
+  have no adopted figure to reproduce, so they check that the no-flag frame reproduces their own today's production
+  and a 300-row match sample.
+- The flag uses that week: share of team carries + targets through week w, 4+ games through week w.
+- **Decided on** the pooled flagged test rows of all three weeks: 2% lower RMSE, paired permutation p < 0.05 with each
+  player's rows (all weeks) shuffled together, and all pooled test rows at most 0.5% worse.
+- **Crash tests rerun on the pool** before any real run: noise at most 1 of 20; planted (rule is right) at least 80%
+  of 200. If either fails, back to Steve.
 
 ## 6. Reported, Deciding Nothing
 
