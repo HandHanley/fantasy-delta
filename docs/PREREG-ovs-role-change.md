@@ -65,6 +65,19 @@ every unflagged row.
   drawn from today's matches; reported (50 runs).
 - **If either fails,** this goes to Steve before any real run.
 
+**Results (25 Nov, `study/out/ovs_role_change_crash.json`):** 134 flagged test rows (RB 54, WR 54, TE 26); 177 in the
+frame 2010–2022. The rebuilt frame reproduced today's production on every unflagged row and today's matches on a
+300-row sample.
+
+| Check | Result | Needed |
+|---|---|---|
+| Noise | passed 1 of 20 (median lift +0.5%) | at most 1 of 20: **OK** |
+| Planted, rule is right | passed **143 of 200 (71.5%)**, median lift +9.1% | at least 80%: **FAIL** |
+| Planted, today is right | passed 0 of 50, median lift −16.3% | reported |
+
+**Reading:** when the rule is right the gain is large (about 9%), but 134 players are too few for the luck check to
+confirm it reliably. **Taken to Steve before any real run.**
+
 ## 6. Reported, Deciding Nothing
 
 - Flagged rows by season and position, and how many test rows' values move.

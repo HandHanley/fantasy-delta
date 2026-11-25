@@ -1,0 +1,47 @@
+{
+ "info": {
+  "flagged_test_rows": 134,
+  "flagged_all_frame_rows": 177,
+  "by_season": {
+   "2010": 14,
+   "2011": 15,
+   "2012": 14,
+   "2013": 11,
+   "2014": 15,
+   "2015": 19,
+   "2016": 19,
+   "2017": 10,
+   "2018": 18,
+   "2019": 13,
+   "2020": 11,
+   "2021": 9,
+   "2022": 9
+  },
+  "by_position": {
+   "RB": 54,
+   "WR": 54,
+   "TE": 26
+  },
+  "test_rows_value_moved": 1522,
+  "changed_prod_rows_in_frame": 177
+ },
+ "noise": {
+  "runs": 20,
+  "passed": 1,
+  "ok": true,
+  "median_lift": 0.0049507987361187555
+ },
+ "rule_is_right": {
+  "runs": 200,
+  "passed": 143,
+  "share": 0.715,
+  "median_lift": 0.09097097720886316
+ },
+ "today_is_right": {
+  "runs": 50,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": -0.163216024861494
+ },
+ "planted_ok": false
+}
