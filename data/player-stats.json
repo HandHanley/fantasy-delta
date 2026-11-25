@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-24T18:58:31.611977+00:00",
+  "fetched": "2026-11-25T18:02:40.130293+00:00",
   "seasons": [
     2022,
     2023,
@@ -6995,13 +6995,13 @@
         "target_share": 0.0091,
         "air_yds_share": -0.0025,
         "rz_targets": null,
-        "rz_carries": null,
+        "rz_carries": 11,
         "gl_targets": null,
-        "gl_carries": null,
+        "gl_carries": 2,
         "rz_tgt_share": null,
-        "rz_car_share": null,
+        "rz_car_share": 0.1429,
         "gl_tgt_share": null,
-        "gl_car_share": null
+        "gl_car_share": 0.0833
       },
       "2025": {
         "games": 5,
@@ -7021,13 +7021,13 @@
         "target_share": 0.023,
         "air_yds_share": -0.0004,
         "rz_targets": null,
-        "rz_carries": null,
+        "rz_carries": 6,
         "gl_targets": null,
-        "gl_carries": null,
+        "gl_carries": 3,
         "rz_tgt_share": null,
-        "rz_car_share": null,
+        "rz_car_share": 0.0896,
         "gl_tgt_share": null,
-        "gl_car_share": null
+        "gl_car_share": 0.1765
       }
     },
     "MarShawn Lloyd": {
@@ -25565,6 +25565,11 @@
     }
   },
   "qb_roles": {
+    "Kyler Murray": {
+      "role": "backup",
+      "behind": "Kirk Cousins",
+      "source": "depth-chart"
+    },
     "Tua Tagovailoa": {
       "role": "backup",
       "behind": "Michael Penix Jr.",
@@ -25580,9 +25585,9 @@
       "behind": "Deshaun Watson",
       "source": "depth-chart"
     },
-    "Mason Rudolph": {
+    "Aaron Rodgers": {
       "role": "backup",
-      "behind": "Aaron Rodgers",
+      "behind": "Mason Rudolph",
       "source": "depth-chart"
     },
     "Mac Jones": {
@@ -25603,21 +25608,26 @@
     "Ty Simpson": {
       "role": "backup",
       "behind": "Matthew Stafford",
-      "source": "incumbency-2025"
+      "source": "depth-chart"
     },
     "Drew Allar": {
       "role": "backup",
-      "behind": "Aaron Rodgers",
-      "source": "incumbency-2025"
+      "behind": "Mason Rudolph",
+      "source": "depth-chart"
     },
     "Garrett Nussmeier": {
       "role": "backup",
       "behind": "Patrick Mahomes",
-      "source": "incumbency-2025"
+      "source": "depth-chart"
     },
     "Cade Klubnik": {
       "role": "backup",
       "behind": "Geno Smith",
+      "source": "depth-chart"
+    },
+    "Taylen Green": {
+      "role": "backup",
+      "behind": "Deshaun Watson",
       "source": "depth-chart"
     },
     "Jalen Milroe": {
@@ -25627,13 +25637,13 @@
     },
     "Will Howard": {
       "role": "backup",
-      "behind": "Aaron Rodgers",
-      "source": "incumbency-2025"
+      "behind": "Mason Rudolph",
+      "source": "depth-chart"
     },
     "Cole Payton": {
       "role": "backup",
-      "behind": "Jalen Hurts",
-      "source": "incumbency-2025"
+      "behind": "Joe Milton III",
+      "source": "depth-chart"
     },
     "Marcus Mariota": {
       "role": "backup",
@@ -25642,8 +25652,8 @@
     },
     "Riley Leonard": {
       "role": "backup",
-      "behind": "Daniel Jones",
-      "source": "incumbency-2025"
+      "behind": "Anthony Richardson Sr.",
+      "source": "depth-chart"
     },
     "Quinn Ewers": {
       "role": "backup",
@@ -25653,6 +25663,11 @@
     "Jameis Winston": {
       "role": "backup",
       "behind": "J.J. McCarthy",
+      "source": "depth-chart"
+    },
+    "Dillon Gabriel": {
+      "role": "backup",
+      "behind": "Deshaun Watson",
       "source": "depth-chart"
     },
     "Kenny Pickett": {
@@ -25817,7 +25832,7 @@
     "source": "depth-chart",
     "reason": "ok",
     "teams": 32,
-    "snapshot": "2026-11-24T18:50:30Z",
+    "snapshot": "2026-11-25T17:56:34Z",
     "in_season": true
   },
   "qb_start_splits": {
@@ -27003,7 +27018,7 @@
       "body_part": "Concussion"
     },
     "Sam Darnold": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Quadriceps"
     },
     "Jaxson Dart": {
@@ -27011,27 +27026,15 @@
       "body_part": "Knee - Meniscus"
     },
     "Kyler Murray": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Hamstring"
     },
     "Malik Willis": {
       "status": "IR",
       "body_part": "Groin"
     },
-    "Derrick Henry": {
-      "status": "Questionable",
-      "body_part": "Concussion"
-    },
-    "Kyren Williams": {
-      "status": "Questionable",
-      "body_part": "Toe"
-    },
-    "Saquon Barkley": {
-      "status": "Questionable",
-      "body_part": "Arm"
-    },
     "Josh Jacobs": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Finger"
     },
     "TreVeyon Henderson": {
@@ -27047,8 +27050,12 @@
       "body_part": "Groin"
     },
     "Woody Marks": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Concussion"
+    },
+    "J.K. Dobbins": {
+      "status": "Out",
+      "body_part": "Personal"
     },
     "Bhayshul Tuten": {
       "status": "Questionable",
@@ -27082,10 +27089,6 @@
       "status": "IR",
       "body_part": "Abdomen"
     },
-    "Audric Estime": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Puka Nacua": {
       "status": "IR",
       "body_part": "Knee - MCL"
@@ -27095,12 +27098,8 @@
       "body_part": "Hamstring"
     },
     "A.J. Brown": {
-      "status": "Out",
+      "status": "Doubtful",
       "body_part": "Hamstring"
-    },
-    "Drake London": {
-      "status": "Questionable",
-      "body_part": "Head"
     },
     "Michael Pittman Jr.": {
       "status": "IR",
@@ -27115,7 +27114,7 @@
       "body_part": "Shoulder"
     },
     "Jordan Addison": {
-      "status": "Out",
+      "status": "Doubtful",
       "body_part": "Thumb"
     },
     "Terry McLaurin": {
@@ -27131,16 +27130,8 @@
       "body_part": "Knee - PCL"
     },
     "Marvin Harrison Jr.": {
-      "status": "Out",
-      "body_part": "Hamstring"
-    },
-    "Brandon Aiyuk": {
-      "status": "DNR",
-      "body_part": "Knee - ACL + MCL"
-    },
-    "Jalen Coker": {
       "status": "Questionable",
-      "body_part": "Undisclosed"
+      "body_part": "Hamstring"
     },
     "Jayden Reed": {
       "status": "IR",
@@ -27155,23 +27146,15 @@
       "body_part": "Ankle"
     },
     "Brock Bowers": {
-      "status": "Out",
-      "body_part": "Ankle"
-    },
-    "Sam LaPorta": {
       "status": "Questionable",
       "body_part": "Ankle"
-    },
-    "Dallas Goedert": {
-      "status": "Questionable",
-      "body_part": "Shin"
     },
     "Juwan Johnson": {
       "status": "Questionable",
       "body_part": "Hamstring"
     },
     "Dalton Kincaid": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Thumb"
     },
     "Cole Kmet": {
@@ -27179,7 +27162,7 @@
       "body_part": "Knee"
     },
     "Jake Ferguson": {
-      "status": "Out",
+      "status": "Doubtful",
       "body_part": "Knee"
     },
     "Christian Kirk": {
@@ -27214,10 +27197,6 @@
       "status": "Questionable",
       "body_part": "Back"
     },
-    "David Njoku": {
-      "status": "Questionable",
-      "body_part": "Shoulder"
-    },
     "Terrance Ferguson": {
       "status": "IR",
       "body_part": "Ankle"
@@ -27226,20 +27205,12 @@
       "status": "IR",
       "body_part": "Knee"
     },
-    "JaTavion Sanders": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Jeremiyah Love": {
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Ty Simpson": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Omar Cooper": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Ankle"
     },
     "Denzel Boston": {
@@ -27247,84 +27218,28 @@
       "body_part": "Toe"
     },
     "Carson Beck": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Back"
     },
     "Zachariah Branch": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Hamstring"
     },
     "Chris Brazzell II": {
       "status": "IR",
       "body_part": "Knee"
     },
-    "Drew Allar": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Chris Bell": {
-      "status": "Questionable",
-      "body_part": "Chest"
-    },
     "Kendrick Law": {
       "status": "IR",
       "body_part": "Knee - ACL"
-    },
-    "Kaden Wetjen": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Nicholas Singleton": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Adam Randall": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
     },
     "Demond Claiborne": {
       "status": "IR",
       "body_part": "Knee"
     },
-    "Garrett Nussmeier": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Taylen Green": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Elijah Sarratt": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Skyler Bell": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Brenen Thompson": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Hamstring"
-    },
-    "Justin Joly": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Will Howard": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Cole Payton": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Riley Leonard": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Dillon Gabriel": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
     },
     "Gardner Minshew": {
       "status": "IR",
@@ -27338,25 +27253,9 @@
       "status": "IR",
       "body_part": "Groin"
     },
-    "Tanner McKee": {
-      "status": "Questionable",
-      "body_part": "Ribs"
-    },
-    "Eli Heidenreich": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Seth McGowan": {
       "status": "Out",
       "body_part": "Hamstring"
-    },
-    "Emanuel Wilson": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
-    "Robert Henry": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
     },
     "Brashard Smith": {
       "status": "IR",
@@ -27370,12 +27269,8 @@
       "status": "IR",
       "body_part": "Hip"
     },
-    "Will Shipley": {
-      "status": "Questionable",
-      "body_part": "Illness"
-    },
     "Roschon Johnson": {
-      "status": "Out",
+      "status": "Questionable",
       "body_part": "Ankle"
     },
     "Raheim Sanders": {
@@ -27426,10 +27321,6 @@
       "status": "IR",
       "body_part": "Ankle"
     },
-    "Malik Benson": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
-    },
     "Andrei Iosivas": {
       "status": "IR",
       "body_part": "Thumb"
@@ -27437,10 +27328,6 @@
     "Calvin Austin": {
       "status": "IR",
       "body_part": "Knee"
-    },
-    "KeAndre Lambert-Smith": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
     },
     "Kendrick Bourne": {
       "status": "IR",
@@ -27462,17 +27349,9 @@
       "status": "IR",
       "body_part": "Ankle"
     },
-    "D.J. Moore": {
-      "status": "Questionable",
-      "body_part": "Knee"
-    },
     "De'Zhaun Stribling": {
       "status": "IR",
       "body_part": "Ankle"
-    },
-    "Dont'e Thornton": {
-      "status": "Out",
-      "body_part": "Coach's Decision"
     },
     "Ja'Lynn Polk": {
       "status": "NA",
@@ -27567,6 +27446,9 @@
     "Brian Robinson": {
       "status": "Inactive"
     },
+    "George Holani": {
+      "status": "Inactive"
+    },
     "Terrance Ferguson": {
       "status": "Inactive"
     },
@@ -27651,706 +27533,706 @@
   },
   "epa": {
     "Josh Allen": {
-      "e21": 0.094,
-      "e22": 0.154,
-      "e23": 0.142,
-      "e24": 0.228,
-      "e25": 0.125
+      "e21": 0.088,
+      "e22": 0.145,
+      "e23": 0.133,
+      "e24": 0.22,
+      "e25": 0.12
     },
     "Drake Maye": {
-      "e24": -0.043,
-      "e25": 0.263
+      "e24": -0.049,
+      "e25": 0.246
     },
     "Jayden Daniels": {
-      "e24": 0.11,
-      "e25": 0.007
+      "e24": 0.108,
+      "e25": -0.001
     },
     "Caleb Williams": {
-      "e24": -0.047,
-      "e25": 0.067
+      "e24": -0.043,
+      "e25": 0.06
     },
     "Lamar Jackson": {
-      "e21": 0.045,
-      "e22": 0.028,
-      "e23": 0.108,
-      "e24": 0.317,
-      "e25": 0.057
+      "e21": 0.036,
+      "e22": 0.022,
+      "e23": 0.103,
+      "e24": 0.304,
+      "e25": 0.045
     },
     "Patrick Mahomes": {
-      "e21": 0.175,
-      "e22": 0.244,
-      "e23": 0.076,
-      "e24": 0.102,
-      "e25": 0.117
+      "e21": 0.168,
+      "e22": 0.237,
+      "e23": 0.067,
+      "e24": 0.1,
+      "e25": 0.102
     },
     "Jalen Hurts": {
-      "e21": 0.045,
-      "e22": 0.13,
-      "e23": 0.101,
-      "e24": 0.099,
-      "e25": 0.072
+      "e21": 0.042,
+      "e22": 0.124,
+      "e23": 0.086,
+      "e24": 0.09,
+      "e25": 0.067
     },
     "Justin Herbert": {
-      "e21": 0.155,
-      "e22": 0.033,
-      "e23": 0.059,
-      "e24": 0.112,
-      "e25": 0.033
+      "e21": 0.157,
+      "e22": 0.037,
+      "e23": 0.057,
+      "e24": 0.114,
+      "e25": 0.034
     },
     "Bo Nix": {
-      "e24": 0.062,
-      "e25": 0.091
+      "e24": 0.061,
+      "e25": 0.083
     },
     "Trevor Lawrence": {
-      "e21": -0.073,
-      "e22": 0.119,
-      "e23": 0.01,
-      "e24": 0.027,
-      "e25": 0.063
+      "e21": -0.079,
+      "e22": 0.103,
+      "e23": 0.004,
+      "e24": 0.022,
+      "e25": 0.053
     },
     "Jared Goff": {
-      "e21": -0.026,
-      "e22": 0.147,
-      "e23": 0.124,
-      "e24": 0.251,
-      "e25": 0.156
+      "e21": -0.015,
+      "e22": 0.137,
+      "e23": 0.123,
+      "e24": 0.25,
+      "e25": 0.152
     },
     "Dak Prescott": {
-      "e21": 0.156,
-      "e22": 0.097,
-      "e23": 0.167,
-      "e24": -0.015,
-      "e25": 0.153
+      "e21": 0.149,
+      "e22": 0.084,
+      "e23": 0.159,
+      "e24": -0.019,
+      "e25": 0.143
     },
     "Brock Purdy": {
       "e22": 0.187,
-      "e23": 0.268,
-      "e24": 0.143,
-      "e25": 0.189
+      "e23": 0.255,
+      "e24": 0.132,
+      "e25": 0.165
     },
     "Jordan Love": {
-      "e21": -0.095,
-      "e23": 0.13,
-      "e24": 0.125,
-      "e25": 0.208
+      "e21": -0.11,
+      "e23": 0.119,
+      "e24": 0.114,
+      "e25": 0.194
     },
     "Baker Mayfield": {
-      "e21": 0.001,
+      "e21": -0.013,
       "e22": -0.116,
-      "e23": 0.08,
-      "e24": 0.168,
-      "e25": 0.016
+      "e23": 0.072,
+      "e24": 0.152,
+      "e25": 0.006
     },
     "Sam Darnold": {
-      "e21": -0.148,
-      "e22": 0.131,
-      "e23": 0.012,
-      "e24": 0.075,
-      "e25": 0.135
+      "e21": -0.141,
+      "e22": 0.109,
+      "e23": -0.011,
+      "e24": 0.074,
+      "e25": 0.116
     },
     "C.J. Stroud": {
-      "e23": 0.104,
-      "e24": -0.013,
-      "e25": 0.09
+      "e23": 0.1,
+      "e24": -0.02,
+      "e25": 0.08
     },
     "Jaxson Dart": {
-      "e25": 0.02
+      "e25": 0.019
     },
     "Cam Ward": {
-      "e25": -0.141
+      "e25": -0.146
     },
     "Bryce Young": {
-      "e23": -0.217,
-      "e24": -0.031,
-      "e25": -0.02
+      "e23": -0.227,
+      "e24": -0.041,
+      "e25": -0.029
     },
     "Matthew Stafford": {
-      "e21": 0.163,
-      "e22": -0.062,
-      "e23": 0.091,
-      "e24": 0.046,
-      "e25": 0.213
+      "e21": 0.171,
+      "e22": -0.053,
+      "e23": 0.089,
+      "e24": 0.049,
+      "e25": 0.218
     },
     "Kyler Murray": {
-      "e21": 0.111,
-      "e22": -0.025,
-      "e23": -0.032,
-      "e24": 0.095,
-      "e25": 0.037
+      "e21": 0.11,
+      "e22": -0.023,
+      "e23": -0.043,
+      "e24": 0.085,
+      "e25": 0.029
     },
     "Joe Burrow": {
-      "e21": 0.158,
-      "e22": 0.128,
-      "e23": 0.023,
-      "e24": 0.149,
-      "e25": 0.117
+      "e21": 0.149,
+      "e22": 0.12,
+      "e23": 0.01,
+      "e24": 0.137,
+      "e25": 0.112
     },
     "Tua Tagovailoa": {
-      "e21": 0.05,
-      "e22": 0.201,
-      "e23": 0.184,
-      "e24": 0.178,
-      "e25": 0.042
+      "e21": 0.052,
+      "e22": 0.197,
+      "e23": 0.167,
+      "e24": 0.163,
+      "e25": 0.029
     },
     "Geno Smith": {
-      "e21": -0.01,
-      "e22": 0.042,
-      "e23": 0.062,
-      "e24": 0.044,
-      "e25": -0.101
+      "e21": -0.021,
+      "e22": 0.033,
+      "e23": 0.052,
+      "e24": 0.042,
+      "e25": -0.094
     },
     "J.J. McCarthy": {
-      "e25": -0.156
+      "e25": -0.153
     },
     "Daniel Jones": {
-      "e21": -0.034,
-      "e22": 0.043,
-      "e23": -0.263,
-      "e24": -0.073,
-      "e25": 0.134
+      "e21": -0.038,
+      "e22": 0.029,
+      "e23": -0.265,
+      "e24": -0.081,
+      "e25": 0.131
     },
     "Tyler Shough": {
       "e25": 0.015
     },
     "Michael Penix Jr.": {
-      "e24": 0.128,
-      "e25": 0.014
+      "e24": 0.116,
+      "e25": -0.0
     },
     "Shedeur Sanders": {
-      "e25": -0.188
+      "e25": -0.193
     },
     "Mason Rudolph": {
-      "e21": -0.136,
-      "e23": 0.162,
-      "e24": 0.008,
-      "e25": 0.049
+      "e21": -0.147,
+      "e23": 0.173,
+      "e24": 0.007,
+      "e25": 0.024
     },
     "Aaron Rodgers": {
-      "e21": 0.259,
-      "e22": 0.002,
-      "e24": 0.021,
-      "e25": 0.056
-    },
-    "Malik Willis": {
-      "e22": -0.449,
-      "e24": 0.198
-    },
-    "Jacoby Brissett": {
-      "e21": -0.079,
-      "e22": 0.042,
-      "e24": -0.167,
-      "e25": 0.005
-    },
-    "Bijan Robinson": {
-      "e22": -0.026,
-      "e23": -0.105,
-      "e24": 0.01,
-      "e25": -0.03
-    },
-    "Jahmyr Gibbs": {
-      "e23": -0.02,
-      "e24": 0.124,
-      "e25": -0.006
-    },
-    "James Cook": {
-      "e22": 0.067,
-      "e23": -0.023,
-      "e24": 0.047,
-      "e25": 0.016
-    },
-    "Jonathan Taylor": {
-      "e21": 0.073,
-      "e22": -0.144,
-      "e23": -0.048,
-      "e24": -0.062,
+      "e21": 0.249,
+      "e22": -0.001,
+      "e24": 0.008,
       "e25": 0.05
     },
-    "Derrick Henry": {
-      "e21": -0.01,
-      "e22": -0.049,
-      "e23": -0.0,
-      "e24": 0.093,
-      "e25": 0.028
+    "Malik Willis": {
+      "e22": -0.447,
+      "e24": 0.189
     },
-    "Kyren Williams": {
-      "e23": 0.096,
-      "e24": -0.054,
-      "e25": 0.015
-    },
-    "Saquon Barkley": {
-      "e21": -0.112,
-      "e22": -0.038,
-      "e23": -0.166,
-      "e24": 0.088,
-      "e25": -0.07
-    },
-    "Christian McCaffrey": {
-      "e21": 0.009,
-      "e22": 0.003,
-      "e23": 0.05,
-      "e24": -0.055,
-      "e25": -0.062
-    },
-    "Chase Brown": {
-      "e23": -0.189,
-      "e24": -0.008,
-      "e25": -0.012
-    },
-    "Travis Etienne": {
-      "e22": -0.031,
-      "e23": -0.105,
-      "e24": -0.148,
-      "e25": -0.055
-    },
-    "Javonte Williams": {
-      "e21": -0.036,
-      "e22": -0.115,
-      "e23": -0.159,
-      "e24": -0.131,
-      "e25": 0.03
-    },
-    "Josh Jacobs": {
-      "e21": -0.119,
-      "e22": -0.003,
-      "e23": -0.159,
-      "e24": -0.056,
-      "e25": -0.043
-    },
-    "Ashton Jeanty": {
-      "e25": -0.21
-    },
-    "Jaylen Warren": {
-      "e22": 0.091,
-      "e23": -0.026,
-      "e24": -0.102,
-      "e25": -0.004
-    },
-    "Rico Dowdle": {
-      "e23": -0.047,
-      "e24": -0.043,
-      "e25": -0.009
-    },
-    "Breece Hall": {
-      "e24": -0.073,
-      "e25": -0.077
-    },
-    "TreVeyon Henderson": {
-      "e25": 0.04
-    },
-    "Kenneth Gainwell": {
-      "e21": 0.059,
-      "e22": 0.144,
-      "e23": -0.107,
-      "e24": -0.133,
-      "e25": 0.003
-    },
-    "RJ Harvey": {
-      "e25": -0.122
-    },
-    "Kenneth Walker III": {
-      "e22": -0.07,
-      "e23": -0.039,
-      "e24": -0.065,
-      "e25": -0.062
-    },
-    "Zach Charbonnet": {
-      "e23": -0.068,
-      "e24": -0.072,
+    "Jacoby Brissett": {
+      "e21": -0.072,
+      "e22": 0.032,
+      "e24": -0.172,
       "e25": 0.001
     },
-    "Tony Pollard": {
-      "e21": 0.079,
-      "e22": 0.024,
-      "e23": -0.061,
-      "e24": -0.077,
-      "e25": -0.066
+    "Bijan Robinson": {
+      "e22": -0.0,
+      "e23": -0.086,
+      "e24": 0.024,
+      "e25": -0.003
     },
-    "Rhamondre Stevenson": {
-      "e21": 0.012,
-      "e22": -0.044,
-      "e23": -0.069,
-      "e24": -0.144,
-      "e25": -0.109
+    "Jahmyr Gibbs": {
+      "e23": 0.027,
+      "e24": 0.158,
+      "e25": 0.027
     },
-    "Quinshon Judkins": {
-      "e25": -0.083
+    "James Cook": {
+      "e22": 0.075,
+      "e23": 0.008,
+      "e24": 0.078,
+      "e25": 0.039
     },
-    "David Montgomery": {
-      "e21": -0.085,
-      "e22": -0.065,
-      "e23": 0.05,
-      "e24": -0.022,
-      "e25": 0.012
+    "Jonathan Taylor": {
+      "e21": 0.089,
+      "e22": -0.115,
+      "e23": -0.025,
+      "e24": -0.036,
+      "e25": 0.064
     },
-    "Woody Marks": {
-      "e25": -0.118
+    "Derrick Henry": {
+      "e21": 0.018,
+      "e22": -0.023,
+      "e23": 0.015,
+      "e24": 0.115,
+      "e25": 0.047
     },
-    "Kyle Monangai": {
-      "e25": 0.025
+    "Kyren Williams": {
+      "e23": 0.119,
+      "e24": -0.025,
+      "e25": 0.031
     },
-    "Kareem Hunt": {
-      "e21": 0.077,
-      "e22": -0.085,
-      "e23": -0.034,
-      "e24": 0.01,
-      "e25": 0.049
+    "Saquon Barkley": {
+      "e21": -0.103,
+      "e22": -0.015,
+      "e23": -0.147,
+      "e24": 0.117,
+      "e25": -0.051
     },
-    "Jacory Croskey-Merritt": {
-      "e25": -0.03
+    "Christian McCaffrey": {
+      "e21": 0.015,
+      "e22": 0.034,
+      "e23": 0.084,
+      "e24": -0.033,
+      "e25": -0.037
     },
-    "Bucky Irving": {
-      "e24": 0.088,
-      "e25": -0.17
+    "Chase Brown": {
+      "e23": -0.169,
+      "e24": 0.009,
+      "e25": 0.009
     },
-    "Rachaad White": {
-      "e22": -0.121,
-      "e23": -0.146,
-      "e24": -0.083,
-      "e25": 0.066
-    },
-    "Jordan Mason": {
-      "e22": 0.069,
-      "e23": 0.139,
-      "e24": -0.038,
-      "e25": -0.029
-    },
-    "Omarion Hampton": {
-      "e25": -0.012
-    },
-    "Blake Corum": {
-      "e24": -0.138,
-      "e25": 0.094
-    },
-    "Cam Skattebo": {
-      "e25": -0.097
-    },
-    "J.K. Dobbins": {
-      "e22": 0.083,
-      "e24": 0.02,
-      "e25": 0.02
-    },
-    "Chuba Hubbard": {
-      "e21": -0.117,
-      "e22": 0.014,
-      "e23": -0.078,
-      "e24": 0.036,
-      "e25": -0.098
-    },
-    "Bhayshul Tuten": {
-      "e25": -0.101
-    },
-    "Aaron Jones": {
-      "e21": 0.009,
-      "e22": 0.047,
-      "e23": 0.014,
-      "e24": -0.054,
-      "e25": -0.015
-    },
-    "Tyjae Spears": {
-      "e23": -0.004,
-      "e24": -0.048,
-      "e25": -0.04
-    },
-    "Alvin Kamara": {
-      "e21": -0.142,
-      "e22": -0.157,
-      "e23": -0.002,
-      "e24": -0.062,
-      "e25": -0.179
-    },
-    "Ollie Gordon": {
-      "e25": -0.102
-    },
-    "Isaac Guerendo": {
-      "e24": 0.057
-    },
-    "Trey Benson": {
-      "e24": -0.071
-    },
-    "Dylan Sampson": {
-      "e25": -0.205
-    },
-    "Jaylen Wright": {
-      "e24": -0.252,
-      "e25": -0.064
-    },
-    "Braelon Allen": {
-      "e24": -0.07
-    },
-    "James Conner": {
-      "e21": -0.015,
+    "Travis Etienne": {
       "e22": -0.01,
-      "e23": 0.045,
-      "e24": 0.011
+      "e23": -0.076,
+      "e24": -0.11,
+      "e25": -0.026
     },
-    "Isiah Pacheco": {
-      "e22": -0.022,
-      "e23": -0.016,
-      "e24": -0.138,
-      "e25": -0.102
-    },
-    "Tank Bigsby": {
-      "e23": -0.201,
-      "e24": -0.003,
-      "e25": 0.103
-    },
-    "Alexander Mattison": {
-      "e21": -0.167,
-      "e22": 0.018,
-      "e23": -0.157,
-      "e24": -0.206
-    },
-    "Audric Estime": {
-      "e24": -0.078,
-      "e25": 0.078
-    },
-    "Kimani Vidal": {
-      "e24": -0.176,
-      "e25": -0.077
-    },
-    "Tyrone Tracy": {
-      "e24": -0.091,
-      "e25": -0.054
-    },
-    "Brian Robinson": {
-      "e22": -0.026,
-      "e23": -0.105,
-      "e24": 0.01,
-      "e25": -0.03
-    },
-    "Keaton Mitchell": {
-      "e23": 0.307,
-      "e25": 0.026
-    },
-    "Chris Rodriguez": {
-      "e23": -0.058,
+    "Javonte Williams": {
+      "e21": -0.023,
+      "e22": -0.105,
+      "e23": -0.12,
+      "e24": -0.101,
       "e25": 0.051
     },
-    "Sean Tucker": {
-      "e24": 0.165,
-      "e25": -0.027
+    "Josh Jacobs": {
+      "e21": -0.095,
+      "e22": 0.031,
+      "e23": -0.118,
+      "e24": -0.036,
+      "e25": -0.022
     },
-    "Ray Davis": {
-      "e24": -0.037,
-      "e25": 0.013
+    "Ashton Jeanty": {
+      "e25": -0.163
     },
-    "Tyler Allgeier": {
-      "e22": 0.052,
-      "e23": -0.107,
-      "e24": 0.02,
+    "Jaylen Warren": {
+      "e22": 0.097,
+      "e23": -0.003,
+      "e24": -0.068,
+      "e25": 0.028
+    },
+    "Rico Dowdle": {
+      "e23": -0.027,
+      "e24": -0.02,
+      "e25": 0.01
+    },
+    "Breece Hall": {
+      "e24": -0.047,
       "e25": -0.068
     },
+    "TreVeyon Henderson": {
+      "e25": 0.05
+    },
+    "Kenneth Gainwell": {
+      "e21": 0.062,
+      "e22": 0.167,
+      "e23": -0.087,
+      "e24": -0.105,
+      "e25": 0.015
+    },
+    "RJ Harvey": {
+      "e25": -0.096
+    },
+    "Kenneth Walker III": {
+      "e22": -0.039,
+      "e23": -0.012,
+      "e24": -0.041,
+      "e25": -0.031
+    },
+    "Zach Charbonnet": {
+      "e23": -0.046,
+      "e24": -0.068,
+      "e25": 0.02
+    },
+    "Tony Pollard": {
+      "e21": 0.104,
+      "e22": 0.057,
+      "e23": -0.032,
+      "e24": -0.046,
+      "e25": -0.046
+    },
+    "Rhamondre Stevenson": {
+      "e21": 0.035,
+      "e22": -0.033,
+      "e23": -0.047,
+      "e24": -0.114,
+      "e25": -0.076
+    },
+    "Quinshon Judkins": {
+      "e25": -0.066
+    },
+    "David Montgomery": {
+      "e21": -0.073,
+      "e22": -0.051,
+      "e23": 0.076,
+      "e24": 0.001,
+      "e25": 0.033
+    },
+    "Woody Marks": {
+      "e25": -0.088
+    },
+    "Kyle Monangai": {
+      "e25": 0.036
+    },
+    "Kareem Hunt": {
+      "e21": 0.098,
+      "e22": -0.073,
+      "e23": -0.005,
+      "e24": 0.024,
+      "e25": 0.059
+    },
+    "Jacory Croskey-Merritt": {
+      "e25": 0.002
+    },
+    "Bucky Irving": {
+      "e24": 0.104,
+      "e25": -0.148
+    },
+    "Rachaad White": {
+      "e22": -0.098,
+      "e23": -0.12,
+      "e24": -0.057,
+      "e25": 0.08
+    },
+    "Jordan Mason": {
+      "e22": 0.076,
+      "e23": 0.162,
+      "e24": -0.018,
+      "e25": 0.016
+    },
+    "Omarion Hampton": {
+      "e25": 0.013
+    },
+    "Blake Corum": {
+      "e24": -0.083,
+      "e25": 0.122
+    },
+    "Cam Skattebo": {
+      "e25": -0.086
+    },
+    "J.K. Dobbins": {
+      "e22": 0.103,
+      "e24": 0.051,
+      "e25": 0.035
+    },
+    "Chuba Hubbard": {
+      "e21": -0.1,
+      "e22": 0.017,
+      "e23": -0.051,
+      "e24": 0.052,
+      "e25": -0.088
+    },
+    "Bhayshul Tuten": {
+      "e25": -0.065
+    },
+    "Aaron Jones": {
+      "e21": 0.018,
+      "e22": 0.061,
+      "e23": 0.03,
+      "e24": -0.01,
+      "e25": 0.014
+    },
+    "Tyjae Spears": {
+      "e23": 0.01,
+      "e24": -0.029,
+      "e25": -0.038
+    },
+    "Alvin Kamara": {
+      "e21": -0.111,
+      "e22": -0.132,
+      "e23": 0.032,
+      "e24": -0.029,
+      "e25": -0.142
+    },
+    "Ollie Gordon": {
+      "e25": -0.091
+    },
+    "Isaac Guerendo": {
+      "e24": 0.081
+    },
+    "Trey Benson": {
+      "e24": -0.039
+    },
+    "Dylan Sampson": {
+      "e25": -0.176
+    },
+    "Jaylen Wright": {
+      "e24": -0.231,
+      "e25": -0.054
+    },
+    "Braelon Allen": {
+      "e24": -0.05
+    },
+    "James Conner": {
+      "e21": 0.009,
+      "e22": 0.011,
+      "e23": 0.075,
+      "e24": 0.034
+    },
+    "Isiah Pacheco": {
+      "e22": -0.008,
+      "e23": 0.014,
+      "e24": -0.104,
+      "e25": -0.061
+    },
+    "Tank Bigsby": {
+      "e23": -0.195,
+      "e24": 0.013,
+      "e25": 0.109
+    },
+    "Alexander Mattison": {
+      "e21": -0.132,
+      "e22": 0.045,
+      "e23": -0.13,
+      "e24": -0.176
+    },
+    "Audric Estime": {
+      "e24": -0.06,
+      "e25": 0.112
+    },
+    "Kimani Vidal": {
+      "e24": -0.155,
+      "e25": -0.031
+    },
+    "Tyrone Tracy": {
+      "e24": -0.062,
+      "e25": -0.036
+    },
+    "Brian Robinson": {
+      "e22": -0.0,
+      "e23": -0.086,
+      "e24": 0.024,
+      "e25": -0.003
+    },
+    "Keaton Mitchell": {
+      "e23": 0.32,
+      "e25": 0.062
+    },
+    "Chris Rodriguez": {
+      "e23": -0.041,
+      "e25": 0.066
+    },
+    "Sean Tucker": {
+      "e24": 0.195,
+      "e25": -0.023
+    },
+    "Ray Davis": {
+      "e24": -0.03,
+      "e25": 0.026
+    },
+    "Tyler Allgeier": {
+      "e22": 0.076,
+      "e23": -0.078,
+      "e24": 0.048,
+      "e25": -0.034
+    },
     "Mac Jones": {
-      "e21": 0.084,
-      "e22": -0.049,
-      "e23": -0.123,
-      "e24": 0.0,
-      "e25": 0.144
+      "e21": 0.072,
+      "e22": -0.057,
+      "e23": -0.135,
+      "e24": -0.004,
+      "e25": 0.137
     },
     "Joe Flacco": {
-      "e22": -0.095,
-      "e23": 0.011,
-      "e24": 0.016,
-      "e25": -0.067
+      "e22": -0.099,
+      "e23": 0.006,
+      "e24": 0.015,
+      "e25": -0.073
     },
     "Justin Fields": {
-      "e21": -0.181,
-      "e22": -0.148,
-      "e23": -0.081,
-      "e24": 0.042,
-      "e25": -0.064
+      "e21": -0.182,
+      "e22": -0.149,
+      "e23": -0.088,
+      "e24": 0.043,
+      "e25": -0.069
     },
     "Kirk Cousins": {
-      "e21": 0.104,
-      "e22": 0.035,
-      "e23": 0.103,
-      "e24": 0.049,
-      "e25": 0.005
+      "e21": 0.112,
+      "e22": 0.034,
+      "e23": 0.105,
+      "e24": 0.046,
+      "e25": 0.0
     },
     "Jeremiyah Love": {
-      "e21": -0.095,
-      "e23": 0.13,
-      "e24": 0.125,
-      "e25": 0.208
+      "e21": -0.11,
+      "e23": 0.119,
+      "e24": 0.114,
+      "e25": 0.194
     },
     "Kaytron Allen": {
-      "e22": -0.351
+      "e22": -0.347
     },
     "Deshaun Watson": {
-      "e22": -0.107,
-      "e23": -0.083,
-      "e24": -0.191
+      "e22": -0.103,
+      "e23": -0.102,
+      "e24": -0.174
     },
     "Anthony Richardson": {
       "e23": 0.076,
-      "e24": -0.107
+      "e24": -0.121
     },
     "Marcus Mariota": {
-      "e22": 0.021,
-      "e25": 0.012
+      "e22": 0.009,
+      "e25": 0.001
     },
     "Riley Leonard": {
-      "e25": -0.135
+      "e25": -0.153
     },
     "Quinn Ewers": {
-      "e25": -0.004
+      "e25": -0.026
     },
     "Jameis Winston": {
       "e21": 0.13,
-      "e22": -0.024,
-      "e24": -0.051,
-      "e25": 0.166
+      "e22": -0.034,
+      "e24": -0.045,
+      "e25": 0.157
     },
     "Dillon Gabriel": {
-      "e25": -0.177
+      "e25": -0.176
     },
     "Gardner Minshew": {
-      "e21": 0.196,
-      "e22": 0.091,
-      "e23": -0.01,
-      "e24": -0.11
+      "e21": 0.194,
+      "e22": 0.069,
+      "e23": -0.026,
+      "e24": -0.106
     },
     "Kenny Pickett": {
-      "e22": -0.021,
-      "e23": -0.098,
-      "e25": -0.406
+      "e22": -0.031,
+      "e23": -0.101,
+      "e25": -0.419
     },
     "Tyler Huntley": {
-      "e21": -0.118,
-      "e22": -0.051,
-      "e24": -0.124,
-      "e25": 0.061
+      "e21": -0.128,
+      "e22": -0.063,
+      "e24": -0.114,
+      "e25": 0.035
     },
     "Will Levis": {
-      "e23": -0.034,
-      "e24": -0.15
+      "e23": -0.047,
+      "e24": -0.159
     },
     "Tyson Bagent": {
-      "e23": -0.138
+      "e23": -0.123
     },
     "Trey Lance": {
-      "e21": 0.136,
-      "e25": -0.512
+      "e21": 0.116,
+      "e25": -0.507
     },
     "Tyrod Taylor": {
-      "e21": -0.277,
-      "e23": 0.006,
-      "e25": -0.074
+      "e21": -0.267,
+      "e23": -0.013,
+      "e25": -0.089
     },
     "Davis Mills": {
-      "e21": -0.075,
-      "e22": -0.12,
-      "e25": -0.078
+      "e21": -0.073,
+      "e22": -0.121,
+      "e25": -0.094
     },
     "Emanuel Wilson": {
-      "e25": -0.046
+      "e25": -0.016
     },
     "Devin Neal": {
-      "e25": -0.111
+      "e25": -0.077
     },
     "Trevor Etienne": {
-      "e22": -0.031,
-      "e23": -0.105,
-      "e24": -0.148,
-      "e25": -0.055
+      "e22": -0.01,
+      "e23": -0.076,
+      "e24": -0.11,
+      "e25": -0.026
     },
     "Isaiah Davis": {
-      "e25": -0.071
-    },
-    "Brashard Smith": {
-      "e25": -0.187
-    },
-    "Najee Harris": {
-      "e21": -0.053,
-      "e22": -0.087,
-      "e23": -0.084,
-      "e24": -0.049
-    },
-    "Joe Mixon": {
-      "e21": -0.069,
-      "e22": -0.045,
-      "e23": -0.057,
-      "e24": -0.053
-    },
-    "Malik Davis": {
-      "e21": -0.105,
-      "e22": -0.128,
-      "e25": 0.009
-    },
-    "Kendre Miller": {
-      "e23": -0.065,
       "e25": -0.048
     },
+    "Brashard Smith": {
+      "e25": -0.158
+    },
+    "Najee Harris": {
+      "e21": -0.036,
+      "e22": -0.063,
+      "e23": -0.064,
+      "e24": -0.028
+    },
+    "Joe Mixon": {
+      "e21": -0.052,
+      "e22": -0.023,
+      "e23": -0.035,
+      "e24": -0.023
+    },
+    "Malik Davis": {
+      "e21": -0.088,
+      "e22": -0.106,
+      "e25": 0.016
+    },
+    "Kendre Miller": {
+      "e23": -0.036,
+      "e25": -0.021
+    },
     "Justice Hill": {
-      "e22": -0.057,
-      "e23": 0.002,
-      "e24": 0.009
+      "e22": -0.06,
+      "e23": 0.012,
+      "e24": 0.005
     },
     "Emari Demercado": {
-      "e23": -0.066,
-      "e25": -0.136
+      "e23": -0.047,
+      "e25": -0.124
     },
     "Ty Johnson": {
-      "e21": -0.152
+      "e21": -0.143
     },
     "Devin Singletary": {
-      "e21": -0.019,
-      "e22": -0.076,
-      "e23": -0.063,
-      "e24": -0.085,
-      "e25": -0.017
+      "e21": 0.003,
+      "e22": -0.04,
+      "e23": -0.042,
+      "e24": -0.054,
+      "e25": -0.002
     },
     "Jerome Ford": {
-      "e23": -0.15,
-      "e24": 0.038
+      "e23": -0.122,
+      "e24": 0.052
     },
     "Samaje Perine": {
-      "e21": -0.096,
-      "e22": -0.045,
-      "e23": -0.158,
-      "e25": 0.007
+      "e21": -0.126,
+      "e22": -0.028,
+      "e23": -0.13,
+      "e25": 0.004
     },
     "Michael Carter": {
-      "e25": -0.07
+      "e25": -0.039
     },
     "Zonovan Knight": {
-      "e22": -0.142,
-      "e25": -0.152
+      "e22": -0.126,
+      "e25": -0.126
     },
     "Roschon Johnson": {
-      "e23": -0.073,
-      "e24": -0.04
+      "e23": -0.061,
+      "e24": -0.024
     },
     "Nick Chubb": {
-      "e21": 0.043,
-      "e22": 0.039,
-      "e24": -0.159,
-      "e25": -0.098
+      "e21": 0.062,
+      "e22": 0.054,
+      "e24": -0.155,
+      "e25": -0.067
     },
     "Austin Ekeler": {
-      "e21": -0.0,
-      "e22": 0.005,
-      "e23": -0.192,
-      "e24": 0.07
+      "e21": 0.024,
+      "e22": 0.041,
+      "e23": -0.15,
+      "e24": 0.094
     },
     "D'Andre Swift": {
-      "e21": -0.147,
-      "e22": 0.054,
-      "e23": 0.009,
-      "e24": -0.121,
-      "e25": 0.061
+      "e21": -0.135,
+      "e22": 0.099,
+      "e23": 0.032,
+      "e24": -0.094,
+      "e25": 0.08
     },
     "De'Von Achane": {
-      "e23": 0.289,
-      "e24": -0.05,
-      "e25": 0.054
+      "e23": 0.276,
+      "e24": -0.031,
+      "e25": 0.078
     },
     "J'Mari Taylor": {
-      "e21": 0.073,
-      "e22": -0.144,
-      "e23": -0.048,
-      "e24": -0.062,
-      "e25": 0.05
+      "e21": 0.089,
+      "e22": -0.115,
+      "e23": -0.025,
+      "e24": -0.036,
+      "e25": 0.064
     }
   },
   "draft": {
