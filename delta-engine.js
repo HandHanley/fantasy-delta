@@ -3843,7 +3843,7 @@ function mvAssetRaw(pl){
 // <contracts-backup>
 /* Built-in copy of data/delta-contracts.json, written by scripts/build-contracts-backup.js.
    Do not edit by hand: change the table, then run the script. The nightly fails if they differ. */
-const DL_CONTRACTS_BACKUP_ASOF="2026-11-05";
+const DL_CONTRACTS_BACKUP_ASOF="2026-11-25";
 const DL_CONTRACTS_BACKUP={
   "A.J. Brown":{team:"NE",end:2029,kind:"extension",aav:32,total:96},
   "AJ Barner":{team:"SEA",end:2027,kind:"rookie",aav:null,total:null},
@@ -3870,7 +3870,7 @@ const DL_CONTRACTS_BACKUP={
   "Blake Corum":{team:"LAR",end:2027,kind:"rookie",aav:null,total:null},
   "Bo Nix":{team:"DEN",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
   "Braelon Allen":{team:"NYJ",end:2027,kind:"rookie",aav:null,total:null},
-  "Brandon Aiyuk":{team:"SF",end:null,kind:"left_team",aav:null,total:null},
+  "Brandon Aiyuk":{team:null,end:null,kind:"free_agent",aav:null,total:null},
   "Brashard Smith":{team:"KC",end:2028,kind:"rookie",aav:null,total:null},
   "Breece Hall":{team:"NYJ",end:2028,kind:"extension",aav:15.25,total:45.75},
   "Brenen Thompson":{team:"LAC",end:2029,kind:"rookie",aav:null,total:null},
@@ -3927,7 +3927,7 @@ const DL_CONTRACTS_BACKUP={
   "Dalton Kincaid":{team:"BUF",end:2027,kind:"rookie_option",aav:null,total:null,option:"exercised"},
   "Dalton Schultz":{team:"HOU",end:2027,kind:"extension",aav:12.6,total:12.6},
   "Damien Martinez":{team:null,end:null,kind:"free_agent",aav:null,total:null},
-  "Daniel Jones":{team:"IND",end:2027,kind:"veteran",aav:44,total:88},
+  "Daniel Jones":{team:null,end:null,kind:"free_agent",aav:null,total:null},
   "Darius Slayton":{team:null,end:null,kind:"free_agent",aav:null,total:null},
   "Darnell Mooney":{team:"NYG",end:2026,kind:"veteran",aav:null,total:null},
   "Darnell Washington":{team:"PIT",end:2030,kind:"extension",aav:10.5,total:42},
@@ -3962,7 +3962,7 @@ const DL_CONTRACTS_BACKUP={
   "Eli Stowers":{team:"PHI",end:2029,kind:"rookie",aav:null,total:null},
   "Elic Ayomanor":{team:"TEN",end:2028,kind:"rookie",aav:null,total:null},
   "Elijah Arroyo":{team:"SEA",end:2028,kind:"rookie",aav:null,total:null},
-  "Elijah Higgins":{team:"ARI",end:2026,kind:"rookie",aav:null,total:null},
+  "Elijah Higgins":{team:"ARI",end:2029,kind:"extension",aav:8.93,total:26.8},
   "Elijah Sarratt":{team:"BAL",end:2029,kind:"rookie",aav:null,total:null},
   "Emanuel Wilson":{team:"SEA",end:2026,kind:"veteran",aav:2.1,total:2.1},
   "Emari Demercado":{team:"HOU",end:2026,kind:"veteran",aav:null,total:null},
@@ -4030,7 +4030,7 @@ const DL_CONTRACTS_BACKUP={
   "Jayden Daniels":{team:"WAS",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
   "Jayden Higgins":{team:"HOU",end:2028,kind:"rookie",aav:null,total:null},
   "Jayden Reed":{team:"GB",end:2029,kind:"extension",aav:16.75,total:50.25},
-  "Jaydon Blue":{team:"PHI",end:2026,kind:"veteran",aav:null,total:null},
+  "Jaydon Blue":{team:"PHI",end:2026,kind:"practice_squad",aav:null,total:null},
   "Jaylen Waddle":{team:"DEN",end:2028,kind:"extension",aav:28.25,total:84.75},
   "Jaylen Warren":{team:"PIT",end:2027,kind:"extension",aav:5.83,total:17.5},
   "Jaylen Wright":{team:"MIA",end:2027,kind:"rookie",aav:null,total:null},
@@ -4129,7 +4129,7 @@ const DL_CONTRACTS_BACKUP={
   "Matthew Golden":{team:"GB",end:2028,kind:"rookie",aav:null,total:null,option:"available"},
   "Matthew Stafford":{team:"LAR",end:2027,kind:"extension",aav:55,total:55},
   "Max Klare":{team:"LAR",end:2029,kind:"rookie",aav:null,total:null},
-  "Michael Carter":{team:"TEN",end:2026,kind:"veteran",aav:null,total:null},
+  "Michael Carter":{team:"TEN",end:2026,kind:"practice_squad",aav:null,total:null},
   "Michael Mayer":{team:"LV",end:2029,kind:"extension",aav:15,total:45},
   "Michael Penix Jr.":{team:"ATL",end:2027,kind:"rookie",aav:null,total:null,option:"available"},
   "Michael Pittman Jr.":{team:"PIT",end:2028,kind:"extension",aav:19.67,total:59},
