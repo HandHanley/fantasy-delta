@@ -97,9 +97,9 @@ def pooled(parts, y_override=None):
     cat = lambda f: np.concatenate([f(p) for p in parts])
     if y_override is None:
         today, new = cat(lambda p: p['today']), cat(lambda p: p['new'])
-    else:
-        today = cat(lambda p: M.values(p['G'], y_override))
-        new = cat(lambda p: RC.values_with(p['G'], p['R']['nnI'], p['R']['wI'], y_override))
+    else:                                   # y_override: one outcome array per week (each week's frame has its own rows)
+        today = np.concatenate([M.values(p['G'], yo) for p, yo in zip(parts, y_override)])
+        new = np.concatenate([RC.values_with(p['G'], p['R']['nnI'], p['R']['wI'], yo) for p, yo in zip(parts, y_override)])
     return today, new
 
 
@@ -125,9 +125,7 @@ def main():
         print('week', a.week, 'flagged test rows', int((p['mask'] & p['G']['test']).sum()), 'frame flagged', int(p['mask'].sum()))
         return
     parts = [week_parts(a, w) for w in WEEKS]
-    y = parts[0]['G']['y']
-    for p in parts: assert np.array_equal(p['G']['y'], y)
-    truth = np.concatenate([y[p['G']['rows']] for p in parts])
+    truth = np.concatenate([p['G']['y'][p['G']['rows']] for p in parts])
     info = {f'week_{w}': {'flagged_test_rows': int((p['mask'] & p['G']['test']).sum()),
                           'by_position': {q: int((p['mask'] & p['G']['test'] & (p['G']['pos'] == q)).sum()) for q in RC.LINE}}
             for w, p in zip(WEEKS, parts)}
@@ -135,15 +133,17 @@ def main():
     today, new = pooled(parts)
     if a.mode == 'crash':
         res = {'info': info}
-        S = parts[0]['G']['S']
-        grp = pd.DataFrame({'p': S.pos.values, 't': S.t.values}).groupby(['p', 't']).groups
+        grps = [pd.DataFrame({'p': p['G']['S'].pos.values, 't': p['G']['S'].t.values}).groupby(['p', 't']).groups for p in parts]
         rng = np.random.default_rng(7); ok = 0; lifts = []
         for i in range(20):
-            yn = y.copy()
-            for g in grp.values():
-                g = np.array(list(g)); yn[g] = y[rng.permutation(g)]
-            tn, nn_ = pooled(parts, yn)
-            r = decide(parts, tn, nn_, np.concatenate([yn[p['G']['rows']] for p in parts]), n_perm=1000)
+            ys = []
+            for p, grp in zip(parts, grps):
+                y = p['G']['y']; yn = y.copy()
+                for g in grp.values():
+                    g = np.array(list(g)); yn[g] = y[rng.permutation(g)]
+                ys.append(yn)
+            tn, nn_ = pooled(parts, ys)
+            r = decide(parts, tn, nn_, np.concatenate([yn[p['G']['rows']] for p, yn in zip(parts, ys)]), n_perm=1000)
             ok += r['pass']; lifts.append(r['lift'])
         res['noise'] = {'runs': 20, 'passed': int(ok), 'ok': ok <= 1, 'median_lift': float(np.median(lifts))}
         print(res['noise'], flush=True)
@@ -151,7 +151,7 @@ def main():
         def world(rng, use_rule):
             out = []
             for p in parts:
-                F, R, d = p['G']['F'], p['R'], p['G']['on_draft']
+                F, R, d, y = p['G']['F'], p['R'], p['G']['on_draft'], p['G']['y']
                 nI, wI = (R['nnI'], R['wI']) if use_rule else (F['nnI'], F['wI'])
                 o = np.empty(len(d))
                 for i in range(len(d)):
