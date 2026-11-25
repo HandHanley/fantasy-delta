@@ -1,0 +1,81 @@
+{
+ "prereg": "docs/PREREG-ovs-role-change.md \u00a75A",
+ "info": {
+  "week_5": {
+   "flagged_test_rows": 150,
+   "by_position": {
+    "RB": 64,
+    "WR": 65,
+    "TE": 21
+   }
+  },
+  "week_9": {
+   "flagged_test_rows": 134,
+   "by_position": {
+    "RB": 54,
+    "WR": 54,
+    "TE": 26
+   }
+  },
+  "week_13": {
+   "flagged_test_rows": 124,
+   "by_position": {
+    "RB": 49,
+    "WR": 51,
+    "TE": 23
+   }
+  }
+ },
+ "decides": {
+  "flagged_rows": 408,
+  "rmse_today": 60.93651290121928,
+  "rmse_rule": 81.36666784105722,
+  "lift": -0.33526951194197974,
+  "p": 1.0,
+  "all_rows": 20356,
+  "all_rmse_today": 48.47748088207558,
+  "all_rmse_rule": 49.05508317040402,
+  "all_rows_worse_by": 0.011914857740514373,
+  "pass": false
+ },
+ "reported": {
+  "by_week": {
+   "5": {
+    "rows": 150,
+    "rmse_today": 58.43632558726086,
+    "rmse_rule": 80.05124566997007
+   },
+   "9": {
+    "rows": 134,
+    "rmse_today": 61.33932356820313,
+    "rmse_rule": 80.17551725425768
+   },
+   "13": {
+    "rows": 124,
+    "rmse_today": 63.41187674460082,
+    "rmse_rule": 84.17438807339501
+   }
+  },
+  "by_position": {
+   "RB": {
+    "rows": 167,
+    "rmse_today": 65.3217599665991,
+    "rmse_rule": 83.31271795338863
+   },
+   "WR": {
+    "rows": 170,
+    "rmse_today": 60.32028045588764,
+    "rmse_rule": 83.96916038341658
+   },
+   "TE": {
+    "rows": 70,
+    "rmse_today": 50.60499265985088,
+    "rmse_rule": 65.63434878424134
+   }
+  },
+  "produced_over_value_flagged": {
+   "today": 0.7780209543518404,
+   "rule": 0.4765389241292353
+  }
+ }
+}

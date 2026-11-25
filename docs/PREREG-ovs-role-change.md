@@ -122,3 +122,21 @@ value has been compared with any outcome.**
 - The flag can't see a role that hasn't happened yet (Trevor Etienne, 5% share). DELTA counts demonstrated production.
 - Team carries + targets mix rushing and receiving roles: a slot receiver and a lead back are measured on one scale.
   The starter-line rank is within position, so they aren't compared with each other.
+
+## 9. Results (25 November 2026, The One Real Run, A1 Pooled)
+
+`study/out/ovs_role_change_weeks_run.json`. **Decision: FAIL, no change.**
+
+| Measure | Today | Role Rule |
+|---|---|---|
+| **Decides:** typical miss, 408 flagged rows (weeks 5, 9, 13) | 60.94 | 81.37 (**33.5% worse**, p = 1.0) |
+| Guard: all 20,356 pooled test rows | 48.48 | 49.06 (1.2% worse, fails the 0.5% guard) |
+| Flagged rows: produced ÷ value | 0.78 | 0.48 |
+
+- Worse at every week (5: 58.4 → 80.1; 9: 61.3 → 80.2; 13: 63.4 → 84.2) and every position (RB 65.3 → 83.3; WR
+  60.3 → 84.0; TE 50.6 → 65.6).
+- **Reading:** players whose share of team work jumped to a starter's level went on to produce about 78% of today's
+  cautious value, and under half of what their new role alone suggested. Their earlier, smaller-role seasons carry real
+  information: breakouts on a new role tend to fall back. Today's 3 / 2 / 1 weighting is the better guide.
+- Implementation checked against `ovs_available_ppg.prod_available` before reading the result: the rule's figure is the
+  same this-season term today's production uses.
