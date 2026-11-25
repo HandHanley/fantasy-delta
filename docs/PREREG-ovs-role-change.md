@@ -91,6 +91,9 @@ so each checkpoint adds role-change cases. Everything else in sections 1–4 is 
 - The flag uses that week: share of team carries + targets through week w, 4+ games through week w.
 - **Decided on** the pooled flagged test rows of all three weeks: 2% lower RMSE, paired permutation p < 0.05 with each
   player's rows (all weeks) shuffled together, and all pooled test rows at most 0.5% worse.
+- **Build note (before any outcome):** at week 5 the incoming-rookie value can't match 11 rookie QBs of 2006–2007
+  (too few earlier classes that early in the season). They're dropped from week 5's frame; every dropped row must be a
+  fit season (checked), so no test row is lost. Flagged test rows: week 5 150, week 9 134, week 13 124 (408 pooled).
 - **Crash tests rerun on the pool** before any real run: noise at most 1 of 20; planted (rule is right) at least 80%
   of 200. If either fails, back to Steve.
 

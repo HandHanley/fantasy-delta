@@ -25,12 +25,52 @@ def set_week(w):
     RC.CACHE = '/tmp/ovs_role_change_frame.pkl' if w == 9 else f'/tmp/ovs_role_change_frame_w{w}.pkl'
 
 
+def ssm_frame(a, w):
+    """ovs_small_samples.frame for week w != 9, unchanged except: rows the incoming-rookie value can't match at that
+    week are dropped, and every dropped row must be a fit-season row (before 2013). Week 5: 11 rookie QBs of 2006-2007."""
+    import injury_weeks as J, ovs_in_season as I, ovs_available_ppg as AP
+    if os.path.exists(SSm.CACHE):
+        return pickle.load(open(SSm.CACHE, 'rb'))
+    C.HORIZON = I.HORIZON
+    st, W, Sin, Sb, skipped = I.build(a.nflverse, a.rosters, a.weekly, w)
+    L_full, L_upto = I.levels(W)
+    AP.prod_available = SSm._capturing_prod
+    try:
+        SS, none, parts = QS.build_S(Sin, W, st, L_full, L_upto, a, a.sched, a.snaps, os.path.join(a.nflverse, 'players.csv'))
+    finally:
+        AP.prod_available = SSm._orig_prod
+    n = SSm.CAP['n'].copy(); n[none] = 0.0
+    rows = Sin.index[(Sin.t >= SSm.FIT[0]) & (Sin.t <= SSm.TEST[1])].values
+    C.W_V['games'] = 0.0
+    xr = rows[none[rows]]; vr = rows[~none[rows]]
+    nnI, wI = {}, {}
+    ti, nn, ww = I.match(SS, vr)
+    for r, a_, b_ in zip(ti, nn, ww): nnI[int(r)] = a_; wI[int(r)] = b_
+    if len(xr):
+        ti, nn, ww = I.match(Sb, xr)
+        for r, a_, b_ in zip(ti, nn, ww): nnI[int(r)] = a_; wI[int(r)] = b_
+    ti, nn, ww = I.match(Sb, rows)
+    nnB = {int(r): a_ for r, a_ in zip(ti, nn)}; wB = {int(r): b_ for r, b_ in zip(ti, ww)}
+    keep = np.array([int(r) in nnI and int(r) in nnB for r in rows])
+    dropped = rows[~keep]
+    assert (Sin.t.values[dropped] < SSm.TEST[0]).all(), 'a test row could not be matched'
+    rows = rows[keep]
+    assert Sin.complete.values[rows].all()
+    inj = J.injured_weeks(a.weekly, a.wrost, a.inj, w)
+    neutral, add = J.neutral_games(Sin, inj, w)
+    F = {'Sin': Sin, 'rows': rows, 'n': n, 'none': none, 'add': add, 'dropped_fit_rows': [int(r) for r in dropped],
+         'nnI': [nnI[int(r)] for r in rows], 'wI': [wI[int(r)] for r in rows],
+         'nnB': [nnB[int(r)] for r in rows], 'wB': [wB[int(r)] for r in rows], 'parts': parts}
+    pickle.dump(F, open(SSm.CACHE, 'wb'))
+    return F
+
+
 def frame_g(a, w):
     """M.frame for week w. Week 9 runs SSm.setup's reproduction assertion; other weeks have no adopted figure."""
     set_week(w)
     if w == 9:
         return M.frame(a)
-    F = SSm.frame(a)
+    F = ssm_frame(a, w)
     S, rows = F['Sin'], F['rows']
     y = np.nan_to_num(S.FV.values.astype(float))
     t = S.t.values[rows]
