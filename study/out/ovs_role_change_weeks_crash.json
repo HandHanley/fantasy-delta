@@ -1,0 +1,47 @@
+{
+ "info": {
+  "week_5": {
+   "flagged_test_rows": 150,
+   "by_position": {
+    "RB": 64,
+    "WR": 65,
+    "TE": 21
+   }
+  },
+  "week_9": {
+   "flagged_test_rows": 134,
+   "by_position": {
+    "RB": 54,
+    "WR": 54,
+    "TE": 26
+   }
+  },
+  "week_13": {
+   "flagged_test_rows": 124,
+   "by_position": {
+    "RB": 49,
+    "WR": 51,
+    "TE": 23
+   }
+  }
+ },
+ "noise": {
+  "runs": 20,
+  "passed": 1,
+  "ok": true,
+  "median_lift": -0.00175840684459172
+ },
+ "rule_is_right": {
+  "runs": 200,
+  "passed": 198,
+  "share": 0.99,
+  "median_lift": 0.09697322980747503
+ },
+ "today_is_right": {
+  "runs": 50,
+  "passed": 0,
+  "share": 0.0,
+  "median_lift": -0.16175390441159043
+ },
+ "planted_ok": true
+}

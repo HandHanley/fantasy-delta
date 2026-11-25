@@ -97,6 +97,10 @@ so each checkpoint adds role-change cases. Everything else in sections 1–4 is 
 - **Crash tests rerun on the pool** before any real run: noise at most 1 of 20; planted (rule is right) at least 80%
   of 200. If either fails, back to Steve.
 
+**A1 crash results (25 Nov, `study/out/ovs_role_change_weeks_crash.json`), 408 pooled flagged test rows:** noise
+passed 1 of 20 (median lift −0.2%): **OK**. Planted, rule is right: **198 of 200 (99%)**, median lift +9.7%: **OK**.
+Today is right: 0 of 50. The real run follows.
+
 ## 6. Reported, Deciding Nothing
 
 - Flagged rows by season and position, and how many test rows' values move.
