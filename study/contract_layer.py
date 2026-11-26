@@ -10,6 +10,9 @@ guaranteed"). Display only; not part of any locked test.
 import json, re
 
 LAYER = {0: 0.7692947141173002, 1: 0.9547539143952655, 2: 1.0781335965973162}   # ovs_contract_security_results.json
+# QBs in a contract year: the QBs' own measured ratio (same results file, reported.by_position.QB group_0), used in place
+# of x0.77 by Steve's decision, not a passed test (docs/DECISION-qb-contract-year.md, 26 Nov 2026).
+QB_CONTRACT_YEAR = 0.8676795603900516
 TEAM_SIGNED = {'veteran', 'extension', 'franchise_tag', 'transition_tag', 'rfa_tender', 'practice_squad', 'rookie_option'}
 
 
@@ -26,8 +29,8 @@ def load(path):
     return out
 
 
-def factor(name, table, season, expiring='contract_year'):
-    """(multiplier, label) for one player in the week-W build of `season`."""
+def factor(name, table, season, expiring='contract_year', pos=None):
+    """(multiplier, label) for one player in the week-W build of `season`. pos='QB' uses QB_CONTRACT_YEAR for group 0."""
     p = table.get(norm(name))
     if p is None: return 1.0, 'not in table'
     if p.get('kind') not in TEAM_SIGNED or p.get('end') is None: return 1.0, p.get('kind') or 'none'
@@ -36,6 +39,7 @@ def factor(name, table, season, expiring='contract_year'):
     # through 2028). The multiplier is unchanged: `left` counts seasons after NEXT season, the study's own definition
     # (years left = end - n at kickoff of n = season + 1), so a deal through 2028 in 2026 is group 1 (x0.95).
     lab = f"signed through {int(p['end'])}"
+    cy = QB_CONTRACT_YEAR if pos == 'QB' else LAYER[0]
     if left < 0:
-        return (LAYER[0], f'{lab} (expiring)') if expiring == 'contract_year' else (1.0, f'{lab} (expiring)')
-    return LAYER[min(left, 2)], lab
+        return (cy, f'{lab} (expiring)') if expiring == 'contract_year' else (1.0, f'{lab} (expiring)')
+    return (cy if left == 0 else LAYER[min(left, 2)]), lab

@@ -213,7 +213,7 @@ def build(D, season, week, contracts):
     out = []
     for r, v in list(v_in.items()) + list(v_x.items()):
         S_ = Sin if r < len(Sin) else Sb2
-        f, lab = CL.factor(S_.name.values[r], T, season, 'contract_year')
+        f, lab = CL.factor(S_.name.values[r], T, season, 'contract_year', pos=str(S_.pos.values[r]))
         g_ = S_.games.values[r] if r < len(Sin) else 0
         out.append({'gsis_id': str(S_.key.values[r]), 'name': str(S_.name.values[r]), 'pos': str(S_.pos.values[r]),
                     'age': round(float(S_.age.values[r]), 1) if S_.age.values[r] == S_.age.values[r] else None,

@@ -159,6 +159,12 @@ Test B's first reading is the Sunday before Week 1, 2027.
 - Tested and **not** adopted: capping each match at the third-best (`PREREG-ovs-one-match.md`, 1.77% vs the 2% bar) and
   a roster-spot cost (`DECISION-roster-spot-cost.md`, moved no one more than 6 places).
 
+- **Added 26 Nov:** QBs in a contract year use the QBs' own measured contract number, ×0.868 in place of ×0.769
+  (`DECISION-qb-contract-year.md`, Steve's judgment, not a passed test).
+- Also tested and **not** adopted (25 Nov): judging a player whose role grew on his new role alone
+  (`PREREG-ovs-role-change.md`, 33.5% worse); splitting contract years by deal length (`PREREG-contract-length.md`,
+  crash test failed).
+
 **Test B's call rule is replaced.** Steve's eye test of the "30 places apart" calls found them dominated by long shots
 past 120th, where every player is worth close to nothing and rank gaps are cheap, and by a running back vs receiver
 tilt that any dynasty player already knows. Steve, 13 Nov: "This definitely looks better." The new rule:
