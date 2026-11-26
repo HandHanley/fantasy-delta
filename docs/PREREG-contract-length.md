@@ -75,6 +75,17 @@ planted: one-year rows' outcomes × (1 − gap ÷ 2), multi-year rows × (1 + ga
 
 If it fails, back to Steve before any real run.
 
+**Results (25 Nov, `study/out/ovs_contract_length_crash.json`): FAIL.**
+
+| Planted Gap | Caught (Of 200) | Average Estimate | Needed |
+|---|---|---|---|
+| None | 11 | −0.02 | at most 15: OK |
+| 0.25 | **26** | 0.16 | at least 160: **FAIL** |
+| 0.15 | 14 | 0.10 | reported |
+
+With 127 multi-year and 291 one-year contract-year rows, a real gap of 0.25 is caught about 1 time in 8: outcomes swing
+too much between players for groups this size. **No real run made; no outcome by this split read. Taken to Steve.**
+
 ## 5. Reported, Deciding Nothing
 
 The gap by position (where a position has 5+ multi-year rows); each group's ratio; what the 2026 build would change
