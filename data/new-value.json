@@ -2,7 +2,7 @@
  "meta": {
   "season": 2026,
   "through_week": 11,
-  "built_utc": "2026-11-25T23:06:12Z",
+  "built_utc": "2026-11-26T14:49:09Z",
   "scoring": "full PPR, no TE premium, 12-team superflex",
   "lines": {
    "QB": 24,
@@ -11,7 +11,7 @@
    "TE": 14
   },
   "contract_security": "on (deal ending this season counts as a contract year)",
-  "players": 640,
+  "players": 642,
   "incoming_rookie_values": 257,
   "top_raw": 331.29127243295244,
   "rookie_snap_rule": {
@@ -98,7 +98,6 @@
     "Brady Boyd (WR)",
     "Brandon Allen (QB)",
     "Brenden Bates (TE)",
-    "Brennan Presley (WR)",
     "Brock Lampe (RB)",
     "Brock Rechsteiner (WR)",
     "Bryce Oliver (WR)",
@@ -225,7 +224,6 @@
     "Kaden Davis (WR)",
     "Kareem Hunt (RB)",
     "Ke'Shawn Williams (WR)",
-    "Kedon Slovis (QB)",
     "Kendall Milton (RB)",
     "Kenny Fletcher Jr. (TE)",
     "Kentrel Bullock (RB)",
@@ -853,6 +851,22 @@
    "rank": 31
   },
   {
+   "gsis_id": "00-0034796",
+   "name": "Lamar Jackson",
+   "pos": "QB",
+   "age": 29.7,
+   "games": 5,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "lamarjackson|QB"
+   ],
+   "value": 4366,
+   "rank": 32
+  },
+  {
    "gsis_id": "00-0036389",
    "name": "Jalen Hurts",
    "pos": "QB",
@@ -866,7 +880,7 @@
     "jalenhurts|QB"
    ],
    "value": 4362,
-   "rank": 32
+   "rank": 33
   },
   {
    "gsis_id": "00-0033106",
@@ -882,7 +896,7 @@
     "jaredgoff|QB"
    ],
    "value": 4348,
-   "rank": 33
+   "rank": 34
   },
   {
    "gsis_id": "00-0036264",
@@ -898,7 +912,7 @@
     "jordanlove|QB"
    ],
    "value": 4186,
-   "rank": 34
+   "rank": 35
   },
   {
    "gsis_id": "00-0038120",
@@ -914,7 +928,7 @@
     "breecehall|RB"
    ],
    "value": 4150,
-   "rank": 35
+   "rank": 36
   },
   {
    "gsis_id": "00-0036554",
@@ -930,7 +944,7 @@
     "nicocollins|WR"
    ],
    "value": 4109,
-   "rank": 36
+   "rank": 37
   },
   {
    "gsis_id": "00-0041438",
@@ -946,7 +960,7 @@
     "carnelltate|WR"
    ],
    "value": 4096,
-   "rank": 37
+   "rank": 38
   },
   {
    "gsis_id": "00-0041496",
@@ -962,7 +976,7 @@
     "jonahcoleman|RB"
    ],
    "value": 4036,
-   "rank": 38
+   "rank": 39
   },
   {
    "gsis_id": "00-0039338",
@@ -978,23 +992,24 @@
     "brockbowers|TE"
    ],
    "value": 4033,
-   "rank": 39
+   "rank": 40
   },
   {
-   "gsis_id": "00-0034796",
-   "name": "Lamar Jackson",
+   "gsis_id": "00-0039163",
+   "name": "C.J. Stroud",
    "pos": "QB",
-   "age": 29.7,
-   "games": 5,
+   "age": 24.9,
+   "games": 10,
    "rookie": false,
    "contract": "signed through 2027",
-   "contract_factor": 0.7693,
+   "contract_factor": 0.8677,
    "basis": "this season",
    "keys": [
-    "lamarjackson|QB"
+    "cjstroud|QB",
+    "coleridgestroud|QB"
    ],
-   "value": 3871,
-   "rank": 40
+   "value": 3992,
+   "rank": 41
   },
   {
    "gsis_id": "00-0039040",
@@ -1010,7 +1025,7 @@
     "devonachane|RB"
    ],
    "value": 3866,
-   "rank": 41
+   "rank": 42
   },
   {
    "gsis_id": "00-0038124",
@@ -1026,7 +1041,7 @@
     "christianwatson|WR"
    ],
    "value": 3839,
-   "rank": 42
+   "rank": 43
   },
   {
    "gsis_id": "00-0040129",
@@ -1042,7 +1057,7 @@
     "emekaegbuka|WR"
    ],
    "value": 3838,
-   "rank": 43
+   "rank": 44
   },
   {
    "gsis_id": "00-0041512",
@@ -1058,7 +1073,7 @@
     "jadarianprice|RB"
    ],
    "value": 3832,
-   "rank": 44
+   "rank": 45
   },
   {
    "gsis_id": "00-0037740",
@@ -1074,7 +1089,7 @@
     "garrettwilson|WR"
    ],
    "value": 3816,
-   "rank": 45
+   "rank": 46
   },
   {
    "gsis_id": "00-0038597",
@@ -1090,23 +1105,6 @@
     "chasebrown|RB"
    ],
    "value": 3577,
-   "rank": 46
-  },
-  {
-   "gsis_id": "00-0039163",
-   "name": "C.J. Stroud",
-   "pos": "QB",
-   "age": 24.9,
-   "games": 10,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "cjstroud|QB",
-    "coleridgestroud|QB"
-   ],
-   "value": 3540,
    "rank": 47
   },
   {
@@ -1388,6 +1386,22 @@
    "rank": 64
   },
   {
+   "gsis_id": "00-0039150",
+   "name": "Bryce Young",
+   "pos": "QB",
+   "age": 25.1,
+   "games": 10,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "bryceyoung|QB"
+   ],
+   "value": 2687,
+   "rank": 65
+  },
+  {
    "gsis_id": "00-0040735",
    "name": "Luther Burden III",
    "pos": "WR",
@@ -1401,7 +1415,7 @@
     "lutherburden|WR"
    ],
    "value": 2600,
-   "rank": 65
+   "rank": 66
   },
   {
    "gsis_id": "00-0041037",
@@ -1417,7 +1431,7 @@
     "denzelboston|WR"
    ],
    "value": 2592,
-   "rank": 66
+   "rank": 67
   },
   {
    "gsis_id": "00-0041489",
@@ -1433,7 +1447,25 @@
     "germiebernard|WR"
    ],
    "value": 2575,
-   "rank": 67
+   "rank": 68
+  },
+  {
+   "gsis_id": "00-0026498",
+   "name": "Matthew Stafford",
+   "pos": "QB",
+   "age": 38.6,
+   "games": 10,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "johnstafford|QB",
+    "matthewstafford|QB",
+    "mattstafford|QB"
+   ],
+   "value": 2564,
+   "rank": 69
   },
   {
    "gsis_id": "00-0034855",
@@ -1449,7 +1481,7 @@
     "bakermayfield|QB"
    ],
    "value": 2554,
-   "rank": 68
+   "rank": 70
   },
   {
    "gsis_id": "00-0033280",
@@ -1465,7 +1497,7 @@
     "christianmccaffrey|RB"
    ],
    "value": 2481,
-   "rank": 69
+   "rank": 71
   },
   {
    "gsis_id": "00-0033288",
@@ -1481,23 +1513,7 @@
     "georgekittle|TE"
    ],
    "value": 2427,
-   "rank": 70
-  },
-  {
-   "gsis_id": "00-0039150",
-   "name": "Bryce Young",
-   "pos": "QB",
-   "age": 25.1,
-   "games": 10,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "bryceyoung|QB"
-   ],
-   "value": 2382,
-   "rank": 71
+   "rank": 72
   },
   {
    "gsis_id": "00-0041040",
@@ -1513,7 +1529,7 @@
     "antoniowilliams|WR"
    ],
    "value": 2371,
-   "rank": 72
+   "rank": 73
   },
   {
    "gsis_id": "00-0038996",
@@ -1529,7 +1545,7 @@
     "tuckerkraft|TE"
    ],
    "value": 2350,
-   "rank": 73
+   "rank": 74
   },
   {
    "gsis_id": "00-0038559",
@@ -1546,7 +1562,7 @@
     "mikewilson|WR"
    ],
    "value": 2345,
-   "rank": 74
+   "rank": 75
   },
   {
    "gsis_id": "00-0039065",
@@ -1563,24 +1579,6 @@
     "samuellaporta|TE"
    ],
    "value": 2342,
-   "rank": 75
-  },
-  {
-   "gsis_id": "00-0026498",
-   "name": "Matthew Stafford",
-   "pos": "QB",
-   "age": 38.6,
-   "games": 10,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "johnstafford|QB",
-    "matthewstafford|QB",
-    "mattstafford|QB"
-   ],
-   "value": 2273,
    "rank": 76
   },
   {
@@ -1731,6 +1729,22 @@
    "rank": 85
   },
   {
+   "gsis_id": "00-0035228",
+   "name": "Kyler Murray",
+   "pos": "QB",
+   "age": 29.1,
+   "games": 6,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "kylermurray|QB"
+   ],
+   "value": 2046,
+   "rank": 86
+  },
+  {
    "gsis_id": "00-0041013",
    "name": "Emmett Johnson",
    "pos": "RB",
@@ -1744,7 +1758,7 @@
     "emmettjohnson|RB"
    ],
    "value": 1942,
-   "rank": 86
+   "rank": 87
   },
   {
    "gsis_id": "00-0040128",
@@ -1760,7 +1774,7 @@
     "tylerwarren|TE"
    ],
    "value": 1928,
-   "rank": 87
+   "rank": 88
   },
   {
    "gsis_id": "00-0040666",
@@ -1776,7 +1790,7 @@
     "omarionhampton|RB"
    ],
    "value": 1916,
-   "rank": 88
+   "rank": 89
   },
   {
    "gsis_id": "00-0040663",
@@ -1792,7 +1806,7 @@
     "haroldfannin|TE"
    ],
    "value": 1882,
-   "rank": 89
+   "rank": 90
   },
   {
    "gsis_id": "00-0041547",
@@ -1809,7 +1823,7 @@
     "kevinconcepcion|WR"
    ],
    "value": 1865,
-   "rank": 90
+   "rank": 91
   },
   {
    "gsis_id": "00-0039919",
@@ -1825,23 +1839,23 @@
     "romeodunze|WR"
    ],
    "value": 1823,
-   "rank": 91
+   "rank": 92
   },
   {
-   "gsis_id": "00-0035228",
-   "name": "Kyler Murray",
+   "gsis_id": "00-0023459",
+   "name": "Aaron Rodgers",
    "pos": "QB",
-   "age": 29.1,
-   "games": 6,
+   "age": 42.8,
+   "games": 10,
    "rookie": false,
    "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
+   "contract_factor": 0.8677,
    "basis": "this season",
    "keys": [
-    "kylermurray|QB"
+    "aaronrodgers|QB"
    ],
-   "value": 1814,
-   "rank": 92
+   "value": 1806,
+   "rank": 93
   },
   {
    "gsis_id": "00-0031408",
@@ -1858,7 +1872,7 @@
     "mikeevans|WR"
    ],
    "value": 1724,
-   "rank": 93
+   "rank": 94
   },
   {
    "gsis_id": "00-0040730",
@@ -1875,7 +1889,7 @@
     "robertharvey|RB"
    ],
    "value": 1711,
-   "rank": 94
+   "rank": 95
   },
   {
    "gsis_id": "00-0039893",
@@ -1891,7 +1905,7 @@
     "brianthomas|WR"
    ],
    "value": 1702,
-   "rank": 95
+   "rank": 96
   },
   {
    "gsis_id": "00-0040130",
@@ -1907,7 +1921,7 @@
     "jaydenhiggins|WR"
    ],
    "value": 1644,
-   "rank": 96
+   "rank": 97
   },
   {
    "gsis_id": "00-0036322",
@@ -1923,22 +1937,6 @@
     "justinjefferson|WR"
    ],
    "value": 1642,
-   "rank": 97
-  },
-  {
-   "gsis_id": "00-0023459",
-   "name": "Aaron Rodgers",
-   "pos": "QB",
-   "age": 42.8,
-   "games": 10,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "aaronrodgers|QB"
-   ],
-   "value": 1601,
    "rank": 98
   },
   {
@@ -2070,6 +2068,23 @@
    "rank": 106
   },
   {
+   "gsis_id": "00-0034869",
+   "name": "Sam Darnold",
+   "pos": "QB",
+   "age": 29.3,
+   "games": 7,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "samdarnold|QB",
+    "samueldarnold|QB"
+   ],
+   "value": 1466,
+   "rank": 107
+  },
+  {
    "gsis_id": "00-0040236",
    "name": "Kyle Monangai",
    "pos": "RB",
@@ -2083,7 +2098,7 @@
     "kylemonangai|RB"
    ],
    "value": 1452,
-   "rank": 107
+   "rank": 108
   },
   {
    "gsis_id": "00-0035700",
@@ -2100,7 +2115,7 @@
     "joshuajacobs|RB"
    ],
    "value": 1382,
-   "rank": 108
+   "rank": 109
   },
   {
    "gsis_id": "00-0040134",
@@ -2117,7 +2132,7 @@
     "patrickbryant|WR"
    ],
    "value": 1363,
-   "rank": 109
+   "rank": 110
   },
   {
    "gsis_id": "00-0041565",
@@ -2134,7 +2149,7 @@
     "drewallar|QB"
    ],
    "value": 1358,
-   "rank": 110
+   "rank": 111
   },
   {
    "gsis_id": "00-0039917",
@@ -2151,7 +2166,7 @@
     "mikepenix|QB"
    ],
    "value": 1356,
-   "rank": 111
+   "rank": 112
   },
   {
    "gsis_id": "00-0039849",
@@ -2167,7 +2182,7 @@
     "marvinharrison|WR"
    ],
    "value": 1353,
-   "rank": 112
+   "rank": 113
   },
   {
    "gsis_id": "00-0040198",
@@ -2183,7 +2198,7 @@
     "olliegordon|RB"
    ],
    "value": 1329,
-   "rank": 113
+   "rank": 114
   },
   {
    "gsis_id": "00-0036970",
@@ -2199,7 +2214,7 @@
     "kylepitts|TE"
    ],
    "value": 1315,
-   "rank": 114
+   "rank": 115
   },
   {
    "gsis_id": "00-0037261",
@@ -2215,7 +2230,7 @@
     "khalilshakir|WR"
    ],
    "value": 1308,
-   "rank": 115
+   "rank": 116
   },
   {
    "gsis_id": "00-0039916",
@@ -2232,23 +2247,6 @@
     "rickypearsall|WR"
    ],
    "value": 1305,
-   "rank": 116
-  },
-  {
-   "gsis_id": "00-0034869",
-   "name": "Sam Darnold",
-   "pos": "QB",
-   "age": 29.3,
-   "games": 7,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "samdarnold|QB",
-    "samueldarnold|QB"
-   ],
-   "value": 1300,
    "rank": 117
   },
   {
@@ -2399,6 +2397,23 @@
    "rank": 126
   },
   {
+   "gsis_id": "00-0030565",
+   "name": "Geno Smith",
+   "pos": "QB",
+   "age": 35.9,
+   "games": 11,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "eugenesmith|QB",
+    "genosmith|QB"
+   ],
+   "value": 1152,
+   "rank": 127
+  },
+  {
    "gsis_id": "00-0040162",
    "name": "Dylan Sampson",
    "pos": "RB",
@@ -2412,7 +2427,7 @@
     "dylansampson|RB"
    ],
    "value": 1134,
-   "rank": 127
+   "rank": 128
   },
   {
    "gsis_id": "00-0038997",
@@ -2429,7 +2444,7 @@
     "joshuadowns|WR"
    ],
    "value": 1126,
-   "rank": 128
+   "rank": 129
   },
   {
    "gsis_id": "00-0037816",
@@ -2445,7 +2460,7 @@
     "romeodoubs|WR"
    ],
    "value": 1117,
-   "rank": 129
+   "rank": 130
   },
   {
    "gsis_id": "00-0041472",
@@ -2461,7 +2476,7 @@
     "marlinklein|TE"
    ],
    "value": 1111,
-   "rank": 130
+   "rank": 131
   },
   {
    "gsis_id": "00-0040648",
@@ -2477,7 +2492,7 @@
     "toryhorton|WR"
    ],
    "value": 1027,
-   "rank": 131
+   "rank": 132
   },
   {
    "gsis_id": "00-0041561",
@@ -2493,7 +2508,7 @@
     "carsonbeck|QB"
    ],
    "value": 1025,
-   "rank": 132
+   "rank": 133
   },
   {
    "gsis_id": "00-0037228",
@@ -2510,23 +2525,6 @@
     "jaylenwarren|RB"
    ],
    "value": 1024,
-   "rank": 133
-  },
-  {
-   "gsis_id": "00-0030565",
-   "name": "Geno Smith",
-   "pos": "QB",
-   "age": 35.9,
-   "games": 11,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "eugenesmith|QB",
-    "genosmith|QB"
-   ],
-   "value": 1022,
    "rank": 134
   },
   {
@@ -2806,6 +2804,22 @@
    "rank": 151
   },
   {
+   "gsis_id": "00-0033119",
+   "name": "Jacoby Brissett",
+   "pos": "QB",
+   "age": 33.7,
+   "games": 10,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "jacobybrissett|QB"
+   ],
+   "value": 792,
+   "rank": 152
+  },
+  {
    "gsis_id": "00-0041117",
    "name": "Athan Kaliakmanis",
    "pos": "QB",
@@ -2819,7 +2833,7 @@
     "athankaliakmanis|QB"
    ],
    "value": 784,
-   "rank": 152
+   "rank": 153
   },
   {
    "gsis_id": "00-0041510",
@@ -2835,7 +2849,7 @@
     "maxklare|TE"
    ],
    "value": 772,
-   "rank": 153
+   "rank": 154
   },
   {
    "gsis_id": "00-0035719",
@@ -2852,7 +2866,7 @@
     "tyshunsamuel|WR"
    ],
    "value": 764,
-   "rank": 154
+   "rank": 155
   },
   {
    "gsis_id": "00-0038994",
@@ -2868,7 +2882,7 @@
     "jordanaddison|WR"
    ],
    "value": 759,
-   "rank": 155
+   "rank": 156
   },
   {
    "gsis_id": "00-0040705",
@@ -2884,7 +2898,7 @@
     "chimeredike|WR"
    ],
    "value": 743,
-   "rank": 156
+   "rank": 157
   },
   {
    "gsis_id": "00-0041051",
@@ -2900,7 +2914,7 @@
     "zavionthomas|WR"
    ],
    "value": 737,
-   "rank": 157
+   "rank": 158
   },
   {
    "gsis_id": "00-0035676",
@@ -2917,7 +2931,7 @@
     "arthurbrown|WR"
    ],
    "value": 734,
-   "rank": 158
+   "rank": 159
   },
   {
    "gsis_id": "00-0040718",
@@ -2933,7 +2947,7 @@
     "travishunter|WR"
    ],
    "value": 731,
-   "rank": 159
+   "rank": 160
   },
   {
    "gsis_id": "00-0039921",
@@ -2949,7 +2963,7 @@
     "treybenson|RB"
    ],
    "value": 720,
-   "rank": 160
+   "rank": 161
   },
   {
    "gsis_id": "00-0039165",
@@ -2967,7 +2981,7 @@
     "zachcharbonnet|RB"
    ],
    "value": 720,
-   "rank": 160
+   "rank": 161
   },
   {
    "gsis_id": "00-0041446",
@@ -2983,7 +2997,7 @@
     "kendricklaw|WR"
    ],
    "value": 713,
-   "rank": 162
+   "rank": 163
   },
   {
    "gsis_id": "00-0033553",
@@ -3000,7 +3014,7 @@
     "jimmyconner|RB"
    ],
    "value": 712,
-   "rank": 163
+   "rank": 164
   },
   {
    "gsis_id": "00-0036894",
@@ -3017,22 +3031,6 @@
     "patrickfreiermuth|TE"
    ],
    "value": 711,
-   "rank": 164
-  },
-  {
-   "gsis_id": "00-0033119",
-   "name": "Jacoby Brissett",
-   "pos": "QB",
-   "age": 33.7,
-   "games": 10,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "jacobybrissett|QB"
-   ],
-   "value": 702,
    "rank": 165
   },
   {
@@ -3489,6 +3487,22 @@
    "rank": 192
   },
   {
+   "gsis_id": "00-0035289",
+   "name": "Gardner Minshew",
+   "pos": "QB",
+   "age": 30.3,
+   "games": 2,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "gardnerminshew|QB"
+   ],
+   "value": 502,
+   "rank": 194
+  },
+  {
    "gsis_id": "00-0034351",
    "name": "Dallas Goedert",
    "pos": "TE",
@@ -3502,7 +3516,7 @@
     "dallasgoedert|TE"
    ],
    "value": 488,
-   "rank": 194
+   "rank": 195
   },
   {
    "gsis_id": "00-0040170",
@@ -3518,7 +3532,7 @@
     "elicayomanor|WR"
    ],
    "value": 483,
-   "rank": 195
+   "rank": 196
   },
   {
    "gsis_id": "00-0040737",
@@ -3534,7 +3548,7 @@
     "terranceferguson|TE"
    ],
    "value": 478,
-   "rank": 196
+   "rank": 197
   },
   {
    "gsis_id": "00-0040886",
@@ -3551,7 +3565,7 @@
     "nicksingleton|RB"
    ],
    "value": 477,
-   "rank": 197
+   "rank": 198
   },
   {
    "gsis_id": "00-0039384",
@@ -3567,7 +3581,7 @@
     "tyronetracy|RB"
    ],
    "value": 466,
-   "rank": 198
+   "rank": 199
   },
   {
    "gsis_id": "00-0035229",
@@ -3584,7 +3598,7 @@
     "tjhockenson|TE"
    ],
    "value": 466,
-   "rank": 198
+   "rank": 199
   },
   {
    "gsis_id": "00-0041056",
@@ -3600,7 +3614,7 @@
     "cadeklubnik|QB"
    ],
    "value": 465,
-   "rank": 200
+   "rank": 201
   },
   {
    "gsis_id": "00-0032764",
@@ -3616,7 +3630,7 @@
     "derrickhenry|RB"
    ],
    "value": 464,
-   "rank": 201
+   "rank": 202
   },
   {
    "gsis_id": "00-0038551",
@@ -3632,7 +3646,7 @@
     "kendremiller|RB"
    ],
    "value": 463,
-   "rank": 202
+   "rank": 203
   },
   {
    "gsis_id": "00-0039890",
@@ -3648,7 +3662,7 @@
     "adonaimitchell|WR"
    ],
    "value": 457,
-   "rank": 203
+   "rank": 204
   },
   {
    "gsis_id": "00-0039923",
@@ -3665,7 +3679,7 @@
     "jonathanmccarthy|QB"
    ],
    "value": 454,
-   "rank": 204
+   "rank": 205
   },
   {
    "gsis_id": "00-0041503",
@@ -3682,7 +3696,7 @@
     "nathanielboerkircher|TE"
    ],
    "value": 450,
-   "rank": 205
+   "rank": 206
   },
   {
    "gsis_id": "00-0039880",
@@ -3698,22 +3712,6 @@
     "malikwashington|WR"
    ],
    "value": 448,
-   "rank": 206
-  },
-  {
-   "gsis_id": "00-0035289",
-   "name": "Gardner Minshew",
-   "pos": "QB",
-   "age": 30.3,
-   "games": 2,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "gardnerminshew|QB"
-   ],
-   "value": 445,
    "rank": 207
   },
   {
@@ -4269,6 +4267,22 @@
    "rank": 241
   },
   {
+   "gsis_id": "00-0035993",
+   "name": "Tyler Huntley",
+   "pos": "QB",
+   "age": 28.6,
+   "games": 5,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "tylerhuntley|QB"
+   ],
+   "value": 329,
+   "rank": 242
+  },
+  {
    "gsis_id": "00-0040177",
    "name": "Jordan James",
    "pos": "RB",
@@ -4282,7 +4296,7 @@
     "jordanjames|RB"
    ],
    "value": 328,
-   "rank": 242
+   "rank": 243
   },
   {
    "gsis_id": "00-0034383",
@@ -4298,7 +4312,7 @@
     "daltonschultz|TE"
    ],
    "value": 326,
-   "rank": 243
+   "rank": 244
   },
   {
    "gsis_id": "00-0037263",
@@ -4314,7 +4328,7 @@
     "tylerallgeier|RB"
    ],
    "value": 322,
-   "rank": 244
+   "rank": 245
   },
   {
    "gsis_id": "00-0038619",
@@ -4330,7 +4344,7 @@
     "andreiiosivas|WR"
    ],
    "value": 319,
-   "rank": 245
+   "rank": 246
   },
   {
    "gsis_id": "00-0033906",
@@ -4346,7 +4360,7 @@
     "alvinkamara|RB"
    ],
    "value": 318,
-   "rank": 246
+   "rank": 247
   },
   {
    "gsis_id": "00-0034975",
@@ -4362,7 +4376,7 @@
     "justicehill|RB"
    ],
    "value": 317,
-   "rank": 247
+   "rank": 248
   },
   {
    "gsis_id": "00-0040466",
@@ -4378,7 +4392,7 @@
     "raheimsanders|RB"
    ],
    "value": 315,
-   "rank": 248
+   "rank": 249
   },
   {
    "gsis_id": "00-0039344",
@@ -4394,7 +4408,7 @@
     "jonathonbrooks|RB"
    ],
    "value": 314,
-   "rank": 249
+   "rank": 250
   },
   {
    "gsis_id": "00-0039451",
@@ -4410,7 +4424,7 @@
     "isaiahwilliams|WR"
    ],
    "value": 308,
-   "rank": 250
+   "rank": 251
   },
   {
    "gsis_id": "00-0038564",
@@ -4427,7 +4441,7 @@
     "camlatu|TE"
    ],
    "value": 303,
-   "rank": 251
+   "rank": 252
   },
   {
    "gsis_id": "00-0037545",
@@ -4443,7 +4457,7 @@
     "rashidshaheed|WR"
    ],
    "value": 302,
-   "rank": 252
+   "rank": 253
   },
   {
    "gsis_id": "00-0037157",
@@ -4460,7 +4474,7 @@
     "zonovanknight|RB"
    ],
    "value": 301,
-   "rank": 253
+   "rank": 254
   },
   {
    "gsis_id": "00-0040959",
@@ -4476,7 +4490,7 @@
     "jaydnott|RB"
    ],
    "value": 298,
-   "rank": 254
+   "rank": 255
   },
   {
    "gsis_id": "00-0036252",
@@ -4493,7 +4507,7 @@
     "mikepittman|WR"
    ],
    "value": 295,
-   "rank": 255
+   "rank": 256
   },
   {
    "gsis_id": "00-0040363",
@@ -4509,7 +4523,7 @@
     "kelekilatu|TE"
    ],
    "value": 294,
-   "rank": 256
+   "rank": 257
   },
   {
    "gsis_id": "00-0040238",
@@ -4525,22 +4539,6 @@
     "lequintallen|RB"
    ],
    "value": 293,
-   "rank": 257
-  },
-  {
-   "gsis_id": "00-0035993",
-   "name": "Tyler Huntley",
-   "pos": "QB",
-   "age": 28.6,
-   "games": 5,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "tylerhuntley|QB"
-   ],
-   "value": 291,
    "rank": 258
   },
   {
@@ -4642,6 +4640,22 @@
    "rank": 264
   },
   {
+   "gsis_id": "00-0036945",
+   "name": "Justin Fields",
+   "pos": "QB",
+   "age": 27.5,
+   "games": 3,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "justinfields|QB"
+   ],
+   "value": 279,
+   "rank": 265
+  },
+  {
    "gsis_id": "00-0041100",
    "name": "Josh Cameron",
    "pos": "WR",
@@ -4656,7 +4670,7 @@
     "joshuacameron|WR"
    ],
    "value": 276,
-   "rank": 265
+   "rank": 266
   },
   {
    "gsis_id": "00-0039391",
@@ -4672,7 +4686,23 @@
     "kimanividal|RB"
    ],
    "value": 274,
-   "rank": 266
+   "rank": 267
+  },
+  {
+   "gsis_id": "00-0040597",
+   "name": "Brennan Presley",
+   "pos": "WR",
+   "age": 24.6,
+   "games": 0,
+   "rookie": true,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "incoming rookie",
+   "keys": [
+    "brennanpresley|WR"
+   ],
+   "value": 270,
+   "rank": 268
   },
   {
    "gsis_id": "00-0039032",
@@ -4688,7 +4718,7 @@
     "tyjaespears|RB"
    ],
    "value": 268,
-   "rank": 267
+   "rank": 269
   },
   {
    "gsis_id": "00-0038555",
@@ -4705,7 +4735,7 @@
     "tankbigsby|RB"
    ],
    "value": 266,
-   "rank": 268
+   "rank": 270
   },
   {
    "gsis_id": "00-0040179",
@@ -4721,7 +4751,7 @@
     "djgiddens|RB"
    ],
    "value": 253,
-   "rank": 269
+   "rank": 271
   },
   {
    "gsis_id": "00-0040934",
@@ -4737,23 +4767,7 @@
     "jordanhudson|WR"
    ],
    "value": 252,
-   "rank": 270
-  },
-  {
-   "gsis_id": "00-0036945",
-   "name": "Justin Fields",
-   "pos": "QB",
-   "age": 27.5,
-   "games": 3,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "justinfields|QB"
-   ],
-   "value": 248,
-   "rank": 271
+   "rank": 272
   },
   {
    "gsis_id": "00-0040398",
@@ -4769,7 +4783,7 @@
     "bradycook|QB"
    ],
    "value": 244,
-   "rank": 272
+   "rank": 273
   },
   {
    "gsis_id": "00-0039855",
@@ -4785,7 +4799,7 @@
     "jalenmcmillan|WR"
    ],
    "value": 243,
-   "rank": 273
+   "rank": 274
   },
   {
    "gsis_id": "00-0041436",
@@ -4802,7 +4816,7 @@
     "djherman|RB"
    ],
    "value": 240,
-   "rank": 274
+   "rank": 275
   },
   {
    "gsis_id": "00-0038797",
@@ -4818,7 +4832,7 @@
     "emanuelwilson|RB"
    ],
    "value": 238,
-   "rank": 275
+   "rank": 276
   },
   {
    "gsis_id": "00-0039164",
@@ -4835,7 +4849,7 @@
     "tonyrichardson|QB"
    ],
    "value": 235,
-   "rank": 276
+   "rank": 277
   },
   {
    "gsis_id": "00-0037746",
@@ -4851,7 +4865,23 @@
     "brianrobinson|RB"
    ],
    "value": 230,
-   "rank": 277
+   "rank": 278
+  },
+  {
+   "gsis_id": "00-0039577",
+   "name": "Kedon Slovis",
+   "pos": "QB",
+   "age": 25.4,
+   "games": 0,
+   "rookie": false,
+   "contract": "not in table",
+   "contract_factor": 1.0,
+   "basis": "this season",
+   "keys": [
+    "kedonslovis|QB"
+   ],
+   "value": 229,
+   "rank": 279
   },
   {
    "gsis_id": "00-0040887",
@@ -4868,7 +4898,24 @@
     "joshuacuevas|TE"
    ],
    "value": 229,
-   "rank": 278
+   "rank": 279
+  },
+  {
+   "gsis_id": "00-0036212",
+   "name": "Tua Tagovailoa",
+   "pos": "QB",
+   "age": 28.5,
+   "games": 1,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "tuanigamanuolepolatagovailoa|QB",
+    "tuatagovailoa|QB"
+   ],
+   "value": 226,
+   "rank": 281
   },
   {
    "gsis_id": "00-0033885",
@@ -4886,7 +4933,7 @@
     "davidnjoku|TE"
    ],
    "value": 223,
-   "rank": 279
+   "rank": 282
   },
   {
    "gsis_id": "00-0038930",
@@ -4902,7 +4949,7 @@
     "carloswashington|RB"
    ],
    "value": 222,
-   "rank": 280
+   "rank": 283
   },
   {
    "gsis_id": "00-0036040",
@@ -4918,7 +4965,7 @@
     "juwanjohnson|TE"
    ],
    "value": 219,
-   "rank": 281
+   "rank": 284
   },
   {
    "gsis_id": "00-0036244",
@@ -4934,7 +4981,7 @@
     "colbyparkinson|TE"
    ],
    "value": 219,
-   "rank": 281
+   "rank": 284
   },
   {
    "gsis_id": "00-0037525",
@@ -4950,7 +4997,7 @@
     "jordanmason|RB"
    ],
    "value": 216,
-   "rank": 283
+   "rank": 286
   },
   {
    "gsis_id": "00-0041267",
@@ -4966,7 +5013,7 @@
     "malikmcclain|WR"
    ],
    "value": 216,
-   "rank": 283
+   "rank": 286
   },
   {
    "gsis_id": "00-0035685",
@@ -4983,7 +5030,7 @@
     "davidmontgomery|RB"
    ],
    "value": 214,
-   "rank": 285
+   "rank": 288
   },
   {
    "gsis_id": "00-0040024",
@@ -4999,7 +5046,7 @@
     "dariuscooper|WR"
    ],
    "value": 214,
-   "rank": 285
+   "rank": 288
   },
   {
    "gsis_id": "00-0040876",
@@ -5015,7 +5062,7 @@
     "elijahsarratt|WR"
    ],
    "value": 213,
-   "rank": 287
+   "rank": 290
   },
   {
    "gsis_id": "00-0034753",
@@ -5031,7 +5078,7 @@
     "markandrews|TE"
    ],
    "value": 209,
-   "rank": 288
+   "rank": 291
   },
   {
    "gsis_id": "00-0037410",
@@ -5047,7 +5094,7 @@
     "jashauncorbin|RB"
    ],
    "value": 207,
-   "rank": 289
+   "rank": 292
   },
   {
    "gsis_id": "00-0040277",
@@ -5063,24 +5110,7 @@
     "jahdaewalker|WR"
    ],
    "value": 206,
-   "rank": 290
-  },
-  {
-   "gsis_id": "00-0036212",
-   "name": "Tua Tagovailoa",
-   "pos": "QB",
-   "age": 28.5,
-   "games": 1,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "tuanigamanuolepolatagovailoa|QB",
-    "tuatagovailoa|QB"
-   ],
-   "value": 201,
-   "rank": 291
+   "rank": 293
   },
   {
    "gsis_id": "00-0038393",
@@ -5096,7 +5126,7 @@
     "dontayvionwicks|WR"
    ],
    "value": 201,
-   "rank": 291
+   "rank": 294
   },
   {
    "gsis_id": "00-0036550",
@@ -5112,7 +5142,7 @@
     "rashodbateman|WR"
    ],
    "value": 198,
-   "rank": 293
+   "rank": 295
   },
   {
    "gsis_id": "00-0040131",
@@ -5128,7 +5158,7 @@
     "kylewilliams|WR"
    ],
    "value": 194,
-   "rank": 294
+   "rank": 296
   },
   {
    "gsis_id": "00-0041176",
@@ -5144,7 +5174,7 @@
     "jadenbradley|WR"
    ],
    "value": 193,
-   "rank": 295
+   "rank": 297
   },
   {
    "gsis_id": "00-0040948",
@@ -5160,7 +5190,7 @@
     "jmichaelsturdivant|WR"
    ],
    "value": 193,
-   "rank": 295
+   "rank": 297
   },
   {
    "gsis_id": "00-0040265",
@@ -5176,7 +5206,7 @@
     "jaseemreed|WR"
    ],
    "value": 192,
-   "rank": 297
+   "rank": 299
   },
   {
    "gsis_id": "00-0035537",
@@ -5192,7 +5222,7 @@
     "tyjohnson|RB"
    ],
    "value": 186,
-   "rank": 298
+   "rank": 300
   },
   {
    "gsis_id": "00-0038611",
@@ -5209,7 +5239,7 @@
     "christopherrodriguez|RB"
    ],
    "value": 184,
-   "rank": 299
+   "rank": 301
   },
   {
    "gsis_id": "00-0040215",
@@ -5225,7 +5255,7 @@
     "gavinbartholomew|TE"
    ],
    "value": 184,
-   "rank": 299
+   "rank": 301
   },
   {
    "gsis_id": "00-0040890",
@@ -5241,7 +5271,7 @@
     "cyrusallen|WR"
    ],
    "value": 184,
-   "rank": 299
+   "rank": 301
   },
   {
    "gsis_id": "00-0036679",
@@ -5257,7 +5287,7 @@
     "shanebuechele|QB"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0040206",
@@ -5273,7 +5303,7 @@
     "rileyleonard|QB"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0038104",
@@ -5289,7 +5319,7 @@
     "tyquanthornton|WR"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0036290",
@@ -5305,7 +5335,7 @@
     "colekmet|TE"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0040203",
@@ -5322,7 +5352,7 @@
     "williamhoward|QB"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0041123",
@@ -5338,7 +5368,7 @@
     "behrenmorton|QB"
    ],
    "value": 178,
-   "rank": 302
+   "rank": 304
   },
   {
    "gsis_id": "00-0034407",
@@ -5355,7 +5385,7 @@
     "rayraymccloud|WR"
    ],
    "value": 174,
-   "rank": 308
+   "rank": 310
   },
   {
    "gsis_id": "00-0039376",
@@ -5371,7 +5401,7 @@
     "spencerrattler|QB"
    ],
    "value": 173,
-   "rank": 309
+   "rank": 311
   },
   {
    "gsis_id": "00-0038400",
@@ -5387,7 +5417,7 @@
     "tannermckee|QB"
    ],
    "value": 173,
-   "rank": 309
+   "rank": 311
   },
   {
    "gsis_id": "00-0032385",
@@ -5403,7 +5433,7 @@
     "sterlingshepard|WR"
    ],
    "value": 172,
-   "rank": 311
+   "rank": 313
   },
   {
    "gsis_id": "00-0039107",
@@ -5419,7 +5449,7 @@
     "stetsonbennett|QB"
    ],
    "value": 171,
-   "rank": 312
+   "rank": 314
   },
   {
    "gsis_id": "00-0040211",
@@ -5435,7 +5465,7 @@
     "grahammertz|QB"
    ],
    "value": 171,
-   "rank": 312
+   "rank": 314
   },
   {
    "gsis_id": "00-0040589",
@@ -5451,7 +5481,7 @@
     "kurtisrourke|QB"
    ],
    "value": 171,
-   "rank": 312
+   "rank": 314
   },
   {
    "gsis_id": "00-0037197",
@@ -5467,7 +5497,7 @@
     "isiahpacheco|RB"
    ],
    "value": 170,
-   "rank": 315
+   "rank": 317
   },
   {
    "gsis_id": "00-0034829",
@@ -5484,7 +5514,7 @@
     "mikegesicki|TE"
    ],
    "value": 168,
-   "rank": 316
+   "rank": 318
   },
   {
    "gsis_id": "00-0040506",
@@ -5500,7 +5530,7 @@
     "mylesprice|WR"
    ],
    "value": 168,
-   "rank": 316
+   "rank": 318
   },
   {
    "gsis_id": "00-0040120",
@@ -5517,7 +5547,7 @@
     "jimmyholiday|WR"
    ],
    "value": 168,
-   "rank": 316
+   "rank": 318
   },
   {
    "gsis_id": "00-0040673",
@@ -5533,7 +5563,7 @@
     "jalenmilroe|QB"
    ],
    "value": 167,
-   "rank": 319
+   "rank": 321
   },
   {
    "gsis_id": "00-0040563",
@@ -5549,7 +5579,7 @@
     "eftonchism|WR"
    ],
    "value": 166,
-   "rank": 320
+   "rank": 322
   },
   {
    "gsis_id": "00-0040464",
@@ -5565,7 +5595,7 @@
     "djuiagalelei|QB"
    ],
    "value": 166,
-   "rank": 320
+   "rank": 322
   },
   {
    "gsis_id": "00-0041149",
@@ -5581,7 +5611,7 @@
     "haynesking|QB"
    ],
    "value": 166,
-   "rank": 320
+   "rank": 322
   },
   {
    "gsis_id": "00-0041203",
@@ -5598,7 +5628,7 @@
     "joseaguilar|QB"
    ],
    "value": 166,
-   "rank": 320
+   "rank": 322
   },
   {
    "gsis_id": "00-0040981",
@@ -5615,7 +5645,7 @@
     "josephfagnano|QB"
    ],
    "value": 165,
-   "rank": 324
+   "rank": 326
   },
   {
    "gsis_id": "00-0040618",
@@ -5631,7 +5661,7 @@
     "maxhurleman|WR"
    ],
    "value": 165,
-   "rank": 324
+   "rank": 326
   },
   {
    "gsis_id": "00-0039464",
@@ -5647,7 +5677,7 @@
     "austinreed|QB"
    ],
    "value": 164,
-   "rank": 326
+   "rank": 328
   },
   {
    "gsis_id": "00-0039534",
@@ -5663,7 +5693,7 @@
     "carterbradley|QB"
    ],
    "value": 164,
-   "rank": 326
+   "rank": 328
   },
   {
    "gsis_id": "00-0035662",
@@ -5679,7 +5709,7 @@
     "marquisebrown|WR"
    ],
    "value": 163,
-   "rank": 328
+   "rank": 330
   },
   {
    "gsis_id": "00-0040785",
@@ -5695,7 +5725,23 @@
     "dohntemeyers|WR"
    ],
    "value": 163,
-   "rank": 328
+   "rank": 330
+  },
+  {
+   "gsis_id": "00-0037012",
+   "name": "Trey Lance",
+   "pos": "QB",
+   "age": 26.3,
+   "games": 0,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "treylance|QB"
+   ],
+   "value": 159,
+   "rank": 332
   },
   {
    "gsis_id": "00-0040568",
@@ -5711,7 +5757,24 @@
     "lanlarison|RB"
    ],
    "value": 159,
-   "rank": 330
+   "rank": 332
+  },
+  {
+   "gsis_id": "00-0039398",
+   "name": "Joe Milton III",
+   "pos": "QB",
+   "age": 26.5,
+   "games": 2,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "joemilton|QB",
+    "josephmilton|QB"
+   ],
+   "value": 158,
+   "rank": 334
   },
   {
    "gsis_id": "00-0035208",
@@ -5727,7 +5790,7 @@
     "olamidezaccheaus|WR"
    ],
    "value": 158,
-   "rank": 331
+   "rank": 334
   },
   {
    "gsis_id": "00-0041415",
@@ -5743,7 +5806,7 @@
     "deanconnors|RB"
    ],
    "value": 152,
-   "rank": 332
+   "rank": 336
   },
   {
    "gsis_id": "00-0040494",
@@ -5759,7 +5822,7 @@
     "maxbrosmer|QB"
    ],
    "value": 151,
-   "rank": 333
+   "rank": 337
   },
   {
    "gsis_id": "00-0040556",
@@ -5775,7 +5838,7 @@
     "coreykiner|RB"
    ],
    "value": 151,
-   "rank": 333
+   "rank": 337
   },
   {
    "gsis_id": "00-0035891",
@@ -5791,7 +5854,7 @@
     "codywhite|WR"
    ],
    "value": 151,
-   "rank": 333
+   "rank": 337
   },
   {
    "gsis_id": "00-0038579",
@@ -5807,7 +5870,7 @@
     "aidanoconnell|QB"
    ],
    "value": 147,
-   "rank": 336
+   "rank": 340
   },
   {
    "gsis_id": "00-0037013",
@@ -5824,40 +5887,7 @@
     "zachwilson|QB"
    ],
    "value": 141,
-   "rank": 337
-  },
-  {
-   "gsis_id": "00-0037012",
-   "name": "Trey Lance",
-   "pos": "QB",
-   "age": 26.3,
-   "games": 0,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "treylance|QB"
-   ],
-   "value": 141,
-   "rank": 337
-  },
-  {
-   "gsis_id": "00-0039398",
-   "name": "Joe Milton III",
-   "pos": "QB",
-   "age": 26.5,
-   "games": 2,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "joemilton|QB",
-    "josephmilton|QB"
-   ],
-   "value": 140,
-   "rank": 339
+   "rank": 341
   },
   {
    "gsis_id": "00-0039410",
@@ -5873,7 +5903,7 @@
     "ryanflournoy|WR"
    ],
    "value": 138,
-   "rank": 340
+   "rank": 342
   },
   {
    "gsis_id": "00-0037004",
@@ -5889,7 +5919,7 @@
     "hunterlong|TE"
    ],
    "value": 138,
-   "rank": 340
+   "rank": 342
   },
   {
    "gsis_id": "00-0041084",
@@ -5905,7 +5935,7 @@
     "tannerkoziol|TE"
    ],
    "value": 136,
-   "rank": 342
+   "rank": 344
   },
   {
    "gsis_id": "00-0040390",
@@ -5921,7 +5951,7 @@
     "jacksonmeeks|TE"
    ],
    "value": 135,
-   "rank": 343
+   "rank": 345
   },
   {
    "gsis_id": "00-0038976",
@@ -5937,7 +5967,7 @@
     "marvinmims|WR"
    ],
    "value": 132,
-   "rank": 344
+   "rank": 346
   },
   {
    "gsis_id": "00-0041529",
@@ -5953,7 +5983,7 @@
     "kevincoleman|WR"
    ],
    "value": 129,
-   "rank": 345
+   "rank": 347
   },
   {
    "gsis_id": "00-0032950",
@@ -5969,7 +5999,7 @@
     "carsonwentz|QB"
    ],
    "value": 128,
-   "rank": 346
+   "rank": 348
   },
   {
    "gsis_id": "00-0040739",
@@ -5985,7 +6015,7 @@
     "elijaharroyo|TE"
    ],
    "value": 128,
-   "rank": 346
+   "rank": 348
   },
   {
    "gsis_id": "00-0041368",
@@ -6001,7 +6031,7 @@
     "harrisonwallace|WR"
    ],
    "value": 128,
-   "rank": 346
+   "rank": 348
   },
   {
    "gsis_id": "00-0041077",
@@ -6017,7 +6047,7 @@
     "justinjoly|TE"
    ],
    "value": 128,
-   "rank": 346
+   "rank": 348
   },
   {
    "gsis_id": "00-0035406",
@@ -6033,7 +6063,7 @@
     "liljordanhumphrey|WR"
    ],
    "value": 126,
-   "rank": 350
+   "rank": 352
   },
   {
    "gsis_id": "00-0040586",
@@ -6049,7 +6079,7 @@
     "jaydonblue|RB"
    ],
    "value": 123,
-   "rank": 351
+   "rank": 353
   },
   {
    "gsis_id": "00-0036422",
@@ -6065,7 +6095,7 @@
     "adamtrautman|TE"
    ],
    "value": 122,
-   "rank": 352
+   "rank": 354
   },
   {
    "gsis_id": "00-0032464",
@@ -6081,7 +6111,7 @@
     "kalifraymond|WR"
    ],
    "value": 121,
-   "rank": 353
+   "rank": 355
   },
   {
    "gsis_id": "00-0032775",
@@ -6097,7 +6127,7 @@
     "demarcusrobinson|WR"
    ],
    "value": 121,
-   "rank": 353
+   "rank": 355
   },
   {
    "gsis_id": "00-0041524",
@@ -6114,7 +6144,7 @@
     "willkacmarek|TE"
    ],
    "value": 121,
-   "rank": 353
+   "rank": 355
   },
   {
    "gsis_id": "00-0031610",
@@ -6130,7 +6160,7 @@
     "darrenwaller|TE"
    ],
    "value": 120,
-   "rank": 356
+   "rank": 358
   },
   {
    "gsis_id": "00-0039355",
@@ -6146,7 +6176,7 @@
     "lukemccaffrey|WR"
    ],
    "value": 119,
-   "rank": 357
+   "rank": 359
   },
   {
    "gsis_id": "00-0037258",
@@ -6162,7 +6192,7 @@
     "dameonpierce|RB"
    ],
    "value": 117,
-   "rank": 358
+   "rank": 360
   },
   {
    "gsis_id": "00-0036020",
@@ -6178,7 +6208,7 @@
     "salvonahmed|RB"
    ],
    "value": 117,
-   "rank": 358
+   "rank": 360
   },
   {
    "gsis_id": "00-0036271",
@@ -6195,7 +6225,7 @@
     "terrancewatkins|WR"
    ],
    "value": 115,
-   "rank": 360
+   "rank": 362
   },
   {
    "gsis_id": "00-0036849",
@@ -6212,7 +6242,7 @@
     "tutuatwell|WR"
    ],
    "value": 112,
-   "rank": 361
+   "rank": 363
   },
   {
    "gsis_id": "00-0040906",
@@ -6228,7 +6258,7 @@
     "garrettnussmeier|QB"
    ],
    "value": 112,
-   "rank": 361
+   "rank": 363
   },
   {
    "gsis_id": "00-0040172",
@@ -6244,7 +6274,7 @@
     "jordanwatkins|WR"
    ],
    "value": 111,
-   "rank": 363
+   "rank": 365
   },
   {
    "gsis_id": "00-0030279",
@@ -6260,7 +6290,7 @@
     "keenanallen|WR"
    ],
    "value": 111,
-   "rank": 363
+   "rank": 365
   },
   {
    "gsis_id": "00-0040522",
@@ -6276,7 +6306,7 @@
     "xavierrestrepo|WR"
    ],
    "value": 110,
-   "rank": 365
+   "rank": 367
   },
   {
    "gsis_id": "00-0037282",
@@ -6293,7 +6323,7 @@
     "jimmymitchell|TE"
    ],
    "value": 110,
-   "rank": 365
+   "rank": 367
   },
   {
    "gsis_id": "00-0041081",
@@ -6309,7 +6339,7 @@
     "maxbredeson|RB"
    ],
    "value": 109,
-   "rank": 367
+   "rank": 369
   },
   {
    "gsis_id": "00-0037837",
@@ -6325,7 +6355,7 @@
     "calvinaustin|WR"
    ],
    "value": 103,
-   "rank": 368
+   "rank": 370
   },
   {
    "gsis_id": "00-0040244",
@@ -6341,7 +6371,7 @@
     "molikimatavao|TE"
    ],
    "value": 103,
-   "rank": 368
+   "rank": 370
   },
   {
    "gsis_id": "00-0040894",
@@ -6357,7 +6387,7 @@
     "malikbenson|WR"
    ],
    "value": 101,
-   "rank": 370
+   "rank": 372
   },
   {
    "gsis_id": "00-0041106",
@@ -6374,7 +6404,7 @@
     "cjwilliams|WR"
    ],
    "value": 101,
-   "rank": 370
+   "rank": 372
   },
   {
    "gsis_id": "00-0041399",
@@ -6390,7 +6420,7 @@
     "cjdaniels|WR"
    ],
    "value": 100,
-   "rank": 372
+   "rank": 374
   },
   {
    "gsis_id": "00-0038951",
@@ -6406,7 +6436,7 @@
     "seantucker|RB"
    ],
    "value": 97,
-   "rank": 373
+   "rank": 375
   },
   {
    "gsis_id": "00-0040075",
@@ -6422,7 +6452,7 @@
     "lajohntaywester|WR"
    ],
    "value": 94,
-   "rank": 374
+   "rank": 376
   },
   {
    "gsis_id": "00-0033908",
@@ -6438,7 +6468,7 @@
     "cooperkupp|WR"
    ],
    "value": 93,
-   "rank": 375
+   "rank": 377
   },
   {
    "gsis_id": "00-0040184",
@@ -6454,7 +6484,7 @@
     "keandrelambertsmith|WR"
    ],
    "value": 89,
-   "rank": 376
+   "rank": 378
   },
   {
    "gsis_id": "00-0041239",
@@ -6471,7 +6501,7 @@
     "deamontetrayanum|RB"
    ],
    "value": 89,
-   "rank": 376
+   "rank": 378
   },
   {
    "gsis_id": "00-0036626",
@@ -6487,7 +6517,7 @@
     "dyamibrown|WR"
    ],
    "value": 85,
-   "rank": 378
+   "rank": 380
   },
   {
    "gsis_id": "00-0037231",
@@ -6503,7 +6533,7 @@
     "kevinaustin|WR"
    ],
    "value": 84,
-   "rank": 379
+   "rank": 381
   },
   {
    "gsis_id": "00-0036980",
@@ -6519,7 +6549,7 @@
     "elijahmoore|WR"
    ],
    "value": 83,
-   "rank": 380
+   "rank": 382
   },
   {
    "gsis_id": "00-0038409",
@@ -6535,7 +6565,7 @@
     "lewnichols|RB"
    ],
    "value": 81,
-   "rank": 381
+   "rank": 383
   },
   {
    "gsis_id": "00-0040649",
@@ -6551,7 +6581,7 @@
     "robbieouzts|RB"
    ],
    "value": 81,
-   "rank": 381
+   "rank": 383
   },
   {
    "gsis_id": "00-0033526",
@@ -6567,7 +6597,7 @@
     "samajeperine|RB"
    ],
    "value": 80,
-   "rank": 383
+   "rank": 385
   },
   {
    "gsis_id": "00-0041096",
@@ -6583,7 +6613,23 @@
     "kaytronallen|RB"
    ],
    "value": 80,
-   "rank": 383
+   "rank": 385
+  },
+  {
+   "gsis_id": "00-0032268",
+   "name": "Marcus Mariota",
+   "pos": "QB",
+   "age": 32.9,
+   "games": 3,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "marcusmariota|QB"
+   ],
+   "value": 79,
+   "rank": 387
   },
   {
    "gsis_id": "00-0040218",
@@ -6600,7 +6646,7 @@
     "jimmyhorn|WR"
    ],
    "value": 79,
-   "rank": 385
+   "rank": 387
   },
   {
    "gsis_id": "00-0033881",
@@ -6616,7 +6662,7 @@
     "evanengram|TE"
    ],
    "value": 78,
-   "rank": 386
+   "rank": 389
   },
   {
    "gsis_id": "00-0040194",
@@ -6632,7 +6678,7 @@
     "jacksonhawes|TE"
    ],
    "value": 76,
-   "rank": 387
+   "rank": 390
   },
   {
    "gsis_id": "00-0040953",
@@ -6649,7 +6695,7 @@
     "jeffreycaldwell|WR"
    ],
    "value": 73,
-   "rank": 388
+   "rank": 391
   },
   {
    "gsis_id": "00-0036309",
@@ -6665,7 +6711,7 @@
     "darnellmooney|WR"
    ],
    "value": 71,
-   "rank": 389
+   "rank": 392
   },
   {
    "gsis_id": "00-0038476",
@@ -6682,23 +6728,7 @@
     "tommydevito|QB"
    ],
    "value": 70,
-   "rank": 390
-  },
-  {
-   "gsis_id": "00-0032268",
-   "name": "Marcus Mariota",
-   "pos": "QB",
-   "age": 32.9,
-   "games": 3,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "marcusmariota|QB"
-   ],
-   "value": 70,
-   "rank": 390
+   "rank": 393
   },
   {
    "gsis_id": "00-0039798",
@@ -6714,7 +6744,7 @@
     "isaiahdavis|RB"
    ],
    "value": 69,
-   "rank": 392
+   "rank": 394
   },
   {
    "gsis_id": "00-0041178",
@@ -6732,7 +6762,7 @@
     "robhenry|RB"
    ],
    "value": 69,
-   "rank": 392
+   "rank": 394
   },
   {
    "gsis_id": "00-0041376",
@@ -6749,7 +6779,7 @@
     "gregorydesrosiers|RB"
    ],
    "value": 69,
-   "rank": 392
+   "rank": 394
   },
   {
    "gsis_id": "00-0035250",
@@ -6765,7 +6795,24 @@
     "devinsingletary|RB"
    ],
    "value": 68,
-   "rank": 395
+   "rank": 397
+  },
+  {
+   "gsis_id": "00-0038102",
+   "name": "Kenny Pickett",
+   "pos": "QB",
+   "age": 28.3,
+   "games": 3,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "kennethpickett|QB",
+    "kennypickett|QB"
+   ],
+   "value": 64,
+   "rank": 398
   },
   {
    "gsis_id": "00-0040078",
@@ -6781,7 +6828,7 @@
     "brashardsmith|RB"
    ],
    "value": 64,
-   "rank": 396
+   "rank": 398
   },
   {
    "gsis_id": "00-0040879",
@@ -6798,7 +6845,7 @@
     "matthibner|TE"
    ],
    "value": 64,
-   "rank": 396
+   "rank": 398
   },
   {
    "gsis_id": "00-0040142",
@@ -6814,7 +6861,7 @@
     "kalebjohnson|RB"
    ],
    "value": 62,
-   "rank": 398
+   "rank": 401
   },
   {
    "gsis_id": "00-0039407",
@@ -6830,7 +6877,7 @@
     "dylanlaube|RB"
    ],
    "value": 61,
-   "rank": 399
+   "rank": 402
   },
   {
    "gsis_id": "00-0040930",
@@ -6846,7 +6893,7 @@
     "camdenbrown|WR"
    ],
    "value": 61,
-   "rank": 399
+   "rank": 402
   },
   {
    "gsis_id": "00-0039603",
@@ -6862,7 +6909,7 @@
     "britishbrooks|RB"
    ],
    "value": 58,
-   "rank": 401
+   "rank": 404
   },
   {
    "gsis_id": "00-0039703",
@@ -6878,24 +6925,7 @@
     "codyschrader|RB"
    ],
    "value": 58,
-   "rank": 401
-  },
-  {
-   "gsis_id": "00-0038102",
-   "name": "Kenny Pickett",
-   "pos": "QB",
-   "age": 28.3,
-   "games": 3,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "kennethpickett|QB",
-    "kennypickett|QB"
-   ],
-   "value": 57,
-   "rank": 403
+   "rank": 404
   },
   {
    "gsis_id": "00-0039874",
@@ -6911,7 +6941,7 @@
     "jaylenwright|RB"
    ],
    "value": 55,
-   "rank": 404
+   "rank": 406
   },
   {
    "gsis_id": "00-0038454",
@@ -6927,7 +6957,7 @@
     "keatonmitchell|RB"
    ],
    "value": 54,
-   "rank": 405
+   "rank": 407
   },
   {
    "gsis_id": "00-0034775",
@@ -6943,7 +6973,7 @@
     "christiankirk|WR"
    ],
    "value": 54,
-   "rank": 405
+   "rank": 407
   },
   {
    "gsis_id": "00-0036259",
@@ -6960,7 +6990,7 @@
     "jauanjennings|WR"
    ],
    "value": 54,
-   "rank": 405
+   "rank": 407
   },
   {
    "gsis_id": "00-0035021",
@@ -6976,7 +7006,7 @@
     "ashtondulin|WR"
    ],
    "value": 54,
-   "rank": 405
+   "rank": 407
   },
   {
    "gsis_id": "00-0038710",
@@ -6992,7 +7022,7 @@
     "blakewhiteheart|TE"
    ],
    "value": 54,
-   "rank": 405
+   "rank": 407
   },
   {
    "gsis_id": "00-0034837",
@@ -7008,7 +7038,7 @@
     "calvinridley|WR"
    ],
    "value": 52,
-   "rank": 410
+   "rank": 412
   },
   {
    "gsis_id": "00-0041326",
@@ -7025,7 +7055,7 @@
     "decarlodonaldson|RB"
    ],
    "value": 51,
-   "rank": 411
+   "rank": 413
   },
   {
    "gsis_id": "00-0039144",
@@ -7041,7 +7071,7 @@
     "lukemusgrave|TE"
    ],
    "value": 50,
-   "rank": 412
+   "rank": 414
   },
   {
    "gsis_id": "00-0039746",
@@ -7058,7 +7088,7 @@
     "willshipley|RB"
    ],
    "value": 49,
-   "rank": 413
+   "rank": 415
   },
   {
    "gsis_id": "00-0033699",
@@ -7074,7 +7104,7 @@
     "austinekeler|RB"
    ],
    "value": 49,
-   "rank": 413
+   "rank": 415
   },
   {
    "gsis_id": "00-0033555",
@@ -7091,7 +7121,7 @@
     "mackhollins|WR"
    ],
    "value": 49,
-   "rank": 413
+   "rank": 415
   },
   {
    "gsis_id": "00-0033921",
@@ -7109,7 +7139,7 @@
     "rodgodwin|WR"
    ],
    "value": 49,
-   "rank": 413
+   "rank": 415
   },
   {
    "gsis_id": "00-0038685",
@@ -7126,7 +7156,7 @@
     "christopherbrooks|RB"
    ],
    "value": 47,
-   "rank": 417
+   "rank": 419
   },
   {
    "gsis_id": "00-0037291",
@@ -7142,7 +7172,7 @@
     "jalennailor|WR"
    ],
    "value": 47,
-   "rank": 417
+   "rank": 419
   },
   {
    "gsis_id": "00-0037277",
@@ -7158,7 +7188,7 @@
     "teaganquitoriano|TE"
    ],
    "value": 46,
-   "rank": 419
+   "rank": 421
   },
   {
    "gsis_id": "00-0040164",
@@ -7175,7 +7205,7 @@
     "joshualane|WR"
    ],
    "value": 45,
-   "rank": 420
+   "rank": 422
   },
   {
    "gsis_id": "00-0041170",
@@ -7191,7 +7221,7 @@
     "haydenlarge|TE"
    ],
    "value": 44,
-   "rank": 421
+   "rank": 423
   },
   {
    "gsis_id": "00-0040955",
@@ -7207,7 +7237,7 @@
     "johnmichaelgyllenborg|TE"
    ],
    "value": 43,
-   "rank": 422
+   "rank": 424
   },
   {
    "gsis_id": "00-0037086",
@@ -7223,7 +7253,7 @@
     "grantcalcaterra|TE"
    ],
    "value": 42,
-   "rank": 423
+   "rank": 425
   },
   {
    "gsis_id": "00-0035045",
@@ -7239,7 +7269,23 @@
     "djmontgomery|WR"
    ],
    "value": 42,
-   "rank": 423
+   "rank": 425
+  },
+  {
+   "gsis_id": "00-0036898",
+   "name": "Davis Mills",
+   "pos": "QB",
+   "age": 27.9,
+   "games": 1,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "davismills|QB"
+   ],
+   "value": 41,
+   "rank": 427
   },
   {
    "gsis_id": "00-0037557",
@@ -7255,7 +7301,7 @@
     "ronnierivers|RB"
    ],
    "value": 41,
-   "rank": 425
+   "rank": 427
   },
   {
    "gsis_id": "00-0039356",
@@ -7271,7 +7317,7 @@
     "jatavionsanders|TE"
    ],
    "value": 41,
-   "rank": 425
+   "rank": 427
   },
   {
    "gsis_id": "00-0036637",
@@ -7287,7 +7333,7 @@
     "noahgray|TE"
    ],
    "value": 41,
-   "rank": 425
+   "rank": 427
   },
   {
    "gsis_id": "00-0039912",
@@ -7304,7 +7350,7 @@
     "bensinnott|TE"
    ],
    "value": 40,
-   "rank": 428
+   "rank": 431
   },
   {
    "gsis_id": "00-0041092",
@@ -7320,7 +7366,24 @@
     "taylengreen|QB"
    ],
    "value": 40,
-   "rank": 428
+   "rank": 431
+  },
+  {
+   "gsis_id": "00-0036972",
+   "name": "Mac Jones",
+   "pos": "QB",
+   "age": 28.0,
+   "games": 3,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "macjones|QB",
+    "michaeljones|QB"
+   ],
+   "value": 39,
+   "rank": 433
   },
   {
    "gsis_id": "00-0036906",
@@ -7336,7 +7399,7 @@
     "khalilherbert|RB"
    ],
    "value": 39,
-   "rank": 430
+   "rank": 433
   },
   {
    "gsis_id": "00-0037666",
@@ -7352,7 +7415,7 @@
     "jalentolbert|WR"
    ],
    "value": 39,
-   "rank": 430
+   "rank": 433
   },
   {
    "gsis_id": "00-0039814",
@@ -7368,7 +7431,7 @@
     "erickall|TE"
    ],
    "value": 39,
-   "rank": 430
+   "rank": 433
   },
   {
    "gsis_id": "00-0037112",
@@ -7385,7 +7448,7 @@
     "jaketonges|TE"
    ],
    "value": 38,
-   "rank": 433
+   "rank": 437
   },
   {
    "gsis_id": "00-0040014",
@@ -7401,7 +7464,7 @@
     "kylemccord|QB"
    ],
    "value": 38,
-   "rank": 433
+   "rank": 437
   },
   {
    "gsis_id": "00-0040891",
@@ -7417,23 +7480,7 @@
     "colepayton|QB"
    ],
    "value": 38,
-   "rank": 433
-  },
-  {
-   "gsis_id": "00-0036898",
-   "name": "Davis Mills",
-   "pos": "QB",
-   "age": 27.9,
-   "games": 1,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "davismills|QB"
-   ],
-   "value": 37,
-   "rank": 436
+   "rank": 437
   },
   {
    "gsis_id": "00-0039359",
@@ -7449,7 +7496,7 @@
     "cadestover|TE"
    ],
    "value": 37,
-   "rank": 436
+   "rank": 440
   },
   {
    "gsis_id": "00-0040901",
@@ -7465,7 +7512,7 @@
     "jarenkanak|TE"
    ],
    "value": 37,
-   "rank": 436
+   "rank": 440
   },
   {
    "gsis_id": "00-0039471",
@@ -7482,7 +7529,7 @@
     "franklingore|RB"
    ],
    "value": 36,
-   "rank": 439
+   "rank": 442
   },
   {
    "gsis_id": "00-0039710",
@@ -7498,7 +7545,7 @@
     "jeshaunjones|WR"
    ],
    "value": 36,
-   "rank": 439
+   "rank": 442
   },
   {
    "gsis_id": "00-0041116",
@@ -7514,7 +7561,7 @@
     "jackendries|TE"
    ],
    "value": 36,
-   "rank": 439
+   "rank": 442
   },
   {
    "gsis_id": "00-0039626",
@@ -7530,24 +7577,7 @@
     "coleburgess|WR"
    ],
    "value": 36,
-   "rank": 439
-  },
-  {
-   "gsis_id": "00-0036972",
-   "name": "Mac Jones",
-   "pos": "QB",
-   "age": 28.0,
-   "games": 3,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "macjones|QB",
-    "michaeljones|QB"
-   ],
-   "value": 34,
-   "rank": 443
+   "rank": 442
   },
   {
    "gsis_id": "00-0037252",
@@ -7564,7 +7594,7 @@
     "gregorydulcich|TE"
    ],
    "value": 34,
-   "rank": 443
+   "rank": 446
   },
   {
    "gsis_id": "00-0039041",
@@ -7580,7 +7610,23 @@
     "elijahhiggins|TE"
    ],
    "value": 34,
-   "rank": 443
+   "rank": 446
+  },
+  {
+   "gsis_id": "00-0038416",
+   "name": "Tyson Bagent",
+   "pos": "QB",
+   "age": 26.2,
+   "games": 3,
+   "rookie": false,
+   "contract": "signed through 2027",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "tysonbagent|QB"
+   ],
+   "value": 33,
+   "rank": 448
   },
   {
    "gsis_id": "00-0039074",
@@ -7596,23 +7642,7 @@
     "davisallen|TE"
    ],
    "value": 31,
-   "rank": 446
-  },
-  {
-   "gsis_id": "00-0038416",
-   "name": "Tyson Bagent",
-   "pos": "QB",
-   "age": 26.2,
-   "games": 3,
-   "rookie": false,
-   "contract": "signed through 2027",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "tysonbagent|QB"
-   ],
-   "value": 29,
-   "rank": 447
+   "rank": 449
   },
   {
    "gsis_id": "00-0039325",
@@ -7628,7 +7658,7 @@
     "carsonsteele|RB"
    ],
    "value": 28,
-   "rank": 448
+   "rank": 450
   },
   {
    "gsis_id": "00-0039875",
@@ -7645,7 +7675,7 @@
     "remahndavis|RB"
    ],
    "value": 28,
-   "rank": 448
+   "rank": 450
   },
   {
    "gsis_id": "00-0041067",
@@ -7661,7 +7691,7 @@
     "brycelance|WR"
    ],
    "value": 28,
-   "rank": 448
+   "rank": 450
   },
   {
    "gsis_id": "00-0037304",
@@ -7677,7 +7707,7 @@
     "connorheyward|RB"
    ],
    "value": 27,
-   "rank": 451
+   "rank": 453
   },
   {
    "gsis_id": "00-0040225",
@@ -7694,7 +7724,7 @@
     "tommyfidone|TE"
    ],
    "value": 26,
-   "rank": 452
+   "rank": 454
   },
   {
    "gsis_id": "00-0041094",
@@ -7710,7 +7740,7 @@
     "bauersharp|TE"
    ],
    "value": 26,
-   "rank": 452
+   "rank": 454
   },
   {
    "gsis_id": "00-0036924",
@@ -7727,7 +7757,7 @@
     "mikecarter|RB"
    ],
    "value": 25,
-   "rank": 454
+   "rank": 456
   },
   {
    "gsis_id": "00-0038389",
@@ -7743,7 +7773,7 @@
     "israelabanikanda|RB"
    ],
    "value": 25,
-   "rank": 454
+   "rank": 456
   },
   {
    "gsis_id": "00-0040598",
@@ -7759,7 +7789,7 @@
     "markredman|TE"
    ],
    "value": 24,
-   "rank": 456
+   "rank": 458
   },
   {
    "gsis_id": "00-0038046",
@@ -7776,7 +7806,7 @@
     "charliekolar|TE"
    ],
    "value": 24,
-   "rank": 456
+   "rank": 458
   },
   {
    "gsis_id": "00-0037742",
@@ -7792,7 +7822,7 @@
     "treylonburks|WR"
    ],
    "value": 23,
-   "rank": 458
+   "rank": 460
   },
   {
    "gsis_id": "00-0037741",
@@ -7808,7 +7838,7 @@
     "jahandotson|WR"
    ],
    "value": 23,
-   "rank": 458
+   "rank": 460
   },
   {
    "gsis_id": "00-0033662",
@@ -7824,7 +7854,7 @@
     "cooperrush|QB"
    ],
    "value": 22,
-   "rank": 460
+   "rank": 462
   },
   {
    "gsis_id": "00-0038720",
@@ -7840,7 +7870,7 @@
     "julianhill|TE"
    ],
    "value": 21,
-   "rank": 461
+   "rank": 463
   },
   {
    "gsis_id": "00-0035644",
@@ -7856,7 +7886,7 @@
     "noahfant|TE"
    ],
    "value": 20,
-   "rank": 462
+   "rank": 464
   },
   {
    "gsis_id": "00-0033110",
@@ -7872,7 +7902,7 @@
     "tylerhigbee|TE"
    ],
    "value": 20,
-   "rank": 462
+   "rank": 464
   },
   {
    "gsis_id": "00-0038129",
@@ -7888,7 +7918,7 @@
     "cadeotton|TE"
    ],
    "value": 19,
-   "rank": 464
+   "rank": 466
   },
   {
    "gsis_id": "00-0036893",
@@ -7904,7 +7934,7 @@
     "najeeharris|RB"
    ],
    "value": 18,
-   "rank": 465
+   "rank": 467
   },
   {
    "gsis_id": "00-0038794",
@@ -7920,7 +7950,7 @@
     "jaleelmclaughlin|RB"
    ],
    "value": 16,
-   "rank": 466
+   "rank": 468
   },
   {
    "gsis_id": "00-0030061",
@@ -7937,7 +7967,7 @@
     "zachertz|TE"
    ],
    "value": 16,
-   "rank": 466
+   "rank": 468
   },
   {
    "gsis_id": "00-0040240",
@@ -7953,7 +7983,7 @@
     "caleblohner|TE"
    ],
    "value": 16,
-   "rank": 466
+   "rank": 468
   },
   {
    "gsis_id": "00-0040782",
@@ -7969,7 +7999,7 @@
     "isaiahbond|WR"
    ],
    "value": 15,
-   "rank": 469
+   "rank": 471
   },
   {
    "gsis_id": "00-0040298",
@@ -7987,7 +8017,7 @@
     "drewarmstrong|WR"
    ],
    "value": 15,
-   "rank": 469
+   "rank": 471
   },
   {
    "gsis_id": "00-0037801",
@@ -8003,7 +8033,7 @@
     "kavontaeturpin|WR"
    ],
    "value": 15,
-   "rank": 469
+   "rank": 471
   },
   {
    "gsis_id": "00-0039796",
@@ -8019,7 +8049,7 @@
     "rasheenali|RB"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0038839",
@@ -8036,7 +8066,7 @@
     "mitchtinsley|WR"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0038840",
@@ -8052,7 +8082,7 @@
     "brycentremayne|WR"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0038679",
@@ -8068,7 +8098,7 @@
     "tyrellshavers|WR"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0039489",
@@ -8084,7 +8114,7 @@
     "haydenrucci|TE"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0039518",
@@ -8100,7 +8130,7 @@
     "treytonwelch|TE"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0040853",
@@ -8116,7 +8146,7 @@
     "carsontowt|TE"
    ],
    "value": 14,
-   "rank": 472
+   "rank": 474
   },
   {
    "gsis_id": "00-0039299",
@@ -8132,7 +8162,7 @@
     "georgeholani|RB"
    ],
    "value": 13,
-   "rank": 479
+   "rank": 481
   },
   {
    "gsis_id": "00-0038115",
@@ -8149,7 +8179,7 @@
     "dannybellinger|TE"
    ],
    "value": 13,
-   "rank": 479
+   "rank": 481
   },
   {
    "gsis_id": "00-0033307",
@@ -8165,7 +8195,7 @@
     "kendrickbourne|WR"
    ],
    "value": 11,
-   "rank": 481
+   "rank": 483
   },
   {
    "gsis_id": "00-0038359",
@@ -8181,7 +8211,7 @@
     "xaviersmith|WR"
    ],
    "value": 10,
-   "rank": 482
+   "rank": 484
   },
   {
    "gsis_id": "00-0041467",
@@ -8197,7 +8227,7 @@
     "lewisbond|WR"
    ],
    "value": 10,
-   "rank": 482
+   "rank": 484
   },
   {
    "gsis_id": "00-0035704",
@@ -8215,7 +8245,7 @@
     "paullock|QB"
    ],
    "value": 9,
-   "rank": 484
+   "rank": 486
   },
   {
    "gsis_id": "00-0037524",
@@ -8232,7 +8262,7 @@
     "taymartin|WR"
    ],
    "value": 9,
-   "rank": 484
+   "rank": 486
   },
   {
    "gsis_id": "00-0040646",
@@ -8248,7 +8278,7 @@
     "jalenroyals|WR"
    ],
    "value": 9,
-   "rank": 484
+   "rank": 486
   },
   {
    "gsis_id": "00-0039737",
@@ -8264,7 +8294,24 @@
     "tipreiman|TE"
    ],
    "value": 8,
-   "rank": 487
+   "rank": 489
+  },
+  {
+   "gsis_id": "00-0026158",
+   "name": "Joe Flacco",
+   "pos": "QB",
+   "age": 41.6,
+   "games": 0,
+   "rookie": false,
+   "contract": "signed through 2026 (expiring)",
+   "contract_factor": 0.8677,
+   "basis": "this season",
+   "keys": [
+    "joeflacco|QB",
+    "josephflacco|QB"
+   ],
+   "value": 6,
+   "rank": 490
   },
   {
    "gsis_id": "00-0034771",
@@ -8274,14 +8321,14 @@
    "games": 3,
    "rookie": false,
    "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
+   "contract_factor": 0.8677,
    "basis": "this season",
    "keys": [
     "brettrudolph|QB",
     "masonrudolph|QB"
    ],
    "value": 6,
-   "rank": 488
+   "rank": 490
   },
   {
    "gsis_id": "00-0037120",
@@ -8297,7 +8344,7 @@
     "tylergoodson|RB"
    ],
    "value": 6,
-   "rank": 488
+   "rank": 490
   },
   {
    "gsis_id": "00-0033375",
@@ -8314,7 +8361,7 @@
     "timpatrick|WR"
    ],
    "value": 6,
-   "rank": 488
+   "rank": 490
   },
   {
    "gsis_id": "00-0036988",
@@ -8331,24 +8378,7 @@
     "joshuapalmer|WR"
    ],
    "value": 6,
-   "rank": 488
-  },
-  {
-   "gsis_id": "00-0026158",
-   "name": "Joe Flacco",
-   "pos": "QB",
-   "age": 41.6,
-   "games": 0,
-   "rookie": false,
-   "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
-   "basis": "this season",
-   "keys": [
-    "joeflacco|QB",
-    "josephflacco|QB"
-   ],
-   "value": 5,
-   "rank": 492
+   "rank": 490
   },
   {
    "gsis_id": "00-0034272",
@@ -8364,7 +8394,7 @@
     "marquezvaldesscantling|WR"
    ],
    "value": 5,
-   "rank": 492
+   "rank": 495
   },
   {
    "gsis_id": "00-0032398",
@@ -8381,7 +8411,7 @@
     "christophermoore|WR"
    ],
    "value": 5,
-   "rank": 492
+   "rank": 495
   },
   {
    "gsis_id": "00-0039021",
@@ -8397,7 +8427,7 @@
     "roschonjohnson|RB"
    ],
    "value": 4,
-   "rank": 495
+   "rank": 497
   },
   {
    "gsis_id": "00-0036407",
@@ -8413,7 +8443,7 @@
     "jerryjeudy|WR"
    ],
    "value": 4,
-   "rank": 495
+   "rank": 497
   },
   {
    "gsis_id": "00-0038728",
@@ -8429,7 +8459,7 @@
     "jaredwayne|WR"
    ],
    "value": 4,
-   "rank": 495
+   "rank": 497
   },
   {
    "gsis_id": "00-0040154",
@@ -8445,7 +8475,7 @@
     "taifelton|WR"
    ],
    "value": 4,
-   "rank": 495
+   "rank": 497
   },
   {
    "gsis_id": "00-0037324",
@@ -8462,7 +8492,7 @@
     "christopheroladokun|QB"
    ],
    "value": 3,
-   "rank": 499
+   "rank": 501
   },
   {
    "gsis_id": "00-0037614",
@@ -8478,7 +8508,7 @@
     "johnmetchie|WR"
    ],
    "value": 2,
-   "rank": 500
+   "rank": 502
   },
   {
    "gsis_id": "00-0038705",
@@ -8494,7 +8524,7 @@
     "emaridemercado|RB"
    ],
    "value": 1,
-   "rank": 501
+   "rank": 503
   },
   {
    "gsis_id": "00-0040432",
@@ -8511,7 +8541,7 @@
     "ccollins|WR"
    ],
    "value": 1,
-   "rank": 501
+   "rank": 503
   },
   {
    "gsis_id": "00-0028118",
@@ -8521,13 +8551,13 @@
    "games": 2,
    "rookie": false,
    "contract": "signed through 2026 (expiring)",
-   "contract_factor": 0.7693,
+   "contract_factor": 0.8677,
    "basis": "this season",
    "keys": [
     "tyrodtaylor|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0027973",
@@ -8544,7 +8574,7 @@
     "andydalton|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033319",
@@ -8561,7 +8591,7 @@
     "nickmullens|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0026300",
@@ -8578,7 +8608,7 @@
     "joshuajohnson|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034577",
@@ -8594,7 +8624,7 @@
     "kyleallen|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033869",
@@ -8610,7 +8640,7 @@
     "mitchelltrubisky|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033949",
@@ -8628,7 +8658,7 @@
     "robertdobbs|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035264",
@@ -8644,7 +8674,7 @@
     "jarrettstidham|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0028986",
@@ -8661,7 +8691,7 @@
     "caseykeenum|QB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036187",
@@ -8677,7 +8707,7 @@
     "reggiegilliam|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039364",
@@ -8693,7 +8723,7 @@
     "sionevaki|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038896",
@@ -8710,7 +8740,7 @@
     "jakesaylors|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037594",
@@ -8726,7 +8756,7 @@
     "juliuschestnut|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037085",
@@ -8742,7 +8772,7 @@
     "tylerbadie|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037745",
@@ -8758,7 +8788,7 @@
     "velusjones|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036842",
@@ -8774,7 +8804,7 @@
     "kenenwangwu|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037563",
@@ -8790,7 +8820,7 @@
     "malikdavis|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038440",
@@ -8806,7 +8836,7 @@
     "zavierscott|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038488",
@@ -8822,7 +8852,7 @@
     "bradyrussell|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036265",
@@ -8839,7 +8869,7 @@
     "algiersdillon|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035594",
@@ -8855,7 +8885,7 @@
     "travishomer|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038040",
@@ -8871,7 +8901,7 @@
     "zamirwhite|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036425",
@@ -8887,7 +8917,7 @@
     "deejaydallas|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035125",
@@ -8903,7 +8933,7 @@
     "alecingold|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040208",
@@ -8919,7 +8949,7 @@
     "tahjbrooks|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037276",
@@ -8936,7 +8966,7 @@
     "tykeviouschandler|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040205",
@@ -8952,7 +8982,7 @@
     "kalelmullings|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038738",
@@ -8968,7 +8998,7 @@
     "hunterluepke|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038614",
@@ -8985,7 +9015,7 @@
     "scottymatlock|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033854",
@@ -9002,7 +9032,7 @@
     "oluwadareogunbowale|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033376",
@@ -9019,7 +9049,7 @@
     "patrickricard|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036567",
@@ -9035,7 +9065,7 @@
     "elijahmitchell|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0029892",
@@ -9051,7 +9081,7 @@
     "kylejuszczyk|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040547",
@@ -9068,7 +9098,7 @@
     "nathanielcarter|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038397",
@@ -9084,7 +9114,7 @@
     "evanhull|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033955",
@@ -9100,7 +9130,7 @@
     "jeremymcnichols|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034959",
@@ -9118,7 +9148,7 @@
     "drewbeck|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037329",
@@ -9134,7 +9164,7 @@
     "brittainbrown|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038098",
@@ -9150,7 +9180,7 @@
     "pierrestrong|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035567",
@@ -9166,7 +9196,7 @@
     "craigreynolds|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036727",
@@ -9182,7 +9212,7 @@
     "adamprentice|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0032104",
@@ -9198,7 +9228,7 @@
     "ameerabdullah|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0031595",
@@ -9215,7 +9245,7 @@
     "mikeburton|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036387",
@@ -9231,7 +9261,7 @@
     "jalenreagor|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036646",
@@ -9248,7 +9278,7 @@
     "simionefehoko|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036630",
@@ -9264,7 +9294,7 @@
     "tylanwallace|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034419",
@@ -9280,7 +9310,7 @@
     "braxtonberrios|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0031235",
@@ -9296,7 +9326,7 @@
     "odellbeckham|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039751",
@@ -9312,7 +9342,7 @@
     "jordanwhittington|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0041132",
@@ -9328,7 +9358,7 @@
     "deionburks|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037132",
@@ -9344,7 +9374,7 @@
     "britaincovey|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037382",
@@ -9360,7 +9390,7 @@
     "brandonjohnson|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0031236",
@@ -9376,7 +9406,7 @@
     "brandincooks|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038090",
@@ -9392,7 +9422,7 @@
     "skyymoore|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036775",
@@ -9408,7 +9438,7 @@
     "brandonsmith|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038640",
@@ -9424,7 +9454,7 @@
     "jalenbrooks|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040582",
@@ -9440,7 +9470,7 @@
     "ariansmith|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036862",
@@ -9458,7 +9488,7 @@
     "benskowronek|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035645",
@@ -9474,7 +9504,7 @@
     "gunnerolszewski|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038496",
@@ -9490,7 +9520,7 @@
     "xaviergipson|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033589",
@@ -9507,7 +9537,7 @@
     "davidmoore|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034854",
@@ -9523,7 +9553,7 @@
     "khadarelhodge|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038938",
@@ -9539,7 +9569,7 @@
     "jalinhyatt|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036463",
@@ -9556,7 +9586,7 @@
     "christopherblair|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036331",
@@ -9572,7 +9602,7 @@
     "devinduvernay|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037091",
@@ -9589,7 +9619,7 @@
     "milesmelton|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039623",
@@ -9605,7 +9635,7 @@
     "masontipton|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035544",
@@ -9621,7 +9651,7 @@
     "tomkennedy|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037487",
@@ -9637,7 +9667,7 @@
     "deventhompkins|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0032951",
@@ -9653,7 +9683,7 @@
     "laquontreadwell|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039062",
@@ -9670,7 +9700,7 @@
     "jonmingo|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038576",
@@ -9687,7 +9717,7 @@
     "charliejones|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040581",
@@ -9703,7 +9733,7 @@
     "dontethornton|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038824",
@@ -9719,7 +9749,7 @@
     "ryanmiller|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036182",
@@ -9736,7 +9766,7 @@
     "nickwestbrookikhine|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038519",
@@ -9752,7 +9782,7 @@
     "nikkoremigio|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039816",
@@ -9769,7 +9799,7 @@
     "tonygould|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036415",
@@ -9786,7 +9816,7 @@
     "vanjefferson|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039365",
@@ -9803,7 +9833,7 @@
     "jakecowing|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037093",
@@ -9819,7 +9849,7 @@
     "darekeyoung|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038573",
@@ -9835,7 +9865,7 @@
     "deriusdavis|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039920",
@@ -9851,7 +9881,7 @@
     "malachicorley|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038752",
@@ -9868,7 +9898,7 @@
     "jakebobo|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033891",
@@ -9885,7 +9915,7 @@
     "zayjones|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034386",
@@ -9901,7 +9931,7 @@
     "justinwatson|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039589",
@@ -9917,7 +9947,7 @@
     "kameronjohnson|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0031763",
@@ -9933,7 +9963,7 @@
     "deandrecarter|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035500",
@@ -9950,7 +9980,7 @@
     "gregorydortch|WR"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036628",
@@ -9966,7 +9996,7 @@
     "johnbates|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033246",
@@ -9983,7 +10013,7 @@
     "johnnymundt|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033757",
@@ -10001,7 +10031,7 @@
     "robtonyan|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039686",
@@ -10017,7 +10047,7 @@
     "colsonyankoff|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039847",
@@ -10034,7 +10064,7 @@
     "theojohnson|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036825",
@@ -10050,7 +10080,7 @@
     "feleipefranks|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036590",
@@ -10066,7 +10096,7 @@
     "quintinmorris|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036876",
@@ -10082,7 +10112,7 @@
     "kylengranson|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039631",
@@ -10099,7 +10129,7 @@
     "camgrandy|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0032392",
@@ -10115,7 +10145,7 @@
     "austinhooper|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040058",
@@ -10132,7 +10162,7 @@
     "nickkallerup|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0031484",
@@ -10149,7 +10179,7 @@
     "christophermanhertz|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034270",
@@ -10165,7 +10195,7 @@
     "tylerconklin|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038589",
@@ -10182,7 +10212,7 @@
     "joshwhyle|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036429",
@@ -10199,7 +10229,7 @@
     "charliewoerner|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038547",
@@ -10215,7 +10245,7 @@
     "lukeschoonmaker|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039050",
@@ -10232,7 +10262,7 @@
     "williamdurham|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033576",
@@ -10248,7 +10278,7 @@
     "ericsaubert|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038643",
@@ -10264,7 +10294,7 @@
     "braydenwillis|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037292",
@@ -10282,7 +10312,7 @@
     "drewogletree|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034365",
@@ -10298,7 +10328,7 @@
     "ianthomas|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034798",
@@ -10314,7 +10344,7 @@
     "durhamsmythe|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036556",
@@ -10330,7 +10360,7 @@
     "brevinjordan|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034613",
@@ -10346,7 +10376,7 @@
     "tannerhudson|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035249",
@@ -10363,7 +10393,7 @@
     "joshuaoliver|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039824",
@@ -10379,7 +10409,7 @@
     "jaredwiley|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037317",
@@ -10396,7 +10426,7 @@
     "nickmuse|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0034981",
@@ -10412,7 +10442,7 @@
     "fostermoreau|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036754",
@@ -10428,7 +10458,7 @@
     "brockwright|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035689",
@@ -10444,7 +10474,7 @@
     "dawsonknox|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0036887",
@@ -10460,7 +10490,7 @@
     "lukefarrell|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039530",
@@ -10476,7 +10506,7 @@
     "brevynspannford|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033439",
@@ -10492,7 +10522,7 @@
     "pharaohbrown|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037755",
@@ -10508,7 +10538,7 @@
     "jelaniwoods|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038783",
@@ -10526,7 +10556,7 @@
     "nathanieladkins|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0035631",
@@ -10543,7 +10573,7 @@
     "drewsample|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040509",
@@ -10560,7 +10590,7 @@
     "benyurosek|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039648",
@@ -10577,7 +10607,7 @@
     "davidmartinrobinson|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033217",
@@ -10594,7 +10624,7 @@
     "mohamedaliecox|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0033858",
@@ -10610,7 +10640,7 @@
     "jonnusmith|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038394",
@@ -10627,7 +10657,7 @@
     "willmallory|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037805",
@@ -10643,7 +10673,7 @@
     "jeremyruckert|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040394",
@@ -10660,7 +10690,7 @@
     "tonytyus|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0040081",
@@ -10677,7 +10707,7 @@
     "jakebriningstool|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0041323",
@@ -10693,7 +10723,7 @@
     "mylesmontgomery|RB"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0037031",
@@ -10709,7 +10739,7 @@
     "nikolakalinic|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0038735",
@@ -10725,7 +10755,7 @@
     "princetonfant|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039263",
@@ -10741,7 +10771,7 @@
     "mccallancastles|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0039936",
@@ -10758,7 +10788,7 @@
     "tommyyassmin|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   },
   {
    "gsis_id": "00-0041133",
@@ -10774,7 +10804,7 @@
     "dallenbentley|TE"
    ],
    "value": 0,
-   "rank": 503
+   "rank": 505
   }
  ],
  "picks": [
