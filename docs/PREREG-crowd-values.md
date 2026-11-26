@@ -118,3 +118,19 @@ votes.**
   have, never on the outcomes. So the fit in §3 stands as written.
 - **Why it's worth doing:** it gets more items to the 30-vote minimum sooner.
 - **Votes cast before A1** stay in, exactly as they are.
+
+**A2 (26 Nov 2026, after the first read of 2,595 votes; Steve: "I'm good with updating how players get picked so they
+are paired against neighbors in the crowd's current order").** The first read showed "close" pairs, drawn from the
+page's original order, never test a player who beats everyone near him: Jordyn Tyson was 30–0 with no opponent above
+16th, and the fit put him 3rd.
+
+- **What changes:** "close" pairs are now an item and items within 12 places of it in the crowd's **current** order, a
+  quick Bradley-Terry order of every pick so far, with 2 pretend games per item against an opponent at its page slot
+  (strength e^(−slot/30)) so that thin evidence stays near the page's order. Source: a new Supabase function,
+  `pair_results(board)` (totals per pair only), loaded with the counts and refreshed every 25 votes. Until it exists or
+  if it fails, the page pairs exactly as before.
+- **Unchanged:** the pair-type mix (6% gimme, 20% random, the rest close), gimme pairs on the page slot (the quality
+  check the fit reads), the fewer-votes weighting, the fit, weights, the 30-vote threshold, prices and steadiness.
+- **Why the fit is unaffected:** which pairs are shown may depend on earlier picks; the Bradley-Terry fit uses only
+  the picks made, so the order it finds is still the crowd's.
+- **Votes cast before A2** stay in, exactly as they are.

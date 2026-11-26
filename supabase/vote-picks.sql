@@ -57,3 +57,18 @@ $$;
 
 revoke all on function public.item_vote_counts(text) from public;
 grant execute on function public.item_vote_counts(text) to anon, authenticated;
+
+-- Added 26 Nov 2026 (PREREG-crowd-values A2): results per pair, so the page can pair players against their neighbours
+-- in the crowd's CURRENT order (a player who keeps winning gets tested against better players). Totals only: no
+-- device, time or tag. Run this once in the Supabase SQL Editor.
+create or replace function public.pair_results(p_board text)
+returns table (x text, y text, x_wins bigint, y_wins bigint)
+language sql stable security definer set search_path = public as $$
+  select least(a, b), greatest(a, b),
+         count(*) filter (where pick = least(a, b)), count(*) filter (where pick = greatest(a, b))
+  from public.vote_picks where board = p_board and pick is not null
+  group by least(a, b), greatest(a, b);
+$$;
+
+revoke all on function public.pair_results(text) from public;
+grant execute on function public.pair_results(text) to anon, authenticated;

@@ -22,7 +22,7 @@ let tag = store.get('dv_tag') === 'owner' ? 'owner' : 'organic';
 let mine = Number(store.get('dv_votes') || 0) || 0;   // kept in memory too, for browsers that block storage
 
 // Fewer votes, more often (PREREG-crowd-values A1): an item with v votes is drawn with weight (1 + v)^-1.5.
-// Uses vote COUNTS only, never who won. Without counts (offline, or the first load), every item is equally likely.
+// Without counts (offline, or the first load), every item is equally likely.
 let COUNTS = {}, haveCounts = false, sinceCounts = 0, last = new Set();
 async function loadCounts() {
   try {
@@ -32,8 +32,41 @@ async function loadCounts() {
     (Array.isArray(j) ? j : []).forEach((x) => { c[x.name] = Number(x.votes) || 0; });
     COUNTS = c; haveCounts = true; sinceCounts = 0;
   } catch (e) {}
+  await loadOrder();
 }
 const need = (x) => Math.pow(1 + (COUNTS[x.n] || 0), -1.5);
+
+// Pairs by the crowd's CURRENT order (PREREG-crowd-values A2, 26 Nov 2026): "close" pairs are neighbours in POS, a
+// quick Bradley-Terry order of every pick so far, so a player who keeps winning moves up and meets better players.
+// Each item also plays 2 pretend games against an opponent at its page slot (strength exp(-r/30)), so with few votes
+// an item stays near its slot. Without results (offline, or before the database function exists), POS = page slot.
+// Gimme pairs still use the page slot: they are the quality check the fit reads.
+let POS = {};
+ITEMS.forEach((x) => { POS[x.n] = x.r; });
+function crowdOrder(rows) {
+  const idx = {}; ITEMS.forEach((x, i) => { idx[x.n] = i; });
+  const n = ITEMS.length, s0 = ITEMS.map((x) => Math.exp(-x.r / 30)), PRI = 2;
+  const P = rows.filter((g) => g.x in idx && g.y in idx).map((g) => [idx[g.x], idx[g.y], Number(g.x_wins) || 0, Number(g.y_wins) || 0]);
+  const wins = s0.map(() => PRI / 2);
+  P.forEach(([i, j, wi, wj]) => { wins[i] += wi; wins[j] += wj; });
+  let s = s0.slice();
+  for (let it = 0; it < 200; it++) {
+    const den = s.map((v, i) => PRI / (v + s0[i]));
+    P.forEach(([i, j, wi, wj]) => { const d = (wi + wj) / (s[i] + s[j]); den[i] += d; den[j] += d; });
+    s = s.map((v, i) => wins[i] / den[i]);
+  }
+  const order = ITEMS.map((x, i) => i).sort((a, b) => s[b] - s[a]);
+  const pos = {}; order.forEach((i, k) => { pos[ITEMS[i].n] = k + 1; });
+  return pos;
+}
+async function loadOrder() {
+  try {
+    const r = await fetch(API + '/rpc/pair_results', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD }) });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (Array.isArray(j) && j.length) POS = crowdOrder(j);
+  } catch (e) {}
+}
 function draw(list) {
   let t = 0; for (const x of list) t += need(x);
   let u = Math.random() * t;
@@ -49,7 +82,7 @@ function pickPair() {
   let cands;
   if (roll < 0.06) { curType = 'gimme'; cands = pool.filter((x) => Math.abs(x.r - a.r) >= 90); }   // a quality check
   else if (roll < 0.26) { curType = 'random'; cands = pool.filter((x) => x !== a); }
-  else { curType = 'close'; cands = pool.filter((x) => x !== a && Math.abs(x.r - a.r) <= 12); }
+  else { curType = 'close'; cands = pool.filter((x) => x !== a && Math.abs(POS[x.n] - POS[a.n]) <= 12); }
   if (!cands.length) { curType = 'random'; cands = pool.filter((x) => x !== a); }
   const b = curType === 'gimme' ? cands[Math.floor(Math.random() * cands.length)] : draw(cands);
   last = new Set([a.n, b.n]);
@@ -84,7 +117,7 @@ function total() {
 }
 
 window.DV = {
-  ITEMS, BOARD, GOAL, store, loadCounts, pickPair, save, noteVote, share, myVotes, total,
+  ITEMS, BOARD, GOAL, store, loadCounts, pickPair, save, noteVote, share, myVotes, total, crowdOrder, pos: () => POS,
   setOwner() { tag = 'owner'; store.set('dv_tag', 'owner'); },
 };
 })();
