@@ -197,3 +197,22 @@ after 13 Nov.
 **Freeze date.** Held for the role-change study (Steve, 13 Nov). Version 2 freezes once that study is decided and Steve
 eye-tests the build, with FantasyCalc and KeepTradeCut captured the same day, before the season's last regular-season
 game. Section 8's "before Thursday 19 November" is replaced by this.
+
+## 10. Version 2 Freeze Inputs (26 November 2026, Before Freezing)
+
+Dated entry under rule 4, written before the version 2 file exists.
+
+- **A true 11-week sample** (Steve, 26 Nov: "can we ensure that game info isn't in there when we freeze so it's a true
+  11 week sample"). Week 12 began Wednesday 25 Nov, GB at LA, 20:00 ET (26 Nov 01:00 UTC).
+  - **New Value:** the weekly build of 26 Nov 14:49 UTC (commit 38e7d33, built from 4b3bd4b), through week 11. Checked:
+    every one of its 640 shared players has the same value as a local week-11 build from data holding no week-12 rows,
+    so no week-12 game is in it. Two players are valued only in the official build, Brennan Presley and Kedon Slovis:
+    both have no game and became valued through a roster signing in the fresher roster file, not a game.
+  - **FantasyCalc:** its last capture before week 12 began, polled 25 Nov 18:02 UTC (commit 6d4cb12). Not the same day
+    as the freeze, replacing "captured the same day" in §9: the capture with no week-12 game in the market is the
+    closer like-for-like comparison.
+- **KeepTradeCut is not captured.** The dachhack/stathead archive (the only KTC source used) was unreachable on 26 Nov
+  (GitHub: not found, or not accessible). Steve, 26 Nov: "We don't need KTC that's fine." Tests A and B are graded
+  against FantasyCalc only; the freeze file records KTC as not captured, with the reason. Version 1's KTC copy stays as
+  it was.
+- **Season-enders** (`data/injury-overrides.json`, commit bee8a2f) are frozen verbatim with it, for the no-call rule.

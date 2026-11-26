@@ -23,10 +23,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'data', 'freeze-2026-nv-midseason-v2.json')
 PREREG = 'docs/LEDGER-NEW-VALUE-MIDSEASON-2026.md'
 NV_PATH, NV_COMMIT, NV_BUILT_FROM, NV_RUN = 'data/new-value.json', '38e7d331f8283cd4bf09d1e1299adcf0ccad2a4d', '4b3bd4bdad43dacb9cea53511c05b9b3ebb7dd6c', 45842700859
-FC_PATH, FC_COMMIT, FC_KEY = 'data/market-values.json', 'aac6683538bcd5a259f8d81ff773652ed6b4d1ca', '12|sf'
+FC_PATH, FC_COMMIT, FC_KEY = 'data/market-values.json', '6d4cb120addb5838c22d975f9f3cd6abe8937853', '12|sf'   # last capture before week 12
 INJ_PATH, INJ_COMMIT = 'data/injury-overrides.json', 'bee8a2fd20256e45cba63eb2ac78a252f084bd85'
 KTC_REPO, KTC_PATH = 'github.com/dachhack/stathead', 'public/data/ktc_rankings_superflex.json'
-WEEK12_FIRST_KICKOFF_UTC = '2026-11-26T17:30:00Z'   # Thanksgiving
+WEEK12_FIRST_KICKOFF_UTC = '2026-11-26T01:00:00Z'   # GB at LA, Wed 25 Nov 20:00 ET
 
 
 def git(repo, *args):
@@ -91,8 +91,9 @@ def main():
         'preregistration': {'path': PREREG, 'commit_and_date': prereg_commit},
         'claim': 'Value over the next three seasons (2027-2029), 12-team superflex, full PPR: FV = sum k=1..3 of '
                  '0.9^(k-1) x max(0, points in 2026+k - starter line), lines QB24/RB34/WR48/TE14.',
-        'timing_note': f'New Value runs through week 11. Week 12 first kickoff (Thanksgiving): {WEEK12_FIRST_KICKOFF_UTC}. '
-                       'Compare frozen_utc. Test A counts no 2026 games.',
+        'timing_note': f'A true 11-week sample (Steve, 26 Nov). New Value runs through week 11: no week-12 game is in it '
+                       '(values match a build from data with no week-12 rows). FantasyCalc is its last capture before week '
+                       f'12 began ({WEEK12_FIRST_KICKOFF_UTC}, GB at LA). Test A counts no 2026 games.',
         'new_value': {'path': NV_PATH, 'commit': NV_COMMIT, 'commit_date': built, 'built_from_commit': NV_BUILT_FROM,
                       'workflow_run': NV_RUN, 'sha256': sha(nv_b), 'bytes': len(nv_b),
                       'build_script_sha256_at_built_from': sha(git(ROOT, 'show', f'{NV_BUILT_FROM}:study/new_value_weekly.py')),
