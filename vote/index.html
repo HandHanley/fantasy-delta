@@ -29,6 +29,9 @@
   .back:focus-visible { outline: 2px solid var(--teal-br); outline-offset: 2px; }
   .prog { font-size: 12px; color: var(--fog); margin: 8px 0 0; text-align: center; }
   .prog b { font-family: var(--mono); color: var(--paper); font-weight: 600; }
+  .yours { font-size: 13px; color: var(--fog); margin: 6px 0 0; text-align: center; }
+  .yours b { font-family: var(--mono); color: var(--paper); font-weight: 600; }
+  .yours a { color: var(--teal-br); font-weight: 700; }
   .count b { font-family: var(--mono); color: var(--paper); font-weight: 500; }
   h1 { font-size: 20px; font-weight: 800; margin: 0; text-align: center; }
   .sub { font-size: 13px; color: var(--fog); margin: 4px 0 0; text-align: center; }
@@ -84,6 +87,7 @@
     <h1>Who Would You Rather Have?</h1>
     <p class="sub">In a 12-team, full PPR superflex dynasty league. Tap one.</p>
     <p class="prog" id="prog" hidden>Crowd Rankings: <b id="tot"></b> of <b id="goal"></b> votes</p>
+    <p class="yours" id="yours" hidden></p>
   </div>
 
   <div class="pair" id="pair">
@@ -136,6 +140,14 @@ function progress() {
   $('#tot').textContent = t.toLocaleString('en-US');
   $('#goal').textContent = DV.GOAL.toLocaleString('en-US');
 }
+// Your Rankings (28 Nov 2026, docs/PLAN-your-rankings.md): a countdown to 25 votes, then a link to the My Team tab.
+function yours() {
+  const m = DV.myVotes(), el = $('#yours');
+  if (!m) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = m >= DV.UNLOCK ? '<a href="../?tab=yours">See Your Rankings</a>'
+    : 'Your Rankings unlock in <b>' + (DV.UNLOCK - m) + '</b> more ' + (DV.UNLOCK - m === 1 ? 'vote' : 'votes');
+}
 
 function chips(x) {
   if (x.pos === 'PICK') return '<span class="chip">Rookie Pick</span>';
@@ -172,7 +184,7 @@ async function vote(side) {
   catch (e) { $('#result').textContent = "Couldn't save that vote. Check your connection and try the next one."; $('#next').disabled = false; return; }
   $('#n').textContent = DV.noteVote(pair);
   count('vote-page-vote');
-  progress();
+  progress(); yours();
   $('#next').disabled = false;
   let n;
   try { n = await DV.share(pair[0].n, pair[1].n); } catch (e) { n = null; }
@@ -195,6 +207,7 @@ $('#skip').addEventListener('click', () => {
   show();
 });
 $('#n').textContent = DV.myVotes();
+yours();
 checkOwnerLink();
 Promise.race([DV.loadCounts(), new Promise((r) => setTimeout(r, 1500))]).then(show, show);   // never wait long for counts
 </script>

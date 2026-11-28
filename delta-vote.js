@@ -43,9 +43,13 @@ const need = (x) => Math.pow(1 + (COUNTS[x.n] || 0), -1.5);
 // Gimme pairs still use the page slot: they are the quality check the fit reads.
 let POS = {};
 ITEMS.forEach((x) => { POS[x.n] = x.r; });
-function crowdOrder(rows) {
+function crowdOrder(rows) { return crowdFit(rows).pos; }
+// The same fit, with each item's pretend games played against its own START strength s0 (default: its page slot).
+// Your Rankings use it with the crowd's strengths as s0 and your picks as the games (PLAN-your-rankings.md).
+function crowdFit(rows, s0, pri) {
   const idx = {}; ITEMS.forEach((x, i) => { idx[x.n] = i; });
-  const n = ITEMS.length, s0 = ITEMS.map((x) => Math.exp(-x.r / 30)), PRI = 2;
+  const PRI = pri || 2;
+  s0 = s0 || ITEMS.map((x) => Math.exp(-x.r / 30));
   const P = rows.filter((g) => g.x in idx && g.y in idx).map((g) => [idx[g.x], idx[g.y], Number(g.x_wins) || 0, Number(g.y_wins) || 0]);
   const wins = s0.map(() => PRI / 2);
   P.forEach(([i, j, wi, wj]) => { wins[i] += wi; wins[j] += wj; });
@@ -57,14 +61,18 @@ function crowdOrder(rows) {
   }
   const order = ITEMS.map((x, i) => i).sort((a, b) => s[b] - s[a]);
   const pos = {}; order.forEach((i, k) => { pos[ITEMS[i].n] = k + 1; });
-  return pos;
+  return { s, pos };
 }
+let CROWD_S = null, CROWD_N = 0;   // the crowd's strengths and how many votes they came from (null until loaded)
 async function loadOrder() {
   try {
     const r = await fetch(API + '/rpc/pair_results', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD }) });
     if (!r.ok) return;
     const j = await r.json();
-    if (Array.isArray(j) && j.length) POS = crowdOrder(j);
+    if (Array.isArray(j) && j.length) {
+      const f = crowdFit(j); POS = f.pos; CROWD_S = f.s;
+      CROWD_N = j.reduce((t, g) => t + (Number(g.x_wins) || 0) + (Number(g.y_wins) || 0), 0);
+    }
   } catch (e) {}
 }
 function draw(list) {
@@ -94,6 +102,51 @@ async function save(pair, type, pick, ms) {
   const row = { board: BOARD, session, tag, a: pair[0].n, b: pair[1].n, pick, pair_type: type, ms: Math.min(3600000, Math.round(ms)) };
   const r = await fetch(API + '/vote_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) });
   if (!r.ok) throw new Error('save ' + r.status);
+  if (pick) keepPick(row.a, row.b, pick);
+}
+// Your Rankings (PLAN-your-rankings.md): this device's picks, kept here too so the board loads if the database is slow.
+const MY_KEY = 'dv_picks', MY_MAX = 5000, UNLOCK = 25;
+let MY_PRI = 4;   // pretend games anchoring your board to the crowd (more = steadier, slower to move)
+function localPicks() {
+  try { const j = JSON.parse(store.get(MY_KEY) || '[]'); return Array.isArray(j) ? j.filter((x) => Array.isArray(x) && x.length === 3) : []; }
+  catch (e) { return []; }
+}
+function keepPick(a, b, pick) { const l = localPicks(); l.push([a, b, pick]); store.set(MY_KEY, JSON.stringify(l.slice(-MY_MAX))); }
+// Every pick this device has made on this board: the database's copy (which includes votes from before this existed)
+// when it answers, otherwise the device's own. The longer list wins, so neither can hide the other.
+async function myPicks() {
+  const local = localPicks();
+  try {
+    const r = await fetch(API + '/rpc/my_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD, p_sessions: [session] }) });
+    if (!r.ok) return local;
+    const j = await r.json();
+    const srv = (Array.isArray(j) ? j : []).filter((x) => x && x.pick).map((x) => [x.a, x.b, x.pick]);
+    return srv.length >= local.length ? srv : local;
+  } catch (e) { return local; }
+}
+// Your board: the crowd's order, moved by your picks. Players you never voted on stay at the crowd's strength.
+// Returns one row per item: name, pos, team, your overall and position rank, the crowd's, and whether you voted on him.
+function myBoard(picks) {
+  const s0 = CROWD_S || ITEMS.map((x) => Math.exp(-x.r / 30));
+  const pairs = {}, voted = new Set();
+  picks.forEach(([a, b, pick]) => {
+    if (pick !== a && pick !== b) return;
+    const x = a < b ? a : b, y = a < b ? b : a, k = x + '|' + y;
+    const g = pairs[k] || (pairs[k] = { x, y, x_wins: 0, y_wins: 0 });
+    if (pick === x) g.x_wins++; else g.y_wins++;
+    voted.add(a); voted.add(b);
+  });
+  const mine = crowdFit(Object.values(pairs), s0, MY_PRI).s;
+  const rank = (s) => {
+    const ov = {}, pr = {}, seen = {};
+    ITEMS.map((x, i) => i).sort((i, j) => s[j] - s[i]).forEach((i, k) => {
+      const x = ITEMS[i]; ov[x.n] = k + 1; seen[x.pos] = (seen[x.pos] || 0) + 1; pr[x.n] = seen[x.pos];
+    });
+    return { ov, pr };
+  };
+  const me = rank(mine), cr = rank(s0);
+  return ITEMS.map((x) => ({ n: x.n, pos: x.pos, team: x.team, age: x.age, voted: voted.has(x.n),
+    mine: me.ov[x.n], myPos: me.pr[x.n], crowd: cr.ov[x.n], crowdPos: cr.pr[x.n] }));
 }
 // After a vote saves: this device's tally, and the counts the pairing uses (refreshed every 25 votes).
 function noteVote(pair) {
@@ -117,7 +170,8 @@ function total() {
 }
 
 window.DV = {
-  ITEMS, BOARD, GOAL, store, loadCounts, pickPair, save, noteVote, share, myVotes, total, crowdOrder, pos: () => POS,
+  ITEMS, BOARD, GOAL, UNLOCK, store, loadCounts, loadOrder, pickPair, save, noteVote, share, myVotes, total, crowdOrder, pos: () => POS,
+  myPicks, myBoard, setMyPri(v) { MY_PRI = v; }, crowdReady: () => CROWD_S !== null, crowdVotes: () => CROWD_N,
   setOwner() { tag = 'owner'; store.set('dv_tag', 'owner'); },
 };
 })();

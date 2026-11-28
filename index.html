@@ -138,6 +138,36 @@ tr:hover td{background:var(--panel)}
 .vq-bar i{display:block;height:100%;width:0;background:var(--teal-br);border-radius:3px;transition:width .5s ease}
 .vq-n{font-size:12px;color:var(--fog);margin-top:5px}
 .vq-n b{font-family:var(--mono);color:var(--paper);font-weight:600}
+.vq-n a{color:var(--teal-br);font-weight:700}
+/* Your Rankings (My Team, 28 Nov 2026, docs/PLAN-your-rankings.md). */
+.yr{max-width:640px}
+.yr-t{font-size:20px;font-weight:800;margin:0 0 4px}
+.yr-s{font-size:13px;color:var(--fog);line-height:1.45;margin:0 0 14px}
+.yr-s b{color:var(--paper);font-family:var(--mono);font-weight:600}
+.yr-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;margin:0 0 14px}
+.yr-h{font-size:15px;font-weight:800;margin:0 0 8px}
+.yr-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.yr-two{grid-template-columns:1fr}}
+.yr-sub{font-size:12px;font-weight:700;color:var(--fog);text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
+.yr-line{font-size:13.5px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line)}
+.yr-line:first-of-type{border-top:0}
+.yr-line b{color:var(--paper)}
+.yr-line span{color:var(--fog)}
+.yr-pills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.yr-pill{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line);background:var(--ink-2);color:var(--fog);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.yr-pill.on{border-color:var(--teal-br);color:var(--paper);background:var(--teal-tint)}
+.yr-pill:focus-visible,.yr-go:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
+.yr-tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.yr-tbl th{font-size:11.5px;font-weight:700;color:var(--fog);text-align:left;padding:0 6px 6px;border-bottom:1px solid var(--line)}
+.yr-tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.yr-tbl td.r{font-family:var(--mono);white-space:nowrap}
+.yr-tbl td.nm{font-weight:700}
+.yr-tbl td.nm span{display:block;font-size:12px;font-weight:500;color:var(--fog)}
+.yr-up{color:var(--sky);font-family:var(--mono);font-weight:700}
+.yr-dn{color:var(--violet);font-family:var(--mono);font-weight:700}
+.yr-eq{color:var(--fog);font-family:var(--mono)}
+.yr-go{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer}
+.yr-note{font-size:12px;color:var(--fog);line-height:1.5;margin:4px 0 0}
 .trade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
 .trade-grid.four-col{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -2715,6 +2745,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <button data-tab="trade" data-sec="me" class="tab" onclick="showTab('trade',this)">Trade Calc</button>
   <button data-tab="mock" data-sec="me" class="tab" onclick="showTab('mock',this)">Mock Draft</button>
   <button data-tab="watchlist" data-sec="me" class="tab" onclick="showTab('watchlist',this)">Watchlist</button>
+  <button data-tab="yours" data-sec="me" class="tab" onclick="showTab('yours',this)">Your Rankings</button>
   <button data-tab="audit" data-sec="nfl" class="tab" id="tab-audit-btn" onclick="showTab('audit',this)" style="display:none">Engine Audit</button>
   <span class="tab-right">
   <button type="button" class="dl-srch-btn" id="dl-srch-btn" aria-label="Search players" aria-expanded="false" onclick="dlSearchToggle()"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
@@ -2789,6 +2820,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <option value="trade">Trade Calc</option>
         <option value="mock">Mock Draft</option>
         <option value="watchlist">Watchlist</option>
+        <option value="yours">Your Rankings</option>
       </optgroup>
     </select>
     <!-- Look (redesign step 4, 31 Oct 2026, Decision 8): the whole style of the site. Synced with
@@ -3352,7 +3384,9 @@ function vqInit(){
     if(t==null){ box.hidden=true; return; }
     box.hidden=false;
     q('.vq-bar i').style.width=Math.min(100,100*t/DV.GOAL).toFixed(1)+'%';
-    q('.vq-n').innerHTML='<b>'+fmt(t)+'</b> of <b>'+fmt(DV.GOAL)+'</b> votes'+(mine>0?' \u00b7 Your Votes <b>'+fmt(mine)+'</b>':'');
+    q('.vq-n').innerHTML='<b>'+fmt(t)+'</b> of <b>'+fmt(DV.GOAL)+'</b> votes'+(mine>0?' \u00b7 Your Votes <b>'+fmt(mine)+'</b>':'')
+      +(mine>=DV.UNLOCK?' \u00b7 <a href="?tab=yours" data-act="yours">See Your Rankings</a>'
+        :mine>0?' \u00b7 Your Rankings unlock in <b>'+fmt(DV.UNLOCK-mine)+'</b>':'');
   }
   function links(){
     var l=q('.vq-links');
@@ -3406,6 +3440,7 @@ function vqInit(){
     if(act==='next') show();
     else if(act==='skip'){ if(!voted&&cur) DV.save(cur,type,null,performance.now()-shownAt).catch(function(){}); show(); }
     else if(act==='full') ev('vote-card-fullscreen');
+    else if(act==='yours'){ e.preventDefault(); ev('vote-card-yours'); var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); }
   });
   var started=false;
   function start(){
@@ -3416,6 +3451,67 @@ function vqInit(){
     var io=new IntersectionObserver(function(es){ if(es.some(function(x){ return x.isIntersecting; })){ io.disconnect(); start(); } });
     io.observe(root);
   } else start();
+}
+/* Your Rankings (My Team tab, 28 Nov 2026, docs/PLAN-your-rankings.md). The crowd's current order, moved by this
+   device's own picks (DV.myBoard). Only players you've voted on are shown; ranks are still among ALL players at the
+   position. Display only: nothing here feeds the crowd board, DELTA Value or the engine. */
+var YR_POS='QB';
+function yrEsc(x){ return String(x==null?'':x).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function yrLabel(r){ return r.pos==='PICK'?'Pick '+r.myPos:r.pos+r.myPos; }
+function yrCrowd(r){ return r.pos==='PICK'?'Pick '+r.crowdPos:r.pos+r.crowdPos; }
+async function openYourRankings(){
+  var root=document.getElementById('yr-root'); if(!root) return;
+  if(!window.DV){ root.innerHTML='<div class="yr-t">Your Rankings</div><p class="yr-s">The vote didn’t load. Refresh the page and try again.</p>'; return; }
+  if(!root.innerHTML) root.innerHTML='<div class="yr-t">Your Rankings</div><p class="yr-s">Loading your votes…</p>';
+  var wait=function(p,ms){ return Promise.race([p,new Promise(function(r){ setTimeout(r,ms); })]); };
+  var picks=await Promise.all([DV.crowdReady()?null:wait(DV.loadOrder(),4000), DV.myPicks()]).then(function(r){ return r[1]||[]; });
+  yrRender(picks);
+}
+function yrRender(picks){
+  var root=document.getElementById('yr-root'), n=picks.length, U=DV.UNLOCK;
+  var fmt=function(x){ return Number(x).toLocaleString('en-US'); };
+  if(n<U){
+    root.innerHTML='<div class="yr-t">Your Rankings</div>'
+      +'<p class="yr-s">Vote on <b>'+U+'</b> pairs and DELTA builds your own board from your picks, then shows where you disagree with the crowd.</p>'
+      +'<div class="yr-card"><div class="yr-h">'+(n?'<b>'+fmt(U-n)+'</b> more to go':'Start voting')+'</div>'
+      +'<div class="vq-bar" style="margin:4px 0 12px"><i style="width:'+(100*n/U).toFixed(0)+'%"></i></div>'
+      +'<a class="yr-go" href="vote/">Vote Now</a>'
+      +'<p class="yr-note">Your board is built from the votes on this device.</p></div>';
+    return;
+  }
+  var B=DV.myBoard(picks), V=B.filter(function(r){ return r.voted; });
+  var gap=function(r){ return r.crowdPos-r.myPos; };
+  var players=V.filter(function(r){ return r.pos!=='PICK'; }).slice().sort(function(a,b){ return gap(b)-gap(a)||a.mine-b.mine; });
+  var hi=players.filter(function(r){ return gap(r)>=2; }).slice(0,5);
+  var lo=players.filter(function(r){ return gap(r)<=-2; }).slice(-5).reverse();
+  var line=function(r){ return '<div class="yr-line"><b>'+yrEsc(r.n)+'</b> <span>Your '+yrLabel(r)+'. Crowd '+yrCrowd(r)+'.</span></div>'; };
+  var col=function(t,list){ return '<div><div class="yr-sub">'+t+'</div>'+(list.length?list.map(line).join(''):'<div class="yr-line"><span>Nobody yet.</span></div>')+'</div>'; };
+  var posList=['QB','RB','WR','TE','PICK'], have={};
+  V.forEach(function(r){ have[r.pos]=(have[r.pos]||0)+1; });
+  if(!have[YR_POS]) YR_POS=posList.filter(function(p){ return have[p]; })[0]||'QB';
+  var rows=V.filter(function(r){ return r.pos===YR_POS; }).sort(function(a,b){ return a.myPos-b.myPos; });
+  var cv=DV.crowdVotes();
+  root.innerHTML='<div class="yr-t">Your Rankings</div>'
+    +'<p class="yr-s">Built from your <b>'+fmt(n)+'</b> votes. You’ve ranked <b>'+V.length+'</b> of <b>'+B.length+'</b> players and picks.'+(V.length<B.length?' Keep voting to fill in your board.':'')+'</p>'
+    +'<div class="yr-card"><div class="yr-h">Where You Disagree With The Crowd</div>'
+    +(hi.length||lo.length?'<div class="yr-two">'+col('You’re Higher On',hi)+col('You’re Lower On',lo)+'</div>'
+      :'<p class="yr-note">Your board matches the crowd so far. The more you vote, the more your own takes show up.</p>')
+    +'</div>'
+    +'<div class="yr-card"><div class="yr-h">Your Board</div><div class="yr-pills" role="tablist">'
+    +posList.filter(function(p){ return have[p]; }).map(function(p){
+      return '<button type="button" class="yr-pill'+(p===YR_POS?' on':'')+'" data-yrpos="'+p+'" role="tab" aria-selected="'+(p===YR_POS)+'">'+(p==='PICK'?'Picks':p)+' <span style="font-weight:500">'+have[p]+'</span></button>';
+    }).join('')+'</div>'
+    +'<table class="yr-tbl"><thead><tr><th>Yours</th><th>Player</th><th>Crowd</th><th>Gap</th></tr></thead><tbody>'
+    +rows.map(function(r){
+      var g=gap(r), gc=g>0?'<span class="yr-up">+'+g+'</span>':g<0?'<span class="yr-dn">−'+(-g)+'</span>':'<span class="yr-eq">—</span>';
+      var meta=r.pos==='PICK'?'Rookie pick':[r.team,r.age!=null?'Age '+r.age:''].filter(Boolean).join(' · ');
+      return '<tr><td class="r">'+yrLabel(r)+'</td><td class="nm">'+yrEsc(r.n)+(meta?'<span>'+yrEsc(meta)+'</span>':'')+'</td><td class="r">'+yrCrowd(r)+'</td><td class="r">'+gc+'</td></tr>';
+    }).join('')+'</tbody></table>'
+    +'<p class="yr-note">Ranks count every player at the position, including ones you haven’t voted on yet. Those stay hidden until you do.</p></div>'
+    +'<p class="yr-note"><b>Early Crowd Rankings</b>'+(cv?' from '+fmt(cv)+' votes':'')+'. The crowd’s order will keep settling as more people vote. '
+    +'Your board starts from the crowd’s order and moves with your picks. It’s saved with the votes from this device and shown only to you. '
+    +'<a href="vote/" style="color:var(--teal-br);font-weight:700">Keep Voting</a></p>';
+  root.querySelectorAll('[data-yrpos]').forEach(function(b){ b.addEventListener('click',function(){ YR_POS=b.getAttribute('data-yrpos'); yrRender(picks); }); });
 }
 document.addEventListener('DOMContentLoaded',function(){ vqWatchAway(); vqInit(); });
 </script>
@@ -6664,7 +6760,7 @@ function setLandingPref(v){ dlPref('delta_landing',v); }
 // section switching can never reveal them.
 const SEC_TABS={ nfl:['market','rankings','compare','roles','scorecard','audit'],
                  cfb:['college','cfbroles','bigboard','portal'],
-                 me: ['myteam','trade','mock','watchlist'] };
+                 me: ['myteam','trade','mock','watchlist','yours'] };
 const SEC_OF={};
 Object.keys(SEC_TABS).forEach(s=>SEC_TABS[s].forEach(id=>SEC_OF[id]=s));
 // The three old NFL tabs are now views of Rankings (14 Oct 2026); their ids still link there.
@@ -6783,7 +6879,7 @@ function showWatchlist(){ const b=dlTabBtn('watchlist'); if(b) showTab('watchlis
 // Deep-link allowlist for ?tab=. SEPARATE from SEC_TABS, which drives the nav — a tab
 // missing here still works when clicked but cannot be linked to or bookmarked, which is
 // a silent failure. Any new tab needs adding to BOTH.
-const DL_TABS=['market','rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit'];
+const DL_TABS=['market','rankings','compare','projections','roles','scorecard','trade','mock','epa','contracts','rookies','myteam','college','cfbroles','watchlist','portal','bigboard','audit','yours'];
 function applyLanding(){
   const params=new URLSearchParams(location.search);
   // A shared trade link has already positioned us via loadTradeFromUrl -> showTab,
@@ -7189,6 +7285,7 @@ function showTab(id,el,skipSection){
   if(id==='cfbroles' && typeof openCfbRolesTab==='function'){ try{ openCfbRolesTab(); }catch(e){ console.warn('cfbroles',e); } }
   if(id==='portal' && typeof openPortalTab==='function'){ try{ openPortalTab(); }catch(e){ console.warn('portal',e); } }
   if(id==='watchlist' && typeof openWatchlistTab==='function'){ try{ openWatchlistTab(); }catch(e){ console.warn('watchlist',e); } }
+  if(id==='yours' && typeof openYourRankings==='function'){ try{ openYourRankings(); }catch(e){ console.warn('yours',e); } }
   if(id==='college' && typeof openCollegeTab==='function'){ try{ openCollegeTab(); }catch(e){ console.warn('college tab error',e); } }
   if(id==='trade' && typeof renderSlpTradeAssist==='function')renderSlpTradeAssist();
   /* typeof guards (14 Nov 2026): dlPanelTypeWatch lives in a later <script> block, so a page opened straight onto
@@ -8621,6 +8718,9 @@ document.addEventListener('click', function(e) {
   <div id="wl-nfl"></div>
   <div id="wl-cfb" style="margin-top:1.5rem"></div>
 </div>
+
+<!-- Your Rankings (28 Nov 2026, docs/PLAN-your-rankings.md): this device's own board from its vote picks. -->
+<div id="panel-yours" class="panel"><div id="yr-root" class="yr"></div></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <linearGradient id="cfbOStroke" x1="0.05" y1="0.25" x2="0.95" y2="0.75">

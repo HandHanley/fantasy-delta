@@ -72,3 +72,21 @@ $$;
 
 revoke all on function public.pair_results(text) from public;
 grant execute on function public.pair_results(text) to anon, authenticated;
+
+-- Added 28 Nov 2026 (docs/PLAN-your-rankings.md, step 1): a device's OWN picks, so it can build Your Rankings,
+-- including votes cast before this existed. It returns only the picks of the device IDs it is given. A device ID is a
+-- long random code that only that device holds (dv_session), so nobody can look up anyone else's votes without it.
+-- Picks only: no times, tags or other devices. At most 10 device IDs per call. Run this once in the Supabase SQL Editor.
+create or replace function public.my_picks(p_board text, p_sessions text[])
+returns table (a text, b text, pick text)
+language sql stable security definer set search_path = public as $$
+  select v.a, v.b, v.pick from public.vote_picks v
+  where v.board = p_board and v.pick is not null
+    and coalesce(array_length(p_sessions, 1), 0) between 1 and 10
+    and v.session = any (p_sessions)
+    and char_length(v.session) >= 8
+  order by v.id;
+$$;
+
+revoke all on function public.my_picks(text, text[]) from public;
+grant execute on function public.my_picks(text, text[]) to anon, authenticated;
