@@ -189,6 +189,7 @@ function milestone(n, go, signIn) {
   // n >= UNLOCK, not ===: anyone already past 25 when this shipped sees it once, on their next vote.
   if (n < UNLOCK || mShown || store.get('dv_m' + UNLOCK) === '1' || typeof document === 'undefined') return false;
   mShown = true; store.set('dv_m' + UNLOCK, '1');
+  store.set('dv_m' + UNLOCK + '_at', String(n));   // the 50-vote pop-up waits 25 more votes after this one (Steve, 28 Nov)
   const bg = document.createElement('div');
   bg.setAttribute('style', 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;'
     + 'background:color-mix(in srgb,var(--ink) 78%,transparent)');
