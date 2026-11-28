@@ -153,6 +153,11 @@ tr:hover td{background:var(--panel)}
 .yr-line:first-of-type{border-top:0}
 .yr-line b{color:var(--paper)}
 .yr-line span{color:var(--fog)}
+.yr-line em{font-style:normal;font-size:12.5px;margin-left:6px}
+.yr-line .yr-cmp{display:block;font-size:12.5px;margin-top:1px}
+.yr-line .yr-cmp i{font-style:normal}
+.yr-sub.yr-up{color:var(--sky);font-family:inherit}
+.yr-sub.yr-dn{color:var(--violet);font-family:inherit}
 .yr-pills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .yr-pill{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line);background:var(--ink-2);color:var(--fog);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .yr-pill.on{border-color:var(--teal-br);color:var(--paper);background:var(--teal-tint)}
@@ -3484,8 +3489,11 @@ function yrRender(picks){
   var players=V.filter(function(r){ return r.pos!=='PICK'; }).slice().sort(function(a,b){ return gap(b)-gap(a)||a.mine-b.mine; });
   var hi=players.filter(function(r){ return gap(r)>=2; }).slice(0,5);
   var lo=players.filter(function(r){ return gap(r)<=-2; }).slice(-5).reverse();
-  var line=function(r){ return '<div class="yr-line"><b>'+yrEsc(r.n)+'</b> <span>Your '+yrLabel(r)+'. Crowd '+yrCrowd(r)+'.</span></div>'; };
-  var col=function(t,list){ return '<div><div class="yr-sub">'+t+'</div>'+(list.length?list.map(line).join(''):'<div class="yr-line"><span>Nobody yet.</span></div>')+'</div>'; };
+  // Sky = you're higher on him than the crowd, violet = lower: the same two colours as the Gap column below.
+  var line=function(r){ var g=gap(r), c=g>0?'yr-up':'yr-dn';
+    return '<div class="yr-line"><b>'+yrEsc(r.n)+'</b> <em class="'+c+'">'+(g>0?'+':'\u2212')+Math.abs(g)+'</em>'
+      +'<span class="yr-cmp">Your <i class="'+c+'">'+yrLabel(r)+'</i> \u00b7 Crowd '+yrCrowd(r)+'</span></div>'; };
+  var col=function(t,list,c){ return '<div><div class="yr-sub '+c+'">'+t+'</div>'+(list.length?list.map(line).join(''):'<div class="yr-line"><span>Nobody yet.</span></div>')+'</div>'; };
   var posList=['QB','RB','WR','TE','PICK'], have={};
   V.forEach(function(r){ have[r.pos]=(have[r.pos]||0)+1; });
   if(!have[YR_POS]) YR_POS=posList.filter(function(p){ return have[p]; })[0]||'QB';
@@ -3494,7 +3502,7 @@ function yrRender(picks){
   root.innerHTML='<div class="yr-t">Your Rankings</div>'
     +'<p class="yr-s">Built from your <b>'+fmt(n)+'</b> votes. You’ve ranked <b>'+V.length+'</b> of <b>'+B.length+'</b> players and picks.'+(V.length<B.length?' Keep voting to fill in your board.':'')+'</p>'
     +'<div class="yr-card"><div class="yr-h">Where You Disagree With The Crowd</div>'
-    +(hi.length||lo.length?'<div class="yr-two">'+col('You’re Higher On',hi)+col('You’re Lower On',lo)+'</div>'
+    +(hi.length||lo.length?'<div class="yr-two">'+col('You’re Higher On',hi,'yr-up')+col('You’re Lower On',lo,'yr-dn')+'</div>'
       :'<p class="yr-note">Your board matches the crowd so far. The more you vote, the more your own takes show up.</p>')
     +'</div>'
     +'<div class="yr-card"><div class="yr-h">Your Board</div><div class="yr-pills" role="tablist">'
