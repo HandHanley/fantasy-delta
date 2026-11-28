@@ -3425,7 +3425,8 @@ function vqInit(){
     q('.vq-res').textContent='Saving\u2026';
     try{ await DV.save(pair,type,pair[side].n,performance.now()-shownAt); }
     catch(e){ q('.vq-res').textContent='Couldn\u2019t save that vote. Check your connection and try the next one.'; links(); return; }
-    DV.noteVote(pair); ev('vote-card-vote'); links(); progress();
+    var nv=DV.noteVote(pair); ev('vote-card-vote'); links(); progress();
+    if(DV.milestone(nv,function(){ ev('vote-milestone-yours'); var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); })) ev('vote-milestone-shown');
     var n=null;
     try{ n=await DV.share(pair[0].n,pair[1].n); }catch(e){}
     if(cur!==pair) return;

@@ -182,8 +182,10 @@ async function vote(side) {
   $('#result').textContent = 'Saving\u2026';
   try { await DV.save(pair, curType, pair[side].n, performance.now() - shownAt); }
   catch (e) { $('#result').textContent = "Couldn't save that vote. Check your connection and try the next one."; $('#next').disabled = false; return; }
-  $('#n').textContent = DV.noteVote(pair);
+  const nv = DV.noteVote(pair);
+  $('#n').textContent = nv;
   count('vote-page-vote');
+  if (DV.milestone(nv, () => { count('vote-milestone-yours'); location.href = '../?tab=yours'; })) count('vote-milestone-shown');
   progress(); yours();
   $('#next').disabled = false;
   let n;
