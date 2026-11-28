@@ -180,50 +180,70 @@ function total() {
   return Math.round(t / 2);
 }
 
-// Milestone pop-up (Steve, 28 Nov 2026): the vote that unlocks Your Rankings gets a moment of its own, once per
-// device, on the vote page and the Market card alike. go(): what "See Your Rankings" does on that page. Styles use
-// only colour variables both pages define (no hex here). The sign-in button joins it with step 3 of
-// docs/PLAN-your-rankings.md, when signing in actually keeps the board.
-let mShown = false;   // also in memory, for browsers that block storage: never more than once per page load
+// Milestone pop-ups (Steve, 28 Nov 2026), once each per device, on the vote page and the Market card alike:
+//   25 votes: Your Rankings are ready (anyone already past 25 when this shipped sees it once, on their next vote).
+//   50 votes: share your hot takes. Never sooner than 25 votes after the first one, so nobody gets two close together.
+// go(kind): what the main button does on that page, kind 'rankings' or 'share'. signIn: offered when signed out.
+// Returns the kind shown, or false. Styles use only colour variables both pages define (no hex here); sizes follow
+// BRAND.md's five steps (12/13/16/20/28), Title Case written in the text.
+// Kept in memory too, for browsers that block storage: each pop-up still shows at most once per page load.
+const mMem = {};
+const mGet = (k) => store.get(k) || mMem[k] || null, mSet = (k, v) => { mMem[k] = v; store.set(k, v); };
+const SHARE_AT = 50, GAP = 25;
 function milestone(n, go, signIn) {
-  // n >= UNLOCK, not ===: anyone already past 25 when this shipped sees it once, on their next vote.
-  if (n < UNLOCK || mShown || store.get('dv_m' + UNLOCK) === '1' || typeof document === 'undefined') return false;
-  mShown = true; store.set('dv_m' + UNLOCK, '1');
-  store.set('dv_m' + UNLOCK + '_at', String(n));   // the 50-vote pop-up waits 25 more votes after this one (Steve, 28 Nov)
+  if (typeof document === 'undefined' || n < UNLOCK) return false;
+  let kind = null;
+  if (mGet('dv_m' + UNLOCK) !== '1') kind = 'rankings';
+  else if (n >= SHARE_AT && mGet('dv_m' + SHARE_AT) !== '1') {
+    const at = Number(mGet('dv_m' + UNLOCK + '_at')) || 0;
+    if (!at) { mSet('dv_m' + UNLOCK + '_at', String(n)); return false; }   // saw the first before counts were kept
+    if (n >= at + GAP) kind = 'share';
+  }
+  if (!kind) return false;
+  if (kind === 'rankings') { mSet('dv_m' + UNLOCK, '1'); mSet('dv_m' + UNLOCK + '_at', String(n)); }
+  else mSet('dv_m' + SHARE_AT, '1');
+  const T = kind === 'rankings'
+    ? { title: 'Your Rankings Are Ready', body: 'DELTA built your own board from your picks. See which players you’re higher and lower on than the crowd.',
+        go: 'See Your Rankings', inLabel: 'Sign In To Keep Them', inNote: 'Your board follows you to every device and survives a new phone.' }
+    : { title: 'Share Your Hot Takes', body: 'Your biggest breaks from the crowd, in one picture. Post it and let your league argue.',
+        go: 'Make My Picture', inLabel: 'Sign In', inNote: 'Keep your board on every device.' };
   const bg = document.createElement('div');
   bg.setAttribute('style', 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;'
     + 'background:color-mix(in srgb,var(--ink) 78%,transparent)');
   bg.innerHTML = '<div role="dialog" aria-modal="true" aria-labelledby="dvm-t" style="max-width:360px;width:100%;border:1px solid var(--teal-br);'
     + 'border-radius:18px;background:var(--panel);color:var(--paper);padding:22px 20px 18px;text-align:center;font-family:inherit">'
-    + '<div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--teal-br);line-height:1">' + Number(n).toLocaleString('en-US') + '</div>'
-    + '<div style="font-size:12px;font-weight:700;color:var(--fog);letter-spacing:.06em;text-transform:uppercase;margin:4px 0 12px">Votes</div>'
-    + '<div id="dvm-t" style="font-size:20px;font-weight:800;margin:0 0 6px">Your Rankings Are Ready</div>'
-    + '<div style="font-size:14px;color:var(--fog);line-height:1.45;margin:0 0 18px">DELTA built your own board from your picks. '
-    + 'See which players you\u2019re higher and lower on than the crowd.</div>'
+    + '<div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--teal-br);line-height:1">' + Number(n).toLocaleString('en-US') + '</div>'
+    + '<div style="font-size:12px;font-weight:700;color:var(--fog);margin:4px 0 12px">Votes</div>'
+    + '<div id="dvm-t" style="font-size:20px;font-weight:800;margin:0 0 6px">' + T.title + '</div>'
+    + '<div style="font-size:13px;color:var(--fog);line-height:1.45;margin:0 0 18px">' + T.body + '</div>'
     + '<button type="button" data-m="go" style="width:100%;height:46px;border:0;border-radius:14px;background:var(--teal-br);color:var(--ink);'
-    + 'font:inherit;font-size:16px;font-weight:800;cursor:pointer">See Your Rankings</button>'
-    + (signIn ? '<button type="button" data-m="in" style="width:100%;height:44px;margin-top:8px;border:1px solid var(--teal-br);border-radius:14px;'
-      + 'background:none;color:var(--paper);font:inherit;font-size:15px;font-weight:800;cursor:pointer">Sign In To Keep Them</button>'
-      + '<div style="font-size:12px;color:var(--fog);line-height:1.4;margin:6px 0 0">Your board follows you to every device and survives a new phone.</div>' : '')
-    + '<button type="button" data-m="x" style="width:100%;height:40px;margin-top:8px;border:0;background:none;color:var(--fog);'
-    + 'font:inherit;font-size:14px;font-weight:700;cursor:pointer">Keep Voting</button></div>';
+    + 'font:inherit;font-size:16px;font-weight:800;cursor:pointer">' + T.go + '</button>'
+    + (signIn ? (kind === 'rankings'
+      ? '<button type="button" data-m="in" style="width:100%;height:44px;margin-top:8px;border:1px solid var(--teal-br);border-radius:14px;'
+        + 'background:none;color:var(--paper);font:inherit;font-size:16px;font-weight:800;cursor:pointer">' + T.inLabel + '</button>'
+        + '<div style="font-size:12px;color:var(--fog);line-height:1.4;margin:6px 0 0">' + T.inNote + '</div>'
+      : '<div style="font-size:12px;color:var(--fog);line-height:1.4;margin:10px 0 0">'
+        + '<button type="button" data-m="in" style="border:0;background:none;padding:0;color:var(--teal-br);font:inherit;font-weight:700;'
+        + 'text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:24px">' + T.inLabel + '</button> to ' + T.inNote.charAt(0).toLowerCase() + T.inNote.slice(1) + '</div>') : '')
+    + '<button type="button" data-m="x" style="width:100%;height:44px;margin-top:8px;border:0;background:none;color:var(--fog);'
+    + 'font:inherit;font-size:13px;font-weight:700;cursor:pointer">Keep Voting</button></div>';
   const close = () => { document.removeEventListener('keydown', esc); bg.remove(); };
   const esc = (e) => { if (e.key === 'Escape') close(); };
   bg.addEventListener('click', (e) => {
     const b = e.target.closest('[data-m]');
-    if (b && b.getAttribute('data-m') === 'go') { close(); go(); }
+    if (b && b.getAttribute('data-m') === 'go') { close(); go(kind); }
     else if (b && b.getAttribute('data-m') === 'in') { close(); setTimeout(signIn, 0); }   // after this tap finishes
     else if (b || e.target === bg) close();
   });
   document.addEventListener('keydown', esc);
   document.body.appendChild(bg);
   const first = bg.querySelector('[data-m="go"]'); if (first) first.focus();
-  return true;
+  return kind;
 }
 
 window.DV = {
   ITEMS, BOARD, GOAL, UNLOCK, store, loadCounts, loadOrder, pickPair, save, noteVote, share, myVotes, total, crowdOrder, pos: () => POS,
-  myPicks, myBoard, milestone, mySessions, setMyPri(v) { MY_PRI = v; }, crowdReady: () => CROWD_S !== null, crowdVotes: () => CROWD_N,
+  myPicks, myBoard, milestone, mySessions, SHARE_AT, setMyPri(v) { MY_PRI = v; }, crowdReady: () => CROWD_S !== null, crowdVotes: () => CROWD_N,
   setOwner() { tag = 'owner'; store.set('dv_tag', 'owner'); },
 };
 })();

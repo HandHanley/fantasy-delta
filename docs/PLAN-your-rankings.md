@@ -135,3 +135,12 @@ loads.
 5. **Share picture at 50 votes** (step 1b), with a second, smaller sign-in prompt for anyone still signed out.
 6. **Pairing doesn't change.** The vote still picks pairs for the crowd's board, not to fill in your own. Steering pairs
    per person would change the pre-registered pairing, so it isn't part of this plan.
+
+## Shipped (28 Nov)
+
+- **Step 1** (e572c41, 33dbdf9): Your Rankings tab, colours on Where You Disagree.
+- **25-vote pop-up** (3cc874d), with **Sign In To Keep Them** once step 3 made it true.
+- **Step 3** (57b9ca1): `vote_devices`, `signed_in`, linked devices.
+- **Step 1b**: the share picture is Steve's pick "A2" from the mock canvas (My N Hottest Takes, three numbers, up to 5 takes
+  each way with a gap bar, the vote link). The 50-vote pop-up comes at least 25 votes after the 25-vote one. Your
+  Rankings' headings and text sizes now follow BRAND.md (no small capitals; 12/13/16/20/28).

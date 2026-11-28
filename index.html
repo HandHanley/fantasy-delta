@@ -145,16 +145,16 @@ tr:hover td{background:var(--panel)}
 .yr-s{font-size:13px;color:var(--fog);line-height:1.45;margin:0 0 14px}
 .yr-s b{color:var(--paper);font-family:var(--mono);font-weight:600}
 .yr-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;margin:0 0 14px}
-.yr-h{font-size:15px;font-weight:800;margin:0 0 8px}
+.yr-h{font-size:16px;font-weight:800;margin:0 0 8px}
 .yr-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:520px){.yr-two{grid-template-columns:1fr}}
-.yr-sub{font-size:12px;font-weight:700;color:var(--fog);text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
-.yr-line{font-size:13.5px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line)}
+.yr-sub{font-size:13px;font-weight:800;color:var(--fog);margin:0 0 6px}
+.yr-line{font-size:13px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line)}
 .yr-line:first-of-type{border-top:0}
 .yr-line b{color:var(--paper)}
 .yr-line span{color:var(--fog)}
-.yr-line em{font-style:normal;font-size:12.5px;margin-left:6px}
-.yr-line .yr-cmp{display:block;font-size:12.5px;margin-top:1px}
+.yr-line em{font-style:normal;font-size:12px;margin-left:6px}
+.yr-line .yr-cmp{display:block;font-size:12px;margin-top:1px}
 .yr-line .yr-cmp i{font-style:normal}
 .yr-sub.yr-up{color:var(--sky);font-family:inherit}
 .yr-sub.yr-dn{color:var(--violet);font-family:inherit}
@@ -162,8 +162,8 @@ tr:hover td{background:var(--panel)}
 .yr-pill{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line);background:var(--ink-2);color:var(--fog);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .yr-pill.on{border-color:var(--teal-br);color:var(--paper);background:var(--teal-tint)}
 .yr-pill:focus-visible,.yr-go:focus-visible{outline:2px solid var(--teal-br);outline-offset:2px}
-.yr-tbl{width:100%;border-collapse:collapse;font-size:13.5px}
-.yr-tbl th{font-size:11.5px;font-weight:700;color:var(--fog);text-align:left;padding:0 6px 6px;border-bottom:1px solid var(--line)}
+.yr-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.yr-tbl th{font-size:12px;font-weight:700;color:var(--fog);text-align:left;padding:0 6px 6px;border-bottom:1px solid var(--line)}
 .yr-tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
 .yr-tbl td.r{font-family:var(--mono);white-space:nowrap}
 .yr-tbl td.nm{font-weight:700}
@@ -171,7 +171,10 @@ tr:hover td{background:var(--panel)}
 .yr-up{color:var(--sky);font-family:var(--mono);font-weight:700}
 .yr-dn{color:var(--violet);font-family:var(--mono);font-weight:700}
 .yr-eq{color:var(--fog);font-family:var(--mono)}
-.yr-go{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer}
+.yr-go{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:16px;font-weight:800;text-decoration:none;cursor:pointer}
+.yr-go[disabled]{opacity:.6;cursor:default}
+.yr-share{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.yr-share.pulse{box-shadow:0 0 0 2px var(--teal-br);transition:box-shadow .3s}
 .yr-note{font-size:12px;color:var(--fog);line-height:1.5;margin:4px 0 0}
 .yr-keep{display:flex;align-items:center;justify-content:space-between;gap:12px;border-color:var(--teal-br)}
 .yr-keep .yr-go{flex-shrink:0}
@@ -3428,8 +3431,9 @@ function vqInit(){
     try{ await DV.save(pair,type,pair[side].n,performance.now()-shownAt); }
     catch(e){ q('.vq-res').textContent='Couldn\u2019t save that vote. Check your connection and try the next one.'; links(); return; }
     var nv=DV.noteVote(pair); ev('vote-card-vote'); links(); progress();
-    if(DV.milestone(nv,function(){ ev('vote-milestone-yours'); var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); },
-      yrSignedOut()?function(){ ev('vote-milestone-signin'); openSettingsAtAccount(); }:null)) ev('vote-milestone-shown');
+    var mk=DV.milestone(nv,function(kind){ ev('vote-milestone-go-'+kind); YR_FOCUS_SHARE=kind==='share'; var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); },
+      yrSignedOut()?function(){ ev('vote-milestone-signin'); openSettingsAtAccount(); }:null);
+    if(mk) ev('vote-milestone-shown-'+mk);
     var n=null;
     try{ n=await DV.share(pair[0].n,pair[1].n); }catch(e){}
     if(cur!==pair) return;
@@ -3464,16 +3468,70 @@ function vqInit(){
 /* Your Rankings (My Team tab, 28 Nov 2026, docs/PLAN-your-rankings.md). The crowd's current order, moved by this
    device's own picks (DV.myBoard). Only players you've voted on are shown; ranks are still among ALL players at the
    position. Display only: nothing here feeds the crowd board, DELTA Value or the engine. */
-var YR_POS='QB';
+var YR_POS='QB', YR_FOCUS_SHARE=false;
 /* Signed out for certain (not still loading): only then offer sign-in. */
 function yrSignedOut(){ try{ return !!window.DSYNC && DSYNC.state().status==='signed-out'; }catch(e){ return false; } }
 /* The vote page's "Sign In To Keep Them" lands here as ?signin=1: open the account box once the page is up. */
 document.addEventListener('DOMContentLoaded',function(){
-  try{ if(new URLSearchParams(location.search).get('signin')==='1') setTimeout(function(){ openSettingsAtAccount(); },600); }catch(e){}
+  try{ var q=new URLSearchParams(location.search);
+    if(q.get('signin')==='1') setTimeout(function(){ openSettingsAtAccount(); },600);
+    if(q.get('share')==='1') YR_FOCUS_SHARE=true; }catch(e){}
 });
 function yrEsc(x){ return String(x==null?'':x).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function yrLabel(r){ return r.pos==='PICK'?'Pick '+r.myPos:r.pos+r.myPos; }
 function yrCrowd(r){ return r.pos==='PICK'?'Pick '+r.crowdPos:r.pos+r.crowdPos; }
+/* The share picture (step 1b, Steve's pick "A2", 28 Nov 2026): 1080 wide, portrait. Up to 5 takes each way (2+ spots
+   apart, players only), three numbers, and the vote link. Drawn with the share kit in delta-engine.js, so the colours
+   come from :root and match every other DELTA picture. */
+function yrTakes(B){
+  var gap=function(r){ return r.crowdPos-r.myPos; };
+  var P=B.filter(function(r){ return r.voted&&r.pos!=='PICK'; }).slice().sort(function(a,b){ return gap(b)-gap(a)||a.mine-b.mine; });
+  return { players:P.length, breaks:P.filter(function(r){ return Math.abs(gap(r))>=3; }).length,
+    hi:P.filter(function(r){ return gap(r)>=2; }).slice(0,5), lo:P.filter(function(r){ return gap(r)<=-2; }).slice(-5).reverse(), gap:gap };
+}
+async function yrDrawTakes(B,votes){
+  var C=dlImgColors(), F=dlImgFonts(), T=yrTakes(B), W=1080, P=64, ROW=58, GAPR=8;
+  var k=T.hi.length+T.lo.length;
+  var groups=[[T.hi,'I’m Higher On',C.sky,'+'],[T.lo,'I’m Lower On',C.violet,'−']].filter(function(x){ return x[0].length; });
+  var H=P+96+24+70+26+118+groups.reduce(function(t,gp){ return t+30+36+gp[0].length*(ROW+GAPR); },0)+20+DL_IMG_FOOT;
+  var cv=document.createElement('canvas'); cv.width=W; cv.height=H; var g=cv.getContext('2d');
+  var y=await dlImgStart(g,W,P,C,F,'MY HOT TAKES','Made '+dlImgDate(new Date()));
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 60px '+F.sans;
+  g.fillText(k===1?'My Hottest Take':'My '+k+' Hottest Takes',P,y+24+30); y+=24+70+26;
+  var tiles=[[votes,'Votes Cast',C.paper],[T.players,'Players Ranked',C.paper],[T.breaks,'Breaks From The Crowd',C.url]];
+  var tw=(W-2*P-2*14)/3;
+  tiles.forEach(function(t,i){ var x=P+i*(tw+14);
+    g.fillStyle=C.panel; dlImgRound(g,x,y,tw,100,16); g.fill(); g.strokeStyle=i===2?C.url:C.line; g.lineWidth=2; g.stroke();
+    g.fillStyle=t[2]; g.font='700 40px '+F.mono; g.fillText(Number(t[0]).toLocaleString('en-US'),x+20,y+36);
+    g.fillStyle=C.fog; g.font='600 20px '+F.sans; g.fillText(dlImgFit(g,t[1],tw-40),x+20,y+76); });
+  y+=118;
+  groups.forEach(function(gp){
+    var list=gp[0], col=gp[2], sign=gp[3];
+    y+=30; g.textAlign='left'; g.fillStyle=col; g.font='800 26px '+F.sans; g.fillText(gp[1],P,y+13);
+    g.textAlign='right'; g.fillStyle=C.fog2; g.font='600 19px '+F.sans; g.fillText('Mine vs Crowd',W-P,y+13); y+=36;
+    list.forEach(function(r){
+      var d=Math.abs(T.gap(r)), lab=function(k){ return r.pos+k; };
+      g.fillStyle=C.panel; dlImgRound(g,P,y,W-2*P,ROW,12); g.fill(); g.strokeStyle=C.line; g.lineWidth=2; g.stroke();
+      var cy=y+ROW/2, xr=W-P-18;
+      g.textAlign='right'; g.fillStyle=col; g.font='700 28px '+F.mono; g.fillText(sign+d,xr,cy); xr-=56+16;
+      var bw=128; g.fillStyle=C.line; dlImgRound(g,xr-bw,cy-6,bw,12,6); g.fill();
+      g.fillStyle=col; dlImgRound(g,xr-bw,cy-6,Math.max(12,Math.round(bw*Math.min(1,d/8))),12,6); g.fill(); xr-=bw+16;
+      g.font='500 21px '+F.mono; var cr=' vs '+lab(r.crowdPos), me=lab(r.myPos);
+      g.fillStyle=C.fog2; g.fillText(cr,xr,cy); var wcr=g.measureText(cr).width;
+      g.font='700 21px '+F.mono; g.fillStyle=col; g.fillText(me,xr-wcr,cy); xr-=wcr+g.measureText(me).width+18;
+      g.textAlign='left'; var x0=P+18; g.fillStyle=C.paper; g.font='800 26px '+F.sans;
+      var meta=[r.team,r.pos].filter(Boolean).join(' · ');
+      g.font='600 19px '+F.sans; var mw=g.measureText(meta).width; g.font='800 26px '+F.sans;
+      var nm=dlImgFit(g,r.n,Math.max(80,xr-x0-mw-12)); g.fillText(nm,x0,cy);
+      var nw=g.measureText(nm).width; g.fillStyle=C.fog2; g.font='600 19px '+F.sans; g.fillText(meta,x0+nw+12,cy+2);
+      y+=ROW+GAPR; });
+  });
+  y+=20;
+  g.fillStyle=C.line; g.fillRect(P,y,W-2*P,2);
+  g.textAlign='left'; g.fillStyle=C.paper; g.font='800 24px '+F.sans; g.fillText('Think the crowd’s wrong? Build your own.',P,y+44);
+  g.textAlign='right'; g.fillStyle=C.url; g.font='800 24px '+F.sans; g.fillText('fantasydelta.com/vote',W-P,y+44);
+  return cv;
+}
 async function openYourRankings(){
   var root=document.getElementById('yr-root'); if(!root) return;
   if(!window.DV){ root.innerHTML='<div class="yr-t">Your Rankings</div><p class="yr-s">The vote didn’t load. Refresh the page and try again.</p>'; return; }
@@ -3520,6 +3578,11 @@ function yrRender(picks){
     +(hi.length||lo.length?'<div class="yr-two">'+col('You’re Higher On',hi,'yr-up')+col('You’re Lower On',lo,'yr-dn')+'</div>'
       :'<p class="yr-note">Your board matches the crowd so far. The more you vote, the more your own takes show up.</p>')
     +'</div>'
+    +(function(){ var S=DV.SHARE_AT;
+      return '<div class="yr-card yr-share" id="yr-share"><div><div class="yr-h" style="margin:0 0 2px">Share Your Hot Takes</div>'
+        +'<p class="yr-note" style="margin:0">'+(n>=S?'Your biggest breaks from the crowd, in one picture.'
+          :'Unlocks at '+S+' votes. <b style="color:var(--paper);font-family:var(--mono)">'+(S-n)+'</b> to go.')+'</p></div>'
+        +(n>=S?'<button type="button" class="yr-go" data-yr="share">Share</button>':'<a class="yr-go" href="vote/">Vote</a>')+'</div>'; })()
     +'<div class="yr-card"><div class="yr-h">Your Board</div><div class="yr-pills" role="tablist">'
     +posList.filter(function(p){ return have[p]; }).map(function(p){
       return '<button type="button" class="yr-pill'+(p===YR_POS?' on':'')+'" data-yrpos="'+p+'" role="tab" aria-selected="'+(p===YR_POS)+'">'+(p==='PICK'?'Picks':p)+' <span style="font-weight:500">'+have[p]+'</span></button>';
@@ -3535,6 +3598,10 @@ function yrRender(picks){
     +'Your board starts from the crowd’s order and moves with your picks. It’s saved with the votes from this device and shown only to you. '
     +'<a href="vote/" style="color:var(--teal-br);font-weight:700">Keep Voting</a></p>';
   var si=root.querySelector('[data-yr="signin"]'); if(si) si.addEventListener('click',function(e){ openSettingsAtAccount(e); });
+  var sh=root.querySelector('[data-yr="share"]');
+  if(sh) sh.addEventListener('click',function(){ try{ dlCount('yours-share'); }catch(e){} dlImgShare(function(){ return yrDrawTakes(B,n); },'delta-hot-takes.png',sh); });
+  if(YR_FOCUS_SHARE){ YR_FOCUS_SHARE=false; var card=document.getElementById('yr-share');
+    if(card){ setTimeout(function(){ try{ card.scrollIntoView({block:'center'}); }catch(e){} card.classList.add('pulse'); setTimeout(function(){ card.classList.remove('pulse'); },1600); },50); } }
   root.querySelectorAll('[data-yrpos]').forEach(function(b){ b.addEventListener('click',function(){ YR_POS=b.getAttribute('data-yrpos'); yrRender(picks); }); });
 }
 document.addEventListener('DOMContentLoaded',function(){ vqWatchAway(); vqInit(); });
