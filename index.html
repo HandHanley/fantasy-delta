@@ -173,6 +173,8 @@ tr:hover td{background:var(--panel)}
 .yr-eq{color:var(--fog);font-family:var(--mono)}
 .yr-go{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:12px;border:0;background:var(--teal-br);color:var(--ink);font:inherit;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer}
 .yr-note{font-size:12px;color:var(--fog);line-height:1.5;margin:4px 0 0}
+.yr-keep{display:flex;align-items:center;justify-content:space-between;gap:12px;border-color:var(--teal-br)}
+.yr-keep .yr-go{flex-shrink:0}
 .trade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
 .trade-grid.three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
 .trade-grid.four-col{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -3426,7 +3428,8 @@ function vqInit(){
     try{ await DV.save(pair,type,pair[side].n,performance.now()-shownAt); }
     catch(e){ q('.vq-res').textContent='Couldn\u2019t save that vote. Check your connection and try the next one.'; links(); return; }
     var nv=DV.noteVote(pair); ev('vote-card-vote'); links(); progress();
-    if(DV.milestone(nv,function(){ ev('vote-milestone-yours'); var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); })) ev('vote-milestone-shown');
+    if(DV.milestone(nv,function(){ ev('vote-milestone-yours'); var yb=dlTabBtn('yours'); if(yb) showTab('yours',yb); window.scrollTo(0,0); },
+      yrSignedOut()?function(){ ev('vote-milestone-signin'); openSettingsAtAccount(); }:null)) ev('vote-milestone-shown');
     var n=null;
     try{ n=await DV.share(pair[0].n,pair[1].n); }catch(e){}
     if(cur!==pair) return;
@@ -3462,6 +3465,12 @@ function vqInit(){
    device's own picks (DV.myBoard). Only players you've voted on are shown; ranks are still among ALL players at the
    position. Display only: nothing here feeds the crowd board, DELTA Value or the engine. */
 var YR_POS='QB';
+/* Signed out for certain (not still loading): only then offer sign-in. */
+function yrSignedOut(){ try{ return !!window.DSYNC && DSYNC.state().status==='signed-out'; }catch(e){ return false; } }
+/* The vote page's "Sign In To Keep Them" lands here as ?signin=1: open the account box once the page is up. */
+document.addEventListener('DOMContentLoaded',function(){
+  try{ if(new URLSearchParams(location.search).get('signin')==='1') setTimeout(function(){ openSettingsAtAccount(); },600); }catch(e){}
+});
 function yrEsc(x){ return String(x==null?'':x).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function yrLabel(r){ return r.pos==='PICK'?'Pick '+r.myPos:r.pos+r.myPos; }
 function yrCrowd(r){ return r.pos==='PICK'?'Pick '+r.crowdPos:r.pos+r.crowdPos; }
@@ -3502,6 +3511,11 @@ function yrRender(picks){
   var cv=DV.crowdVotes();
   root.innerHTML='<div class="yr-t">Your Rankings</div>'
     +'<p class="yr-s">Built from your <b>'+fmt(n)+'</b> votes. You’ve ranked <b>'+V.length+'</b> of <b>'+B.length+'</b> players and picks.'+(V.length<B.length?' Keep voting to fill in your board.':'')+'</p>'
+    +(yrSignedOut()?'<div class="yr-card yr-keep"><div><div class="yr-h" style="margin:0 0 2px">Keep Your Board</div>'
+        +'<p class="yr-note" style="margin:0">Sign in and your board follows you to every device and survives a new phone.</p></div>'
+        +'<button type="button" class="yr-go" data-yr="signin">Sign In</button></div>'
+      :(window.DSYNC&&DSYNC.isSignedIn()?'<p class="yr-note" style="margin:-6px 0 14px">Saved to your account'
+        +(DV.mySessions().length>1?', with votes from your '+DV.mySessions().length+' devices':'')+'.</p>':''))
     +'<div class="yr-card"><div class="yr-h">Where You Disagree With The Crowd</div>'
     +(hi.length||lo.length?'<div class="yr-two">'+col('You’re Higher On',hi,'yr-up')+col('You’re Lower On',lo,'yr-dn')+'</div>'
       :'<p class="yr-note">Your board matches the crowd so far. The more you vote, the more your own takes show up.</p>')
@@ -3520,6 +3534,7 @@ function yrRender(picks){
     +'<p class="yr-note"><b>Early Crowd Rankings</b>'+(cv?' from '+fmt(cv)+' votes':'')+'. The crowd’s order will keep settling as more people vote. '
     +'Your board starts from the crowd’s order and moves with your picks. It’s saved with the votes from this device and shown only to you. '
     +'<a href="vote/" style="color:var(--teal-br);font-weight:700">Keep Voting</a></p>';
+  var si=root.querySelector('[data-yr="signin"]'); if(si) si.addEventListener('click',function(e){ openSettingsAtAccount(e); });
   root.querySelectorAll('[data-yrpos]').forEach(function(b){ b.addEventListener('click',function(){ YR_POS=b.getAttribute('data-yrpos'); yrRender(picks); }); });
 }
 document.addEventListener('DOMContentLoaded',function(){ vqWatchAway(); vqInit(); });

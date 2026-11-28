@@ -314,6 +314,30 @@ var DSYNC = (function () {
   // ═════════════════════════════════════════════════════════════════════════
   //  PULL / PUSH
   // ═════════════════════════════════════════════════════════════════════════
+  /* Your Rankings (28 Nov 2026, docs/PLAN-your-rankings.md step 3). Links this device's voting id (dv_session,
+     made by delta-vote.js) to the account, then keeps the account's full list in dv_linked so delta-vote.js can build
+     one board from all of them. dv_signed_in tells delta-vote.js (on any page) to tag new votes as signed in.
+     Never throws: a failure here only means the board shows this device's votes. */
+  function voteSignedOut() { lsSet('dv_signed_in', ''); lsSet('dv_linked', ''); }
+  async function linkVoteDevices() {
+    try {
+      if (!sb || !user) return;
+      lsSet('dv_signed_in', '1');
+      var uid = user.id, mine = lsGet('dv_session');
+      if (mine && mine.length >= 8) {
+        var up = await sb.from('vote_devices').upsert([{ user_id: uid, session: mine }],
+          { onConflict: 'user_id,session', ignoreDuplicates: true });
+        if (up.error) log('vote device link failed:', up.error.message);
+      }
+      var r = await sb.from('vote_devices').select('session').eq('user_id', uid).order('created_at', { ascending: false });
+      if (r.error) { log('vote devices read failed:', r.error.message); return; }
+      lsSet('dv_linked', JSON.stringify((r.data || []).map(function (x) { return x.session; })));
+      // If Your Rankings is on screen, redraw it with the other devices' votes included.
+      var pnl = document.getElementById('panel-yours');
+      if (pnl && pnl.classList.contains('active') && typeof window.openYourRankings === 'function') window.openYourRankings();
+    } catch (e) { log('vote devices:', e && e.message); }
+  }
+
   async function pullAndMerge() {
     if (!sb || !user) return;
     setStatus('syncing');
@@ -394,6 +418,7 @@ var DSYNC = (function () {
     if (s.source === 'local' || t.source === 'local') await pushState(true);
 
     setStatus('ready');
+    linkVoteDevices();   // not awaited: Your Rankings never holds up the merge
     log('merge complete —',
         'settings:', s.source, 'theme:', t.source,
         'watchlist:', w.merged.length,
@@ -478,6 +503,7 @@ var DSYNC = (function () {
               log('merge failed:', e.message); setStatus('error', e);
             });
           } else if (!user) {
+            voteSignedOut();
             setStatus('signed-out');
           }
         });
@@ -486,6 +512,7 @@ var DSYNC = (function () {
           user = { id: sess.data.session.user.id, email: sess.data.session.user.email };
           await pullAndMergeOnce();
         } else {
+          voteSignedOut();
           setStatus('signed-out');
         }
       } catch (e) {
@@ -518,6 +545,7 @@ var DSYNC = (function () {
       if (!sb) return;
       await sb.auth.signOut();
       user = null;
+      voteSignedOut();
       setStatus('signed-out');
     },
 

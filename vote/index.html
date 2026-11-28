@@ -185,7 +185,8 @@ async function vote(side) {
   const nv = DV.noteVote(pair);
   $('#n').textContent = nv;
   count('vote-page-vote');
-  if (DV.milestone(nv, () => { count('vote-milestone-yours'); location.href = '../?tab=yours'; })) count('vote-milestone-shown');
+  if (DV.milestone(nv, () => { count('vote-milestone-yours'); location.href = '../?tab=yours'; },
+    DV.store.get('dv_signed_in') === '1' ? null : () => { count('vote-milestone-signin'); location.href = '../?tab=yours&signin=1'; })) count('vote-milestone-shown');
   progress(); yours();
   $('#next').disabled = false;
   let n;

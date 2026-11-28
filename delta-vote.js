@@ -100,7 +100,12 @@ function pickPair() {
 // pick: the chosen item's name, or null for a skip. ms: time the pair was on screen.
 async function save(pair, type, pick, ms) {
   const row = { board: BOARD, session, tag, a: pair[0].n, b: pair[1].n, pick, pair_type: type, ms: Math.min(3600000, Math.round(ms)) };
-  const r = await fetch(API + '/vote_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) });
+  // signed_in (PLAN-your-rankings step 3): set by delta-sync.js on the main page; the vote page reads the same flag.
+  if (store.get('dv_signed_in') === '1') row.signed_in = true;
+  const post = (body) => fetch(API + '/vote_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(body) });
+  let r = await post(row);
+  // If the signed_in column isn't in the database yet, a vote must still save: try once more without it.
+  if (!r.ok && row.signed_in && r.status === 400) { delete row.signed_in; r = await post(row); }
   if (!r.ok) throw new Error('save ' + r.status);
   if (pick) keepPick(row.a, row.b, pick);
 }
@@ -112,12 +117,18 @@ function localPicks() {
   catch (e) { return []; }
 }
 function keepPick(a, b, pick) { const l = localPicks(); l.push([a, b, pick]); store.set(MY_KEY, JSON.stringify(l.slice(-MY_MAX))); }
-// Every pick this device has made on this board: the database's copy (which includes votes from before this existed)
+// This device first, then any others linked to the signed-in account (dv_linked, written by delta-sync.js). At most 10.
+function mySessions() {
+  let linked = [];
+  try { const j = JSON.parse(store.get('dv_linked') || '[]'); if (Array.isArray(j)) linked = j.filter((x) => typeof x === 'string' && x.length >= 8); } catch (e) {}
+  return [session].concat(linked.filter((x) => x !== session)).slice(0, 10);
+}
+// Every pick this device (and, signed in, your other devices) made on this board: the database's copy (which includes votes from before this existed)
 // when it answers, otherwise the device's own. The longer list wins, so neither can hide the other.
 async function myPicks() {
   const local = localPicks();
   try {
-    const r = await fetch(API + '/rpc/my_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD, p_sessions: [session] }) });
+    const r = await fetch(API + '/rpc/my_picks', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_board: BOARD, p_sessions: mySessions() }) });
     if (!r.ok) return local;
     const j = await r.json();
     const srv = (Array.isArray(j) ? j : []).filter((x) => x && x.pick).map((x) => [x.a, x.b, x.pick]);
@@ -174,7 +185,7 @@ function total() {
 // only colour variables both pages define (no hex here). The sign-in button joins it with step 3 of
 // docs/PLAN-your-rankings.md, when signing in actually keeps the board.
 let mShown = false;   // also in memory, for browsers that block storage: never more than once per page load
-function milestone(n, go) {
+function milestone(n, go, signIn) {
   // n >= UNLOCK, not ===: anyone already past 25 when this shipped sees it once, on their next vote.
   if (n < UNLOCK || mShown || store.get('dv_m' + UNLOCK) === '1' || typeof document === 'undefined') return false;
   mShown = true; store.set('dv_m' + UNLOCK, '1');
@@ -190,6 +201,9 @@ function milestone(n, go) {
     + 'See which players you\u2019re higher and lower on than the crowd.</div>'
     + '<button type="button" data-m="go" style="width:100%;height:46px;border:0;border-radius:14px;background:var(--teal-br);color:var(--ink);'
     + 'font:inherit;font-size:16px;font-weight:800;cursor:pointer">See Your Rankings</button>'
+    + (signIn ? '<button type="button" data-m="in" style="width:100%;height:44px;margin-top:8px;border:1px solid var(--teal-br);border-radius:14px;'
+      + 'background:none;color:var(--paper);font:inherit;font-size:15px;font-weight:800;cursor:pointer">Sign In To Keep Them</button>'
+      + '<div style="font-size:12px;color:var(--fog);line-height:1.4;margin:6px 0 0">Your board follows you to every device and survives a new phone.</div>' : '')
     + '<button type="button" data-m="x" style="width:100%;height:40px;margin-top:8px;border:0;background:none;color:var(--fog);'
     + 'font:inherit;font-size:14px;font-weight:700;cursor:pointer">Keep Voting</button></div>';
   const close = () => { document.removeEventListener('keydown', esc); bg.remove(); };
@@ -197,6 +211,7 @@ function milestone(n, go) {
   bg.addEventListener('click', (e) => {
     const b = e.target.closest('[data-m]');
     if (b && b.getAttribute('data-m') === 'go') { close(); go(); }
+    else if (b && b.getAttribute('data-m') === 'in') { close(); setTimeout(signIn, 0); }   // after this tap finishes
     else if (b || e.target === bg) close();
   });
   document.addEventListener('keydown', esc);
@@ -207,7 +222,7 @@ function milestone(n, go) {
 
 window.DV = {
   ITEMS, BOARD, GOAL, UNLOCK, store, loadCounts, loadOrder, pickPair, save, noteVote, share, myVotes, total, crowdOrder, pos: () => POS,
-  myPicks, myBoard, milestone, setMyPri(v) { MY_PRI = v; }, crowdReady: () => CROWD_S !== null, crowdVotes: () => CROWD_N,
+  myPicks, myBoard, milestone, mySessions, setMyPri(v) { MY_PRI = v; }, crowdReady: () => CROWD_S !== null, crowdVotes: () => CROWD_N,
   setOwner() { tag = 'owner'; store.set('dv_tag', 'owner'); },
 };
 })();

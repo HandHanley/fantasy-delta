@@ -90,3 +90,26 @@ $$;
 
 revoke all on function public.my_picks(text, text[]) from public;
 grant execute on function public.my_picks(text, text[]) to anon, authenticated;
+
+-- Added 28 Nov 2026 (docs/PLAN-your-rankings.md, step 3): signing in keeps Your Rankings.
+-- 1. vote_devices: which voting devices (dv_session ids) belong to which account, so a board can combine your phone
+--    and laptop votes and survive a cleared browser. Each person can see and add ONLY their own rows.
+--    The crowd board ignores this table: it still treats every device as one voter.
+create table if not exists public.vote_devices (
+  user_id    uuid not null references auth.users (id) on delete cascade,
+  session    text not null check (char_length(session) between 8 and 64),
+  created_at timestamptz not null default now(),
+  primary key (user_id, session)
+);
+alter table public.vote_devices enable row level security;
+drop policy if exists "see own voting devices" on public.vote_devices;
+create policy "see own voting devices" on public.vote_devices
+  for select to authenticated using (auth.uid() = user_id);
+drop policy if exists "add own voting devices" on public.vote_devices;
+create policy "add own voting devices" on public.vote_devices
+  for insert to authenticated with check (auth.uid() = user_id);
+
+-- 2. signed_in on each vote: was this device signed in when it voted? Counted only, to study later whether signed-in
+--    voters vote differently. The crowd board ignores it; weighting by it would need a written amendment first.
+--    Old votes read false.
+alter table public.vote_picks add column if not exists signed_in boolean not null default false;
