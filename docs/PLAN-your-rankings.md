@@ -1,6 +1,6 @@
 # Plan: Your Rankings (And Using Them In The Trade Calc)
 
-Drafted 28 Nov 2026 for Steve's approval. Nothing is built yet.
+Drafted 28 Nov 2026. Steve's decisions on the open questions are in **Decided (28 Nov)** at the end. Nothing is built yet.
 
 ## Why
 
@@ -40,15 +40,20 @@ numbers.
 
 ## Step 1: Your Rankings View
 
-**Where:** a "Your Rankings" button on the vote page and on the Market tab's vote card. It appears after your 25th
-vote, with a counter before then ("Your Rankings unlock in 7 votes").
+**Where:** its own tab in My Team, beside Roster, Trade Calc, Mock Draft and Watchlist, because it's yours rather than
+the crowd's. The vote page and the Market tab's vote card get a "See Your Rankings" button that opens it. Before your
+25th vote, the button reads as a counter ("Your Rankings unlock in 7 votes"). My Team then has five tabs, the same
+count as the NFL row, so the phone tab strip gets checked at 390px wide.
 
 **What you see:**
 - **Where You Disagree With The Crowd** first: the 5 players you're highest on and the 5 you're lowest on compared
   with the crowd, in plain words ("You have Olave as your WR6. The crowd has him at WR11").
-- Then your full board by position, with the crowd's position rank beside each player.
-- A line underneath: "Built from your 31 votes. The more you vote, the sharper it gets."
-- A share button that draws a picture of your 5 biggest disagreements (same kit as the Trade Calc's share image).
+- Then your board by position, **showing only players you've voted on**, with the Early Crowd Rankings position rank
+  beside each. Ranks are still worked out against the whole board, so "your WR6" means sixth among all receivers,
+  not sixth among the ones you've seen.
+- A line underneath: "You've ranked 38 of 159 players. Keep voting to fill in your board."
+
+The share picture is step 1b, unlocked at 50 votes.
 
 **Your past votes count.** Votes already cast on a device are stored in the database under that device's ID, so a new
 database function returns this device's own picks, and everyone who's already voted gets their board on day one. Picks
@@ -61,12 +66,21 @@ are also kept on the device from now on, so the board still loads if the databas
 - `delta-vote.js`: keep this device's picks, fetch past ones, build the personal board.
 - `vote/index.html` and `index.html`: the button, the view and the share picture.
 
+## Step 1b: The Share Picture (50 Votes)
+
+- At your 50th vote: "Share Your Hot Takes" draws a picture of your 5 biggest disagreements with the crowd (same kit
+  as the Trade Calc's share image).
+- If you're signed out, a small second prompt sits beside it: "Sign in so your board follows you."
+
+**Files:** `index.html`, `vote/index.html`.
+
 ## Step 2: The Trade Calc Toggle
 
 - A "Use Your Rankings" switch in the Trade Calc, shown once you have a board. Off by default; the choice stays on
   this device like other display settings.
 - When it's on, each player shows a third number, "Yours," and a short line under the verdict, for example: "By Your
   Rankings: Team A wins by 1,200." The main verdict doesn't change.
+- A player you haven't voted on uses the crowd's value, labelled "Crowd," so trades still add up.
 - If any player in the trade isn't on the vote list, that line says so instead of giving a partial total.
 
 **Files:** `index.html` only.
@@ -111,3 +125,13 @@ loads.
 2. **Unlock at 25 votes?** That's about a minute of voting. Fewer votes makes boards that barely differ from the crowd's.
 3. **Share picture now or later?** It's the part that spreads the vote, but it's the largest piece of step 1. It
    could slip to a step 1b.
+
+## Decided (28 Nov, Steve)
+
+1. **Early Crowd Rankings are shown** before 5,000 votes, labelled that way.
+2. **Unlock at 25 votes**, with the sign-in prompt at the same moment.
+3. **Only players you've voted on are shown**, so filling in your board is a reason to keep voting.
+4. **Home:** a Your Rankings tab in My Team, opened from the vote card and vote page.
+5. **Share picture at 50 votes** (step 1b), with a second, smaller sign-in prompt for anyone still signed out.
+6. **Pairing doesn't change.** The vote still picks pairs for the crowd's board, not to fill in your own. Steering pairs
+   per person would change the pre-registered pairing, so it isn't part of this plan.
